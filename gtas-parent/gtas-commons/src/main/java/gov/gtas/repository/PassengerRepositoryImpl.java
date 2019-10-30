@@ -5,31 +5,23 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.enumtype.HitTypeEnum;
+import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.*;
-import gov.gtas.services.PassengerService;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.services.dto.PassengersRequestDto;
+import gov.gtas.services.dto.PriorityVettingListRequest;
+import gov.gtas.services.dto.RuleCatFilterCheckbox;
 import gov.gtas.services.dto.SortOptionsDto;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -37,135 +29,227 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+@Component
 public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	private static final Logger logger = LoggerFactory.getLogger(PassengerRepositoryImpl.class);
 
 	@PersistenceContext
 	private EntityManager em;
 
-	@Autowired
-	private PassengerService pService;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gov.gtas.repository.PassengerRepositoryCustom#
-	 * findExistingPassengerByAttributes(java.lang.String, java.lang.String,
-	 * java.lang.String, java.util.Date, java.lang.String)
-	 */
+	@SuppressWarnings("DuplicatedCode")
 	@Override
 	@Transactional
-	public boolean findExistingPassengerByAttributes(String firstName, String lastName, String middleName,
-			String gender, Date dob, String passengerType) {
-		boolean found = true;
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Passenger> paxcq = cb.createQuery(Passenger.class);
-		Root<Passenger> root = paxcq.from(Passenger.class);
-		List<Predicate> predicates = new ArrayList<>();
+	public Pair<Long, List<Passenger>> priorityVettingListQuery(PriorityVettingListRequest dto,
+			Set<UserGroup> userGroupSet, String userId) {
 
-		if (StringUtils.isNotBlank(firstName)) {
-			String likeString = String.format("%%%s%%", firstName.toUpperCase());
-			predicates.add(cb.like(root.<String>get("firstName"), likeString));
-		}
-		if (StringUtils.isNotBlank(middleName)) {
-			String likeString = String.format("%%%s%%", middleName.toUpperCase());
-			predicates.add(cb.like(root.<String>get("middleName"), likeString));
-		}
-		if (StringUtils.isNotBlank(lastName)) {
-			String likeString = String.format("%%%s%%", lastName.toUpperCase());
-			predicates.add(cb.like(root.<String>get("lastName"), likeString));
-		}
-		if (StringUtils.isNotBlank(gender)) {
-			String likeString = String.format("%%%s%%", gender.toUpperCase());
-			predicates.add(cb.like(root.<String>get("gender"), likeString));
-		}
-		if (dob != null) {
-			predicates.add(cb.equal(root.<String>get("dob"), dob));
-		}
-		if (StringUtils.isNotBlank(passengerType)) {
-			String likeString = String.format("%%%s%%", passengerType.toUpperCase());
-			predicates.add(cb.like(root.<String>get("passengerType"), likeString));
-		}
-		paxcq.select(root).where(predicates.toArray(new Predicate[] {}));
-		TypedQuery<Passenger> paxtq = em.createQuery(paxcq);
-		if (CollectionUtils.isEmpty(paxtq.getResultList())) {
-			found = false;
-		}
-		return found;
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+
+		// ROOT QUERY
+		CriteriaQuery<Passenger> q = cb.createQuery(Passenger.class);
+		Root<Passenger> pax = q.from(Passenger.class);
+		List<Predicate> rootQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, q, pax, userId);
+		q.select(pax).where(rootQueryPredicate.toArray(new Predicate[] {})).groupBy(pax.get("id"));
+		TypedQuery<Passenger> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), false);
+		List<Passenger> results = typedQuery.getResultList();
+
+		// COUNT QUERY - a version of root query without pagination and a count distinct
+		// on pax id
+		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+		Root<Passenger> paxCount = countQuery.from(Passenger.class);
+		List<Predicate> countQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, countQuery,
+				paxCount, userId);
+		countQuery.select(cb.countDistinct(paxCount.get("id"))).where(countQueryPredicate.toArray(new Predicate[] {}));
+		TypedQuery typedCountQuery = em.createQuery(countQuery);
+		Optional countResult = typedCountQuery.getResultList().stream().findFirst();
+		Long passengerCount = countResult.isPresent() ? (Long) countResult.get() : 0L;
+
+		return new ImmutablePair<>(passengerCount, results);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gov.gtas.repository.PassengerRepositoryCustom#findByAttributes(java.lang
-	 * .Long)
-	 */
-	@Override
-	@Transactional
-	public List<Passenger> findByAttributes(Long pId, String docNum, String docIssuCountry, Date docExpDate) {
-		// NOTE: for perfect 7
-		Passenger pax = em.find(Passenger.class, pId);
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Passenger> paxcq = cb.createQuery(Passenger.class);
-		Root<Passenger> root = paxcq.from(Passenger.class);
-		List<Predicate> predicates = new ArrayList<>();
-		// passenger-related
-		predicates.add(cb.notEqual(root.<Long>get("id"), pax.getId()));
-		if (StringUtils.isNotBlank(pax.getPassengerDetails().getFirstName())) {
-			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getFirstName().toUpperCase());
-			predicates.add(cb.like(root.<String>get("firstName"), likeString));
+	private <T> List<Predicate> joinAndCreateHitViewPredicates(PriorityVettingListRequest dto,
+			Set<UserGroup> userGroupSet, CriteriaBuilder cb, CriteriaQuery<T> q, Root<Passenger> pax, String userId) {
+		// ROOT QUERY JOINS
+		Join<Passenger, Flight> flight = pax.join("flight", JoinType.INNER);
+		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = flight.join("mutableFlightDetails",
+				JoinType.INNER);
+		Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.INNER);
+		Join<Flight, FlightCountDownView> flightCountDownViewJoin = flight.join("flightCountDownView", JoinType.INNER);
+		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.INNER);
+		Join<Passenger, HitDetail> hitDetails = pax.join("hitDetails", JoinType.INNER);
+		Join<HitDetail, HitViewStatus> hitViewJoin = hitDetails.join("hitViewStatus", JoinType.INNER);
+		Join<HitDetail, HitMaker> hitMakerJoin = hitDetails.join("hitMaker", JoinType.INNER);
+		Join<HitMaker, HitCategory> hitCategoryJoin = hitMakerJoin.join("hitCategory", JoinType.INNER);
+		Join<HitMaker, User> hitMakerUserJoin = hitMakerJoin.join("author", JoinType.INNER);
+		// **** PREDICATES ****
+		List<Predicate> queryPredicates = new ArrayList<>();
+		// TIME UP TO -30 MINUTE PREDICATE
+		/*
+		 * if (dto.getWithTimeLeft() != null && dto.getWithTimeLeft()) { LocalDateTime
+		 * ldt = LocalDateTime.now(ZoneOffset.UTC); ldt = ldt.minusMinutes(30L); Date
+		 * oneHourAgo = Date.from(ldt.toInstant(ZoneOffset.UTC)); Predicate
+		 * countDownPredicate = cb
+		 * .and(cb.greaterThanOrEqualTo(flightCountDownViewJoin.get("countDownTimer"),
+		 * oneHourAgo)); queryPredicates.add(countDownPredicate); }
+		 */
+
+		Set<HitViewStatusEnum> hitViewStatusEnumSet = new HashSet<>();
+		if (dto.getDisplayStatusCheckBoxes() != null) {
+			if (dto.getDisplayStatusCheckBoxes().getNewItems() != null
+					&& dto.getDisplayStatusCheckBoxes().getNewItems()) {
+				hitViewStatusEnumSet.add(HitViewStatusEnum.NEW);
+			}
+			if (dto.getDisplayStatusCheckBoxes().getReviewed() != null
+					&& dto.getDisplayStatusCheckBoxes().getReviewed()) {
+				hitViewStatusEnumSet.add(HitViewStatusEnum.REVIEWED);
+			}
+			if (dto.getDisplayStatusCheckBoxes().getReOpened() != null
+					&& dto.getDisplayStatusCheckBoxes().getReOpened()) {
+				hitViewStatusEnumSet.add(HitViewStatusEnum.RE_OPENED);
+			}
 		}
-		if (StringUtils.isNotBlank(pax.getPassengerDetails().getLastName())) {
-			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getLastName().toUpperCase());
-			predicates.add(cb.like(root.<String>get("lastName"), likeString));
+		// Special case. Unused value to give result of 0.
+		if (hitViewStatusEnumSet.isEmpty()) {
+			hitViewStatusEnumSet.add(HitViewStatusEnum.NOT_USED);
 		}
-		if (StringUtils.isNotBlank(pax.getPassengerDetails().getGender())) {
-			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getGender().toUpperCase());
-			predicates.add(cb.like(root.<String>get("gender"), likeString));
+
+		Predicate hitViewStatus = cb.in(hitViewJoin.get("hitViewStatusEnum")).value(hitViewStatusEnumSet);
+		queryPredicates.add(hitViewStatus);
+
+		if (dto.getMyRulesOnly() != null && dto.getMyRulesOnly()) {
+			Predicate authorOnly = cb.equal(hitMakerUserJoin.get("userId"), userId);
+			queryPredicates.add(authorOnly);
 		}
-		if (pax.getPassengerDetails().getDob() != null) {
-			predicates.add(cb.equal(root.<String>get("dob"), pax.getPassengerDetails().getDob()));
+
+		if (dto.getRuleCatFilter() != null && !dto.getRuleCatFilter().isEmpty()) {
+			Set<String> categoriesToConsider = new HashSet<>();
+			for (RuleCatFilterCheckbox rcfc : dto.getRuleCatFilter()) {
+				if (rcfc.getValue()) {
+					categoriesToConsider.add(rcfc.getName());
+				}
+			}
+			Predicate hitCatsIn = cb.in(hitCategoryJoin.get("name")).value(categoriesToConsider);
+			queryPredicates.add(hitCatsIn);
 		}
-		// document-related
-		if (StringUtils.isNotBlank(docNum)) {
-			String likeString = String.format("%%%s%%", docNum.toUpperCase());
-			predicates.add(cb.like(root.join("documents").get("documentNumber"), likeString));
+		if (dto.getPriorityVettingListRuleTypes() != null) {
+			Set<HitTypeEnum> hitTypeEnums = dto.getPriorityVettingListRuleTypes().hitTypeEnums();
+			Predicate hitTypeEnumsIn = cb.in(hitDetails.get("hitEnum")).value(hitTypeEnums);
+			queryPredicates.add(hitTypeEnumsIn);
 		}
-		if (StringUtils.isNotBlank(docIssuCountry)) {
-			String likeString = String.format("%%%s%%", docIssuCountry.toUpperCase());
-			predicates.add(cb.like(root.join("documents").get("issuanceCountry"), likeString));
+		// LAST NAME PREDICATE
+		if (StringUtils.isNotBlank(dto.getLastName())) {
+			String likeString = String.format("%%%s%%", dto.getLastName().toUpperCase());
+			queryPredicates.add(cb.like(paxDetailsJoin.get("lastName"), likeString));
 		}
-		if (docExpDate != null) {
-			predicates.add(cb.equal(root.join("documents").get("expirationDate"), docExpDate));
+
+		// USER GROUP PREDICATE
+		Predicate userGroupFilter = cb.and(cb.in(hitCategoryJoin.joinSet("userGroups")).value(userGroupSet));
+		queryPredicates.add(userGroupFilter);
+
+		// FLIGHT PREDICATES
+		if (!CollectionUtils.isEmpty(dto.getOriginAirports())) {
+			Predicate originPredicate = flight.get("origin").in(dto.getOriginAirports());
+			Predicate originAirportsPredicate = cb.and(originPredicate);
+			queryPredicates.add(originAirportsPredicate);
 		}
-		paxcq.select(root).where(predicates.toArray(new Predicate[] {}));
-		TypedQuery<Passenger> paxtq = em.createQuery(paxcq);
-		return paxtq.getResultList();
+
+		if (!CollectionUtils.isEmpty(dto.getDestinationAirports())) {
+			Predicate destPredicate = flight.get("destination").in(dto.getDestinationAirports());
+			Predicate destAirportsPredicate = cb.and(destPredicate);
+			queryPredicates.add(destAirportsPredicate);
+		}
+		if (StringUtils.isNotBlank(dto.getFlightNumber())) {
+			String likeString = String.format("%%%s%%", dto.getFlightNumber().toUpperCase());
+			queryPredicates.add(cb.like(flight.get("fullFlightNumber"), likeString));
+		}
+		/*
+		 * hack: javascript sends the empty string represented by the 'all' dropdown
+		 * value as '0', so we check for that here to mean 'any direction'
+		 */
+		if (StringUtils.isNotBlank(dto.getDirection()) && !"A".equals(dto.getDirection())) {
+			queryPredicates.add(cb.equal(flight.get("direction"), dto.getDirection()));
+		}
+
+		// ETA / ETD PREDICATE - REQUIRED!!
+		if (dto.getEtaEnd() == null || dto.getEtaStart() == null) {
+			throw new RuntimeException("Flight dates required!");
+		} else {
+			Expression<Date> relevantDate = cb.selectCase(flight.get("direction"))
+					.when("O", mutableFlightDetailsJoin.get("etd")).when("I", mutableFlightDetailsJoin.get("eta"))
+					.otherwise(mutableFlightDetailsJoin.get("eta")).as(Date.class);
+			Predicate startPredicate = cb.greaterThanOrEqualTo(relevantDate, dto.getEtaStart());
+			Predicate endPredicate = cb.lessThanOrEqualTo(relevantDate, dto.getEtaEnd());
+			Predicate relevantDateExpression = cb.and(startPredicate, endPredicate);
+			queryPredicates.add(relevantDateExpression);
+		}
+
+		// SORTING
+		if (dto.getSort() != null) {
+			List<Order> orderList = new ArrayList<>();
+			for (SortOptionsDto sort : dto.getSort()) {
+				List<Expression<?>> orderByItem = new ArrayList<>();
+				String column = sort.getColumn();
+				if (isFlightColumn(column)) {
+					orderByItem.add(flight.get(column));
+				} else if (column.equals("onRuleHitList")) {
+					orderByItem.add(hits.get("ruleHitCount"));
+					orderByItem.add(hits.get("graphHitCount"));
+					orderByItem.add(hits.get("manualHitCount"));
+				} else if (column.equals("onWatchList")) {
+					orderByItem.add(hits.get("watchListHitCount"));
+					orderByItem.add(hits.get("partialHitCount"));
+				} else if ("eta".equalsIgnoreCase(column)) {
+					orderByItem.add(mutableFlightDetailsJoin.get("eta"));
+					// !!!!! THIS COVERS THE ELSE STATEMENT !!!!!
+				} else if ("countdown".equalsIgnoreCase(column)) {
+					orderByItem.add(flightCountDownViewJoin.get("countDownTimer"));
+				} else if ("highPriorityRuleCatId".equalsIgnoreCase(column)) {
+					orderByItem.add(hitCategoryJoin.get("severity"));
+				} else if ("flightNumber".equalsIgnoreCase(column)) {
+					orderByItem.add(flight.get("flightNumber"));
+				} else if ("status".equalsIgnoreCase(column) || "action".equalsIgnoreCase(column)) {
+					orderByItem.add(hitViewJoin.get("hitViewStatusEnum"));
+				} else if (!"documentNumber".equalsIgnoreCase(column)) {
+					orderByItem.add(paxDetailsJoin.get(column));
+				}
+				if (sort.getDir().equals("desc")) {
+					for (Expression<?> e : orderByItem) {
+						if ("onWatchList".equalsIgnoreCase(column) || "onRuleHitList".equalsIgnoreCase(column)) {
+							// The fuzzy matching can occur when the hits summary is null. Coalesce these
+							// values to a 0
+							// in order to have fuzzy matching show up in ordered form.
+							orderList.add(cb.desc(cb.coalesce(e, 0)));
+						} else {
+							orderList.add(cb.desc(e));
+						}
+					}
+				} else {
+					for (Expression<?> e : orderByItem) {
+						if ("onWatchList".equalsIgnoreCase(column) || "onRuleHitList".equalsIgnoreCase(column)) {
+							orderList.add(cb.asc(cb.coalesce(e, 0)));
+						} else {
+							orderList.add(cb.asc(e));
+						}
+					}
+				}
+			}
+			q.orderBy(orderList);
+		}
+
+		return queryPredicates;
 	}
 
-	/**
-	 * This was an especially difficult query to construct mainly because of a bug
-	 * in hibernate. See https://hibernate.atlassian.net/browse/HHH-7321. The
-	 * problem is that the left join on hits requires a dual 'on' condition
-	 * (hits.pax_id = pax.id and hits.flight_id = flight.id). Constructing this in
-	 * JPA seems perfectly valid, and Hibernate converts this into a 'with'
-	 * statement with multiple conditions. I get the exception
-	 * "org.hibernate.hql.internal.ast.QuerySyntaxException: with-clause referenced
-	 * two different from-clause elements."
-	 */
 	@Override
-	public Pair<Long, List<Object[]>> findByCriteria(Long flightId, PassengersRequestDto dto) {
+	public Pair<Long, List<Passenger>> findByCriteria(Long flightId, PassengersRequestDto dto) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Object[]> q = cb.createQuery(Object[].class);
+		CriteriaQuery<Passenger> q = cb.createQuery(Passenger.class);
 		Root<Passenger> pax = q.from(Passenger.class);
 
 		// joins
 		Join<Passenger, Flight> flight = pax.join("flight");
 		Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.LEFT);
-		Join<Passenger, PassengerWLTimestamp> fuzzyHits = pax.join("passengerWLTimestamp", JoinType.LEFT);
 		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = flight.join("mutableFlightDetails",
 				JoinType.LEFT);
 		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.LEFT);
@@ -193,9 +277,10 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 				} else if (column.equals("onRuleHitList")) {
 					orderByItem.add(hits.get("ruleHitCount"));
 					orderByItem.add(hits.get("graphHitCount"));
+					orderByItem.add(hits.get("manualHitCount"));
 				} else if (column.equals("onWatchList")) {
 					orderByItem.add(hits.get("watchListHitCount"));
-					orderByItem.add(fuzzyHits.get("hitCount"));
+					orderByItem.add(hits.get("partialHitCount"));
 				} else if ("eta".equalsIgnoreCase(column)) {
 					orderByItem.add(mutableFlightDetailsJoin.get("eta"));
 					// !!!!! THIS COVERS THE ELSE STATEMENT !!!!!
@@ -226,8 +311,8 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 			q.orderBy(orderList);
 		}
 
-		q.multiselect(pax, flight, hits, fuzzyHits).where(predicates.toArray(new Predicate[] {}));
-		TypedQuery<Object[]> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize());
+		q.select(pax).where(predicates.toArray(new Predicate[] {}));
+		TypedQuery<Passenger> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), true);
 
 		// total count: does not require joining on hitssummary
 		CriteriaQuery<Long> cnt = cb.createQuery(Long.class);
@@ -248,32 +333,9 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 
 		logger.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
 		// System.out.println(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
-		List<Object[]> results = typedQuery.getResultList();
+		List<Passenger> results = typedQuery.getResultList();
 
 		return new ImmutablePair<>(count, results);
-	}
-
-	/**
-	 * Ended up using a native query here. The inner query finds the most recent
-	 * disposition in the history and uses this as the basis for finding all the
-	 * other information. Not particularly efficient. May consider having a separate
-	 * 'case' table that stores most recent disposition status.
-	 */
-	@Override
-	public List<Object[]> findAllDispositions() {
-		String nativeQuery = "select d1.passenger_id, d1.flight_id, p.first_name, p.last_name, p.middle_name, f.full_flight_number, d1.created_at, s.name"
-				+ " from disposition d1" + " join (" + "   select passenger_id, flight_id, max(created_at) maxdate"
-				+ "   from disposition" + "   group by passenger_id, flight_id" + " ) d2"
-				+ " on d1.created_at = d2.maxdate" + "   and d1.passenger_id = d2.passenger_id"
-				+ "   and d1.flight_id = d2.flight_id" + " join passenger p on p.id = d1.passenger_id"
-				+ " join flight f on f.id = d1.flight_id" + " join disposition_status s on s.id = d1.status_id"
-				+ " order by d1.created_at desc";
-
-		Query q = em.createNativeQuery(nativeQuery);
-		@SuppressWarnings("unchecked")
-		List<Object[]> results = q.getResultList();
-
-		return results;
 	}
 
 	private List<Predicate> createPredicates(CriteriaBuilder cb, PassengersRequestDto dto,
@@ -295,7 +357,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		return predicates;
 	}
 
-	private <T> TypedQuery<T> addPagination(CriteriaQuery<T> q, int pageNumber, int pageSize) {
+	private <T> TypedQuery<T> addPagination(CriteriaQuery<T> q, int pageNumber, int pageSize, boolean extraResults) {
 		int offset = (pageNumber - 1) * pageSize;
 		TypedQuery<T> typedQuery = em.createQuery(q);
 		typedQuery.setFirstResult(offset);
@@ -306,7 +368,11 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		 * hitssummary will not work correctly if we have to check both flight id and
 		 * passenger id.
 		 */
-		typedQuery.setMaxResults(pageSize * 3);
+		if (extraResults) {
+			typedQuery.setMaxResults(pageSize * 3);
+		} else {
+			typedQuery.setMaxResults(pageSize);
+		}
 		return typedQuery;
 	}
 
@@ -316,61 +382,4 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		return flightColumns.contains(c);
 	}
 
-	@Override
-	public Passenger findExistingPassengerWithAttributes(String firstName, String lastName, String middleName,
-			String gender, Date dob, String passengerType) {
-		Passenger existing = null;
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Passenger> paxcq = cb.createQuery(Passenger.class);
-		Root<Passenger> root = paxcq.from(Passenger.class);
-		List<Predicate> predicates = new ArrayList<>();
-
-		if (StringUtils.isNotBlank(firstName)) {
-			String likeString = String.format("%%%s%%", firstName.toUpperCase());
-			predicates.add(cb.like(root.<String>get("firstName"), likeString));
-		}
-		if (StringUtils.isNotBlank(middleName)) {
-			String likeString = String.format("%%%s%%", middleName.toUpperCase());
-			predicates.add(cb.like(root.<String>get("middleName"), likeString));
-		}
-		if (StringUtils.isNotBlank(lastName)) {
-			String likeString = String.format("%%%s%%", lastName.toUpperCase());
-			predicates.add(cb.like(root.<String>get("lastName"), likeString));
-		}
-		if (StringUtils.isNotBlank(gender)) {
-			String likeString = String.format("%%%s%%", gender.toUpperCase());
-			predicates.add(cb.like(root.<String>get("gender"), likeString));
-		}
-		if (dob != null) {
-			predicates.add(cb.equal(root.<String>get("dob"), dob));
-		}
-		if (StringUtils.isNotBlank(passengerType)) {
-			String likeString = String.format("%%%s%%", passengerType.toUpperCase());
-			predicates.add(cb.like(root.<String>get("passengerType"), likeString));
-		}
-		paxcq.select(root).where(predicates.toArray(new Predicate[] {}));
-		TypedQuery<Passenger> paxtq = em.createQuery(paxcq);
-		if (!CollectionUtils.isEmpty(paxtq.getResultList())) {
-			existing = (Passenger) paxtq.getResultList().get(0);
-		}
-		return existing;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	@Transactional(Transactional.TxType.MANDATORY)
-	public List<Passenger> getPassengersByFlightIdAndName(Long flightId, String firstName, String lastName) {
-		String nativeQuery = "SELECT p.* FROM flight_passenger fp join passenger p ON (fp.passenger_id = p.id) where "
-				+ "fp.flight_id = (\"" + flightId + "\") " + "AND UPPER(p.first_name) = UPPER(\"" + firstName + "\") "
-				+ "AND UPPER(p.last_name) = UPPER(\"" + lastName + "\")";
-		return (List<Passenger>) em.createNativeQuery(nativeQuery, Passenger.class).getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Passenger> getPassengersByFlightId(Long flightId) {
-		String nativeQuery = "SELECT p.* FROM flight_passenger fp join passenger p ON (fp.passenger_id = p.id) where fp.flight_id = (\""
-				+ flightId + "\")";
-		return (List<Passenger>) em.createNativeQuery(nativeQuery, Passenger.class).getResultList();
-	}
 }

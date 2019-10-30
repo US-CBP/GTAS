@@ -1,0 +1,160 @@
+<!--
+  ~ /*
+  ~  * All Application code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+  ~  *
+  ~  * Please see LICENSE.txt for details.
+  ~  */
+  -->
+
+<div class="flex align-items-center primary-back">
+    <h4 class="block-label margin-0">{{passenger.carrier + passenger.flightNumber | uppercase }}</h4>
+    <h6 class="block-label flex margin-0 ">
+        <table class="table table-condensed table-borderless margin-0">
+            <tr>
+                <td class="text-right">
+                  <span ng-mouseleave="resetTooltip()">{{ passenger.flightOrigin }}
+                    <md-tooltip class="multi-tooltip" md-direction="right">
+                      <div>{{getCodeTooltipData(passenger.flightOrigin,"airport")}}</div>
+                    </md-tooltip>
+                   </span>
+                </td>
+                <td>{{ passenger.etd | date:'yyyy-MM-dd HH:mm' }}</td>
+            </tr>
+            <tr>
+                <td class="text-right">
+                  <span ng-mouseleave="resetTooltip()">{{ passenger.flightDestination }}
+                    <md-tooltip class="multi-tooltip" md-direction="right">
+                      <div>{{getCodeTooltipData(passenger.flightDestination,"airport")}}</div>
+                    </md-tooltip>
+                    </span>
+                </td>
+                <td>{{ passenger.eta | date:'yyyy-MM-dd HH:mm' }}</td>
+            </tr>
+        </table>
+    </h6>
+</div>
+
+<div>
+    <table class="table table-responsive table-condensed table-borderless">
+        <tr>
+            <td class="half-width txt-right"><strong>{{'pass.lastname' | translate}}</strong></td>
+            <td class="half-width">{{passenger.lastName}}</td>
+        </tr>
+        <tr>
+            <td class="half-width txt-right"><strong>{{'pass.firstname' | translate}}</strong></td>
+            <td class="half-width">{{passenger.firstName}}</td>
+        </tr>
+        <tr>
+            <td class="half-width txt-right"><strong>{{'pass.middlename' | translate}}</strong></td>
+            <td class="half-width">{{passenger.middleName}}</td>
+        </tr>
+        <tr>
+            <td class="half-width txt-right"><strong>{{'pass.age' | translate}}</strong></td>
+            <td class="half-width">{{passenger.age}} ({{ passenger.dob | date:"yyyy-MM-dd" }})</td>
+        </tr>
+        <tr>
+            <td class="half-width txt-right"><strong>{{'pass.gender' | translate}}</strong></td>
+            <td class="half-width">{{getCodeTooltipData( passenger.gender,"gender")}}</td>
+        </tr>
+        <tr>
+            <td class="half-width txt-right"><strong>{{'pass.nationality' | translate}}</strong></td>
+            <td class="half-width">
+              <span ng-mouseleave="resetTooltip()">{{passenger.nationality}}
+                <md-tooltip class="multi-tooltip" md-direction="right">
+                  <div>{{getCodeTooltipData(passenger.nationality,"country")}}</div>
+                </md-tooltip>
+              </span></td>
+        </tr>
+        <tr>
+
+            <td class="half-width txt-right"><strong>{{'pass.residence' | translate}}</strong></td>
+            <td class="half-width">
+                <span ng-mouseleave="resetTooltip()">{{passenger.residencyCountry}}
+                  <md-tooltip class="multi-tooltip" md-direction="right">
+                    <div>{{getCodeTooltipData(passenger.residencyCountry,"country")}}</div>
+                  </md-tooltip>
+                </span>
+            </td>
+        </tr>
+    </table>
+
+    <!-- kibana pic here -->
+
+    <table class="table table-responsive table-condensed table-borderless">
+        <tr>
+            <td class="half-width txt-right"><strong>{{'pass.seat' | translate}}</strong></td>
+            <td class="half-width">
+                <a class="primary-link" ng-class="{'disabled': disableLinks}" title="{{'msg.showseatmap' | translate}}" ng-href="#/seatsMap/{{passenger.paxId}}/{{passenger.flightId}}/{{passenger.seat}}" id="seat-map">{{ passenger.seat }}</a>
+            </td>
+        </tr>
+        <tr>
+            <td class="half-width txt-right"><strong>{{'pass.paxtype' | translate}}</strong></td>
+            <td class="half-width">{{getCodeTooltipData( passenger.passengerType,"passenger")}}</td>
+        </tr>
+        <tr>
+            <td class="half-width txt-right"><strong>{{'pass.originairport' | translate}}</strong></td>
+            <td class="half-width"><div>
+                <span ng-mouseleave="resetTooltip()">{{ passenger.flightOrigin }}
+                  <md-tooltip class="multi-tooltip" md-direction="right">
+                    <div>{{getCodeTooltipData(passenger.flightOrigin,"airport")}}</div>
+                    </md-tooltip>
+                </span></div>
+            </td>
+        </tr>
+        <tr>
+            <td class="half-width txt-right"><strong>{{'pass.destinationairport' | translate}}</strong></td>
+            <td class="half-width"><div>
+                  <span ng-mouseleave="resetTooltip()">{{ passenger.flightDestination }}
+                    <md-tooltip class="multi-tooltip" md-direction="right">
+                      <div>{{getCodeTooltipData(passenger.flightDestination,"airport")}}</div>
+                    </md-tooltip>
+                  </span></div>
+            </td>
+        </tr>
+        <tr ng-if="passenger.pnrVo">
+            <td class="half-width txt-right"><strong>{{'pass.lastpnr' | translate}}</strong></td>
+            <td class="half-width">
+                {{passenger.pnrVo.transmissionDate}}
+            </td>
+        </tr>
+        <tr ng-if="passenger.apisMessageVo">
+            <td class="half-width txt-right"><strong>{{'pass.lastapis' | translate}}</strong></td>
+            <td class="half-width">
+                {{passenger.apisMessageVo.transmissionDate}}
+            </td>
+        <tr>
+    </table>
+
+    <table class="table table-responsive table-borderless table-condensed margin-0">
+        <tr ng-if="passenger.pnrVo !== null">
+            <td>{{'pnr' | translate}}</td>
+            <td>
+                <div>
+                    <ol class="nav-steps">
+                        <li ng-repeat="leg in liteLegs" ng-class="{active : leg.flightId !== null, segmentEnd: leg.segmentEnd == true}">
+                      <span ng-mouseleave="resetTooltip()"> <strong>{{ leg.originAirport }}</strong>
+                        <md-tooltip class="multi-tooltip" md-direction="bottom">
+                          <div>{{getCodeTooltipData(leg.originAirport,"airport")}}</div>
+                        </md-tooltip>
+                      </span>
+                        </li>
+                    </ol>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table class="table table-responsive table-borderless table-condensed ">
+        <tr>
+            <td>{{'apis' | translate}}</td>
+            <td>
+                <div>
+                    <ol class="nav-dots">
+                        <li ng-class="{active : passenger.apisMessageVo !== null}">
+                            <a>apis</a>
+                        </li>
+                    </ol>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

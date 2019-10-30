@@ -21,13 +21,13 @@ import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.User;
-import gov.gtas.model.lookup.WatchlistCategory;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.repository.AuditRecordRepository;
-import gov.gtas.repository.watchlist.WatchlistCatRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
+import gov.gtas.services.HitCategoryService;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 
@@ -63,18 +63,18 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 	private WatchlistItemRepository watchlistItemRepository;
 
 	@Resource
-	private WatchlistCatRepository watchlistCategoryRepository;
-
-	@Resource
 	private AuditRecordRepository auditRecordRepository;
 
 	@Autowired
 	private UserService userService;
 
+	@Resource
+	private HitCategoryService hitCategoryService;
+
 	@Override
 	@Transactional
 	public List<Long> createUpdateDelete(String wlName, EntityEnum entity, List<WatchlistItem> createUpdateList,
-			List<WatchlistItem> deleteList, String userId) {
+			List<WatchlistItem> deleteList, String userId, Long catId) {
 		final User user = userService.fetchUser(userId);
 		Watchlist watchlist = watchlistRepository.getWatchlistByName(wlName);
 		if (watchlist == null) {
@@ -94,10 +94,10 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 		if (CollectionUtils.isEmpty(createUpdateList)) {
 			doDeleteWithLogging(watchlist, user, deleteList);
 		} else if (CollectionUtils.isEmpty(deleteList)) {
-			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(watchlist, user, createUpdateList);
+			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(watchlist, user, createUpdateList, catId);
 			ret.addAll(createUpdateIds);
 		} else {
-			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(watchlist, user, createUpdateList);
+			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(watchlist, user, createUpdateList, catId);
 			doDeleteWithLogging(watchlist, user, deleteList);
 			ret.addAll(createUpdateIds);
 		}
@@ -179,8 +179,9 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 	}
 
 	private Collection<Long> doCreateUpdateWithLogging(Watchlist watchlist, User editUser,
-			Collection<WatchlistItem> createUpdateItems) {
+			Collection<WatchlistItem> createUpdateItems, Long catId) {
 		final List<Long> ret = new LinkedList<>();
+		HitCategory hc = hitCategoryService.findById(catId);
 		List<AuditRecord> logRecords = new LinkedList<>();
 		if (createUpdateItems != null && !createUpdateItems.isEmpty()) {
 			List<WatchlistItem> updList = new LinkedList<>();
@@ -188,8 +189,12 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 				if (item.getId() != null) {
 					logRecords.add(createAuditLogRecord(AuditActionType.UPDATE_WL, watchlist, item,
 							WATCHLIST_LOG_UPDATE_MESSAGE, editUser));
+					item.setHitCategory(hc);
+					item.setAuthor(editUser);
 					updList.add(item);
 				} else {
+					item.setAuthor(editUser);
+					item.setHitCategory(hc);
 					logRecords.add(createAuditLogRecord(AuditActionType.CREATE_WL, watchlist, item,
 							WATCHLIST_LOG_CREATE_MESSAGE, editUser));
 				}
@@ -251,8 +256,7 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 
 	}
 
-	public List<WatchlistCategory> findWatchlistCategories() {
-		//
+	public List<HitCategory> findWatchlistCategories() {
 		return this.watchlistRepository.getWatchlistCategories();
 	}
 
@@ -261,7 +265,7 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 	}
 
 	@Override
-	public WatchlistCategory fetchWatchlistCategoryById(Long categoryID) {
+	public HitCategory fetchWatchlistCategoryById(Long categoryID) {
 		//
 		return this.watchlistRepository.getWatchlistCategoryById(categoryID);
 	}
@@ -276,10 +280,6 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 	public List<WatchlistItem> findItemsByWatchlistName(String watchlistName) {
 		//
 		return this.watchlistItemRepository.getItemsByWatchlistName(watchlistName);
-	}
-
-	public WatchlistCategory saveWatchlistCategory(WatchlistCategory watchlistCategory) {
-		return this.watchlistCategoryRepository.save(watchlistCategory);
 	}
 
 }

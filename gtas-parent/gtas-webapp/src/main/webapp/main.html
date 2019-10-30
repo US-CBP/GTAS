@@ -32,6 +32,7 @@
   <link rel="stylesheet" href='resources/node_modules/vaquita/dist/vaquita.min.css' type="text/css" media="all" />
   <link rel="stylesheet" href='seatsMap/jquery.seat-charts.css' type="text/css" media="all" />
 <link rel="stylesheet" href='seatsMap/seats-map.css' type="text/css" media="all" />
+<link rel="stylesheet" type="text/css" href="resources/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css">
 </head>
 
 <body ng-cloak>
@@ -86,7 +87,7 @@
           <li ng-if="userHasRole(9) || userHasRole(1)"  class="dropdown notification mobile-hide">
             <a ng-if="userHasRole(9) || userHasRole(1)" class="dropdown-toggle" data-toggle="dropdown" role="button" href="#/casedisposition">
               <i class="fa fa-inverse fa-bell notif-icon" aria-hidden="true"></i>
-              <span class="notif-icon-cnt">{{getHitCount()}}</span>
+              <span class="notif-icon-cnt">{{hitCount}}</span>
             </a>
           </li>
           <li ng-if="!userHasRole(9) && !userHasRole(1)"  class="dropdown notification mobile-hide disabled">
@@ -170,12 +171,6 @@
               <a ng-disabled="onRoute('cases')" href="#/casedisposition" role="tab">
 	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;{{'case.cases' | translate}}
 	              </a></li>
-	              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}, {{ ROLES.ONE_DAY_LOOKOUT }}]"
-              ng-class="{'active': setSelectedTab('/onedaylookout')}">
-              <a ng-disabled="onRoute('onedaylookout')" href="#/onedaylookout" role="tab">
-	              	<i  class="fa fa-binoculars" aria-hidden="true" ></i> &nbsp;{{'odl.onedaylookouts' | translate}}
-	              </a>
-	         </li>
           </ul>
         </div>
 
@@ -261,6 +256,8 @@
   <script src="resources/node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
   <script src="resources/node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.templates.js"></script>
   <script src="resources/node_modules/angular-datetime-input/dist/datetime.js"></script>
+  <script src="resources/node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js"></script>
+  <script src="resources/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
 
 <script src='resources/node_modules/d3/dist/d3.min.js'></script>
 <script src='resources/node_modules/vaquita/dist/vaquita.js'></script>
@@ -276,6 +273,7 @@
 <script src='dashboard/DashboardController.js'></script>
 <script src='dashboard/DashboardService.js'></script>
 <script src='flights/FlightsModel.js'></script>
+<script src='cases/CaseModel.js'></script>
 <script src='flights/FlightsController.js'></script>
 <script src='flights/FlightsService.js'></script>
 <script src='pax/PaxModel.js'></script>
@@ -305,6 +303,7 @@
 <script src='seatsMap/SeatService.js'></script>
 <script src='help/AboutGtasController.js'></script>
 <script src='help/AboutGtasService.js'></script>
+<script src= 'common/NotificationModalController.js'></script>
 
 
   <script type="text/ng-template" id="dialog1.tmpl.html">

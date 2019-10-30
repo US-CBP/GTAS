@@ -285,7 +285,7 @@ public class FlightServiceImpl implements FlightService {
 				vo.setMiddleInitial(passenger.getPassengerDetails().getMiddleName());
 				vo.setFlightNumber(flight.getFlightNumber());
 				vo.setRefNumber(passenger.getPassengerTripDetails().getReservationReferenceNumber());
-				vo.setHasHits(passenger.getHits().size() > 0);
+				vo.setHasHits(passenger.getHits() != null && passenger.getHits().hasHits());
 				seatVos.add(vo);
 			}
 		}

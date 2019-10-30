@@ -21,12 +21,9 @@ import gov.gtas.model.BaseEntity;
 @Entity
 @Table(name = "airport", indexes = { @Index(columnList = "iata", name = "airport_iata_index") })
 public class Airport extends BaseEntity {
-	public Airport() {
-	}
 
 	private Long originId;
 	private String name;
-
 	@Column(length = 3)
 	private String iata;
 
@@ -45,7 +42,26 @@ public class Airport extends BaseEntity {
 
 	@Column(name = "utc_offset")
 	private Integer utcOffset;
+
 	private String timezone;
+
+	public Airport() {
+	}
+
+	public Airport(Long id, Long originId, String name, String iata, String icao, String country, String city,
+			BigDecimal latitude, BigDecimal longitude, Integer utcOffset, String timezone) {
+		this.id = id;
+		this.originId = originId;
+		this.name = name;
+		this.iata = iata;
+		this.icao = icao;
+		this.country = country;
+		this.city = city;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.utcOffset = utcOffset;
+		this.timezone = timezone;
+	}
 
 	public Long getOriginId() {
 		return originId;

@@ -6,13 +6,13 @@ package gov.gtas.parser.pentaho.bean;
  */
 public class UNA {
 
-	public String serviceStringAdvice;
-	public String componentDataElementSep;
-	public String dataElementSep;
-	public String decimalMark;
-	public String releaseCharacter;
-	public String repetitionSep;
-	public String segmentTerminator;
+	private String serviceStringAdvice;
+	private String componentDataElementSep;
+	private String dataElementSep;
+	private String decimalMark;
+	private String releaseCharacter;
+	private String repetitionSep;
+	private String segmentTerminator;
 
 	public String getServiceStringAdvice() {
 		return serviceStringAdvice;
@@ -124,11 +124,9 @@ public class UNA {
 		} else if (!segmentTerminator.equals(other.segmentTerminator))
 			return false;
 		if (serviceStringAdvice == null) {
-			if (other.serviceStringAdvice != null)
-				return false;
-		} else if (!serviceStringAdvice.equals(other.serviceStringAdvice))
-			return false;
-		return true;
+			return other.serviceStringAdvice == null;
+		} else
+			return serviceStringAdvice.equals(other.serviceStringAdvice);
 	}
 
 }

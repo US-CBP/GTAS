@@ -7,15 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import gov.gtas.model.Case;
-import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.services.matcher.quickmatch.QuickMatcher;
 
 public class MatcherParameters {
-	private Map<Long, Case> caseMap;
-	private Map<Long, RuleCat> ruleCatMap;
+	private Map<Long, HitCategory> ruleCatMap;
 	private List<Watchlist> _watchlists;
 	private Map<Long, List<WatchlistItem>> watchlistListMap;
 	private float threshold;
@@ -67,19 +65,11 @@ public class MatcherParameters {
 		this.qm = qm;
 	}
 
-	Map<Long, Case> getCaseMap() {
-		return caseMap;
-	}
-
-	void setCaseMap(Map<Long, Case> caseMap) {
-		this.caseMap = caseMap;
-	}
-
-	Map<Long, RuleCat> getRuleCatMap() {
+	Map<Long, HitCategory> getRuleCatMap() {
 		return ruleCatMap;
 	}
 
-	void setRuleCatMap(Map<Long, RuleCat> ruleCatMap) {
+	void setRuleCatMap(Map<Long, HitCategory> ruleCatMap) {
 		this.ruleCatMap = ruleCatMap;
 	}
 

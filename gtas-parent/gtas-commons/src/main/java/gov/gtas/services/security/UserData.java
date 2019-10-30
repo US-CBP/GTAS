@@ -26,16 +26,31 @@ public class UserData implements Serializable {
 	private final String lastName;
 	private final int active;
 	private Set<RoleData> roles = new HashSet<RoleData>();
+	private String email;
+	private Boolean emailEnabled;
+	private Boolean highPriorityEmail;
 
 	public UserData(@JsonProperty("userId") String userId, @JsonProperty("password") String password,
-			@JsonProperty("firstName") String firstName, @JsonProperty("lasatName") String lastName,
-			@JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles) {
+					@JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName,
+					@JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles, @JsonProperty("email")String email, @JsonProperty("emailEnabled")Boolean emailEnabled, @JsonProperty("highPriorityEmail")Boolean highPriorityEmail) {
 		this.userId = userId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.active = active;
 		this.password = password;
 		this.roles = roles;
+		this.email = email;
+		this.emailEnabled = emailEnabled;
+		this.highPriorityEmail = highPriorityEmail;
+	}
+
+	@JsonProperty("email")
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	@JsonProperty("userId")
@@ -97,4 +112,19 @@ public class UserData implements Serializable {
 				+ lastName + ", active=" + active + ", roles=" + roles + "]";
 	}
 
+	public Boolean getEmailEnabled() {
+		return emailEnabled;
+	}
+
+	public void setEmailEnabled(Boolean emailEnabled) {
+		this.emailEnabled = emailEnabled;
+	}
+
+	public Boolean getHighPriorityEmail() {
+		return highPriorityEmail;
+	}
+
+	public void setHighPriorityEmail(Boolean highPriorityEmail) {
+		this.highPriorityEmail = highPriorityEmail;
+	}
 }

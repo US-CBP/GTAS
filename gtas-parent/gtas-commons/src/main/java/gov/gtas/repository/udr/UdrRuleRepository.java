@@ -10,6 +10,7 @@ import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.UdrRule;
+import gov.gtas.model.HitDetail;
 
 import java.util.Date;
 import java.util.List;
@@ -60,4 +61,7 @@ public interface UdrRuleRepository extends CrudRepository<UdrRule, Long>, JpaSpe
 	default UdrRule findOne(Long id) {
 		return findById(id).orElse(null);
 	}
+
+	@Query("select udr.id, count(hd.id) from HitDetail hd, UdrRule udr where hd.hitMakerId = udr.id group by udr.id")
+	List<Object[]> getCounts();
 }

@@ -10,16 +10,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
@@ -43,6 +34,19 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
+	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles, String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification) {
+
+		this.userId = userId;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.active = active;
+		this.roles = roles;
+		this.email = email;
+		this.isEmailEnabled = isEmailEnabled;
+		this.highPriorityHitsEmailNotification = highPriorityHitsEmailNotification;
+	}
+
 	@Id
 	@Column(name = "user_id", length = DomainModelConstants.GTAS_USERID_COLUMN_SIZE)
 	private String userId;
@@ -59,6 +63,58 @@ public class User implements Serializable {
 	@Column(name = "active")
 	private int active;
 
+	@Column(name = "email")
+	private String email;
+
+	@Column(name = "email_enabled")
+	private Boolean isEmailEnabled;
+
+	@Column(name = "high_priority_hits_email")
+	private Boolean highPriorityHitsEmailNotification;
+
+	@ManyToMany(targetEntity = UserGroup.class, fetch = FetchType.LAZY, mappedBy = "groupMembers")
+	private Set<UserGroup> userGroups = new HashSet<>();
+
+	// Notification that the user is a part of (elected or assigned)
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	private Set<UserNotification> notifications = new HashSet<>();
+
+	// Notifications that the user created / owns.
+	@OneToMany(mappedBy = "notificationOwner", fetch = FetchType.LAZY)
+	private Set<Notification> notificationOwners = new HashSet<>();
+
+	@ManyToMany(targetEntity = Role.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<>();
+
+	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+	private Set<HitMaker> hitMakers = new HashSet<>();
+
+	public Boolean getHighPriorityHitsEmailNotification() {
+		return highPriorityHitsEmailNotification;
+	}
+
+	public void setHighPriorityHitsEmailNotification(Boolean highPriorityHitsEmailNotification) {
+		this.highPriorityHitsEmailNotification = highPriorityHitsEmailNotification;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+
+	public Boolean getEmailEnabled() {
+		return isEmailEnabled;
+	}
+
+	public void setEmailEnabled(Boolean emailEnabled) {
+		isEmailEnabled = emailEnabled;
+	}
+
 	public int getActive() {
 		return active;
 	}
@@ -66,11 +122,6 @@ public class User implements Serializable {
 	public void setActive(int active) {
 		this.active = active;
 	}
-
-	@ManyToMany(targetEntity = Role.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-
-	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles = new HashSet<Role>();
 
 	public Set<Role> getRoles() {
 		return roles;
@@ -114,7 +165,7 @@ public class User implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.userId, this.password, this.firstName, this.lastName, this.active);
+		return Objects.hash(this.userId.toUpperCase(), this.password, this.firstName, this.lastName, this.active);
 	}
 
 	@Override
@@ -129,7 +180,7 @@ public class User implements Serializable {
 
 		User dataTarget = ((User) target);
 
-		return new EqualsBuilder().append(this.userId, dataTarget.getUserId())
+		return new EqualsBuilder().append(this.userId.toUpperCase(), dataTarget.getUserId().toUpperCase())
 				.append(this.firstName, dataTarget.getFirstName()).append(this.lastName, dataTarget.getLastName())
 				.append(this.password, dataTarget.getPassword()).append(this.active, dataTarget.getActive())
 				.append(this.roles, dataTarget.getRoles()).isEquals();
@@ -141,4 +192,35 @@ public class User implements Serializable {
 				+ lastName + ", active=" + active + ", roles=" + roles + "]";
 	}
 
+	public Set<UserNotification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(Set<UserNotification> notifications) {
+		this.notifications = notifications;
+	}
+
+	public Set<Notification> getNotificationOwners() {
+		return notificationOwners;
+	}
+
+	public void setNotificationOwners(Set<Notification> notificationOwners) {
+		this.notificationOwners = notificationOwners;
+	}
+
+	public Set<HitMaker> getHitMakers() {
+		return hitMakers;
+	}
+
+	public void setHitMakers(Set<HitMaker> hitMakers) {
+		this.hitMakers = hitMakers;
+	}
+
+	public Set<UserGroup> getUserGroups() {
+		return userGroups;
+	}
+
+	public void setUserGroups(Set<UserGroup> userGroups) {
+		this.userGroups = userGroups;
+	}
 }

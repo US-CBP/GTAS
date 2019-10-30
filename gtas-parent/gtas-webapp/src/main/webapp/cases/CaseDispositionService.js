@@ -15,15 +15,27 @@
                     pageNumber: "1",
                     displayStatusCheckBoxes: getDefaultDispCheckboxes(),
                     withTimeLeft: getDefaultTimeLeft(),
+                    myRulesOnly: false,
+                    ruleTypes:    {
+                        WATCHLIST: true,
+                        USER_RULE: true,
+                        GRAPH_RULE: true,
+                        PARTIAL_WATCHLIST: false
+                    },
+                    ruleCatFilter: getDefaultCats(),
                     etaStart: getDefaultStartDate(),
                     etaEnd: getDefaultEndDate(),
                     sort : getDefaultSort()
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
-                    method: 'post',
-                    url: "/gtas/getAllCaseDispositions/",
-                    data: pageRequest
+                    method: 'get',
+                    url: "/gtas/hits/",
+                    params: {requestDto: pageRequest},
+                    data: '',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                 }));
                 return dfd.promise;
             }
@@ -47,10 +59,8 @@
             function getDefaultDispCheckboxes() {
                 return {
                     NEW: true,
-                    OPEN: false,
-                    CLOSED: false,
-                    REOPEN: false,
-                    PENDINGCLOSURE: false
+                    RE_OPENED: false,
+                    REVIEWED: false
                 };
             }
             function getDefaultTimeLeft() {
@@ -74,13 +84,20 @@
                     ruleCatId: params.model.ruleCat,
                     etaStart: params.model.etaStart,
                     etaEnd: params.model.etaEnd,
-                    displayStatusCheckBoxes : params.model.displayStatusCheckBoxes
+                    ruleTypes: params.model.ruleTypes,
+                    displayStatusCheckBoxes : params.model.displayStatusCheckBoxes,
+                    ruleCatFilter: params.model.ruleCatFilter,
+                    myRulesOnly: params.myRulesOnly
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
-                    method: 'post',
-                    url: "/gtas/getAllCaseDispositions/",
-                    data: pageRequest
+                    method: 'get',
+                    url: "/gtas/hits/",
+                    params: {requestDto: pageRequest},
+                    data: '',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                 }));
                 return dfd.promise;
             }
@@ -108,6 +125,9 @@
                     pageNumber: "1",
                     flightNumber: model.flightNumber,
                     displayStatusCheckBoxes: model.displayStatusCheckBoxes,
+                    ruleCatFilter: model.ruleCatFilter,
+                    myRulesOnly: model.myRulesOnly,
+                    ruleTypes: model.ruleTypes,
                     withTimeLeft: model.withTimeLeft,
                     lastName: model.name,
                     status: model.status,
@@ -120,9 +140,13 @@
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
-                    method: 'post',
-                    url: "/gtas/getAllCaseDispositions/",
-                    data: param
+                    method: 'get',
+                    url: "/gtas/hits/",
+                    params: {requestDto: param},
+                    data: '',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                 }));
                 return dfd.promise;
             }
@@ -323,6 +347,23 @@
 //
 //            }
 
+            function updatePassengerHitViews(hitViewVo, status) {
+                let dfd = $q.defer();
+                let updateVo = {
+                    flightId: hitViewVo.flightId,
+                    passengerId: hitViewVo.paxId,
+                    status: status
+                };
+                dfd.resolve(
+                    $http({
+                        method: 'post',
+                        url: "/gtas/hits/",
+                        data: updateVo
+                    })
+                );
+            return dfd.promise;
+            }
+
              function getCurrentServerTime() {
   
                 var currentServerTimeMillis = 0;
@@ -338,6 +379,15 @@
                 return currentServerTimeMillis;
              }
 
+            function getDefaultCats() {
+                let ruleList = [];
+                getRuleCats().then(function(result){
+                    for (let rule of Object.values(result.data)) {
+                        ruleList.push({name : rule.name, value: true})
+                    }
+                });
+                return ruleList;
+            }
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 getHitDispositionStatuses: getHitDispositionStatuses,
@@ -345,6 +395,8 @@
                 getAllCases: getAllCases,
                 getOneHitsDisposition: getOneHitsDisposition,
                 getRuleCats: getRuleCats,
+                getDefaultCats: getDefaultCats,
+                updatePassengerHitViews : updatePassengerHitViews,
                 updateHitsDisposition: updateHitsDisposition,
                 addToOneDayLookout: addToOneDayLookout,
                 removeFromOneDayLookoutList: removeFromOneDayLookoutList,

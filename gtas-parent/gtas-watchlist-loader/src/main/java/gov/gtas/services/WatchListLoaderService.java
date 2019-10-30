@@ -106,13 +106,15 @@ public class WatchListLoaderService {
 	}
 
 	private static void parseAndLoadWatchList(ConfigurableApplicationContext ctx, File f) {
+		CSVParser parser = null;
+
 		try {
 			UserService userService = (UserService) ctx.getBean(UserService.class);
 			WatchlistService wlService = (WatchlistService) ctx.getBean(WatchlistService.class);
 			UserData user = userService.findById("gtas");
 			logger.info(user.getUserId());
 
-			CSVParser parser = new CSVParser(new FileReader(f), CSVFormat.DEFAULT.withHeader());
+			parser = new CSVParser(new FileReader(f), CSVFormat.DEFAULT.withHeader());
 			if (f.toString().endsWith("xls") || f.toString().endsWith("xlsx")) {
 				parser = new CSVParser(new FileReader(f), CSVFormat.EXCEL.withHeader());
 			}
@@ -176,11 +178,11 @@ public class WatchListLoaderService {
 				}
 
 			}
-			JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), ret);
+			JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), ret, 1L);
 			logger.info("****************************************************************");
 			logger.info("Passenger WatchList Saved " + resp.getMessage());
 			logger.info("****************************************************************");
-			JsonServiceResponse resp1 = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), ret_D);
+			JsonServiceResponse resp1 = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), ret_D, 1L);
 			logger.info("****************************************************************");
 			logger.info("Document WatchList Saved " + resp1.getMessage());
 			logger.info("****************************************************************");
@@ -188,13 +190,18 @@ public class WatchListLoaderService {
 			logger.info("****************************************************************");
 			logger.info(" All WatchList items were Activated " + resp2.getMessage());
 			logger.info("****************************************************************");
-			parser.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			logger.error("parse load watchlist error!", e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			logger.error("parse load watchlist error.", e);
+		} finally {
+			try {
+				parser.close();
+			} catch (IOException e) {
+				logger.error("parse load watchlist error.", e);
+			}
 		}
 	}
 

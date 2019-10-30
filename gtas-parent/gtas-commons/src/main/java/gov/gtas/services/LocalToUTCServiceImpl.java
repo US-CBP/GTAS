@@ -10,6 +10,7 @@ package gov.gtas.services;
 
 import com.moodysalem.TimezoneMapper;
 import gov.gtas.model.lookup.Airport;
+import gov.gtas.vo.lookup.AirportVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ public class LocalToUTCServiceImpl implements GtasLocalToUTCService {
 		Airport airport = getAirport(airportCode);
 		Date utcDate = date;
 		if (airport == null) {
-			logger.warn("No airport found; date not processed");
+			logger.warn("No airport found; date not processed; airport not found is " + airportCode);
 			return utcDate;
 		} else if (utcDate == null) {
 			logger.warn("Unable to process; date is null!");
@@ -77,17 +78,22 @@ public class LocalToUTCServiceImpl implements GtasLocalToUTCService {
 	}
 
 	protected Airport getAirport(String airportCode) {
-		Airport airport;
+		AirportVo airportVo;
 		int IATA_LENGTH = 3;
 		int IACO_LENGTH = 4;
 		if (airportCode == null || !(airportCode.length() == IACO_LENGTH || airportCode.length() == IATA_LENGTH)) {
 			logger.warn("No valid airport in database!!");
-			airport = null;
+			airportVo = null;
 		} else if (airportCode.length() == IACO_LENGTH) {
-			airport = airportService.getAirportByFourLetterCode(airportCode);
+			airportVo = airportService.getAirportByFourLetterCode(airportCode);
 		} else {
-			airport = airportService.getAirportByThreeLetterCode(airportCode);
+			airportVo = airportService.getAirportByThreeLetterCode(airportCode);
 		}
-		return airport;
+
+		if (airportVo == null) {
+			return null;
+		}
+
+		return AirportServiceImpl.buildAirport(airportVo);
 	}
 }

@@ -6,12 +6,10 @@
 
 package gov.gtas.vo.passenger;
 
-import gov.gtas.model.HitsDispositionComments;
-import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.HitCategory;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Objects;
 import java.util.Set;
 
 public class HitsDispositionVo {
@@ -21,9 +19,8 @@ public class HitsDispositionVo {
 	private String description;
 	private String status;
 	private String valid;
-	private Set<HitsDispositionComments> dispComments;
 	private Set<HitsDispositionCommentsVo> dispCommentsVo;
-	private Set<RuleCat> ruleCatSet;
+	private Set<HitCategory> ruleCatSet;
 	private String category;
 	private long hit_disp_id;
 
@@ -89,19 +86,11 @@ public class HitsDispositionVo {
 		this.valid = valid;
 	}
 
-	public Set<HitsDispositionComments> getDispComments() {
-		return dispComments;
-	}
-
-	public void setDispComments(Set<HitsDispositionComments> dispComments) {
-		this.dispComments = dispComments;
-	}
-
-	public Set<RuleCat> getRuleCatSet() {
+	public Set<HitCategory> getRuleCatSet() {
 		return ruleCatSet;
 	}
 
-	public void setRuleCatSet(Set<RuleCat> ruleCatSet) {
+	public void setRuleCatSet(Set<HitCategory> ruleCatSet) {
 		this.ruleCatSet = ruleCatSet;
 	}
 

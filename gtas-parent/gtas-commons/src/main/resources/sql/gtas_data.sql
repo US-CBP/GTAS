@@ -1,3 +1,4 @@
+
 -- ----------------------------
 -- Roles
 -- ----------------------------
@@ -16,15 +17,15 @@ INSERT INTO `role` VALUES ('9', 'Manage Cases');
 -- Users
 -- ----------------------------
 -- password is 'password'
-INSERT INTO `user` VALUES ('gtas',1, 'GTAS', 'Application User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('admin',1, 'Admin', 'Admin', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
+INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, last_name, password) VALUES ('GTAS', 1, 'Email', 'GTAS', false, false, 'Application User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
+INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, last_name, password) VALUES ('ADMIN', 1, 'Email', 'Admin', false, false, 'Admin User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 
 -- ----------------------------
 -- Records of user_role
 -- ----------------------------
 
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('admin', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('gtas', 5);
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('ADMIN', 1);
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS', 5);
 
 -- ----------------------------
 -- Records of flight_direction
@@ -60,7 +61,7 @@ insert into app_configuration (opt, val, description) values('BOOKING_COMPRESSIO
 insert into app_configuration (opt, val, description) values('MAX_PASSENGERS_PER_RULE_RUN','3000','Maximum number of passengers processed by rules per run');
 insert into app_configuration (opt, val, description) values('MAX_PASSENGERS_PER_FUZZY_MATCH','2','Maximum number of passengers processed by rules per run');
 insert into app_configuration (opt, val, description) values('MAX_MESSAGES_PER_RULE_RUN','500','Maximum number of messages processed by rules per run');
-insert into app_configuration (opt, val, description) values('MAX_FLIGHTS_PER_BATCH','2','Number of flights saved per batch.');
+insert into app_configuration (opt, val, description) values('MAX_RULE_DETAILS_CREATED','250','Number of hit details saved per batch.');
 insert into app_configuration (opt, val, description) values('THREADS_ON_LOADER','5','Number of threads on loader.');
 insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_TRUNC_TYPE_FLAG', 'ALL', 'Type of values include, ALL, APIS, PNR');
 insert into app_configuration (opt, val, description)values ('THREADS_ON_RULES', '5', 'Number of threads on loader.');
@@ -76,32 +77,19 @@ INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Noti
 INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Notices Notification Subject', 'INTERPOL_SNS_NOTIFICATION_SUBJECT', 'GTAS priority Hit Notification');
 
 
-/*These 4 statuses are irremovable (though mutable) and must exist in some form in order to preserve the case management flow, with this order for ID purposes. */
-insert into disposition_status(id, name, description) values(1, 'NEW', 'New Case');
-insert into disposition_status(id, name, description) values(2, 'OPEN', 'Case is open');
-insert into disposition_status(id, name, description) values(3, 'CLOSED', 'No action required');
-insert into disposition_status(id, name, description) values(4, 'RE-OPEN', 'Re-opened case');
-insert into disposition_status(id, name, description) values(5, 'PENDING CLOSURE','Case is pending closure');
+insert into hit_category(id, category, description, severity) values(1, 'General', 'General category', 2);
+insert into hit_category(id, category, description, severity) values(2, 'Terrorism', 'Terrorism related entities',0);
+insert into hit_category(id, category, description, severity) values(3, 'World Health', 'Health Alert related',1);
+insert into hit_category(id, category, description, severity) values(4, 'Federal Law Enforcement', 'Federal watch category',0);
+insert into hit_category(id, category, description, severity) values(5, 'Local Law Enforcement', 'Local watch category',0);
 
-insert into hit_disposition_status(id, name, description) values(1, 'NEW', 'New Case');
-insert into hit_disposition_status(id, name, description) values(2, 'OPEN', 'Case is open');
-insert into hit_disposition_status(id, name, description) values(3, 'CLOSED', 'No action required');
-insert into hit_disposition_status(id, name, description) values(4, 'RE-OPEN', 'Re-opened case');
-insert into hit_disposition_status(id, name, description) values(5, 'PENDING CLOSURE','Case is pending closure');
+INSERT INTO gtas.user_group (id, created_at, created_by, updated_at, updated_by, ug_name) VALUES (1, null, null, null, null, 'default');
+INSERT INTO gtas.ug_user_join (ug_id, user_id) VALUES (1, 'ADMIN');
+INSERT INTO gtas.ug_user_join (ug_id, user_id) VALUES (1, 'GTAS');
+INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 1);
+INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 2);
+INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 3);
+INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 4);
+INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 5);
 
-insert into case_disposition_status(id, name, description) values(1, 'Admit', 'Admit');
-insert into case_disposition_status(id, name, description) values(2, 'Deny Boarding', 'Deny Boarding');
-insert into case_disposition_status(id, name, description) values(3, 'No Show', 'No Show');
-insert into case_disposition_status(id, name, description) values(4, 'Cancelled', 'Cancelled');
-insert into case_disposition_status(id, name, description) values(5, 'Duplicate','Duplicate');
-insert into case_disposition_status(id, name, description) values(6, 'Refuse Entry', 'Refuse Entry');
-insert into case_disposition_status(id, name, description) values(7, 'Secondary Referral', 'Secondary Referral');
-insert into case_disposition_status(id, name, description) values(8, 'False Match', 'False Match');
-
-
-insert into rule_category(catId, category, description, priority) values(1, 'General', 'General category', 5);
-insert into rule_category(catId, category, description, priority) values(2, 'Terrorism', 'Terrorism related entities', 1);
-insert into rule_category(catId, category, description, priority) values(3, 'World Health', 'Health Alert related', 2);
-insert into rule_category(catId, category, description, priority) values(4, 'Federal Law Enforcement', 'Federal watch category', 3);
-insert into rule_category(catId, category, description, priority) values(5, 'Local Law Enforcement', 'Local watch category', 4);
-
+INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (1, null, null, null, null, 'GENERAL_PASSENGER');

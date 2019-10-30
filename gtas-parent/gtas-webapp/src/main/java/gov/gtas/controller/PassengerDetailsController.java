@@ -5,6 +5,7 @@
  */
 package gov.gtas.controller;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.*;
@@ -12,14 +13,19 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
+import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.*;
+import gov.gtas.services.dto.PassengerNoteSetDto;
+import gov.gtas.vo.HitDetailVo;
+import gov.gtas.vo.NoteTypeVo;
+import gov.gtas.vo.NoteVo;
 import gov.gtas.vo.passenger.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -28,26 +34,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.json.KeyValue;
-import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.BagRepository;
 import gov.gtas.repository.SeatRepository;
-import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
 import gov.gtas.services.search.FlightPassengerVo;
-import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.util.LobUtils;
@@ -88,6 +85,15 @@ public class PassengerDetailsController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private HitDetailService hitDetailService;
+	
+	@Autowired
+	private PassengerNoteService paxNoteService;
+	
+	@Autowired
+	private NoteTypeService noteTypeService;
 
 	static final String EMPTY_STRING = "";
 
@@ -151,22 +157,6 @@ public class PassengerDetailsController {
 			docVo.setExpirationDate(d.getExpirationDate());
 			docVo.setIssuanceDate(d.getIssuanceDate());
 			vo.addDocument(docVo);
-		}
-
-		List<Disposition> cases = pService.getPassengerDispositionHistory(Long.valueOf(paxId),
-				Long.parseLong(flightId));
-		if (CollectionUtils.isNotEmpty(cases)) {
-			List<DispositionVo> history = new ArrayList<>();
-			for (Disposition d : cases) {
-				DispositionVo dvo = new DispositionVo();
-				dvo.setComments(d.getComments());
-				dvo.setCreatedAt(d.getCreatedAt());
-				dvo.setStatus(d.getStatus().getName());
-				dvo.setCreatedBy(d.getCreatedBy());
-				dvo.setStatusId(d.getStatus().getId());
-				history.add(dvo);
-			}
-			vo.setDispositionHistory(history);
 		}
 
 		// Gather PNR Details
@@ -373,6 +363,18 @@ public class PassengerDetailsController {
 
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/passengers/passenger/hitdetailhistory", method = RequestMethod.GET)
+	public List<HitDetailVo> getHitHistory(@RequestParam Long paxId) {
+
+		List<Passenger> passengersWithSamePassengerIdTag = pService.getBookingDetailHistoryByPaxID(paxId);
+		Set<Passenger> passengerSet = new HashSet<>(passengersWithSamePassengerIdTag);
+		Passenger p = pService.findById(paxId);
+		passengerSet.remove(p);
+		return hitDetailService.getLast10RecentHits(passengerSet);
+	}
+
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/savewatchlistlink", method = RequestMethod.GET)
 	public void saveWatchListMatchByPaxId(@RequestParam String paxId) {
 		matchingService.performFuzzyMatching(Long.valueOf(paxId));
@@ -381,55 +383,66 @@ public class PassengerDetailsController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/getwatchlistlink", method = RequestMethod.GET)
-	public List<PaxWatchlistLinkVo> getWatchListMatchByPaxId(@RequestParam String paxId) {
-		return matchingService.findByPassengerId(Long.valueOf(paxId));
+	public Set<PaxWatchlistLinkVo> getWatchListMatchByPaxId(@RequestParam String paxId) throws IOException {
+		if (paxId == null) {
+			return new HashSet<>();
+		}
+		Set<HitDetail> hitDetailSet = hitDetailService.getByPassengerId(Long.parseLong(paxId));
+		Set<PaxWatchlistLinkVo> paxWatchlistLinkVos = new HashSet<>();
+		for (HitDetail hitDetail : hitDetailSet) {
+			HitTypeEnum hitTypeEnum = hitDetail.getHitEnum();
+			if (HitTypeEnum.WATCHLIST_PASSENGER == hitTypeEnum || HitTypeEnum.PARTIAL_WATCHLIST == hitTypeEnum) {
+				PaxWatchlistLinkVo paxWatchlistLinkVo = PaxWatchlistLinkVo.fromHitDetail(hitDetail);
+				paxWatchlistLinkVos.add(paxWatchlistLinkVo);
+			}
+		}
+
+		return paxWatchlistLinkVos;
+	}
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@GetMapping(value = "/passengers/passenger/notes")
+	public PassengerNoteSetDto getAllPassengerHistoricalNotes(@RequestParam Long paxId, @RequestParam Boolean historicalNotes) {
+		if (historicalNotes != null && historicalNotes) {
+			return paxNoteService.getPrevious10PassengerNotes(paxId);
+		} else {
+			return paxNoteService.getAllEventNotes(paxId);
+		}
+	}
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@GetMapping(value = "/passengers/passenger/notetypes")
+	public List<NoteTypeVo> getAllNoteTypes() {
+		return noteTypeService.getAllNoteTypes();
+	}
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@PostMapping(value = "/passengers/passenger/note", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void savePassengerNote (@RequestBody NoteVo note) {
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		paxNoteService.saveNote(note, userId);
 	}
 
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)
-	public @ResponseBody List<DispositionStatus> getDispositionStatuses() {
-
-		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		User user = userService.fetchUser(userId);
-		Role oneDay = new Role(7, "One Day Lookout");
-		if (user.getRoles().contains(oneDay)) {
-			return null;
-		} else {
-			return pService.getDispositionStatuses();
-		}
+	public @ResponseBody List<Object> getDispositionStatuses() {
+		return new ArrayList<>();
 	}
 
 	@RequestMapping(value = "/allcases", method = RequestMethod.GET)
 	public @ResponseBody List<CaseVo> getAllDispositions() {
-		return pService.getAllDispositions();
-	}
-
-	@RequestMapping(value = "/disposition", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody JsonServiceResponse createDisposition(@RequestBody DispositionData disposition) {
-		JsonServiceResponse response = checkIfValidCaseStatusAction(disposition);
-		if (response.getStatus().equals(Status.SUCCESS)) {
-			String userId = GtasSecurityUtils.fetchLoggedInUserId();
-			pService.createDisposition(disposition, uService.fetchUser(userId));
-		}
-		return response;
+		return new ArrayList<>();
 	}
 
 	@RequestMapping(value = "/createoreditdispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody JsonServiceResponse createOrEditDispositionStatus(@RequestBody DispositionStatus ds) {
-		pService.createOrEditDispositionStatus(ds);
+	public @ResponseBody JsonServiceResponse createOrEditDispositionStatus() {
 		return new JsonServiceResponse(Status.SUCCESS, "Creation or Edit of disposition status successful");
 	}
 
 	@RequestMapping(value = "/deletedispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody JsonServiceResponse deleteDispositionStatus(@RequestBody DispositionStatus ds) {
-		if (!isRemovableDispositionStatus(ds)) {
-			return new JsonServiceResponse(Status.FAILURE, "This status is irremovable");
-		}
-		try {
-			pService.deleteDispositionStatus(ds);
-		} catch (ConstraintViolationException e) {
-			return new JsonServiceResponse(Status.FAILURE,
-					"Case already exists with " + ds.getName() + ". You may not remove this status");
-		}
+	public @ResponseBody JsonServiceResponse deleteDispositionStatus() {
 		return new JsonServiceResponse(Status.SUCCESS, "Deletion of disposition status successful");
 	}
 
@@ -593,7 +606,7 @@ public class PassengerDetailsController {
 	/**
 	 * Segments PnrRaw String Required for Frontend to highlight segment
 	 * corresponding to pnr section
-	 * 
+	 *
 	 * @param targetVo
 	 */
 	protected void parseRawMessageToSegmentList(PnrVo targetVo) {
@@ -934,111 +947,6 @@ public class PassengerDetailsController {
 		}
 	}
 
-	private boolean isRemovableDispositionStatus(DispositionStatus ds) {
-		// Prevent deletion of any of the original disp status ids (New, Closed,
-		// Open, Re-opened, Pending Closure)
-		if (ds.getId() <= 5L) {
-			return false;
-		}
-		return true;
-	}
-
-	private JsonServiceResponse checkIfValidCaseStatusAction(DispositionData disposition) {
-		DispositionStatus currentDispStatus = getCurrentDispositionStatus(disposition);
-
-		if (currentDispStatus == null) { // if no history
-			// Conditions: Action cannot close
-			if (disposition.getStatusId().equals(3L)) {
-				return new JsonServiceResponse(Status.FAILURE, "Current Status: Unknown. May not be set to CLOSE");
-			}
-			return new JsonServiceResponse(Status.SUCCESS, "Successful status change from Unknown");
-		}
-
-		if (currentDispStatus.getId().equals(1L)) { // if existing status is
-													// New...
-			// Conditions: Action can NOT be re-open, new, or closed
-			if (disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(3L)
-					|| disposition.getStatusId().equals(4L)) {
-				return new JsonServiceResponse(Status.FAILURE,
-						"Current Status: NEW. Cannot be set to RE-OPEN or CLOSED");
-			} else {
-				return new JsonServiceResponse(Status.SUCCESS, "Successful state change from NEW");
-			}
-		}
-
-		if (currentDispStatus.getId().equals(2L)) { // If existing status is
-													// Open...
-			// Conditions: Action can NOT be set to re-open or closed.
-			if (disposition.getStatusId().equals(2L) || disposition.getStatusId().equals(3L)) {
-				return new JsonServiceResponse(Status.FAILURE,
-						"Current status: OPEN. Cannot be set to CLOSED or RE-OPEN");
-			} else {
-				return new JsonServiceResponse(Status.SUCCESS, "Successful status change from OPEN");
-			}
-		}
-
-		if (currentDispStatus.getId().equals(3L)) {// If existing status is
-													// Closed
-			// Conditions: Action may only be set to 'Re-open' AND be admin
-			boolean isAdmin = false;
-			if (disposition.getStatusId().equals(4L)) {// If is re-open
-				for (RoleData r : uService.findById(disposition.getUser()).getRoles()) { // determine if current user is
-																							// Admin
-					if (r.getRoleId() == 1) {
-						isAdmin = true;
-					}
-				}
-				if (isAdmin) {
-					return new JsonServiceResponse(Status.SUCCESS, "Successful status change from CLOSED");
-				} else {
-					return new JsonServiceResponse(Status.FAILURE,
-							"Current status: CLOSED. Only administrators may RE-OPEN a CLOSED status");
-				}
-			} else {
-				return new JsonServiceResponse(Status.FAILURE, "Current status: CLOSED. May only be set to RE-OPEN.");
-			}
-		}
-
-		if (currentDispStatus.getId().equals(4L)) {// If existing status is
-													// Re-open
-			// Conditions: Action may not be set to Open, New or Closed
-			if (disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(2L)
-					|| disposition.getStatusId().equals(3L)) {
-				return new JsonServiceResponse(Status.FAILURE,
-						"Current status: RE-OPEN. Cannot be set to OPEN or CLOSED");
-			} else {
-				return new JsonServiceResponse(Status.SUCCESS, "Successful status change from RE-OPEN");
-			}
-		}
-
-		if (currentDispStatus.getId().equals(5L)) {// If existing status is
-													// Pending Closure
-			// Conditions: Action may not be set to Open or New
-			if (disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(2L)) {
-				return new JsonServiceResponse(Status.FAILURE,
-						"Current status: PENDING CLOSURE. Cannot be set to OPEN");
-			} else {
-				return new JsonServiceResponse(Status.SUCCESS, "Successful status change from PENDING CLOSURE");
-			}
-		}
-		// If the current status is not of the base 5, then we have no hard rule
-		// set for them other than do not set to close or new
-		if (currentDispStatus.getId() > 5L) {
-			if (disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(3L)) {
-				return new JsonServiceResponse(Status.FAILURE,
-						"Current status: Custom. Cannot be set to NEW or CLOSED");
-			} else {
-				return new JsonServiceResponse(Status.SUCCESS, "Successful status change from custom status");
-			}
-		}
-
-		// If the current id of the disposition is < 1 there is a problem with
-		// the database.
-		return new JsonServiceResponse(Status.FAILURE,
-				"Current status is " + currentDispStatus.getId() + " and breaks expected conventions");
-
-	}
-
 	@RequestMapping(value = "/seats/{flightId}", method = RequestMethod.GET)
 	public @ResponseBody java.util.List<SeatVo> getSeatsByFlightId(@PathVariable(value = "flightId") Long flightId) {
 
@@ -1053,23 +961,6 @@ public class PassengerDetailsController {
 			}
 		}
 		return latest;
-	}
-
-	private DispositionStatus getCurrentDispositionStatus(DispositionData disposition) {
-		List<Disposition> dispList = pService.getPassengerDispositionHistory(disposition.getPassengerId(),
-				disposition.getFlightId());
-		Disposition mostRecentDisposition = null;
-
-		for (Disposition d : dispList) {
-			if (mostRecentDisposition == null || mostRecentDisposition.getCreatedAt().before(d.getCreatedAt())) {
-				mostRecentDisposition = d;
-			}
-		}
-		if (mostRecentDisposition != null) {
-			return mostRecentDisposition.getStatus();
-		} else {
-			return null;
-		}
 	}
 
 }

@@ -15,7 +15,7 @@
         <skip.integration.tests>true</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
         <javadoc-plugin.version>3.0.1</javadoc-plugin.version>
-        <sonar-plugin.version>3.6.0.1398</sonar-plugin.version>
+        <sonar-plugin.version>3.7.0.1746</sonar-plugin.version>
         <elasticsearch.version>6.5.0</elasticsearch.version>
         <sonar.sources>src/main/java</sonar.sources>
         <jackson.version>2.9.9</jackson.version>
@@ -277,6 +277,21 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <configLocation>checkstyle.xml</configLocation>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
@@ -327,6 +342,26 @@
                     </execution>
                 </executions>
             </plugin>
+		<plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.4</version>
+                <executions>
+                        <execution>
+                                <goals>
+                                        <goal>prepare-agent</goal>
+                                </goals>
+                        </execution>
+                        <!-- attached to Maven test phase -->
+                        <execution>
+                                <id>report</id>
+                                <phase>test</phase>
+                                <goals>
+                                        <goal>report</goal>
+                                </goals>
+                        </execution>
+                </executions>
+        </plugin>
             
         </plugins>
     </build>

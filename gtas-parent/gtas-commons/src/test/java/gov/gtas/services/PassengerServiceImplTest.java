@@ -84,14 +84,12 @@ public class PassengerServiceImplTest {
 	@Test
 	public void passengerProcessedToPassengerGridVoHappyPath() {
 
-		List<Object[]> queryResultList = new ArrayList<>();
+		List<Passenger> queryResultList = new ArrayList<>();
 
-		Object[] itemOnQueryResultList = new Object[3];
-		itemOnQueryResultList[0] = p;
-		itemOnQueryResultList[1] = f;
-		queryResultList.add(itemOnQueryResultList);
+		p.setFlight(f);
+		queryResultList.add(p);
 
-		Pair<Long, List<Object[]>> findByCriteriaResult = new ImmutablePair<>(1L, queryResultList);
+		Pair<Long, List<Passenger>> findByCriteriaResult = new ImmutablePair<>(1L, queryResultList);
 
 		PassengersRequestDto prdto = new PassengersRequestDto();
 		prdto.setPageSize(25);

@@ -19,10 +19,11 @@ public class TargetDetailVo implements Serializable, Cloneable {
 	private String description;
 
 	/** The udr rule id. */
-	private Long udrRuleId;
+	private Long lookoutId;
 
 	/*
-	 * either the engine rule id or the watch list item id.
+	 * either the engine rule id or the watch list item id or graph id This is
+	 * typically the same except for rules with multiple conditions.
 	 */
 	private Long ruleId;
 
@@ -40,29 +41,25 @@ public class TargetDetailVo implements Serializable, Cloneable {
 	 *            a numeric rule Id (can be null)
 	 * @param ruleTitle
 	 *            the name of the DRL rule(Rule.getName()).
-	 * @param passenger
-	 *            the Passenger object that matched.
-	 * @param flight
-	 *            the flight object that matched.
 	 * @param cause
 	 *            the reason for the match.
 	 */
-	public TargetDetailVo(final Long udrId, final Long ruleId, final HitTypeEnum hitType, final String ruleTitle,
+	public TargetDetailVo(final Long lookoutId, final Long ruleId, final HitTypeEnum hitType, final String ruleTitle,
 			final String[] cause) {
-		this.udrRuleId = udrId;
+		this.lookoutId = lookoutId;
 		this.ruleId = ruleId;
 		this.hitType = hitType;
 		switch (hitType) {
-		case R:
+		case USER_DEFINED_RULE:
 			this.title = ruleTitle;
 			this.description = String.format("There was a match for UDR '%s', with id=%d, and ruleId=%d", ruleTitle,
-					udrId, ruleId);
+					lookoutId, ruleId);
 			break;
-		case D:
+		case WATCHLIST_DOCUMENT:
 			this.title = ruleTitle;
 			this.description = "Document List hit with Rule #" + ruleId;
 			break;
-		case P:
+		case WATCHLIST_PASSENGER:
 			this.title = ruleTitle;
 			this.description = "Passenger List hit with Rule #" + ruleId;
 			break;
@@ -96,8 +93,8 @@ public class TargetDetailVo implements Serializable, Cloneable {
 	/**
 	 * @return the udrRuleId
 	 */
-	public Long getUdrRuleId() {
-		return udrRuleId;
+	public Long getLookoutId() {
+		return lookoutId;
 	}
 
 	/**

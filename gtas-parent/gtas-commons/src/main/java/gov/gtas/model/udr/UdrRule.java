@@ -6,8 +6,9 @@
 package gov.gtas.model.udr;
 
 import static gov.gtas.constant.DomainModelConstants.UDR_UNIQUE_CONSTRAINT_NAME;
+import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.enumtype.YesNoEnum;
-import gov.gtas.model.BaseEntity;
+import gov.gtas.model.HitMaker;
 import gov.gtas.model.User;
 import gov.gtas.util.DateCalendarUtils;
 
@@ -32,23 +33,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @Entity
-@Table(name = "udr_rule", uniqueConstraints = {
-		@UniqueConstraint(name = UDR_UNIQUE_CONSTRAINT_NAME, columnNames = { "AUTHOR", "TITLE", "DEL_ID" }) })
-public class UdrRule extends BaseEntity {
+@Table(name = "udr_rule")
+public class UdrRule extends HitMaker {
 
 	/**
 	 * serial version UID
 	 */
-	private static final long serialVersionUID = 2089171064855746507L;
-
-	@Version
-	private Long version;
+	// private static final long serialVersionUID = 2089171064855746507L;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "DEL_FLAG", nullable = false, length = 1)
@@ -61,11 +57,7 @@ public class UdrRule extends BaseEntity {
 	@Column(name = "DEL_ID", nullable = false)
 	private Long deleteId;
 
-	@ManyToOne
-	@JoinColumn(name = "AUTHOR", referencedColumnName = "user_id", nullable = false)
-	private User author;
-
-	@Column(name = "TITLE", nullable = false, length = 20)
+	@Column(name = "TITLE", nullable = false, length = 20, unique = true)
 	private String title;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -93,33 +85,22 @@ public class UdrRule extends BaseEntity {
 	 */
 	public UdrRule() {
 		this.deleteId = 0L;
+		this.setHitTypeEnum(HitTypeEnum.USER_DEFINED_RULE);
 	}
 
 	public UdrRule(long id, Date editDt) {
+		this.deleteId = 0L;
+		this.setHitTypeEnum(HitTypeEnum.USER_DEFINED_RULE);
 		this.id = id;
 		this.editDt = editDt;
 	}
 
 	public UdrRule(long id, YesNoEnum deleted, User editedBy, Date editDt) {
+		this.setHitTypeEnum(HitTypeEnum.USER_DEFINED_RULE);
 		this.id = id;
 		this.deleted = deleted;
 		this.editedBy = editedBy;
 		this.editDt = editDt;
-	}
-
-	/**
-	 * @return the author
-	 */
-	public User getAuthor() {
-		return author;
-	}
-
-	/**
-	 * @param author
-	 *            the author to set
-	 */
-	public void setAuthor(User author) {
-		this.author = author;
 	}
 
 	/**
@@ -267,7 +248,6 @@ public class UdrRule extends BaseEntity {
 		UdrRule other = (UdrRule) obj;
 		EqualsBuilder equalsBuilder = new EqualsBuilder();
 		equalsBuilder.append(id, other.id);
-		equalsBuilder.append(getVersion(), other.getVersion());
 		equalsBuilder.append(deleted, other.deleted);
 		equalsBuilder.append(editedBy, other.editedBy);
 
@@ -279,7 +259,4 @@ public class UdrRule extends BaseEntity {
 		return equalsBuilder.isEquals();
 	}
 
-	public Long getVersion() {
-		return version;
-	}
 }

@@ -12,7 +12,7 @@ public class FlightPassengerCount {
 
 	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "fp_flight_id", referencedColumnName = "id", updatable = false, insertable = false)
-	Flight flight;
+	private Flight flight;
 
 	@Column(name = "fp_count")
 	private Integer passengerCount;

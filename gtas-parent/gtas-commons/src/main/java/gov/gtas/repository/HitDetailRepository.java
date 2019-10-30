@@ -7,17 +7,20 @@ package gov.gtas.repository;
 
 import gov.gtas.model.HitDetail;
 
-import org.springframework.data.jpa.repository.Modifying;
+import gov.gtas.model.Passenger;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
 
 public interface HitDetailRepository extends CrudRepository<HitDetail, Long> {
 
-	@Query("DELETE FROM HitDetail hd WHERE hd.parent.id = (:id)")
-	@Modifying
-	@Transactional
-	public void deleteDBData(@Param("id") Long id);
+	HitDetail findFirstByOrderByIdDesc();
+
+	@Query("SELECT hd from HitDetail hd left join fetch hd.hitMaker l left join fetch l.hitCategory left join fetch hd.hitViewStatus left join fetch hd.flight f left join fetch f.mutableFlightDetails  where hd.passenger.id = :passengerId")
+	Set<HitDetail> getSetFromPassengerId(@Param("passengerId") Long passengerId);
+
+	Set<HitDetail> findFirst10ByPassengerInOrderByCreatedDateDesc(Set<Passenger> passenger);
 
 }

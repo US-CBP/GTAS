@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -28,6 +29,8 @@ import java.util.List;
 public class IntegrateUnTaggedPassengerListScheduler {
 
 	private static final Logger logger = LoggerFactory.getLogger(IntegrateUnTaggedPassengerListScheduler.class);
+
+	private SecureRandom random = new SecureRandom();
 
 	@Autowired
 	private PassengerRepository passengerDao;
@@ -54,8 +57,6 @@ public class IntegrateUnTaggedPassengerListScheduler {
 			 * }else{ paxListNotNull.add(_tempPax); }
 			 */
 		}
-
-		final java.util.Random rand = new java.util.Random();
 
 		try {
 			for (Passenger _tempPaxWithIdTag : paxListNotNull) {
@@ -113,12 +114,12 @@ public class IntegrateUnTaggedPassengerListScheduler {
 	 */
 	private String generateRandomIDTag(int strLength) {
 		final String lexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZ12345674890";
-		final java.util.Random rand = new java.util.Random();
+
 		StringBuilder builder = new StringBuilder();
 		while (builder.toString().length() == 0) {
 			int length = (strLength > 0) ? (strLength) : (9);
 			for (int i = 0; i < strLength; i++) {
-				builder.append(lexicon.charAt(rand.nextInt(lexicon.length())));
+				builder.append(lexicon.charAt(random.nextInt(lexicon.length())));
 			}
 		}
 		return builder.toString();

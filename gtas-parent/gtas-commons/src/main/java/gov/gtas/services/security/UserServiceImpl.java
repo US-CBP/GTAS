@@ -5,6 +5,7 @@
  */
 package gov.gtas.services.security;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,9 +16,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import gov.gtas.model.UserGroup;
+import gov.gtas.repository.UserGroupRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,11 +43,17 @@ public class UserServiceImpl implements UserService {
 	@Resource
 	private UserRepository userRepository;
 
+	@Resource
+	private UserGroupRepository userGroupRepository;
+
 	@Autowired
 	private UserServiceUtil userServiceUtil;
 
 	@Autowired
 	private RoleServiceUtil roleServiceUtil;
+
+	@Value("${user.group.default}")
+	private Long defaultUserGroupId;
 
 	private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
 
@@ -59,6 +69,10 @@ public class UserServiceImpl implements UserService {
 			userEntity.setRoles(roleCollection);
 		}
 		User newUserEntity = userRepository.save(userEntity);
+		UserGroup defaultUserGroup = userGroupRepository.findById(defaultUserGroupId)
+				.orElseThrow(RuntimeException::new);
+		defaultUserGroup.getGroupMembers().add(newUserEntity);
+		userGroupRepository.save(defaultUserGroup);
 		return userServiceUtil.mapUserDataFromEntity(newUserEntity);
 	}
 
@@ -81,7 +95,8 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public UserData update(UserData data) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		User entity = userRepository.findOne(data.getUserId());
+
+		User entity = userRepository.findOne(data.getUserId().toUpperCase());
 		User mappedEnity = userServiceUtil.mapUserEntityFromUserData(data);
 		if (entity != null) {
 			entity.setFirstName(mappedEnity.getFirstName());
@@ -108,9 +123,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Transactional
 	public UserData findById(String id) {
-		User userEntity = userRepository.findOne(id);
+		String allCapsName = id.toUpperCase();
+		User userEntity = userRepository.findOne(allCapsName);
 		UserData userData = null;
 		if (userEntity != null) {
 			userData = userServiceUtil.mapUserDataFromEntity(userEntity);
@@ -128,7 +143,6 @@ public class UserServiceImpl implements UserService {
 	 * @return the user fetched from the DB.
 	 */
 	@Override
-	@Transactional
 	public User fetchUser(final String userId) {
 		UserData userData = findById(userId);
 		if (userData == null) {
@@ -136,6 +150,13 @@ public class UserServiceImpl implements UserService {
 					userId);
 		}
 		return userServiceUtil.mapUserEntityFromUserData(userData);
+	}
+
+	@Override
+	@Transactional
+	public Set<UserGroup> fetchUserGroups(final String userId) {
+		User user = userRepository.findOne(userId);
+		return userGroupRepository.findDistinctByGroupMembersIn(Collections.singleton(user));
 	}
 
 	/**
@@ -177,6 +198,9 @@ public class UserServiceImpl implements UserService {
 		if (entity != null) {
 			entity.setFirstName(mappedEnity.getFirstName());
 			entity.setLastName(mappedEnity.getLastName());
+			entity.setEmail(mappedEnity.getEmail());
+			entity.setEmailEnabled(mappedEnity.getEmailEnabled());
+			entity.setHighPriorityHitsEmailNotification(mappedEnity.getHighPriorityHitsEmailNotification());
 
 			if (data.getPassword() != null && !data.getPassword().isEmpty()) {
 				if (!BCRYPT_PATTERN.matcher(mappedEnity.getPassword()).matches()) {

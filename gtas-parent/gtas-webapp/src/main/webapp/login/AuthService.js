@@ -20,7 +20,7 @@
         };
 
         var preparePostData = function (credentials) {
-            var username = credentials.j_username != undefined ? credentials.j_username : '';
+            var username = credentials.j_username != undefined ? credentials.j_username.toUpperCase() : '';
             var password = credentials.j_password != undefined ? credentials.j_password : '';
             return 'username=' + username + '&password=' + encodeURIComponent(password);
         }

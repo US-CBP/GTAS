@@ -11,17 +11,12 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "attachment")
-public class Attachment implements Serializable {
+public class Attachment extends BaseEntityAudit implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	@Id
-	@GeneratedValue
-	@Column(name = "id")
-	private Integer id;
 
 	@Column(name = "name")
 	private String name;
@@ -46,16 +41,8 @@ public class Attachment implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Passenger passenger;
 
-	@ManyToMany(mappedBy = "attachmentSet", targetEntity = HitsDispositionComments.class, cascade = CascadeType.ALL)
-	private Set<HitsDispositionComments> hitsDispositionComments = new HashSet<>();
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
+	@ManyToMany(mappedBy = "attachments", targetEntity = Note.class)
+	private Set<Note> notes = new HashSet<>();
 
 	public String getName() {
 		return name;
@@ -114,14 +101,6 @@ public class Attachment implements Serializable {
 		this.passenger = passenger;
 	}
 
-	public Set<HitsDispositionComments> getHitsDispositionComments() {
-		return hitsDispositionComments;
-	}
-
-	public void setHitsDispositionComments(Set<HitsDispositionComments> hitsDispositionComments) {
-		this.hitsDispositionComments = hitsDispositionComments;
-	}
-
 	@Override
 	public int hashCode() {
 		int hash = 0;
@@ -146,4 +125,11 @@ public class Attachment implements Serializable {
 		return true;
 	}
 
+	public Set<Note> getNotes() {
+		return notes;
+	}
+
+	public void setComments(Set<Note> notes) {
+		this.notes = notes;
+	}
 }

@@ -5,21 +5,28 @@
  */
 package gov.gtas.vo;
 
+import gov.gtas.model.Document;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsSummary;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class HitDetailVo {
 
 	private HitsSummary parent;
 
+	private String status;
+
+	private Long paxId;
+
+	private Long flightId;
+
 	private String ruleConditions;
 
 	private Date createDate;
+
+	private Date flightDate;
 
 	private Long ruleId;
 
@@ -33,7 +40,35 @@ public class HitDetailVo {
 
 	private HashMap<Integer, List<HitDetail>> HitsRulesAndDetails;
 
-	private List<HitDetail> hitsDetailsList = new ArrayList<HitDetail>();
+	private String severity;
+	private String ruleAuthor;
+
+	private String passengerDocNumber;
+
+	public static HitDetailVo from(HitDetail hitDetail) {
+		HitDetailVo hitDetailVo = new HitDetailVo();
+		hitDetailVo.setRuleId(hitDetail.getRuleId());
+		hitDetailVo.setCreateDate(hitDetail.getCreatedDate());
+		hitDetailVo.setCategory(hitDetail.getHitMaker().getHitCategory().getName());
+		hitDetailVo.setFlightId(hitDetail.getPassenger().getFlight().getId());
+		hitDetailVo.setFlightDate(hitDetail.getFlight().getMutableFlightDetails().getEtd());
+		hitDetailVo.setPaxId(hitDetail.getPassenger().getId());
+		hitDetailVo.setRuleConditions(hitDetail.getRuleConditions());
+		hitDetailVo.setRuleDesc(hitDetail.getDescription());
+		hitDetailVo.setRuleTitle(hitDetail.getTitle());
+		String documentNumber = "";
+		for (Document d : hitDetail.getPassenger().getDocuments()) {
+			documentNumber = d.getDocumentNumber();
+			if (StringUtils.isNotBlank(documentNumber) && StringUtils.isNotBlank(d.getDocumentType())) {
+				documentNumber = documentNumber + "(" + d.getDocumentType() + ")";
+			}
+			if ("P".equalsIgnoreCase(d.getDocumentType())) {
+				break;
+			}
+		}
+		hitDetailVo.setPassengerDocNumber(documentNumber);
+		return hitDetailVo;
+	}
 
 	public HitsSummary getParent() {
 		return parent;
@@ -91,14 +126,6 @@ public class HitDetailVo {
 		this.ruleType = ruleType;
 	}
 
-	public List<HitDetail> getHitsDetailsList() {
-		return hitsDetailsList;
-	}
-
-	public void setHitsDetailsList(List<HitDetail> hitsDetailsList) {
-		this.hitsDetailsList = hitsDetailsList;
-	}
-
 	public HashMap<Integer, List<HitDetail>> getHitsRulesAndDetails() {
 		return HitsRulesAndDetails;
 	}
@@ -115,47 +142,80 @@ public class HitDetailVo {
 		this.category = category;
 	}
 
+	public Long getPaxId() {
+		return paxId;
+	}
+
+	public void setPaxId(Long paxId) {
+		this.paxId = paxId;
+	}
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		HitDetailVo that = (HitDetailVo) o;
+		return Objects.equals(getPaxId(), that.getPaxId()) && Objects.equals(getFlightId(), that.getFlightId())
+				&& Objects.equals(getRuleConditions(), that.getRuleConditions())
+				&& Objects.equals(getCreateDate(), that.getCreateDate())
+				&& Objects.equals(getRuleId(), that.getRuleId()) && Objects.equals(getRuleTitle(), that.getRuleTitle())
+				&& Objects.equals(getRuleDesc(), that.getRuleDesc())
+				&& Objects.equals(getCategory(), that.getCategory());
+	}
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((ruleConditions == null) ? 0 : ruleConditions.hashCode());
-		result = prime * result + ((ruleDesc == null) ? 0 : ruleDesc.hashCode());
-		result = prime * result + ((ruleId == null) ? 0 : ruleId.hashCode());
-		result = prime * result + ((ruleTitle == null) ? 0 : ruleTitle.hashCode());
-		return result;
+		return Objects.hash(getPaxId(), getFlightId(), getRuleConditions(), getCreateDate(), getRuleId(),
+				getRuleTitle(), getRuleDesc(), getCategory());
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof HitDetailVo))
-			return false;
-		HitDetailVo other = (HitDetailVo) obj;
-		if (ruleConditions == null) {
-			if (other.ruleConditions != null)
-				return false;
-		} else if (!ruleConditions.equals(other.ruleConditions))
-			return false;
-		if (ruleDesc == null) {
-			if (other.ruleDesc != null)
-				return false;
-		} else if (!ruleDesc.equals(other.ruleDesc))
-			return false;
-		if (ruleId == null) {
-			if (other.ruleId != null)
-				return false;
-		} else if (!ruleId.equals(other.ruleId))
-			return false;
-		if (ruleTitle == null) {
-			if (other.ruleTitle != null)
-				return false;
-		} else if (!ruleTitle.equals(other.ruleTitle))
-			return false;
-		return true;
+	public Date getFlightDate() {
+		return flightDate;
 	}
 
+	public void setFlightDate(Date flightDate) {
+		this.flightDate = flightDate;
+	}
+
+	public void setSeverity(String severity) {
+		this.severity = severity;
+	}
+
+	public String getSeverity() {
+		return severity;
+	}
+
+	public void setRuleAuthor(String userId) {
+		this.ruleAuthor = userId;
+	}
+
+	public String getAuthor() {
+		return ruleAuthor;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getPassengerDocNumber() {
+		return passengerDocNumber;
+	}
+
+	public void setPassengerDocNumber(String passengerDocNumber) {
+		this.passengerDocNumber = passengerDocNumber;
+	}
 }

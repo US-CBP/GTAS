@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,10 +26,14 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 @Configuration
 @ComponentScan("gov.gtas")
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:default.application.properties")
+@PropertySource(value = "file:${catalina.home}/conf/application.properties", ignoreResourceNotFound = true)
 @EnableWebMvc
 public class AppConfiguration extends WebMvcConfigurerAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(AppConfiguration.class);
+
+	@Value("${site.language}")
+	String language;
 
 	@Bean(name = "gtasMessageSource")
 	public MessageSource messageSource() {
@@ -40,26 +45,6 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
 
 	@Bean
 	public LocaleResolver localeResolver() {
-
-		Properties prop = new Properties();
-		InputStream input = null;
-		String language = "en";
-		try {
-			input = this.getClass().getClassLoader().getResourceAsStream("application.properties");
-			prop.load(input);
-			language = prop.getProperty("site.language");
-
-		} catch (IOException ex) {
-			// logger.error("error!", e);
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					// logger.error("error!", e);
-				}
-			}
-		}
 		CookieLocaleResolver resolver = new CookieLocaleResolver();
 		resolver.setDefaultLocale(new Locale(language));
 		resolver.setCookieName("myLocaleCookie");

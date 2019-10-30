@@ -8,7 +8,9 @@ package gov.gtas.services.dto;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class SortOptionsDto {
+import java.io.Serializable;
+
+public class SortOptionsDto implements Serializable {
 	private String column;
 	private String dir;
 

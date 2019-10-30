@@ -6,34 +6,30 @@
 package gov.gtas.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import gov.gtas.enumtype.HitTypeEnum;
 
 @Entity
 @Table(name = "hit_detail")
 public class HitDetail extends BaseEntity {
 	private static final long serialVersionUID = 5219262569468670275L;
 
-	public HitDetail() {
+	HitDetail() {
 	}
 
-	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "hits_summary_id", nullable = false, referencedColumnName = "id")
-	private HitsSummary parent;
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "hitDetail", fetch = FetchType.LAZY)
+	private Set<HitViewStatus> hitViewStatus = new HashSet<>();
+
+	public HitDetail(HitTypeEnum hitEnum) {
+		this.hitEnum = hitEnum;
+		this.setHitType(hitEnum.toString());
+	}
 
 	@Column(name = "title", nullable = false)
 	private String Title;
@@ -43,6 +39,21 @@ public class HitDetail extends BaseEntity {
 
 	@Column(name = "hit_type", nullable = false, length = 3)
 	private String hitType;
+
+	@Enumerated(EnumType.STRING)
+	private HitTypeEnum hitEnum;
+
+	// Binds directly to rule, watchlist item, or graph hit
+	// Null when manual hit.
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "hm_id", referencedColumnName = "id", insertable = false, updatable = false)
+	@JsonIgnore
+	private HitMaker hitMaker;
+
+	@JsonIgnore
+	@Column(name = "hm_id", columnDefinition = "bigint unsigned", nullable = false)
+	private Long hitMakerId;
+
 	/**
 	 * String representation of matched conditions; it can be split into String[]
 	 */
@@ -58,12 +69,39 @@ public class HitDetail extends BaseEntity {
 	@Column(name = "rule_id", nullable = false)
 	private Long ruleId;
 
-	public HitsSummary getParent() {
-		return parent;
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "passenger", nullable = false, insertable = false, updatable = false, referencedColumnName = "id")
+	protected Passenger passenger;
+
+	@Column(name = "passenger", columnDefinition = "bigint unsigned")
+	protected Long passengerId;
+
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "flight", insertable = false, updatable = false, referencedColumnName = "id")
+	private Flight flight;
+
+	@Column(name = "flight", columnDefinition = "bigint unsigned", nullable = false)
+	private Long flightId;
+
+	@Column(name = "percentage_match")
+	private float percentage = 1; // 1 = 100%
+
+	public Flight getFlight() {
+		return flight;
 	}
 
-	public void setParent(HitsSummary parent) {
-		this.parent = parent;
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
 	}
 
 	public Date getCreatedDate() {
@@ -121,11 +159,92 @@ public class HitDetail extends BaseEntity {
 		if (!(o instanceof HitDetail))
 			return false;
 		HitDetail hitDetail = (HitDetail) o;
-		return getHitType().equals(hitDetail.getHitType()) && getRuleId().equals(hitDetail.getRuleId());
+		return getPassengerId().equals(hitDetail.getPassengerId()) && getHitMakerId().equals(hitDetail.getHitMakerId())
+				&& getHitEnum().equals(hitDetail.getHitEnum());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getHitType(), getRuleId());
+		return Objects.hash(getHitMakerId(), getPassengerId(), getHitEnum());
+	}
+
+	public Passenger getPassenger() {
+		return passenger;
+	}
+
+	public Long getPassengerId() {
+		return passengerId;
+	}
+
+	public void setPassengerId(Long passengerId) {
+		this.passengerId = passengerId;
+	}
+
+	public void setPassenger(Passenger passenger) {
+		this.passenger = passenger;
+	}
+
+	public HitTypeEnum getHitEnum() {
+		return hitEnum;
+	}
+
+	public void setHitEnum(HitTypeEnum hitEnum) {
+		this.hitEnum = hitEnum;
+	}
+
+	public HitMaker getHitMaker() {
+		return hitMaker;
+	}
+
+	public Long getHitMakerId() {
+		return hitMakerId;
+	}
+
+	public void setHitMaker(HitMaker hitMaker) {
+		this.hitMaker = hitMaker;
+	}
+
+	public void setHitMakerId(Long hitMakerId) {
+		this.hitMakerId = hitMakerId;
+	}
+
+	public static HitDetail from(RuleHitDetail ruleHitDetail) {
+		HitDetail hitDetail = new HitDetail(ruleHitDetail.getHitType());
+		hitDetail.setHitType(ruleHitDetail.getHitType().toString());
+		hitDetail.setPassengerId(ruleHitDetail.getPassengerId());
+		hitDetail.setHitMakerId(ruleHitDetail.getHitMakerId());
+		hitDetail.setRuleId(ruleHitDetail.getRuleId());
+		hitDetail.setDescription(ruleHitDetail.getDescription());
+		hitDetail.setCreatedDate(new Date());
+		hitDetail.setTitle(ruleHitDetail.getTitle());
+		if (HitTypeEnum.GRAPH_HIT == ruleHitDetail.getHitType()) {
+			hitDetail.setRuleConditions(ruleHitDetail.getGraphHitDisplay());
+		} else {
+			String[] hitReasons = ruleHitDetail.getHitReasons();
+			StringBuilder sb = new StringBuilder();
+			for (String hitReason : hitReasons) {
+				sb.append(hitReason);
+				String HITS_REASONS_SEPARATOR = "$$$";
+				sb.append(HITS_REASONS_SEPARATOR);
+			}
+			hitDetail.setRuleConditions(sb.toString());
+		}
+		return hitDetail;
+	}
+
+	public float getPercentage() {
+		return percentage;
+	}
+
+	public void setPercentage(float percentage) {
+		this.percentage = percentage;
+	}
+
+	public Set<HitViewStatus> getHitViewStatus() {
+		return hitViewStatus;
+	}
+
+	public void setHitViewStatus(Set<HitViewStatus> hitViewStatus) {
+		this.hitViewStatus = hitViewStatus;
 	}
 }

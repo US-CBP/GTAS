@@ -13,14 +13,6 @@ class ProcessedMatcherResults {
 	private boolean caseCreated = false;
 	private int hitCounter;
 
-	void setCaseCreated(boolean caseCreated) {
-		this.caseCreated = caseCreated;
-	}
-
-	boolean getCaseCreated() {
-		return caseCreated;
-	}
-
 	void setHitCounter(int hitCounter) {
 		this.hitCounter = hitCounter;
 	}

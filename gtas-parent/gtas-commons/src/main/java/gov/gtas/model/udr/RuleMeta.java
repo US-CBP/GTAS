@@ -6,8 +6,7 @@
 package gov.gtas.model.udr;
 
 import gov.gtas.enumtype.YesNoEnum;
-import gov.gtas.model.lookup.Airport;
-import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.util.DateCalendarUtils;
 
 import java.io.Serializable;
@@ -67,9 +66,9 @@ public class RuleMeta implements Serializable {
 	@Column(name = "HIT_SHARE_FLAG", nullable = false, length = 1)
 	private YesNoEnum hitSharing;
 
-	@ManyToMany(targetEntity = RuleCat.class, cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@ManyToMany(targetEntity = HitCategory.class, cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "udr_rule_cat", joinColumns = @JoinColumn(name = "udr_rule_id"), inverseJoinColumns = @JoinColumn(name = "rule_cat_id"))
-	private Set<RuleCat> ruleCategories = new HashSet<RuleCat>();
+	private Set<HitCategory> ruleCategories = new HashSet<>();
 
 	@Column(name = "RM_OVER_MAX_HITS_FLAG")
 	private Boolean overMaxHits;
@@ -102,7 +101,7 @@ public class RuleMeta implements Serializable {
 	}
 
 	public RuleMeta(Long id, String title, String description, Date startDt, Date endDt, YesNoEnum enabled,
-			YesNoEnum priorityHigh, YesNoEnum hitSharing, Set<RuleCat> ruleCategories) {
+			YesNoEnum priorityHigh, YesNoEnum hitSharing, Set<HitCategory> ruleCategories) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
@@ -270,11 +269,11 @@ public class RuleMeta implements Serializable {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
-	public Set<RuleCat> getRuleCategories() {
+	public Set<HitCategory> getRuleCategories() {
 		return ruleCategories;
 	}
 
-	public void setRuleCategories(Set<RuleCat> ruleCategories) {
+	public void setRuleCategories(Set<HitCategory> ruleCategories) {
 		this.ruleCategories = ruleCategories;
 	}
 

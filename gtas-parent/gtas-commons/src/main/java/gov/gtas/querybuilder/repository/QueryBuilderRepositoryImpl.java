@@ -53,8 +53,8 @@ import org.springframework.validation.Errors;
 @Repository
 public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
 	private static final Logger logger = LoggerFactory.getLogger(QueryBuilderRepository.class);
-	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	private static final SimpleDateFormat dtFormat = new SimpleDateFormat("yyyy-MM-dd h:mm:ss a");
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	private SimpleDateFormat dtFormat = new SimpleDateFormat("yyyy-MM-dd h:mm:ss a");
 	private static final String CREATED_BY = "createdBy";
 	private static final String TITLE = "title";
 	private static final String USER_ID = "userId";
@@ -482,6 +482,7 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
 					} else if (TypeEnum.BOOLEAN.toString().equalsIgnoreCase(type)) {
 						// For Marketing Flights/Operating Flights
 						// 0 = False 1 = True
+						assert value != null;
 						if (value.equals("0")) {
 							query.setParameter(positionalParameter.intValue(), Boolean.FALSE);
 						} else if (value.equals("1")) {

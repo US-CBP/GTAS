@@ -12,6 +12,9 @@ import java.util.*;
 import javax.persistence.*;
 
 @Entity
+@NamedEntityGraph(name = "passengerGraph", attributeNodes = { @NamedAttributeNode("id"), @NamedAttributeNode("uuid"),
+		@NamedAttributeNode("flight"), @NamedAttributeNode("hitDetails"), @NamedAttributeNode("passengerDetails"),
+		@NamedAttributeNode(("documents")) })
 @Table(name = "passenger")
 public class Passenger extends BaseEntityAudit {
 	private static final long serialVersionUID = 1L;
@@ -60,11 +63,14 @@ public class Passenger extends BaseEntityAudit {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
 	private Set<Seat> seatAssignments = new HashSet<>();
 
-	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
-	private Set<HitsSummary> hits = new HashSet<>();
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
+	private HitsSummary hits;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
-	private Set<PaxWatchlistLink> paxWatchlistLinks = new HashSet<>();
+	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<HitDetail> hitDetails = new HashSet<>();
+
+	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<HitViewStatus> hitViewStatuses = new HashSet<>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
 	private Set<Bag> bags = new HashSet<>();
@@ -74,6 +80,9 @@ public class Passenger extends BaseEntityAudit {
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
 	private Set<TicketFare> tickets = new HashSet<>();
+
+	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<Notification> notifications = new HashSet<>();
 
 	@Type(type = "uuid-char")
 	@Column(name = "uuid", updatable = false)
@@ -222,20 +231,12 @@ public class Passenger extends BaseEntityAudit {
 		this.passengerWLTimestamp = passengerWLTimestamp;
 	}
 
-	public Set<PaxWatchlistLink> getPaxWatchlistLinks() {
-		return paxWatchlistLinks;
+	public Set<HitDetail> getHitDetails() {
+		return hitDetails;
 	}
 
-	public void setPaxWatchlistLinks(Set<PaxWatchlistLink> paxWatchlistLinks) {
-		this.paxWatchlistLinks = paxWatchlistLinks;
-	}
-
-	public Set<HitsSummary> getHits() {
-		return hits;
-	}
-
-	public void setHits(Set<HitsSummary> hits) {
-		this.hits = hits;
+	public void setHitDetails(Set<HitDetail> hitDetails) {
+		this.hitDetails = hitDetails;
 	}
 
 	@Override
@@ -261,4 +262,27 @@ public class Passenger extends BaseEntityAudit {
 		this.passengerIDTag = passengerIDTag;
 	}
 
+	public HitsSummary getHits() {
+		return hits;
+	}
+
+	public void setHits(HitsSummary hits) {
+		this.hits = hits;
+	}
+
+	public Set<Notification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(Set<Notification> notifications) {
+		this.notifications = notifications;
+	}
+
+	public Set<HitViewStatus> getHitViewStatuses() {
+		return hitViewStatuses;
+	}
+
+	public void setHitViewStatuses(Set<HitViewStatus> hitViewStatuses) {
+		this.hitViewStatuses = hitViewStatuses;
+	}
 }

@@ -79,7 +79,7 @@ public class WatchlistManagementControllerIT {
 	@Transactional
 	@WithUserDetails(TEST_USER)
 	public void testGetWl() throws Exception {
-		watchlistService.createUpdateDeleteWatchlistItems("test", SampleDataGenerator.newWlWith2Items(WL_NAME));
+		watchlistService.createUpdateDeleteWatchlistItems("test", SampleDataGenerator.newWlWith2Items(WL_NAME), 1L);
 
 		mockMvc.perform(get("/gtas/wl/PASSENGER/" + WL_NAME)).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -123,7 +123,7 @@ public class WatchlistManagementControllerIT {
 	@Transactional
 	@WithUserDetails(TEST_USER)
 	public void testUpdateDeleteWl() throws Exception {
-		watchlistService.createUpdateDeleteWatchlistItems(TEST_USER, SampleDataGenerator.newWlWith2Items(WL_NAME));
+		watchlistService.createUpdateDeleteWatchlistItems(TEST_USER, SampleDataGenerator.newWlWith2Items(WL_NAME), 1L);
 		WatchlistSpec wlSpec = watchlistService.fetchWatchlist(WL_NAME);
 		assertNotNull(wlSpec);
 		// the watch list has two items
@@ -150,7 +150,7 @@ public class WatchlistManagementControllerIT {
 	@Transactional
 	@WithUserDetails(TEST_USER)
 	public void testDeleteAllWl() throws Exception {
-		watchlistService.createUpdateDeleteWatchlistItems(TEST_USER, SampleDataGenerator.newWlWith2Items(WL_NAME));
+		watchlistService.createUpdateDeleteWatchlistItems(TEST_USER, SampleDataGenerator.newWlWith2Items(WL_NAME), 1L);
 		WatchlistSpec wlSpec = watchlistService.fetchWatchlist(WL_NAME);
 		assertNotNull(wlSpec);
 		// the watch list has two items

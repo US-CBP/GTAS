@@ -5,6 +5,23 @@
  */
 package gov.gtas.controller;
 
+import gov.gtas.enumtype.Status;
+import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.Attachment;
+import gov.gtas.model.Passenger;
+import gov.gtas.repository.*;
+import gov.gtas.util.ApisGeneratorUtil;
+import gov.gtas.vo.passenger.AttachmentVo;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.sql.rowset.serial.SerialException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,33 +31,6 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.sql.rowset.serial.SerialException;
-
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.multipart.MultipartFile;
-
-import gov.gtas.enumtype.Status;
-import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.model.Attachment;
-import gov.gtas.model.Passenger;
-import gov.gtas.repository.AppConfigurationRepository;
-import gov.gtas.repository.AttachmentRepository;
-import gov.gtas.repository.FlightRepository;
-import gov.gtas.repository.LookUpRepository;
-import gov.gtas.repository.PassengerRepository;
-import gov.gtas.util.ApisGeneratorUtil;
-import gov.gtas.vo.passenger.AttachmentVo;
 
 @Controller
 public class UploadController {
@@ -59,7 +49,7 @@ public class UploadController {
 	private AttachmentRepository attRepo;
 
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/upload")
+	@PostMapping(value = "/upload")
 	public void upload(@RequestParam("file") MultipartFile file, @RequestParam("username") String username)
 			throws IOException {
 		if (file.isEmpty()) {
@@ -72,7 +62,7 @@ public class UploadController {
 	}
 
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/uploadattachments")
+	@PostMapping(value = "/uploadattachments")
 	public @ResponseBody JsonServiceResponse uploadAttachments(@RequestParam("file") MultipartFile file,
 			@RequestParam("username") String username, @RequestParam("password") String password,
 			@RequestParam("desc") String desc, @RequestParam("paxId") String paxId)
@@ -157,7 +147,7 @@ public class UploadController {
 	}
 
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/deleteall")
+	@GetMapping(value = "/deleteall")
 	public void wipeAllMessages() throws Exception {
 		logger.info("DELETE ALL MESSAGES");
 		flightRespository.deleteAllMessages();

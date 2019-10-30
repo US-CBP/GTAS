@@ -17,19 +17,23 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Objects;
 
-class CountDownCalculator {
+public class CountDownCalculator {
 
 	private final Date currentTime;
 
-	CountDownCalculator(Date currentTime) {
+	public CountDownCalculator(Date currentTime) {
 		this.currentTime = currentTime;
 	}
 
-	CountDownVo getCountDownFromDate(Date countDownTo) {
+	CountDownCalculator() {
+		this.currentTime = new Date();
+	}
+
+	public CountDownVo getCountDownFromDate(Date countDownTo) {
 		return getCountDownFromDate(countDownTo, 30, 30);
 	}
 
-	@SuppressWarnings({ "SameParameterValue", "WeakerAccess" })
+	@SuppressWarnings({ "SameParameterValue"})
 	CountDownVo getCountDownFromDate(@NonNull Date countDownTo, int minBefore, int minAfter) {
 		Objects.requireNonNull(countDownTo);
 		long currentTimeMillis = currentTime.getTime();

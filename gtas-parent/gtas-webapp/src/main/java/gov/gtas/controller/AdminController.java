@@ -8,29 +8,15 @@ package gov.gtas.controller;
 import gov.gtas.constant.AuditLogConstants;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.error.ErrorDetailInfo;
-import gov.gtas.model.ApiAccess;
-import gov.gtas.services.dto.ApplicationStatisticsDTO;
 import gov.gtas.model.AuditRecord;
-import gov.gtas.model.lookup.Carrier;
-import gov.gtas.model.lookup.Country;
-import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.services.*;
+import gov.gtas.services.dto.ApplicationStatisticsDTO;
 import gov.gtas.util.DateCalendarUtils;
-import gov.gtas.vo.AuditRecordVo;
-import gov.gtas.vo.SettingsVo;
-import gov.gtas.vo.LogFileVo;
-
-import java.text.ParseException;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.io.File;
-import java.io.IOException;
-
-import javax.validation.Valid;
-
+import gov.gtas.vo.*;
+import gov.gtas.vo.lookup.AirportVo;
+import gov.gtas.vo.lookup.CarrierVo;
+import gov.gtas.vo.lookup.CountryVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +30,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static gov.gtas.repository.AppConfigurationRepository.MAX_FLIGHT_QUERY_RESULT;
 import static gov.gtas.repository.AppConfigurationRepository.MAX_PASSENGER_QUERY_RESULT;
@@ -87,11 +77,13 @@ public class AdminController {
 
 	private final FileService fileService;
 
+	private final NoteTypeService noteTypeService;
+
 	@Autowired
 	public AdminController(AppConfigurationService appConfigurationService, AuditLogPersistenceService auditService,
-			ErrorPersistenceService errorService, AdminService adminService, ApiAccessService apiAccessService,
-			CarrierService carrierService, CountryService countryService, AirportService airportService,
-			FileService fileService) {
+						   ErrorPersistenceService errorService, AdminService adminService, ApiAccessService apiAccessService,
+						   CarrierService carrierService, CountryService countryService, AirportService airportService,
+						   FileService fileService, NoteTypeService noteTypeService) {
 		this.appConfigurationService = appConfigurationService;
 		this.auditService = auditService;
 		this.errorService = errorService;
@@ -101,6 +93,7 @@ public class AdminController {
 		this.countryService = countryService;
 		this.airportService = airportService;
 		this.fileService = fileService;
+		this.noteTypeService = noteTypeService;
 	}
 
 	// ------------------------------------------------- //
@@ -116,6 +109,13 @@ public class AdminController {
 	@RequestMapping(method = RequestMethod.GET, value = "/api/logs")
 	public String[] getLogTypeList() throws IOException {
 		return fileService.getLogTypeList();
+	}
+
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@PostMapping(value = "/api/noteType", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void saveNoteType (@RequestBody NoteTypeVo noteTypeVo) {
+		noteTypeService.saveNoteType(noteTypeVo);
 	}
 
 	// GET LIST OF AVAILABLE LOG FILES BY LOG TYPE. SHOW ZIP FILES ONLY
@@ -142,27 +142,27 @@ public class AdminController {
 
 	// carrier
 	@RequestMapping(method = RequestMethod.GET, value = "/api/carrier")
-	public List<Carrier> getAllCarrier() {
+	public List<CarrierVo> getAllCarrier() {
 		return carrierService.findAll();
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/api/carrier", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Carrier createCarrier(@RequestBody @Valid Carrier carrier) {
+	public CarrierVo createCarrier(@RequestBody @Valid CarrierVo carrier) {
 		return carrierService.create(carrier);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/api/carrier", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Carrier updateCarrier(@RequestBody @Valid Carrier carrier) {
+	public CarrierVo updateCarrier(@RequestBody @Valid CarrierVo carrier) {
 		return carrierService.update(carrier);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/api/carrier/{id}")
-	public Carrier deleteCarrier(@PathVariable Long id) {
+	public CarrierVo deleteCarrier(@PathVariable Long id) {
 		return carrierService.delete(id);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/api/carrier/restore")
-	public Carrier restoreCarrier(@RequestBody @Valid Carrier carrier) {
+	public CarrierVo restoreCarrier(@RequestBody @Valid CarrierVo carrier) {
 		return carrierService.restore(carrier);
 	}
 
@@ -173,27 +173,27 @@ public class AdminController {
 
 	// country
 	@RequestMapping(method = RequestMethod.GET, value = "/api/country")
-	public List<Country> getAllCountry() {
+	public List<CountryVo> getAllCountry() {
 		return countryService.findAll();
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/api/country", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Country createCountry(@RequestBody @Valid Country country) {
+	public CountryVo createCountry(@RequestBody @Valid CountryVo country) {
 		return countryService.create(country);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/api/country", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Country updateCountry(@RequestBody @Valid Country country) {
+	public CountryVo updateCountry(@RequestBody @Valid CountryVo country) {
 		return countryService.update(country);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/api/country/{id}")
-	public Country deleteCountry(@PathVariable Long id) {
+	public CountryVo deleteCountry(@PathVariable Long id) {
 		return countryService.delete(id);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/api/country/restore")
-	public Country restoreCountry(@RequestBody @Valid Country country) {
+	public CountryVo restoreCountry(@RequestBody @Valid CountryVo country) {
 		return countryService.restore(country);
 	}
 
@@ -204,27 +204,27 @@ public class AdminController {
 
 	// airport
 	@RequestMapping(method = RequestMethod.GET, value = "/api/airport")
-	public List<Airport> getAllAirport() {
+	public List<AirportVo> getAllAirport() {
 		return airportService.findAll();
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/api/airport", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Airport createAirport(@RequestBody @Valid Airport airport) {
+	public AirportVo createAirport(@RequestBody @Valid AirportVo airport) {
 		return airportService.create(airport);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/api/airport", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Airport updateAirport(@RequestBody @Valid Airport airport) {
+	public AirportVo updateAirport(@RequestBody @Valid AirportVo airport) {
 		return airportService.update(airport);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/api/airport/{id}")
-	public Airport deleteAirport(@PathVariable Long id) {
+	public AirportVo deleteAirport(@PathVariable Long id) {
 		return airportService.delete(id);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/api/airport/restore")
-	public Airport restoreAirport(@RequestBody @Valid Airport airport) {
+	public AirportVo restoreAirport(@RequestBody @Valid AirportVo airport) {
 		return airportService.restore(airport);
 	}
 
@@ -259,22 +259,22 @@ public class AdminController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/apiAccess")
-	public List<ApiAccess> getAllApiAccess() {
+	public List<ApiAccessVo> getAllApiAccess() {
 		return apiAccessService.findAll();
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/apiAccess", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ApiAccess createApiAccess(@RequestBody @Valid ApiAccess apiAccess) {
+	public ApiAccessVo createApiAccess(@RequestBody @Valid ApiAccessVo apiAccess) {
 		return apiAccessService.create(apiAccess);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/apiAccess", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ApiAccess updateApiAccess(@RequestBody @Valid ApiAccess apiAccess) {
+	public ApiAccessVo updateApiAccess(@RequestBody @Valid ApiAccessVo apiAccess) {
 		return apiAccessService.update(apiAccess);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/apiAccess/{id}")
-	public ApiAccess deleteApiAccess(@PathVariable Long id) {
+	public ApiAccessVo deleteApiAccess(@PathVariable Long id) {
 		return apiAccessService.delete(id);
 	}
 

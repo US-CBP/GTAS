@@ -1,0 +1,41 @@
+<div class="modal-header">
+  <h3 class="modal-title" id="modal-title">Email Notification</h3>
+</div>
+
+<form ng-submit="submit()">
+  <div class="modal-body" id="modal-body">
+    <uib-tabset>
+      <uib-tab index="0">
+          <uib-tab-heading>
+              <span class="glyphicon glyphicon-bullhorn"></span> Notify Group
+            </uib-tab-heading>
+        <div class="checkbox">
+          <input type="checkbox" id="select-all" ng-click="toggleUser()"/>
+          <label for="select-all">Notify all users in this group</label>
+        </div>
+        <div class="checkbox" ng-repeat="user in allUsers">
+          <input type="checkbox" id = {{user.userId}} name={{user.email}} ng-click="clearParent()" ng-model="user.selected">
+          <label for={{user.userId}}>{{user.firstName}} {{user.lastName}}</label>
+        </div>
+      </uib-tab>
+      <uib-tab index="1" >
+          <uib-tab-heading>
+              <span class="glyphicon glyphicon-bullhorn"></span> Notify External User
+            </uib-tab-heading>
+        <div class="modal-body form-group">
+          <label>Email address:</label>
+          <input type="email" class="form-control" ng-model="noneGtasUser.email" placeholder="email@example.com"/>
+        </div>
+      </uib-tab>
+    </uib-tabset>
+    <div class="form-group">
+      <label for="notes">Notes:</label>
+      <textarea name="notes" class="form-control col-xs-12" rows="7" cols="50" ng-model="notesForEmailNotification"></textarea>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <input type="submit" class="btn btn-primary" value="Submit" />
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+  </div>
+</form>

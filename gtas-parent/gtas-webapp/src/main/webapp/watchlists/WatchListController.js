@@ -25,6 +25,7 @@
                 WatchlistCategory: function (entity) {
                     this.label = entity ? entity.name : null;
                     this.description = entity ? entity.description : null;
+                    this.severity = entity ? entity.severity : null;
                 }
             },
             resetModels = function (m) {
@@ -141,7 +142,6 @@
         $scope.categories = {};
         watchListService.getWatchlistCategories().then(function(res){
             $scope.watchlistCategories =  res.data;
-            $scope.wlCatagoryGrid.data =  res.data;
         	$scope.watchlistCategories.forEach(function(item){
         		
         		$scope.categories[item.id]=item.label;
@@ -202,19 +202,7 @@
             });
         };
 
-        $scope.saveWlCategory = function () {
-            watchListService.saveCategory($scope.wlCategoryModel).then(function () {
-                watchListService.getWatchlistCategories().then(function(res){
-                    $scope.watchlistCategories =  res.data;
-                    $scope.wlCatagoryGrid.data =  res.data;
-                    $scope.watchlistCategories.forEach(function(item){
-                        $scope.categories[item.id]=item.label;
-                    });
-                });
-                resetModels($scope);
-                $mdSidenav('wlCatSave').close();
-            });
-        };
+   
 
         $scope.getSaveStateText = function (activeTab) {
             return 'Save ';
@@ -256,11 +244,7 @@
             $mdSidenav('save').open();
         };
 
-        $scope.addWlCategory = function () {
-            resetModels($scope);
-            $scope.watchlistCategory = new model.WatchlistCategory();
-            $mdSidenav('wlCatSave').open();
-        };
+  
 
         $scope.saveRow = function () {
             var objectType = $scope.activeTab,
@@ -450,26 +434,7 @@
             return valid;
         }
         $scope.showWLTypesGrid = true;
-        $scope.wlCatagoryGrid = {
-            paginationPageSizes: [10, 15, 20],
-            paginationPageSize: 10,           
-            columnDefs: gridOptionsLookupService.getLookupColumnDefs('watchlist').CATEGORY,
-            enableGridMenu: true,
-            exporterPdfDefaultStyle: {fontSize: 9},
-            exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
-            exporterPdfFooter: function ( currentPage, pageCount ) {
-                return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
-            },
-            exporterPdfPageSize: 'LETTER',
-            exporterPdfMaxGridWidth: 500,
-            exporterCsvFilename: 'watch-list-types.csv',
-            exporterExcelFilename: 'watch-list-types.xlsx',
-            exporterExcelSheetName: 'Data'
 
-        };
-        $scope.wlCatagoryGrid.onRegisterApi = function (gridApi) {
-            $scope.wlGridApi = gridApi;
-        }
 
     });
 }());

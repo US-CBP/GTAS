@@ -9,7 +9,7 @@ import static gov.gtas.rule.builder.RuleTemplateConstants.GLOBAL_RESULT_DECLARAT
 import static gov.gtas.rule.builder.RuleTemplateConstants.IMPORT_PREFIX;
 import static gov.gtas.rule.builder.RuleTemplateConstants.NEW_LINE;
 import static gov.gtas.rule.builder.RuleTemplateConstants.RULE_PACKAGE_NAME;
-import gov.gtas.bo.RuleHitDetail;
+import gov.gtas.model.RuleHitDetail;
 import gov.gtas.bo.match.PnrAddressLink;
 import gov.gtas.bo.match.PnrBookingLink;
 import gov.gtas.bo.match.PnrCreditCardLink;

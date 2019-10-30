@@ -6,7 +6,7 @@
 package gov.gtas.repository.watchlist;
 
 import gov.gtas.enumtype.EntityEnum;
-import gov.gtas.model.lookup.WatchlistCategory;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.Watchlist;
 import java.util.List;
 
@@ -30,9 +30,9 @@ public interface WatchlistRepository extends CrudRepository<Watchlist, Long>, Jp
 	@Query("SELECT wl FROM Watchlist wl WHERE wl.watchlistName in :names")
 	public List<Watchlist> getWatchlistByNames(@Param("names") List<String> names);
 
-	@Query("select categories from WatchlistCategory categories")
-	public List<WatchlistCategory> getWatchlistCategories();
+	@Query("select categories from HitCategory categories")
+	public List<HitCategory> getWatchlistCategories();
 
-	@Query("select c from WatchlistCategory c where c.id = :category_id")
-	public WatchlistCategory getWatchlistCategoryById(@Param("category_id") Long category_id);
+	@Query("select c from HitCategory c where c.id = :category_id")
+	public HitCategory getWatchlistCategoryById(@Param("category_id") Long category_id);
 }

@@ -296,12 +296,101 @@ span.right-header{
   height: calc(100vh - 120px);
   min-height: 240px;
 }
+
+div[ui-grid] {
+  list-style: none;
+  overflow: no-display;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+
+  display: flex;
+
+}
 .case-grid.ui-grid {
   height: calc(100vh - 140px);
   min-height: 240px;
+  list-style: none;
+  display: flex;
+  text-overflow: clip;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+
+  overflow: no-display;
+}
+
+.case-grid .ui-grid-cell .ui-grid-vertical-bar {
+  rowHeight:75px;
+  font-size: 12px;
+  text-overflow: clip;
+  line-height: 20px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  overflow: no-display;
+  vertical-align: middle;
 }
 
 
+.case-grid  .ui-grid-row {
+  height: 65px!important;
+  list-style: none;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  overflow: no-display;
+  vertical-align: middle;
+
+}
+
+.case-grid  .ui-grid-row>div {
+  display: table-row;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  overflow-wrap: break-word;
+
+  display: flex;
+  height: 65px!important;
+  text-overflow: clip;
+  overflow: no-display;
+  list-style: none;
+  vertical-align: middle;
+
+}
+
+.case-grid  .ui-grid-row>div .ui-grid-cell {
+  display: flex;
+  align-content: center;
+  overflow-wrap: break-word;
+  float: none;
+  text-overflow: clip;
+  list-style: none;
+  overflow: no-display;
+  vertical-align: middle;
+  height: 75px!important;
+}
+
+.caseHits {
+  place-self: baseline;
+}
+
+.case-grid  .ui-grid-cell-contents {
+  white-space: normal;
+  list-style: none;
+  overflow: no-display;
+  text-align: center;
+  align-items: center;
+  vertical-align: middle;
+  justify-content: center;
+  display: flex;
+  text-overflow: ellipsis;
+}
 
 /*Sizing Styles */
 .fnt-small {
@@ -389,6 +478,14 @@ span.right-header{
 .white-space-preline {
   white-space:pre-line;
 }
+
+.disabled {
+  color: #8e908c;
+  cursor: default;
+  pointer-events: none;
+  text-decoration: none;
+}
+
 .flex {
   display: flex;
   display: -ms-flexbox;
@@ -723,6 +820,16 @@ span.right-header{
   overflow-y: scroll;
   overflow-x: hidden;
 }
+.caseFilter {
+  z-index: 1 !important;
+  position: absolute;
+  height: 85vh;
+  padding: 10px;
+  width: 250px;
+  margin-top: 51px;
+  overflow-y: scroll;
+  overflow-x: auto;
+}
 #sidebar-toggle {
   position: absolute;
   z-index: 5;
@@ -772,12 +879,13 @@ span.right-header{
     min-height: 20px;
     min-width: inherit;
 }
+
 .ui-grid-cell-contents {
   text-align: center;
 }
 .ui-grid-cell {
-  text-align: center;
   display: flex;
+  text-align: center;
   align-items: center;
   justify-content: center;
   font-size: 14px;
@@ -796,8 +904,8 @@ span.right-header{
 
 /*Override query builder */
 .group-conditions .btn-primary.active {
-  background-color: #F09511 !important;
-  color: black !important;
+  background-color: #85a3f0 !important;
+  color: white !important;
 }
 
 /* BEGIN IE css patches */
@@ -940,4 +1048,12 @@ span.right-header{
     .mobile-hide {
       display: none !important;
     }
+}
+
+.trix-button-group--file-tools{
+	display:none !important;
+}
+
+.trix-button-group--history-tools{
+	display:none !important;
 }

@@ -15,11 +15,9 @@ import gov.gtas.services.dto.FlightsRequestDto;
 import gov.gtas.services.dto.SortOptionsDto;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -70,7 +68,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		Join<Flight, FlightPassengerCount> passengerCountJoin = root.join("flightPassengerCount", JoinType.LEFT);
 		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = root.join("mutableFlightDetails", JoinType.LEFT);
 		Join<Flight, FlightCountDownView> countDownViewJoin = root.join("flightCountDownView", JoinType.LEFT);
-		Predicate etaCondition = getETAPredicate(dto, cb, mutableFlightDetailsJoin);
+		Predicate etaCondition = getETAPredicate(dto, cb, root, mutableFlightDetailsJoin);
 
 		// sorting
 		if (dto.getSort() != null) {
@@ -203,7 +201,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		Root<Flight> countRoot = countQuery.from(Flight.class);
 		Join<Flight, MutableFlightDetails> countMutableFlightsInfoJoin = countRoot.join("mutableFlightDetails",
 				JoinType.LEFT);
-		Predicate countEtaCondition = getETAPredicate(dto, cb, countMutableFlightsInfoJoin);
+		Predicate countEtaCondition = getETAPredicate(dto, cb, countRoot, countMutableFlightsInfoJoin);
 
 		if (countEtaCondition != null) {
 			countPredicates.add(countEtaCondition);
@@ -214,17 +212,18 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		return countResult.isPresent() ? (Long) countResult.get() : 0L;
 	}
 
-	private Predicate getETAPredicate(FlightsRequestDto dto, CriteriaBuilder cb,
+	private Predicate getETAPredicate(FlightsRequestDto dto, CriteriaBuilder cb, Root<Flight> flightRoot,
 			Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin) {
-		Predicate etaCondition = null;
+		Predicate relevantDateExpression = null;
 		if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
-			Path<Date> eta = mutableFlightDetailsJoin.get("eta");
-			Predicate startPredicate = cb.or(cb.isNull(eta),
-					cb.greaterThanOrEqualTo(mutableFlightDetailsJoin.get("eta"), dto.getEtaStart()));
-			Predicate endPredicate = cb.or(cb.isNull(eta), cb.lessThanOrEqualTo(eta, dto.getEtaEnd()));
-			etaCondition = cb.and(startPredicate, endPredicate);
+			Expression<Date> relevantDate = cb.selectCase(flightRoot.get("direction"))
+					.when("O", mutableFlightDetailsJoin.get("etd")).when("I", mutableFlightDetailsJoin.get("eta"))
+					.otherwise(mutableFlightDetailsJoin.get("eta")).as(Date.class);
+			Predicate startPredicate = cb.greaterThanOrEqualTo(relevantDate, dto.getEtaStart());
+			Predicate endPredicate = cb.lessThanOrEqualTo(relevantDate, dto.getEtaEnd());
+			relevantDateExpression = cb.and(startPredicate, endPredicate);
 		}
-		return etaCondition;
+		return relevantDateExpression;
 	}
 
 	@Override

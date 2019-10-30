@@ -39,6 +39,6 @@ public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
 		return findById(id).orElse(null);
 	}
 
-	@Query("SELECT passenger from ApisMessage apismessage join apismessage.passengers passenger left join fetch passenger.flight where apismessage.id in :apisIds")
-	Set<Passenger> getPassengerWithFlightInfo(@Param("apisIds") Set<Long> apisIds);
+	@Query("SELECT passenger.id from ApisMessage apismessage join apismessage.passengers passenger where apismessage.id in :apisIds")
+	Set<Long> getPassengerWithFlightInfo(@Param("apisIds") Set<Long> apisIds);
 }

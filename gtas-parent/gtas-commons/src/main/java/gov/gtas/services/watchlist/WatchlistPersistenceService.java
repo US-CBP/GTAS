@@ -13,9 +13,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.model.AuditRecord;
-import gov.gtas.model.lookup.WatchlistCategory;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * The Persistence Layer service for Watch lists.
@@ -39,11 +41,11 @@ public interface WatchlistPersistenceService {
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	public List<Long> createUpdateDelete(String wlName, EntityEnum entity, List<WatchlistItem> createUpdateList,
-			List<WatchlistItem> deleteList, String userId);
+			List<WatchlistItem> deleteList, String userId, Long catId);
 
 	/**
 	 * Find and return the list of all watch lists.
-	 * 
+	 *
 	 * @return list of all watch lists.
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
@@ -110,15 +112,14 @@ public interface WatchlistPersistenceService {
 	 */
 	public List<AuditRecord> findLogEntriesForWatchlist(String watchlistName);
 
-	public List<WatchlistCategory> findWatchlistCategories();
+	public List<HitCategory> findWatchlistCategories();
 
 	WatchlistItem updateWatchlistItemCategory(WatchlistItem watchlistItem);
 
-	WatchlistCategory fetchWatchlistCategoryById(Long categoryID);
+	HitCategory fetchWatchlistCategoryById(Long categoryID);
 
 	WatchlistItem findWatchlistItemById(Long watchlistItemId);
 
 	List<WatchlistItem> findItemsByWatchlistName(String watchlistName);
 
-	WatchlistCategory saveWatchlistCategory(WatchlistCategory watchlistCategory);
 }

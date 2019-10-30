@@ -132,6 +132,9 @@ public class Flight extends BaseEntityAudit {
 	@JsonIgnore
 	private Set<Passenger> passengers;
 
+	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+	private Set<HitDetail> hitDetails;
+
 	/*
 	 * Used to keep a referenced to FlightVO from parser. Only used in loader to
 	 * help establish relationships.
@@ -366,5 +369,13 @@ public class Flight extends BaseEntityAudit {
 
 	public void setFlightHitsGraph(FlightHitsGraph flightHitsGraph) {
 		this.flightHitsGraph = flightHitsGraph;
+	}
+
+	public Set<HitDetail> getHitDetails() {
+		return hitDetails;
+	}
+
+	public void setHitDetails(Set<HitDetail> hitDetails) {
+		this.hitDetails = hitDetails;
 	}
 }

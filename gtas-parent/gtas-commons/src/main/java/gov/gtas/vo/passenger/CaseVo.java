@@ -5,7 +5,9 @@
  */
 package gov.gtas.vo.passenger;
 
-import gov.gtas.model.HitsDisposition;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.util.ArrayList;
 import java.util.Set;
 
 import java.util.Date;
@@ -21,10 +23,13 @@ public class CaseVo {
 	private Date flightETADate;
 	private Date flightETDDate;
 	private String flightDirection;
+	private String flightDestination;
+	private String flightOrigin;
 	private String lastName;
 	private String firstName;
 	private String middleName;
 	private String nationality;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.SHORT_DATE_FORMAT)
 	private Date dob;
 	private String document;
 	private Long highPriorityRuleCatId;
@@ -32,7 +37,6 @@ public class CaseVo {
 	private String createDate;
 	private String status;
 	private String description;
-	private Set<HitsDisposition> hitsDispositions;
 	private Set<HitsDispositionVo> hitsDispositionVos;
 	private Set<GeneralCaseCommentVo> generalCaseCommentVos;
 	private String caseOfficerStatus;
@@ -41,6 +45,9 @@ public class CaseVo {
 	private String countDownTimeDisplay;
 	private Date countdownTime;
 	private String disposition;
+	private ArrayList<String> hitNames;
+	private String gender;
+	private String docType;
 
 	public String getCaseOfficerStatus() {
 		return caseOfficerStatus;
@@ -226,14 +233,6 @@ public class CaseVo {
 		this.description = description;
 	}
 
-	public Set<HitsDisposition> getHitsDispositions() {
-		return hitsDispositions;
-	}
-
-	public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
-		this.hitsDispositions = hitsDispositions;
-	}
-
 	public Boolean getOneDayLookoutFlag() {
 		return oneDayLookoutFlag;
 	}
@@ -282,4 +281,43 @@ public class CaseVo {
 		this.generalCaseCommentVos = generalCaseCommentVos;
 	}
 
+	public void setHitNames(ArrayList<String> hitNames) {
+		this.hitNames = hitNames;
+	}
+
+	public ArrayList<String> getHitNames() {
+		return this.hitNames;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setDocType(String docType) {
+		this.docType = docType;
+	}
+
+	public String getDocType() {
+		return this.docType;
+	}
+
+	public String getFlightDestination() {
+		return flightDestination;
+	}
+
+	public void setFlightDestination(String flightDestination) {
+		this.flightDestination = flightDestination;
+	}
+
+	public String getFlightOrigin() {
+		return flightOrigin;
+	}
+
+	public void setFlightOrigin(String flightOrigin) {
+		this.flightOrigin = flightOrigin;
+	}
 }

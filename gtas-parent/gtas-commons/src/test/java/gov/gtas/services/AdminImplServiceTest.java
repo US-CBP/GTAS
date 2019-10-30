@@ -9,6 +9,7 @@
 package gov.gtas.services;
 
 import gov.gtas.model.*;
+import gov.gtas.repository.HitDetailRepository;
 import gov.gtas.services.dto.ApplicationStatisticsDTO;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,7 +32,7 @@ public class AdminImplServiceTest {
 	MessageService messageService;
 
 	@Mock
-	HitsSummaryService hitsSummary;
+	HitDetailRepository hitDetailRepository;
 
 	@InjectMocks
 	AdminServiceImpl adminService;
@@ -39,7 +40,7 @@ public class AdminImplServiceTest {
 	@Before
 	public void before() {
 		initMocks(messageService);
-		initMocks(hitsSummary);
+		initMocks(hitDetailRepository);
 
 		// Make 500 messages with 1 passenger each.
 		List<Message> messageList = new ArrayList<>();
@@ -52,7 +53,7 @@ public class AdminImplServiceTest {
 			messageList.add(pnr);
 		}
 		Mockito.when(messageService.getMostRecent500Messages()).thenReturn(messageList);
-		Mockito.when(hitsSummary.getMostRecentHitsSummary()).thenReturn(null);
+		Mockito.when(hitDetailRepository.findFirstByOrderByIdDesc()).thenReturn(null);
 	}
 
 	@Test

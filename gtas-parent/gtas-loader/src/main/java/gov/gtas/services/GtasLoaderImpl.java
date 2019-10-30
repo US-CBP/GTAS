@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static gov.gtas.services.CaseDispositionServiceImpl.getNullPropertyNames;
+import static gov.gtas.services.LoaderUtils.getNullPropertyNames;
 
 @Service
 public class GtasLoaderImpl implements GtasLoader {

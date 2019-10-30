@@ -147,12 +147,12 @@ public class TargetSummaryVo implements Serializable, Cloneable {
 	 *            the detail
 	 */
 	public void addHitDetail(TargetDetailVo detail) {
-		if (detail.getHitType() == HitTypeEnum.R) {
+		if (detail.getHitType() == HitTypeEnum.USER_DEFINED_RULE) {
 			this.ruleHitCount++;
 		} else {
 			this.watchlistHitCount++;
 		}
-		this.hitType = this.hitType.addHitType(detail.getHitType());
+		this.hitType = detail.getHitType();
 		hitDetails.add(detail);
 	}
 

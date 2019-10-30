@@ -12,7 +12,7 @@ import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.error.WatchlistServiceErrorHandler;
 import gov.gtas.json.JsonLookupData;
 import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.model.lookup.WatchlistCategory;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
@@ -63,7 +63,8 @@ public class WatchlistServiceImpl implements WatchlistService {
 	}
 
 	@Override
-	public JsonServiceResponse createUpdateDeleteWatchlistItems(String userId, WatchlistSpec wlToCreateUpdate) {
+	public JsonServiceResponse createUpdateDeleteWatchlistItems(String userId, WatchlistSpec wlToCreateUpdate,
+			Long catId) {
 		WatchlistValidationAdapter.validateWatchlistSpec(wlToCreateUpdate);
 		WatchlistBuilder bldr = new WatchlistBuilder(wlToCreateUpdate);
 		bldr.buildPersistenceLists();
@@ -72,7 +73,7 @@ public class WatchlistServiceImpl implements WatchlistService {
 		List<WatchlistItem> createUpdateList = bldr.getCreateUpdateList();
 		List<WatchlistItem> deleteList = bldr.getDeleteList();
 		List<Long> idList = watchlistPersistenceService.createUpdateDelete(wlName, entity, createUpdateList, deleteList,
-				userId);
+				userId, catId);
 		List<Long> itemIdList = null;
 		Long wlId = idList.get(0);
 		if (idList.size() > 1) {
@@ -135,9 +136,9 @@ public class WatchlistServiceImpl implements WatchlistService {
 	@Override
 	public List<JsonLookupData> findWatchlistCategories() {
 		//
-		List<JsonLookupData> result = this.watchlistPersistenceService.findWatchlistCategories().stream().map(w -> {
-			return new JsonLookupData(w.getId(), w.getName(), w.getDescription());
-		}).collect(Collectors.toList());
+		List<JsonLookupData> result = this.watchlistPersistenceService.findWatchlistCategories().stream()
+				.map(w -> new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString()))
+				.collect(Collectors.toList());
 
 		return result;
 	}
@@ -146,7 +147,7 @@ public class WatchlistServiceImpl implements WatchlistService {
 	public synchronized void updateWatchlistItemCategory(Long categoryID, Long watchlistItemId) {
 		//
 		WatchlistItem watchlistItem = this.fetchWatchlistItemById(watchlistItemId);
-		watchlistItem.setWatchlistCategory(fetchWatchlistCategoryById(Long.parseLong(categoryID.toString())));
+		watchlistItem.setHitCategory(fetchWatchlistCategoryById(Long.parseLong(categoryID.toString())));
 		this.watchlistPersistenceService.updateWatchlistItemCategory(watchlistItem);
 	}
 
@@ -157,7 +158,7 @@ public class WatchlistServiceImpl implements WatchlistService {
 	}
 
 	@Override
-	public WatchlistCategory fetchWatchlistCategoryById(Long categoryID) {
+	public HitCategory fetchWatchlistCategoryById(Long categoryID) {
 		//
 		return this.watchlistPersistenceService.fetchWatchlistCategoryById(categoryID);
 	}
@@ -167,10 +168,4 @@ public class WatchlistServiceImpl implements WatchlistService {
 		// TODO
 		return this.watchlistPersistenceService.findItemsByWatchlistName(watchlistName);
 	}
-
-	@Override
-	public void createWatchlistCategory(WatchlistCategory wlCat) {
-		this.watchlistPersistenceService.saveWatchlistCategory(wlCat);
-	}
-
 }

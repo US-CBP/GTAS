@@ -6,7 +6,7 @@
 package gov.gtas.services;
 
 import gov.gtas.config.TestCommonServicesConfig;
-import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.HitCategory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,26 +35,12 @@ public class RuleCatServiceImpIT {
 	}
 
 	@Autowired
-	private RuleCatService ruleCatService;
-
-	@Test
-	public void testRuleCatRetrievalTerroism() {
-		RuleCat ruleCat = ruleCatService.findRuleCatByCatId(2L);
-		assertEquals(ruleCat.getCatId(), new Long(2L));
-		assertEquals(ruleCat.getCategory(), "Terrorism");
-	}
-
-	@Test
-	public void testRuleCatRetrievalGeneral() {
-		RuleCat ruleCat = ruleCatService.findRuleCatByCatId(1L);
-		assertEquals(ruleCat.getCatId(), new Long(1L));
-		assertEquals(ruleCat.getCategory(), "General");
-	}
+	private HitCategoryService ruleCatService;
 
 	@Test
 	public void testRuleCatDoesntExist() {
 		long notAValidRuleCategory = -1999L;
-		RuleCat ruleCat = ruleCatService.findRuleCatByCatId(notAValidRuleCategory);
+		HitCategory ruleCat = ruleCatService.findById(notAValidRuleCategory);
 		assertNull(ruleCat);
 	}
 

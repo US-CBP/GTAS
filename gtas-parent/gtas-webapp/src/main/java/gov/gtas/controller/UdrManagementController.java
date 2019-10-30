@@ -12,13 +12,13 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.error.CommonServiceException;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.udr.json.JsonUdrListElement;
 import gov.gtas.model.udr.json.MetaData;
 import gov.gtas.model.udr.json.UdrSpecification;
 import gov.gtas.model.udr.json.util.UdrSpecificationBuilder;
 import gov.gtas.security.service.GtasSecurityUtils;
-import gov.gtas.services.RuleCatService;
+import gov.gtas.services.HitCategoryService;
 import gov.gtas.svc.RuleManagementService;
 import gov.gtas.svc.UdrService;
 import gov.gtas.util.DateCalendarUtils;
@@ -55,7 +55,7 @@ public class UdrManagementController {
 	private RuleManagementService ruleManagementService;
 
 	@Autowired
-	private RuleCatService ruleCatService;
+	private HitCategoryService ruleCatService;
 
 	/**
 	 * Gets the udr.
@@ -283,8 +283,8 @@ public class UdrManagementController {
 	}
 
 	@RequestMapping(value = Constants.UDR_GETALL_CATEGORIES, method = RequestMethod.GET)
-	public List<RuleCat> getAllCategories() {
-		List<RuleCat> target = new ArrayList<>();
+	public List<HitCategory> getAllCategories() {
+		List<HitCategory> target = new ArrayList<>();
 		ruleCatService.findAll().forEach(target::add);
 		return target;
 	}

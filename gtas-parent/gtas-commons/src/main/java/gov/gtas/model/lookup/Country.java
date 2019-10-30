@@ -20,13 +20,10 @@ import org.springframework.cache.annotation.Cacheable;
 @Entity
 @Table(name = "country", indexes = { @Index(columnList = "iso3", name = "country_iso3_index") })
 public class Country extends BaseEntity {
-	public Country() {
-	}
 
 	private Long originId;
 	@Column(length = 2)
 	private String iso2;
-
 	@Column(length = 3)
 	private String iso3;
 
@@ -34,6 +31,18 @@ public class Country extends BaseEntity {
 
 	@Column(name = "iso_numeric", length = 3)
 	private String isoNumeric;
+
+	public Country() {
+	}
+
+	public Country(Long id, Long originId, String iso2, String iso3, String name, String isoNumeric) {
+		this.id = id;
+		this.originId = originId;
+		this.iso2 = iso2;
+		this.iso3 = iso3;
+		this.name = name;
+		this.isoNumeric = isoNumeric;
+	}
 
 	public Long getOriginId() {
 		return originId;

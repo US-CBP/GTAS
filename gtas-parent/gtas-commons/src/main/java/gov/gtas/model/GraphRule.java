@@ -1,12 +1,18 @@
 package gov.gtas.model;
 
+import gov.gtas.enumtype.HitTypeEnum;
+
 import javax.persistence.*;
 import java.util.*;
 
 @SuppressWarnings("unused") // This is for getters and setters
 @Entity
 @Table(name = "graph_rules")
-public class GraphRule extends BaseEntityAudit {
+public class GraphRule extends HitMaker {
+
+	public GraphRule() {
+		setHitTypeEnum(HitTypeEnum.GRAPH_HIT);
+	}
 
 	@Column(name = "description")
 	private String description;
@@ -16,6 +22,18 @@ public class GraphRule extends BaseEntityAudit {
 
 	@Column(name = "cipherQuery", length = 10000)
 	private String cipherQuery;
+
+	@Column(name = "displayCondition")
+	public String getDisplayCondition() {
+		return displayCondition;
+	}
+
+	public void setDisplayCondition(String displayCondition) {
+		this.displayCondition = displayCondition;
+	}
+
+	@Column(name = "displayCondition")
+	private String displayCondition;
 
 	@OneToMany(mappedBy = "graphRule")
 	private Set<GraphRuleParameter> graphParameter = new HashSet<>();
