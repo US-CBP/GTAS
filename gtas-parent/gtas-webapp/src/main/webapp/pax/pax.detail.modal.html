@@ -9,11 +9,9 @@
   -->
 
   <!--- todo: i18n for date formats required here!! -->
-
-  <md-dialog style="height: 100%; width:100%; top:5%">
-    <!-- BEGIN SIDEBAR -->
+  <div class="modal-header">
     <div layout="row">
-      <span flex></span>
+      <!-- <span flex></span> -->
       <md-button ng-if="isEmailEnabled()" class="btn-warning"  ng-click="answer('notify')" >
        Notify
       </md-button>
@@ -30,9 +28,16 @@
         Return To PVL
       </md-button>
     </div>
+  </div>
+<div class="modal-body" id="modal-body">
+  <!-- <md-dialog style="height: 100%; width:100%; top:1%"> -->
+    <!-- BEGIN SIDEBAR -->
+    
     <div class="cbp-sidebar sidebar margin-0" ng-include="'pax/pax.detail.sidebar.html'">
     </div>  <!-- END SIDEBAR -->
     <div class="cbp-sidebar-offset margin-top-1" ng-include="'pax/paxTabs.html'">
     </div>
 
-  </md-dialog>
+  <!-- </md-dialog> -->
+</div>
+  

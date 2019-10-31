@@ -9,6 +9,7 @@
   app.controller("PassengerDetailCtrl", function(
     $scope,
     $mdDialog,
+    $uibModalInstance,
     $mdSidenav,
     $timeout,
     $translate,
@@ -31,6 +32,7 @@
     eventNotes,
     noteTypesList,
     $uibModal
+   
   ) {
 	$scope.noteTypesList = noteTypesList.data;
 	$scope.eventNotes = eventNotes.data.paxNotes;
@@ -63,6 +65,7 @@
     $scope.isReloaded = true;
     $scope.answer = function(answer) {
       $mdDialog.hide(answer);
+      $uibModalInstance.close(answer);
     };
     configService.cypherUrl().then(function(result){
       vaquita.rest.CYPHER_URL = result;  
