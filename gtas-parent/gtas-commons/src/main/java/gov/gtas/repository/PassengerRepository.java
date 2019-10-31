@@ -47,9 +47,11 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 	}
 
 	@Query("Select p " + "from Passenger p " + "join fetch p.passengerIDTag " + "left join p.apisMessage apis "
-			+ "left join p.pnrs pnrs " + "left join fetch p.flight f " + "where apis.id in :messageId "
-			+ "or pnrs.id in :messageId")
-	Set<Passenger> getPassengerWithIdInformation(@Param("messageId") Set<Long> messageId);
+			+ "left join p.pnrs pnrs " + "left join fetch p.flight f " +
+			" WHERE (p.flight.id in :flightIds " +
+			" AND (apis.id IN :messageIds " +
+			"       OR pnrs.id IN :messageIds)) ")
+	Set<Passenger> getPassengerWithIdInformation(@Param("messageIds") Set<Long> messageIds,  @Param("flightIds")Set<Long> flightIds);
 
 	@Query("SELECT p FROM Passenger p " + " LEFT JOIN FETCH p.passengerDetails "
 			+ " LEFT JOIN FETCH p.passengerWLTimestamp " + " LEFT JOIN FETCH p.documents "

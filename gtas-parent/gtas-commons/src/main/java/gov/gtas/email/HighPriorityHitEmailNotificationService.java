@@ -1,11 +1,13 @@
 package gov.gtas.email;
 
 import freemarker.template.TemplateException;
+import gov.gtas.email.dto.CategoryDTO;
 import gov.gtas.email.dto.HitEmailDTO;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitDetail;
+import gov.gtas.model.HitViewStatus;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.PassengerDetails;
 import gov.gtas.model.User;
@@ -27,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -112,8 +115,17 @@ public class HighPriorityHitEmailNotificationService {
         Set<HitDetail> hitDetails = passenger.getHitDetails();
         for(HitDetail hitDetail: hitDetails) {
             HitCategory category = hitDetail.getHitMaker().getHitCategory();
-            String rule = hitDetail.getTitle() + " (" + hitDetail.getHitType() + ")";
-            hitEmailDto.addCategory(category.getSeverity().name(), category.getName(), rule);
+
+            CategoryDTO categoryDTO = new CategoryDTO();
+            categoryDTO.setCategoryName(category.getName());
+            categoryDTO.setSeverity(category.getSeverity().name());
+            categoryDTO.setRule(hitDetail.getTitle());
+
+            Optional<HitViewStatus> hitViewStatus = hitDetail.getHitViewStatus().stream().findFirst();
+            hitViewStatus.ifPresent(viewStatus -> categoryDTO.setStatus(viewStatus.getHitViewStatusEnum().name()));
+            categoryDTO.setType(hitDetail.getHitType());
+
+            hitEmailDto.addCategory(categoryDTO);
         }
 
         Set<Document> documents = passenger.getDocuments();
@@ -123,6 +135,9 @@ public class HighPriorityHitEmailNotificationService {
 
         Flight flight = passenger.getFlight();
         hitEmailDto.setFlightNumber(flight.getFlightNumber());
+        hitEmailDto.setFlightOrigin(flight.getOrigin());
+        hitEmailDto.setFlightDestination(flight.getDestination());
+        hitEmailDto.setCarrier(flight.getCarrier());
 
         Date flightDate = flight.getFlightCountDownView().getCountDownTimer();
         hitEmailDto.setTimeRemaining(getTimeRemaining(flightDate));

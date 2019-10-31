@@ -857,8 +857,7 @@
         .savePaxWatchlistLink($scope.passenger.paxId)
         .then(function(response) {
           $scope.getWatchListMatchByPaxId();
-          $scope.refreshCasesHistory($scope.passenger.paxId);
-          $scope.refreshHitDetailsList($scope.passenger.paxId, $scope.passenger.flightId);
+           $scope.refreshHitDetailsList($scope.passenger.paxId, $scope.passenger.flightId);
         });
     };
 

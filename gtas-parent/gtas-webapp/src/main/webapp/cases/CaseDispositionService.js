@@ -121,8 +121,8 @@
 
             function getByQueryParams(model){
                 var param = {
-                    pageSize: "10",
-                    pageNumber: "1",
+                    pageSize: model.pageSize.toString(),
+                    pageNumber: model.pageNumber.toString(),
                     flightNumber: model.flightNumber,
                     displayStatusCheckBoxes: model.displayStatusCheckBoxes,
                     ruleCatFilter: model.ruleCatFilter,
