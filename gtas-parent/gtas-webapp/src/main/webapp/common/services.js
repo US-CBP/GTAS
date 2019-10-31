@@ -478,7 +478,6 @@
                 enableGridMenu: true,
                 enableSelectAll: true,
                 exporterMenuPdf: false
-
               },
               code: {
                 enableRowSelection: true,
@@ -629,6 +628,20 @@
                   name: "country",
                   displayName: $translate.instant('airport.country'),
                   field: "country",
+                  width: "10%",
+                  type: "string"
+                },
+                {
+                  name: "latitude",
+                  displayName: $translate.instant('airport.latitude'),
+                  field: "latitude",
+                  width: "10%",
+                  type: "string"
+                },
+                {
+                  name: "longitude",
+                  displayName: $translate.instant('airport.longitude'),
+                  field: "longitude",
                   width: "10%",
                   type: "string"
                 }
