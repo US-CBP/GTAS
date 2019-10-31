@@ -1,12 +1,10 @@
 package gov.gtas.services;
 
-import gov.gtas.services.dto.PaxDetailPdfDocResponse;
+import gov.gtas.services.dto.PdfDocumentRequest;
+import gov.gtas.services.dto.PdfDocumentResponse;
 
-public interface PassengerEventReportService {
+public interface PassengerEventReportService < R extends PdfDocumentRequest, S extends PdfDocumentResponse> {
 	
-	public PaxDetailPdfDocResponse createPassengerEventReport(Long paxId, Long flightId);
-	
-	
-	
+	public S createPaxDetailReport(R pdfDocumentRequest) throws Exception;
 
 }

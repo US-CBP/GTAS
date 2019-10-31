@@ -48,6 +48,7 @@ public abstract class PassengerPdfTemplateService {
 	protected PDFont PLAIN_TIMES_ROMAN = PDType1Font.TIMES_ROMAN;
 	protected PDFont PLAIN_NOTES_CONTENT_FONT = PDType1Font.COURIER;
 	protected Color DEFAULT_BORDER_COLOR =  new Color (220,220,220);
+	protected Color PASSENGER_TABLE_HEADER_COLOR =  new Color (39,112,168); 
 	protected final Color DEFAULT_LABEL_BACKGROUND_COLOR = new Color(0,51,102);
 	
 
@@ -95,6 +96,38 @@ public abstract class PassengerPdfTemplateService {
     	
     }
    
+    
+    protected Cell<PDPage> createTopBorderCell( Row<PDPage> row,  float cellWidth)
+    {
+    	Cell<PDPage> cell= row.createCell(cellWidth, "");
+       
+        cell.setTopBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR, 0));
+        cell.setLeftBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR,0));
+        cell.setRightBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR,0));
+        cell.setBottomBorderStyle(new LineStyle(Color.WHITE,0));
+        cell.setFillColor(DEFAULT_LABEL_BACKGROUND_COLOR);
+        cell.setTextColor(Color.WHITE);
+        cell.setFont(this.BOLD_TIMES_ROMAN);
+		cell.setFontSize(this.DEFAULT_HORIZONTAL_SECTION_HEADER_FONT);
+		cell.setValign(VerticalAlignment.MIDDLE);
+		cell.setAlign(HorizontalAlignment.CENTER);
+    	return cell;
+    	
+    }
+    
+    protected Cell<PDPage> createPassengerTopBorderCell( Row<PDPage> row,  float cellWidth, String rowValue)
+    {
+    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
+        cell.setFontSize(DEFAULT_LABEL_FONT_SIZE);
+        cell.setTopBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR, 0));
+        cell.setLeftBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR,0));
+        cell.setRightBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR,0));
+        cell.setBottomBorderStyle(new LineStyle(Color.WHITE,0));
+        cell.setFillColor(PASSENGER_TABLE_HEADER_COLOR);
+        cell.setTextColor(Color.WHITE);
+    	return cell;
+    	
+    }
     
     protected Cell<PDPage> createCell( Row<PDPage> row,  float cellWidth, String rowValue)
     {
@@ -161,15 +194,47 @@ public abstract class PassengerPdfTemplateService {
     	
     }
     
+    protected Cell<PDPage> createFirstPassengerColumnValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
+    {
+    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
+        cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
+        cell.setFont(this.BOLD_TIMES_ROMAN);
+        cell.setAlign(HorizontalAlignment.LEFT);
+        cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
+        cell.setLeftBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
+        cell.setTopBorderStyle(new LineStyle(Color.WHITE,0));
+        cell.setRightBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
+        cell.setBottomBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
+        cell.setValign(VerticalAlignment.BOTTOM);
+    	return cell;
+    	
+    }
+    
     protected Cell<PDPage> createFirstVerticalColumnValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
     {
     	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
         cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
-        cell.setFont(PLAIN_TIMES_ROMAN);
+        cell.setFont(this.PLAIN_TIMES_ROMAN);
         cell.setAlign(HorizontalAlignment.LEFT);
         cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
         cell.setLeftBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
-        cell.setTopBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
+        cell.setTopBorderStyle(new LineStyle(Color.WHITE,0));
+        cell.setRightBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
+        cell.setBottomBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
+        cell.setValign(VerticalAlignment.BOTTOM);
+    	return cell;
+    	
+    }
+    
+    protected Cell<PDPage> createPassengerColumnValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
+    {
+    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
+        cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
+        cell.setFont(this.BOLD_TIMES_ROMAN);
+        cell.setAlign(HorizontalAlignment.LEFT);
+        cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
+        cell.setLeftBorderStyle(new LineStyle(Color.WHITE,0));
+        cell.setTopBorderStyle(new LineStyle(Color.WHITE,0));
         cell.setRightBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
         cell.setBottomBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
         cell.setValign(VerticalAlignment.BOTTOM);

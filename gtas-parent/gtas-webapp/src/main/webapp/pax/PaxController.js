@@ -1197,24 +1197,30 @@
    $scope.getPaxDetailReport = function(){
     	  var passengerId = $scope.passenger.paxId;
     	  var flightId = $scope.passenger.flightId;
-    	  
-    	  console.log('####### PAX ID: ' + passengerId);
-    	  console.log('####### FLIGHT ID: ' + flightId);
+
           paxReportService.getPaxDetailReport(passengerId, flightId).then(
                   function(data){
-                	  console.log('####### FILE NAME: ' + data.data);
-                	  var dataArray = data.data.fileByteArray; 
-                	  var byteArray = new Uint8Array(dataArray);
-                	  var a = window.document.createElement('a');
-                	  a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/octet-stream' }));
-                	  a.download = data.data.reportFileName;
-                	  document.body.appendChild(a);
-                	  a.click();
-                	  document.body.removeChild(a);
+                
+                	  if(data)
+                		  {
+                		  	var dataArray = data.data; 
+                		  	var byteArray = new Uint8Array(dataArray);
+                		  	var a = window.document.createElement('a');
+                		  	a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/pdf' }));
+                		  	a.download = "gtas_event_report";
+                		  	document.body.appendChild(a);
+                		  	a.click();
+                		  	document.body.removeChild(a);
+                		  }
+                	  else
+                		  {
+                		  	consol.log("ERROR! Error in generating GTAS Event Report. No data was retured")
+                		  }
+                	  
                 	  
                   });
           
-    	  return "true";
+    	  return true;
     }; 
       
  

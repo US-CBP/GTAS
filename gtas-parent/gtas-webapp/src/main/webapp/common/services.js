@@ -1735,7 +1735,8 @@
         				paxId: paxId,
         				flightId: flightId
         			},
-        			url: PAX_DETAIL_REPORT_URL
+        			url: PAX_DETAIL_REPORT_URL,
+        			responseType: 'arraybuffer'
         
                    
         		}));
