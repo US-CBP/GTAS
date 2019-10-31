@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "message_status")
+@Table(name = "message_status", indexes = @Index(name = "message_status_ms_status_index", columnList = "ms_status"))
 public class MessageStatus {
 
 	@Id
