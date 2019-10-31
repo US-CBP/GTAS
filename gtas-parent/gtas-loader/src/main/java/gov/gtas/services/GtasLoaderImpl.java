@@ -304,7 +304,7 @@ public class GtasLoaderImpl implements GtasLoader {
 			if (!utils.isPrimeFlight(fvo, primeFlightOrigin, primeFlightDest, primeFlightDateString)) {
 				BookingDetail bD = utils.convertFlightVoToBookingDetail(fvo);
 				List<BookingDetail> existingBookingDetail = bookingDetailDao.getBookingDetailByCriteria(
-						bD.getFullFlightNumber(), bD.getDestination(), bD.getOrigin(), bD.getLocalEtdDate(),
+						bD.getFullFlightNumber(), bD.getDestination(), bD.getOrigin(), bD.getEtd(),
 						primeFlight.getId());
 				if (existingBookingDetail.isEmpty()) {
 					bD.setFlight(primeFlight);
