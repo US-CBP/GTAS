@@ -20,6 +20,9 @@ public class HitEmailDTO {
     private List<DocumentDTO> documentDTOs = new ArrayList<>();
     private List<CategoryDTO> categoryDTOs = new ArrayList<>();
     private String timeRemaining;
+    private String note;
+    private HitEmailSenderDTO hitEmailSenderDTO;
+    private String urlToLoginPage;
 
     public String getFirstName() {
         return firstName;
@@ -76,6 +79,31 @@ public class HitEmailDTO {
     public void setDob(Date dob) {
         this.dob = dob;
     }
+
+    public HitEmailSenderDTO getHitEmailSenderDTO() {
+        return hitEmailSenderDTO;
+    }
+
+    public void setHitEmailSenderDTO(HitEmailSenderDTO hitEmailSenderDTO) {
+        this.hitEmailSenderDTO = hitEmailSenderDTO;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public String geturlToLoginPage() {
+        return urlToLoginPage;
+    }
+
+    public void seturlToLoginPage(String urlToLoginPage) {
+        this.urlToLoginPage = urlToLoginPage;
+    }
+
 
     public String getGender() {
         return gender;

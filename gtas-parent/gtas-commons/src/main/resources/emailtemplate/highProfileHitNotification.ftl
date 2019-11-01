@@ -2,10 +2,18 @@
     <title>Generated Hits</title>
 </head>
 <body>
-    <p>This is a system generated email caused by elevated risk categories for the following <font color="red"><b>${hits?size}</b></font> passenger(s):</p>
+    <#if !hits[0].hitEmailSenderDTO??>
+        <p>This is a system generated email caused by elevated risk categories for the following <font color="red"><b>${hits?size}</b></font> passenger(s):</p>
+    </#if>
     <#list hits as hit>
-        <font color="red"><b>#${hit?index+1}</b></font>
-        <div style="margin-left: 30px; border-bottom: black">
+        <#if hits?size != 1>
+            <font color="red"><b>#${hit?index+1}</b></font>
+        </#if>
+        <div style="margin-left: 30px;">
+            <#if hit.note?has_content>
+                <b><font color="red"><span class="il">NOTES</span></font>:</b><br>
+                <p style="margin-left: 30px;">${hit.note}</p>
+            </#if>
             <b>First Name: </b>${hit.firstName}<br>
             <b>Last Name: </b>${hit.lastName}<br>
             <b>DOB: </b>${hit.dob}<br>
@@ -59,6 +67,10 @@
                 </table>
             </div>
             <br>
+            <#if hit.hitEmailSenderDTO??>
+                <p>Sent By: <font color="red">${hit.hitEmailSenderDTO.firstName} ${hit.hitEmailSenderDTO.lastName}</font> (${hit.hitEmailSenderDTO.userId})</p>
+                <p><a href="${hit.urlToLoginPage}">GTAS Login</a></p>
+            </#if>
             <hr size="2">
         </div>
     </#list>
