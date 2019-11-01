@@ -65,7 +65,9 @@
     $scope.isReloaded = true;
     $scope.answer = function(answer) {
       $mdDialog.hide(answer);
-      $uibModalInstance.close(answer);
+      if($uibModalInstance != undefined) {
+        $uibModalInstance.close(answer);
+      }    
     };
     configService.cypherUrl().then(function(result){
       vaquita.rest.CYPHER_URL = result;  
