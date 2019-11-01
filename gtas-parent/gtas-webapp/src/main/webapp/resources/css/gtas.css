@@ -241,6 +241,26 @@ md-switch.md-default-theme.md-checked .md-thumb, md-switch.md-checked .md-thumb 
     bottom: auto !important;
   }
 }
+@media (min-width: 1500px){
+  .my-modal-popup .modal-lg {
+    width: 80%;
+    max-height: 800px;
+    overflow: auto;
+  }       
+}
+@media (max-width: 1450px){
+  .my-modal-popup .modal-lg {
+    width: 90%;
+    max-height: 600px;
+    overflow: auto;
+  }       
+}
+/* .my-modal-popup .modal-lg {
+    max-height: 800px;
+    overflow: auto;
+} */
+
+
 .table-wrap {
   word-break: break-all;
   min-width: 30vh;

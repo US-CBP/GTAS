@@ -239,6 +239,9 @@
                         },
                         disableLinks: function() {
                             return true;
+                        },
+                        $uibModalInstance: function() {
+                            
                         }
                     }
                 }).then(function(answer) {
@@ -265,6 +268,7 @@
                     ariaDescribedBy: 'modal-body',
                     controller: 'PassengerDetailCtrl',
                     templateUrl: 'pax/pax.detail.modal.html',
+                    windowClass: 'my-modal-popup',
                     // clickOutsideToClose: true,
                     // fullscreen: true,
                     size: 'lg',
