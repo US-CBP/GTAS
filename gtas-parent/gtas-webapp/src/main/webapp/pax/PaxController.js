@@ -847,6 +847,7 @@
       paxService.getRuleHitsByFlightAndPax($scope.passenger.paxId, $scope.passenger.flightId).then(
           function(result) {
             $scope.ruleHits = result;
+            ruleHits = result;
             stripCharacters();
           }
       );
@@ -1103,6 +1104,41 @@
           $scope.refreshHitDetailsList();
           $rootScope.$broadcast('hitCountChange');
         });
+    };
+
+    $scope.reOpen = function () {
+      let paxId = $scope.passenger.paxId;
+      paxDetailService.updatePassengerHitDetails(paxId, 'Re_Opened')
+          .then(function () {
+            $scope.refreshHitDetailsList();
+            $rootScope.$broadcast('hitCountChange');
+          });
+    };
+
+    $scope.passengerHasOpenCases = function() {
+      if ($scope.ruleHits !== undefined && $scope.ruleHits !== null && $scope.ruleHits.length > 0) {
+        for (let i in ruleHits) {
+          let ruleHit = $scope.ruleHits[i];
+          if (ruleHit.status === 'New' || ruleHit.status === 'Re_Opened') {
+            return true;
+          }
+        }
+        return false;
+      }
+      return false;
+    };
+
+    $scope.passengerHasClosedCasesAndNoOpenCases = function() {
+      if ($scope.ruleHits !== undefined && $scope.ruleHits !== null && $scope.ruleHits.length > 0) {
+        for(let i in ruleHits) {
+          let ruleHit = $scope.ruleHits[i];
+          if (ruleHit.status === 'New' || ruleHit.status === 'Re_Opened') {
+              return false;
+            }
+        }
+        return true;
+      }
+      return false;
     };
 
     $scope.notify = function () {

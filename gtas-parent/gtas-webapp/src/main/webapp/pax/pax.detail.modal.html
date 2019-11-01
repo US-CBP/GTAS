@@ -20,8 +20,11 @@
       <md-button  class="btn-danger"  ng-click="addToWatchlist()" >
         Add to Watchlist
       </md-button>
-      <md-button class="btn-info" ng-click="answer('reviewed')" >
+      <md-button ng-if="passengerHasOpenCases()" class="btn-info" ng-click="answer('reviewed')" >
         Set Status to Reviewed
+      </md-button>
+      <md-button ng-if="passengerHasClosedCasesAndNoOpenCases()" class="btn-info" ng-click="answer('reOpen')" >
+        Set Status To Re-Opened
       </md-button>
       <md-button class="btn-primary" ng-click="answer('fullPax')" >
         Load Full Passenger Details
