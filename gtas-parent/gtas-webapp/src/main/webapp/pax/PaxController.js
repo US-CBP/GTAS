@@ -1172,7 +1172,9 @@
     };
     //dialog function for watchlist addition dialog
     $scope.showConfirm = function() {
-      $uibModalInstance.close();
+      if ($uibModalInstance != undefined) {
+        $uibModalInstance.close();
+      }
       var confirm = $mdDialog
         .confirm()
         .title("WARNING: Please Confirm The Watchlist Addition")
