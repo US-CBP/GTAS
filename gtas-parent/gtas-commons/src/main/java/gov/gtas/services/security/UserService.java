@@ -6,6 +6,8 @@
 package gov.gtas.services.security;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
+
+import gov.gtas.constant.GtasSecurityConstants;
 import gov.gtas.model.User;
 
 import java.util.List;
@@ -43,7 +45,7 @@ public interface UserService {
 	 *
 	 * @return the list
 	 */
-	@PreAuthorize(PRIVILEGE_ADMIN)
+	@PreAuthorize(GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	public List<UserData> findAll();
 
 	/**
