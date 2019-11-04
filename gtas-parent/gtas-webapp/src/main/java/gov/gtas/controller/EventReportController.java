@@ -1,3 +1,8 @@
+/*
+ * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+ * 
+ * Please see LICENSE.txt for details.
+ */
 package gov.gtas.controller;
 
 import java.io.IOException;
@@ -11,15 +16,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import gov.gtas.services.PassengerEventPdfReportService;
+import gov.gtas.services.EventReportService;
 import gov.gtas.services.dto.PaxDetailPdfDocResponse;
 
 @Controller
-public class PaxEventReportController {
+public class EventReportController {
 
-	private static final Logger logger = LoggerFactory.getLogger(PaxEventReportController.class);
+	private static final Logger logger = LoggerFactory.getLogger(EventReportController.class);
 
-	private PassengerEventPdfReportService passengerEventReportService;
+	private EventReportService passengerEventReportService;
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/paxdetailreport", method = RequestMethod.GET)
@@ -46,7 +51,7 @@ public class PaxEventReportController {
 	}
 
 	@Autowired
-	public void setPassengerEventReportService(PassengerEventPdfReportService passengerEventReportService) {
+	public void setPassengerEventReportService(EventReportService passengerEventReportService) {
 		this.passengerEventReportService = passengerEventReportService;
 	}
 

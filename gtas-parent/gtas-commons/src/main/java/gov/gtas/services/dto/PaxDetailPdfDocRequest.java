@@ -27,6 +27,8 @@ public class PaxDetailPdfDocRequest extends PdfDocumentRequest{
 	private String highestSeverity;
 	
 	private String alert;
+	
+	private String tripType;
     
 	public PassengerVo getPassengerVo() {
 		return passengerVo;
@@ -92,6 +94,14 @@ public class PaxDetailPdfDocRequest extends PdfDocumentRequest{
 
 	public void setAlert(String alert) {
 		this.alert = alert;
+	}
+
+	public String getTripType() {
+		return tripType;
+	}
+
+	public void setTripType(String tripType) {
+		this.tripType = tripType;
 	}
 
 

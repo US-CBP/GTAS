@@ -1,6 +1,10 @@
 package gov.gtas.services.dto;
 
+import gov.gtas.vo.passenger.PassengerVo;
+
 public class PaxDetailPdfDocResponse extends PdfDocumentResponse{
+	
+	public PassengerVo passengerVo;
 	
 	public String getPdfDocumentPath() {
 		return this.pdfDocumentPath;
@@ -25,6 +29,12 @@ public class PaxDetailPdfDocResponse extends PdfDocumentResponse{
 	}
 	public void setReportFileName(String reportFileName) {
 		this.reportFileName = reportFileName;
+	}
+	public PassengerVo getPassengerVo() {
+		return passengerVo;
+	}
+	public void setPassengerVo(PassengerVo passengerVo) {
+		this.passengerVo = passengerVo;
 	}
 	
 

@@ -18,7 +18,7 @@ import be.quodlibet.boxable.Row;
 import be.quodlibet.boxable.VerticalAlignment;
 import be.quodlibet.boxable.line.LineStyle;
 
-public abstract class PassengerPdfTemplateService {
+public abstract class EventReportPdfTemplateService {
 	
 	protected String fileName;
 	protected String reportName;
@@ -29,12 +29,14 @@ public abstract class PassengerPdfTemplateService {
 	protected final float  DEFAULT_HEADER_ROW_HEIGHT = 40;
 	protected final float  HEADER_CELL_WIDTH = 100;
 	protected final float  DEFAULT_HEADER_CELL_WIDTH = 100;
-	protected final float DEFAULT_CONTENT_FONT_SIZE = 10;
+	protected final float DEFAULT_CONTENT_FONT_SIZE = 12;
 	protected final float DEFAULT_HORIZONTAL_SECTION_HEADER_FONT = 14;
 	protected final float DEFAULT_SINGLE_ROW_LABEL_FONT_SIZE = 14;
 	protected final Color DEFAULT_HORIZONTAL_SECTION_HEADER_TEXT_COLOR =Color.WHITE;
 	protected final Color DEFAULT_CONTENT_TEXT_COLOR = Color.BLACK;
 	protected final Color DEFAULT_GRAY_ROW_COLOR = new Color (220,220,220);
+	protected final Color DEFAULT_BORDER_COLOR =  new Color (220,220,220);
+	protected final Color DEFAULT_LABEL_BACKGROUND_COLOR = new Color(0,51,102);
 	protected final float DEFAULT_LABEL_FONT_SIZE = 14;
 	protected final float DEFAULT_ROW_HEIGHT = 20;
 	protected final float REPORT_COVER_MARGIN = 50;
@@ -47,9 +49,7 @@ public abstract class PassengerPdfTemplateService {
 	protected PDFont BOLD_TIMES_ROMAN = PDType1Font.TIMES_BOLD;
 	protected PDFont PLAIN_TIMES_ROMAN = PDType1Font.TIMES_ROMAN;
 	protected PDFont PLAIN_NOTES_CONTENT_FONT = PDType1Font.COURIER;
-	protected Color DEFAULT_BORDER_COLOR =  new Color (220,220,220);
-	protected Color PASSENGER_TABLE_HEADER_COLOR =  new Color (39,112,168); 
-	protected final Color DEFAULT_LABEL_BACKGROUND_COLOR = new Color(0,51,102);
+	protected Color PASSENGER_TABLE_HEADER_COLOR =  new Color (44,134,224);
 	
 
 	protected PDDocument getDefaultA4ReportDocument(PDPage coverPage)
@@ -119,12 +119,14 @@ public abstract class PassengerPdfTemplateService {
     {
     	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
         cell.setFontSize(DEFAULT_LABEL_FONT_SIZE);
-        cell.setTopBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR, 0));
-        cell.setLeftBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR,0));
-        cell.setRightBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR,0));
+        cell.setTopBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR, 0));
+        cell.setLeftBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
+        cell.setRightBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
         cell.setBottomBorderStyle(new LineStyle(Color.WHITE,0));
         cell.setFillColor(PASSENGER_TABLE_HEADER_COLOR);
         cell.setTextColor(Color.WHITE);
+        cell.setFont(this.BOLD_TIMES_ROMAN);
+        cell.setAlign(HorizontalAlignment.CENTER);
     	return cell;
     	
     }
@@ -194,18 +196,55 @@ public abstract class PassengerPdfTemplateService {
     	
     }
     
-    protected Cell<PDPage> createFirstPassengerColumnValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
+    protected Cell<PDPage> creatPassengerVerticalColumnLabelCell( Row<PDPage> row,  float cellWidth, String rowValue)
+    {
+    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
+        cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
+        cell.setAlign(HorizontalAlignment.LEFT);
+        cell.setFont(this.BOLD_TIMES_ROMAN);
+        cell.setLeftBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
+        cell.setTopBorderStyle(new LineStyle(Color.WHITE,0));
+        cell.setRightBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
+        cell.setBottomBorderStyle(new LineStyle(Color.WHITE,1));
+        cell.setFillColor(DEFAULT_GRAY_ROW_COLOR);
+        cell.setTextColor(Color.BLACK);
+        
+        
+        
+    	return cell;
+    	
+    }
+
+    protected Cell<PDPage> createPassengerFirstVerticalColumnValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
     {
     	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
         cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
         cell.setFont(this.BOLD_TIMES_ROMAN);
         cell.setAlign(HorizontalAlignment.LEFT);
         cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
-        cell.setLeftBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
-        cell.setTopBorderStyle(new LineStyle(Color.WHITE,0));
+        cell.setLeftBorderStyle(new LineStyle(Color.WHITE,0));
+        cell.setTopBorderStyle(new LineStyle(Color.WHITE,1));
         cell.setRightBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
-        cell.setBottomBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
+        cell.setBottomBorderStyle(new LineStyle(this.DEFAULT_GRAY_ROW_COLOR, 1));
         cell.setValign(VerticalAlignment.BOTTOM);
+        cell.setTextColor(Color.BLACK);
+       
+    	return cell;
+    	
+    }
+    
+    protected Cell<PDPage> createPassengerColumnValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
+    {
+    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
+        cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
+        cell.setFont(this.BOLD_TIMES_ROMAN);
+        cell.setAlign(HorizontalAlignment.LEFT);
+        cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
+        cell.setLeftBorderStyle(new LineStyle(Color.WHITE,0));
+        cell.setTopBorderStyle(new LineStyle(Color.WHITE,0));
+        cell.setRightBorderStyle(new LineStyle(this.DEFAULT_GRAY_ROW_COLOR,1));
+        cell.setBottomBorderStyle(new LineStyle(this.DEFAULT_GRAY_ROW_COLOR,1));
+        cell.setTextColor(Color.BLACK);
     	return cell;
     	
     }
@@ -226,21 +265,7 @@ public abstract class PassengerPdfTemplateService {
     	
     }
     
-    protected Cell<PDPage> createPassengerColumnValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
-    {
-    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
-        cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
-        cell.setFont(this.BOLD_TIMES_ROMAN);
-        cell.setAlign(HorizontalAlignment.LEFT);
-        cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
-        cell.setLeftBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setTopBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setRightBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
-        cell.setBottomBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
-        cell.setValign(VerticalAlignment.BOTTOM);
-    	return cell;
-    	
-    }
+ 
     
     protected Cell<PDPage> createVerticalColumnValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
     {
@@ -696,6 +721,52 @@ public abstract class PassengerPdfTemplateService {
     	return cell;
     	
     }
+    
+    
+
+	protected void setBottomFieldLabelProperties(Cell<PDPage> cell) {
+		cell.setAlign(HorizontalAlignment.LEFT);
+		cell.setFont(this.BOLD_TIMES_ROMAN);
+		cell.setLeftBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setTopBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setRightBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setBottomBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR, 1));
+	}
+
+	protected void setBottomFieldValueProperties(Cell<PDPage> cell) {
+		cell.setAlign(HorizontalAlignment.LEFT);
+		cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
+		cell.setLeftBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setTopBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setRightBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setBottomBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR, 1));
+	}
+
+	// set the properties of the report header cell
+	protected void setPassengerDetailHeaderLabelProperties(Cell<PDPage> cell) {
+		cell.setFont(this.BOLD_TIMES_ROMAN);
+		cell.setFontSize(12);
+		cell.setValign(VerticalAlignment.MIDDLE);
+		cell.setAlign(HorizontalAlignment.LEFT);
+		cell.setLeftBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setTopBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setRightBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setBottomBorderStyle(new LineStyle(Color.WHITE, 1));
+		cell.setFillColor(this.DEFAULT_GRAY_ROW_COLOR);
+	}
+	
+	protected void setPassengerDetailHeaderValueProperties(Cell<PDPage> cell) {
+
+		cell.setFont(this.BOLD_TIMES_ROMAN);
+		cell.setFontSize(12);
+		cell.setValign(VerticalAlignment.MIDDLE);
+		cell.setAlign(HorizontalAlignment.LEFT);
+		cell.setTopBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setRightBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setBottomBorderStyle(new LineStyle(Color.WHITE, 0));
+		cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
+		cell.setLeftPadding(5);
+	}
     
 	public String getFileName() {
 		return fileName;

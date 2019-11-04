@@ -1,8 +1,7 @@
-package gov.gtas.vo.passenger;
+package gov.gtas.util;
 
 import static java.util.stream.Collectors.toList;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,13 +31,23 @@ import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
-import gov.gtas.util.DateCalendarUtils;
-import gov.gtas.util.LobUtils;
+import gov.gtas.vo.passenger.AddressVo;
+import gov.gtas.vo.passenger.AgencyVo;
+import gov.gtas.vo.passenger.CreditCardVo;
+import gov.gtas.vo.passenger.DocumentVo;
+import gov.gtas.vo.passenger.EmailVo;
+import gov.gtas.vo.passenger.FlightLegVo;
+import gov.gtas.vo.passenger.FlightVo;
+import gov.gtas.vo.passenger.FlightVoForFlightHistory;
+import gov.gtas.vo.passenger.FrequentFlyerVo;
+import gov.gtas.vo.passenger.PassengerVo;
+import gov.gtas.vo.passenger.PhoneVo;
+import gov.gtas.vo.passenger.PnrVo;
 
 public class PaxDetailVoUtil {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(PaxDetailVoUtil.class);
-	
+
 	public static List<FlightVoForFlightHistory> copyBookingDetailFlightModelToVo(
 			List<Passenger> allPassengersRelatingToSingleIdTag) {
 
@@ -81,8 +90,7 @@ public class PaxDetailVoUtil {
 
 		return flightsAndBookingDetailsRelatingToSamePaxIdTag;
 	}
-	
-	
+
 	public static List<FlightPax> getFlightPaxes(List<Passenger> allPassengersRelatingToSingleIdTag) {
 
 		List<FlightPax> flightPaxes = allPassengersRelatingToSingleIdTag.stream()
@@ -99,7 +107,6 @@ public class PaxDetailVoUtil {
 		}
 		return filteredFlightPax;
 	}
-	
 
 	public static void populateFlightVoWithBookingDetail(BookingDetail source, FlightVo target) {
 		try {
@@ -122,7 +129,6 @@ public class PaxDetailVoUtil {
 		}
 	}
 
-
 	public static void populateFlightVoWithFlightDetail(Flight source, FlightVo target) {
 		try {
 
@@ -143,8 +149,7 @@ public class PaxDetailVoUtil {
 			logger.error("error populating flight vo", e);
 		}
 	}
-	
-	
+
 	/**
 	 * Util method to map PNR model object to VO
 	 * 
@@ -315,8 +320,7 @@ public class PaxDetailVoUtil {
 			logger.error("error copying model to vo", e);
 		}
 	}
-	
-	
+
 	public static Pnr getLatestPnrFromList(List<Pnr> pnrList) {
 		Pnr latest = pnrList.get(0);
 		for (Pnr p : pnrList) {
