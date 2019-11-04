@@ -29,7 +29,7 @@
         <div layout="column">
             <code style="font-weight: bold; font-size: 17px;">Email Settings</code>
             <div layout layout-sm="column">
-                <md-input-container flex><label>Email Address</label> <input required ng-model="user.email" autocomplete="off" required style="width: 300px;">
+                <md-input-container flex><label>Email Address</label> <input type="email" required ng-model="user.email" autocomplete="off" required style="width: 300px;">
                 </md-input-container>
             </div>
             <md-switch ng-model="user.emailEnabled" ng-true-value="true" ng-false-value="false"
