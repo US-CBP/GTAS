@@ -18,4 +18,5 @@ public interface NotificatonService {
 
 	Set<String> sendHitNotifications(HitNotificationConfig config);
 	void sendAutomatedHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException;
+	void sendManualNotificationEmail(String[] to, String note, Long paxId, String userId) throws IOException, TemplateException, MessagingException;
 }

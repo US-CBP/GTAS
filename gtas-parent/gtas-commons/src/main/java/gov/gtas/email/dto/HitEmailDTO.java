@@ -14,9 +14,15 @@ public class HitEmailDTO {
     private Date dob;
     private String gender;
     private UUID passengerUUID;
+    private String flightOrigin;
+    private String flightDestination;
+    private String carrier;
     private List<DocumentDTO> documentDTOs = new ArrayList<>();
     private List<CategoryDTO> categoryDTOs = new ArrayList<>();
     private String timeRemaining;
+    private String note;
+    private HitEmailSenderDTO hitEmailSenderDTO;
+    private String urlToLoginPage;
 
     public String getFirstName() {
         return firstName;
@@ -42,6 +48,30 @@ public class HitEmailDTO {
         this.flightNumber = flightNumber;
     }
 
+    public String getFlightOrigin() {
+        return flightOrigin;
+    }
+
+    public void setFlightOrigin(String flightOrigin) {
+        this.flightOrigin = flightOrigin;
+    }
+
+    public String getFlightDestination() {
+        return flightDestination;
+    }
+
+    public void setFlightDestination(String flightDestination) {
+        this.flightDestination = flightDestination;
+    }
+
+    public String getCarrier() {
+        return carrier;
+    }
+
+    public void setCarrier(String carrier) {
+        this.carrier = carrier;
+    }
+
     public Date getDob() {
         return dob;
     }
@@ -49,6 +79,31 @@ public class HitEmailDTO {
     public void setDob(Date dob) {
         this.dob = dob;
     }
+
+    public HitEmailSenderDTO getHitEmailSenderDTO() {
+        return hitEmailSenderDTO;
+    }
+
+    public void setHitEmailSenderDTO(HitEmailSenderDTO hitEmailSenderDTO) {
+        this.hitEmailSenderDTO = hitEmailSenderDTO;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public String geturlToLoginPage() {
+        return urlToLoginPage;
+    }
+
+    public void seturlToLoginPage(String urlToLoginPage) {
+        this.urlToLoginPage = urlToLoginPage;
+    }
+
 
     public String getGender() {
         return gender;
@@ -74,11 +129,18 @@ public class HitEmailDTO {
         this.passengerUUID = passengerUUID;
     }
 
-    public void addCategory(String severity, String category, String rule) {
+    public void addCategory(CategoryDTO categoryDTO) {
+        if(categoryDTOs == null) {
+            categoryDTOs = new ArrayList<>();
+        }
+        categoryDTOs.add(categoryDTO);
+    }
+
+    public void addCategory(String severity, String categoryName, String rule) {
         CategoryDTO categoryDTO = new CategoryDTO();
 
         categoryDTO.setSeverity(severity);
-        categoryDTO.setCategory(category);
+        categoryDTO.setCategoryName(categoryName);
         categoryDTO.setRule(rule);
 
         categoryDTOs.add(categoryDTO);

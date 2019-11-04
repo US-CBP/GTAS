@@ -252,7 +252,7 @@
                     } else if (answer === 'notify') {
                         $scope.notify(pax.paxId);
                     }
-                });;
+                });
             };
 
             $scope.showPassenger = function (row) {
@@ -310,6 +310,8 @@
                         window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
                     } else if (answer === 'notify') {
                         $scope.notify(pax.paxId);
+                    } else if (answer === 'reOpen') {
+                        $scope.reOpen(row);
                     }
 
                 });
@@ -361,6 +363,8 @@
                     gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                         $scope.pageNumber = newPage;
                         $scope.pageSize = pageSize;
+                        $scope.model.pageSize = pageSize;
+                        $scope.model.pageNumber = newPage;
                         $scope.resolvePage();
                     });
                 }
@@ -457,6 +461,42 @@
               return filters.includes(option);
             };
 
+            $scope.clearFilters = function(){
+                let defaultSort = [
+                        {column: 'countDown', dir: 'asc'},
+
+                    ];
+                let    displayStatusCheckBoxes = {
+                        NEW: true,
+                        RE_OPENED: true,
+                        REVIEWED: false
+                    };
+               let     ruleTypes = {
+                        WATCHLIST: true,
+                        USER_RULE: true,
+                        GRAPH_RULE: true,
+                        PARTIAL_WATCHLIST: false
+                    };
+                 let   ruleCatFilter;
+                 let   startDate = new Date();
+                 let   endDate = new Date();
+                endDate.setDate(endDate.getDate() + 1);
+                startDate.setMinutes(startDate.getMinutes() - 15);
+                ruleCatFilter = caseDispositionService.getDefaultCats();
+                $scope.model.pageNumber = 1;
+                $scope.model.pageSize = typeof $scope.model.pageSize != "undefined" ? $scope.model.pageSize : 10;
+                $scope.model.origin = [];
+                $scope.model.dest = [];
+                $scope.model.etaStart = startDate;
+                $scope.model.ruleCatFilter = ruleCatFilter;
+                $scope.model.myRulesOnly = false;
+                $scope.model.etaEnd = endDate;
+                $scope.model.ruleTypes = ruleTypes;
+                $scope.model.sort = defaultSort;
+                $scope.model.displayStatusCheckBoxes = displayStatusCheckBoxes;
+                $scope.model.withTimeLeft = true;
+                $scope.filter();
+            };
 
             $scope.filter = function () {
                 spinnerService.show('html5spinner');
@@ -477,7 +517,8 @@
                         }
                         spinnerService.hide('html5spinner');
                     });
+
             };
-            $scope.filter();
+            $scope.resolvePage();
         });
 }());

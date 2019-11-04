@@ -478,7 +478,6 @@
                 enableGridMenu: true,
                 enableSelectAll: true,
                 exporterMenuPdf: false
-
               },
               code: {
                 enableRowSelection: true,
@@ -629,6 +628,20 @@
                   name: "country",
                   displayName: $translate.instant('airport.country'),
                   field: "country",
+                  width: "10%",
+                  type: "string"
+                },
+                {
+                  name: "latitude",
+                  displayName: $translate.instant('airport.latitude'),
+                  field: "latitude",
+                  width: "10%",
+                  type: "string"
+                },
+                {
+                  name: "longitude",
+                  displayName: $translate.instant('airport.longitude'),
+                  field: "longitude",
                   width: "10%",
                   type: "string"
                 }
@@ -875,8 +888,7 @@
               query: [
                 {
                   name: "title",
-                  displayName: "qry.name",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('qry.name'),
                   field: "title",
                   cellTemplate:
                     '<md-button aria-label="title" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
@@ -885,8 +897,7 @@
                 },
                 {
                   name: "description",
-                  displayName: "qry.desc",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('qry.desc'),
                   field: "description",
                   cellTemplate:
                     '<md-button aria-label="description" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
@@ -897,8 +908,7 @@
               rule: [
                 {
                   name: "hitCount",
-                  displayName: "Hits",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('qry.hits'),
                   field: "hitCount",
                   cellTemplate:
                     '<md-button aria-label="title" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
@@ -907,8 +917,7 @@
                 },
                 {
                   name: "title",
-                  displayName: "Name",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('qry.name'),
                   field: "title",
                   cellTemplate:
                     '<md-button aria-label="title" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
@@ -917,8 +926,7 @@
                 },
                 {
                   name: "description",
-                  displayName: "Description",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('qry.desc'),
                   field: "description",
                   cellTemplate:
                     '<md-button aria-label="description" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
@@ -927,8 +935,7 @@
                 },
                 {
                   name: "startDate",
-                  displayName: "flight.startdate",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('flight.startdate'),
                   field: "startDate",
                   cellTemplate:
                     '<md-button aria-label="start date" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
@@ -937,8 +944,7 @@
                 },
                 {
                   name: "endDate",
-                  displayName: "flight.enddate",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('flight.enddate'),
                   field: "endDate",
                   cellTemplate:
                     '<md-button aria-label="end date" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
@@ -947,8 +953,7 @@
                 },
                 {
                   name: "enabled",
-                  displayName: "user.status.enabled",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('qry.enabled'),
                   field: "enabled",
                   cellTemplate:
                     '<md-button aria-label="enabled" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
@@ -957,8 +962,7 @@
                 },
                 {
                   name: "overMaxHits",
-                  displayName: "Over Max Hits",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('qry.overmaxhits'),
                   field: "overMaxHits",
                   cellTemplate:
                     '<md-button aria-label="overMaxHits" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
@@ -967,8 +971,7 @@
                 },
                 {
                   name: "modifiedOn",
-                  displayName: "qry.modified",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('qry.modified'),
                   field: "modifiedOn",
                   cellTemplate:
                     '<md-button aria-label="modified" ng-click="grid.api.selection.selectRow(row.entity)">{{row.entity.modifiedOn}} | {{row.entity.modifiedBy}}</md-button>',
@@ -1723,6 +1726,32 @@
               enableEmailNotificationService: enableEmailNotificationService
           });
         })
+   .service("paxReportService", function($http, $q){
+
+        	const PAX_DETAIL_REPORT_URL = "/gtas/paxdetailreport";
+
+        	function getPaxDetailReport(paxId, flightId){
+        		var dfd = $q.defer();
+        		dfd.resolve($http({
+        			method: 'get',
+        			params: {
+        				paxId: paxId,
+        				flightId: flightId
+        			},
+        			url: PAX_DETAIL_REPORT_URL,
+        			responseType: 'arraybuffer'
+        
+                   
+        		}));
+        		return dfd.promise;
+        	}
+
+
+        return({
+        	
+        	getPaxDetailReport:getPaxDetailReport
+        });
+      })
         .service("paxNotesService", function($http, $q){
 
         	const PAX_URL = "/gtas/passengers/passenger";

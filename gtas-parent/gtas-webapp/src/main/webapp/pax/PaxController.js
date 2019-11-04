@@ -31,8 +31,8 @@
     paxNotesService,
     eventNotes,
     noteTypesList,
-    $uibModal
-   
+    $uibModal,
+    paxReportService
   ) {
 	$scope.noteTypesList = noteTypesList.data;
 	$scope.eventNotes = eventNotes.data.paxNotes;
@@ -67,7 +67,7 @@
       $mdDialog.hide(answer);
       if($uibModalInstance != undefined) {
         $uibModalInstance.close(answer);
-      }    
+      }
     };
     configService.cypherUrl().then(function(result){
       vaquita.rest.CYPHER_URL = result;  
@@ -852,6 +852,7 @@
       paxService.getRuleHitsByFlightAndPax($scope.passenger.paxId, $scope.passenger.flightId).then(
           function(result) {
             $scope.ruleHits = result;
+            ruleHits = result;
             stripCharacters();
           }
       );
@@ -869,8 +870,7 @@
         .savePaxWatchlistLink($scope.passenger.paxId)
         .then(function(response) {
           $scope.getWatchListMatchByPaxId();
-          $scope.refreshCasesHistory($scope.passenger.paxId);
-          $scope.refreshHitDetailsList($scope.passenger.paxId, $scope.passenger.flightId);
+           $scope.refreshHitDetailsList($scope.passenger.paxId, $scope.passenger.flightId);
         });
     };
 
@@ -1111,6 +1111,41 @@
         });
     };
 
+    $scope.reOpen = function () {
+      let paxId = $scope.passenger.paxId;
+      paxDetailService.updatePassengerHitDetails(paxId, 'Re_Opened')
+          .then(function () {
+            $scope.refreshHitDetailsList();
+            $rootScope.$broadcast('hitCountChange');
+          });
+    };
+
+    $scope.passengerHasOpenCases = function() {
+      if ($scope.ruleHits !== undefined && $scope.ruleHits !== null && $scope.ruleHits.length > 0) {
+        for (let i in ruleHits) {
+          let ruleHit = $scope.ruleHits[i];
+          if (ruleHit.status === 'New' || ruleHit.status === 'Re_Opened') {
+            return true;
+          }
+        }
+        return false;
+      }
+      return false;
+    };
+
+    $scope.passengerHasClosedCasesAndNoOpenCases = function() {
+      if ($scope.ruleHits !== undefined && $scope.ruleHits !== null && $scope.ruleHits.length > 0) {
+        for(let i in ruleHits) {
+          let ruleHit = $scope.ruleHits[i];
+          if (ruleHit.status === 'New' || ruleHit.status === 'Re_Opened') {
+              return false;
+            }
+        }
+        return true;
+      }
+      return false;
+    };
+
     $scope.notify = function () {
       $scope.paxId = $scope.passenger.paxId;
       var notificationModalInstance = $uibModal.open({
@@ -1224,6 +1259,38 @@
       $scope.getNoteTypes = function(){
           return paxNotesService.getNoteTypes();
       }
+
+      $scope.getPaxDetailReport = function(){
+    	  var passengerId = $scope.passenger.paxId;
+    	  var flightId = $scope.passenger.flightId;
+
+    	  paxReportService.getPaxDetailReport(passengerId, flightId).then(
+                  function(data){
+
+                	  if(data)
+                		  {
+                		  	var dataArray = data.data;
+                		  	var byteArray = new Uint8Array(dataArray);
+                		  	var a = window.document.createElement('a');
+                		  	a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/pdf' }));
+                		  	a.download = "gtas_event_report";
+                		  	document.body.appendChild(a);
+                		  	a.click();
+                		  	document.body.removeChild(a);
+                		  }
+                	  else
+                		  {
+                		  	consol.log("ERROR! Error in generating GTAS Event Report. No data was retured")
+                		  }
+
+                  });
+
+    	  return true;
+    };
+
+
+
+
   });
 
   ////     PAX CONTROLLER     //////////////
