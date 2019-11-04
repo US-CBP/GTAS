@@ -1076,3 +1076,11 @@ div[ui-grid] {
 .trix-button-group--history-tools{
 	display:none !important;
 }
+.pax-details-comment-dialog{
+  height: 100%;
+  width: 100%;
+  top: 5%;
+}
+.pax-details-comment-dialog .cbp-card-container .cbp-card {
+  margin-left: 2%;
+}
