@@ -192,14 +192,14 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		this.createEmptyWhiteCell(row, FIRST_COLUMN_WIDTH);
 		cell = this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, COVER_PAGE_TABLE_COLUMN_LABEL_ORIGIN);
 		this.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
-				passengerVo.getFlightOrigin() + "   " + passengerVo.getFlightETD());
+				passengerVo.getFlightOrigin() + "     " + passengerVo.getFlightETD());
 		this.createEmptyWhiteCell(row, FOUR_COLUMN_WIDTH);
 		// Flight Destination
 		row = this.getRow(reportCoverTable);
 		this.createEmptyWhiteCell(row, FIRST_COLUMN_WIDTH);
 		cell = this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, COVER_PAGE_TABLE_COLUMN_LABEL_DESTINATION);
 		this.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
-				passengerVo.getFlightDestination() + "   " + passengerVo.getFlightETA());
+				passengerVo.getFlightDestination() + "     " + passengerVo.getFlightETA());
 		this.createEmptyWhiteCell(row, FOUR_COLUMN_WIDTH);
 		// Report Date
 		row = this.getRow(reportCoverTable);
