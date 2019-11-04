@@ -158,8 +158,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 			image.draw(document, coverPageContentStream, imageXposition, imageYposition);
 		} catch (Exception e) {
 
-			logger.error("ERROR! The image file of the GTAS logo could not be read.");
-			e.printStackTrace();
+			logger.error("ERROR! The image file of the GTAS logo could not be read.", e);
 		}
 
 		Row<PDPage> headerRow = reportCoverTable.createRow(this.COVER_HEADER_ROW_HEIGHT);
@@ -1015,11 +1014,13 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		if (noteTypeSet != null && !noteTypeSet.isEmpty()) {
 			int i = 0;
 			for (NoteTypeVo noteTypeVo : noteTypeSet) {
-				if (i == 0)
+				if (i == 0) {
 					result = result + noteTypeVo.getNoteType();
-				else
+				}
+				else {
 					result = result + ", " + noteTypeVo.getNoteType();
-
+				}
+				i++;
 			}
 
 		}

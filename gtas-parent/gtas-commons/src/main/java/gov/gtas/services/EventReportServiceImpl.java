@@ -73,14 +73,14 @@ public class EventReportServiceImpl implements EventReportService {
 
 		PaxDetailPdfDocRequest paxDetailPdfDocRequest = new PaxDetailPdfDocRequest();
 		PaxDetailPdfDocResponse paxDetailPdfDocResponse = new PaxDetailPdfDocResponse();
-		SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DD HH:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
 		PassengerVo passengerVo = new PassengerVo();
 		Flight flight = flightService.findById(flightId);
 
-		Passenger passenger = passengerService.findByIdWithFlightPaxAndDocuments(Long.valueOf(paxId));
+		Passenger passenger = passengerService.findByIdWithFlightPaxAndDocuments(paxId);
 
-		if (passenger != null) {
-			if (flightId != null && flight.getId() == flightId) {
+		if (passenger != null && flight != null) {
+			if (flight.getId().equals(flightId)) {
 				passengerVo.setFlightNumber(flight.getFlightNumber());
 				passengerVo.setCarrier(flight.getCarrier());
 				passengerVo.setFlightOrigin(flight.getOrigin());
@@ -128,7 +128,7 @@ public class EventReportServiceImpl implements EventReportService {
 			}
 
 			// PNR info
-			List<Pnr> pnrList = pnrService.findPnrByPassengerIdAndFlightId(passenger.getId(), new Long(flightId));
+			List<Pnr> pnrList = pnrService.findPnrByPassengerIdAndFlightId(passenger.getId(), flightId);
 
 			if (!pnrList.isEmpty()) {
 				Pnr latestPnr = PaxDetailVoUtil.getLatestPnrFromList(pnrList);
@@ -155,8 +155,7 @@ public class EventReportServiceImpl implements EventReportService {
 			try {
 				paxDetailPdfDocResponse = passengerEventReportService.createPaxDetailReport(paxDetailPdfDocRequest);
 			} catch (Exception exception) {
-				logger.error("An error has occurred when creating pdf requests");
-				exception.printStackTrace();
+				logger.error("An error has occurred when creating pdf requests", exception);
 			}
 
 		}
@@ -202,9 +201,9 @@ public class EventReportServiceImpl implements EventReportService {
 	{
 		
 		List<Passenger> passengersWithSamePassengerIdTag = passengerService
-				.getBookingDetailHistoryByPaxID(Long.valueOf(paxId));
+				.getBookingDetailHistoryByPaxID(paxId);
 		Set<Passenger> passengerSet = new HashSet<>(passengersWithSamePassengerIdTag);
-		Passenger p = passengerService.findById(Long.valueOf(paxId));
+		Passenger p = passengerService.findById(paxId);
 		passengerSet.remove(p);
 		List<HitDetailVo> hitDetailHistoryVoList = hitDetailService.getLast10RecentHits(passengerSet);
 		paxDetailPdfDocRequest.setHitDetailHistoryVoList(hitDetailHistoryVoList);
@@ -215,7 +214,7 @@ public class EventReportServiceImpl implements EventReportService {
 	
 	public void setFlightHistory(PaxDetailPdfDocRequest paxDetailPdfDocRequest, Long paxId)
 	{
-		List<Passenger> passengerRecList = passengerService.getBookingDetailHistoryByPaxID(Long.valueOf(paxId));
+		List<Passenger> passengerRecList = passengerService.getBookingDetailHistoryByPaxID(paxId);
 		if (passengerRecList != null) {
 			List<FlightVoForFlightHistory> flightVoFHList = PaxDetailVoUtil
 					.copyBookingDetailFlightModelToVo(passengerRecList);

@@ -4,7 +4,7 @@ import gov.gtas.vo.passenger.PassengerVo;
 
 public class PaxDetailPdfDocResponse extends PdfDocumentResponse{
 	
-	public PassengerVo passengerVo;
+	private PassengerVo passengerVo;
 	
 	public String getPdfDocumentPath() {
 		return this.pdfDocumentPath;
