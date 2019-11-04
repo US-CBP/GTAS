@@ -1203,7 +1203,7 @@
                 }
     		});
     	return hasRole;
-    }
+    };
     
     //dialog function for image display dialog
     $scope.showAttachments = function(attachmentList) {
