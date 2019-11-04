@@ -612,6 +612,9 @@ var app;
                         },
                         noteTypesList: function(paxNotesService){
                         	return paxNotesService.getNoteTypes();
+                        },
+                        $uibModalInstance: function() {
+                            
                         }
                         
                     }

@@ -241,6 +241,25 @@ md-switch.md-default-theme.md-checked .md-thumb, md-switch.md-checked .md-thumb 
     bottom: auto !important;
   }
 }
+@media (min-width: 1500px){
+  .my-modal-popup .modal-lg {
+    width: 80%;
+    height: 800px;
+    overflow-y: auto;
+  }       
+}
+@media (max-width: 1450px){
+  .my-modal-popup .modal-lg {
+    width: 90%;
+    height: 600px;
+    overflow-y: auto;
+  }       
+}
+.modal-body{
+  background-color: rgb(247, 247, 245);
+  height: 88vh;
+}
+
 .table-wrap {
   word-break: break-all;
   min-width: 30vh;
