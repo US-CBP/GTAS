@@ -244,22 +244,21 @@ md-switch.md-default-theme.md-checked .md-thumb, md-switch.md-checked .md-thumb 
 @media (min-width: 1500px){
   .my-modal-popup .modal-lg {
     width: 80%;
-    max-height: 800px;
-    overflow: auto;
+    height: 800px;
+    overflow-y: auto;
   }       
 }
 @media (max-width: 1450px){
   .my-modal-popup .modal-lg {
     width: 90%;
-    max-height: 600px;
-    overflow: auto;
+    height: 600px;
+    overflow-y: auto;
   }       
 }
-/* .my-modal-popup .modal-lg {
-    max-height: 800px;
-    overflow: auto;
-} */
-
+.modal-body{
+  background-color: rgb(247, 247, 245);
+  height: 86vh;
+}
 
 .table-wrap {
   word-break: break-all;
