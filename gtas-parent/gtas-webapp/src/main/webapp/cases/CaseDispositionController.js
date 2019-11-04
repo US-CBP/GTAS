@@ -239,6 +239,9 @@
                         },
                         disableLinks: function() {
                             return true;
+                        },
+                        $uibModalInstance: function() {
+                            
                         }
                     }
                 }).then(function(answer) {
@@ -254,13 +257,21 @@
 
             $scope.showPassenger = function (row) {
                 const pax = row.entity;
+                $scope.row = row;
                 $scope.paxId = pax.paxId;
                 $scope.flightId = pax.flightId;
-                $mdDialog.show({
+                $scope.answer="";
+                var paxModalInstance = $uibModal.open({
+                    animation: true,
+                    backdrop: true,
+                    ariaLabelledBy: 'modal-title',
+                    ariaDescribedBy: 'modal-body',
                     controller: 'PassengerDetailCtrl',
                     templateUrl: 'pax/pax.detail.modal.html',
-                    clickOutsideToClose: true,
-                    fullscreen: true,
+                    windowClass: 'my-modal-popup',
+                    // clickOutsideToClose: true,
+                    // fullscreen: true,
+                    size: 'lg',
                     resolve: {
                         passenger: function (paxDetailService) {
                             return paxDetailService.getPaxDetail($scope.paxId, $scope.flightId);
@@ -291,7 +302,8 @@
                             return paxNotesService.getNoteTypes();
                         }
                     }
-                }).then(function(answer) {
+                });
+                paxModalInstance.result.then(function(answer) {
                     if (answer === 'reviewed') {
                         $scope.deleteRow(row);
                     } else if (answer === 'fullPax') {

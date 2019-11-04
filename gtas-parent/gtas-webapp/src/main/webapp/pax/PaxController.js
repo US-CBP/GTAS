@@ -9,6 +9,7 @@
   app.controller("PassengerDetailCtrl", function(
     $scope,
     $mdDialog,
+    $uibModalInstance,
     $mdSidenav,
     $timeout,
     $translate,
@@ -64,6 +65,9 @@
     $scope.isReloaded = true;
     $scope.answer = function(answer) {
       $mdDialog.hide(answer);
+      if($uibModalInstance != undefined) {
+        $uibModalInstance.close(answer);
+      }
     };
     configService.cypherUrl().then(function(result){
       vaquita.rest.CYPHER_URL = result;  
@@ -1168,6 +1172,7 @@
     };
     //dialog function for watchlist addition dialog
     $scope.showConfirm = function() {
+      $uibModalInstance.close();
       var confirm = $mdDialog
         .confirm()
         .title("WARNING: Please Confirm The Watchlist Addition")
@@ -1254,17 +1259,17 @@
       $scope.getNoteTypes = function(){
           return paxNotesService.getNoteTypes();
       }
-      
+
       $scope.getPaxDetailReport = function(){
     	  var passengerId = $scope.passenger.paxId;
     	  var flightId = $scope.passenger.flightId;
 
     	  paxReportService.getPaxDetailReport(passengerId, flightId).then(
                   function(data){
-                
+
                 	  if(data)
                 		  {
-                		  	var dataArray = data.data; 
+                		  	var dataArray = data.data;
                 		  	var byteArray = new Uint8Array(dataArray);
                 		  	var a = window.document.createElement('a');
                 		  	a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/pdf' }));
@@ -1277,15 +1282,15 @@
                 		  {
                 		  	consol.log("ERROR! Error in generating GTAS Event Report. No data was retured")
                 		  }
-                	  
+
                   });
-          
+
     	  return true;
-    };  
-      
-      
-      
-      
+    };
+
+
+
+
   });
 
   ////     PAX CONTROLLER     //////////////
