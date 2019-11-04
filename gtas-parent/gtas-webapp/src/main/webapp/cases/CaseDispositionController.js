@@ -298,6 +298,8 @@
                         window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
                     } else if (answer === 'notify') {
                         $scope.notify(pax.paxId);
+                    } else if (answer === 'reOpen') {
+                        $scope.reOpen(row);
                     }
 
                 });

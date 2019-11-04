@@ -11,10 +11,11 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 
 import freemarker.template.TemplateException;
-import gov.gtas.email.HighPriorityHitEmailNotificationService;
+import gov.gtas.email.HitEmailNotificationService;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.services.dto.EmailDTO;
 import org.slf4j.Logger;
@@ -52,16 +53,16 @@ public class NotificatonServiceImpl implements NotificatonService {
 
 	private final HitCategoryService watchlistCatService;
 	private final GtasEmailService emailService;
-	private final HighPriorityHitEmailNotificationService highPriorityHitEmailNotificationService;
+	private final HitEmailNotificationService hitEmailNotificationService;
 
 	public NotificatonServiceImpl(SnsService snsService,
 								  HitCategoryService watchlistCatService,
 								  GtasEmailService emailService,
-								  HighPriorityHitEmailNotificationService highPriorityHitEmailNotificationService) {
+								  HitEmailNotificationService hitEmailNotificationService) {
 		this.snsService = snsService;
 		this.watchlistCatService = watchlistCatService;
 		this.emailService = emailService;
-		this.highPriorityHitEmailNotificationService = highPriorityHitEmailNotificationService;
+		this.hitEmailNotificationService = hitEmailNotificationService;
 	}
 
 	/**
@@ -121,7 +122,7 @@ public class NotificatonServiceImpl implements NotificatonService {
 	@Override
 	@Transactional
 	public void sendAutomatedHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException {
-		List<EmailDTO> emailDTOS = highPriorityHitEmailNotificationService.generateAutomatedHitEmailDTOs(passengers);
+		List<EmailDTO> emailDTOS = hitEmailNotificationService.generateAutomatedHighPriorityHitEmailDTOs(passengers);
 
 		for(EmailDTO emailDTO: emailDTOS) {
 			try {
@@ -131,6 +132,13 @@ public class NotificatonServiceImpl implements NotificatonService {
 				logger.warn(String.format("Automated hit email notification failed for email: %s, with the exception: %s", emailDTO.getTo()[0], ex));
 			}
 		}
+	}
+
+	@Override
+	@Transactional
+	public void sendManualNotificationEmail(String[] to, String note, Long paxId, String userId) throws IOException, TemplateException, MessagingException {
+		EmailDTO emailDTO = hitEmailNotificationService.generateManualNotificationEmailDTO(to, note, paxId, userId);
+		emailService.sendHTMLEmail(emailDTO);
 	}
 
 	/**
