@@ -48,12 +48,12 @@ select * from (select
 	pnr_message.`raw` "pnr",
 	apis_message.`raw` "apis",
 
-	pax_watchlist.`id` "pax_watchlist.id",
-	pax_watchlist.`last_run_timestamp` "pax_watchlist.last_run_timestamp",
-	pax_watchlist.`passenger_id` "pax_watchlist.passenger_id",
-	pax_watchlist.`percent_match` "pax_watchlist.percent_match",
-	pax_watchlist.`verified_status` "pax_watchlist.verified_status",
-	pax_watchlist.`watchlist_item_id` "pax_watchlist.watchlist_item_id"
+	hit_detail.`id` "hit_detail.id",
+	hit_detail.`created_date` "hit_detail.created_date",
+	hit_detail.`passenger` "hit_detail.passenger",
+	hit_detail.`percentage_match` "hit_detail.percentage_match",
+	hit_detail.`hitEnum` "hit_detail.hitEnum"
+	-- hit_detail.`watchlist_item_id` "hit_detail.watchlist_item_id"
 	
 	from `flight_pax` fp 
 	join `passenger` p 
@@ -86,8 +86,8 @@ select * from (select
 		on (apis_fp.`apis_message_id` = apis.id)
 	left join `message` apis_message
 		on (apis.id = apis_message.id)
-	left join `pax_watchlist_link` pax_watchlist
-		on (pax_watchlist.passenger_id=p.id)
+	left join `hit_detail` hit_detail
+		on (hit_detail.passenger=p.id)
 	left join seat 
 		on (seat.flight_id=f.ID and seat.passenger_id=p.id)
-	 ) a
+	 ) flight_pax_generated_table
