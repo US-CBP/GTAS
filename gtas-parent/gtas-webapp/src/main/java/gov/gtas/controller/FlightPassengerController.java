@@ -70,6 +70,7 @@ public class FlightPassengerController {
 		UserLocationStatus userLocationStatus = null;
 		Set<String> defaultDestAirport = new HashSet<String>();
 
+		/*
 		if (!isAdmin) {
 			Object userLocationObject = hsr.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION);
 			if (userLocationObject != null) {
@@ -84,7 +85,7 @@ public class FlightPassengerController {
 				request.setDestinationAirports(defaultDestAirport);
 			}
 
-		}
+		}*/
 
 		return flightService.findAll(request);
 	}
