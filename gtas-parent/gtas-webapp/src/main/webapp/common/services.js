@@ -6,7 +6,7 @@
 (function () {
   'use strict';
   app
-      .service('notificationService', function($http,$q) {
+      .service('notificationService', function($http,$q,$mdToast) {
         var GET_MESSAGE_ERRORS_URL ="/gtas/errorMessage";
         var GET_NOTIFICATION_HITS ="/gtas/hitCount";
         function handleError(response) {
@@ -17,6 +17,17 @@
         }
 
         function handleSuccess(response) {
+            if(response.status !== 200) {
+                var toastPosition = angular.element(document.getElementById('notificationForm'));
+                $mdToast.show(
+                    $mdToast.simple()
+                        .content('Unable to send email notification')
+                        .position('top right')
+                        .hideDelay(4000)
+                        .parent(toastPosition));
+                return $q.reject(response.data.message);
+            }
+
             return response.data;
         }
         return {
@@ -35,9 +46,7 @@
                 return (request.then(handleSuccess, handleError));
             },
             notifyByEmail: function(to, paxId, note) {
-              const dfq = $q.defer();
-              dfq.resolve(
-                $http({
+              var request = $http({
                   method: 'post',
                   url: "/gtas/notify",
                   params: {
@@ -45,10 +54,8 @@
                     paxId: paxId,
                     note: note
                   }
-                })
-              );
-              
-              return dfq.promise;
+                });
+              return (request.then(handleSuccess, handleError));
             }
         }
       })
