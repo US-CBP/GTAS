@@ -8,13 +8,13 @@
 
 <form name="sideForm"  ng-submit="filter()" class="filters" _lpchecked="1">
     <div class="filter-list" role="tablist">
-        <h1 class="filter-heading">{{'nav.filters' | translate}}
+        <h3 class="filter-heading">{{'nav.filters' | translate}}
             <button type="submit" class="btn btn-icon-only btn-hover">
                 <md-tooltip>{{'flight.filter' | translate}}</md-tooltip>
                 <i class="fa fa-search"></i>
             </button>
             <a href="#/casedisposition" ng-click="clearFilters()" class="filters-clear">{{'nav.clearfilters' | translate}}</a>
-        </h1>
+        </h3>
         <h4 ng-show='filterCheck("dispstatus")' aria-expanded="true" data-toggle="collapse" role="tab" data-target="#dispstatusGroup" aria-controls="statusGroup" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>{{'case.casestatus' | translate}}
         </h4>

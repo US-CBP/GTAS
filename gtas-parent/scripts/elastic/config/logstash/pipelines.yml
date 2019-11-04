@@ -4,16 +4,7 @@
 # Default values for ommitted settings are read from the `logstash.yml` file.
 # When declaring multiple pipelines, each MUST have its own `pipeline.id`.
 #
-# Example of two pipelines:
-#
-# - pipeline.id: test
-#   pipeline.workers: 1
-#   pipeline.batch.size: 1
-#   config.string: "input { generator {} } filter { sleep { time => 1 } } output { stdout { codec => dots } }"
-# - pipeline.id: another_test
-#   queue.type: persisted
-#   path.config: "/tmp/logstash/*.config"
-#
+
 - pipeline.id: cases
   pipeline.workers: 1
   # pipeline.batch.size: 125
@@ -30,17 +21,12 @@
   
 - pipeline.id: message_delivery_comp
   pipeline.workers: 1
-  path.config: "../config/logstash-message_delivery_comp.conf"
+  path.config: "./config/logstash-message_delivery_comp.conf"
   
 - pipeline.id: message_count_comp
   pipeline.workers: 1
-  path.config: "../config/logstash-message_count_comp.conf"  
-  
-# - pipeline.id: countries
-#   pipeline.workers: 1
-#   pipeline.batch.size: 125
-#   path.config: "logstash/config/logstash-airport.conf"
-  
+  path.config: "./config/logstash-message_count_comp.conf"  
+
 # Available options:
 #
 #   # name of the pipeline

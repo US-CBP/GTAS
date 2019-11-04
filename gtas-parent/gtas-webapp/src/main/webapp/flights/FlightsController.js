@@ -41,7 +41,7 @@
         $('md-tooltip').remove();
       };
       
-      $scope.updateOnDirectionChange = function(){
+     /* $scope.updateOnDirectionChange = function(){
 
         var isAdminUser = flightSearchOptions.data.adminUser;
           
@@ -70,7 +70,7 @@
           }
         
    
-      };
+      };*/
 
       /* Search for airports. */
       function querySearch(query) {
@@ -161,7 +161,7 @@
           $scope.model.destinationAirports = destinationAirports;
       };
       
-      var loadFlightDirection = function() {
+     /* var loadFlightDirection = function() {
 
            var isAdminUser = flightSearchOptions.data.adminUser;
            
@@ -174,7 +174,7 @@
 
            }
 
-        };  
+        };  */
 
       var mapAirports = function () {
           var originAirports = new Array();
@@ -574,6 +574,6 @@
     }
     resolvePage();
     mapAirports();
-    loadFlightDirection();
+  //  loadFlightDirection();
 })
 }());

@@ -9,7 +9,7 @@
         function ($scope, $rootScope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, caseModel,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, configService) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, configService, paxReportService) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList;
@@ -170,6 +170,36 @@
                 }
             };
 
+        $scope.getPaxDetailReport  = function(row) {
+            const pax = row.entity;
+            $scope.row = row;
+            $scope.paxId = pax.paxId;
+            $scope.flightId = pax.flightId;
+
+            paxReportService.getPaxDetailReport( pax.paxId, pax.flightId).then(
+                function(data){
+
+                    if(data)
+                    {
+                        var dataArray = data.data;
+                        var byteArray = new Uint8Array(dataArray);
+                        var a = window.document.createElement('a');
+                        a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/pdf' }));
+                        a.download = "gtas_event_report";
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    }
+                    else
+                    {
+                        consol.log("ERROR! Error in generating GTAS Event Report. No data was retured")
+                    }
+
+                });
+
+            return true;
+        };
+
             $scope.reOpen = function(row) {
                 row.entity.status = 'Re_Opened';
                 caseDispositionService.updatePassengerHitViews(row.entity, 'RE_OPENED').then(function(result) {
@@ -239,6 +269,9 @@
                         },
                         disableLinks: function() {
                             return true;
+                        },
+                        $uibModalInstance: function() {
+                            
                         }
                     }
                 }).then(function(answer) {
@@ -254,13 +287,21 @@
 
             $scope.showPassenger = function (row) {
                 const pax = row.entity;
+                $scope.row = row;
                 $scope.paxId = pax.paxId;
                 $scope.flightId = pax.flightId;
-                $mdDialog.show({
+                $scope.answer="";
+                var paxModalInstance = $uibModal.open({
+                    animation: true,
+                    backdrop: true,
+                    ariaLabelledBy: 'modal-title',
+                    ariaDescribedBy: 'modal-body',
                     controller: 'PassengerDetailCtrl',
                     templateUrl: 'pax/pax.detail.modal.html',
-                    clickOutsideToClose: true,
-                    fullscreen: true,
+                    windowClass: 'my-modal-popup',
+                    // clickOutsideToClose: true,
+                    // fullscreen: true,
+                    size: 'lg',
                     resolve: {
                         passenger: function (paxDetailService) {
                             return paxDetailService.getPaxDetail($scope.paxId, $scope.flightId);
@@ -291,7 +332,8 @@
                             return paxNotesService.getNoteTypes();
                         }
                     }
-                }).then(function(answer) {
+                });
+                paxModalInstance.result.then(function(answer) {
                     if (answer === 'reviewed') {
                         $scope.deleteRow(row);
                     } else if (answer === 'fullPax') {
@@ -421,10 +463,16 @@
                 {
                     field: 'status',
                     name: 'action',
+                    width: 265,
                     displayName: $translate.instant('case.action'),
-                    cellTemplate: '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
-                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.review(row)" style="margin:5px;">Review</button>' +
-                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row.entity.paxId)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
+                    cellTemplate:
+                        '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
+                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.review(row)" style="margin:5px;">Review</button>' +
+                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row.entity.paxId)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>' +
+                        '<button  type="submit" class="btn btn-info" ng-click="grid.appScope.getPaxDetailReport(row)">' +
+                        '{{\'btn.downloadreportshort\' | translate}}' +
+                        '</button>'
+
                 }
                 
 

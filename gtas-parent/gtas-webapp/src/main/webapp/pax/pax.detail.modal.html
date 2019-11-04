@@ -9,16 +9,17 @@
   -->
 
   <!--- todo: i18n for date formats required here!! -->
-
-  <md-dialog style="height: 100%; width:100%; top:5%">
-    <!-- BEGIN SIDEBAR -->
+  <div class="modal-header">
     <div layout="row">
       <span flex></span>
+      <md-button class="btn-info" ng-click="getPaxDetailReport()">
+        {{'btn.downloadreport' | translate}}
+      </md-button> &nbsp;
+      <md-button  class="btn-danger"  ng-click="addToWatchlist()" ng-disabled = "!userHasRole(4) && !userHasRole(1)" >
+        Add to Watchlist
+      </md-button>
       <md-button ng-if="isEmailEnabled()" class="btn-warning"  ng-click="answer('notify')" >
        Notify
-      </md-button>
-      <md-button  class="btn-danger"  ng-click="addToWatchlist()" >
-        Add to Watchlist
       </md-button>
       <md-button ng-if="passengerHasOpenCases()" class="btn-info" ng-click="answer('reviewed')" >
         Set Status to Reviewed
@@ -33,9 +34,9 @@
         Return To PVL
       </md-button>
     </div>
-    <div class="cbp-sidebar sidebar margin-0" ng-include="'pax/pax.detail.sidebar.html'">
-    </div>  <!-- END SIDEBAR -->
-    <div class="cbp-sidebar-offset margin-top-1" ng-include="'pax/paxTabs.html'">
-    </div>
-
-  </md-dialog>
+  </div>
+<div class="modal-body">
+  <div class="cbp-sidebar sidebar margin-0" ng-include="'pax/pax.detail.sidebar.html'"></div>
+  <div class="cbp-sidebar-offset margin-top-1" ng-include="'pax/paxTabs.html'" style="height: 100%;"></div>
+</div>
+  

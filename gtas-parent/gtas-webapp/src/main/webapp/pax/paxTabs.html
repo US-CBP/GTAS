@@ -148,7 +148,7 @@
                                                     Previous Notes History (Up to 10)
 	        									</a>
         								</h4>
-        								<div id="collapseTwo" class="panel-collapse collapse">
+        								<div id="collapseTwo" class="panel-collapse collapse in">
 	                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
 	                                        	<span class="panel-body no-pad-top" ng-repeat="note in historicalNotes | orderBy : createdAt">
 													<label class="static-label" style="font-size:12px">
@@ -1008,29 +1008,22 @@
 
 
                 <div class="flex justify-around action-buttons" ng-show="!disableLinks">
-                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-danger" ng-click="addToWatchlist() ">
+                	<md-button  type="button" class="btn btn-info" ng-click="getPaxDetailReport()">
+                               {{'btn.downloadreport' | translate}}
+     				</md-button> &nbsp;
+                    <md-button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-danger" ng-click="addToWatchlist() ">
                         &nbsp;{{'btn.addtowatchlist' | translate}}
-                    </button>
-                    <button ng-if="isEmailEnabled()" ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-warning" ng-click="notify()">
-                        &nbsp;{{'btn.notify' | translate}}
-                    </button>
-                    <button ng-if="passengerHasOpenCases()" ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-info" ng-click="review()">
+                    </md-button>&nbsp;
+                    <md-button ng-if="isEmailEnabled()" type="button" class="btn btn-warning" ng-click="notify()">
+                        &nbsp;{{'btn.notify' | translate}} &nbsp;
+                    </md-button>
+                    <md-button ng-if="passengerHasOpenCases()" type="button" class="btn btn-info" ng-click="review()" style="margin-left: 5px">
                         &nbsp;{{'btn.reviewed' | translate}}
-                    </button>
-                    <button ng-if="passengerHasClosedCasesAndNoOpenCases()" ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-info" ng-click="reOpen()">
-                        &nbsp;Set Status to Re-Open
-                    </button>
-                    <!--  <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
-                          <i class="fa fa-download" aria-hidden="true"></i> &nbsp;{{'btn.paxdetail' | translate}}
-                      </a>
-                      <a ng-if="!userHasRole(9) && !userHasRole(1)" ng-disabled = "true" class="btn btn-primary">
-                          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
-                      </a>
-                      <a ng-if="userHasRole(9) || userHasRole(1)" class="btn btn-primary" ng-class="{'disabled': disableLinks}" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
-                          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
-                      </a>-->
+                    </md-button>
+                    <md-button ng-if="passengerHasClosedCasesAndNoOpenCases()" type="button" class="btn btn-info" ng-click="reOpen()" style="margin-left: 5px">
+                        &nbsp;{{'btn.setToReOpen' | translate}}
+                    </md-button>
                 </div>
-
             </div>
         </section>
     </div>
