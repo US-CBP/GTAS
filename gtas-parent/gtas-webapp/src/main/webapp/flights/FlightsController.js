@@ -244,8 +244,6 @@
           exporterCsvFilename: 'FlightGid.csv',
           exporterExcelFilename: 'flightGrid.xlsx',
           exporterExcelSheetName: 'Data',
-          expandableRowHeight: 200,
-          expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
           exporterFieldCallback: function ( grid, row, col, value ){
               return fixGridData (grid, row, col, value);
           },
@@ -307,8 +305,6 @@
               exporterCsvFilename: 'FlightsQueryGrid.csv',
               exporterExcelFilename: 'flightsQueryGrid.xlsx',
               exporterExcelSheetName: 'Data',
-              expandableRowHeight: 200,
-              expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
               exporterFieldCallback: function ( grid, row, col, value ){
                 return fixGridData (grid, row, col, value);
               },  
@@ -319,40 +315,8 @@
                  gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                      $scope.model.pageSize = pageSize;
                  });
-
-                 gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-                     if (row.isExpanded) {
-                        row.entity.subGridOptions = {
-                            columnDefs: $scope.passengerSubGridColumnDefs
-                        }
-
-                        var request ={
-                            dest:row.entity.destination,
-                            direction:row.entity.direction,
-                            etaEnd:new Date(row.entity.etd.toString().substring(0,10).split('-').join(',')),
-                            etaStart:new Date(row.entity.eta.toString().substring(0,10).split('-').join(',')),
-                            flightNumber:row.entity.fullFlightNumber,
-                            origin: row.entity.origin,
-                            lastname:"",
-                            pageNumber:1,
-                            pageSize:5000
-                        };
-
-                       paxService.getPax(row.entity.id, request).then(function(data){
-                        spinnerService.show('html5spinner');
-                         var passengerHitList = [];
-                         $.each(data.data.passengers, function(index,value){
-                         if (value.onRuleHitList || value.onWatchList || value.onWatchListDoc){
-                           passengerHitList.push(value);
-                         }
-                         });
-                         row.entity.subGridOptions.data=passengerHitList;
-                         spinnerService.hide('html5spinner');
-                       });
-                      }
-                 });
              }
-      }
+      };
 
       $scope.flightsGrid.columnDefs = [
           {

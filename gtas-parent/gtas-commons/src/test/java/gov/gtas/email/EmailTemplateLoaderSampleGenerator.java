@@ -45,16 +45,24 @@ public class EmailTemplateLoaderSampleGenerator {
 
         hitEmailDTO.setFirstName("John");
         hitEmailDTO.setLastName("Doe");
+        hitEmailDTO.setFlightOrigin("BWI");
+        hitEmailDTO.setFlightDestination("LHR");
+        hitEmailDTO.setCarrier("Spirit");
 
         CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setRule("Age Rule(R)");
+        categoryDTO.setRule("R");
         categoryDTO.setSeverity("Top");
-        categoryDTO.setCategory("Terrorism");
+        categoryDTO.setCategoryName("Terrorism");
+        categoryDTO.setType("Age Rule");
+        categoryDTO.setStatus("NEW");
 
         CategoryDTO categoryDTO2 = new CategoryDTO();
-        categoryDTO2.setRule("Age Rule(R)");
+        categoryDTO2.setRule("R");
         categoryDTO2.setSeverity("High");
-        categoryDTO2.setCategory("Terrorism");
+        categoryDTO2.setCategoryName("Terrorism");
+        categoryDTO2.setType("Age Rule");
+        categoryDTO2.setStatus("NEW");
+
         hitEmailDTO.setCategoryDTOs(Arrays.asList(categoryDTO, categoryDTO2));
 
         DocumentDTO documentDTO = new DocumentDTO();

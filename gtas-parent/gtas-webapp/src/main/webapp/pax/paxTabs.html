@@ -1003,27 +1003,33 @@
                             </div>
                         </md-tab-body>
                     </md-tab>
-
+                    <!-- END - TABS AND CONTENT -->
                 </md-tabs>
-                <!-- END - TABS AND CONTENT -->
+
+
                 <div class="flex justify-around action-buttons" ng-show="!disableLinks">
-                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-danger" ng-click="addToWatchlist() ">
+                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-danger" ng-click="addToWatchlist() ">
                         &nbsp;{{'btn.addtowatchlist' | translate}}
                     </button>
-                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-info" ng-click="review()">
+                    <button ng-if="isEmailEnabled()" ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-warning" ng-click="notify()">
+                        &nbsp;{{'btn.notify' | translate}}
+                    </button>
+                    <button ng-if="passengerHasOpenCases()" ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-info" ng-click="review()">
                         &nbsp;{{'btn.reviewed' | translate}}
                     </button>
-                  <!--  <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
-                        <i class="fa fa-download" aria-hidden="true"></i> &nbsp;{{'btn.paxdetail' | translate}}
-                    </a>
-                    <a ng-if="!userHasRole(9) && !userHasRole(1)" ng-disabled = "true" class="btn btn-primary">
-                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
-                    </a>
-                    <a ng-if="userHasRole(9) || userHasRole(1)" class="btn btn-primary" ng-class="{'disabled': disableLinks}" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
-                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
-                    </a>-->
+                    <button ng-if="passengerHasClosedCasesAndNoOpenCases()" ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-info" ng-click="reOpen()">
+                        &nbsp;Set Status to Re-Open
+                    </button>
+                    <!--  <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
+                          <i class="fa fa-download" aria-hidden="true"></i> &nbsp;{{'btn.paxdetail' | translate}}
+                      </a>
+                      <a ng-if="!userHasRole(9) && !userHasRole(1)" ng-disabled = "true" class="btn btn-primary">
+                          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
+                      </a>
+                      <a ng-if="userHasRole(9) || userHasRole(1)" class="btn btn-primary" ng-class="{'disabled': disableLinks}" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
+                          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
+                      </a>-->
                 </div>
-
 
             </div>
         </section>

@@ -9,7 +9,7 @@
         function ($scope, $rootScope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, caseModel,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, userService, configService) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, configService) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList;
@@ -180,15 +180,15 @@
                     $scope.casesDispGrid.data.splice(index, 1);
                 }
             };
-            $scope.notify = function(row) {
-                $scope.notificationData = row;
+            $scope.notify = function(paxId) {
+                $scope.paxId = paxId;
                var notificationModalInstance = $uibModal.open({
                     animation: true,
                     ariaLabelledBy: 'modal-title',
                     ariaDescribedBy: 'modal-body',
-                    templateUrl:'cases/notificationTemplate.html',
+                    templateUrl:'common/notificationTemplate.html',
                     backdrop: true,
-                    controller: NotificationModalCtrl,
+                    controller: 'EmailNotificationModalCtrl',
                     scope: $scope
 
                 });
@@ -199,51 +199,7 @@
 
             };
 
-            var NotificationModalCtrl = function($scope, $uibModalInstance, $rootScope) {
-                var loggedInUser = $rootScope.currentlyLoggedInUser;
-                $scope.noneGtasUser = {};
-                $scope.notesForEmailNotification='';
-                var setUserData = function (data) {
-                    $scope.allUsers= data;
-                    $scope.allUsers.forEach(function(user) {
-                        user.selected = false;
-                    })
-                };
-                userService.getAllUsers().then(setUserData);
-
-                $scope.submit = function () {
-                    $scope.selectedEmails = [];
-                    $scope.allUsers.forEach(function(user){
-                        if (user.selected && user.email != null) {
-                            $scope.selectedEmails.push(user.email);
-                        }
-                    });
-                    if ($scope.noneGtasUser.email != null) {
-                        $scope.selectedEmails.push($scope.noneGtasUser.email);
-                    }
-                    
-                    if ($scope.selectedEmails.length > 0)  {//if selectedEmail is not empty send notification
-                        caseDispositionService.notify($scope.selectedEmails, 
-                            $scope.notificationData.entity.paxId, 
-                            $scope.notesForEmailNotification, 
-                            $scope.notificationData.entity.status);
-                    }
-
-                    $uibModalInstance.dismiss('cancel');
-
-                }
-
-                $scope.cancel = function () {
-                    $uibModalInstance.dismiss('cancel');
-                };
-
-                $scope.toggleUser = function () {
-                    angular.forEach($scope.allUsers, function(user) {
-                        user.selected = event.target.checked;
-                    })
-                }
-
-            };
+            
 
             $scope.review = function(row) {
                 const pax = row.entity;
@@ -290,10 +246,11 @@
                         $scope.deleteRow(row);
                     } else if (answer === 'fullPax') {
                         window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
+                    } else if (answer === 'notify') {
+                        $scope.notify(pax.paxId);
                     }
-                });;
+                });
             };
-
 
             $scope.showPassenger = function (row) {
                 const pax = row.entity;
@@ -339,7 +296,12 @@
                         $scope.deleteRow(row);
                     } else if (answer === 'fullPax') {
                         window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
+                    } else if (answer === 'notify') {
+                        $scope.notify(pax.paxId);
+                    } else if (answer === 'reOpen') {
+                        $scope.reOpen(row);
                     }
+
                 });
             };
             $scope.casesDispGrid = {
@@ -389,6 +351,8 @@
                     gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                         $scope.pageNumber = newPage;
                         $scope.pageSize = pageSize;
+                        $scope.model.pageSize = pageSize;
+                        $scope.model.pageNumber = newPage;
                         $scope.resolvePage();
                     });
                 }
@@ -460,7 +424,7 @@
                     displayName: $translate.instant('case.action'),
                     cellTemplate: '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
                         '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.review(row)" style="margin:5px;">Review</button>' +
-                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
+                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row.entity.paxId)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
                 }
                 
 
@@ -485,6 +449,42 @@
               return filters.includes(option);
             };
 
+            $scope.clearFilters = function(){
+                let defaultSort = [
+                        {column: 'countDown', dir: 'asc'},
+
+                    ];
+                let    displayStatusCheckBoxes = {
+                        NEW: true,
+                        RE_OPENED: true,
+                        REVIEWED: false
+                    };
+               let     ruleTypes = {
+                        WATCHLIST: true,
+                        USER_RULE: true,
+                        GRAPH_RULE: true,
+                        PARTIAL_WATCHLIST: false
+                    };
+                 let   ruleCatFilter;
+                 let   startDate = new Date();
+                 let   endDate = new Date();
+                endDate.setDate(endDate.getDate() + 1);
+                startDate.setMinutes(startDate.getMinutes() - 15);
+                ruleCatFilter = caseDispositionService.getDefaultCats();
+                $scope.model.pageNumber = 1;
+                $scope.model.pageSize = typeof $scope.model.pageSize != "undefined" ? $scope.model.pageSize : 10;
+                $scope.model.origin = [];
+                $scope.model.dest = [];
+                $scope.model.etaStart = startDate;
+                $scope.model.ruleCatFilter = ruleCatFilter;
+                $scope.model.myRulesOnly = false;
+                $scope.model.etaEnd = endDate;
+                $scope.model.ruleTypes = ruleTypes;
+                $scope.model.sort = defaultSort;
+                $scope.model.displayStatusCheckBoxes = displayStatusCheckBoxes;
+                $scope.model.withTimeLeft = true;
+                $scope.filter();
+            };
 
             $scope.filter = function () {
                 spinnerService.show('html5spinner');
@@ -505,7 +505,8 @@
                         }
                         spinnerService.hide('html5spinner');
                     });
+
             };
-            $scope.filter();
+            $scope.resolvePage();
         });
 }());

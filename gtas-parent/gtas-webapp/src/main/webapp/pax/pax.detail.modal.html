@@ -10,15 +10,21 @@
 
   <!--- todo: i18n for date formats required here!! -->
 
-  <md-dialog style="height: 100%; width:100%; top:1%"">
+  <md-dialog style="height: 100%; width:100%; top:5%">
     <!-- BEGIN SIDEBAR -->
     <div layout="row">
       <span flex></span>
+      <md-button ng-if="isEmailEnabled()" class="btn-warning"  ng-click="answer('notify')" >
+       Notify
+      </md-button>
       <md-button  class="btn-danger"  ng-click="addToWatchlist()" >
         Add to Watchlist
       </md-button>
-      <md-button class="btn-info" ng-click="answer('reviewed')" >
+      <md-button ng-if="passengerHasOpenCases()" class="btn-info" ng-click="answer('reviewed')" >
         Set Status to Reviewed
+      </md-button>
+      <md-button ng-if="passengerHasClosedCasesAndNoOpenCases()" class="btn-info" ng-click="answer('reOpen')" >
+        Set Status To Re-Opened
       </md-button>
       <md-button class="btn-primary" ng-click="answer('fullPax')" >
         Load Full Passenger Details

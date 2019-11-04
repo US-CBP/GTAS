@@ -29,7 +29,8 @@
     configService,
     paxNotesService,
     eventNotes,
-    noteTypesList
+    noteTypesList,
+    $uibModal
   ) {
 	$scope.noteTypesList = noteTypesList.data;
 	$scope.eventNotes = eventNotes.data.paxNotes;
@@ -846,9 +847,17 @@
       paxService.getRuleHitsByFlightAndPax($scope.passenger.paxId, $scope.passenger.flightId).then(
           function(result) {
             $scope.ruleHits = result;
+            ruleHits = result;
             stripCharacters();
           }
       );
+    };
+
+    $scope.enableEmailNotification =  configService.enableEmailNotificationService().then(function(value) {
+      $scope.enableEmailNotification = value.data;
+    });
+    $scope.isEmailEnabled = function() {
+      return $scope.enableEmailNotification === 'true';
     };
 
     $scope.saveWatchListMatchByPaxId = function() {
@@ -856,8 +865,7 @@
         .savePaxWatchlistLink($scope.passenger.paxId)
         .then(function(response) {
           $scope.getWatchListMatchByPaxId();
-          $scope.refreshCasesHistory($scope.passenger.paxId);
-          $scope.refreshHitDetailsList($scope.passenger.paxId, $scope.passenger.flightId);
+           $scope.refreshHitDetailsList($scope.passenger.paxId, $scope.passenger.flightId);
         });
     };
 
@@ -1092,10 +1100,64 @@
     $scope.review = function () {
       let paxId = $scope.passenger.paxId;
       paxDetailService.updatePassengerHitDetails(paxId, 'REVIEWED')
-          .then(function (response) {
+        .then(function (response) {
+          $scope.refreshHitDetailsList();
+          $rootScope.$broadcast('hitCountChange');
+        });
+    };
+
+    $scope.reOpen = function () {
+      let paxId = $scope.passenger.paxId;
+      paxDetailService.updatePassengerHitDetails(paxId, 'Re_Opened')
+          .then(function () {
             $scope.refreshHitDetailsList();
             $rootScope.$broadcast('hitCountChange');
           });
+    };
+
+    $scope.passengerHasOpenCases = function() {
+      if ($scope.ruleHits !== undefined && $scope.ruleHits !== null && $scope.ruleHits.length > 0) {
+        for (let i in ruleHits) {
+          let ruleHit = $scope.ruleHits[i];
+          if (ruleHit.status === 'New' || ruleHit.status === 'Re_Opened') {
+            return true;
+          }
+        }
+        return false;
+      }
+      return false;
+    };
+
+    $scope.passengerHasClosedCasesAndNoOpenCases = function() {
+      if ($scope.ruleHits !== undefined && $scope.ruleHits !== null && $scope.ruleHits.length > 0) {
+        for(let i in ruleHits) {
+          let ruleHit = $scope.ruleHits[i];
+          if (ruleHit.status === 'New' || ruleHit.status === 'Re_Opened') {
+              return false;
+            }
+        }
+        return true;
+      }
+      return false;
+    };
+
+    $scope.notify = function () {
+      $scope.paxId = $scope.passenger.paxId;
+      var notificationModalInstance = $uibModal.open({
+        animation: true,
+        ariaLabelledBy: 'modal-title',
+        ariaDescribedBy: 'modal-body',
+        templateUrl: 'common/notificationTemplate.html',
+        backdrop: true,
+        controller: 'EmailNotificationModalCtrl',
+        scope: $scope
+
+      });
+
+      notificationModalInstance.result.then(function () {
+        $uibModalInstance.close();
+      })
+
     };
 
     $scope.addToWatchlist = function() {
@@ -1148,30 +1210,29 @@
         clickOutsideToClose: true
       });
     };
-    
-	$scope.saveNote = function(text){
-		//if wanted to save note from other place than normal comment section
-		if(text == null){
-			text = $scope.currentNoteText; 
-		}
-		var element = document.querySelector("trix-editor");
-		var plainTextNote = element.editor.getDocument().toString();
-		var rtfNote = text.valueOf();
-		
-		var note = {
-				plainTextNote:plainTextNote,
-				rtfNote:rtfNote,
-				passengerId:$scope.passenger.paxId,
-				noteType: $scope.currentNoteTypes
-		};
-		paxNotesService.saveNote(note).then(function(){
-			$scope.getEventNotes(); // reload current event notes after adding new one
-            $scope.getHistoricalNotes();
-		});
-		$scope.currentNoteText = "";
-		text = "";
-	};
 
+    $scope.saveNote = function(text){
+      //if wanted to save note from other place than normal comment section
+      if(text == null){
+        text = $scope.currentNoteText;
+      }
+      var element = document.querySelector("trix-editor");
+      var plainTextNote = element.editor.getDocument().toString();
+      var rtfNote = text.valueOf();
+
+      var note = {
+        plainTextNote:plainTextNote,
+        rtfNote:rtfNote,
+        passengerId:$scope.passenger.paxId,
+        noteType: $scope.currentNoteTypes
+      };
+      paxNotesService.saveNote(note).then(function(){
+        $scope.getEventNotes(); // reload current event notes after adding new one
+        $scope.getHistoricalNotes();
+      });
+      $scope.currentNoteText = "";
+      text = "";
+    };
 	$scope.getListOfNoteTypes = function (arrayOfNoteType) {
 	  return arrayOfNoteType.map(nType => nType.noteType).toString();
     };
@@ -1273,18 +1334,6 @@
               field: 'hitsDetailsList[0]',
               cellFilter: 'hitsConditionDisplayFilter'
           }],
-          setSubGridOptions = function (data, appScopeProvider) {
-              data.passengers.forEach(function (entity_row) {
-                  if (!entity_row.flightId) {
-                      entity_row.flightId = $stateParams.id;
-                  }
-                  entity_row.subGridOptions = {
-                      appScopeProvider: appScopeProvider,
-                      columnDefs: ruleGridColumns,
-                      data: []
-                  };
-              });
-          },
           //TODO There is probably a better location to put this
           //Parses Passengers object for front-end in flightpax
           paxPassParser = function(passengers){
@@ -1318,7 +1367,6 @@
           },
           setPassengersGrid = function (grid, response) {
               var data = stateName === 'queryPassengers' ? response.data.result : response.data;
-              setSubGridOptions(data, $scope);
               grid.totalItems = data.totalPassengers === -1 ? 0 : data.totalPassengers;
               grid.data = data.passengers;
               //Add specific passenger info to scope for paxDetail
@@ -1431,22 +1479,12 @@
       exporterCsvFilename: 'PassengerGrid.csv',
       exporterExcelFilename: 'PassengerGrid.xlsx',
       exporterExcelSheetName: 'Data',
-      enableExpandableRowHeader: false,
 
-      expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
       exporterFieldCallback: function ( grid, row, col, value ){
         return fixGridData (grid, row, col, value);
       },
       onRegisterApi: function (gridApi) {
           $scope.gridApi = gridApi;
-
-          gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-              if (row.isExpanded) {
-                  paxService.getRuleHits(row.entity.id).then(function (data) {
-                      row.entity.subGridOptions.data = data;
-                  });
-              }
-          });
       }
   };
 
@@ -1476,7 +1514,6 @@
       multiSelect: false,
       enableExpandableRowHeader: false,
       minRowsToShow: 10,
-      expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
       exporterFieldCallback: function ( grid, row, col, value ){
         return fixGridData (grid, row, col, value);
       },
@@ -1489,14 +1526,6 @@
           pageSize
         ) {
           $scope.model.pageSize = pageSize;
-        });
-
-        gridApi.expandable.on.rowExpandedStateChanged($scope, function(row) {
-          if (row.isExpanded) {
-            paxService.getRuleHits(row.entity.id).then(function(data) {
-              row.entity.subGridOptions.data = data;
-            });
-          }
         });
       }
     };
