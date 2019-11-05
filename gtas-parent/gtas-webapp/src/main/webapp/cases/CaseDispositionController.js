@@ -351,7 +351,7 @@
                 paginationPageSizes: [10, 15, 25],
                 paginationPageSize: $scope.pageSize,
                 paginationCurrentPage: $scope.pageNumber,
-                rowHeight: 66,
+                rowHeight: 75,
                 useExternalPagination: true,
                 enableFiltering: false,
                 enableHorizontalScrollbar:  uiGridConstants.scrollbars.NEVER,
@@ -405,7 +405,7 @@
                 {
                     field: 'countdown',
                     name: 'countdown',
-                    width: 325,
+                    width: '20%',
                     displayName: $translate.instant('flight.flight'),
                     cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace">' +
                         '<div class="flex">' +
@@ -417,10 +417,10 @@
                         '<span class="sm-pad">' +
                         '<div>' +
                         '<i class="fa fa-arrow-circle-up" aria-hidden="true"></i>' +
-                        '{{row.entity.flightOrigin}} {{row.entity.flightETDDate | date:\'yyyy-MM-dd HH:mm\'}}</div>' +
+                        '{{row.entity.flightOrigin}} {{row.entity.flightETDDate | date:\'MM-dd HH:mm\'}}</div>' +
                         '<div>' +
                         '<i class="fa fa-arrow-circle-down" aria-hidden="true"></i>' +
-                        '{{row.entity.flightDestination}} {{row.entity.flightETADate | date:\'yyyy-MM-dd HH:mm\'}}</div>' +
+                        '{{row.entity.flightDestination}} {{row.entity.flightETADate | date:\'MM-dd HH:mm\'}}</div>' +
                         '</span>' +
                         '</div>' +
                         '</div>'
@@ -428,6 +428,7 @@
                 {
                     field: 'highPriorityRuleCatId',
                     name: 'highPriorityRuleCatId',
+                    width: '20%',
                     displayName: $translate.instant('case.toprulecategory'),
                     cellTemplate: '<div class="case-grid" ng-class="{\'caseHits\': row.entity.hitNames.length > 1}"><ul>' +
                         '' +
@@ -438,7 +439,7 @@
                 {
                     field: 'lastName',
                     name: 'lastName',
-                    width: 300,
+                    width: '20%',
                     displayName: $translate.instant('pass.lastNameFirstName'),
                     cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace"><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
                         'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none; font-size: 12px">' +
@@ -453,13 +454,12 @@
                 {
                     field: 'status',
                     name: 'status',
-                    width: 75,
+                    width: '7%',
                     displayName: $translate.instant('case.status'),
                 },
                 {
                     field: 'status',
                     name: 'action',
-                    width: 265,
                     displayName: $translate.instant('case.action'),
                     cellTemplate:
                         '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px; font-size: 12px">Re-Open</button>' +
