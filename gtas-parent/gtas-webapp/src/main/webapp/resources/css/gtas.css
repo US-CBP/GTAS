@@ -356,7 +356,7 @@ div[ui-grid] {
 
 
 .case-grid  .ui-grid-row {
-  height: 85%!important;
+  height: 85px!important;
   list-style: none;
   font-size: 12px;
   text-align: center;
@@ -394,7 +394,7 @@ div[ui-grid] {
   list-style: none;
   overflow: no-display;
   vertical-align: middle;
-  height: 75px!important;
+  height: 85px!important;
 }
 
 .caseHits {
