@@ -351,8 +351,9 @@
                 paginationPageSizes: [10, 15, 25],
                 paginationPageSize: $scope.pageSize,
                 paginationCurrentPage: $scope.pageNumber,
+                rowHeight: 66,
                 useExternalPagination: true,
-                enableFiltering: true,
+                enableFiltering: false,
                 enableHorizontalScrollbar:  uiGridConstants.scrollbars.NEVER,
                 enableVerticalScrollbar:  uiGridConstants.scrollbars.NEVER,
                 enableColumnMenus: false,
@@ -402,15 +403,17 @@
 
             $scope.casesDispGrid.columnDefs = [
                 {
-                    field: 'flightNumber',
-                    name: 'flightNumber',
+                    field: 'countdown',
+                    name: 'countdown',
                     width: 325,
                     displayName: $translate.instant('flight.flight'),
                     cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace">' +
                         '<div class="flex">' +
-                        '<span ng-if="row.entity.flightDirection === \'O\'" class="sm-pad flight-num"><i class="fa fa-plane" aria-hidden="true"></i></span>' +
-                        '<span ng-if="row.entity.flightDirection === \'I\'" class="sm-pad flight-num"><i class="fa fa-flip-vertical fa-plane" aria-hidden="true"></i></span>' +
-                        '<span class="sm-pad flight-num">{{row.entity.flightNumber}}</span>' +
+                        '<span class="sm-pad">' +
+                        '<div><span ng-if="row.entity.flightDirection === \'O\'" class="sm-pad flight-num"><i class="fa fa-plane" aria-hidden="true"></i>  {{row.entity.flightNumber}}</span></div>' +
+                        '<div><span ng-if="row.entity.flightDirection === \'I\'" class="sm-pad flight-num"><i class="fa fa-flip-vertical fa-plane" aria-hidden="true"></i>{{row.entity.flightNumber}}</span></div>' +
+                        '<div><span ng-class="row.entity.closeToCountDown ? \'badge danger-back danger-border-th\': \'badge info-back info-border-th\'"><strong>{{row.entity.countDownTimeDisplay}}</strong></span></div>' +
+                        '</span>' +
                         '<span class="sm-pad">' +
                         '<div>' +
                         '<i class="fa fa-arrow-circle-up" aria-hidden="true"></i>' +
@@ -421,13 +424,6 @@
                         '</span>' +
                         '</div>' +
                         '</div>'
-                },
-                {
-                    field: 'countdown',
-                    name: 'countdown',
-                    width: 135,
-                    displayName: $translate.instant('flight.countdown'),
-                    cellTemplate: '<div><span class="case-grid">{{row.entity.countDownTimeDisplay}}</span></div>'
                 },
                 {
                     field: 'highPriorityRuleCatId',
@@ -445,7 +441,7 @@
                     width: 300,
                     displayName: $translate.instant('pass.lastNameFirstName'),
                     cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace"><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
-                        'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none;">' +
+                        'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none; font-size: 12px">' +
                         '<li>' +
                         '{{COL_FIELD}}, {{row.entity.firstName}}' +
                         '</li>' +
@@ -457,7 +453,7 @@
                 {
                     field: 'status',
                     name: 'status',
-                    width: 135,
+                    width: 75,
                     displayName: $translate.instant('case.status'),
                 },
                 {
@@ -466,10 +462,10 @@
                     width: 265,
                     displayName: $translate.instant('case.action'),
                     cellTemplate:
-                        '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
-                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.review(row)" style="margin:5px;">Review</button>' +
-                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row.entity.paxId)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>' +
-                        '<button  type="submit" class="btn btn-info" ng-click="grid.appScope.getPaxDetailReport(row)">' +
+                        '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px; font-size: 12px">Re-Open</button>' +
+                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.review(row)" style="margin:5px; font-size: 12px">Review</button>' +
+                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row.entity.paxId)" style="margin:5px; font-size: 12px"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>' +
+                        '<button  type="submit" class="btn btn-info" ng-click="grid.appScope.getPaxDetailReport(row)" style="margin:5px; font-size: 12px">' +
                         '{{\'btn.downloadreportshort\' | translate}}' +
                         '</button>'
 

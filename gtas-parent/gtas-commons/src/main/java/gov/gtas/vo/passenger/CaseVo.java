@@ -44,6 +44,7 @@ public class CaseVo {
 	private Date currentTime;
 	private String countDownTimeDisplay;
 	private Date countdownTime;
+	private Boolean closeToCountDown;
 	private String disposition;
 	private ArrayList<String> hitNames;
 	private String gender;
@@ -319,5 +320,13 @@ public class CaseVo {
 
 	public void setFlightOrigin(String flightOrigin) {
 		this.flightOrigin = flightOrigin;
+	}
+
+	public Boolean getCloseToCountDown() {
+		return closeToCountDown;
+	}
+
+	public void setCloseToCountDown(Boolean closeToCountDown) {
+		this.closeToCountDown = closeToCountDown;
 	}
 }

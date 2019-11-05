@@ -44,8 +44,18 @@ public class CountDownCalculator {
 		long hoursLong = secondsRemainder1 / 3600;
 		long secondsRemainder2 = secondsRemainder1 % 3600;
 		long minutesLong = secondsRemainder2 / 60;
-		String daysString = (countDownSeconds < 0 && daysLong == 0) ? "-" + daysLong : Long.toString(daysLong);
-		String countDownString = daysString + "d " + Math.abs(hoursLong) + "h " + Math.abs(minutesLong) + "m";
+		StringBuilder stringBuilder = new StringBuilder();
+		if (countDownSeconds < 0) {
+		    stringBuilder.append("-");
+        }
+		if (!(daysLong == 0)) {
+			stringBuilder.append(Math.abs(daysLong)).append("d "); // This is where the negative value will be
+		}
+		if (!(daysLong == 0) || Math.abs(hoursLong) != 0) {
+			stringBuilder.append(Math.abs(hoursLong)).append("h ");
+		}
+		stringBuilder.append(Math.abs(minutesLong)).append("m");
+		String countDownString = stringBuilder.toString();
 		LocalDateTime currentDate = convertToLocalDateViaMilisecond(currentTime);
 		LocalDateTime minutesBefore = currentDate.minusMinutes(minBefore);
 		LocalDateTime minutesAfter = currentDate.plusMinutes(minAfter);
@@ -55,6 +65,10 @@ public class CountDownCalculator {
 			closeToCountDown = true;
 		}
 		return new CountDownVo(countDownString, closeToCountDown, countDownToMinusCurrentTimeInMillis);
+	}
+
+	private boolean moreThanZeroDays(String daysString) {
+		return (!"-0".equalsIgnoreCase(daysString) && !"0".equalsIgnoreCase(daysString));
 	}
 
 	private LocalDateTime convertToLocalDateViaMilisecond(Date dateToConvert) {

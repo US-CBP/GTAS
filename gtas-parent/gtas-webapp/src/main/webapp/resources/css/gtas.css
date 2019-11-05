@@ -342,7 +342,7 @@ div[ui-grid] {
 }
 
 .case-grid .ui-grid-cell .ui-grid-vertical-bar {
-  rowHeight:75px;
+  rowHeight:150px;
   font-size: 12px;
   text-overflow: clip;
   line-height: 20px;
@@ -358,6 +358,7 @@ div[ui-grid] {
 .case-grid  .ui-grid-row {
   height: 65px!important;
   list-style: none;
+  font-size: 12px;
   text-align: center;
   align-items: center;
   justify-content: center;
@@ -387,6 +388,7 @@ div[ui-grid] {
   display: flex;
   align-content: center;
   overflow-wrap: break-word;
+  font-size: 12px;
   float: none;
   text-overflow: clip;
   list-style: none;

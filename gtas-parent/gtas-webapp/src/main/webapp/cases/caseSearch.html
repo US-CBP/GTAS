@@ -8,16 +8,16 @@
 
 <form name="sideForm"  ng-submit="filter()" class="filters" _lpchecked="1">
     <div class="filter-list" role="tablist">
-        <h3 class="filter-heading">{{'nav.filters' | translate}}
+        <h5 class="filter-heading">{{'nav.filters' | translate}}
             <button type="submit" class="btn btn-icon-only btn-hover">
                 <md-tooltip>{{'flight.filter' | translate}}</md-tooltip>
                 <i class="fa fa-search"></i>
             </button>
             <a href="#/casedisposition" ng-click="clearFilters()" class="filters-clear">{{'nav.clearfilters' | translate}}</a>
-        </h3>
-        <h4 ng-show='filterCheck("dispstatus")' aria-expanded="true" data-toggle="collapse" role="tab" data-target="#dispstatusGroup" aria-controls="statusGroup" class="filter-group-title">
+        </h5>
+        <h6 ng-show='filterCheck("dispstatus")' aria-expanded="true" data-toggle="collapse" role="tab" data-target="#dispstatusGroup" aria-controls="statusGroup" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>{{'case.casestatus' | translate}}
-        </h4>
+        </h6>
         <div id="dispstatusGroup" ng-show='filterCheck("dispstatus")' class="collapse in" aria-expanded="true">
             <div class="filter-group-content">
                 <div data-upgraded=",MaterialSelectfield">
@@ -33,9 +33,9 @@
                 </div>
             </div>
         </div>
-        <h4 ng-show='filterCheck("onlyMyRules")' aria-expanded="true" data-toggle="collapse" role="tab" data-target="#userRulesOnly" aria-controls="userRulesOnlyGroup" class="filter-group-title">
+        <h6 ng-show='filterCheck("onlyMyRules")' aria-expanded="true" data-toggle="collapse" role="tab" data-target="#userRulesOnly" aria-controls="userRulesOnlyGroup" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>{{'case.onlyMyRules' | translate}}
-        </h4>
+        </h6>
         <div ng-show='filterCheck("onlyMyRules")' id="userRulesOnly" class="collapse in" aria-expanded="true">
             <div class="filter-group-content">
                 <div data-upgraded=",MaterialSelectfield">
@@ -45,9 +45,9 @@
                 </div>
             </div>
         </div>
-        <h4 ng-show='filterCheck("rulecats")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#rulecatsGroup" aria-controls="rulecatsGroup" class="filter-group-title">
+        <h6 ng-show='filterCheck("rulecats")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#rulecatsGroup" aria-controls="rulecatsGroup" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>{{'case.rulecategory' | translate}}
-        </h4>
+        </h6>
         <div id="rulecatsGroup" ng-show='filterCheck("rulecats")' class="collapse" aria-expanded="false">
             <div class="filter-group-content">
                 <div data-upgraded=",MaterialSelectfield">
@@ -60,9 +60,9 @@
                 </div>
             </div>
         </div>
-        <h4 ng-show='filterCheck("ruleTypes")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#ruleTypeGroup" aria-controls="ruleTypeGroup" class="filter-group-title">
+        <h6 ng-show='filterCheck("ruleTypes")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#ruleTypeGroup" aria-controls="ruleTypeGroup" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>{{'case.ruleType' | translate}}
-        </h4>
+        </h6>
         <div id="ruleTypeGroup" ng-show='filterCheck("ruleTypes")' class="collapse" aria-expanded="true">
             <div class="filter-group-content">
                 <div data-upgraded=",MaterialSelectfield">
@@ -82,9 +82,9 @@
                 </div>
             </div>
         </div>
-        <h4 ng-show='filterCheck("priority")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#priorityGroup" aria-controls="priorityGroup" class="filter-group-title">
+        <h6 ng-show='filterCheck("priority")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#priorityGroup" aria-controls="priorityGroup" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Priority
-        </h4>
+        </h6>
         <div id="priorityGroup" ng-show='filterCheck("priority")' class="collapse in" aria-expanded="true">
             <div class="filter-group-content">
                 <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
@@ -97,9 +97,9 @@
                 </div>
             </div>
         </div>
-        <h4 ng-show='filterCheck("status")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#statusGroup" aria-controls="statusGroup" class="filter-group-title">
+        <h6 ng-show='filterCheck("status")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#statusGroup" aria-controls="statusGroup" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Status
-        </h4>
+        </h6>
         <div id="statusGroup" ng-show='filterCheck("status")' class="collapse in" aria-expanded="true">
             <div class="filter-group-content">
                 <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
@@ -112,10 +112,10 @@
                 </div>
             </div>
         </div>
-        <h4 ng-show='filterCheck("date")' aria-expanded="true" data-toggle="collapse" role="tab" data-target="#dateGroup" aria-controls="dateGroup" class="filter-group-title">
+        <h6 ng-show='filterCheck("date")' aria-expanded="true" data-toggle="collapse" role="tab" data-target="#dateGroup" aria-controls="dateGroup" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
             <span ng-show='filterCheck("dateLabel")'>{{'flight.flight' | translate}}</span> {{'nav.daterange' | translate}}
-        </h4>
+        </h6>
         <div id="dateGroup" ng-show='filterCheck("date")' class="collapse in pull-left">
             <div class="filter-group-content">
                 <div class="row form-group col-xs-12 pull-left">
@@ -159,10 +159,10 @@
                 </div>
             </div>
         </div>
-        <h4 ng-show='filterCheck("paxname")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#paxnameGroup" aria-controls="nameGroup" class="filter-group-title">
+        <h6 ng-show='filterCheck("paxname")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#paxnameGroup" aria-controls="nameGroup" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
             {{'pass.passengername' | translate}}
-        </h4>
+        </h6>
         <div id="paxnameGroup" ng-show='filterCheck("paxname")' class="collapse" aria-expanded="false">
             <div class="filter-group-content">
                 <div class="form-group">
@@ -171,10 +171,10 @@
                 </div>
             </div>
         </div>
-        <h4 ng-show='filterCheck("name")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#nameGroup" aria-controls="nameGroup" class="filter-group-title">
+        <h6 ng-show='filterCheck("name")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#nameGroup" aria-controls="nameGroup" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
             {{'pass.lastname' | translate}}
-        </h4>
+        </h6>
         <div id="nameGroup" ng-show='filterCheck("name")' class="collapse in" aria-expanded="true">
             <div class="filter-group-content">
                 <div class="form-group">
@@ -183,11 +183,11 @@
                 </div>
             </div>
         </div>
-        <h4 ng-show='filterCheck("origin")' aria-expanded="false" data-toggle="collapse" role="tab"
+        <h6 ng-show='filterCheck("origin")' aria-expanded="false" data-toggle="collapse" role="tab"
             data-target="#originGroup" aria-controls="originGroup" class="filter-group-title">
             {{'flight.originairport' | translate}}
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
-        </h4>
+        </h6>
         <div id="originGroup" ng-show='filterCheck("origin")' class="collapse in">
             <div class="filter-group-content">
                 <div class="form-group">
@@ -206,11 +206,11 @@
                 </div>
             </div>
         </div>
-        <h4 ng-show='filterCheck("destination")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#filterGroup2"
+        <h6 ng-show='filterCheck("destination")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#filterGroup2"
             aria-controls="filterGroup2" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
             {{'flight.destinationairport' | translate}}
-        </h4>
+        </h6>
         <div id="filterGroup2" ng-show='filterCheck("destination")' class="collapse in" aria-expanded="true">
             <div class="filter-group-content">
                 <div class="form-group">
@@ -229,10 +229,10 @@
                 </div>
             </div>
         </div>
-        <h4 ng-show='filterCheck("flight")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#filterGroup1" aria-controls="filterGroup1" class="filter-group-title collapsed">
+        <h6 ng-show='filterCheck("flight")' aria-expanded="false" data-toggle="collapse" role="tab" data-target="#filterGroup1" aria-controls="filterGroup1" class="filter-group-title collapsed">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
             {{'flight.flight' | translate}}
-        </h4>
+        </h6>
         <div id="filterGroup1" ng-show='filterCheck("flight")' class="collapse" aria-expanded="false">
             <div class="filter-group-content">
                 <div class="form-group">
@@ -241,9 +241,9 @@
                 </div>
             </div>
         </div>
-        <h4 aria-expanded="false" ng-show='filterCheck("direction")' data-toggle="collapse" role="tab" data-target="#filterGroup5" aria-controls="filterGroup5" class="filter-group-title">
+        <h6 aria-expanded="false" ng-show='filterCheck("direction")' data-toggle="collapse" role="tab" data-target="#filterGroup5" aria-controls="filterGroup5" class="filter-group-title">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>{{'flight.direction' | translate}}
-        </h4>
+        </h6>
         <div id="filterGroup5" ng-show='filterCheck("direction")' class="collapse in" aria-expanded="true">
             <div ng-show='filterCheck("direction")' class="filter-group-content">
                 <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
