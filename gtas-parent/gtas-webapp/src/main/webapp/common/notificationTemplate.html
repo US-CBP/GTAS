@@ -13,7 +13,7 @@
           <input type="checkbox" id="select-all" ng-click="toggleUser()"/>
           <label for="select-all">Notify all users in this group</label>
         </div>
-        <div class="checkbox" ng-repeat="user in allUsers">
+        <div class="checkbox" ng-repeat="user in allUsersWithEmailEnabled">
           <input type="checkbox" id = {{user.userId}} name={{user.email}} ng-click="clearParent()" ng-model="user.selected">
           <label for={{user.userId}}>{{user.firstName}} {{user.lastName}}</label>
         </div>
