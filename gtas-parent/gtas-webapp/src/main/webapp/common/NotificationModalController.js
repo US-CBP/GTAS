@@ -10,18 +10,23 @@
         function ($scope, userService, $uibModalInstance, notificationService) {
 
             $scope.noneGtasUser = {};
+            $scope.allUsersWithEmailEnabled = [];
             $scope.notesForEmailNotification = '';
             var setUserData = function (data) {
                 $scope.allUsers = data;
                 $scope.allUsers.forEach(function (user) {
-                    user.selected = false;
+                    if (user.emailEnabled) {
+                        user.selected = false;
+                        $scope.allUsersWithEmailEnabled.push(user);
+                    }
+                    
                 })
             };
             userService.getAllUsers().then(setUserData);
 
             $scope.submit = function () {
                 $scope.selectedEmails = [];
-                $scope.allUsers.forEach(function (user) {
+                $scope.allUsersWithEmailEnabled.forEach(function (user) {
                     if (user.selected && user.email != null) {
                         $scope.selectedEmails.push(user.email);
                     }
@@ -45,7 +50,7 @@
             };
 
             $scope.toggleUser = function () {
-                angular.forEach($scope.allUsers, function (user) {
+                angular.forEach($scope.allUsersWithEmailEnabled, function (user) {
                     user.selected = event.target.checked;
                 });
             }
