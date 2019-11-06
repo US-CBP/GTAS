@@ -406,6 +406,7 @@
                     field: 'countdown',
                     name: 'countdown',
                     width: '20%',
+                    minWidth: '210',
                     displayName: $translate.instant('flight.flight'),
                     cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace">' +
                         '<div class="flex">' +
@@ -429,6 +430,7 @@
                     field: 'highPriorityRuleCatId',
                     name: 'highPriorityRuleCatId',
                     width: '20%',
+                    minWidth: '210',
                     displayName: $translate.instant('case.toprulecategory'),
                     cellTemplate: '<div class="case-grid" ng-class="{\'caseHits\': row.entity.hitNames.length > 1}"><ul>' +
                         '' +
@@ -440,9 +442,10 @@
                     field: 'lastName',
                     name: 'lastName',
                     width: '20%',
+                    minWidth: '156',
                     displayName: $translate.instant('pass.lastNameFirstName'),
                     cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace"><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
-                        'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none; font-size: 12px">' +
+                        'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none; font-size: 12px; padding-inline-start: 0px">' +
                         '<li>' +
                         '{{COL_FIELD}}, {{row.entity.firstName}}' +
                         '</li>' +
@@ -455,6 +458,7 @@
                     field: 'status',
                     name: 'status',
                     width: '7%',
+                    minWidth: '0',
                     displayName: $translate.instant('case.status'),
                 },
                 {
