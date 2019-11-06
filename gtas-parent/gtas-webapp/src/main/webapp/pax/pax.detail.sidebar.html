@@ -148,11 +148,10 @@
             <td>{{'apis' | translate}}</td>
             <td>
                 <div>
-                    <ol class="nav-dots">
-                        <li ng-class="{active : passenger.apisMessageVo !== null}">
-                            <a>apis</a>
-                        </li>
-                    </ol>
+                    <div class="switch">
+                        <input type="checkbox" id="t1" ng-model="passenger.apisMessageVo !== null">
+                        <label for="t1" data-on="YES" data-off="NO"></label>
+                    </div>
                 </div>
             </td>
         </tr>
