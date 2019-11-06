@@ -147,11 +147,11 @@
         <tr>
             <td>{{'apis' | translate}}</td>
             <td>
-                <div>
-                    <div class="switch">
-                        <input type="checkbox" id="t1" ng-model="passenger.apisMessageVo !== null">
-                        <label for="t1" data-on="YES" data-off="NO"></label>
-                    </div>
+                <div class="checkbox-inline">
+                    <label for="inlineCheckbox1" ng-class="{'is-checked': passenger.apisMessageVo !== null}" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple">
+                        <input type="checkbox" class="mdl-checkbox__input" id="inlineCheckbox1" value="option1">
+                        <span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span>
+                    </label>
                 </div>
             </td>
         </tr>
