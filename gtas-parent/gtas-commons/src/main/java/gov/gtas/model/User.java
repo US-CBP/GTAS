@@ -120,7 +120,7 @@ public class User implements Serializable {
 	}
 
 	public boolean isActive() {
-		return active == 0;
+		return active == 1;
 	}
 
 	public void setActive(int active) {
