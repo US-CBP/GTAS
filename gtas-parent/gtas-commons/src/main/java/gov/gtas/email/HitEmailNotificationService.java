@@ -197,12 +197,13 @@ public class HitEmailNotificationService {
        return passenger.getHitDetails().stream()
                .flatMap(details -> details.getHitMaker().getHitCategory().getUserGroups().stream())
                .flatMap(userGroup -> userGroup.getGroupMembers().stream())
+               .filter(User::isActive)
                .filter(HitEmailNotificationService::isRegisteredForHighPriorityHitNotifications)
                .map(User::getEmail)
                .collect(Collectors.toList());
     }
 
     private static boolean isRegisteredForHighPriorityHitNotifications(User u) {
-        return u.getEmailEnabled() != null && u.getHighPriorityHitsEmailNotification() != null && u.getHighPriorityHitsEmailNotification() && u.getEmailEnabled() && StringUtils.isNotBlank(u.getEmail());
+        return u.getHighPriorityHitsEmailNotification() != null && u.getHighPriorityHitsEmailNotification() && StringUtils.isNotBlank(u.getEmail());
     }
 }
