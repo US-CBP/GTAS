@@ -126,6 +126,7 @@ public class HitEmailNotificationServiceTest {
         User user = new User();
         user.setEmail(RECIPIENT_EMAIL);
         user.setEmailEnabled(true);
+        user.setActive(1);
         user.setHighPriorityHitsEmailNotification(true);
         userGroup.setGroupMembers(Collections.singleton(user));
         hitCategory.setUserGroups(Collections.singleton(userGroup));
