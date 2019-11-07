@@ -88,7 +88,7 @@ public class GraphRulesThread implements Callable<Boolean> {
 			Set<HitDetail> hitDetails = graphRulesService.generateHitDetails(filteredList);
 
 			int BATCH_SIZE = Integer.parseInt(appConfigurationService
-					.findByOption(AppConfigurationRepository.MAX_FLIGHTS_SAVED_PER_BATCH).getValue());
+					.findByOption(AppConfigurationRepository.MAX_RULE_DETAILS_CREATED).getValue());
 
 			List<Set<HitDetail>> batchedTargetingServiceResults = TargetingResultUtils.batchResults(hitDetails,
 					BATCH_SIZE);

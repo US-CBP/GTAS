@@ -197,6 +197,7 @@ public class HitEmailNotificationService {
        return passenger.getHitDetails().stream()
                .flatMap(details -> details.getHitMaker().getHitCategory().getUserGroups().stream())
                .flatMap(userGroup -> userGroup.getGroupMembers().stream())
+               .filter(User::getEmailEnabled)
                .filter(HitEmailNotificationService::isRegisteredForHighPriorityHitNotifications)
                .map(User::getEmail)
                .collect(Collectors.toList());
