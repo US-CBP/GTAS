@@ -119,6 +119,10 @@ public class User implements Serializable {
 		return active;
 	}
 
+	public boolean isActive() {
+		return active == 0;
+	}
+
 	public void setActive(int active) {
 		this.active = active;
 	}
