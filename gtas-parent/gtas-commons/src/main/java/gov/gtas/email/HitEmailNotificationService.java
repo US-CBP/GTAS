@@ -204,6 +204,6 @@ public class HitEmailNotificationService {
     }
 
     private static boolean isRegisteredForHighPriorityHitNotifications(User u) {
-        return u.getEmailEnabled() != null && u.getHighPriorityHitsEmailNotification() != null && u.getHighPriorityHitsEmailNotification() && u.getEmailEnabled() && StringUtils.isNotBlank(u.getEmail());
+        return u.getHighPriorityHitsEmailNotification() != null && u.getHighPriorityHitsEmailNotification() && StringUtils.isNotBlank(u.getEmail());
     }
 }
