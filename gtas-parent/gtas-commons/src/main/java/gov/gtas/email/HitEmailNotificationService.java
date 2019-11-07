@@ -198,7 +198,6 @@ public class HitEmailNotificationService {
                .flatMap(details -> details.getHitMaker().getHitCategory().getUserGroups().stream())
                .flatMap(userGroup -> userGroup.getGroupMembers().stream())
                .filter(User::isActive)
-               .filter(User::getEmailEnabled)
                .filter(HitEmailNotificationService::isRegisteredForHighPriorityHitNotifications)
                .map(User::getEmail)
                .collect(Collectors.toList());
