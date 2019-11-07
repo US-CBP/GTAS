@@ -7,26 +7,56 @@ package gov.gtas.aws;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.amazonaws.regions.Region;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.RegionUtils;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.CreateQueueRequest;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 
 public class QueueService {
+
 	private static AmazonSQS sqs;
+	private final Logger logger = LoggerFactory.getLogger(QueueService.class);
+	private boolean externalAccessFlag;
+
 	static {
 		sqs = new AmazonSQSClient();
 	}
 
 	private String queueUrl;
+
+	/**
+	 * Configures SQS Client using Region, Access Key, and Secret Key
+	 * 
+	 * @param region
+	 *            Region of AWS SQS
+	 * @param accessKey
+	 *            Access Key of the IAM user
+	 * @param secretKey
+	 *            Secret Key of the IAM user
+	 */
+	public void configureCredentials(String region, String accessKey, String secretKey) {
+
+		if (region != null && accessKey != null && secretKey != null) {
+			BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKey, secretKey);
+			sqs = AmazonSQSClientBuilder.standard().withRegion(region.trim())
+					.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
+			externalAccessFlag = true;
+			logger.info("## Configured SQS access credentials successfully. ");
+		}
+		else
+		{
+			logger.info("## sqs.loader.usecredentials is set to Y but one of the following values are null: region, accessKey, or secretKey.");
+		}
+	}
 
 	public QueueService(String queueUrl, String region) {
 		configure(queueUrl, region);
@@ -58,6 +88,10 @@ public class QueueService {
 
 	public List<String> listQueues() {
 		return sqs.listQueues().getQueueUrls();
+	}
+
+	public boolean isExternalAccessFlag() {
+		return externalAccessFlag;
 	}
 
 }
