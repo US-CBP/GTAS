@@ -106,6 +106,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			caseVo.setGender(passenger.getPassengerDetails().getGender());
 			caseVo.setHitNames(hitDetailsTitles);
 			caseVo.setCountdownTime(countDownTo);
+			caseVo.setCloseToCountDown(countDownVo.isCloseToCountDown());
 			caseVo.setNationality(passenger.getPassengerDetails().getNationality());
 			caseVo.setCountDownTimeDisplay(countDownVo.getCountDownTimer());
 			caseVo.setCurrentTime(new Date());

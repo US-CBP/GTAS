@@ -241,6 +241,25 @@ md-switch.md-default-theme.md-checked .md-thumb, md-switch.md-checked .md-thumb 
     bottom: auto !important;
   }
 }
+@media (min-width: 1500px){
+  .my-modal-popup .modal-lg {
+    width: 80%;
+    height: 800px;
+    overflow-y: auto;
+  }       
+}
+@media (max-width: 1450px){
+  .my-modal-popup .modal-lg {
+    width: 90%;
+    height: 600px;
+    overflow-y: auto;
+  }       
+}
+.modal-lg .modal-body {
+  background-color: rgb(247, 247, 245);
+  height: 88vh;
+}
+
 .table-wrap {
   word-break: break-all;
   min-width: 30vh;
@@ -323,7 +342,7 @@ div[ui-grid] {
 }
 
 .case-grid .ui-grid-cell .ui-grid-vertical-bar {
-  rowHeight:75px;
+  rowHeight:170px;
   font-size: 12px;
   text-overflow: clip;
   line-height: 20px;
@@ -337,8 +356,9 @@ div[ui-grid] {
 
 
 .case-grid  .ui-grid-row {
-  height: 65px!important;
+  height: 85px!important;
   list-style: none;
+  font-size: 12px;
   text-align: center;
   align-items: center;
   justify-content: center;
@@ -368,12 +388,13 @@ div[ui-grid] {
   display: flex;
   align-content: center;
   overflow-wrap: break-word;
+  font-size: 12px;
   float: none;
   text-overflow: clip;
   list-style: none;
   overflow: no-display;
   vertical-align: middle;
-  height: 75px!important;
+  height: 85px!important;
 }
 
 .caseHits {
@@ -1056,4 +1077,12 @@ div[ui-grid] {
 
 .trix-button-group--history-tools{
 	display:none !important;
+}
+.pax-details-comment-dialog{
+  height: 100%;
+  width: 100%;
+  top: 5%;
+}
+.pax-details-comment-dialog .cbp-card-container .cbp-card {
+  margin-left: 2%;
 }

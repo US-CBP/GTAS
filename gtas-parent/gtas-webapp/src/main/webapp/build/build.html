@@ -8,25 +8,23 @@
         <input name="title" ng-model="query.title" class="mdl-textfield__input"
           type="text" id="title-input" maxlength="20" />
         <label class="mdl-textfield__label static-label" for="title-input">
-          Name
+          {{'qry.name' | translate}}
         </label>
       </div>
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
         <input name="description" ng-model="query.description" class="mdl-textfield__input"
           type="text" id="descr-input">
         <label class="mdl-textfield__label static-label" for="descr-input">
-          Description
+          {{'qry.desc' | translate}}
         </label>
       </div>
     </div>
     <div class="flex justify-around">
       <button type="button" ng-click="prompt.cancel()" ng-disabled="saving === true" class="btn btn-default">
-        Cancel
+        {{'btn.cancel' | translate}}
       </button>
-      <button type="submit" ng-disabled="saving === true" class="btn btn-icon-only btn-primary">
-        <i class="fa fa-inverse fa-floppy-o"></i>
-        <span class="sr-only">Save</span>
-        <md-tooltip>Confirm Save</md-tooltip>
+      <button type="submit" ng-disabled="saving === true" class="btn btn-primary">
+        {{'btn.save' | translate}}
       </button>
     </div>
   </form>
@@ -42,25 +40,25 @@
           <input name="title" ng-model="rule.title" class="mdl-textfield__input"
             type="text" id="title-input-rule" maxlength="20" />
           <label class="mdl-textfield__label static-label" for="title-input-rule">
-            Name
+            {{'qry.name' | translate}}
           </label>
         </div>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
           <input name="description" ng-model="rule.description" class="mdl-textfield__input"
             type="text" id="descr-input-rule">
           <label class="mdl-textfield__label static-label" for="descr-input-rule">
-            Description
+            {{'qry.desc' | translate}}
           </label>
         </div>
       </div>
       <div>
-        <md-checkbox class="md-primary" required ng-model="rule.enabled" aria-label="Enabled">Enabled</md-checkbox>
+        <md-checkbox class="md-primary" required ng-model="rule.enabled" aria-label="Enabled">{{'qry.enabled' | translate}}</md-checkbox>
       </div>
       <div>
-        <md-datepicker ng-model="rule.startDate" md-placeholder="Start Date" ng-disabled="isUpdate() && !isCopy"></md-datepicker>
+        <md-datepicker ng-model="rule.startDate" md-placeholder="{{'qry.startdate' | translate}}" ng-disabled="isUpdate() && !isCopy"></md-datepicker>
       </div>
       <div>
-        <md-datepicker ng-model="rule.endDate" md-placeholder="End Date"></md-datepicker>
+        <md-datepicker ng-model="rule.endDate" md-placeholder="{{'qry.enddate' | translate}}"></md-datepicker>
       </div>
       <div class="mdl-selectfield mdl-js-selectfield" data-upgraded=",MaterialSelectfield">
          <select class="cbp-non-chip-input mdl-selectfield__select"
@@ -68,17 +66,15 @@
                   ng-model="rule.ruleCat"
                   ng-options="rule.id as rule.name for rule in ruleCategories">
         </select>
-        <label class="mdl-selectfield__label static-label" for="disposition">Rule Categories:</label>
+        <label class="mdl-selectfield__label static-label" for="disposition">{{'qry.rulecategories' | translate}}:</label>
       </div>
     </md-content>
     <div class="flex justify-around">
       <button type="button" ng-click="prompt.cancel()" ng-disabled="saving === true" class="btn btn-default">
-        Cancel
+        {{'btn.cancel' | translate}}
       </button>
-      <button type="submit" ng-disabled="saving === true" class="btn btn-icon-only btn-primary">
-        <i class="fa fa-inverse fa-floppy-o"></i>
-        <span class="sr-only">Save</span>
-        <md-tooltip>Confirm Save</md-tooltip>
+      <button type="submit" ng-disabled="saving === true" class="btn btn-primary">
+        {{'btn.save' | translate}}
       </button>
     </div>
   </form>
@@ -91,57 +87,49 @@
     </div>
     <div ui-grid="qbGrid" ui-grid-pagination ui-grid-selection ui-grid-exporter class="grid" external-scopes="$scope"></div>
     <section class="sev-five-width">
-      <h3 class="block-label">Conditions:</h3>
+      <h3 class="block-label">{{'qry.conditions' | translate}}:</h3>
       <div id="builder"></div>
       <div class="flex justify-around flex-wrap">
         <md-button ng-click="addNew()" ng-disabled="ruleId === null"
           class="btn btn-default">
-          <md-tooltip>Add New {{mode}}</md-tooltip>
           <i class="fa fa-plus" aria-hidden="true"></i>
-          &nbsp; {{mode}}
+          {{'qry.addnew' | translate}}
         </md-button>
-        <md-button href="#/query/flights" title="Launch Flight Query Results in new window"
+        <md-button href="#/query/flights" title="{{'qry.launchflights' | translate}}"
           target="queryFlights" ng-click="executeQuery($event)"
           class="btn btn-default">
-          <md-tooltip>Query Flights</md-tooltip>
           <i class="fa fa-search" aria-hidden="true"></i>&nbsp;
-          Flights
+          {{'flight.flights' | translate}}
         </md-button>
-        <md-button href="#/query/passengers" title="Launch Passengers Query Results in new window"
+        <md-button href="#/query/passengers" title="{{'qry.launchpax' | translate}}"
           target="queryPassengers" ng-click="executeQuery($event)"
           class="btn btn-default">
-          <md-tooltip>Query Passengers</md-tooltip>
           <i class="fa fa-search" aria-hidden="true"></i>&nbsp;
-          Passengers
+          {{'qry.passengers' | translate}}
         </md-button>
-        <md-button ng-click="resetQueryBuilder()" class="btn btn-default">
-          <md-tooltip>Clear Conditions</md-tooltip>
+        <md-button ng-click="resetQueryBuilder()" class="btn btn-default" title="{{'qry.clearconditions' | translate}}">
           <i class="fa fa-undo" aria-hidden="true"></i>&nbsp;
-          Clear
+          {{'qry.clear' | translate}}
         </md-button>
         <md-button data-toggle="modal" data-target="#deleteModal" ng-disabled="ruleId === null"
-          class="btn btn-default">
-          <md-tooltip>Delete</md-tooltip>
+          class="btn btn-default" title="{{'qry.delete' | translate}}">
           <i class="fa fa-trash-o" aria-hidden="true"></i>
-          &nbsp; {{mode}}
+          {{'qry.delete' | translate}}
         </md-button>
         <md-button ng-click="copyRule()" ng-disabled="ruleId === null || saving === true"
-          class="btn btn-default">
-          <md-tooltip>Copy {{mode}}</md-tooltip>
+          class="btn btn-default" title="{{'qry.copy' | translate}}">
           <i class="fa fa-clipboard" aria-hidden="true"></i>
-          &nbsp; {{mode}}
+          {{'qry.copy' | translate}}
         </md-button>
         <md-button ng-click="prompt.save('rule')" ng-disabled="saving === true"
-          class="btn btn-primary">
-          <md-tooltip>Save As Rule</md-tooltip>
+          class="btn btn-primary" title="{{'qry.saveasrule' | translate}}">
           <i class="fa fa-floppy-o" aria-hidden="true"></i>
-          &nbsp;Rule
+          {{'qry.rule' | translate}}
         </md-button>
         <md-button ng-click="prompt.save('query')" ng-disabled="saving === true" type="submit"
-          class="btn btn-primary">
-          <md-tooltip>Save As Query</md-tooltip>
+          class="btn btn-primary" title="{{'qry.saveasquery' | translate}}">
           <i class="fa fa-floppy-o" aria-hidden="true"></i>
-          &nbsp;Query
+          {{'qry.query' | translate}}
         </md-button>
       </div>
     </section>
@@ -152,14 +140,14 @@
     <div class="modal-body">
       <button type="button" class="close" data-dismiss="modal">
       <span aria-hidden="true">&times;</span>
-      <span class="sr-only">Close</span>
+      <span class="sr-only">{{'btn.close' | translate}}</span>
       </button>
-      <h4  class="text-danger">Delete this {{mode}}?</h4>
-      <p>May effect hit information.</p>
+      <h4 ng- class="text-danger" translate>{{mode === 'rule' ? 'qry.deletethisrule' : 'qry.deletethisquery'}}?</h4>
+      <p>{{'qry.mayaffecthit' | translate}}</p>
     </div>
     <div class="modal-footer">
-      <button type="button" class="pull-left btn btn-default" data-dismiss="modal">Cancel</button>
-      <button data-dismiss="modal" ng-click="delete()" type="button" class="btn btn-danger">Delete</button>
+      <button type="button" class="pull-left btn btn-default" data-dismiss="modal">{{'btn.cancel' | translate}}</button>
+      <button data-dismiss="modal" ng-click="delete()" type="button" class="btn btn-danger">{{'btn.delete' | translate}}</button>
     </div>
   </div>
 </div>
@@ -169,7 +157,7 @@
     <div class="overlay"></div>
     <div class="spinner">
       <button class="btn btn-default" disabled>
-          <i class="fa fa-spinner fa-spin"></i> Please Wait...
+          <i class="fa fa-spinner fa-spin"></i> {{'msg.wait' | translate}}
       </button>
     </div>
   </spinner>

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import freemarker.template.TemplateException;
 import gov.gtas.aws.HitNotificationConfig;
-import gov.gtas.email.HighPriorityHitEmailNotificationService;
+import gov.gtas.email.HitEmailNotificationService;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
@@ -43,8 +43,6 @@ import gov.gtas.svc.TargetingService;
 import gov.gtas.svc.util.RuleResultsWithMessageStatus;
 import gov.gtas.svc.util.TargetingResultUtils;
 
-import javax.mail.MessagingException;
-
 @Component
 @Scope("prototype")
 public class RuleRunnerThread implements Callable<Boolean> {
@@ -63,19 +61,19 @@ public class RuleRunnerThread implements Callable<Boolean> {
 
 	private NotificatonService notificationSerivce;
 
-	private HighPriorityHitEmailNotificationService highPriorityHitEmailNotificationService;
+	private HitEmailNotificationService hitEmailNotificationService;
 
 	@Value("${email.hit.notification.enabled}")
 	private Boolean emailHitNotificationEnabled;
 
 	public RuleRunnerThread(ErrorPersistenceService errorPersistenceService,
 							AppConfigurationService appConfigurationService, ApplicationContext applicationContext,
-							NotificatonService notificationSerivce, HighPriorityHitEmailNotificationService highPriorityHitEmailNotificationService) {
+							NotificatonService notificationSerivce, HitEmailNotificationService hitEmailNotificationService) {
 		this.errorPersistenceService = errorPersistenceService;
 		this.appConfigurationService = appConfigurationService;
 		this.applicationContext = applicationContext;
 		this.notificationSerivce = notificationSerivce;
-		this.highPriorityHitEmailNotificationService = highPriorityHitEmailNotificationService;
+		this.hitEmailNotificationService = hitEmailNotificationService;
 	}
 
 	public Boolean call() {

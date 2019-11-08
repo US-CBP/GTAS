@@ -302,6 +302,19 @@
 			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+    		<groupId>com.github.dhorions</groupId>
+   			 <artifactId>boxable</artifactId>
+    		<version>1.5</version>
+		</dependency>
+		
+		<dependency>
+    			<groupId>org.apache.pdfbox</groupId>
+    			<artifactId>pdfbox</artifactId>
+    			<version>2.0.17</version>
+		</dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>

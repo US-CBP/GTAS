@@ -57,7 +57,7 @@
                                 <div class="full-width cbp-card-container"  ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
                                     <div class="cbp-card cbp-card-shadow">
                                         <h4 class="h-label no-margin-top" >{{'hit.hitssummary' | translate}}</h4>
-                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md" style="overflow-x: auto;">
                                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                                 <thead>
                                                 <tr>
@@ -116,39 +116,34 @@
 							</md-content>
 								</form>
 							<!-- BEGIN PANEL ACCORDION -->
-							<div class="panel-group full-width" id="accordion" role="tablist">
+							<div class="panel-group full-width filter-list" id="accordion" role="tablist">
 								<!-- CURRENT EVENT NOTES DISPLAY -->
 								 <div class="full-width cbp-card-container">
-                                    <div class="cbp-card cbp-card-shadow">
-                                        <h4 class="panel-heading h-label no-margin-top" >
-	                                        <a class="h-label" role="button" data-toggle="collapse" data-parent="#accordion" href="{{passenger.id}}/{{passenger.flight.id}}/#collapseOne"
-	                                        	aria-expanded="true" aria-controls="collapseOne"><i class="fa fa-angle-right fa-fw"></i>
-	        									Event Notes History
-	        								</a>
-        								</h4>
-        								<div id="collapseOne" class="panel-collapse collapse in">
-	                                       	<div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                                    <div class="cbp-card cbp-card-shadow filter-list" role="tablist">
+
+                                        <h4 data-toggle="collapse" aria-expanded="true" data-target="#collapseOne" aria-controls="collapseOne" class="panel-heading h-label no-margin-top filter-group-title">
+                                            <a href="#" class="h-label"  role="button"><i class="fa fa-angle-right fa-fw"></i></a>Event Notes History
+                                        </h4>
+                                        <div id="collapseOne" class="panel-collapse collapse in" aria-expanded="true">
+                                            <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
 		                                       	<span class="panel-body no-pad-top" ng-repeat="note in eventNotes">
 													<label class="static-label" style="font-size:12px">
 														Note Type: <i>{{getListOfNoteTypes(note.noteType)}}</i></br>
-														Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt | date:'yyyy-MM-dd HH:mm'}}</i>
+                                                        Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt | date:'yyyy-MM-dd HH:mm'}}</i>
 													</label>
 			                                   		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" ng-model="note.rtfNote" toolbar="hidden_toolbar"> </trix-editor>
 		                                   		</span>
-                                    		</div>
-                                    	</div>
+                                            </div>
+                                        </div>
                                  	</div>
                                  </div>
                                  <!-- FULL HISTORICAL NOTES DISPLAY -->
                                  <div class="full-width cbp-card-container">
-                                    <div class="cbp-card cbp-card-shadow">
-                                        <h4 class="panel-heading h-label no-margin-top" >
-	                                        	<a class="h-label" role="button" data-toggle="collapse" data-parent="#accordion" href="{{passenger.id}}/{{passenger.flight.id}}/#collapseTwo"
-	                                        	aria-expanded="true" aria-controls="collapseTwo"><i class="fa fa-angle-right fa-fw"></i>
-                                                    Previous Notes History (Up to 10)
-	        									</a>
+                                    <div class="cbp-card cbp-card-shadow filter-list" role="tablist">
+                                        <h4 data-toggle="collapse" aria-expanded="true" data-target="#collapseTwo" aria-controls="collapseTwo" class="panel-heading h-label no-margin-top filter-group-title" >
+	                                        	<a class="h-label" role="button" href="#"><i class="fa fa-angle-right fa-fw"></i></a>Previous Notes History (Up to 10)
         								</h4>
-        								<div id="collapseTwo" class="panel-collapse collapse">
+        								<div id="collapseTwo" class="panel-collapse collapse in" aria-expanded="true">
 	                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
 	                                        	<span class="panel-body no-pad-top" ng-repeat="note in historicalNotes | orderBy : createdAt">
 													<label class="static-label" style="font-size:12px">
@@ -242,7 +237,7 @@
                                 <div class="full-width cbp-card-container"  ng-if="!isLoadingHistoricalHits && hitHistory != undefined && hitHistory != null && hitHistory.length > 0 ">
                                     <div class="cbp-card cbp-card-shadow">
                                         <h4 class="h-label no-margin-top" >{{'hit.historicalHits' | translate}}</h4>
-                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md" style="overflow-x: auto;">
                                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                                 <thead>
                                                 <tr>
@@ -1003,31 +998,27 @@
                             </div>
                         </md-tab-body>
                     </md-tab>
-
+                    <!-- END - TABS AND CONTENT -->
                 </md-tabs>
-                <!-- END - TABS AND CONTENT -->
+
+
                 <div class="flex justify-around action-buttons" ng-show="!disableLinks">
-                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-danger" ng-click="addToWatchlist() ">
+                	<md-button  type="button" class="btn btn-info" ng-click="getPaxDetailReport()">
+                               {{'btn.downloadreport' | translate}}
+     				</md-button> &nbsp;
+                    <md-button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-danger" ng-click="addToWatchlist() ">
                         &nbsp;{{'btn.addtowatchlist' | translate}}
-                    </button>
-                    <button ng-if="isEmailEnabled()" ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-warning" ng-click="notify()">
-                        &nbsp;{{'btn.notify' | translate}}
-                    </button>
-                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-info" ng-click="review()">
+                    </md-button>&nbsp;
+                    <md-button ng-if="isEmailEnabled()" type="button" class="btn btn-warning" ng-click="notify()">
+                        &nbsp;{{'btn.notify' | translate}} &nbsp;
+                    </md-button>
+                    <md-button ng-if="passengerHasOpenCases()" type="button" class="btn btn-info" ng-click="review()" style="margin-left: 5px">
                         &nbsp;{{'btn.reviewed' | translate}}
-                    </button>
-                  <!--  <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
-                        <i class="fa fa-download" aria-hidden="true"></i> &nbsp;{{'btn.paxdetail' | translate}}
-                    </a>
-                    <a ng-if="!userHasRole(9) && !userHasRole(1)" ng-disabled = "true" class="btn btn-primary">
-                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
-                    </a>
-                    <a ng-if="userHasRole(9) || userHasRole(1)" class="btn btn-primary" ng-class="{'disabled': disableLinks}" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
-                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
-                    </a>-->
+                    </md-button>
+                    <md-button ng-if="passengerHasClosedCasesAndNoOpenCases()" type="button" class="btn btn-info" ng-click="reOpen()" style="margin-left: 5px">
+                        &nbsp;{{'btn.setToReOpen' | translate}}
+                    </md-button>
                 </div>
-
-
             </div>
         </section>
     </div>

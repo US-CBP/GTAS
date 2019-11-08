@@ -3,11 +3,13 @@ package gov.gtas.email;
 import freemarker.template.TemplateException;
 import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.enumtype.HitSeverityEnum;
+import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightCountDownView;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitMaker;
+import gov.gtas.model.HitViewStatus;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.PassengerDetails;
 import gov.gtas.model.User;
@@ -22,7 +24,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.mail.MessagingException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -55,7 +56,7 @@ public class SampleEmailSender {
         passengerDetails.setFirstName("John");
         passengerDetails.setLastName("Doe");
         passengerDetails.setGender("MALE");
-        passengerDetails.setDob(java.sql.Date.valueOf(LocalDate.of(2000,1,1)));
+        passengerDetails.setDob(java.sql.Date.valueOf(LocalDate.of(2000,1,2)));
         passenger.setPassengerDetails(passengerDetails);
 
         HitDetail hitDetail = new HitDetail(WATCHLIST_PASSENGER);
@@ -73,9 +74,14 @@ public class SampleEmailSender {
         UserGroup userGroup = new UserGroup();
         User user = new User();
         user.setEmail(RECIPIENT_EMAIL);
+        user.setEmailEnabled(true);
+        user.setHighPriorityHitsEmailNotification(true);
         userGroup.setGroupMembers(Collections.singleton(user));
         hitCategory.setUserGroups(Collections.singleton(userGroup));
         passenger.setHitDetails(Collections.singleton(hitDetail));
+
+        HitViewStatus hitViewStatus = new HitViewStatus(hitDetail, userGroup, HitViewStatusEnum.NEW, passenger);
+        hitDetail.setHitViewStatus(Collections.singleton(hitViewStatus));
 
         Document document = new Document();
         document.setDocumentNumber("A123456");
@@ -84,9 +90,12 @@ public class SampleEmailSender {
 
         Flight flight = new Flight();
         flight.setFlightNumber("F435435");
+        flight.setOrigin("BWI");
+        flight.setDestination("LHR");
+        flight.setCarrier("Spirit");
 
         FlightCountDownView flightCountDownView = new FlightCountDownView();
-        flightCountDownView.setCountDownTimer(java.sql.Date.valueOf(LocalDate.of(2030,1,1)));
+        flightCountDownView.setCountDownTimer(java.sql.Date.valueOf(LocalDate.of(2030,1,2)));
         flight.setFlightCountDownView(flightCountDownView);
         passenger.setFlight(flight);
 

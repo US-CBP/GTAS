@@ -25,7 +25,7 @@ app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptions
   // could also pull these from the coldefs:
   // airportGrid.coldefs.map((col) => col.field), and filter the fields to exclude the "Edit" and "Id" fields?
   $scope.codeColList[CARRIER] = [{name: 'iata', len: 2}, {name: 'name', len: 255}];
-  $scope.codeColList[AIRPORT] = [{name: 'iata', len: 3}, {name: 'icao', len: 4}, {name: 'name', len: 255}, {name: 'city', len: 255}, {name: 'country', len: 3}];
+  $scope.codeColList[AIRPORT] = [{name: 'iata', len: 3}, {name: 'icao', len: 4}, {name: 'name', len: 255}, {name: 'city', len: 255}, {name: 'country', len: 3}, {name: 'latitude', len: 10}, {name: 'longitude', len: 10}];
   $scope.codeColList[COUNTRY] = [{name: 'iso2', len: 2}, {name: 'iso3', len: 3}, {name: 'name', len: 255}, {name: 'isoNumeric', len: 3}];
 
   $scope.settingsInfo = settingsInfo.data;

@@ -30,7 +30,18 @@ public class CountDownCalculatorTest {
 		ZonedDateTime laterZoneDateTime = twentyNineMinutesLater.atZone(ZoneId.systemDefault());
 		Date countDownFrom = Date.from(laterZoneDateTime.toInstant());
 		CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownFrom);
-		Assert.assertEquals("0d 0h 29m", countDownVo.getCountDownTimer());
+		Assert.assertEquals("29m", countDownVo.getCountDownTimer());
+		Assert.assertTrue(countDownVo.isCloseToCountDown());
+	}
+
+	@Test
+	public void test29MinutesNegative() {
+		CountDownCalculator countDownCalculator = new CountDownCalculator(timeCheck);
+		LocalDateTime twentyNineMinutesLater = ldt.minusMinutes(29);
+		ZonedDateTime laterZoneDateTime = twentyNineMinutesLater.atZone(ZoneId.systemDefault());
+		Date countDownFrom = Date.from(laterZoneDateTime.toInstant());
+		CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownFrom);
+		Assert.assertEquals("-29m", countDownVo.getCountDownTimer());
 		Assert.assertTrue(countDownVo.isCloseToCountDown());
 	}
 
@@ -41,7 +52,7 @@ public class CountDownCalculatorTest {
 		ZonedDateTime laterZoneDateTime = twentyNineMinutesLater.atZone(ZoneId.systemDefault());
 		Date countDownFrom = Date.from(laterZoneDateTime.toInstant());
 		CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownFrom);
-		Assert.assertEquals("0d 0h 31m", countDownVo.getCountDownTimer());
+		Assert.assertEquals("31m", countDownVo.getCountDownTimer());
 		Assert.assertFalse(countDownVo.isCloseToCountDown());
 	}
 
