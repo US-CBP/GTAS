@@ -52,6 +52,15 @@ public class SQSLoaderScheduler {
 
 	@Value("${sqs.loader.region}")
 	private String region;
+	
+	@Value("${sqs.loader.usecredentials}")
+	private String useCredentials;
+	
+	@Value("${sqs.loader.accessKey}")
+	private String accessKey;
+	
+	@Value("${sqs.loader.secretKey}")
+	private String secretKey;
 
 	@Autowired
 	private InboundQMessageSender sender;
@@ -68,8 +77,14 @@ public class SQSLoaderScheduler {
 
 			if (this.queueService == null) {
 				this.queueService = new QueueService(this.queue, this.region);
+				
+				if(useCredentials!=null && useCredentials.trim().equalsIgnoreCase("Y"))
+				{
+					queueService.configureCredentials(this.region, this.accessKey, this.secretKey);
+				}
+				
 			}
-
+			
 			List<Message> messages = queueService.receiveMessages();
 
 			messages.forEach(p -> {
