@@ -3115,7 +3115,10 @@
          */
         this.on('afterInit', function(e) {
             // configure jQuery to use dataTransfer
-            $.event.props.push('dataTransfer');
+
+            // TODO APB  - the second line below is the correct syntax for jquery v3
+            // $.event.props.push('dataTransfer');    // original line, jquery v2.2.3
+            $.event.addProp('dataTransfer');       // v3.4 line
 
             var placeholder, src,
                 self = e.builder;
