@@ -15,7 +15,7 @@
 	<name>GTAS Common Classes</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<elasticsearch.version>6.5.0</elasticsearch.version>
+		<elasticsearch.version>7.2.0</elasticsearch.version>
 		<hazelcast.version>3.11</hazelcast.version>
 
 		<hibernate.connection.driver_class>org.mariadb.jdbc.Driver</hibernate.connection.driver_class>
@@ -245,7 +245,7 @@
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>transport</artifactId>
-			<version>6.5.0</version>
+			<version>7.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
