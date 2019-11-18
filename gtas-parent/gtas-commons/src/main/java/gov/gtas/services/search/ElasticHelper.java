@@ -239,7 +239,8 @@ public class ElasticHelper {
 			}
 		}
 		rv.sort((o1, o2) -> o1.getEta().compareTo(o2.getEta()) * -1);
-		return new AdhocQueryDto(rv, results.getTotalHits());
+	
+		return new AdhocQueryDto(rv, results.getHits().length);
 	}
 
 	LinkAnalysisDto findPaxLinks(Passenger pax, int pageNumber, int pageSize, String column, String dir)
@@ -287,11 +288,11 @@ public class ElasticHelper {
 				lpVo.setFlightNumber((String) result.get("flightNumber"));
 				lpVo.setHighlightMatch(converHighlightsTable(hit.getHighlightFields().entrySet()));
 				// Need to normalize for intuitive consideration
-				lpVo.setScore(hit.getExplanation().getValue());
+				lpVo.setScore(hit.getExplanation().getValue().floatValue());
 				lp.add(lpVo);
 			}
 		}
-		return new LinkAnalysisDto(lp, hits.getTotalHits());
+		return new LinkAnalysisDto(lp, hits.getHits().length);
 	}
 
 	////////////////////////////////////////////////////////////////////

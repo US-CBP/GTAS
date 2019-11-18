@@ -248,15 +248,30 @@
 			<version>7.2.0</version>
 		</dependency>
 		<dependency>
+		    <groupId>org.elasticsearch</groupId>
+		    <artifactId>elasticsearch</artifactId>
+		    <version>7.2.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.elasticsearch.client</groupId>
+		    <artifactId>elasticsearch-rest-client</artifactId>
+		    <version>7.2.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.elasticsearch.plugin</groupId>
+		    <artifactId>transport-netty4-client</artifactId>
+		    <version>7.2.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>2.7</version>
+			<version>2.11.1</version>
 
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.7</version>
+			<version>2.11.1</version>
 
 		</dependency>
 
