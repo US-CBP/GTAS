@@ -173,6 +173,26 @@
 	              </a></li>
           </ul>
         </div>
+
+        <div class="nav navbar-nav navbar-form navbar-right">
+          <form role="search">
+            <div data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES }}]" class="form-group">
+              <div class="input-group">
+                <div class="mdl-textfield mdl-js-textfield">
+                  <label for="main-search" class="mdl-textfield__label">{{'nav.search' | translate}}</label>
+                  <input ng-model="searchBarContent.content" ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'" ng-keypress="$event.which === 13 && searchBarQuery() && setSelectedTab('adhocquery')" type="text" id="main-search" class="mdl-textfield__input"
+                  />
+                </div>
+                <span class="input-group-btn">
+	                  <button ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'"
+	                  	ng-click="searchBarQuery() && setSelectedTab('adhocquery')"
+	                  	aria-label="Search"  type="submit" class="btn btn-primary">
+	                  	<i class="fa fa-search"></i></button>
+	                </span>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
