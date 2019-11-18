@@ -991,9 +991,7 @@
                   {
                     field: "documentType",
                     name: "documentType",
-                    //displayName: "Type",
-                    displayName: "doc.type",
-                    headerCellFilter: "translate",
+                    displayName: $translate.instant('doc.type'),
                     cellTemplate:
                       '<md-button class="md-primary"  ng-click="grid.appScope.editRecord(row.entity)" style="min-width: 0; margin: 0 auto; width: 100%;" >{{COL_FIELD}}</md-button>',
                     type: "string"
@@ -1001,8 +999,7 @@
                   {
                     field: "documentNumber",
                     name: "documentNumber",
-                    displayName: "doc.number",
-                    headerCellFilter: "translate",
+                    displayName: $translate.instant('doc.number'),
                     cellTemplate:
                       '<md-button class="md-primary"  ng-click="grid.appScope.editRecord(row.entity)" style="min-width: 0; margin: 0 auto; width: 100%;" >{{COL_FIELD}}</md-button>',
                     type: "string"
@@ -1010,9 +1007,7 @@
                   {
                     field: "categoryId",
                     name: "categoryId",
-                    //displayName: "Number",
-                    displayName: "Category",
-                    headerCellFilter: "translate",
+                    displayName: $translate.instant('doc.category'),
                     cellTemplate:
                       '<md-button class="md-primary"  ng-click="grid.appScope.editRecord(row.entity)" style="min-width: 0; margin: 0 auto; width: 100%;" >{{grid.appScope.categories[COL_FIELD]}}</md-button>',
                     type: "integer"
@@ -1022,9 +1017,7 @@
                   {
                     field: "dob",
                     name: "dob",
-                    //displayName: "DOB",
-                    displayName: "doc.dob",
-                    headerCellFilter: "translate",
+                    displayName: $translate.instant('doc.dob'),
                     width: 100,
                     cellTemplate:
                       '<md-button class="md-primary"  ng-click="grid.appScope.editRecord(row.entity)" style="min-width: 0; margin: 0 auto; width: 100%;" >{{COL_FIELD | date:\'yyyy-MM-dd\'}}</md-button>',
@@ -1033,9 +1026,7 @@
                   {
                     field: "firstName",
                     name: "firstName",
-                    //displayName: "First Name",
-                    displayName: "pass.firstname",
-                    headerCellFilter: "translate",
+                    displayName: $translate.instant('pass.firstname'),
                     cellTemplate:
                       '<md-button class="md-primary"  ng-click="grid.appScope.editRecord(row.entity)" style="min-width: 0; margin: 0 auto; width: 100%;" >{{COL_FIELD}}</md-button>',
                     type: "string"
@@ -1043,9 +1034,7 @@
                   {
                     field: "lastName",
                     name: "lastName",
-                    //displayName: "Last Name",
-                    displayName: "pass.lastname",
-                    headerCellFilter: "translate",
+                    displayName: $translate.instant('pass.lastname'),
                     cellTemplate:
                       '<md-button class="md-primary"  ng-click="grid.appScope.editRecord(row.entity)" style="min-width: 0; margin: 0 auto; width: 100%;" >{{COL_FIELD}}</md-button>',
                     type: "string"
@@ -1053,9 +1042,7 @@
                   {
                     field: "categoryId",
                     name: "categoryId",
-                    //displayName: "Number",
-                    displayName: "Category",
-                    headerCellFilter: "translate",
+                    displayName: $translate.instant('doc.category'),
                     cellTemplate:
                       '<md-button class="md-primary"  ng-click="grid.appScope.editRecord(row.entity)" style="min-width: 0; margin: 0 auto; width: 100%;" >{{grid.appScope.categories[COL_FIELD]}}</md-button>',
                     type: "integer"
