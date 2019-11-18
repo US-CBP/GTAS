@@ -310,8 +310,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>960</yloc>
+      <xloc>416</xloc>
+      <yloc>1184</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -332,8 +332,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>544</yloc>
+      <xloc>128</xloc>
+      <yloc>912</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -364,8 +364,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>448</xloc>
-      <yloc>176</yloc>
+      <xloc>144</xloc>
+      <yloc>240</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -373,14 +373,14 @@
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>--->>>> Starting SFTP communication to SERVER = ${EXT_VAR_REMOTE_DATA_PROC_SERVER}  to get the Apache Tomcat log</logmessage>
+      <logmessage>--->>>> Starting SFTP communication to SERVER = ${EXT_VAR_REMOTE_DATA_PROC_SERVER} using SSH KEY  to get the Apache Tomcat log</logmessage>
       <loglevel>Minimal</loglevel>
       <logsubject>GET GTAS LOG ON SFTP</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>416</yloc>
+      <xloc>128</xloc>
+      <yloc>688</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -394,22 +394,22 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>736</xloc>
+      <xloc>720</xloc>
       <yloc>176</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Write to log 2</name>
+      <name>Write to log - error-key</name>
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>######--->>>>> ERROR! ROTATED APACHE TOMCAT LOGS CAN NOT BE COLLECTED BECAUSE THE SFTP CALL TO THE REMOTE SERVER ${EXT_VAR_REMOTE_DATA_PROC_SERVER} FAILED</logmessage>
+      <logmessage>######--->>>>> ERROR! ROTATED APACHE TOMCAT LOGS CAN NOT BE COLLECTED BECAUSE THE SFTP CALL TO THE REMOTE SERVER ${EXT_VAR_REMOTE_DATA_PROC_SERVER} FAILED (using SSH KEY)</logmessage>
       <loglevel>Error</loglevel>
       <logsubject>SFTP CALL FAILED</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>592</xloc>
+      <xloc>864</xloc>
       <yloc>256</yloc>
       <attributes_kjc/>
     </entry>
@@ -426,8 +426,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>656</yloc>
+      <xloc>128</xloc>
+      <yloc>1056</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -464,7 +464,7 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>960</xloc>
+      <xloc>976</xloc>
       <yloc>176</yloc>
       <attributes_kjc/>
     </entry>
@@ -557,12 +557,12 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1232</xloc>
+      <xloc>1344</xloc>
       <yloc>176</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Get File SFTP- Apache Tomact-log</name>
+      <name>Get File SFTP- SSH Key</name>
       <description/>
       <type>SFTP</type>
       <attributes/>
@@ -589,8 +589,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>272</yloc>
+      <xloc>128</xloc>
+      <yloc>560</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -598,14 +598,14 @@
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>--->>>>> ERROR! THE CURRENT APACHE TOMCAT LOGS CAN NOT BE COLLECTED BECAUSE THE SFTP CALL TO THE REMOTE SERVER ${EXT_VAR_REMOTE_DATA_PROC_SERVER} FAILED</logmessage>
+      <logmessage>--->>>>> ERROR! THE CURRENT APACHE TOMCAT LOGS CAN NOT BE COLLECTED BECAUSE THE SFTP CALL TO THE REMOTE SERVER ${EXT_VAR_REMOTE_DATA_PROC_SERVER} FAILED (USING SSH KEY)</logmessage>
       <loglevel>Error</loglevel>
       <logsubject>SFTP CALL FAILED</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>432</xloc>
-      <yloc>304</yloc>
+      <xloc>608</xloc>
+      <yloc>368</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -619,8 +619,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>944</xloc>
-      <yloc>256</yloc>
+      <xloc>1104</xloc>
+      <yloc>272</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -634,8 +634,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1104</xloc>
-      <yloc>272</yloc>
+      <xloc>1200</xloc>
+      <yloc>256</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -664,7 +664,7 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>288</xloc>
-      <yloc>528</yloc>
+      <yloc>912</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -756,8 +756,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1136</xloc>
-      <yloc>608</yloc>
+      <xloc>1184</xloc>
+      <yloc>624</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -809,8 +809,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>624</xloc>
-      <yloc>384</yloc>
+      <xloc>640</xloc>
+      <yloc>496</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -824,8 +824,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>848</xloc>
-      <yloc>496</yloc>
+      <xloc>944</xloc>
+      <yloc>528</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -839,8 +839,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1072</xloc>
-      <yloc>480</yloc>
+      <xloc>1120</xloc>
+      <yloc>528</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -868,8 +868,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>512</xloc>
-      <yloc>528</yloc>
+      <xloc>528</xloc>
+      <yloc>912</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -883,8 +883,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>720</xloc>
-      <yloc>464</yloc>
+      <xloc>768</xloc>
+      <yloc>528</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -892,14 +892,14 @@
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>--->>>> Starting SFTP communication to SERVER = ${EXT_VAR_REMOTE_DATA_PROC_SERVER}  to get the Apache Tomcat Rotated log</logmessage>
+      <logmessage>--->>>> Starting SFTP communication to SERVER = ${EXT_VAR_REMOTE_DATA_PROC_SERVER} using SSH KEY to get the Apache Tomcat Rotated log</logmessage>
       <loglevel>Minimal</loglevel>
       <logsubject>GET GTAS LOG ON SFTP</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>224</xloc>
-      <yloc>176</yloc>
+      <xloc>128</xloc>
+      <yloc>400</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1212,7 +1212,7 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1248</xloc>
+      <xloc>1312</xloc>
       <yloc>384</yloc>
       <attributes_kjc/>
     </entry>
@@ -1237,8 +1237,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>768</yloc>
+      <xloc>128</xloc>
+      <yloc>1184</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1255,8 +1255,8 @@ GTAS LOG COLLECTOR ETL JOB IS STARTING...........................
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>864</yloc>
+      <xloc>272</xloc>
+      <yloc>1184</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1268,33 +1268,193 @@ GTAS LOG COLLECTOR ETL JOB IS STARTING...........................
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>336</xloc>
-      <yloc>768</yloc>
+      <xloc>272</xloc>
+      <yloc>1104</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Simple evaluation-use key?</name>
+      <description/>
+      <type>SIMPLE_EVAL</type>
+      <attributes/>
+      <valuetype>variable</valuetype>
+      <fieldname/>
+      <variablename>${EXT_VAR_REMOTE_USE_KEY}</variablename>
+      <fieldtype>boolean</fieldtype>
+      <mask/>
+      <comparevalue/>
+      <minvalue/>
+      <maxvalue/>
+      <successcondition>equal</successcondition>
+      <successnumbercondition>equal</successnumbercondition>
+      <successbooleancondition>true</successbooleancondition>
+      <successwhenvarset>N</successwhenvarset>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>128</xloc>
+      <yloc>800</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Get File SFTP- pwd</name>
+      <description/>
+      <type>SFTP</type>
+      <attributes/>
+      <servername>${EXT_VAR_REMOTE_DATA_PROC_SERVER}</servername>
+      <serverport>${EXT_VAR_REMOTE_DATA_PROC_SERVER_PORT}</serverport>
+      <username>${EXT_VAR_REMOTE_DATA_PROC_SERVER_USER_NAME}</username>
+      <password>${EXT_VAR_REMOTE_DATA_PROC_SERVER_USER_PASSWORD}</password>
+      <sftpdirectory>${EXT_VAR_REMOTE_TOMCAT_LOG_DIR}</sftpdirectory>
+      <targetdirectory>${EXT_VAR_TEMP_TOMCAT_DIR}</targetdirectory>
+      <wildcard>${EXT_VAR_TOMCAT_CURRENT_LOG_WC}</wildcard>
+      <remove>N</remove>
+      <isaddresult>Y</isaddresult>
+      <createtargetfolder>N</createtargetfolder>
+      <copyprevious>N</copyprevious>
+      <usekeyfilename>N</usekeyfilename>
+      <keyfilename/>
+      <keyfilepass>Encrypted </keyfilepass>
+      <compression>none</compression>
+      <proxyType/>
+      <proxyHost/>
+      <proxyPort/>
+      <proxyUsername/>
+      <proxyPassword>Encrypted </proxyPassword>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>320</xloc>
+      <yloc>560</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log 17</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>--->>>> Starting SFTP communication to SERVER = ${EXT_VAR_REMOTE_DATA_PROC_SERVER} using PASSWORD  to get the Apache Tomcat log</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>GET GTAS LOG ON SFTP</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>256</xloc>
+      <yloc>704</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log - sftp success-key</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>===> SUCCESSFULLY CONNECTED TO SFTP USING SSH KEY TO RETRIEVE ROTATED LOGS</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>SFTP SUCCESS - 2!</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>352</xloc>
+      <yloc>160</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log 18</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>--->>>>> ERROR! THE CURRENT APACHE TOMCAT LOGS CAN NOT BE COLLECTED BECAUSE THE SFTP CALL TO THE REMOTE SERVER ${EXT_VAR_REMOTE_DATA_PROC_SERVER} FAILED (USING PASSWORD)</logmessage>
+      <loglevel/>
+      <logsubject/>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>624</xloc>
+      <yloc>432</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log 9 2</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>--->>>> Starting SFTP communication to SERVER = ${EXT_VAR_REMOTE_DATA_PROC_SERVER} using PASSWORD  to get the Apache Tomcat Rotated log</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>GET GTAS LOG ON SFTP</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>320</xloc>
+      <yloc>400</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Get File SFTP- Apache Tomact-rotated-log-PWD</name>
+      <description/>
+      <type>SFTP</type>
+      <attributes/>
+      <servername>${EXT_VAR_REMOTE_DATA_PROC_SERVER}</servername>
+      <serverport>${EXT_VAR_REMOTE_DATA_PROC_SERVER_PORT}</serverport>
+      <username>${EXT_VAR_REMOTE_DATA_PROC_SERVER_USER_NAME}</username>
+      <password>${EXT_VAR_REMOTE_DATA_PROC_SERVER_USER_PASSWORD}</password>
+      <sftpdirectory>${EXT_VAR_REMOTE_TOMCAT_LOG_DIR}</sftpdirectory>
+      <targetdirectory>${EXT_VAR_TEMP_TOMCAT_DIR}</targetdirectory>
+      <wildcard>${EXT_VAR_TOMCAT_ROTATED_LOG_WC}</wildcard>
+      <remove>Y</remove>
+      <isaddresult>Y</isaddresult>
+      <createtargetfolder>N</createtargetfolder>
+      <copyprevious>N</copyprevious>
+      <usekeyfilename>N</usekeyfilename>
+      <keyfilename/>
+      <keyfilepass>Encrypted </keyfilepass>
+      <compression>none</compression>
+      <proxyType/>
+      <proxyHost/>
+      <proxyPort/>
+      <proxyUsername/>
+      <proxyPassword>Encrypted </proxyPassword>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>432</xloc>
+      <yloc>320</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log - sftp success-pwd</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>===> SUCCESSFULLY CONNECTED TO SFTP USING PASSWORD TO RETRIEVE ROTATED LOGS</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>SFTP SUCCESS - 2!</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>528</xloc>
+      <yloc>208</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log - error-pwd</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>######--->>>>> ERROR! ROTATED APACHE TOMCAT LOGS CAN NOT BE COLLECTED BECAUSE THE SFTP CALL TO THE REMOTE SERVER ${EXT_VAR_REMOTE_DATA_PROC_SERVER} FAILED (using PASSWORD)</logmessage>
+      <loglevel>Error</loglevel>
+      <logsubject>SFTP CALL FAILED</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>864</xloc>
+      <yloc>320</yloc>
       <attributes_kjc/>
     </entry>
   </entries>
   <hops>
     <hop>
-      <from>Dummy</from>
-      <to>Write to log</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
       <from>Get File SFTP- Apache Tomact-rotated-log</from>
-      <to>Write to log - 2</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Get File SFTP- Apache Tomact-rotated-log</from>
-      <to>Write to log 2</to>
+      <to>Write to log - error-key</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -1329,16 +1489,7 @@ GTAS LOG COLLECTOR ETL JOB IS STARTING...........................
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Write to log</from>
-      <to>Get File SFTP- Apache Tomact-log</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Get File SFTP- Apache Tomact-log</from>
+      <from>Get File SFTP- SSH Key</from>
       <to>Write to log-1</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -1437,7 +1588,7 @@ GTAS LOG COLLECTOR ETL JOB IS STARTING...........................
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Get File SFTP- Apache Tomact-log</from>
+      <from>Get File SFTP- SSH Key</from>
       <to>Write to log 9</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -1644,7 +1795,7 @@ GTAS LOG COLLECTOR ETL JOB IS STARTING...........................
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Write to log 2</from>
+      <from>Write to log - error-key</from>
       <to>Dummy- completed zipping</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -1759,6 +1910,141 @@ GTAS LOG COLLECTOR ETL JOB IS STARTING...........................
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy</from>
+      <to>Simple evaluation-use key?</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Simple evaluation-use key?</from>
+      <to>Write to log</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Simple evaluation-use key?</from>
+      <to>Write to log 17</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log 17</from>
+      <to>Get File SFTP- pwd</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log</from>
+      <to>Get File SFTP- SSH Key</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Get File SFTP- Apache Tomact-rotated-log</from>
+      <to>Write to log - sftp success-key</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log - sftp success-key</from>
+      <to>Write to log - 2</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Get File SFTP- pwd</from>
+      <to>Write to log 18</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log 18</from>
+      <to>Dummy- completed zipping</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Get File SFTP- pwd</from>
+      <to>Write to log 9 2</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log 9 2</from>
+      <to>Get File SFTP- Apache Tomact-rotated-log-PWD</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Get File SFTP- Apache Tomact-rotated-log-PWD</from>
+      <to>Write to log - sftp success-pwd</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log - sftp success-pwd</from>
+      <to>Write to log - 2</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Get File SFTP- Apache Tomact-rotated-log-PWD</from>
+      <to>Write to log - error-pwd</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log - error-pwd</from>
+      <to>Dummy- completed zipping</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
   </hops>
   <notepads>
