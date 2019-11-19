@@ -1004,7 +1004,7 @@
 
                 <div class="flex justify-around action-buttons" ng-show="!disableLinks">
                 	<md-button  type="button" class="btn btn-info" ng-click="getPaxDetailReport()">
-                               {{'btn.downloadreport' | translate}}
+                               {{'btn.eventreport' | translate}}
      				</md-button> &nbsp;
                     <md-button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-danger" ng-click="addToWatchlist() ">
                         &nbsp;{{'btn.addtowatchlist' | translate}}
@@ -1013,10 +1013,10 @@
                         &nbsp;{{'btn.notify' | translate}} &nbsp;
                     </md-button>
                     <md-button ng-if="passengerHasOpenCases()" type="button" class="btn btn-info" ng-click="review()" style="margin-left: 5px">
-                        &nbsp;{{'btn.reviewed' | translate}}
+                        &nbsp;{{'btn.setstatustoreviewed' | translate}}
                     </md-button>
                     <md-button ng-if="passengerHasClosedCasesAndNoOpenCases()" type="button" class="btn btn-info" ng-click="reOpen()" style="margin-left: 5px">
-                        &nbsp;{{'btn.setToReOpen' | translate}}
+                        &nbsp;{{'btn.settoreopened' | translate}}
                     </md-button>
                 </div>
             </div>
