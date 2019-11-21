@@ -1758,6 +1758,12 @@
             '<i class="fa fa-flag" aria-hidden="true"></i></span></div>'
         },
         {
+          field: "seat",
+          name: "seat",
+          displayName: $translate.instant('pass.seat'),
+          visible: false
+        },
+        {
           name: "passengerType",
           displayName: $translate.instant('pass.type'),
           width: 50,
