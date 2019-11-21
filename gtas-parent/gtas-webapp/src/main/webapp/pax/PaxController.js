@@ -1633,6 +1633,12 @@
           width: 50
         },
         {
+          field: "seat",
+          name: "seat",
+          displayName: $translate.instant('pass.seat'),
+          visible: false
+        },
+        {
           field: "lastName",
           name: "lastName",
           displayName: $translate.instant('pass.lastname'),

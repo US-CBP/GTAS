@@ -28,6 +28,7 @@ import gov.gtas.querybuilder.repository.QueryBuilderRepository;
 import gov.gtas.querybuilder.validation.util.QueryValidationUtils;
 import gov.gtas.querybuilder.vo.FlightQueryVo;
 import gov.gtas.querybuilder.vo.PassengerQueryVo;
+import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.PassengersPageDto;
@@ -37,6 +38,7 @@ import gov.gtas.vo.passenger.PassengerGridItemVo;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -57,6 +59,8 @@ public class QueryBuilderService {
 	private QueryBuilderRepository queryRepository;
 	@Autowired
 	private PassengerService passengerService;
+	@Autowired
+	private SeatRepository seatRepository;
 
 	/**
 	 * Persists a user defined query to the database
@@ -211,6 +215,15 @@ public class QueryBuilderService {
 					Passenger passenger = (Passenger) result[1];
 					Flight flight = (Flight) result[2];
 					PassengerGridItemVo vo = createPassengerGridItemVo(paxDocuments, passenger, flight);
+					
+					List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(flight.getId(), passenger.getId());
+					if (CollectionUtils.isNotEmpty(seatList)) {
+						List<String> seats = seatList.stream().map(seat -> seat.getNumber()).distinct()
+								.collect(Collectors.toList());
+						if (seats.size() == 1) {
+							vo.setSeat(seats.get(0));
+						}
+					}
 					passengerList.add(vo);
 				}
 			}
