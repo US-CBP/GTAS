@@ -1,0 +1,51 @@
+{
+  "name": "gtas-ui",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@reach/router": "^1.2.1",
+    "axios": "^0.19.0",
+    "bulma": "^0.8.0",
+    "cross-env": "^6.0.3",
+    "font-awesome": "^4.7.0",
+    "node-sass": "^4.13.0",
+    "react": "^16.11.0",
+    "react-dom": "^16.11.0",
+    "react-idle-timer": "^4.2.12",
+    "react-querybuilder": "^2.5.1",
+    "react-responsive-tabs": "^3.3.0",
+    "react-scripts": "3.2.0",
+    "react-table": "^6.10.3",
+    "source-map-explorer": "^2.1.0",
+    "vaquita": "^1.0.9"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "sg": "styleguidist server",
+    "sg:build": "styleguidist build",
+    "docz:dev": "docz dev",
+    "docz:build": "docz build",
+    "docz:serve": "docz build && docz serve"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "react-styleguidist": "^10.2.1"
+  }
+}
