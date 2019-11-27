@@ -55,6 +55,10 @@
       "data:text/json;charset=utf-8," +
       encodeURIComponent(JSON.stringify($scope.passenger));
 
+    $scope.getCarrierCodeCodeTooltipData = function(code) {
+      let tooltip = codeTooltipService.getCodeTooltipData(code, "carrier");
+      return tooltip + " (" + code + ")";
+    };
     $scope.paxIdTag = $scope.passenger.paxIdTag;
     $scope.paxLastName = $scope.passenger.lastName;
     $scope.paxFlightIdTag = $scope.passenger.flightIdTag;
@@ -1331,7 +1335,11 @@
       );
     };
 
-
+    $scope.getCarrierCodeCodeTooltipData = function(code) {
+      let tooltip = codeTooltipService.getCodeTooltipData(code, "carrier");
+      return tooltip + " (" + code + ")";
+    };
+    
     var exporter = {
       csv: function() {
         $scope.gridApi.exporter.csvExport("all", "all");
@@ -1402,6 +1410,7 @@
               pax.flightOrigin = firstPassenger.flightOrigin;
               pax.flightDestination = firstPassenger.flightDestination;
               pax.flightNumber = firstPassenger.fullFlightNumber;
+              pax.carrier = firstPassenger.carrier;
             }
             $scope.pax = pax;
           },

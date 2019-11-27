@@ -9,7 +9,7 @@
         function ($scope, $rootScope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, caseModel,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, configService, paxReportService) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, configService, paxReportService,  codeTooltipService) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList;
@@ -29,6 +29,11 @@
                     .hideDelay(4000)
                     .parent(toastPosition));
             };
+            $scope.getCarrierCodeCodeTooltipData = function(flightNumber) {
+                let code = flightNumber.substring(0,2);
+                let tooltip = codeTooltipService.getCodeTooltipData(code, "carrier");
+                return tooltip + " (" + code + ")";
+              };
 
             var exporter = {
                 'csv': function () {
@@ -411,8 +416,8 @@
                     cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace">' +
                         '<div class="flex">' +
                         '<span class="sm-pad">' +
-                        '<div><span ng-if="row.entity.flightDirection === \'O\'" class="sm-pad flight-num"><i class="fa fa-plane" aria-hidden="true"></i>  {{row.entity.flightNumber}}</span></div>' +
-                        '<div><span ng-if="row.entity.flightDirection === \'I\'" class="sm-pad flight-num"><i class="fa fa-flip-vertical fa-plane" aria-hidden="true"></i>{{row.entity.flightNumber}}</span></div>' +
+                        '<div><span ng-if="row.entity.flightDirection === \'O\'" class="sm-pad flight-num" tooltip-placement="right" uib-tooltip={{grid.appScope.getCarrierCodeCodeTooltipData(row.entity.flightNumber)}}><i class="fa fa-plane" aria-hidden="true"></i>  {{row.entity.flightNumber}}</span></div>' +
+                        '<div><span ng-if="row.entity.flightDirection === \'I\'" class="sm-pad flight-num" tooltip-placement="right" uib-tooltip={{grid.appScope.getCarrierCodeCodeTooltipData(row.entity.flightNumber)}}><i class="fa fa-flip-vertical fa-plane" aria-hidden="true"></i>{{row.entity.flightNumber}}</span></div>' +
                         '<div><span ng-class="row.entity.closeToCountDown ? \'badge danger-back danger-border-th\': \'badge info-back info-border-th\'"><strong>{{row.entity.countDownTimeDisplay}}</strong></span></div>' +
                         '</span>' +
                         '<span class="sm-pad">' +
