@@ -96,7 +96,7 @@ public class PassengerDetailsController {
 	private NoteTypeService noteTypeService;
 	
 	@Autowired
-	private SeatService seatService;
+	private SeatServiceImpl seatService;
 
 	static final String EMPTY_STRING = "";
 

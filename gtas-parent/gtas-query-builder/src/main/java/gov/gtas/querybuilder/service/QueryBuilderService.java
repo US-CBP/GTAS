@@ -30,7 +30,7 @@ import gov.gtas.querybuilder.vo.FlightQueryVo;
 import gov.gtas.querybuilder.vo.PassengerQueryVo;
 import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.PassengerService;
-import gov.gtas.services.SeatService;
+import gov.gtas.services.SeatServiceImpl;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.vo.passenger.DocumentVo;
@@ -61,7 +61,7 @@ public class QueryBuilderService {
 	@Autowired
 	private PassengerService passengerService;
 	@Autowired
-	private SeatService seatService;
+	private SeatServiceImpl seatService;
 	/**
 	 * Persists a user defined query to the database
 	 * 
