@@ -30,6 +30,7 @@ import gov.gtas.querybuilder.vo.FlightQueryVo;
 import gov.gtas.querybuilder.vo.PassengerQueryVo;
 import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.PassengerService;
+import gov.gtas.services.SeatService;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.vo.passenger.DocumentVo;
@@ -60,8 +61,7 @@ public class QueryBuilderService {
 	@Autowired
 	private PassengerService passengerService;
 	@Autowired
-	private SeatRepository seatRepository;
-
+	private SeatService seatService;
 	/**
 	 * Persists a user defined query to the database
 	 * 
@@ -216,14 +216,9 @@ public class QueryBuilderService {
 					Flight flight = (Flight) result[2];
 					PassengerGridItemVo vo = createPassengerGridItemVo(paxDocuments, passenger, flight);
 					
-					List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(flight.getId(), passenger.getId());
-					if (CollectionUtils.isNotEmpty(seatList)) {
-						List<String> seats = seatList.stream().map(seat -> seat.getNumber()).distinct()
-								.collect(Collectors.toList());
-						if (seats.size() == 1) {
-							vo.setSeat(seats.get(0));
-						}
-					}
+					String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), passenger.getId());
+					vo.setSeat(seatNumber);
+					
 					passengerList.add(vo);
 				}
 			}
