@@ -472,8 +472,8 @@
                     displayName: $translate.instant('case.action'),
                     cellTemplate:
                         '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px; font-size: 12px">Re-Open</button>' +
-                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.review(row)" style="margin:5px; font-size: 12px">Review</button>' +
-                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row.entity.paxId)" style="margin:5px; font-size: 12px"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>' +
+                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.review(row)" style="margin:5px; font-size: 12px">{{"btn.review" | translate}}</button>' +
+                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row.entity.paxId)" style="margin:5px; font-size: 12px"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> {{"btn.notify" | translate}}</button>' +
                         '<button  type="submit" class="btn btn-info" ng-click="grid.appScope.getPaxDetailReport(row)" style="margin:5px; font-size: 12px">' +
                         '{{\'btn.downloadreportshort\' | translate}}' +
                         '</button>'
