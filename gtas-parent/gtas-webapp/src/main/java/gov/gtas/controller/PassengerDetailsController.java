@@ -94,6 +94,9 @@ public class PassengerDetailsController {
 	
 	@Autowired
 	private NoteTypeService noteTypeService;
+	
+	@Autowired
+	private SeatService seatService;
 
 	static final String EMPTY_STRING = "";
 
@@ -117,14 +120,10 @@ public class PassengerDetailsController {
 			vo.setFlightDestination(flight.getDestination());
 			vo.setFlightId(flight.getId().toString());
 			vo.setFlightIdTag(flight.getIdTag());
-			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(flight.getId(), t.getId());
-			if (CollectionUtils.isNotEmpty(seatList)) {
-				List<String> seats = seatList.stream().map(seat -> seat.getNumber()).distinct()
-						.collect(Collectors.toList());
-				if (seats.size() == 1) {
-					vo.setSeat(seats.get(0));
-				}
-			}
+			
+			String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), t.getId());
+			vo.setSeat(seatNumber);
+			
 			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
