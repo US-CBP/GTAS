@@ -13,15 +13,15 @@ import gov.gtas.model.Seat;
 import gov.gtas.repository.SeatRepository;
 
 @Service
-public class SeatServiceImpl implements SeatService{
+public class SeatServiceImpl implements SeatService {
 
 	private final SeatRepository seatRepository;
-	
+
 	@Autowired
 	public SeatServiceImpl(SeatRepository seatRepository) {
 		this.seatRepository = seatRepository;
 	}
-	
+
 	public String findSeatNumberByFlightIdAndPassengerId(Long flightId, Long paxId) {
 		List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(flightId, paxId);
 		String seatNumber = null;
@@ -29,10 +29,10 @@ public class SeatServiceImpl implements SeatService{
 			List<String> seats = seatList.stream().map(seat -> seat.getNumber()).distinct()
 					.collect(Collectors.toList());
 			if (seats.size() == 1) {
-				 seatNumber = seats.get(0);
+				seatNumber = seats.get(0);
 			}
 		}
-		
+
 		return seatNumber;
 	}
 

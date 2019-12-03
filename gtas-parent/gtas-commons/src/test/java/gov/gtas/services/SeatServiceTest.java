@@ -28,7 +28,7 @@ public class SeatServiceTest {
 
 	@Before
 	public void before() {
-		seatService = new SeatServiceImpl(seatRepository);		
+		seatService = new SeatServiceImpl(seatRepository);
 
 	}
 
@@ -43,38 +43,38 @@ public class SeatServiceTest {
 		String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flightId, paxId);
 		assertEquals("50A", seatNumber);
 	}
-	
+
 	public void testFindSeatNumberByFlightIdAndPassengerIdWithTwoSeats() {
 		List<Seat> seatList = new ArrayList<Seat>();
 		Seat seat1 = new Seat();
 		Seat seat2 = new Seat();
-		
+
 		seat1.setNumber("50A");
 		seat2.setNumber("50B");
-		
+
 		seatList.add(seat1);
 		seatList.add(seat2);
-		
+
 		Mockito.when(seatRepository.findByFlightIdAndPassengerId(flightId, paxId)).thenReturn(seatList);
 		String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flightId, paxId);
 		assertNull(seatNumber);
-		
+
 	}
-	
+
 	public void testFindSeatNumberByFlightIdAndPassengerIdWithThreeSeats() {
 		List<Seat> seatList = new ArrayList<Seat>();
 		Seat seat1 = new Seat();
 		Seat seat2 = new Seat();
 		Seat seat3 = new Seat();
-		
+
 		seat1.setNumber("50A");
 		seat2.setNumber("50B");
 		seat3.setNumber("50C");
-		
+
 		seatList.add(seat1);
 		seatList.add(seat2);
 		seatList.add(seat3);
-		
+
 		Mockito.when(seatRepository.findByFlightIdAndPassengerId(flightId, paxId)).thenReturn(seatList);
 		String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flightId, paxId);
 		assertNull(seatNumber);
