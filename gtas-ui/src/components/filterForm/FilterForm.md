@@ -1,7 +1,8 @@
 Requires:
 
-- an **`entity`** prop with a post method for Add, or with get and put methods for Edit. Entities are defined in serviceWrapper.js.
-- an **`id`** prop for Edit mode.
+- an **`entity`** prop with a post or get method. Entities are defined in serviceWrapper.js.
+- an **`id`** prop.
+- an **`callback`** prop, called to return fetched data to the parent.
 - child components containing data to have a **`datafield`** prop. Children can be standard html elements or components.
 
 EXAMPLE
@@ -11,10 +12,10 @@ import "bulma/css/bulma.css";
 import LabelledInput from "../labelledInput/LabelledInput.js";
 
 const fetch = {
-  put: async function(id) {
+  post: async function(param) {
     return {};
   },
-  get: async function(id) {
+  get: async function(param) {
     return {};
   }
 };
@@ -22,12 +23,12 @@ const fetch = {
 function cb(e) {}
 
 <div className="column is-4 is-offset-4">
-  <Form
-    title="Important Form"
+  <FilterForm
+    title="Student Filter Form"
     submitText="GO"
     service={fetch}
-    action="edit"
     id="loginform"
+    callback={cb}
   >
     <LabelledInput
       inputType="text"
@@ -61,12 +62,12 @@ function cb(e) {}
       callback={cb}
       alt="grade"
     />
-  </Form>
+  </FilterForm>
 </div>;
 ```
 
 DATAFIELD PROP -
-tells Form.js to track and submit the component's data, and to use the **`datafield`** or **`name`** prop as the field name. The **`datafield`** prop can be assigned the name of the entity field it represents if the **`name`** prop requires a different name. For example, if you are saving data to a Widget entity with a "widgetName" field, but the child component holding the widgetName data has its **`name`** prop set to "component1", you can:
+tells FilterForm.js to track and submit the component's data, and to use the **`datafield`** or **`name`** prop as the field name. The **`datafield`** prop can be assigned the name of the entity field it represents if the **`name`** prop requires a different name. For example, if you are saving data to a Widget entity with a "widgetName" field, but the child component holding the widgetName data has its **`name`** prop set to "component1", you can:
 
 leave the component **`name`** as is and set **`datafield`** to "widgetName"
 
@@ -86,15 +87,11 @@ omit the **`name`** prop and set **`datafield`** to the field name "widgetName"
 <mychildcomponent  datafield="widgetName" ... />
 ```
 
+CALLBACK PROP -
+is used to return data fetched from the supplied service to the parent component. This data can then be fed to another component, like a Table component, contained by the parent.
+
 ERROR -
 If **`datafield`** is present but neither **`name`** nor **`datafield`** resolves to a string, the Form will toss an error.
-
-ADD/EDIT MODES -
-the Form's default mode is Add, but you can change it to Edit by setting the **`action`** prop to "edit" and providing an **`id`** prop.
-
-```jsx static
-<mychildcomponent datafield="widgetName" action="edit" ... />
-```
 
 ---
 

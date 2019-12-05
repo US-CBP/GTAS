@@ -5,7 +5,7 @@ import { hasData, asArray } from "../../utils/text";
 import "./FilterForm.css";
 
 /**
- * **Generic form used to fetch filtered data for use in another component.**
+ * **Generic filter form used to fetch data for use in another component.**
  */
 
 class FilterForm extends React.Component {
