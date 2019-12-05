@@ -4,7 +4,7 @@
 // import {pingUrl} from '../../Utils/request';
 
 // // APB 508, unit tests
-// // need timeout. 
+// // need timeout.
 // // show status text in the well??
 // class LinkStatus extends Component {
 //   constructor(props) {

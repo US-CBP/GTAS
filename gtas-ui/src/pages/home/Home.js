@@ -1,11 +1,11 @@
 import React from "react";
-import Header from '../../components/header/Header';
+import Header from "../../components/header/Header";
 
-const Home = (props) => (
+const Home = props => (
   <div>
     <Header></Header>
     {props.children}
-    </div>
+  </div>
 );
 
 export default Home;

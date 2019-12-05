@@ -16,22 +16,24 @@
     "react-responsive-tabs": "^3.3.0",
     "react-scripts": "3.2.0",
     "react-table": "^6.10.3",
-    "source-map-explorer": "^2.1.0",
     "vaquita": "^1.0.9"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "sg": "styleguidist server",
-    "sg:build": "styleguidist build",
-    "docz:dev": "docz dev",
-    "docz:build": "docz build",
-    "docz:serve": "docz build && docz serve"
+    "rsg": "styleguidist server",
+    "rsg:build": "styleguidist build",
+    "format": "prettier \"src/**/*.{js,html}\" --write",
+    "lint": "eslint \"src/**/*.{js,jsx}\" --quiet",
+    "lint:fix": "eslint --fix ."
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app"
+    ]
   },
   "browserslist": {
     "production": [
@@ -46,6 +48,15 @@
     ]
   },
   "devDependencies": {
-    "react-styleguidist": "^10.2.1"
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-react": "^7.17.0",
+    "husky": "^3.1.0",
+    "lint-staged": "^9.5.0",
+    "prettier": "^1.19.1",
+    "react-styleguidist": "^10.2.1",
+    "source-map-explorer": "^2.1.2"
   }
 }

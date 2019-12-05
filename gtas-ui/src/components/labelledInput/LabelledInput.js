@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import CheckboxInput from '../Inputs/Checkbox';
-import TextInput from '../Inputs/Text';
-import FileInput from '../Inputs/File';
-import SelectInput from '../Inputs/Select';
-import {hasData} from '../../utils/text';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import CheckboxInput from "../Inputs/Checkbox";
+import TextInput from "../Inputs/Text";
+import FileInput from "../Inputs/File";
+import SelectInput from "../Inputs/Select";
+import { hasData } from "../../utils/text";
 
-const textTypes = ['text', 'number', 'password', 'email', 'search', 'tel'];
-const optionTypes = ['radio', 'checkbox'];
-const selectType = 'select';
-const fileType = 'file';
-const REQUIRED = 'required';
+const textTypes = ["text", "number", "password", "email", "search", "tel"];
+const optionTypes = ["radio", "checkbox"];
+const selectType = "select";
+const fileType = "file";
+const REQUIRED = "required";
 
 class LabelledInput extends Component {
   constructor(props) {
@@ -19,14 +19,13 @@ class LabelledInput extends Component {
 
     this.state = {
       isValid: true,
-      labelText: props.labelText || '',
-      inputVal: props.inputVal || '',
+      labelText: props.labelText || "",
+      inputVal: props.inputVal || "",
       options: props.options,
-      placeholder: props.placeholder || '',
-      required: (props.required || ''),
-//      visibleStyle: (props.isVisible || ''),
-      callback: props.callback
-    }
+      placeholder: props.placeholder || "",
+      required: props.required || "",
+      visibleStyle: props.isVisible || ""
+    };
   }
 
   componentDidMount() {
@@ -39,7 +38,7 @@ class LabelledInput extends Component {
     //update the local state
     this.setState({
       inputVal: value,
-      isValid: hasData(value) || this.props.required !== REQUIRED,
+      isValid: hasData(value) || this.props.required !== REQUIRED
     });
     //update the parent state
     this.props.callback(e.target);
@@ -50,27 +49,68 @@ class LabelledInput extends Component {
     const type = this.props.inputType;
 
     // const inputStyle = this.state.isValid ? 'input' : 'input invalid';
-    const inputStyle = 'input';
+    const inputStyle = "input";
 
-    if(textTypes.includes(type)) {
-      return (<TextInput className={inputStyle} alt={this.props.alt} name={this.props.name} inputType={this.props.inputType} inputVal={this.state.inputVal || ''}
-       callback={this.onChange} required={this.state.required} placeholder={this.state.placeholder} readOnly={this.props.readOnly}
-      /> )
+    if (textTypes.includes(type)) {
+      return (
+        <TextInput
+          className={inputStyle}
+          alt={this.props.alt}
+          name={this.props.name}
+          inputType={this.props.inputType}
+          inputVal={this.state.inputVal || ""}
+          callback={this.onChange}
+          required={this.state.required}
+          placeholder={this.state.placeholder}
+          readOnly={this.props.readOnly}
+        />
+      );
     }
-    if(selectType === type) {
-      return (<SelectInput className={inputStyle} alt={this.props.alt} name={this.props.name} inputType={this.props.inputType} selected={(this.props.selected || [])[0]}
-        callback={this.onChange} required={this.state.required} placeholder={this.state.placeholder} options={this.state.options} readOnly={this.props.readOnly}
-      /> )
+    if (selectType === type) {
+      return (
+        <SelectInput
+          className={inputStyle}
+          alt={this.props.alt}
+          name={this.props.name}
+          inputType={this.props.inputType}
+          selected={(this.props.selected || [])[0]}
+          callback={this.onChange}
+          required={this.state.required}
+          placeholder={this.state.placeholder}
+          options={this.state.options}
+          readOnly={this.props.readOnly}
+        />
+      );
     }
-    if(optionTypes.includes(type)) {
-      return (<CheckboxInput className={inputStyle} name={this.props.name} inputType={this.props.inputType} selected={this.state.inputVal}
-        options={this.state.options} callback={this.onChange} required={this.state.required} placeholder={this.state.placeholder} alt={this.props.alt}
-      /> )
+    if (optionTypes.includes(type)) {
+      return (
+        <CheckboxInput
+          className={inputStyle}
+          name={this.props.name}
+          inputType={this.props.inputType}
+          selected={this.state.inputVal}
+          options={this.state.options}
+          callback={this.onChange}
+          required={this.state.required}
+          placeholder={this.state.placeholder}
+          alt={this.props.alt}
+        />
+      );
     }
-    if(fileType === type) {
-      return (<FileInput className={inputStyle} name={this.props.name} inputType={this.props.inputType} selected={this.state.inputVal}
-        options={this.state.options} callback={this.onChange} required={this.state.required} placeholder={this.state.placeholder} alt={this.props.alt}
-      /> )
+    if (fileType === type) {
+      return (
+        <FileInput
+          className={inputStyle}
+          name={this.props.name}
+          inputType={this.props.inputType}
+          selected={this.state.inputVal}
+          options={this.state.options}
+          callback={this.onChange}
+          required={this.state.required}
+          placeholder={this.state.placeholder}
+          alt={this.props.alt}
+        />
+      );
     }
 
     return null;
@@ -81,12 +121,12 @@ class LabelledInput extends Component {
 
     return (
       <div className={`field ${this.state.visibleStyle}`}>
-        <div className='control'>
-          <label className='txtlabel'>{this.state.labelText}</label>
+        <div className="control">
+          <label className="txtlabel">{this.state.labelText}</label>
           {input}
         </div>
       </div>
-    )
+    );
   }
 }
 
@@ -94,15 +134,26 @@ LabelledInput.propTypes = {
   name: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,
   labelText: PropTypes.string.isRequired,
-  inputType: PropTypes.oneOf(['text', 'number', 'password', 'select', 'radio', 'checkbox', 'email', 'search', 'tel', 'file']).isRequired,
+  inputType: PropTypes.oneOf([
+    "text",
+    "number",
+    "password",
+    "select",
+    "radio",
+    "checkbox",
+    "email",
+    "search",
+    "tel",
+    "file"
+  ]).isRequired,
   callback: PropTypes.func.isRequired,
   inputVal: PropTypes.string,
   selected: PropTypes.array,
   options: PropTypes.array,
   placeholder: PropTypes.string,
-  required: PropTypes.oneOf([REQUIRED, '', undefined]),
+  required: PropTypes.oneOf([REQUIRED, "", undefined]),
   isVisible: PropTypes.bool,
-  readOnly: PropTypes.string,
-}
+  readOnly: PropTypes.string
+};
 
 export default LabelledInput;

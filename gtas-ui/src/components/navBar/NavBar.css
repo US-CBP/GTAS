@@ -8,11 +8,11 @@
 }
 
 .navbar-nav .nav-link {
-	font-size: 1rem !important;
+  font-size: 1rem !important;
 }
 
 .navbar-nav .nav-link a {
-	font-size: 1rem !important;
+  font-size: 1rem !important;
 }
 
 .navLinkColor {
@@ -27,33 +27,39 @@ button.dropdown-item {
   background-color: var(--color-offwhite);
 }
 
-.dropdown-item:focus, .dropdown-item:hover {
+.dropdown-item:focus,
+.dropdown-item:hover {
   background-color: var(--color-offwhite-hover) !important;
 }
 
-a.navDropdownColor.active, a.navDropdownColor:active, .dropdown-item.active, .dropdown-item:active, button.dropdown-item.active, button.dropdown-item:active {
+a.navDropdownColor.active,
+a.navDropdownColor:active,
+.dropdown-item.active,
+.dropdown-item:active,
+button.dropdown-item.active,
+button.dropdown-item:active {
   background-color: var(--color-primary-hover) !important;
   color: var(--color-offwhite) !important;
 }
 
 .navAbout {
-  margin: .5rem;
+  margin: 0.5rem;
   cursor: pointer;
 }
 
 .navbar-brand {
-	padding-top: 0;
+  padding-top: 0;
 }
 
 a.navbar-brand {
-	font-size: 1.5rem;
-	font-family: 'Merriweather', serif !important;
-	font-weight: 300 !important;
+  font-size: 1.5rem;
+  font-family: "Merriweather", serif !important;
+  font-weight: 300 !important;
   color: var(--color-offwhite) !important;
 }
 
 .navbar-brand img {
-	margin-right: .5rem;
+  margin-right: 0.5rem;
 }
 
 .fa.fa-info-circle {

@@ -1,22 +1,32 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import './Inputs.css';
+import React from "react";
+import PropTypes from "prop-types";
+import "./Inputs.css";
 
-function SelectInput(props){
+function SelectInput(props) {
   return (
     <div className="input-select">
-      <select type="select" name={props.name} required={props.required} alt={props.alt} onChange={props.callback}
-        className="form-input" value={props.selected} disabled={props.readOnly === 'readOnly' ? 'disabled' : ''}>
+      <select
+        type="select"
+        name={props.name}
+        required={props.required}
+        alt={props.alt}
+        onChange={props.callback}
+        className="form-input"
+        value={props.selected}
+        disabled={props.readOnly === "readOnly" ? "disabled" : ""}
+      >
         <option value="">{props.placeholder}</option>
-          {props.options.map((option, idx) => {
+        {props.options.map((option, idx) => {
           return (
-            <option key={idx} value={option}>{option} </option>
+            <option key={idx} value={option}>
+              {option}{" "}
+            </option>
           );
         })}
       </select>
     </div>
-    )
-  };
+  );
+}
 
 //APB pass invalid state up to parent
 //Validation
@@ -28,7 +38,7 @@ SelectInput.propTypes = {
   selected: PropTypes.string,
   callback: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
-  readOnly: PropTypes.string,
+  readOnly: PropTypes.string
 };
 
 export default SelectInput;

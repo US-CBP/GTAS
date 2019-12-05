@@ -1,48 +1,89 @@
-import React from 'react';
-import Table from '../../components/table/Table';
-import {flights} from '../../services/serviceWrapper';
-import Title from '../../components/title/Title';
+import React, { useState } from "react";
+import Table from "../../components/table/Table";
+import { flights } from "../../services/serviceWrapper";
+import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
-import LabelledInput from '../../components/labelledInput/LabelledInput';
+import LabelledInput from "../../components/labelledInput/LabelledInput";
+import FilterForm from "../../components/filterForm/FilterForm";
 
-const Flights = (props) => {
-  const onTextChange = () => {
+const Flights = props => {
+  const cb = () => {};
 
-  }
-  /// APB - passing the uri here as a test, can we use context here??
+  const [data, setData] = useState([{}]);
 
   return (
-    <div className='container'>
-      <Title title='Flights' uri={props.uri}></Title>
-
-      <div className='columns'>
-      <div className='column is-3'>
-        <div className='box2'>
+    <div className="container">
+      <Title title="Flights" uri={props.uri}></Title>
+      <div className="columns">
+        <div className="column is-3">
+          <div className="box2">
             <aside className="menu">
-                <p className="menu-label">Filters</p>
+              <FilterForm service={flights} title="Filter" callback={setData}>
                 <hr></hr>
-                <LabelledInput labelText='Origin Airport' inputType='text' name='originAirport' callback={onTextChange} alt='nothing' />
-                <LabelledInput labelText='Destination Airport' inputType='text' name='destAirport' callback={onTextChange} alt='nothing' />
-                <LabelledInput labelText='Full Flight ID' inputType='text' name='fullFlightId' callback={onTextChange} alt='nothing' />
-                <LabelledInput labelText='Direction' inputType='text' name='direction' callback={onTextChange} alt='nothing' />
-                <LabelledInput labelText='Start Date' inputType='text' name='direction' callback={onTextChange} alt='nothing' />
-                <LabelledInput labelText='End Date' inputType='text' name='direction' callback={onTextChange} alt='nothing' />
+                <LabelledInput
+                  datafield
+                  labelText="Origin Airport"
+                  inputType="text"
+                  name="origin"
+                  callback={cb}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="Destination Airport"
+                  inputType="text"
+                  name="destination"
+                  callback={cb}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="Flight ID"
+                  inputType="number"
+                  name="flightId"
+                  callback={cb}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="Direction"
+                  inputType="text"
+                  name="direction"
+                  callback={cb}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="Start Date"
+                  inputType="text"
+                  name="departure"
+                  callback={cb}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="End Date"
+                  inputType="text"
+                  name="arrival"
+                  callback={cb}
+                  alt="nothing"
+                />
+              </FilterForm>
             </aside>
+          </div>
         </div>
-      </div>
 
-      <div className='column'>
-        <div className='box2'>
-        <Link to='../flightpax'>Flight Passengers</Link>
-          <div className='card events-card'>
-            <Table service={flights.get} id='foo' ></Table>
+        <div className="column">
+          <div className="box2">
+            <Link to="../flightpax">Flight Passengers</Link>
+            <div className="card events-card">
+              <Table data={data} id="Flights" callback={cb} key={data}></Table>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-)
-
-}
+  );
+};
 
 export default Flights;
