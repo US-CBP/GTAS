@@ -8,3 +8,5 @@ yum install wget unzip java-1.8.0-openjdk* -y
 
 ./kibana/install.sh
 
+./setup-security.sh
+

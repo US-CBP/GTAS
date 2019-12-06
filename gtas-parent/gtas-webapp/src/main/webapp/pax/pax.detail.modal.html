@@ -13,25 +13,25 @@
     <div layout="row">
       <span flex></span>
       <md-button class="btn-info" ng-click="getPaxDetailReport()">
-        {{'btn.downloadreport' | translate}}
+        {{'btn.eventreport' | translate}}
       </md-button> &nbsp;
       <md-button  class="btn-danger"  ng-click="addToWatchlist()" ng-disabled = "!userHasRole(4) && !userHasRole(1)" >
-        Add to Watchlist
+        {{'btn.addtowatchlist' | translate}}
       </md-button>
       <md-button ng-if="isEmailEnabled()" class="btn-warning"  ng-click="answer('notify')" >
-       Notify
+       {{'btn.notify' | translate}}
       </md-button>
       <md-button ng-if="passengerHasOpenCases()" class="btn-info" ng-click="answer('reviewed')" >
-        Set Status to Reviewed
+        {{'btn.setstatustoreviewed' | translate}}
       </md-button>
       <md-button ng-if="passengerHasClosedCasesAndNoOpenCases()" class="btn-info" ng-click="answer('reOpen')" >
-        Set Status To Re-Opened
+        {{'btn.settoreopened' | translate}}
       </md-button>
       <md-button class="btn-primary" ng-click="answer('fullPax')" >
-        Load Full Passenger Details
+        {{'btn.loadfullpassengerdetails' | translate}}
       </md-button>
       <md-button class="btn-primary" ng-click="answer('viewed')" style="margin-right:20px;" >
-        Return To PVL
+        {{'btn.returntopvl' | translate}}
       </md-button>
     </div>
   </div>
@@ -39,4 +39,3 @@
   <div class="cbp-sidebar sidebar margin-0" ng-include="'pax/pax.detail.sidebar.html'"></div>
   <div class="cbp-sidebar-offset margin-top-1" ng-include="'pax/paxTabs.html'" style="height: 100%;"></div>
 </div>
-  

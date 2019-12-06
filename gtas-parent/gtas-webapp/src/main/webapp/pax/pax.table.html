@@ -3,7 +3,7 @@
 	<div class="flex justify-around align-items-center md-pad">
 		<div class="flight-info">
 			<div class="flex primary-back">
-				<span class="sm-pad flight-num">{{pax.flightNumber}}</span>
+				<span class="sm-pad flight-num" uib-tooltip={{getCarrierCodeCodeTooltipData(pax.carrier)}}>{{pax.flightNumber}}</span>
 				<span class="sm-pad">
 					<div>
 						<i class="fa fa-inverse fa-arrow-circle-up" aria-hidden="true"></i>
