@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "./Inputs.css";
 
 const SelectInput = props => {
+  const [selected, setSelected] = useState(props.selected);
+
+  const onChange = ev => {
+    setSelected(ev.target.value);
+    props.callback(ev);
+  };
+
   return (
     <div className="input-select">
       <select
@@ -10,15 +17,15 @@ const SelectInput = props => {
         name={props.name}
         required={props.required}
         alt={props.alt}
-        onChange={props.callback}
+        onChange={onChange}
         className="form-input"
-        value={props.selected}
+        value={selected}
         disabled={props.readOnly === "readOnly" ? "disabled" : ""}
       >
         <option value="">{props.placeholder}</option>
-        {props.options.map((option, idx) => {
+        {props.options.map(option => {
           return (
-            <option key={idx} value={option.value}>
+            <option key={option.value} value={option.value}>
               {option.label}{" "}
             </option>
           );
