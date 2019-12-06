@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import "./Inputs.css";
 
-function SelectInput(props) {
+const SelectInput = props => {
   return (
     <div className="input-select">
       <select
@@ -18,15 +18,15 @@ function SelectInput(props) {
         <option value="">{props.placeholder}</option>
         {props.options.map((option, idx) => {
           return (
-            <option key={idx} value={option}>
-              {option}{" "}
+            <option key={idx} value={option.value}>
+              {option.label}{" "}
             </option>
           );
         })}
       </select>
     </div>
   );
-}
+};
 
 //APB pass invalid state up to parent
 //Validation

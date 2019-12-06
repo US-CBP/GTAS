@@ -2,7 +2,7 @@ Requires:
 
 - an **`entity`** prop with a post or get method. Entities are defined in serviceWrapper.js.
 - an **`id`** prop.
-- an **`callback`** prop, called to return fetched data to the parent.
+- an **`callback`** prop to return data to the parent.
 - child components containing data to have a **`datafield`** prop. Children can be standard html elements or components.
 
 EXAMPLE
@@ -88,10 +88,10 @@ omit the **`name`** prop and set **`datafield`** to the field name "widgetName"
 ```
 
 CALLBACK PROP -
-is used to return data fetched from the supplied service to the parent component. This data can then be fed to another component, like a Table component, contained by the parent.
+is used to return data fetched from the supplied service to the parent component. This data can then be fed to another component contained by the parent.
 
 ERROR -
-If **`datafield`** is present but neither **`name`** nor **`datafield`** resolves to a string, the Form will toss an error.
+If **`datafield`** is present but neither **`name`** nor **`datafield`** resolves to a string, the FilterForm will toss an error.
 
 ---
 

@@ -7,15 +7,11 @@ import { hasData, asArray } from "../../utils/text";
  * **Generic form that can add a new record or fetch and edit an existing one.**
  */
 
-//   NOTE - Originally this component automatically treated all child elements as data-containing elements
-// which works fine until the form's children collection includes layout elements you didn't expect
-// like header tags, divs, links, additional buttons, etc.
-
 // The quick solution is to require the child elements to include a "datafield" prop
 // that we can use to identify the data-containing elements. There are probably other ways to
 // separate the data elements from non-data elements automatically without the user having to mark the
-// children, BUUUT using the "datafield" prop also lets the user define different names for the component
-// and the data field it should save to ("name" vs "datafield" props). So I like it.
+// children, but using the "datafield" prop also lets the user define different names for the component
+// and the data field it should save to ("name" vs "datafield" props).
 
 class Form extends React.Component {
   constructor(props) {
@@ -63,6 +59,7 @@ class Form extends React.Component {
     if (this.isEdit()) {
       this.props.service.get(this.props.id).then(res => {
         if (hasData(res)) {
+          console.log(res);
           let populatedFields = [];
           for (let field in this.state.fields) {
             populatedFields[field] = res[field];
@@ -117,14 +114,17 @@ class Form extends React.Component {
       if (!child.props.datafield) return child;
 
       let cleanprops = Object.assign({}, child.props);
-      delete cleanprops.datafield;
+      delete cleanprops.callback;
 
       let newchild = React.cloneElement(child, {
         key: idx,
         callback: this.onChange,
-        value: populatedFields[this.state.fieldMap[child.props.name]] || "",
+        inputVal: populatedFields[this.state.fieldMap[child.props.name]] || "",
         ...cleanprops
       });
+
+      console.log(populatedFields[this.state.fieldMap[child.props.name]]);
+
       return newchild;
     });
 
@@ -143,9 +143,7 @@ class Form extends React.Component {
         <div className="title has-text-centered">{this.props.title}</div>
         <form onSubmit={this.onFormSubmit}>
           <ErrorBoundary message="Form children could not be rendered">
-            {this.state.kids.map(kid => {
-              return kid;
-            })}
+            {this.state.kids}
           </ErrorBoundary>
           <div className="text-center pad-top-20" id="button-div">
             <button

@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import Table from "../../components/table/Table";
-import { files } from "../../services/serviceWrapper";
+import { cases } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
-
+import FilterForm from "../../components/filterForm/FilterForm";
 const Vetting = props => {
+  const onTableChange = () => {};
   const onTextChange = () => {};
+  const [data, setData] = useState([]);
 
   return (
     <div className="container">
@@ -16,64 +18,73 @@ const Vetting = props => {
         <div className="column is-3">
           <div className="box2">
             <aside className="menu">
-              <p className="menu-label">Filters</p>
-              <hr></hr>
-              <LabelledInput
-                labelText="Passenger Hit Status"
-                inputType="text"
-                name="hitStatus"
-                callback={onTextChange}
-                alt="nothing"
-              />
-              <LabelledInput
-                labelText="My Rules Only"
-                inputType="text"
-                name="myRules"
-                callback={onTextChange}
-                alt="nothing"
-              />
-              <LabelledInput
-                labelText="Rule Category"
-                inputType="text"
-                name="ruleCat"
-                callback={onTextChange}
-                alt="nothing"
-              />
-              <LabelledInput
-                labelText="Rule Type"
-                inputType="text"
-                name="ruleType"
-                callback={onTextChange}
-                alt="nothing"
-              />
-              <LabelledInput
-                labelText="Start Date"
-                inputType="text"
-                name="direction"
-                callback={onTextChange}
-                alt="nothing"
-              />
-              <LabelledInput
-                labelText="End Date"
-                inputType="text"
-                name="direction"
-                callback={onTextChange}
-                alt="nothing"
-              />
-              <LabelledInput
-                labelText="Passenger Last Name"
-                inputType="text"
-                name="paxLastName"
-                callback={onTextChange}
-                alt="nothing"
-              />
-              <LabelledInput
-                labelText="Full Flight ID"
-                inputType="text"
-                name="fullFlightId"
-                callback={onTextChange}
-                alt="nothing"
-              />
+              <FilterForm service={cases} title="Filter" callback={setData}>
+                <hr></hr>
+                <LabelledInput
+                  datafield
+                  labelText="Passenger Hit Status"
+                  inputType="text"
+                  name="hitStatus"
+                  callback={onTextChange}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="My Rules Only"
+                  inputType="text"
+                  name="myRules"
+                  callback={onTextChange}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="Rule Category"
+                  inputType="text"
+                  name="ruleCat"
+                  callback={onTextChange}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="Rule Type"
+                  inputType="text"
+                  name="ruleType"
+                  callback={onTextChange}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="Start Date"
+                  inputType="text"
+                  name="direction"
+                  callback={onTextChange}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="End Date"
+                  inputType="text"
+                  name="direction"
+                  callback={onTextChange}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="Passenger Last Name"
+                  inputType="text"
+                  name="paxLastName"
+                  callback={onTextChange}
+                  alt="nothing"
+                />
+                <LabelledInput
+                  datafield
+                  labelText="Full Flight ID"
+                  inputType="text"
+                  name="fullFlightId"
+                  callback={onTextChange}
+                  alt="nothing"
+                />
+              </FilterForm>
             </aside>
           </div>
         </div>
@@ -81,7 +92,13 @@ const Vetting = props => {
         <div className="column">
           <div className="box2">
             <div className="top">
-              <Table service={files.get} id="foo"></Table>
+              <Table
+                data={data}
+                id="FlightDataTable"
+                callback={onTableChange}
+                header={["flightId", "hitNames", "status"]}
+                key={data}
+              ></Table>
             </div>
           </div>
         </div>

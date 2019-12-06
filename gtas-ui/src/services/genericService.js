@@ -6,8 +6,6 @@ import { hasData } from "../utils/text";
 // APB - need mock endpoint for testing
 
 async function GenericService(props) {
-  console.log(props.uri);
-
   let param = {
     method: props.method,
     headers: {}
@@ -25,7 +23,7 @@ async function GenericService(props) {
       "X-Requested-With": "XMLHttpRequest",
       Connection: "keep-alive",
       "Accept-Encoding": "gzip, deflate",
-      Cookie: "NG_TRANSLATE_LANG_KEY=en; JSESSIONID=sessionidgoeshere; myLocaleCookie=en"
+      Cookie: "NG_TRANSLATE_LANG_KEY=en; JSESSIONID=sessionID; myLocaleCookie=en"
     };
   }
 
@@ -42,7 +40,6 @@ async function GenericService(props) {
         const result = response.json() || [];
         return result;
       } else {
-        console.log("response", response);
         console.log("some error");
         const err = HttpStatus(response.status);
         const newErr = new Error();

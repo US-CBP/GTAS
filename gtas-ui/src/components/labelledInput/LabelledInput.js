@@ -34,10 +34,12 @@ class LabelledInput extends Component {
 
   onChange(e) {
     const value = e.target.value;
+    console.log(e.target);
 
     //update the local state
     this.setState({
       inputVal: value,
+      selected: value,
       isValid: hasData(value) || this.props.required !== REQUIRED
     });
     //update the parent state
@@ -66,14 +68,16 @@ class LabelledInput extends Component {
         />
       );
     }
-    if (selectType === type) {
+    if (type === selectType) {
+      console.log(this.props.inputVal);
       return (
         <SelectInput
           className={inputStyle}
           alt={this.props.alt}
           name={this.props.name}
           inputType={this.props.inputType}
-          selected={(this.props.selected || [])[0]}
+          selected={this.props.inputVal || ""}
+          inputVal={this.props.inputVal || ""}
           callback={this.onChange}
           required={this.state.required}
           placeholder={this.state.placeholder}
@@ -97,7 +101,7 @@ class LabelledInput extends Component {
         />
       );
     }
-    if (fileType === type) {
+    if (type === fileType) {
       return (
         <FileInput
           className={inputStyle}

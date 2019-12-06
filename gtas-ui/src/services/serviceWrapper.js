@@ -11,6 +11,7 @@ const JSON = "application/json";
 const PUTBODY = "The put method requires a valid body parameter.";
 const POSTBODY = "The post method requires a valid body parameter.";
 const PUTID = "The put method requires a valid id parameter.";
+const PUTPARAMS = "The put method requires parameters.";
 const DELETEID = "The delete method requires a valid id parameter.";
 
 // const HEAD = 'head';
@@ -68,6 +69,18 @@ function put(body, id) {
   });
 }
 
+// APB shd params be an object so we can handle parsing it into a queryparam here?
+// PutParams - same as put, but use queryparams rather than a body
+function putp(params) {
+  if (!hasData(params)) throw new TypeError(PUTPARAMS);
+
+  const query = `${params}`;
+  return GenericService({
+    uri: this.uri + query,
+    method: PUT
+  });
+}
+
 function del(id) {
   if (!hasData(id)) throw new TypeError(DELETEID);
 
@@ -90,6 +103,8 @@ const WATCHLISTCATS = "http://localhost:3004/watchlistcats";
 const FLIGHTS = "http://localhost:3004/flights";
 const AUDITLOG = "http://localhost:3004/auditlog?startDate=2019-11-04&endDate=2019-12-02";
 const ERRORLOG = "http://localhost:3004/errorlog?startDate=2019-11-04&endDate=2019-12-02";
+const CASES = "http://localhost:3004/cases";
+const SETTINGSINFO = "http://localhost:3004/settingsinfo";
 
 // ENTITY METHODS
 export const company = setOps(COMPANY, get, post);
@@ -103,3 +118,5 @@ export const logins = setOps(LOGINS, get, post, put);
 export const flights = setOps(FLIGHTS, get, post);
 export const auditlog = setOps(AUDITLOG, get);
 export const errorlog = setOps(ERRORLOG, get);
+export const cases = setOps(CASES, get);
+export const settingsinfo = setOps(SETTINGSINFO, get, putp, put);
