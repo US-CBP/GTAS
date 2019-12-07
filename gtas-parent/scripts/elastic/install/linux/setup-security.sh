@@ -17,6 +17,7 @@ export KIBANA_PATH_CONF=/etc/kibana
 #Logstash
 export LOGSTASH_HOME=$ES_INSTALL_LOCATION/logstash
 export LOGSTASH_PATH_CONF=/etc/logstash
+export WORKING_DIR=/config
 
 # remove existing keystore
 if [[ -f $ES_PATH_CONF/elasticsearch.keystore ]]
@@ -112,11 +113,12 @@ yes | cp -f $ES_PATH_CONF/certs/ssl/docker-cluster/kibana/kibana.key $KIBANA_PAT
 yes | cp -f $ES_PATH_CONF/certs/ssl/ca/ca.crt $KIBANA_PATH_CONF/certs
 
 # Copy Certificates
-mkdir -p $LOGSTASH_PATH_CONF/certs
-yes | cp -f $ES_PATH_CONF/certs/ssl/docker-cluster/logstash/logstash.crt $LOGSTASH_PATH_CONF/certs
-yes | cp -f $ES_PATH_CONF/certs/ssl/docker-cluster/logstash/logstash.key $LOGSTASH_PATH_CONF/certs
-yes | cp -f $ES_PATH_CONF/certs/ssl/ca/ca.crt $LOGSTASH_PATH_CONF/certs
+mkdir -p $WORKING_DIR/certs
+yes | cp -f $ES_PATH_CONF/certs/ssl/docker-cluster/logstash/logstash.crt $WORKING_DIR/certs
+yes | cp -f $ES_PATH_CONF/certs/ssl/docker-cluster/logstash/logstash.key $WORKING_DIR/certs
+yes | cp -f $ES_PATH_CONF/certs/ssl/ca/ca.crt $WORKING_DIR/certs
 
+chown -R logstash:logstash $WORKING_DIR/
 
 es_url=https://localhost:9200
 cacert=$ES_PATH_CONF/certs/ssl/ca/ca.crt
