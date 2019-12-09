@@ -9,7 +9,6 @@ services:
       IS_DOCKER_RUN: "true"
     networks:
       - GTAS_webapp-network
-      - GTAS_builder-network
       - GTAS_logstash-network
     restart: unless-stopped
     depends_on:
@@ -52,6 +51,7 @@ services:
       - 3306:3306
     networks:
       - GTAS_webapp-network
+      - GTAS_builder-network
     restart: unless-stopped
     volumes:
       - db-data:/var/lib/mysql
