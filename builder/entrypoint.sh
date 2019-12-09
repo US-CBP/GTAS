@@ -1,5 +1,8 @@
 #!/bin/bash
 
+sleep 30 # waiting for database to start accepting connections.
+BUILDER_FINISHED=false
+
 VERSION_NUMBER=1.0.0
 BUILD_NUMBER=SNAPSHOT
 WEBAPP_WAR="//root/.m2/repository/gov/gtas/gtas-webapp/$VERSION_NUMBER-BUILD-$BUILD_NUMBER/gtas-webapp-$VERSION_NUMBER-BUILD-$BUILD_NUMBER.war"
@@ -13,4 +16,7 @@ else
 	mvn clean install -Dmaven.test.skip=true
 	cd gtas-commons
 	mvn hibernate:create
+	
 fi
+
+BUILDER_FINISHED=true

@@ -1,48 +1,79 @@
 version: '3.7'
 services:
   webapp:
+    container_name: webapp
     build: './gtas-parent/gtas-webapp'
     ports:
       - 8080:8080
+    environment:
+      IS_DOCKER_RUN: "true"
     networks:
-      - gtas_network
+      - GTAS_webapp-network
+      - GTAS_builder-network
+      - GTAS_logstash-network
     restart: unless-stopped
     depends_on:
       - builder
     volumes:
       - m2:/root/.m2
+      - service_status:/service_status
   builder:
+    container_name: builder
     build: './builder'
     networks:
-      - gtas_network
+      - GTAS_builder-network
     depends_on:
       - mariadb
     volumes:
        - gtas-parent:/gtas-parent
        - m2:/root/.m2
+       - service_status:/service_status
   mariadb:
+    container_name: mariadb
     build: './mariadb'
     environment:
       MYSQL_DATABASE: gtas
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+    healthcheck:
+      test: "mysql --user=$$(cat /run/secrets/mysql_healthcheck_user) --password=$$(cat /run/secrets/mysql_healthcheck_password) --execute \"SHOW DATABASES;\")"
+      interval: 5s
+      retries: 36
     secrets:
+     - mysql_etl_user
+     - mysql_etl_password
+     - mysql_processor_user
+     - mysql_processor_password
+     - mysql_webapp_user
+     - mysql_webapp_password
+     - mysql_healthcheck_user
+     - mysql_healthcheck_password
      - mysql_root_password
     ports:
       - 3306:3306
     networks:
-      - gtas_network
+      - GTAS_webapp-network
     restart: unless-stopped
     volumes:
       - db-data:/var/lib/mysql
 secrets:
-  mysql_root_password:
-    file: ./mariadb/mysql_root_password.txt
-  mysql_webapp_password:
-    file: ./mariadb/mysql_webapp_password.txt
+  mysql_etl_user:
+    file: ./mariadb/mysql_etl_user.txt
   mysql_etl_password:
     file: ./mariadb/mysql_etl_password.txt
+  mysql_healthcheck_user:
+    file: ./mariadb/mysql_healthcheck_user.txt
+  mysql_healthcheck_password:
+    file: ./mariadb/mysql_healthcheck_password.txt
+  mysql_processor_user:
+    file: ./mariadb/mysql_processor_user.txt
   mysql_processor_password:
     file: ./mariadb/mysql_processor_password.txt
+  mysql_webapp_user:
+    file: ./mariadb/mysql_webapp_user.txt
+  mysql_webapp_password:
+    file: ./mariadb/mysql_webapp_password.txt
+  mysql_root_password:
+    file: ./mariadb/mysql_root_password.txt
 volumes:
   gtas-parent:
     driver_opts:
@@ -51,6 +82,11 @@ volumes:
       o: bind
   db-data:
   m2:
+  service_status:
 networks:
-  gtas_network:
+  GTAS_logstash-network:
+    driver: "bridge"
+  GTAS_builder-network:
+    driver: "bridge"
+  GTAS_webapp-network:
     driver: "bridge"
