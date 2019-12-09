@@ -76,10 +76,6 @@ secrets:
     file: ./mariadb/mysql_root_password.txt
 volumes:
   gtas-parent:
-    driver_opts:
-      type: none
-      device: ${PWD}/gtas-parent
-      o: bind
   db-data:
   m2:
   service_status:
