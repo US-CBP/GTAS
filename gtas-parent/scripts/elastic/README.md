@@ -1,6 +1,6 @@
 ## ELK stack installation (TLS enabled)
 ### Requirements
-    sudo yum install git, wget, maven, unzip -y
+    sudo yum install git wget unzip -y
 ### Configuration
 
   Configuration files can be found at `GTAS/gtas-parent/scripts/elastic/config/*`. 
