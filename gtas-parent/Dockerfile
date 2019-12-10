@@ -6,7 +6,6 @@ COPY ./docker-resources/building-script.sh /building-script.sh
 COPY ./docker-resources/default.application.properties /default.application.properties
 COPY ./docker-resources/hibernate.properties /hibernate.properties
 
-# VOLUME /root/.m2
 COPY ./ /gtas-parent/
 
 RUN sh /building-script.sh
