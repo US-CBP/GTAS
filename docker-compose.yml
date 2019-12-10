@@ -24,7 +24,7 @@ services:
     depends_on:
       - mariadb
     volumes:
-       - gtas-parent:/gtas-parent
+       - ./gtas-parent:/gtas-parent
        - m2:/root/.m2
        - service_status:/service_status
   mariadb:
@@ -75,7 +75,6 @@ secrets:
   mysql_root_password:
     file: ./mariadb/mysql_root_password.txt
 volumes:
-  gtas-parent:
   db-data:
   m2:
   service_status:
