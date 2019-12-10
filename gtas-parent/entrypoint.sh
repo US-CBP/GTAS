@@ -1,10 +1,6 @@
 #!/bin/bash
 
-VERSION_NUMBER=1.0.0
-BUILD_NUMBER=SNAPSHOT
-
-
-cp /root/.m2/repository/gov/gtas/gtas-webapp/1.0.0-BUILD-SNAPSHOT/gtas-webapp-1.0.0-BUILD-SNAPSHOT.war /usr/local/tomcat/webapps/gtas.war
+cp /gtas-webapp-1.0.0-BUILD-SNAPSHOT.war /usr/local/tomcat/webapps/gtas.war
 
 mkdir /usr/local/tomcat/webapps/gtas
 

@@ -2,31 +2,16 @@ version: '3.7'
 services:
   webapp:
     container_name: webapp
-    build: './gtas-parent/gtas-webapp'
+    build: './gtas-parent'
     ports:
       - 8080:8080
-    environment:
-      IS_DOCKER_RUN: "true"
     networks:
       - GTAS_webapp-network
       - GTAS_logstash-network
     restart: unless-stopped
-    depends_on:
-      - builder
     volumes:
+      - ./gtas-parent:/gtas-parent
       - m2:/root/.m2
-      - service_status:/service_status
-  builder:
-    container_name: builder
-    build: './builder'
-    networks:
-      - GTAS_builder-network
-    depends_on:
-      - mariadb
-    volumes:
-       - ./gtas-parent:/gtas-parent
-       - m2:/root/.m2
-       - service_status:/service_status
   mariadb:
     container_name: mariadb
     build: './mariadb'
@@ -51,7 +36,6 @@ services:
       - 3306:3306
     networks:
       - GTAS_webapp-network
-      - GTAS_builder-network
     restart: unless-stopped
     volumes:
       - db-data:/var/lib/mysql
@@ -80,8 +64,6 @@ volumes:
   service_status:
 networks:
   GTAS_logstash-network:
-    driver: "bridge"
-  GTAS_builder-network:
     driver: "bridge"
   GTAS_webapp-network:
     driver: "bridge"
