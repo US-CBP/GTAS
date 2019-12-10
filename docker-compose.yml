@@ -61,7 +61,6 @@ secrets:
 volumes:
   db-data:
   m2:
-  service_status:
 networks:
   GTAS_logstash-network:
     driver: "bridge"
