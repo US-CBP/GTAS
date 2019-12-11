@@ -31,11 +31,10 @@ public class GraphRulesServiceImpl implements GraphRulesService {
 	public GraphRulesServiceImpl(GraphRuleRepository graphRuleRepository,
 			AppConfigurationRepository appConfigurationRepository, Neo4JConfig neo4JConfig) {
 		this.graphRuleRepository = graphRuleRepository;
-		String url = appConfigurationRepository.findByOption(AppConfigurationRepository.GRAPH_DB_URL).getValue();
 		Boolean neo4J = Boolean.valueOf(
 				appConfigurationRepository.findByOption(AppConfigurationRepository.GRAPH_DB_TOGGLE).getValue());
 		if (neo4J && neo4JConfig.enabled()) {
-			this.neo4JClient = new Neo4JClient(url, neo4JConfig.neoUserName(), neo4JConfig.neoPassword());
+			this.neo4JClient = new Neo4JClient(neo4JConfig.getNeo4JGraphDbUrl(), neo4JConfig.neoUserName(), neo4JConfig.neoPassword());
 		} else {
 			this.neo4JClient = null;
 		}

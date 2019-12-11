@@ -27,8 +27,13 @@ public class Neo4JConfig {
 	private static final String PROPERTY_NAME_USERNAME = "neo4jusername";
 	private static final String PROPERTY_NAME_CRED = "neo4jpassword";
 	private static final String NEO_4_J_ENABLED = "neo4jEnabled";
+	private static final String NEO_4_J_GRAPH_DB_URL = "neo4jUrl";
 
 	public Neo4JConfig() {
+	}
+
+	public String getNeo4JGraphDbUrl() {
+		return env.getRequiredProperty(NEO_4_J_GRAPH_DB_URL);
 	}
 
 	public String neoUserName() {
