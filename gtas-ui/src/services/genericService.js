@@ -1,30 +1,26 @@
 import PropTypes from "prop-types";
 import HttpStatus from "../utils/HttpStatus";
-import { hasData } from "../utils/text";
-
-//APB Axios or just Fetch??? Keep it simple?
-// APB - need mock endpoint for testing
+import {hasData} from "../utils/text";
+import Cookies from 'js-cookie';
 
 async function GenericService(props) {
+  let headerObject = props.headers ? {...props.headers} : {};
   let param = {
     method: props.method,
-    headers: {}
+    headers: headerObject
   };
 
   if (hasData(props.body)) {
-    param.body = JSON.stringify(props.body);
-    param.headers = {
-      "Content-Type": props.contentType || "application/json;charset=UTF-8",
-      Accept: props.contentType || "application/json",
-      "X-CSRF-TOKEN": "null",
-      "Access-Control-Allow-Origin": "urigoeshere",
-      Vary: "Origin",
-      "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+    param.body =   props.body;
+    let defaultHeader = {
+      "Content-Type": props.contentTypeServer || "application/json;charset=UTF-8",
+      Accept: props.contentTypeReceive || "application/json",
       "X-Requested-With": "XMLHttpRequest",
       Connection: "keep-alive",
       "Accept-Encoding": "gzip, deflate",
-      Cookie: "NG_TRANSLATE_LANG_KEY=en; JSESSIONID=sessionID; myLocaleCookie=en"
+      Cookie: "NG_TRANSLATE_LANG_KEY=en; JSESSIONID="+Cookies.get('JSESSIONID')+"; myLocaleCookie=en"
     };
+    param.headers = {...props.headers, ...defaultHeader};
   }
 
   if (hasData(props.mode)) {
@@ -36,9 +32,20 @@ async function GenericService(props) {
       if (response === undefined) {
         return [];
       }
+      if (response.status === 401) {
+        return {authenticated: false}
+      }
       if (response.ok) {
-        const result = response.json() || [];
-        return result;
+        //todo: MAKE URLS CONFIGURABLE
+        if (response.url === 'http://localhost:8080/gtas/authenticate') {
+          const responseText = response.text();
+          return {
+            authenticated: true,
+            responseText: responseText
+          }
+        } else {
+          return response.json() || [];
+        }
       } else {
         console.log("some error");
         const err = HttpStatus(response.status);
@@ -65,8 +72,10 @@ GenericService.propTypes = {
   uri: PropTypes.string.isRequired,
   method: PropTypes.oneOf(["get", "delete", "post", "put"]).isRequired,
   body: PropTypes.object,
-  contentType: PropTypes.string,
-  mode: PropTypes.string
+  contentTypeReceive: PropTypes.string,
+  mode: PropTypes.string,
+  headers: PropTypes.object,
+  contentTypeServer: PropTypes.string
 };
 
 export default GenericService;

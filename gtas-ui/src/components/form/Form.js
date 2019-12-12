@@ -101,8 +101,27 @@ class Form extends React.Component {
     e.preventDefault();
 
     const service = this.props.service;
-    const operation = this.isEdit() ? service.put : service.post;
-    operation({ ...this.state.fields }, this.props.id);
+
+    let operation = null;
+    switch (this.props.action) {
+      case "":
+      case "add":
+        operation = service.post;
+        break;
+      case "auth":
+        operation = service.authPost;
+        break;
+      case "edit":
+        operation = service.put;
+        break;
+      default:
+        throw new Error("Unsupported action on form. ");
+    }
+    let operationResult =  operation({ ...this.state.fields }, this.props.id);
+    if (this.props.afterProcessed !== undefined) {
+      this.props.afterProcessed(operationResult);
+    }
+
     // handle confirmation here or pass through to parent??
     // could expose the method of confirmation in the page-container context so we can swap it out easily ???
     // then we can implement it as a page-level banner or popup, whatever. Try it?
@@ -163,8 +182,9 @@ Form.propTypes = {
   title: PropTypes.string,
   submitText: PropTypes.string,
   service: PropTypes.any.isRequired,
-  action: PropTypes.oneOf(["add", "edit", ""]),
-  id: PropTypes.string
+  action: PropTypes.oneOf(["add", "edit", "auth", ""]),
+  id: PropTypes.string,
+  afterProcessed: PropTypes.func
 };
 
 export default Form;

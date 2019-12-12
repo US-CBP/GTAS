@@ -1,12 +1,13 @@
 import GenericService from "./genericService";
 import { hasData, isObject } from "../utils/text";
+import Cookies from "js-cookie";
 
 const GET = "get";
 const DELETE = "delete";
 const POST = "post";
 const PUT = "put";
-const JSON = "application/json";
-// const FORM = 'multipart/form-data';
+const APPLICATION_JSON = "application/json";
+const FORM = 'application/x-www-form-urlencoded';
 
 const PUTBODY = "The put method requires a valid body parameter.";
 const POSTBODY = "The post method requires a valid body parameter.";
@@ -28,8 +29,8 @@ const DELETEID = "The delete method requires a valid id parameter.";
 function setOps(ctx, ...fxns) {
   // context - allow just a uri string or an object for more params.
   const context = isObject(ctx)
-    ? { uri: ctx.uri, contentType: ctx.contentType || JSON }
-    : { uri: ctx, contentType: JSON };
+    ? { uri: ctx.uri, contentType: ctx.contentType || APPLICATION_JSON }
+    : { uri: ctx, contentType: APPLICATION_JSON };
 
   return fxns.reduce(function(obj, fxn) {
     const name = fxn.name === "del" ? "delete" : fxn.name;
@@ -46,7 +47,24 @@ function post(body) {
     uri: this.uri,
     method: POST,
     contentType: this.contentType,
-    body: body
+    body: JSON.stringify(body)
+  });
+}
+
+function authPost(body) {
+  Cookies.remove("JSESSIONID");
+  if (!hasData(body)) throw new TypeError(POSTBODY);
+  const username = body.username !== undefined ? body.username.toUpperCase() : '';
+  const password = body.password !== undefined ? body.password : '';
+  body = 'username=' + username + '&password=' + encodeURIComponent(password);
+
+  return GenericService({
+    uri: this.uri,
+    method: POST,
+    contentType: FORM,
+    body: body,
+    headers: {"X-Login-Ajax-call": 'true'},
+    contentTypeServer: "application/x-www-form-urlencoded"
   });
 }
 
@@ -65,7 +83,7 @@ function put(body, id) {
     uri: this.uri + query,
     method: PUT,
     contentType: this.contentType,
-    body: body
+    body: JSON.stringify(body)
   });
 }
 
@@ -98,7 +116,7 @@ const FOO = "http://localhost:3004/foo";
 const FILES = "http://localhost:3004/files";
 const EMPLOYEES = "http://localhost:3004/employees";
 const HACKS = "http://localhost:3004/hacks";
-const LOGINS = "http://localhost:3004/logins";
+const LOGINS = "http://localhost:8080/gtas/authenticate";
 const WATCHLISTCATS = "http://localhost:3004/watchlistcats";
 const FLIGHTS = "http://localhost:3004/flights";
 const AUDITLOG = "http://localhost:3004/auditlog?startDate=2019-11-04&endDate=2019-12-02";
@@ -113,8 +131,7 @@ export const files = setOps(FILES, get, post, put, del);
 export const employees = setOps(EMPLOYEES, get, post);
 export const hacks = setOps(HACKS, get);
 export const watchlistcats = setOps(WATCHLISTCATS, get);
-
-export const logins = setOps(LOGINS, get, post, put);
+export const logins = setOps(LOGINS, authPost);
 export const flights = setOps(FLIGHTS, get, post);
 export const auditlog = setOps(AUDITLOG, get);
 export const errorlog = setOps(ERRORLOG, get);

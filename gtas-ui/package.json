@@ -8,6 +8,7 @@
     "bulma": "^0.8.0",
     "cross-env": "^6.0.3",
     "font-awesome": "^4.7.0",
+    "js-cookie": "^2.2.1",
     "node-sass": "^4.13.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
@@ -56,6 +57,7 @@
     "husky": "^3.1.0",
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1",
+    "prop-types": "^15.7.2",
     "react-styleguidist": "^10.2.1",
     "source-map-explorer": "^2.1.2"
   }
