@@ -84,7 +84,12 @@
  */
 
 
-
+.failed-login {
+  color: red;
+  border-color: blue;
+  font-size: larger;
+  font-weight: bold;
+}
 
 .gradient-button {
   background-image: linear-gradient(to right, #1f2957 0%, #4a92d6 90%);

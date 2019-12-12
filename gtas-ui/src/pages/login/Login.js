@@ -10,12 +10,13 @@ import {navigate} from "@reach/router";
 const Login = () => {
 
 const [authenticate, setAuthenticate] = useState(false);
+const [failedLogin, setFailedLogIn] = useState(false);
 
     useEffect(() => {
         if (authenticate) {
             navigate(`/gtas/tools/about`, true);
         }
-    }, [authenticate]);
+    }, [authenticate, failedLogin]);
 
  const loginCallback = (input) => {
    return input.then(response => {
@@ -23,12 +24,18 @@ const [authenticate, setAuthenticate] = useState(false);
        setAuthenticate(true);
      } else {
        setAuthenticate(false);
+       setFailedLogIn(true);
      }
     }).catch(reason => {
       console.log(reason);
       //todo: make a toast that sets error to false when done letting the user know why the login failed.
    });
   };
+
+    let failedLoginDiv = <div className="failed-login"><p>Authorization failed!</p>
+    <br/>
+    <p>Incorrect username or password</p>
+    </div> ;
 
   return (
       <section className="hero is-info is-fullheight">
@@ -39,7 +46,8 @@ const [authenticate, setAuthenticate] = useState(false);
                           <figure className="avatar">
                               <img src={logo} height="100" alt="logo" width="100"/>
                           </figure>
-                          <h3 className="title2 has-text-black">GTAS</h3>
+                          <h3 className="title2 has-text-black">GTAS </h3>
+                          {failedLogin ? failedLoginDiv : null}
                           <div className="section">
                               <Form
                                   title=""
