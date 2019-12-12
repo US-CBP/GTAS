@@ -14,7 +14,7 @@ const [failedLogin, setFailedLogIn] = useState(false);
 
     useEffect(() => {
         if (authenticate) {
-            navigate(`/gtas/tools/about`, true);
+            navigate(`/gtas/flights`, true);
         }
     }, [authenticate, failedLogin]);
 
