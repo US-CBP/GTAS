@@ -12,6 +12,9 @@ services:
     volumes:
       - ./gtas-parent:/gtas-parent
       - m2:/root/.m2
+    depends_on: 
+      - mariadb
+
   mariadb:
     container_name: mariadb
     build: './mariadb'
