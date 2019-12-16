@@ -28,12 +28,9 @@ public class GraphRulesServiceImpl implements GraphRulesService {
 	private final Neo4JClient neo4JClient;
 
 	@Autowired
-	public GraphRulesServiceImpl(GraphRuleRepository graphRuleRepository,
-			AppConfigurationRepository appConfigurationRepository, Neo4JConfig neo4JConfig) {
+	public GraphRulesServiceImpl(GraphRuleRepository graphRuleRepository, Neo4JConfig neo4JConfig) {
 		this.graphRuleRepository = graphRuleRepository;
-		Boolean neo4J = Boolean.valueOf(
-				appConfigurationRepository.findByOption(AppConfigurationRepository.GRAPH_DB_TOGGLE).getValue());
-		if (neo4J && neo4JConfig.enabled()) {
+		if (neo4JConfig.getNeo4JRuleEngineEnabled() && neo4JConfig.enabled()) {
 			this.neo4JClient = new Neo4JClient(neo4JConfig.getNeo4JGraphDbUrl(), neo4JConfig.neoUserName(), neo4JConfig.neoPassword());
 		} else {
 			this.neo4JClient = null;
