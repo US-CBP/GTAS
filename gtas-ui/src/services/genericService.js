@@ -5,13 +5,18 @@ import Cookies from 'js-cookie';
 
 async function GenericService(props) {
   let headerObject = props.headers ? {...props.headers} : {};
-  let param = {
+  let defaultParam = {
     method: props.method,
-    headers: headerObject
+    headers: headerObject,
+    credentials: 'include'
   };
 
+  let paramObject = props.param ? {...props.param} : {};
+  let param = {...paramObject, ...defaultParam};
+
   if (hasData(props.body)) {
-    param.body =   props.body;
+    param.body = props.body;
+  }
     let defaultHeader = {
       "Content-Type": props.contentTypeServer || "application/json;charset=UTF-8",
       Accept: props.contentTypeReceive || "application/json",
@@ -21,7 +26,7 @@ async function GenericService(props) {
       Cookie: "NG_TRANSLATE_LANG_KEY=en; JSESSIONID="+Cookies.get('JSESSIONID')+"; myLocaleCookie=en"
     };
     param.headers = {...props.headers, ...defaultHeader};
-  }
+
 
   if (hasData(props.mode)) {
     param.headers.mode = props.mode;
@@ -64,7 +69,12 @@ async function GenericService(props) {
       }
     })
     .catch(error => {
+      const newErr = new Error();
+      newErr.name = "Connection Error";
+      newErr.message = "Connection Error";
+      newErr.spec_href = "";
       console.log(error);
+      throw newErr;
     });
 }
 

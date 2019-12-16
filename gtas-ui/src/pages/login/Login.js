@@ -1,22 +1,35 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import "bulma/css/bulma.css";
 import Form from "../../components/form/Form";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
-import { logins } from "../../services/serviceWrapper";
+import { logins, userService } from "../../services/serviceWrapper";
 import logo from "../../images/GTAS Logo blue 2.png";
 import "./Login.css";
 import {navigate} from "@reach/router";
+import { store } from '../../appContext';
 
 const Login = () => {
 
 const [authenticate, setAuthenticate] = useState(false);
 const [failedLogin, setFailedLogIn] = useState(false);
 
+    const globalState = useContext(store);
+    const { dispatch } = globalState;
+
     useEffect(() => {
         if (authenticate) {
-            navigate(`/gtas/flights`, true);
+                userService.get().then(response => {
+                    dispatch({
+                        type: 'login',
+                        user : response
+                    });
+                    navigate(`/gtas/flights`, true);
+                }).catch(error => {
+                    //todo: error handling
+                   console.log(error);
+                });
         }
-    }, [authenticate, failedLogin]);
+    }, [authenticate, failedLogin, dispatch]);
 
  const loginCallback = (input) => {
    return input.then(response => {
