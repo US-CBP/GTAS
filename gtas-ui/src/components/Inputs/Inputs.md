@@ -1,7 +1,7 @@
 Inputs example:
 
 ```js
-import "bulma/css/bulma.css";
+
 import Text from "./Text.js";
 
 <div>

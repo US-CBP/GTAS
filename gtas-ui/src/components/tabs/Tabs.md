@@ -1,7 +1,6 @@
 Tabs example:
 
 ```js
-import 'bulma/css/bulma.css';
 
 const tabs = [{ 
   title: 'Settings', link: 'Content or Link to Settings page goes here' }, 

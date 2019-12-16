@@ -6,7 +6,7 @@ import Login from "./pages/login/Login";
 import Flights from "./pages/flights/Flights";
 import PriorityVetting from "./pages/vetting/Vetting";
 import Home from "./pages/home/Home";
-import "bulma/css/bulma.min.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "font-awesome/css/font-awesome.min.css";
 import "./App.css";
 import Dashboard from "./pages/dashboard/Dashboard";

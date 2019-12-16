@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from "react";
-import "bulma/css/bulma.css";
 import Form from "../../components/form/Form";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import { logins } from "../../services/serviceWrapper";

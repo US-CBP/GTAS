@@ -7,7 +7,7 @@ Requires:
 EXAMPLE
 
 ```js
-import "bulma/css/bulma.css";
+
 import LabelledInput from "../labelledInput/LabelledInput.js";
 
 const fetch = {
