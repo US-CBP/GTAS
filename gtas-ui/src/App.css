@@ -5,6 +5,7 @@
 nav.navbar {
   border-top: 4px solid #276cda;
   margin-bottom: 1rem;
+  background-color:#002841 ;
 }
 .navbar-item.brand-text {
   font-weight: 300;
@@ -12,6 +13,19 @@ nav.navbar {
 .navbar-item, .navbar-link {
   font-size: 14px;
   font-weight: 700;
+}
+.navbar-light .navbar-brand a {
+  color: #fff;
+}
+.navbar-light .navbar-nav .nav-link {
+  color: #fff;
+  
+}
+.nav-tabs {
+  border-bottom: none;
+}
+.navbar-light .navbar-nav .nav-link:hover{
+  background-color: #fff;
 }
 .columns {
   width: 100%;

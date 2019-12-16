@@ -1,70 +1,46 @@
 import React from "react";
 import { Link } from "@reach/router";
+import { Nav, Navbar, Container, NavDropdown, Form, FormControl, Button } from "react-bootstrap";
 
 const Header = () => {
   return (
-    <div>
-      <nav className="navbar is-white on-top top">
-        <div className="container">
-          <div className="navbar-brand">
-            <Link to="/gtas" className="navbar-item brand-text">
-              GTAS
-            </Link>
-            <div className="navbar-burger burger" data-target="navMenu">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-          <div id="navMenu" className="navbar-menu">
-            <div className="navbar-start">
-              <Link to="dashboard" className="navbar-item">
-                Dashboard
-              </Link>
-              <Link to="flights" className="navbar-item">
-                Flights
-              </Link>
-              <Link to="vetting" className="navbar-item">
-                Vetting
-              </Link>
-              <div className="navbar-item has-dropdown is-hoverable">
-                <div className="navbar-link">Tools</div>
-                <div className="navbar-dropdown">
-                  <Link to="tools/queries" className="navbar-item">
-                    Queries
-                  </Link>
-                  <Link to="tools/rules" className="navbar-item">
-                    Rules
-                  </Link>
-                  <Link to="tools/watchlist" className="navbar-item">
-                    Watchlist
-                  </Link>
-                  <Link to="tools/neo4j" className="navbar-item">
-                    Neo4J Browser
-                  </Link>
-                  <Link to="tools/about" className="navbar-item">
-                    About
-                  </Link>
-                </div>
-              </div>
+    <Navbar>
+      <Container>
+        <Navbar.Brand>
+          <Link to="/gtas">GTAS</Link>
+        </Navbar.Brand>
 
-              <Link to="admin" className="navbar-item">
-                Admin
-              </Link>
-              <i className="fa fa-bell-o column"></i>
-            </div>
-            <div className="navbar-end">
-              <div className="navbar-item is-right" href="index.html">
-                searchbar
-              </div>
-              <div className="navbar-item is-right" href="admin.html">
-                User
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
+        <Navbar.Collapse>
+          <Nav variant="tabs">
+            <Nav.Link as={Link} to="dashboard">Dashboard</Nav.Link>
+            <Nav.Link as={Link} to="flights"> Flights</Nav.Link>
+            <Nav.Link as={Link} to="vetting">Vetting</Nav.Link>
+
+            <NavDropdown title="Tools" id="basic-nav-dropdown">
+              <NavDropdown.Item as={Link} to="tools/queries">Queries</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="tools/rules">Rules</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="tools/watchlist">Watchlist</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="tools/neo4j">Neo4J Browser</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="tools/about">About</NavDropdown.Item>
+            </NavDropdown>
+
+            <Nav.Link as={Link} to="admin">Admin </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+
+
+        <Form inline>
+          <FormControl type="text" placeholder="Search" className="mr-sm-2" />
+          <Button variant="outline-light">Search</Button>
+        </Form>
+
+        <Nav variant="tabs">
+          <Nav.Link href="admin.html"> User</Nav.Link>
+        </Nav>
+
+      </Container>
+    </Navbar>
+
   );
 };
 
