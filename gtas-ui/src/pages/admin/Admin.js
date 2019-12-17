@@ -15,7 +15,7 @@ const Admin = props => {
       <Title title="Admin" uri={props.uri}></Title>
       <Banner
         id="banner"
-        styleName="primary"
+        styleName="warning"
         text="Something has happened."
         defaultState={true}
       ></Banner>
