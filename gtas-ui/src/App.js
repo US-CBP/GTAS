@@ -35,6 +35,7 @@ import Neo4J from "./pages/tools/neo4J/Neo4J";
 import Watchlist from "./pages/tools/watchlist/Watchlist";
 import About from "./pages/tools/about/About";
 import GModal from "./components/modal/GModal";
+import {StateProvider} from "./appContext";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -79,6 +80,7 @@ export default class App extends React.Component {
 
     return (
       <React.StrictMode>
+        <StateProvider>
         <Router>
           <Login path="/login"></Login>
         </Router>
@@ -140,6 +142,7 @@ export default class App extends React.Component {
             </Home>
           </Router>
         </div>
+        </StateProvider>
       </React.StrictMode>
     );
   }

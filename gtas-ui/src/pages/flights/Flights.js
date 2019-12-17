@@ -1,15 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Table from "../../components/table/Table";
 import { flights } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import FilterForm from "../../components/filterForm/FilterForm";
+import { store } from '../../appContext';
 
 const Flights = props => {
   const cb = () => {};
 
   const [data, setData] = useState([{}]);
+
+  const globalState = useContext(store);
+
+  useEffect(() => {
+    console.log(globalState); // debug statement to prove user loaded.
+  }, [globalState]);
 
   return (
     <div className="container">
