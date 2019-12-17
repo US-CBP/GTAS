@@ -1,4 +1,4 @@
-SET NAMES utf8;
+SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
 ALTER TABLE airport MODIFY name VARCHAR(255) CHARACTER SET utf8mb4;
 INSERT INTO airport(name, iata, icao, city, latitude, longitude, country) VALUES ('Goroka Airport', 'GKA', 'AYGA', 'Goroka', -6.081690, 145.391998, (select iso3 from country where upper(name) like upper('%Papua New Guinea%') limit 1) );
