@@ -48,7 +48,7 @@
 
 
 /* noorulabdeen */
-.hero.is-info {
+.jumbotron {
   background: linear-gradient(
       rgba(255, 255, 255, 0),
       rgba(0, 74, 147, 0.83)
@@ -57,10 +57,16 @@
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  height: 100vh;
 }
 
 .transparent-white {
   background:rgba(200,217,250,0.14) !important;
+}
+
+.login-card {
+  width: 30vw;
+  height: 60vh;
 }
 
 
