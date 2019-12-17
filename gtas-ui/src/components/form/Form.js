@@ -143,7 +143,6 @@ class Form extends React.Component {
         ...cleanprops
       });
 
-      console.log(populatedFields[this.state.fieldMap[child.props.name]]);
 
       return newchild;
     });
