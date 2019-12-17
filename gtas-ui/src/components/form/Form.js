@@ -2,7 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 import { hasData, asArray } from "../../utils/text";
-import {Badge, Button} from "react-bootstrap"
+import { Button}  from "react-bootstrap"
+import Title from "../title/Title";
 
 /**
  * **Generic form that can add a new record or fetch and edit an existing one.**
@@ -159,7 +160,7 @@ class Form extends React.Component {
 
     return (
       <div>
-        <Badge>{this.props.title}</Badge>
+        <Title title={this.props.title}></Title>
         <form onSubmit={this.onFormSubmit}>
           <ErrorBoundary message="Form children could not be rendered">
             {this.state.kids}

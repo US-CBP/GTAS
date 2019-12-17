@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext} from "react";
 import Form from "../../components/form/Form";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import { logins, userService } from "../../services/serviceWrapper";
 import logo from "../../images/GTAS Logo blue 2.png";
 import "./Login.css";
-import { Container, Figure, Jumbotron, Card, Badge } from "react-bootstrap"
+import { Container, Figure, Jumbotron, Card} from "react-bootstrap"
 import {navigate} from "@reach/router";
 import { store } from '../../appContext';
+import Title from "../../components/title/Title";
 
 const Login = () => {
 
@@ -61,7 +62,7 @@ const Login = () => {
                             src={logo} />
                     </Figure>
                     <Container>
-                        <h3><Badge >GTAS</Badge></h3>
+                        <Title title="GTAS"></Title>
                         {failedLogin ? failedLoginDiv : null}
                         <Form
                             title=""
