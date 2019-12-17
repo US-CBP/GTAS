@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
+import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.PnrVo;
 
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -42,7 +44,7 @@ public class PnrGovParserTest implements ParserTestHelper {
     private static final String failingMessage1 = "/pnr-messages/failingMessage1.txt";
     private static final String PNR_DOCO = "/pnr-messages/pnrWithDoco.txt";
     private static final String PNR_NO_ORG_MSG = "/pnr-messages/pnrNoOrgMsg.txt";
-
+    private static final String PNR_WITH_PREFIXES_AND_BOOKING_DETAIL_BAGS = "/pnr-messages/pnrWithPrefixesAndBookingDetailBags.txt";
     private EdifactParser<PnrVo> parser;
 
     @Before
@@ -204,5 +206,20 @@ public class PnrGovParserTest implements ParserTestHelper {
         assertEquals(docoVo.getIssuanceDate(), dec22_06);
 
         assertEquals(docoVo.getExpirationDate(), null); // DOCO does not have expiration date per spec.
+    }
+    
+    @Test
+    public void pnrWithPrefixesAndBagsTest() throws IOException, URISyntaxException, ParseException {
+        //Original ticket was to resolve for booking detail bags, this will test to see if bags were fully formed and if it is a non-prime-flight bag. I.E. booking detail
+    	
+        String pnrExample = getMessageText(PNR_WITH_PREFIXES_AND_BOOKING_DETAIL_BAGS);
+        PnrVo vo = this.parser.parse(pnrExample);
+        BagVo bagVo = vo.getBagVos().get(0);
+        
+        assertEquals(vo.getTotal_bag_count(), new Integer(4));
+        assertEquals(bagVo.getAirline(), "UA");
+        assertEquals(bagVo.getDestinationAirport(), "KWI");
+        assertEquals(bagVo.isPrimeFlight(), Boolean.FALSE);
+        
     }
 }
