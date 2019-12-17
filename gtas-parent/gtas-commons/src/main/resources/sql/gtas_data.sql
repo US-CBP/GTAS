@@ -39,8 +39,6 @@ INSERT INTO `flight_direction` VALUES (4,'A', 'Any');
 -- Records of app_configuration
 -- ----------------------------
 insert into app_configuration (opt, val, description) values('HOME_COUNTRY', 'USA', 'home country for the loader to determine incoming/outgoing flights');
-insert into app_configuration (opt, val, description) values('ELASTIC_HOSTNAME','localhost','ElasticSearch hostname');
-insert into app_configuration (opt, val, description) values('ELASTIC_PORT','9300','ElasticSearch port');
 insert into app_configuration (opt, val, description) values('QUEUE_OUT', 'GTAS_Q_OUT', 'queue name for storing outgoing messages');
 insert into app_configuration (opt, val, description) values('QUEUE_IN', 'GTAS_Q_IN', 'queue name for storing incoming messages');
 insert into app_configuration (opt, val, description) values('UPLOAD_DIR', 'C:\\MESSAGE', 'directory for uploading files from UI');
@@ -57,17 +55,11 @@ insert into app_configuration (opt, val, description) values('APIS_ONLY_FLAG','F
 insert into app_configuration (opt, val, description) values('APIS_VERSION','16B','Latest APIS version being used.');
 insert into app_configuration (opt, val, description) values('MAX_RULE_HITS','300','Number of rule hits allowed per rule');
 insert into app_configuration (opt, val, description) values('BOOKING_COMPRESSION_AMOUNT','50','Maximum number of messages processed by compression job at each run');
-insert into app_configuration (opt, val, description) values('MAX_PASSENGERS_PER_RULE_RUN','3000','Maximum number of passengers processed by rules per run');
 insert into app_configuration (opt, val, description) values('MAX_PASSENGERS_PER_FUZZY_MATCH','2','Maximum number of passengers processed by rules per run');
-insert into app_configuration (opt, val, description) values('MAX_MESSAGES_PER_RULE_RUN','500','Maximum number of messages processed by rules per run');
 insert into app_configuration (opt, val, description) values('MAX_RULE_DETAILS_CREATED','250','Number of hit details saved per batch.');
-insert into app_configuration (opt, val, description) values('THREADS_ON_LOADER','5','Number of threads on loader.');
 insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_TRUNC_TYPE_FLAG', 'ALL', 'Type of values include, ALL, APIS, PNR');
-insert into app_configuration (opt, val, description)values ('THREADS_ON_RULES', '5', 'Number of threads on loader.');
 insert into app_configuration (opt, val, description)values ('FUZZY_MATCHING', 'true', 'Fuzzy matching toggle');
 insert into app_configuration (opt, val, description)values ('DATA_MANAGEMENT_CUT_OFF_TIME_SPAN', '6', 'Time in months past which we can truncate data from our database');
-insert into app_configuration (opt, val, description)values ('GRAPH_DB_URL', 'bolt://localhost:7687', 'Neo4J Address');
-insert into app_configuration (opt, val, description)values ('GRAPH_DB_TOGGLE', 'false', 'Neo4J Toggle');
 insert into app_configuration (description, opt, val) values ('Time in years - an offset in which quickmatch can apply during fuzzy matching', 'QUICKMATCH_DOB_YEAR_OFFSET', '3');
 INSERT INTO app_configuration (description, opt, val) VALUES ('UTC Server Time', 'UTC_SERVER', 'true');
 INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Notices Watch List Hit Notification ARN', 'INTERPOL_SNS_NOTIFICATION_ARN', '');
