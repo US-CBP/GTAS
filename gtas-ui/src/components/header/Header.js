@@ -4,7 +4,7 @@ import { Nav, Navbar, Container, NavDropdown, Form, FormControl, Button } from "
 
 const Header = () => {
   return (
-    <Navbar>
+    <Navbar fixed="top">
       <Container>
         <Navbar.Brand>
           <Link to="/gtas">GTAS</Link>
