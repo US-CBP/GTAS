@@ -4,12 +4,9 @@ import { Nav, Navbar, Container, NavDropdown, Form, FormControl, Button } from "
 
 const Header = () => {
   return (
-    <Navbar fixed="top">
-      <Container>
-        <Navbar.Brand>
-          <Link to="/gtas">GTAS</Link>
-        </Navbar.Brand>
-
+    <Navbar sticky="top" expand="md">
+        <Navbar.Brand><Link to="/gtas">GTAS</Link></Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse>
           <Nav variant="tabs">
             <Nav.Link as={Link} to="dashboard">Dashboard</Nav.Link>
@@ -26,19 +23,19 @@ const Header = () => {
 
             <Nav.Link as={Link} to="admin">Admin </Nav.Link>
           </Nav>
-        </Navbar.Collapse>
+          </Navbar.Collapse>
 
-
+          <Navbar.Collapse>
         <Form inline>
           <FormControl type="text" placeholder="Search" className="mr-sm-2" />
           <Button variant="outline-light">Search</Button>
         </Form>
-
-        <Nav variant="tabs">
+        
+        <Nav variant="tabs" className="ml-auto">
           <Nav.Link href="admin.html"> User</Nav.Link>
         </Nav>
-
-      </Container>
+        </Navbar.Collapse>
+       
     </Navbar>
 
   );
