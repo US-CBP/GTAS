@@ -66,17 +66,22 @@ class FilterForm extends React.Component {
 
   componentDidMount() {
     this.bindChildren(this.state.fields);
-    this.fetchData();
+    this.fetchWithParams();
   }
 
   fetchWithParams() {
-    let fields = this.state.fields;
-    let params = "?";
-
-    for (let field in fields) {
-      if (hasData(fields[field])) params += `${field}=${fields[field]}&`;
+    let params;
+    if (this.props.paramAdapter === undefined) {
+      // default behavior
+      let fields = this.state.fields;
+      params = "?";
+      for (let field in fields) {
+        if (hasData(fields[field])) params += `${field}=${fields[field]}&`;
+      }
+      params += "action=get";
+    } else {
+      params = this.props.paramAdapter(this.state.fields);
     }
-    params += "action=get";
 
     this.fetchData(params);
   }
@@ -168,7 +173,8 @@ FilterForm.propTypes = {
   clearText: PropTypes.string,
   service: PropTypes.any.isRequired,
   id: PropTypes.string,
-  callback: PropTypes.func.isRequired
+  callback: PropTypes.func.isRequired,
+  paramAdapter: PropTypes.func
 };
 
 export default FilterForm;

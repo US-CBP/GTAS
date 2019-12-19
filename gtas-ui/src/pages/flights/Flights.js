@@ -6,11 +6,25 @@ import { Link } from "@reach/router";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import FilterForm from "../../components/filterForm/FilterForm";
 import { store } from '../../appContext';
+import {hasData} from "../../utils/text";
 
 const Flights = props => {
   const cb = () => {};
 
-  const [data, setData] = useState([{}]);
+  const parameterAdapter = (fields) => {
+    let paramObject = {pageSize: 10, pageNumber:1};
+    for (let field in fields) {
+      if (hasData(fields[field])) {
+        let objectName = `${field}`;
+        let objectValue = `${fields[field]}`;
+        paramObject[objectName.trim()] = objectValue.trim();
+      }
+    }
+    return "?request=" + encodeURIComponent(JSON.stringify(paramObject));
+  };
+
+
+  const [data, setData] = useState({flights: []});
 
   const globalState = useContext(store);
 
@@ -25,8 +39,13 @@ const Flights = props => {
         <div className="column is-3">
           <div className="box2">
             <aside className="menu">
-              <FilterForm service={flights} title="Filter" callback={setData}>
-                <hr></hr>
+              <FilterForm
+                  service={flights}
+                  title="Filter"
+                  callback={setData}
+                  paramAdapter={parameterAdapter}
+              >
+                <hr/>
                 <LabelledInput
                   datafield
                   labelText="Origin Airport"
@@ -44,7 +63,7 @@ const Flights = props => {
                   alt="nothing"
                 />
                 <LabelledInput
-                  datafield
+                  datafield="flightNumber"
                   labelText="Flight ID"
                   inputType="number"
                   name="flightId"
@@ -52,7 +71,7 @@ const Flights = props => {
                   alt="nothing"
                 />
                 <LabelledInput
-                  datafield
+                  datafield="direction"
                   labelText="Direction"
                   inputType="text"
                   name="direction"
@@ -60,7 +79,7 @@ const Flights = props => {
                   alt="nothing"
                 />
                 <LabelledInput
-                  datafield
+                  datafield="etaStart"
                   labelText="Start Date"
                   inputType="text"
                   name="departure"
@@ -68,7 +87,7 @@ const Flights = props => {
                   alt="nothing"
                 />
                 <LabelledInput
-                  datafield
+                  datafield="etaEnd"
                   labelText="End Date"
                   inputType="text"
                   name="arrival"
@@ -84,7 +103,13 @@ const Flights = props => {
           <div className="box2">
             <Link to="../flightpax">Flight Passengers</Link>
             <div className="card events-card">
-              <Table data={data} id="Flights" callback={cb} key={data}></Table>
+              <Table
+                  data={data.flights}
+                  id="Flights"
+                  callback={cb}
+                  key={data}
+                  ignoredFields = {["countDown"]}
+              />
             </div>
           </div>
         </div>

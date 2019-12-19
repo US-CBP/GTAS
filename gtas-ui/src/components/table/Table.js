@@ -32,6 +32,10 @@ class Table extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return this.props.data !== nextProps.data;
+  }
+
   componentDidMount() {
     if (!Array.isArray(this.props.data)) this.getData();
     else this.parseData(this.props.data);
@@ -82,9 +86,9 @@ class Table extends Component {
   //APB - needs error handling. Error boundary??S
   //APB - optional buttons, links ??
   createTable = () => {
+    this.parseData(this.props.data);
     let table = [];
     let header = [];
-
     // header
     for (let field of this.state.header) {
       header.push(
@@ -114,7 +118,9 @@ class Table extends Component {
 
       let children = [];
       for (let field in rec) {
-        children.push(<td key={field}>{rec[field]}</td>);
+        if (!this.props.ignoredFields || !this.props.ignoredFields.includes(field)) {
+          children.push(<td key={field}>{rec[field]}</td>);
+        }
       }
       rows.push(<tr key={rec[this.props.id]}>{children}</tr>);
     }
@@ -146,7 +152,8 @@ Table.propTypes = {
   header: PropTypes.array,
   title: PropTypes.string,
   smalltext: PropTypes.string,
-  style: PropTypes.string
+  style: PropTypes.string,
+  ignoredFields: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default Table;
