@@ -13,11 +13,10 @@ const Flights = props => {
 
   const parameterAdapter = (fields) => {
     let paramObject = {pageSize: 10, pageNumber:1};
-    for (let field in fields) {
+    const fieldNames = Object.keys(fields);
+    for (let field in fieldNames) {
       if (hasData(fields[field])) {
-        let objectName = `${field}`;
-        let objectValue = `${fields[field]}`;
-        paramObject[objectName.trim()] = objectValue.trim();
+        paramObject[field] = fields[field];
       }
     }
     return "?request=" + encodeURIComponent(JSON.stringify(paramObject));
