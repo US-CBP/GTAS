@@ -21,10 +21,22 @@ COPY --chown=logstash config/logstash/cases_mapping.json /usr/share/logstash/con
 COPY --chown=logstash config/logstash/flightpax_template.json /usr/share/logstash/config/flightpax_template.json
 
 # #
-ARG DB_HOST=localhost
-ARG ELASTIC_HOST=localhost
+#ARG DB_HOST=localhost
+#ARG ELASTIC_HOST=localhost
 #
-ENV ELASTIC_HOST=$ELASTIC_HOST
-ENV DATABASE_HOST=$DB_HOST
+#ENV ELASTIC_HOST=$ELASTIC_HOST
+#ENV DATABASE_HOST=$DB_HOST
+#ENV MYSQL_LOGSTASH_USER=$(cat /run/secrets/mysql_logstash_user)
+#ENV MYSQL_LOGSTASH_PASSWORD=$(cat /run/secrets/mysql_logstash_password)
+
+ENV JAVA_OPTS="-Xms1g -Xmx1g"
+ENV LOGSTASH_DIR=/usr/share/logstash
+ENV LOGSTASH_LIB=/usr/share/logstash/logstash-core/lib/jars
+
+
 
 RUN curl -o  /usr/share/logstash/logstash-core/lib/jars/mariadb-java-client-2.3.0.jar https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar
+
+
+
+#CMD echo $(cat /run/secrets/mysql_logstash_password) | ./bin/logstash-keystore add $(cat /run/secrets/mysql_logstash_user) && ./bin/logstash-keystore list

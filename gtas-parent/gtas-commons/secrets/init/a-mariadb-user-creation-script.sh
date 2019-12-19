@@ -26,6 +26,12 @@ commands="CREATE USER '${NEW_USER}'@'%' IDENTIFIED BY '${NEW_DB_PASSWORD}';GRANT
 
 echo "${commands}" | /usr/bin/mysql --user="root" --password=${MYSQL_ROOT_PASSWORD}
 
+NEW_USER=$(cat /run/secrets/mysql_logstash_user)
+NEW_DB_PASSWORD=$(cat /run/secrets/mysql_logstash_password)
+commands="CREATE USER '${NEW_USER}'@'%' IDENTIFIED BY '${NEW_DB_PASSWORD}';GRANT ALL privileges ON *.* TO '${NEW_USER}'@'%' IDENTIFIED BY '${NEW_DB_PASSWORD}';FLUSH PRIVILEGES;"
+
+echo "${commands}" | /usr/bin/mysql --user="root" --password=${MYSQL_ROOT_PASSWORD}
+
 
 NEW_USER=""
 NEW_DB_PASSWORD=""
