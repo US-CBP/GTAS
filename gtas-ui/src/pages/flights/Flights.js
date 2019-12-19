@@ -29,11 +29,13 @@ const Flights = props => {
 
   useEffect(() => {
     console.log(globalState); // debug statement to prove user loaded.
+    let user = JSON.parse(localStorage.getItem("user"));
+    console.log(user); // debug statement to prove user was loaded in local storage.
   }, [globalState]);
 
   return (
     <div className="container">
-      <Title title="Flights" uri={props.uri}></Title>
+      <Title title="Flights" uri={props.uri}/>
       <div className="columns">
         <div className="column is-3">
           <div className="box2">

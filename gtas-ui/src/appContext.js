@@ -8,6 +8,12 @@ const StateProvider = ( { children } ) => {
     const [state, dispatch] = useReducer((state, action) => {
         switch(action.type) {
             case 'login':
+                if (action.user === null) {
+                    localStorage.removeItem("user");
+                    return initialState;
+                } else {
+                    localStorage.setItem("user", JSON.stringify(action.user));
+                }
                 return {user: action.user,
                         authenticated: true};
             default:
