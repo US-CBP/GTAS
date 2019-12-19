@@ -5,21 +5,41 @@ import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import FilterForm from "../../components/filterForm/FilterForm";
+import {hasData} from "../../utils/text";
+
 const Vetting = props => {
   const onTableChange = () => {};
   const onTextChange = () => {};
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({cases: []});
+
+  const parameterAdapter = (fields) => {
+    let paramObject = {pageSize: 100, pageNumber:1};
+    const fieldNames = Object.keys(fields);
+
+    fieldNames.forEach(name => {
+      if (hasData(fields[name])) {
+        paramObject[name] = fields[name];
+      }
+    });
+    return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
+  };
+
 
   return (
     <div className="container">
-      <Title title="Priority Vetting" uri={props.uri}></Title>
+      <Title title="Priority Vetting" uri={props.uri}/>
 
       <div className="columns">
         <div className="column is-3">
           <div className="box2">
             <aside className="menu">
-              <FilterForm service={cases} title="Filter" callback={setData}>
-                <hr></hr>
+              <FilterForm
+                  service={cases}
+                  title="Filter"
+                  callback={setData}
+                  paramAdapter={parameterAdapter}
+              >
+                <hr/>
                 <LabelledInput
                   datafield
                   labelText="Passenger Hit Status"
@@ -53,18 +73,20 @@ const Vetting = props => {
                   alt="nothing"
                 />
                 <LabelledInput
-                  datafield
+                  datafield="etaStart"
                   labelText="Start Date"
                   inputType="text"
-                  name="direction"
+                  name="etaStart"
+                  inputVal="2015-10-02T18:33:03.412Z"
                   callback={onTextChange}
                   alt="nothing"
                 />
                 <LabelledInput
-                  datafield
+                  datafield="etaEnd"
                   labelText="End Date"
+                  inputVal="2025-10-02T18:33:03.412Z"
                   inputType="text"
-                  name="direction"
+                  name="etaEnd"
                   callback={onTextChange}
                   alt="nothing"
                 />
@@ -93,12 +115,13 @@ const Vetting = props => {
           <div className="box2">
             <div className="top">
               <Table
-                data={data}
+                data={data.cases}
                 id="FlightDataTable"
                 callback={onTableChange}
                 header={["flightId", "hitNames", "status"]}
+                ignoredFields = {["countDown", "priorityVettingListRuleTypes", "ruleCatFilter"]}
                 key={data}
-              ></Table>
+              />
             </div>
           </div>
         </div>
