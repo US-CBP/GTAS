@@ -24,7 +24,7 @@ const Login = () => {
                         type: 'login',
                         user : response
                     });
-                    navigate(`/gtas/flights`, true);
+                    navigate(`/gtas`, true);
                 }).catch(error => {
                     //todo: error handling
                    console.log(error);
@@ -61,8 +61,8 @@ const Login = () => {
                             alt="logo"
                             src={logo} />
                     </Figure>
-                    <Container>
-                        <Title title="GTAS"></Title>
+                    <Card.Body>
+                        <Card.Title>GTAS</Card.Title>
                         {failedLogin ? failedLoginDiv : null}
                         <Form
                             title=""
@@ -94,7 +94,7 @@ const Login = () => {
                                 inputVal=""
                             />
                         </Form>
-                    </Container>
+                    </Card.Body>
                 </Card>
         </Jumbotron>
     );
