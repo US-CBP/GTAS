@@ -1,8 +1,16 @@
 import React from "react";
 import { Link } from "@reach/router";
 import { Nav, Navbar, Container, NavDropdown, Form, FormControl, Button } from "react-bootstrap";
+import { store } from '../../appContext';
 
 const Header = () => {
+  const globalState = React.useContext(store);
+  const loggedinUserName =  globalState.state.user.lastName + ", " + globalState.state.user.firstName 
+    
+ 
+  
+  
+
   return (
     <Navbar sticky="top" expand="md">
         <Navbar.Brand><Link to="/gtas">GTAS</Link></Navbar.Brand>
@@ -15,9 +23,13 @@ const Header = () => {
 
             <NavDropdown title="Tools" id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to="tools/queries">Queries</NavDropdown.Item>
+              <NavDropdown.Divider />
               <NavDropdown.Item as={Link} to="tools/rules">Rules</NavDropdown.Item>
+              <NavDropdown.Divider />
               <NavDropdown.Item as={Link} to="tools/watchlist">Watchlist</NavDropdown.Item>
+              <NavDropdown.Divider />
               <NavDropdown.Item as={Link} to="tools/neo4j">Neo4J Browser</NavDropdown.Item>
+              <NavDropdown.Divider />
               <NavDropdown.Item as={Link} to="tools/about">About</NavDropdown.Item>
             </NavDropdown>
 
@@ -32,7 +44,11 @@ const Header = () => {
         </Form>
         
         <Nav variant="tabs" className="ml-auto">
-          <Nav.Link href="admin.html"> User</Nav.Link>
+          <NavDropdown title={loggedinUserName} id="basic-nav-dropdown">
+          <NavDropdown.Item as={Link} to="#">Change Password</NavDropdown.Item>
+          <NavDropdown.Divider />
+          <NavDropdown.Item as={Link} to="#">Logout</NavDropdown.Item>
+          </NavDropdown>
         </Nav>
         </Navbar.Collapse>
        
