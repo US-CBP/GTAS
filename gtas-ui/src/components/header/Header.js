@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "@reach/router";
-import { Nav, Navbar, Container, NavDropdown, Form, FormControl, Button } from "react-bootstrap";
+import { Nav, Navbar, NavDropdown, Form, FormControl, Button } from "react-bootstrap";
 import { store } from '../../appContext';
 
 const Header = () => {

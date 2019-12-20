@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Alert } from "react-bootstrap";
+import {Alert } from "react-bootstrap";
 /**
  *
  * **This is a simple Notification Banner for displaying dismissable messages to the user.**
@@ -19,7 +19,7 @@ const Banner = ({ id, styleName, text, defaultState }) => {
     setState(false);
   };
 
-  if (text != undefined) {
+  if (text !== undefined) {
     return (
       <div id={id} className={`notification is-${styleName}`}>
         <Alert variant={styleName} onClose={close} dismissible>
