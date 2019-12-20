@@ -7,11 +7,11 @@ services:
     build:
       context: ./gtas-parent/scripts/elastic
       dockerfile: install/docker/kibana/Dockerfile
+    environment:
+      ELASTICSEARCH_HOST: 'elasticsearch'
     ports:
       - 5601:5601
     restart: always
-    # secrets:
-    #  - kibana_keystore
     volumes:
       - '$PWD/gtas-parent/scripts/elastic:/config/kibana'
     networks: 
@@ -19,22 +19,24 @@ services:
       - GTAS_webapp-network
     depends_on:
       - elasticsearch
+    # secrets:
+    #  - kibana_keystore
 
   elasticsearch:
     container_name: elasticsearch
     build:
       context: ./gtas-parent/scripts/elastic
       dockerfile: install/docker/elasticsearch/Dockerfile
-    volumes: 
-      - "es-data:/usr/share/elasticsearch/data"
-    restart: always
-    # secrets:
-    #   - elastic_keystore
-    ports: 
+    ports:
       - 9300:9300
       - 9200:9200
+    restart: always
+    volumes: 
+      - "es-data:/usr/share/elasticsearch/data"
     networks: 
       - GTAS_elastic-network
+    # secrets:
+    #   - elastic_keystore
 
   logstash:
     container_name: logstash
@@ -45,27 +47,52 @@ services:
       MARIADB_HOST: 'mariadb'
       ELASTIC_HOST: 'elasticsearch'
     restart: always
-    secrets:
-       - source: logstash_keystore
-         target: /usr/share/logstash/config/logstash.keystore
     networks:
       - GTAS_elastic-network
       - GTAS_logstash-network
+    volumes:
+      - "logstash_keystore:/usr/share/logstash/config/"
     depends_on:
       - elasticsearch
 
+  elk-setup:
+    container_name: elk-setup
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: ./install/docker/elk-setup/Dockerfile
+    environment:
+      KIBANA_HOST: 'kibana'
+    volumes:
+      - "logstash_keystore:/logstash-keystore"
+    secrets:
+      - logstash_keystore_password
+      - mysql_logstash_user
+      - mysql_logstash_password
+      - elastic_user
+      - elastic_password
+    networks:
+      - GTAS_elastic-network
+
 
 secrets:
-  logstash_keystore:
-    file: ./gtas-parent/gtas-commons/secrets/logstash.keystore
+  logstash_keystore_password:
+    file: ./gtas-parent/gtas-commons/secrets/logstash_keystore_password.txt
+  mysql_logstash_user:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_user.txt
+  mysql_logstash_password:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_password.txt
+  elastic_user:
+    file: ./gtas-parent/gtas-commons/secrets/elastic_user.txt
+  elastic_password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic_password.txt
   # elastic_keystore:
   #   file: ./gtas-parent/gtas-commons/secrets/elastic.keystore
   # kibana_keystore:
   #   file: ./gtas-parent/gtas-commons/secrets/kibana.keystore
 
 volumes:
+  logstash_keystore:
   es-data:
-  certs:
 
 networks:
   GTAS_elastic-network:
