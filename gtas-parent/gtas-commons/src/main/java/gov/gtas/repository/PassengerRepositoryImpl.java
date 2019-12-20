@@ -62,9 +62,9 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		List<Predicate> countQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, countQuery,
 				paxCount, userId);
 		countQuery.select(cb.countDistinct(paxCount.get("id"))).where(countQueryPredicate.toArray(new Predicate[] {}));
-		TypedQuery typedCountQuery = em.createQuery(countQuery);
-		Optional countResult = typedCountQuery.getResultList().stream().findFirst();
-		Long passengerCount = countResult.isPresent() ? (Long) countResult.get() : 0L;
+		TypedQuery<Long> typedCountQuery = em.createQuery(countQuery);
+		Optional<Long> countResult = typedCountQuery.getResultList().stream().findFirst();
+		Long passengerCount = countResult.orElse(0L);
 
 		return new ImmutablePair<>(passengerCount, results);
 	}
@@ -112,7 +112,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		}
 		// Special case. Unused value to give result of 0.
 		if (hitViewStatusEnumSet.isEmpty()) {
-			hitViewStatusEnumSet.add(HitViewStatusEnum.NOT_USED);
+			hitViewStatusEnumSet.add(HitViewStatusEnum.NEW);
 		}
 
 		Predicate hitViewStatus = cb.in(hitViewJoin.get("hitViewStatusEnum")).value(hitViewStatusEnumSet);
