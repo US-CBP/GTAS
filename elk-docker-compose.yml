@@ -62,14 +62,20 @@ services:
       dockerfile: ./install/docker/elk-setup/Dockerfile
     environment:
       KIBANA_HOST: 'kibana'
+    tty:
+      false
     volumes:
       - "logstash_keystore:/logstash-keystore"
+      - "kibana_keystore:/kibana-keystore"
+      - "elasticsearch_keystore:/elasticsearch-keystore"
     secrets:
       - logstash_keystore_password
       - mysql_logstash_user
       - mysql_logstash_password
       - elastic_user
       - elastic_password
+      - elasticsearch_kibana_user
+      - elasticsearch_kibana_password
     networks:
       - GTAS_elastic-network
 
@@ -85,6 +91,10 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/elastic_user.txt
   elastic_password:
     file: ./gtas-parent/gtas-commons/secrets/elastic_password.txt
+  elasticsearch_kibana_user:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch_kibana_user.txt
+  elasticsearch_kibana_password:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch_kibana_password.txt
   # elastic_keystore:
   #   file: ./gtas-parent/gtas-commons/secrets/elastic.keystore
   # kibana_keystore:
@@ -92,6 +102,8 @@ secrets:
 
 volumes:
   logstash_keystore:
+  kibana_keystore:
+  elasticsearch_keystore:
   es-data:
 
 networks:
