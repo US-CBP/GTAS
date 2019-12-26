@@ -5,11 +5,13 @@ import { store } from '../../appContext';
 
 const Header = () => {
   const globalState = React.useContext(store);
-  const loggedinUserName =  globalState.state.user.lastName + ", " + globalState.state.user.firstName 
-    
- 
-  
-  
+  const loggedinUserName = globalState.state.user ?
+    globalState.state.user.lastName + ", " + globalState.state.user.firstName
+    : "User Name";
+
+
+
+
 
   return (
     <Navbar sticky="top" expand="md">
