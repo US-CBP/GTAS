@@ -2,6 +2,7 @@ import React from "react";
 import Title from "../../components/title/Title";
 import Tabs from "../../components/tabs/Tabs";
 import Banner from "../../components/banner/Banner";
+import {Col, Container } from "react-bootstrap";
 
 const Admin = props => {
   const tabcontent = props.children.props.children;
@@ -11,24 +12,21 @@ const Admin = props => {
   });
 
   return (
-    <div className="container">
-      <Title title="Admin" uri={props.uri}></Title>
+    <>
+     <Container> <Title title="Admin" uri={props.uri}></Title></Container>
       <Banner
         id="banner"
         styleName="warning"
         text="Something has happened."
         defaultState={true}
       ></Banner>
-      <div className="columns">
-        <div className="column">
-          <div className="box2">
-            <div className="top">
-              <Tabs tabs={tablist} />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      <Container>
+      <Col className="box2">
+        <Tabs tabs={tablist} />
+      </Col>
+      </Container>
+      </>
+    
   );
 };
 
