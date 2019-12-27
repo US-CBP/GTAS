@@ -6,15 +6,32 @@ import { Link } from "@reach/router";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import FilterForm from "../../components/filterForm/FilterForm";
 import { store } from '../../appContext';
-import { hasData } from "../../utils/text";
+import {hasData} from "../../utils/text";
+import "react-datepicker/dist/react-datepicker.css";
+import LabelledDateTimePicker from "../../components/Inputs/LabelledDateTimePicker/LabelledDateTimePicker";
 import "./Flights.css";
 import { Nav, Container, Row, Col } from "react-bootstrap"
 
+
 const Flights = props => {
-  const cb = () => { };
+  const cb = () => {};
+  const [data, setData] = useState({flights: []});
+
+  const globalState = useContext(store);
+
+  let startDate = new Date();
+  let endDate = new Date();
+  endDate.setDate(endDate.getDate() + 1);
+  startDate.setHours(startDate.getHours()-1);
+
+  useEffect(() => {
+    console.log(globalState); // debug statement to prove user loaded.
+    let user = JSON.parse(localStorage.getItem("user"));
+    console.log(user); // debug statement to prove user was loaded in local storage.
+  }, [globalState]);
 
   const parameterAdapter = (fields) => {
-    let paramObject = { pageSize: 10, pageNumber: 1 };
+    let paramObject = {pageSize: 10, pageNumber:1};
     const fieldNames = Object.keys(fields);
     fieldNames.forEach(name => {
       if (hasData(fields[name])) {
@@ -23,17 +40,6 @@ const Flights = props => {
     });
     return "?request=" + encodeURIComponent(JSON.stringify(paramObject));
   };
-
-
-  const [data, setData] = useState({ flights: [] });
-
-  const globalState = useContext(store);
-
-  useEffect(() => {
-    console.log(globalState); // debug statement to prove user loaded.
-    let user = JSON.parse(localStorage.getItem("user"));
-    console.log(user); // debug statement to prove user was loaded in local storage.
-  }, [globalState]);
 
   return (
     <Container fluid>
@@ -79,21 +85,40 @@ const Flights = props => {
                 callback={cb}
                 alt="nothing"
               />
-              <LabelledInput
-                datafield="etaStart"
-                labelText="Start Date"
-                inputType="text"
-                name="departure"
-                callback={cb}
-                alt="nothing"
+              <LabelledDateTimePicker
+                  datafield="etaStart"
+                  name="etaStart"
+                  alt="Start Date"
+                  labelText="Start Date and Time"
+                  inputType="dateTime"
+                  dateFormat="yyyy-MM-dd h:mm aa"
+                  callback={cb}
+                  showTimeSelect
+                  showYearDropdown
+                  inputVal={startDate}
+                  startDate={startDate}
+                  endDate={endDate}
+                  dateRange={{
+                    'position': 'start'
+                  }}
               />
-              <LabelledInput
-                datafield="etaEnd"
-                labelText="End Date"
-                inputType="text"
-                name="arrival"
-                callback={cb}
-                alt="nothing"
+              <LabelledDateTimePicker
+                  datafield="etaEnd"
+                  name="etaEnd"
+                  alt="End Date"
+                  labelText="End Date and Time"
+                  inputType="dateTime"
+                  dateFormat="yyyy-MM-dd h:mm aa"
+                  callback={cb}
+                  showTimeSelect
+                  inputVal={endDate}
+                  startDate={startDate}
+                  endDate={endDate}
+                  showYearDropdown
+                  end
+                  dateRange={{
+                    'position': 'end'
+                  }}
               />
             </FilterForm>
           </div>

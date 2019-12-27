@@ -33,9 +33,15 @@ class FilterForm extends React.Component {
           throw new Error(`The child collection contains a "datafield" element whose name is not defined in the 
           "name" or "datafield" props. Remove the "datafield" prop or define a name for the element.`);
         }
-
+        const getChildVal = (val) => {
+          if (val instanceof Date) {
+            return val.toISOString();
+          } else {
+            return val;
+          }
+        };
         fieldMap[componentname] = fieldname;
-        fields[fieldMap[componentname]] = "";
+        fields[fieldMap[componentname]] = getChildVal(child.props.inputVal);
         datafieldNames.push(fieldname);
       }
     });
@@ -128,7 +134,8 @@ class FilterForm extends React.Component {
       let newchild = React.cloneElement(child, {
         key: idx,
         callback: this.onChange,
-        value: populatedFields[this.state.fieldMap[child.props.name]] || "",
+ //  TODO: See if "value" is nessesary
+//       value: populatedFields[this.state.fieldMap[child.props.name]] || "",
         ...cleanprops
       });
       return newchild;
