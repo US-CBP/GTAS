@@ -3,14 +3,19 @@ import { hasData } from "../utils/text";
 import Cookies from "js-cookie";
 
 async function GenericService(props) {
-  let headerObject = props.headers ? { ...props.headers } : {};
-  let param = {
+  let headerObject = props.headers ? {...props.headers} : {};
+  let defaultParam = {
     method: props.method,
-    headers: headerObject
+    headers: headerObject,
+    credentials: 'include'
   };
+
+  let paramObject = props.param ? {...props.param} : {};
+  let param = {...paramObject, ...defaultParam};
 
   if (hasData(props.body)) {
     param.body = props.body;
+  }
     let defaultHeader = {
       "Content-Type": props.contentTypeServer || "application/json;charset=UTF-8",
       Accept: props.contentTypeReceive || "application/json",
@@ -22,8 +27,8 @@ async function GenericService(props) {
         Cookies.get("JSESSIONID") +
         "; myLocaleCookie=en"
     };
-    param.headers = { ...props.headers, ...defaultHeader };
-  }
+    param.headers = {...props.headers, ...defaultHeader};
+
 
   //TODO - ensure we disable x-powered-by
 
@@ -60,7 +65,12 @@ async function GenericService(props) {
       }
     })
     .catch(error => {
+      const newErr = new Error();
+      newErr.name = "Connection Error";
+      newErr.message = "Connection Error";
+      newErr.spec_href = "";
       console.log(error);
+      throw newErr;
     });
 }
 

@@ -33,9 +33,15 @@ class FilterForm extends React.Component {
           throw new Error(`The child collection contains a "datafield" element whose name is not defined in the 
           "name" or "datafield" props. Remove the "datafield" prop or define a name for the element.`);
         }
-
+        const getChildVal = (val) => {
+          if (val instanceof Date) {
+            return val.toISOString();
+          } else {
+            return val;
+          }
+        };
         fieldMap[componentname] = fieldname;
-        fields[fieldMap[componentname]] = "";
+        fields[fieldMap[componentname]] = getChildVal(child.props.inputVal);
         datafieldNames.push(fieldname);
       }
     });
@@ -67,17 +73,22 @@ class FilterForm extends React.Component {
 
   componentDidMount() {
     this.bindChildren(this.state.fields);
-    this.fetchData();
+    this.fetchWithParams();
   }
 
   fetchWithParams() {
-    let fields = this.state.fields;
-    let params = "?";
-
-    for (let field in fields) {
-      if (hasData(fields[field])) params += `${field}=${fields[field]}&`;
+    let params;
+    if (this.props.paramAdapter === undefined) {
+      // default behavior
+      let fields = this.state.fields;
+      params = "?";
+      for (let field in fields) {
+        if (hasData(fields[field])) params += `${field}=${fields[field]}&`;
+      }
+      params += "action=get";
+    } else {
+      params = this.props.paramAdapter(this.state.fields);
     }
-    params += "action=get";
 
     this.fetchData(params);
   }
@@ -124,7 +135,8 @@ class FilterForm extends React.Component {
       let newchild = React.cloneElement(child, {
         key: idx,
         callback: this.onChange,
-        value: populatedFields[this.state.fieldMap[child.props.name]] || "",
+ //  TODO: See if "value" is nessesary
+//       value: populatedFields[this.state.fieldMap[child.props.name]] || "",
         ...cleanprops
       });
       return newchild;
@@ -169,7 +181,8 @@ FilterForm.propTypes = {
   clearText: PropTypes.string,
   service: PropTypes.any.isRequired,
   id: PropTypes.string,
-  callback: PropTypes.func.isRequired
+  callback: PropTypes.func.isRequired,
+  paramAdapter: PropTypes.func
 };
 
 export default FilterForm;

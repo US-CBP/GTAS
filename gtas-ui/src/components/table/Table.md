@@ -3,8 +3,6 @@ Table example:
 The table component can accept either a data array, a uri, or a function that fetches data. It will attempt to auto-format the headers, or you can optionally pass in an array of strings representing the header text for each column.
 
 ```js
-import "bulma/css/bulma.css";
-import Table from "./Table.js";
 
 const cb = e => {};
 

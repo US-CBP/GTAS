@@ -6,7 +6,6 @@ It takes a **`uri`** prop and will format and render the crumbs for that path. H
 Breadcrumbs example:
 
 ```js
-import "bulma/css/bulma.css";
 
 <section className="section card message is-link">
   <div>

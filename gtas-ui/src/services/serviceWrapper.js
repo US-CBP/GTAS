@@ -117,13 +117,12 @@ const FILES = "http://localhost:3004/files";
 const EMPLOYEES = "http://localhost:3004/employees";
 const HACKS = "http://localhost:3004/hacks";
 const LOGINS = "http://localhost:8080/gtas/authenticate";
-
-const AUTHENTICATE = "http://localhost:3004/authenticate";
+const USERS = "http://localhost:8080/gtas/user";
 const WATCHLISTCATS = "http://localhost:3004/watchlistcats";
-const FLIGHTS = "http://localhost:3004/flights";
+const FLIGHTS = "http://localhost:8080/gtas/flights";
 const AUDITLOG = "http://localhost:3004/auditlog?startDate=2019-11-04&endDate=2019-12-02";
 const ERRORLOG = "http://localhost:3004/errorlog?startDate=2019-11-04&endDate=2019-12-02";
-const CASES = "http://localhost:3004/cases";
+const CASES = "http://localhost:8080/gtas/hits";
 const SETTINGSINFO = "http://localhost:3004/settingsinfo";
 const GETRULECATS = "http://localhost:3004/getRuleCats";
 const PAX = "http://localhost:3004/passengers";
@@ -136,8 +135,7 @@ export const employees = setOps(EMPLOYEES, get, post);
 export const hacks = setOps(HACKS, get);
 export const watchlistcats = setOps(WATCHLISTCATS, get);
 export const logins = setOps(LOGINS, authPost);
-
-export const authenticate = setOps(AUTHENTICATE, post);
+export const userService = setOps(USERS, get);
 export const flights = setOps(FLIGHTS, get, post);
 export const auditlog = setOps(AUDITLOG, get);
 export const errorlog = setOps(ERRORLOG, get);

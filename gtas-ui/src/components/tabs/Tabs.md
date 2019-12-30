@@ -1,7 +1,6 @@
 Tabs example:
 
 ```js
-import "bulma/css/bulma.css";
 
 const tabs = [
   {

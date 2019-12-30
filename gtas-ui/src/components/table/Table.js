@@ -182,6 +182,10 @@ class Table extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return this.props.data !== nextProps.data;
+  }
+
   componentDidMount() {
     if (!Array.isArray(this.props.data)) this.getData();
     else this.parseData(this.props.data);
@@ -232,6 +236,11 @@ class Table extends Component {
       // How to set the class on translation fail for a direct translation?
       if (element.xid !== undefined) {
         xl8Title = trans !== element.xid ? trans : undefined;
+        // let children = [];
+        // for (let field in rec) {
+        //   if (!this.props.ignoredFields || !this.props.ignoredFields.includes(field)) {
+        //     children.push(<td key={field}>{rec[field]}</td>);
+        //   }
       }
 
       const title = titleCase(xl8Title || element.Header || acc);
@@ -274,7 +283,8 @@ Table.propTypes = {
   header: PropTypes.array,
   title: PropTypes.string,
   smalltext: PropTypes.string,
-  style: PropTypes.string
+  style: PropTypes.string,
+  ignoredFields: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default withTranslation()(Table);

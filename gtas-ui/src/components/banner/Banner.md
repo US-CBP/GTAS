@@ -1,7 +1,6 @@
 Banner example:
 
 ```js
-import "bulma/css/bulma.css";
 <div>
   <Banner
     styleName="primary"
