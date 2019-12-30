@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import Table from "../../components/table/Table";
 import { cases } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
-import { Link } from "@reach/router";
+// import { Link } from "@reach/router";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import FilterForm from "../../components/filterForm/FilterForm";
+
 const Vetting = props => {
   const onTableChange = () => {};
   const onTextChange = () => {};
@@ -18,8 +19,7 @@ const Vetting = props => {
         <div className="column is-3">
           <div className="box2">
             <aside className="menu">
-              <FilterForm service={cases} title="Filter" callback={setData}>
-                <hr></hr>
+              <FilterForm service={cases} callback={setData}>
                 <LabelledInput
                   datafield
                   labelText="Passenger Hit Status"
@@ -80,7 +80,7 @@ const Vetting = props => {
                   datafield
                   labelText="Full Flight ID"
                   inputType="text"
-                  name="fullFlightId"
+                  name="flightId"
                   callback={onTextChange}
                   alt="nothing"
                 />
@@ -96,7 +96,11 @@ const Vetting = props => {
                 data={data}
                 id="FlightDataTable"
                 callback={onTableChange}
-                header={["flightId", "hitNames", "status"]}
+                header={[
+                  { Accessor: "flightId", xid: "20" },
+                  { Accessor: "hitNames", xid: "21" },
+                  { Accessor: "status", xid: "22" }
+                ]}
                 key={data}
               ></Table>
             </div>

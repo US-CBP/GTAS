@@ -40,6 +40,7 @@ class FilterForm extends React.Component {
       }
     });
 
+    // TODO: refac formkey as collection/hash of form values. Poss pass caching options in as prop?
     this.state = {
       fields: fields, // array of data fields and their current vals. This gets sent to the DB as a filter.
       fieldMap: fieldMap, // maps the names of the child components to the data fields.

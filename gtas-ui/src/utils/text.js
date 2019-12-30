@@ -1,9 +1,9 @@
+import { NO_URI } from "./constants";
+
 // APB - shd add handling for other naming patterns like underscores and dashes, and maybe
 // reference an enum of well-know acronyms to preserve casing there.
 export function titleCase(input) {
-  let str = input;
-
-  let result = str
+  let result = input
     .replace(/_|-/g, " ")
     .replace(/(\b[a-z](?!\s))/g, x => x.toUpperCase())
     .replace(/^[a-z]|[^\sA-Z][A-Z]/g, function(str2, idx) {
@@ -45,11 +45,7 @@ export function getEndpoint(str) {
 export function randomIntOfLength(length) {
   let digits = rerunArray(length, randomInt, 0, 10);
 
-  return Number(
-    digits.reduce((acc, currentValue) => {
-      return acc.concat(currentValue);
-    }, "")
-  );
+  return Number(digits.join(""));
 }
 
 export function randomInt(min = 0, max = 10) {
@@ -74,8 +70,28 @@ export function rerunArray(count, cb, ...params) {
 }
 
 export function getCrumbs(uri) {
-  if (uri === undefined) return ["No URI was passed to getCrumbs"];
+  if (uri === undefined) return [NO_URI];
 
   //return the positive array (falsy values excluded)
   return uri.split("/").filter(Boolean);
+}
+
+// Return a hash value for a given input. Stringifies the input for numbers, arrays, etc.
+export function asHash(str) {
+  return str
+    .toString()
+    .split("")
+    .reduce((acc, curr) => ((acc << 5) - acc + curr.charCodeAt(0)) | 0, 0);
+}
+
+// TBD - takes an array of key value pairs and sorts them before hashing so we can get
+// a deterministic hash for equivalent disordered datasets. Might not end up needing this.
+export function asOrderedHash(value) {
+  return value;
+}
+
+// Locale Date formatter
+// TBD - should return a date value in a standard format based on the users's locale.
+export function lDate(value) {
+  return value;
 }

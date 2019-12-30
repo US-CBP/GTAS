@@ -7,7 +7,7 @@ const DELETE = "delete";
 const POST = "post";
 const PUT = "put";
 const APPLICATION_JSON = "application/json";
-const FORM = 'application/x-www-form-urlencoded';
+const FORM = "application/x-www-form-urlencoded";
 
 const PUTBODY = "The put method requires a valid body parameter.";
 const POSTBODY = "The post method requires a valid body parameter.";
@@ -54,16 +54,16 @@ function post(body) {
 function authPost(body) {
   Cookies.remove("JSESSIONID");
   if (!hasData(body)) throw new TypeError(POSTBODY);
-  const username = body.username !== undefined ? body.username.toUpperCase() : '';
-  const password = body.password !== undefined ? body.password : '';
-  body = 'username=' + username + '&password=' + encodeURIComponent(password);
+  const username = body.username !== undefined ? body.username.toUpperCase() : "";
+  const password = body.password !== undefined ? body.password : "";
+  body = "username=" + username + "&password=" + encodeURIComponent(password);
 
   return GenericService({
     uri: this.uri,
     method: POST,
     contentType: FORM,
     body: body,
-    headers: {"X-Login-Ajax-call": 'true'},
+    headers: { "X-Login-Ajax-call": "true" },
     contentTypeServer: "application/x-www-form-urlencoded"
   });
 }
@@ -117,12 +117,16 @@ const FILES = "http://localhost:3004/files";
 const EMPLOYEES = "http://localhost:3004/employees";
 const HACKS = "http://localhost:3004/hacks";
 const LOGINS = "http://localhost:8080/gtas/authenticate";
+
+const AUTHENTICATE = "http://localhost:3004/authenticate";
 const WATCHLISTCATS = "http://localhost:3004/watchlistcats";
 const FLIGHTS = "http://localhost:3004/flights";
 const AUDITLOG = "http://localhost:3004/auditlog?startDate=2019-11-04&endDate=2019-12-02";
 const ERRORLOG = "http://localhost:3004/errorlog?startDate=2019-11-04&endDate=2019-12-02";
 const CASES = "http://localhost:3004/cases";
 const SETTINGSINFO = "http://localhost:3004/settingsinfo";
+const GETRULECATS = "http://localhost:3004/getRuleCats";
+const PAX = "http://localhost:3004/passengers";
 
 // ENTITY METHODS
 export const company = setOps(COMPANY, get, post);
@@ -132,8 +136,12 @@ export const employees = setOps(EMPLOYEES, get, post);
 export const hacks = setOps(HACKS, get);
 export const watchlistcats = setOps(WATCHLISTCATS, get);
 export const logins = setOps(LOGINS, authPost);
+
+export const authenticate = setOps(AUTHENTICATE, post);
 export const flights = setOps(FLIGHTS, get, post);
 export const auditlog = setOps(AUDITLOG, get);
 export const errorlog = setOps(ERRORLOG, get);
 export const cases = setOps(CASES, get);
 export const settingsinfo = setOps(SETTINGSINFO, get, putp, put);
+export const getrulecats = setOps(GETRULECATS, get);
+export const passengers = setOps(PAX, get);

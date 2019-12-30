@@ -59,7 +59,6 @@ class Form extends React.Component {
     if (this.isEdit()) {
       this.props.service.get(this.props.id).then(res => {
         if (hasData(res)) {
-          console.log(res);
           let populatedFields = [];
           for (let field in this.state.fields) {
             populatedFields[field] = res[field];
@@ -117,7 +116,7 @@ class Form extends React.Component {
       default:
         throw new Error("Unsupported action on form. ");
     }
-    let operationResult =  operation({ ...this.state.fields }, this.props.id);
+    let operationResult = operation({ ...this.state.fields }, this.props.id);
     if (this.props.afterProcessed !== undefined) {
       this.props.afterProcessed(operationResult);
     }
@@ -141,8 +140,6 @@ class Form extends React.Component {
         inputVal: populatedFields[this.state.fieldMap[child.props.name]] || "",
         ...cleanprops
       });
-
-      console.log(populatedFields[this.state.fieldMap[child.props.name]]);
 
       return newchild;
     });

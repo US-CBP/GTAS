@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import "./Inputs.css";
+import "../Inputs.css";
 
 const SelectInput = props => {
   const [selected, setSelected] = useState(props.selected);

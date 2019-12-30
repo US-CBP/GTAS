@@ -3,9 +3,11 @@ Loading example:
 ```js
 import "font-awesome/css/font-awesome.min.css";
 
-<div>
-  <Loading />
-</div>;
+<section className="section card message is-primary">
+  <div>
+    <Loading />
+  </div>
+</section>;
 ```
 
 ---

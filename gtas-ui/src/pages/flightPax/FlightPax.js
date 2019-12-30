@@ -1,6 +1,6 @@
 import React from "react";
 import Table from "../../components/table/Table";
-import { hacks } from "../../services/serviceWrapper";
+import { passengers } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
 
@@ -16,7 +16,7 @@ const FlightPax = () => {
           <div className="box2">
             <div className="top">
               <Link to="/gtas/paxdetail">Passenger Details</Link>
-              <Table service={hacks.get} id="foo" callback={cb}></Table>
+              <Table service={passengers.get} id="foo" callback={cb}></Table>
             </div>
           </div>
         </div>

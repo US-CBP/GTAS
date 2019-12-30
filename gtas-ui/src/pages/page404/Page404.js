@@ -1,17 +1,17 @@
 import React from "react";
-import Title from "../../Components/title/Title";
-import { Link } from "./node_modules/@reach/router";
+import Title from "../../components/title/Title";
+import { Link } from "@reach/router";
 
 const Page404 = () => {
   return (
     <div className="container">
-      <Title title="404"></Title>
+      <Title title="Page Not found"></Title>
 
       <div className="columns">
         <div className="column">
           <div className="box2">
             <div className="top">
-              <Link to="/flights">Flights</Link>
+              <Link to="/gtas/flights">Flights</Link>
             </div>
           </div>
         </div>

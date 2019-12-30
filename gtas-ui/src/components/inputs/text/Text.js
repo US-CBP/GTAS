@@ -1,10 +1,10 @@
 import React from "react";
 import { PropTypes } from "prop-types";
-import "./Inputs.css";
+import "../Inputs.css";
 
 const TextInput = props => (
   <input
-    className="form-input"
+    className={`form-input ${props.className || ""}`}
     name={props.name}
     type={props.inputType}
     placeholder={props.placeholder}
@@ -16,9 +16,6 @@ const TextInput = props => (
     readOnly={props.readOnly}
   />
 );
-
-//APB - validation by type. How to structure ??
-//APB pass invalid state up to parent
 
 TextInput.propTypes = {
   inputType: PropTypes.oneOf(["text", "number", "email", "password", "search", "tel"])

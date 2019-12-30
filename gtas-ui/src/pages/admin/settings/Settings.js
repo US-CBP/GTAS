@@ -15,7 +15,7 @@ const Settings = ({ name }) => {
             <LabelledInput
               datafield
               labelText="Matching Threshold"
-              inputType="text"
+              inputType="number"
               name="matchingThreshold"
               callback={onChange}
               alt="nothing"
@@ -47,7 +47,7 @@ const Settings = ({ name }) => {
             <LabelledInput
               datafield
               labelText="Maximum Rule Hits Allowed Per Run on Rule"
-              inputType="text"
+              inputType="number"
               name="maxRuleHit"
               callback={onChange}
               alt="nothing"

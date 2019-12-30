@@ -10,6 +10,11 @@ const Admin = props => {
     return { title: tab.props.name, key: tab.props.name, link: tab };
   });
 
+  // use cases for banner vs notification?
+  const showBanner = () => {
+    return false;
+  };
+
   return (
     <div className="container">
       <Title title="Admin" uri={props.uri}></Title>
@@ -17,7 +22,7 @@ const Admin = props => {
         id="banner"
         styleName="primary"
         text="Something has happened."
-        defaultState={true}
+        defaultState={showBanner}
       ></Banner>
       <div className="columns">
         <div className="column">

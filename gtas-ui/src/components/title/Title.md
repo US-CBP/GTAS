@@ -1,14 +1,13 @@
 Title example:
 
 ```js
-import 'bulma/css/bulma.css';
+import "bulma/css/bulma.css";
 
-<div>
-  <Title title='GTAS Title Component' />
-
-</div>
+<div className="section card message is-danger">
+  <Title title="GTAS Title Component" />
+</div>;
 ```
 
+---
 
- - - -
- - - -
+---

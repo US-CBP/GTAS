@@ -4,10 +4,9 @@ The table component can accept either a data array, a uri, or a function that fe
 
 ```js
 import "bulma/css/bulma.css";
+import Table from "./Table.js";
 
-function cb(e) {
-  console.log(e);
-}
+const cb = e => {};
 
 const fruits = [
   {
@@ -59,14 +58,9 @@ const casing = [
   }
 ];
 
-<div>
+<div className="section card message is-danger">
   <div className="box">
-    <Table
-      callback={cb}
-      title="Table with a data array"
-      data={fruits}
-      id="table1"
-    />
+    <Table callback={cb} title="Table with a data array" data={fruits} id="table1" />
   </div>
   <br />
   <div className="box">
@@ -74,6 +68,61 @@ const casing = [
       callback={cb}
       title="Autoformatted Casing on Headers"
       data={casing}
+      id="table2"
+    />
+  </div>
+  <br />
+</div>;
+```
+
+You can also limit the visible columns by passing an array to the **`header`** prop:
+
+```js
+import "bulma/css/bulma.css";
+import Table from "./Table.js";
+
+const cb = e => {};
+const allData = [
+  {
+    first_field: "first field",
+    second_field: "second field",
+    third_field: "I will not be displayed",
+    fourth_field: "4th field! Skipped the 3rd field",
+    fifth_field: "I will not be displayed either",
+    sixth_field: "Skipped the 5th field"
+  },
+  {
+    first_field: "1st field",
+    second_field: "2nd field",
+    third_field: "I will not be displayed",
+    fourth_field: "4th field! Skipped the 3rd field",
+    fifth_field: "I will not be displayed either",
+    sixth_field: "Skipped the 5th field"
+  },
+  {
+    first_field: "first field again",
+    second_field: "second field again",
+    third_field: "I will not be displayed again",
+    fourth_field: "4th field! Skipped the 3rd field again",
+    fifth_field: "I will not be displayed either again",
+    sixth_field: "Skipped the 5th field again"
+  }
+];
+
+const someColumns = [
+  { Accessor: "first_field" },
+  { Accessor: "second_field" },
+  { Accessor: "fourth_field" },
+  { Accessor: "sixth_field" }
+];
+
+<div className="section card message is-danger">
+  <div className="box">
+    <Table
+      callback={cb}
+      title="My dataset has 6 Cols, but I am only showing 4"
+      data={allData}
+      header={someColumns}
       id="table2"
     />
   </div>

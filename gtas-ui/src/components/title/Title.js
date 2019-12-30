@@ -1,15 +1,16 @@
 import React from "react";
 // import Breadcrumbs from "../breadcrumbs/Breadcrumbs";
 
-const Title = (props) => {
+// APB - Need to potentially pass in another component or text data from a peer. useEffect.
+const Title = props => {
+  const cb = () => {};
+
   return (
     <div>
       <div className="navbar column">
-        <h2 className="title">{props.title}</h2>
+        <h2 className={`title ${props.className}`}>{props.title}</h2>
       </div>
-      <div>
-        {/* <Breadcrumbs uri={props.uri}></Breadcrumbs> */}
-      </div>
+      <div>{/* <Breadcrumbs uri={props.uri}></Breadcrumbs> */}</div>
     </div>
   );
 };

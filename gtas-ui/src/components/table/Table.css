@@ -1,0 +1,8 @@
+.events-card {
+  max-width: 100px;
+  line-height: normal;
+}
+
+.card-table {
+  max-height: unset !important;
+}

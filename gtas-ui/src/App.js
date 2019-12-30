@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Router, Redirect } from "@reach/router";
 import IdleTimer from "react-idle-timer";
 // import logo from './logo.svg';
@@ -35,6 +35,9 @@ import Neo4J from "./pages/tools/neo4J/Neo4J";
 import Watchlist from "./pages/tools/watchlist/Watchlist";
 import About from "./pages/tools/about/About";
 import GModal from "./components/modal/GModal";
+import AddUser from "./pages/admin/manageUsers/addUser/AddUser";
+
+import Page404 from "./pages/page404/Page404";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -102,43 +105,48 @@ export default class App extends React.Component {
             debounce={250}
             timeout={1000 * 25 * 60}
           />
-          <Router>
-            <Home path="gtas">
-              <Dashboard path="dashboard"></Dashboard>
-              <Flights path="flights"></Flights>
-              <FlightPax path="flightpax"></FlightPax>
-              <PriorityVetting path="vetting"></PriorityVetting>
-              <Queries path="tools/queries"></Queries>
-              <Rules path="tools/rules"></Rules>
-              <Neo4J path="tools/neo4j"></Neo4J>
-              <Watchlist path="tools/watchlist"></Watchlist>
-              <About path="tools/about"></About>
-              <Admin path="admin">
-                <ManageUser name="Manage Users" path="manageusers"></ManageUser>
-                <AuditLog name="Audit Log View" path="auditlog"></AuditLog>
-                <ErrorLog name="Error Log View" path="errorlog"></ErrorLog>
-                <Settings name="Settings" path="settings"></Settings>
-                <FileDownload name="File Download" path="filedownload"></FileDownload>
-                <CodeEditor name="Code Editor" path="codeeditor"></CodeEditor>
-                <LoaderStats name="Loader Statistics" path="loaderstats"></LoaderStats>
-                <WatchlistCats
-                  name="Watchlist Categories"
-                  path="watchlistcats"
-                ></WatchlistCats>
-                <NoteTypeCats
-                  name="Note Type Categories"
-                  path="notetypecats"
-                ></NoteTypeCats>
-              </Admin>
-              <PaxDetail path="paxdetail">
-                <Summary path="summary"></Summary>
-                <APIS path="apis"></APIS>
-                <PNR path="pnr"></PNR>
-                <FlightHistory path="flighthistory"></FlightHistory>
-                <LinkAnalysis path="linkanalysis"></LinkAnalysis>
-              </PaxDetail>
-            </Home>
-          </Router>
+          <Suspense fallback="loading">
+            <Router>
+              <Home path="gtas">
+                <Dashboard path="dashboard"></Dashboard>
+                <Flights path="flights"></Flights>
+                <FlightPax path="flightpax"></FlightPax>
+                <PriorityVetting path="vetting"></PriorityVetting>
+                <Queries path="tools/queries"></Queries>
+                <Rules path="tools/rules"></Rules>
+                <Neo4J path="tools/neo4j"></Neo4J>
+                <Watchlist path="tools/watchlist"></Watchlist>
+                <About path="tools/about"></About>
+                <Admin path="admin">
+                  <ManageUser name="Manage Users" path="manageusers">
+                    <AddUser name="Add User" path="/gtas/admin/adduser"></AddUser>
+                  </ManageUser>
+                  <AuditLog name="Audit Log View" path="auditlog"></AuditLog>
+                  <ErrorLog name="Error Log View" path="errorlog"></ErrorLog>
+                  <Settings name="Settings" path="settings"></Settings>
+                  <FileDownload name="File Download" path="filedownload"></FileDownload>
+                  <CodeEditor name="Code Editor" path="codeeditor"></CodeEditor>
+                  <LoaderStats name="Loader Statistics" path="loaderstats"></LoaderStats>
+                  <WatchlistCats
+                    name="Watchlist Categories"
+                    path="watchlistcats"
+                  ></WatchlistCats>
+                  <NoteTypeCats
+                    name="Note Type Categories"
+                    path="notetypecats"
+                  ></NoteTypeCats>
+                </Admin>
+                <PaxDetail path="paxdetail">
+                  <Summary path="summary"></Summary>
+                  <APIS path="apis"></APIS>
+                  <PNR path="pnr"></PNR>
+                  <FlightHistory path="flighthistory"></FlightHistory>
+                  <LinkAnalysis path="linkanalysis"></LinkAnalysis>
+                </PaxDetail>
+                <Page404 default></Page404>
+              </Home>
+            </Router>
+          </Suspense>
         </div>
       </React.StrictMode>
     );

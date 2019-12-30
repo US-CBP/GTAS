@@ -1,20 +1,26 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import CheckboxInput from "../Inputs/Checkbox";
-import TextInput from "../Inputs/Text";
-import FileInput from "../Inputs/File";
-import SelectInput from "../Inputs/Select";
+import CheckboxInput from "../inputs/checkbox/Checkbox";
+import TextInput from "../inputs/text/Text";
+import TextareaInput from "../inputs/textarea/Textarea";
+import FileInput from "../inputs/file/File";
+import SelectInput from "../inputs/select/Select";
 import { hasData } from "../../utils/text";
 
 const textTypes = ["text", "number", "password", "email", "search", "tel"];
-const optionTypes = ["radio", "checkbox"];
+const boolTypes = ["radio", "checkbox", "toggle"];
 const selectType = "select";
+const textareaType = "textarea";
 const fileType = "file";
 const REQUIRED = "required";
 
+/**
+ * **LabelledInput is a pass-thru for the Input components. It composes them with a label to standardize input appearance.**
+ */
 class LabelledInput extends Component {
   constructor(props) {
     super(props);
+
     this.onChange = this.onChange.bind(this);
 
     this.state = {
@@ -28,13 +34,10 @@ class LabelledInput extends Component {
     };
   }
 
-  componentDidMount() {
-    //APB getInput here??
-  }
+  componentDidMount() {}
 
   onChange(e) {
     const value = e.target.value;
-    console.log(e.target);
 
     //update the local state
     this.setState({
@@ -49,9 +52,23 @@ class LabelledInput extends Component {
   //APB - REFACTOR
   getInputByType() {
     const type = this.props.inputType;
+    const inputStyle = `${type} ${this.props.className || ""}`;
 
-    // const inputStyle = this.state.isValid ? 'input' : 'input invalid';
-    const inputStyle = "input";
+    if (type === textareaType) {
+      return (
+        <TextareaInput
+          className={inputStyle}
+          alt={this.props.alt}
+          name={this.props.name}
+          inputType={this.props.inputType}
+          inputVal={this.state.inputVal || ""}
+          callback={this.onChange}
+          required={this.state.required}
+          placeholder={this.state.placeholder}
+          readOnly={this.props.readOnly}
+        />
+      );
+    }
 
     if (textTypes.includes(type)) {
       return (
@@ -69,7 +86,6 @@ class LabelledInput extends Component {
       );
     }
     if (type === selectType) {
-      console.log(this.props.inputVal);
       return (
         <SelectInput
           className={inputStyle}
@@ -86,19 +102,22 @@ class LabelledInput extends Component {
         />
       );
     }
-    if (optionTypes.includes(type)) {
+    if (boolTypes.includes(type)) {
       return (
-        <CheckboxInput
-          className={inputStyle}
-          name={this.props.name}
-          inputType={this.props.inputType}
-          selected={this.state.inputVal}
-          options={this.state.options}
-          callback={this.onChange}
-          required={this.state.required}
-          placeholder={this.state.placeholder}
-          alt={this.props.alt}
-        />
+        <React.Fragment>
+          {this.props.labelText && <br />}
+          <CheckboxInput
+            className={inputStyle}
+            name={this.props.name}
+            inputType={this.props.inputType}
+            inputVal={this.props.inputVal}
+            callback={this.onChange}
+            required={this.state.required}
+            selected={this.props.selected}
+            placeholder={this.state.placeholder}
+            alt={this.props.alt}
+          />
+        </React.Fragment>
       );
     }
     if (type === fileType) {
@@ -140,11 +159,13 @@ LabelledInput.propTypes = {
   labelText: PropTypes.string.isRequired,
   inputType: PropTypes.oneOf([
     "text",
+    "textarea",
     "number",
     "password",
     "select",
     "radio",
     "checkbox",
+    "toggle",
     "email",
     "search",
     "tel",

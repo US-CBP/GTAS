@@ -3,7 +3,7 @@ import Table from "../../../components/table/Table";
 import { files } from "../../../services/serviceWrapper";
 import Title from "../../../components/title/Title";
 
-const Summary = () => {
+const Summary = props => {
   return (
     <div className="container">
       <Title title="Summary"></Title>

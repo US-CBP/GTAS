@@ -20,49 +20,50 @@ const fetch = {
 };
 
 function cb(e) {}
-
-<div className="column is-4 is-offset-4">
-  <Form
-    title="Important Form"
-    submitText="GO"
-    service={fetch}
-    action="edit"
-    id="loginform"
-  >
-    <LabelledInput
-      inputType="text"
-      datafield
-      labelText="Name"
-      name="name"
-      callback={cb}
-      alt="name"
-    />
-    <LabelledInput
-      inputType="number"
-      datafield
-      labelText="Age"
-      name="age"
-      callback={cb}
-      alt="age"
-    />
-    <LabelledInput
-      inputType="text"
-      datafield
-      labelText="School"
-      name="school"
-      callback={cb}
-      alt="school"
-    />
-    <LabelledInput
-      inputType="number"
-      datafield
-      labelText="Grade"
-      name="grade"
-      callback={cb}
-      alt="grade"
-    />
-  </Form>
-</div>;
+<section className="section card message is-primary">
+  <div className="card column is-4 is-offset-4">
+    <Form
+      title="Important Form"
+      submitText="GO"
+      service={fetch}
+      action="edit"
+      id="loginform"
+    >
+      <LabelledInput
+        inputType="text"
+        datafield
+        labelText="Name"
+        name="name"
+        callback={cb}
+        alt="name"
+      />
+      <LabelledInput
+        inputType="number"
+        datafield
+        labelText="Age"
+        name="age"
+        callback={cb}
+        alt="age"
+      />
+      <LabelledInput
+        inputType="text"
+        datafield
+        labelText="School"
+        name="school"
+        callback={cb}
+        alt="school"
+      />
+      <LabelledInput
+        inputType="number"
+        datafield
+        labelText="Grade"
+        name="grade"
+        callback={cb}
+        alt="grade"
+      />
+    </Form>
+  </div>
+</section>;
 ```
 
 DATAFIELD PROP -
