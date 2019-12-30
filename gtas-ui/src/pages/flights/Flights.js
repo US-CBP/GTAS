@@ -54,7 +54,9 @@ const Flights = props => {
               paramAdapter={parameterAdapter}
             >
               <hr />
-              <LabelledSelectInput/>
+              <LabelledSelectInput
+                isMulti
+              />
               <LabelledInput
                 datafield
                 labelText="Destination Airport"

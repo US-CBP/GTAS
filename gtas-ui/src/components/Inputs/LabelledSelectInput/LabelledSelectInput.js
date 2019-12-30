@@ -30,7 +30,11 @@ const LabelledSelectInput = props => {
             </Row>
             <Row style={finalStyles}>
                 <div style={finalStyles}>
-                <Select style={finalStyles} options={options}/>
+                <Select
+                    style={finalStyles}
+                    options={options}
+                    {...props}
+                />
                 </div>
             </Row>
         </div>
