@@ -4,7 +4,7 @@ import LabelledInput from "../../components/labelledInput/LabelledInput";
 import { logins, userService } from "../../services/serviceWrapper";
 import logo from "../../images/GTAS Logo blue 2.png";
 import "./Login.css";
-import { Container, Figure, Jumbotron, Card} from "react-bootstrap"
+import { Figure, Jumbotron, Card} from "react-bootstrap"
 import {navigate} from "@reach/router";
 import { store } from '../../appContext';
 import Title from "../../components/title/Title";
@@ -24,7 +24,7 @@ const Login = () => {
                         type: 'login',
                         user : response
                     });
-                    navigate(`/gtas`, true);
+                    navigate(`/gtas/admin`, true);
                 }).catch(error => {
                     //todo: error handling
                    console.log(error);
@@ -52,8 +52,8 @@ const Login = () => {
     </div>;
 
     return (
-        <Jumbotron fluid>
-                <Card className="transparent-white text-center login-card mx-auto">
+        <div className="login-page-container">
+                <Card className="transparent-white text-center mx-auto">
                     <Figure className="avatar">
                         <Figure.Image
                             width={100}
@@ -96,7 +96,7 @@ const Login = () => {
                         </Form>
                     </Card.Body>
                 </Card>
-        </Jumbotron>
+        </div>
     );
 };
 
