@@ -5,6 +5,7 @@ import TextInput from "../Inputs/Text";
 import FileInput from "../Inputs/File";
 import SelectInput from "../Inputs/Select";
 import { hasData } from "../../utils/text";
+import {Row} from "react-bootstrap";
 
 const textTypes = ["text", "number", "password", "email", "search", "tel"];
 const optionTypes = ["radio", "checkbox"];
@@ -125,10 +126,12 @@ class LabelledInput extends Component {
 
     return (
       <div className={`field ${this.state.visibleStyle}`}>
-        <div className="control">
+        <Row className="control">
           <label className="txtlabel">{this.state.labelText}</label>
+        </Row>
+          <Row>
           {input}
-        </div>
+        </Row>
       </div>
     );
   }

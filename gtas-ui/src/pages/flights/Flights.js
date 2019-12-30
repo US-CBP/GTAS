@@ -11,6 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import LabelledDateTimePicker from "../../components/Inputs/LabelledDateTimePicker/LabelledDateTimePicker";
 import "./Flights.css";
 import { Nav, Container, Row, Col } from "react-bootstrap"
+import LabelledSelectInput from "../../components/Inputs/LabelledSelectInput/LabelledSelectInput";
 
 
 const Flights = props => {
@@ -53,14 +54,7 @@ const Flights = props => {
               paramAdapter={parameterAdapter}
             >
               <hr />
-              <LabelledInput
-                datafield
-                labelText="Origin Airport"
-                inputType="text"
-                name="origin"
-                callback={cb}
-                alt="nothing"
-              />
+              <LabelledSelectInput/>
               <LabelledInput
                 datafield
                 labelText="Destination Airport"

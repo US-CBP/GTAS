@@ -18,6 +18,7 @@
     "react-querybuilder": "^2.5.1",
     "react-responsive-tabs": "^3.3.0",
     "react-scripts": "^3.3.0",
+    "react-select": "^3.0.8",
     "react-table": "^6.10.3",
     "vaquita": "^1.0.9"
   },

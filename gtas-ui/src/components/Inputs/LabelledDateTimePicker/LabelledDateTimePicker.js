@@ -6,19 +6,21 @@
  *
  */
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import DatePicker from "react-datepicker";
 import inputPasses from "../Inputs.css";
 
 import "react-datepicker/dist/react-datepicker.css";
 import PropTypes from "prop-types";
 import classes from "./LabelledDateTimePicker.css";
+import {Row} from "react-bootstrap";
 const REQUIRED = "required";
 
 const LabelledDateTimePicker = props => {
 
     const [startDate, setStartDate] = useState(props.startDate);
     const [endDate, setEndDate] = useState(props.endDate);
+    const [dateProperties, setDateProperties] = useState({...props});
 
     const onChange = (event) => {
         if (props.end) {
@@ -33,8 +35,7 @@ const LabelledDateTimePicker = props => {
         props.callback(update);
     };
 
-    //TODO: correct date range on bad dates.
-    const createDateProperties = (props) => {
+    useEffect(() => {
         let dateProperties = {...props};
         if (dateProperties.dateRange) {
             let dateRange = dateProperties.dateRange;
@@ -48,8 +49,26 @@ const LabelledDateTimePicker = props => {
         } else {
             dateProperties = {...dateProperties, selected: startDate};
         }
-        return dateProperties;
-    };
+        setDateProperties(dateProperties);
+    }, [endDate, startDate, props]);
+
+    //TODO: correct date range on bad dates.
+    // const createDateProperties = (props) => {
+    //     let dateProperties = {...props};
+    //     if (dateProperties.dateRange) {
+    //         let dateRange = dateProperties.dateRange;
+    //         if (dateRange.position === 'start') {
+    //             dateProperties = {...dateProperties, selectsStart: true};
+    //             dateProperties = {...dateProperties, selected: startDate};
+    //         } else {
+    //             dateProperties = {...dateProperties, selectsEnd: true};
+    //             dateProperties = {...dateProperties, selected: endDate};
+    //         }
+    //     } else {
+    //         dateProperties = {...dateProperties, selected: startDate};
+    //     }
+    //     return dateProperties;
+    // };
 
     const totalClasses = {...classes, ...inputPasses};
     return  (
@@ -57,15 +76,17 @@ const LabelledDateTimePicker = props => {
             className={`field ${props.visibleStyle}`}
             style={totalClasses}
         >
-            <div className="control">
+            <Row className="control">
                 <label className="txtlabel">{props.labelText}</label>
+            </Row>
+            <Row>
                 <DatePicker
-                    {...createDateProperties(props)}
+                    {...dateProperties}
                     className="form-input"
                     style={totalClasses}
                     onChange= {onChange}
                 />
-            </div>
+            </Row>
         </div>
     );
 };
