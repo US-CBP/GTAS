@@ -71,8 +71,12 @@
 }
 
 .card {
-  width: fit-content;
-  height: auto;
+  width: 25rem;
+  height: 27rem;
+  text-align: center;
+}
+.card-title {
+  font-size: xx-large;
 }
 
 

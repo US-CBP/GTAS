@@ -6,6 +6,7 @@ import TextareaInput from "../inputs/textarea/Textarea";
 import FileInput from "../inputs/file/File";
 import SelectInput from "../inputs/select/Select";
 import { hasData } from "../../utils/text";
+import { Row } from "react-bootstrap";
 
 const textTypes = ["text", "number", "password", "email", "search", "tel"];
 const boolTypes = ["radio", "checkbox", "toggle"];
@@ -144,10 +145,10 @@ class LabelledInput extends Component {
 
     return (
       <div className={`field ${this.state.visibleStyle}`}>
-        <div className="control">
+        <Row className="control">
           <label className="txtlabel">{this.state.labelText}</label>
-          {input}
-        </div>
+        </Row>
+        <Row>{input}</Row>
       </div>
     );
   }

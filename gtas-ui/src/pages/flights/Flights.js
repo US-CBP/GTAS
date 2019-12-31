@@ -4,6 +4,7 @@ import { flights } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
+import LabelledSelectInput from "../../components/inputs/labelledSelectInput/LabelledSelectInput";
 import FilterForm from "../../components/filterForm/FilterForm";
 // import { useTranslation } from "react-i18next";
 import Xl8 from "../../components/xl8/Xl8";
@@ -13,7 +14,7 @@ import { hasData } from "../../utils/text";
 import "react-datepicker/dist/react-datepicker.css";
 import LabelledDateTimePicker from "../../components/inputs/labelledDateTimePicker/LabelledDateTimePicker";
 import "./Flights.css";
-import { Nav, Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 
 const Flights = props => {
   const cb = () => {};
@@ -74,6 +75,16 @@ const Flights = props => {
     { Accessor: "graphHitCount" }
   ];
 
+  const options = [
+    { value: "foo", label: "foo" },
+    { value: "bar", label: "bar" },
+    { value: "baz", label: "baz" }
+  ];
+  const directions = [
+    { value: "I", label: "Inbound" },
+    { value: "O", label: "Outbound" },
+    { value: "A", label: "All" }
+  ];
   return (
     <Container fluid>
       <Row>
@@ -86,37 +97,38 @@ const Flights = props => {
               paramAdapter={parameterAdapter}
             >
               <hr />
-              <LabelledInput
-                datafield
-                labelText="Origin Airport"
-                inputType="text"
-                name="origin"
-                callback={cb}
-                alt="nothing"
+              <LabelledSelectInput
+                name="originAirports"
+                labelText="Origin Airports"
+                datafield="originAirports"
+                ReturnStringArray
+                isMulti
+                options={options}
               />
-              <LabelledInput
+              <LabelledSelectInput
                 datafield
-                labelText="Destination Airport"
+                labelText="Destination Airports"
                 inputType="text"
-                name="destination"
-                callback={cb}
-                alt="nothing"
+                name="destinationAirports"
+                ReturnStringArray
+                isMulti
+                options={options}
               />
               <LabelledInput
                 datafield="flightNumber"
-                labelText="Flight ID"
+                labelText="Flight Number"
                 inputType="number"
                 name="flightId"
                 callback={cb}
                 alt="nothing"
               />
-              <LabelledInput
-                datafield="direction"
+              <LabelledSelectInput
+                datafield
+                defaultValue={{ value: "A", label: "All" }}
                 labelText="Direction"
-                inputType="text"
                 name="direction"
-                callback={cb}
-                alt="nothing"
+                ReturnString
+                options={directions}
               />
               <LabelledDateTimePicker
                 datafield="etaStart"

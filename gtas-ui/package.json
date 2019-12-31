@@ -24,6 +24,7 @@
     "react-responsive-tabs": "^3.3.0",
     "react-scripts": "^3.3.0",
     "react-table": "^7.0.0-rc.9",
+    "react-select": "^3.0.8",
     "vaquita": "^1.0.9"
   },
   "scripts": {
