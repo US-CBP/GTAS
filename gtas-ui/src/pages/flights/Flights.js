@@ -10,7 +10,7 @@ import {hasData} from "../../utils/text";
 import "react-datepicker/dist/react-datepicker.css";
 import LabelledDateTimePicker from "../../components/Inputs/LabelledDateTimePicker/LabelledDateTimePicker";
 import "./Flights.css";
-import { Nav, Container, Row, Col } from "react-bootstrap"
+import { Container, Row, Col } from "react-bootstrap"
 import LabelledSelectInput from "../../components/Inputs/LabelledSelectInput/LabelledSelectInput";
 
 
@@ -41,7 +41,16 @@ const Flights = props => {
     });
     return "?request=" + encodeURIComponent(JSON.stringify(paramObject));
   };
-
+  const options = [
+    { value: 'foo', label: 'foo' },
+    { value: 'bar', label: 'bar' },
+    { value: 'baz', label: 'baz' }
+  ];
+  const directions = [
+    { value: 'I', label: 'Inbound' },
+    { value: 'O', label: 'Outbound' },
+    { value: 'A', label: 'All' }
+  ];
   return (
     <Container fluid>
       <Row>
@@ -55,15 +64,21 @@ const Flights = props => {
             >
               <hr />
               <LabelledSelectInput
+                name="originAirports"
+                labelText="Origin Airports"
+                datafield="originAirports"
+                ReturnStringArray
                 isMulti
+                options={options}
               />
-              <LabelledInput
-                datafield
-                labelText="Destination Airport"
-                inputType="text"
-                name="destination"
-                callback={cb}
-                alt="nothing"
+              <LabelledSelectInput
+                  datafield
+                  labelText="Destination Airports"
+                  inputType="text"
+                  name="destinationAirports"
+                  ReturnStringArray
+                  isMulti
+                  options={options}
               />
               <LabelledInput
                 datafield="flightNumber"
@@ -73,13 +88,13 @@ const Flights = props => {
                 callback={cb}
                 alt="nothing"
               />
-              <LabelledInput
-                datafield="direction"
-                labelText="Direction"
-                inputType="text"
-                name="direction"
-                callback={cb}
-                alt="nothing"
+              <LabelledSelectInput
+                  datafield
+                  defaultValue= {{ value: 'A', label: 'All' }}
+                  labelText="Direction"
+                  name="direction"
+                  ReturnString
+                  options={directions}
               />
               <LabelledDateTimePicker
                   datafield="etaStart"

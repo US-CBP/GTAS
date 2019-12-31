@@ -11,14 +11,27 @@ import Select from 'react-select'
 import inputPasses from "../Inputs.css";
 import {Row} from "react-bootstrap";
 
-const options = [
-    { value: 'foo', label: 'foo' },
-    { value: 'bar', label: 'bar' },
-    { value: 'baz', label: 'baz' }
-];
+
 const LabelledSelectInput = props => {
-    let foo = {'min-width': '100%'};
-    const finalStyles = {...foo, ...inputPasses};
+    let minWidth = {'min-width': '100%'};
+    const finalStyles = {...minWidth, ...inputPasses};
+
+    const onChange = (event) => {
+        let returnValue;
+        if (props.ReturnStringArray && event !== null) {
+            returnValue = event.map(e => e.value)
+        } else if (props.ReturnString && event !== null) {
+            returnValue = event.value;
+        } else {
+            returnValue = event;
+        }
+
+        const update = {
+            name: props.name,
+            value: returnValue
+        };
+        props.callback(update);
+    };
 
     return (
         <div
@@ -26,14 +39,14 @@ const LabelledSelectInput = props => {
             style={finalStyles}
         >
             <Row className="control" style={finalStyles}>
-                <label>Origin Airport</label>
+                <label>{props.labelText}</label>
             </Row>
             <Row style={finalStyles}>
                 <div style={finalStyles}>
                 <Select
                     style={finalStyles}
-                    options={options}
                     {...props}
+                    onChange={onChange}
                 />
                 </div>
             </Row>
