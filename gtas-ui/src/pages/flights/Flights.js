@@ -17,12 +17,19 @@ import { Nav, Container, Row, Col } from "react-bootstrap";
 
 const Flights = props => {
   const cb = () => {};
-  const [data, setData] = useState({ flights: [] });
-
+  const [data, setData] = useState([{}]);
   const globalState = useContext(store);
+
+  const setDataWrapper = data => {
+    const dataOrEmptyArray = data?.flights || [{}];
+    setData(dataOrEmptyArray);
+  };
 
   let startDate = new Date();
   let endDate = new Date();
+  // let startDate = new Date(2018, 0, 0);
+  // let endDate = new Date(2020, 0, 0);
+
   endDate.setDate(endDate.getDate() + 1);
   startDate.setHours(startDate.getHours() - 1);
 
@@ -33,15 +40,39 @@ const Flights = props => {
   }, [globalState]);
 
   const parameterAdapter = fields => {
-    let paramObject = { pageSize: 10, pageNumber: 1 };
+    let paramObject = { pageSize: 20, pageNumber: 1 };
     const fieldNames = Object.keys(fields);
     fieldNames.forEach(name => {
       if (hasData(fields[name])) {
         paramObject[name] = fields[name];
       }
     });
-    return "?request=" + encodeURIComponent(JSON.stringify(paramObject));
+
+    return paramObject;
+    // return "?request=" + encodeURIComponent(JSON.stringify(paramObject));
   };
+
+  const Headers = [
+    {
+      Accessor: "passengerCount",
+      Cell: ({ row }) => (
+        <Link to={"../flightpax?flightId=" + row.original.id}>
+          {row.original.passengerCount}
+        </Link>
+      )
+    },
+    { Accessor: "fullFlightNumber" },
+    { Accessor: "origin" },
+    { Accessor: "originCountry" },
+    { Accessor: "destination" },
+    { Accessor: "destinationCountry" },
+    { Accessor: "direction" },
+    { Accessor: "etaDate" },
+    { Accessor: "etdDate" },
+    { Accessor: "ruleHitCount" },
+    { Accessor: "listHitCount" },
+    { Accessor: "graphHitCount" }
+  ];
 
   return (
     <Container fluid>
@@ -49,9 +80,9 @@ const Flights = props => {
         <Col lg="2" md="3" sm="3">
           <div className="flight-filter-nav">
             <FilterForm
-              service={flights}
+              service={flights.post}
               title="Filter"
-              callback={setData}
+              callback={setDataWrapper}
               paramAdapter={parameterAdapter}
             >
               <hr />
@@ -129,15 +160,8 @@ const Flights = props => {
         <Col lg="10" md="9" sm="9" className="flight-body">
           <Title title="Flights" uri={props.uri} />
           <div className="flight-body-box">
-            <Link to="../flightpax">Flight Passengers</Link>
-            <div className="card events-card">
-              <Table
-                data={data.flights}
-                id="Flights"
-                callback={cb}
-                key={data}
-                ignoredFields={["countDown"]}
-              />
+            <div className="card">
+              <Table data={data} key={data} id="Flights" header={Headers} callback={cb} />
             </div>
           </div>
         </Col>

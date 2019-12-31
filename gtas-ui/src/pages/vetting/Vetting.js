@@ -19,7 +19,11 @@ const Vetting = props => {
   endDate.setDate(endDate.getDate() + 1);
   startDate.setHours(startDate.getHours() - 1);
 
-  const [data, setData] = useState({ cases: [] });
+  const [data, setData] = useState([{}]);
+
+  const setDataWrapper = data => {
+    setData(data?.cases || []);
+  };
 
   const parameterAdapter = fields => {
     let paramObject = { pageSize: 100, pageNumber: 1 };
@@ -30,7 +34,8 @@ const Vetting = props => {
         paramObject[name] = fields[name];
       }
     });
-    return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
+    // return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
+    return paramObject;
   };
 
   return (
@@ -39,9 +44,9 @@ const Vetting = props => {
       <Row>
         <Col lg="2" md="3" sm="3" className="box2">
           <FilterForm
-            service={cases}
+            service={cases.get}
             title="Filter"
-            callback={setData}
+            callback={setDataWrapper}
             paramAdapter={parameterAdapter}
           >
             <hr />
@@ -132,7 +137,7 @@ const Vetting = props => {
         </Col>
         <Col lg="10" md="9" sm="9" className="flight-body">
           <Table
-            data={data.cases}
+            data={data}
             id="FlightDataTable"
             callback={onTableChange}
             header={["flightId", "hitNames", "status"]}

@@ -33,7 +33,7 @@ class FilterForm extends React.Component {
           throw new Error(`The child collection contains a "datafield" element whose name is not defined in the 
           "name" or "datafield" props. Remove the "datafield" prop or define a name for the element.`);
         }
-        const getChildVal = (val) => {
+        const getChildVal = val => {
           if (val instanceof Date) {
             return val.toISOString();
           } else {
@@ -94,7 +94,7 @@ class FilterForm extends React.Component {
   }
 
   fetchData(params) {
-    this.props.service.get("", params).then(res => {
+    this.props.service(params).then(res => {
       this.props.callback(res);
     });
   }
@@ -135,8 +135,8 @@ class FilterForm extends React.Component {
       let newchild = React.cloneElement(child, {
         key: idx,
         callback: this.onChange,
- //  TODO: See if "value" is nessesary
-//       value: populatedFields[this.state.fieldMap[child.props.name]] || "",
+        //  TODO: See if "value" is nessesary
+        // value: populatedFields[this.state.fieldMap[child.props.name]] || "",
         ...cleanprops
       });
       return newchild;
@@ -179,7 +179,7 @@ FilterForm.propTypes = {
   title: PropTypes.string,
   submitText: PropTypes.string,
   clearText: PropTypes.string,
-  service: PropTypes.any.isRequired,
+  service: PropTypes.func.isRequired,
   id: PropTypes.string,
   callback: PropTypes.func.isRequired,
   paramAdapter: PropTypes.func

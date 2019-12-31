@@ -182,9 +182,9 @@ class Table extends Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return this.props.data !== nextProps.data;
-  }
+  // shouldComponentUpdate(nextProps, nextState, nextContext) {
+  //   return this.props.data !== nextProps.data;
+  // }
 
   componentDidMount() {
     if (!Array.isArray(this.props.data)) this.getData();
@@ -192,18 +192,47 @@ class Table extends Component {
   }
 
   parseData(data) {
-    let noDataObj = {};
-    noDataObj[this.props.id] = "No Data Found";
+    let noDataObj = [{}];
+    noDataObj[0][this.props.id] = "No Data Found";
 
     let dataArray = Array.isArray(data) ? data : [data];
-    const sdata = hasData(dataArray) ? dataArray : [noDataObj];
-    const sheader = hasData(dataArray)
+    const isPopulated = hasData(dataArray);
+    const sdata = isPopulated ? dataArray : noDataObj;
+    const sheader = isPopulated
       ? this.props.header || Object.keys(dataArray[0])
       : [this.props.id];
 
+    let columns = [];
+
+    sheader.forEach(element => {
+      const acc = element.Accessor || element;
+      let xl8Title = undefined;
+      const trans = this.props.t(element.xid);
+      // TODO - refac. - logic shd be exposed by xl8 or a util.
+      // How to set the class on translation fail for a direct translation?
+      if (element.xid !== undefined) {
+        xl8Title = trans !== element.xid ? trans : undefined;
+      }
+
+      if (!(this.props.ignoredFields || []).includes(acc)) {
+        const title = titleCase(xl8Title || element.Header || acc);
+        let cellconfig = {
+          Header: title,
+          accessor: acc
+        };
+
+        if (element.Cell !== undefined) {
+          cellconfig.Cell = element.Cell;
+        }
+
+        columns.push(cellconfig);
+      }
+    });
+
     this.setState({
       data: sdata,
-      header: sheader
+      header: sheader,
+      columns: columns
     });
   }
 
@@ -221,51 +250,19 @@ class Table extends Component {
   }
 
   render() {
-    let columns = [];
-
-    const sheader = hasData(this.state.header)
-      ? this.props.header || Object.keys(this.state.data[0])
-      : [this.props.id];
-
-    sheader.forEach(element => {
-      const acc = element.Accessor || element;
-      let xl8Title = undefined;
-      const trans = this.props.t(element.xid);
-
-      // TODO - refac. - logic shd be exposed by xl8 or a util.
-      // How to set the class on translation fail for a direct translation?
-      if (element.xid !== undefined) {
-        xl8Title = trans !== element.xid ? trans : undefined;
-        // let children = [];
-        // for (let field in rec) {
-        //   if (!this.props.ignoredFields || !this.props.ignoredFields.includes(field)) {
-        //     children.push(<td key={field}>{rec[field]}</td>);
-        //   }
-      }
-
-      const title = titleCase(xl8Title || element.Header || acc);
-      let cellconfig = {
-        Header: title,
-        accessor: acc
-      };
-
-      if (element.Cell !== undefined) {
-        cellconfig.Cell = element.Cell;
-      }
-
-      columns.push(cellconfig);
-    });
-
     return (
       <div>
-        <div className="card-table">
+        <div>
           {this.props.title !== undefined && (
             <h4 className={`title ${this.props.style}`}>{this.props.title}</h4>
           )}
           {this.props.smalltext !== undefined && <small>{this.props.smalltext}</small>}
           <div className="content">
             <Xl8>
-              <this.RTable columns={columns} data={this.state.data}></this.RTable>
+              <this.RTable
+                columns={this.state.columns}
+                data={this.state.data}
+              ></this.RTable>
             </Xl8>
           </div>
         </div>

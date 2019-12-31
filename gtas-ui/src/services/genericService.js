@@ -3,32 +3,31 @@ import { hasData } from "../utils/text";
 import Cookies from "js-cookie";
 
 async function GenericService(props) {
-  let headerObject = props.headers ? {...props.headers} : {};
+  let headerObject = props.headers ? { ...props.headers } : {};
   let defaultParam = {
     method: props.method,
     headers: headerObject,
-    credentials: 'include'
+    credentials: "include"
   };
 
-  let paramObject = props.param ? {...props.param} : {};
-  let param = {...paramObject, ...defaultParam};
+  let paramObject = props.param ? { ...props.param } : {};
+  let param = { ...paramObject, ...defaultParam };
 
   if (hasData(props.body)) {
     param.body = props.body;
   }
-    let defaultHeader = {
-      "Content-Type": props.contentTypeServer || "application/json;charset=UTF-8",
-      Accept: props.contentTypeReceive || "application/json",
-      "X-Requested-With": "XMLHttpRequest",
-      Connection: "keep-alive",
-      "Accept-Encoding": "gzip, deflate",
-      Cookie:
-        "NG_TRANSLATE_LANG_KEY=en; JSESSIONID=" +
-        Cookies.get("JSESSIONID") +
-        "; myLocaleCookie=en"
-    };
-    param.headers = {...props.headers, ...defaultHeader};
-
+  let defaultHeader = {
+    "Content-Type": props.contentTypeServer || "application/json;charset=UTF-8",
+    Accept: props.contentTypeReceive || "application/json",
+    "X-Requested-With": "XMLHttpRequest",
+    Connection: "keep-alive",
+    "Accept-Encoding": "gzip, deflate",
+    Cookie:
+      "NG_TRANSLATE_LANG_KEY=en; JSESSIONID=" +
+      Cookies.get("JSESSIONID") +
+      "; myLocaleCookie=en"
+  };
+  param.headers = { ...props.headers, ...defaultHeader };
 
   //TODO - ensure we disable x-powered-by
 
@@ -61,7 +60,8 @@ async function GenericService(props) {
         newErr.name = "Http status code mismatch";
         newErr.message = "The transaction failed, error code was not found";
         newErr.spec_href = "";
-        throw newErr;
+        console.log(newErr);
+        // throw newErr;
       }
     })
     .catch(error => {
@@ -70,7 +70,7 @@ async function GenericService(props) {
       newErr.message = "Connection Error";
       newErr.spec_href = "";
       console.log(error);
-      throw newErr;
+      // throw newErr;
     });
 }
 
