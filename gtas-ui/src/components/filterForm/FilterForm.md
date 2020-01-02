@@ -23,7 +23,12 @@ function cb(e) {}
 
 <div className="section card message is-success">
   <div className="card column is-4 is-offset-4">
-    <FilterForm title="Student Filter Form" service={fetch} id="loginform" callback={cb}>
+    <FilterForm
+      title="Student Filter Form"
+      service={fetch.get}
+      id="loginform"
+      callback={cb}
+    >
       <LabelledInput
         inputType="text"
         datafield
