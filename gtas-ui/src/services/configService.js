@@ -1,4 +1,4 @@
-import { setOps, get, post, del } from "./serviceWrapper";
+import { setOps, get } from "./serviceWrapper";
 
 // hosts
 const HOST = "http://localhost:8080/gtas/api/config/";

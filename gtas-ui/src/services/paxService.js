@@ -1,8 +1,8 @@
 import { setOps, get, post, del } from "./serviceWrapper";
 
 // hosts
-const MOCK = "http://localhost:3004/";
-const HOST = "http://localhost:8080/gtas/";
+const MOCK = "http://localhost:3004";
+const HOST = "http://localhost:8080/gtas";
 
 // errors
 const PAXIDREQUIRED = "This method requires a Pax ID param.";
@@ -21,18 +21,18 @@ to this:
     
 */
 
-const PAX = MOCK + "passengers";
+const PAX = `${MOCK}/passengers`;
 const PAXCASEHISTORY = paxId => {
   if (!paxId) throw new TypeError(PAXIDREQUIRED);
 
-  return HOST + "passenger/caseHistory/" + paxId;
+  return `${HOST}/passenger/caseHistory/${paxId}`;
 };
 
 const PAXDETAIL = (paxId, flightId) => {
   if (!paxId) throw new TypeError(PAXIDREQUIRED);
   if (!flightId) throw new TypeError(FLIGHTIDREQUIRED);
 
-  return HOST + "passengers/passenger/" + paxId + "/details?flightId=" + flightId;
+  return `${HOST}/passengers/passenger/${paxId}/details?flightId=${flightId}`;
 };
 
 // getPax(flightId, pageRequest) {
@@ -64,7 +64,7 @@ const PAXWATCHLISTLINK = paxId => {
 
   // TODO - 1. change endpoint to "gtas/passengers/:id/watchlistlink" and
   // 2. handle both get and post (save) with it.
-  return HOST + "passengers/passenger/getwatchlistlink?paxId=" + paxId;
+  return `${HOST}/passengers/passenger/getwatchlistlink?paxId=${paxId}`;
 };
 
 // TODO, combine the endpoint here with the above
@@ -79,37 +79,27 @@ const PAXFLIGHTHISTORY = (paxId, flightId) => {
   if (!flightId) throw new TypeError(FLIGHTIDREQUIRED);
 
   // TODO - change to "passengers/{:paxid}/flighthistory/{:flightId}
-  return (
-    HOST + "passengers/passenger/flighthistory?paxId=" + paxId + "&flightId=" + flightId
-  );
+  return `${HOST}/passengers/passenger/flighthistory?paxId=${paxId}&flightId=${flightId}`;
 };
 
 const PAXFULLTRAVELHISTORY = (paxId, flightId) => {
   if (!paxId) throw new TypeError(PAXIDREQUIRED);
   if (!flightId) throw new TypeError(FLIGHTIDREQUIRED);
   // TODO - "passengers/{:paxid}/travelhistory/{:flightId}
-  return (
-    HOST + "passengers/passenger/travelhistory?paxId=" + paxId + "&flightId=" + flightId
-  );
+  return `${HOST}/passengers/passenger/travelhistory?paxId=${paxId}&flightId=${flightId}`;
 };
 
 const PAXBOOKINGDETAILHISTORY = (paxId, flightId) => {
   if (!paxId) throw new TypeError(PAXIDREQUIRED);
   if (!flightId) throw new TypeError(FLIGHTIDREQUIRED);
   // TODO - "passengers/{:paxid}/bookingdetailhistory/{:flightId}
-  return (
-    HOST +
-    "passengers/passenger/bookingdetailhistory?paxId=" +
-    paxId +
-    "&flightId=" +
-    flightId
-  );
+  return `${HOST}/passengers/passenger/bookingdetailhistory?paxId=${paxId}&flightId=${flightId}`;
 };
 
 const PAXDETAILHITHISTORY = paxId => {
   if (!paxId) throw new TypeError(PAXIDREQUIRED);
   // "passengers/{:paxid}/hitdetailhistory
-  return HOST + "passengers/passenger/hitdetailhistory?paxId=" + paxId;
+  return `${HOST}/passengers/passenger/hitdetailhistory?paxId=${paxId}`;
 };
 
 // pass 5 params to handle GET and POST
@@ -119,7 +109,7 @@ const PAXATTACHMENTS = (paxId, username, password, description, file) => {
   // passengers/{:id}/attachments for the GET, or maybe access the attachments directly?
   // attachments/{:attachmentId} ???
   // for POST, pass the other props in the body object
-  return HOST + "getattachments?paxId=" + paxId;
+  return `${HOST}/getattachments?paxId=${paxId}`;
 };
 
 // TODO - handle this in the above function
