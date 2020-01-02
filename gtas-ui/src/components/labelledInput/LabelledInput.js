@@ -6,7 +6,7 @@ import TextareaInput from "../inputs/textarea/Textarea";
 import FileInput from "../inputs/file/File";
 import SelectInput from "../inputs/select/Select";
 import { hasData } from "../../utils/text";
-import { Row } from "react-bootstrap";
+import LabelledInputDisplayWrapper from "../inputs/labelledInputDecorator";
 
 const textTypes = ["text", "number", "password", "email", "search", "tel"];
 const boolTypes = ["radio", "checkbox", "toggle"];
@@ -141,16 +141,7 @@ class LabelledInput extends Component {
   }
 
   render() {
-    const input = this.getInputByType();
-
-    return (
-      <div className={`field ${this.state.visibleStyle}`}>
-        <Row className="control">
-          <label className="txtlabel">{this.state.labelText}</label>
-        </Row>
-        <Row>{input}</Row>
-      </div>
-    );
+    return this.getInputByType();
   }
 }
 
@@ -182,4 +173,4 @@ LabelledInput.propTypes = {
   readOnly: PropTypes.string
 };
 
-export default LabelledInput;
+export default LabelledInputDisplayWrapper(LabelledInput);

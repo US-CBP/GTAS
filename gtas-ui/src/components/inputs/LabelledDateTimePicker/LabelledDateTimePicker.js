@@ -13,7 +13,7 @@ import inputPasses from "../Inputs.css";
 import "../../../../node_modules/react-datepicker/dist/react-datepicker.css";
 import PropTypes from "prop-types";
 import classes from "./LabelledDateTimePicker.css";
-import { Row } from "react-bootstrap";
+import LabelledInputDisplayWrapper from "../labelledInputDecorator";
 const REQUIRED = "required";
 
 const LabelledDateTimePicker = props => {
@@ -71,19 +71,12 @@ const LabelledDateTimePicker = props => {
 
   const totalClasses = { ...classes, ...inputPasses };
   return (
-    <div className={`field ${props.visibleStyle}`} style={totalClasses}>
-      <Row className="control">
-        <label className="txtlabel">{props.labelText}</label>
-      </Row>
-      <Row>
         <DatePicker
           {...dateProperties}
           className="form-input"
           style={totalClasses}
           onChange={onChange}
         />
-      </Row>
-    </div>
   );
 };
 
@@ -102,7 +95,7 @@ LabelledDateTimePicker.propTypes = {
   readOnly: PropTypes.string,
   dateRange: PropTypes.object
 };
-export default React.memo(LabelledDateTimePicker, (oldProps, newProps) => {
+export default LabelledInputDisplayWrapper(React.memo(LabelledDateTimePicker, (oldProps, newProps) => {
   // True when an update should not happen.
   return oldProps === newProps || oldProps.children === newProps.children;
-});
+}));

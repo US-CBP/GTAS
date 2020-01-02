@@ -9,7 +9,7 @@
 import React from "react";
 import Select from "react-select";
 import inputPasses from "../Inputs.css";
-import { Row } from "react-bootstrap";
+import LabelledInputDecorator from "../labelledInputDecorator";
 
 const LabelledSelectInput = props => {
   let minWidth = { "min-width": "100%" };
@@ -33,17 +33,10 @@ const LabelledSelectInput = props => {
   };
 
   return (
-    <div className={`field ${props.visibleStyle}`} style={finalStyles}>
-      <Row className="control" style={finalStyles}>
-        <label>{props.labelText}</label>
-      </Row>
-      <Row style={finalStyles}>
         <div style={finalStyles}>
           <Select style={finalStyles} {...props} onChange={onChange} />
         </div>
-      </Row>
-    </div>
   );
 };
 
-export default LabelledSelectInput;
+export default LabelledInputDecorator(LabelledSelectInput);
