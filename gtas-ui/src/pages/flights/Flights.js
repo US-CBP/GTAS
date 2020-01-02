@@ -4,12 +4,12 @@ import { flights } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
-import LabelledSelectInput from "../../components/inputs/LabelledSelectInput/LabelledSelectInput";
+import LabelledSelectInput from "../../components/inputs/labelledSelectInput/LabelledSelectInput";
 import FilterForm from "../../components/filterForm/FilterForm";
 import { store } from "../../appContext";
 import { hasData } from "../../utils/text";
 import "react-datepicker/dist/react-datepicker.css";
-import LabelledDateTimePicker from "../../components/inputs/LabelledDateTimePicker/LabelledDateTimePicker";
+import LabelledDateTimePicker from "../../components/inputs/labelledDateTimePicker/LabelledDateTimePicker";
 import "./Flights.css";
 import { Container, Row, Col } from "react-bootstrap";
 
@@ -46,7 +46,7 @@ const Flights = props => {
       }
     });
 
-   return "?request=" + encodeURIComponent(JSON.stringify(paramObject));
+    return "?request=" + encodeURIComponent(JSON.stringify(paramObject));
   };
 
   const Headers = [
@@ -169,12 +169,7 @@ const Flights = props => {
           <Title title="Flights" uri={props.uri} />
           <div className="flight-body-box">
             <div className="card">
-              <Table
-                  data={data}
-                  key={data}
-                  id="Flights"
-                  header={Headers}
-                  callback={cb} />
+              <Table data={data} key={data} id="Flights" header={Headers} callback={cb} />
             </div>
           </div>
         </Col>

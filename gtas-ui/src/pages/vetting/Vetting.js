@@ -5,7 +5,7 @@ import Title from "../../components/title/Title";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import FilterForm from "../../components/filterForm/FilterForm";
 import { hasData } from "../../utils/text";
-import LabelledDateTimePicker from "../../components/inputs/LabelledDateTimePicker/LabelledDateTimePicker";
+import LabelledDateTimePicker from "../../components/inputs/labelledDateTimePicker/LabelledDateTimePicker";
 import { Col, Container } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 
