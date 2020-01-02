@@ -6,14 +6,14 @@
  *
  */
 
-import React, { useEffect, useState } from "react";
-import DatePicker from "react-datepicker";
+import React, { useEffect, useState } from "./node_modules/react";
+import DatePicker from "./node_modules/react-datepicker";
 import inputPasses from "../Inputs.css";
 
-import "react-datepicker/dist/react-datepicker.css";
-import PropTypes from "prop-types";
+import "./node_modules/react-datepicker/dist/react-datepicker.css";
+import PropTypes from "./node_modules/propTypes";
 import classes from "./LabelledDateTimePicker.css";
-import { Row } from "react-bootstrap";
+import { Row } from "./node_modules/react-bootstrap";
 const REQUIRED = "required";
 
 const LabelledDateTimePicker = props => {

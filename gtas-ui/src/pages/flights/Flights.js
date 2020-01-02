@@ -4,7 +4,7 @@ import { flights } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
-import LabelledSelectInput from "../../components/inputs/labelledSelectInput/LabelledSelectInput";
+import LabelledSelectInput from "../../components/inputs/LabelledSelectInput/LabelledSelectInput";
 import FilterForm from "../../components/filterForm/FilterForm";
 // import { useTranslation } from "react-i18next";
 import Xl8 from "../../components/xl8/Xl8";
@@ -12,7 +12,7 @@ import Xl8 from "../../components/xl8/Xl8";
 import { store } from "../../appContext";
 import { hasData } from "../../utils/text";
 import "react-datepicker/dist/react-datepicker.css";
-import LabelledDateTimePicker from "../../components/inputs/labelledDateTimePicker/LabelledDateTimePicker";
+import LabelledDateTimePicker from "../../components/inputs/LabelledDateTimePicker/LabelledDateTimePicker";
 import "./Flights.css";
 import { Container, Row, Col } from "react-bootstrap";
 

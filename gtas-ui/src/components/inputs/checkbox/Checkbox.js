@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useRef } from "./node_modules/react";
+import PropTypes from "./node_modules/propTypes";
 
 /**
  * **Checkbox and Radio input component.**
