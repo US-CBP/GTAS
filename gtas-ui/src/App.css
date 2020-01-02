@@ -3,9 +3,9 @@
   z-index: 999;
 }
 nav.navbar {
-  border-top: 4px solid #276cda;
+  border-top: 4px solid #075484;;
   margin-bottom: 1rem;
-  background-color:#002841 ;
+  background-color:#075484; ;
 }
 .navbar-item.brand-text {
   font-weight: 300;
