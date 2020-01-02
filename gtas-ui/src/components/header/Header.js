@@ -1,17 +1,11 @@
 import React from "react";
 import { Link } from "@reach/router";
 import { Nav, Navbar, NavDropdown, Form, FormControl, Button } from "react-bootstrap";
-import { store } from '../../appContext';
 
 const Header = () => {
-  const globalState = React.useContext(store);
-  const loggedinUserName = globalState.state.user ?
-    globalState.state.user.lastName + ", " + globalState.state.user.firstName
+    let user = JSON.parse(localStorage.getItem("user"));
+    const loggedinUserName = user ? user.lastName + ", " + user.firstName
     : "User Name";
-
-
-
-
 
   return (
     <Navbar sticky="top" expand="md">
