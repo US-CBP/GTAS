@@ -9,7 +9,7 @@
 import React from "react";
 import Select from "react-select";
 import inputPasses from "../Inputs.css";
-import LabelledInputDecorator from "../labelledInputDecorator";
+import LabelledInputDecorator from "../LabelledInputDecorator";
 
 const LabelledSelectInput = props => {
   let minWidth = { "min-width": "100%" };

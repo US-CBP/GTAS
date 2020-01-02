@@ -13,7 +13,7 @@ import inputPasses from "../Inputs.css";
 import "../../../../node_modules/react-datepicker/dist/react-datepicker.css";
 import PropTypes from "prop-types";
 import classes from "./LabelledDateTimePicker.css";
-import LabelledInputDisplayWrapper from "../labelledInputDecorator";
+import LabelledInputDisplayWrapper from "../LabelledInputDecorator";
 const REQUIRED = "required";
 
 const LabelledDateTimePicker = props => {
