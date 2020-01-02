@@ -6,7 +6,7 @@ import TextareaInput from "../inputs/textarea/Textarea";
 import FileInput from "../inputs/file/File";
 import SelectInput from "../inputs/select/Select";
 import { hasData } from "../../utils/text";
-import LabelledInputDisplayWrapper from "../inputs/labelledInputDecorator";
+import LabelledInputDisplayWrapper from "../inputs/LabelledInputDecorator";
 
 const textTypes = ["text", "number", "password", "email", "search", "tel"];
 const boolTypes = ["radio", "checkbox", "toggle"];
