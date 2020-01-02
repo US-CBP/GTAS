@@ -16,7 +16,7 @@ const fileType = "file";
 const REQUIRED = "required";
 
 /**
- * **LabelledInput is a pass-thru for the Input components. It composes them with a label to standardize input appearance.**
+ * **LabelledInput is contains elements and props required by filter form for non 3rd party inputs.**
  */
 class LabelledInput extends Component {
   constructor(props) {
