@@ -6,10 +6,10 @@
  *
  */
 
-import React from "./node_modules/react";
-import Select from "./node_modules/react-select";
+import React from "react";
+import Select from "react-select";
 import inputPasses from "../Inputs.css";
-import { Row } from "./node_modules/react-bootstrap";
+import { Row } from "react-bootstrap";
 
 const LabelledSelectInput = props => {
   let minWidth = { "min-width": "100%" };
