@@ -24,7 +24,7 @@ LabelledInputs example:
 import LabelledInput from "./LabelledInput.js";
 
 const cb = () => {};
-<section className="section card message is-warning">
+<section>
   <div>
     <LabelledInput
       name="chkboxfield"

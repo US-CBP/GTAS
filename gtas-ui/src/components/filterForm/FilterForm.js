@@ -152,7 +152,7 @@ class FilterForm extends React.Component {
   render() {
     return (
       <div>
-        <div className="menu-label has-text-centered">{this.props.title}</div>
+        <div>{this.props.title}</div>
         <form
           onSubmit={this.onFormSubmit}
           onReset={this.onReset}
