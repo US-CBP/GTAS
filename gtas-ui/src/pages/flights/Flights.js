@@ -172,12 +172,20 @@ const Flights = props => {
         <Col lg="10" md="9" sm="9" className="flight-body">
           <Title title="Flights" uri={props.uri} />
           <div className="flight-body-box">
-            <div className="card">
-              <Table data={data} key={data} id="Flights" header={Headers} callback={cb} />
+            <Link to="../flightpax">Flight Passengers</Link>
+            <div className="card events-card">
+              <Table
+                data={data.flights}
+                id="Flights"
+                callback={cb}
+                key={data}
+                ignoredFields={["countDown",  "codeshares"]}
+              />
             </div>
           </div>
-        </Col>
+        </Col >
       </Row>
+      
     </Container>
   );
 };
