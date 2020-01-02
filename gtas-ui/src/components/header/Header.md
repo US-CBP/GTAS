@@ -7,13 +7,11 @@ Could update this later to read from a json file to dynamically determine which 
 Header example:
 
 ```js
-import "bulma/css/bulma.css";
-
 <section className="section card message is-success">
   <div>
     <Header origin="IAD" />
   </div>
-</section>;
+</section>
 ```
 
 ---

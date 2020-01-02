@@ -5,7 +5,6 @@ Xl8 Translate examples:
 Expecting to have it handle translations at the component level so that any child components containing an **`xid`** and an **`xname`** prop are handled without requiring their own xl8 tags. This will simplify the code, but further testing needs to be done to see how it impacts performance and upcoming features like Suspense and code splitting.
 
 ```js
-import "bulma/css/bulma.css";
 import LabelledInput from "../labelledInput/LabelledInput.js";
 import Checkbox from "../inputs/checkbox/Checkbox.js";
 import "./Xl8.css";

@@ -4,7 +4,7 @@ import "./utils";
 import svgs from "./utils";
 import "../../services/configService";
 import { cypher, cypherAuth } from "../../services/configService";
-import d3 from "d3";
+import * as d3 from "d3";
 
 const Graph = props => {
   // constructor(props) {

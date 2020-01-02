@@ -1,7 +1,6 @@
 Checkbox and Radio examples:
 
 ```js
-import "bulma/css/bulma.css";
 import ICheckbox from "./ICheckbox.js";
 
 const cb = () => {};

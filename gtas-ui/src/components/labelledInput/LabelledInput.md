@@ -21,7 +21,6 @@ selected={[this.state.txt2]} alt='nothing' options={['one', 'two', 'three']} />
 LabelledInputs example:
 
 ```js
-import "bulma/css/bulma.css";
 import LabelledInput from "./LabelledInput.js";
 
 const cb = () => {};
