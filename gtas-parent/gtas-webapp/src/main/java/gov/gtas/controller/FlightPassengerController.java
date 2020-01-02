@@ -5,41 +5,21 @@
  */
 package gov.gtas.controller;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.gtas.services.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import gov.gtas.common.UserLocationSetting;
-import gov.gtas.common.UserLocationStatus;
-import gov.gtas.constants.Constants;
-import gov.gtas.model.lookup.AppConfiguration;
-import gov.gtas.security.service.GtasSecurityUtils;
-import gov.gtas.services.AppConfigurationService;
-import gov.gtas.services.DataManagementService;
 import gov.gtas.services.FlightService;
 import gov.gtas.services.PassengerService;
-import gov.gtas.services.UserLocationService;
-import gov.gtas.services.dto.FlightsPageDto;
-import gov.gtas.services.dto.FlightsRequestDto;
-import gov.gtas.services.dto.PassengersPageDto;
-import gov.gtas.services.dto.PassengersRequestDto;
-import gov.gtas.services.security.UserService;
-import gov.gtas.vo.passenger.UserLocationVo;
 
 @RestController
 public class FlightPassengerController {
@@ -49,43 +29,16 @@ public class FlightPassengerController {
 	@Autowired
 	private PassengerService paxService;
 
-	@Autowired
-	private DataManagementService dataManagementService;
-
-	@Autowired
-	private UserService userService;
-
-	@Autowired
-	private UserLocationSetting userLocationSetting;
-
-	private static final Logger logger = LoggerFactory.getLogger(FlightPassengerController.class);
+	@RequestMapping(value = "/flights", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody FlightsPageDto getAllFlights(@RequestParam(value = "request", required = false) String requestDTO) throws IOException {
+		final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PriorityVettingListRequest.DATE_FORMAT);
+		final ObjectMapper objectMapper = new ObjectMapper().setDateFormat(simpleDateFormat);
+		final FlightsRequestDto request = objectMapper.readValue(requestDTO, FlightsRequestDto.class);
+		return flightService.findAll(request);
+	}
 
 	@RequestMapping(value = "/flights", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody FlightsPageDto getAllFlights(@RequestBody FlightsRequestDto request, HttpServletRequest hsr) {
-		hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-
-		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		boolean isAdmin = userService.isAdminUser(userId);
-		String userLocationAirport;
-		UserLocationStatus userLocationStatus = null;
-		Set<String> defaultDestAirport = new HashSet<String>();
-
-		/*
-		if (!isAdmin) {
-			Object userLocationObject = hsr.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION);
-			if (userLocationObject != null) {
-				userLocationAirport = userLocationObject.toString();
-			} else {
-				userLocationStatus = userLocationSetting.setPrimaryLocation(hsr, userId);
-				userLocationAirport = userLocationStatus.getPrimaryLocationAirport();
-			}
-
-			if (request.getSearchSubmitFlag() == null && userLocationAirport != null) {
-				defaultDestAirport.add(userLocationAirport);
-				request.setDestinationAirports(defaultDestAirport);
-			}
-
-		}*/
+	public @ResponseBody FlightsPageDto getAllFlights(@RequestBody FlightsRequestDto request) {
 
 		return flightService.findAll(request);
 	}

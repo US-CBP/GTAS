@@ -76,7 +76,7 @@ class FilterForm extends React.Component {
     this.fetchWithParams();
   }
 
-  fetchWithParams() {
+  fetchWithParams(id) {
     let params;
     if (this.props.paramAdapter === undefined) {
       // default behavior
@@ -90,11 +90,11 @@ class FilterForm extends React.Component {
       params = this.props.paramAdapter(this.state.fields);
     }
 
-    this.fetchData(params);
+    this.fetchData(id, params);
   }
 
-  fetchData(params) {
-    this.props.service(params).then(res => {
+  fetchData(id, params) {
+    this.props.service(id, params).then(res => {
       this.props.callback(res);
     });
   }
