@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import inputPasses from "../Inputs.css";
 
-import "react-datepicker/dist/react-datepicker.css";
+import "../../../../node_modules/react-datepicker/dist/react-datepicker.css";
 import PropTypes from "prop-types";
 import classes from "./LabelledDateTimePicker.css";
 import { Row } from "react-bootstrap";
