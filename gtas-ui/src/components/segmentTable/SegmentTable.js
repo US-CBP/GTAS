@@ -27,12 +27,10 @@ class SegmentTable extends React.Component {
       return acc;
     }, {});
 
-    const color = `${props.color || "yellow"}`;
     this.state = {
       data: sdata,
       header: sheader,
-      refs: refs,
-      color: color
+      refs: refs
     };
   }
 
