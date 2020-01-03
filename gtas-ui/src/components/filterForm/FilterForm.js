@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 import { hasData, asArray } from "../../utils/text";
 import "./FilterForm.css";
+import { Form, Button, ButtonToolbar } from "react-bootstrap";
 
 /**
  * **Generic filter form used to fetch data for use in another component.**
@@ -64,7 +65,7 @@ class FilterForm extends React.Component {
     let key = this.state.formkey;
     let fields = [];
 
-    this.state.datafieldNames.forEach(function(name) {
+    this.state.datafieldNames.forEach(function (name) {
       fields[name] = "";
     });
 
@@ -153,7 +154,7 @@ class FilterForm extends React.Component {
     return (
       <div>
         <div className="menu-label has-text-centered">{this.props.title}</div>
-        <form
+        <Form
           onSubmit={this.onFormSubmit}
           onReset={this.onReset}
           key={this.state.formkey}
@@ -161,15 +162,14 @@ class FilterForm extends React.Component {
           <ErrorBoundary message="FilterForm children could not be rendered">
             {this.state.kids}
           </ErrorBoundary>
-          <div className="text-center pad-top-20 flex-button" id="button-div">
-            <button className={`button is-block button`} type="reset">
-              {this.props.clearText || "Reset"}
-            </button>
-            <button className={`button is-block is-info gradient-button`} type="submit">
+          <br></br>
+          <ButtonToolbar>
+            <Button type="reset" variant="outline-info"> {this.props.clearText || "Reset"}</Button>&nbsp;
+            <Button type="submit" className="gradient-button" variant="outline-success">
               {this.props.submitText || "Search"}
-            </button>
-          </div>
-        </form>
+            </Button>
+          </ButtonToolbar>
+        </Form>
       </div>
     );
   }

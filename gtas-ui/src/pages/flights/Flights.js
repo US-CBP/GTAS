@@ -87,9 +87,9 @@ const Flights = props => {
   ];
   return (
     <Container fluid>
-      <Row>
-        <Col lg="2" md="3" sm="3">
-          <div className="flight-filter-nav">
+      <Row flex>
+        <Col lg="3" md="3" xs="12">
+          <div className="filter-side-nav">
             <FilterForm
               service={flights.post}
               title="Filter"
@@ -169,23 +169,13 @@ const Flights = props => {
           </div>
         </Col>
 
-        <Col lg="10" md="9" sm="9" className="flight-body">
+        <Col lg="9" md="9" xs="12">
           <Title title="Flights" uri={props.uri} />
-          <div className="flight-body-box">
-            <Link to="../flightpax">Flight Passengers</Link>
-            <div className="card events-card">
-              <Table
-                data={data.flights}
-                id="Flights"
-                callback={cb}
-                key={data}
-                ignoredFields={["countDown",  "codeshares"]}
-              />
-            </div>
+          <div>
+            <Table data={data} key={data} id="Flights" header={Headers} callback={cb} />
           </div>
-        </Col >
+        </Col>
       </Row>
-      
     </Container>
   );
 };

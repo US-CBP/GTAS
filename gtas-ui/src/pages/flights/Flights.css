@@ -1,4 +1,4 @@
-.flight-filter-nav{
+/* .flight-filter-nav{
     background-color: #fff;
     border-radius: 4px;
     box-shadow: 0 0.5em 0.5em -0.125em rgba(10,10,10,0.5), 0 0 0 1px rgba(10,10,10,.02);
@@ -7,7 +7,7 @@
     padding: 1.25rem;
     position: sticky;
 
-}
+} */
 .flight-body-box{
     background-color: #fff;
     border-radius: 4px;
@@ -21,3 +21,19 @@
     display: flex;
     flex-wrap: nowrap;
 }
+
+.filter-side-nav {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 4rem;
+    z-index: 1000;
+    height: auto;
+    background-color: #f7f7f7;
+    border-right: 1px solid #ececec;
+    padding: 1.5rem;
+    box-shadow: 0 0.5em 0.5em -0.125em rgba(10,10,10,0.5), 0 0 0 1px rgba(10,10,10,.02);
+    border-radius: 10px;
+    
+} 
+
+
