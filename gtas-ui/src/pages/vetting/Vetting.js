@@ -37,8 +37,7 @@ const Vetting = props => {
         paramObject[name] = fields[name];
       }
     });
-    // return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
-    return paramObject;
+     return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
   };
 
   return (
