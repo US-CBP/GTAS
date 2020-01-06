@@ -171,9 +171,7 @@ const Flights = props => {
 
         <Col lg="9" md="9" xs="12">
           <Title title="Flights" uri={props.uri} />
-          <div>
             <Table data={data} key={data} id="Flights" header={Headers} callback={cb} />
-          </div>
         </Col>
       </Row>
     </Container>

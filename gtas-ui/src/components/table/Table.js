@@ -6,6 +6,7 @@ import { useTable, usePagination, useSortBy, useFilters } from "react-table";
 import "./Table.css";
 import { withTranslation } from "react-i18next";
 import Xl8 from "../xl8/Xl8";
+import BTable from 'react-bootstrap/Table';
 
 //Will auto-populate with data retrieved from the given uri
 //Attempts to format the header from the column names, but can be passed a header array instead.
@@ -88,7 +89,7 @@ class Table extends Component {
     };
     return (
       <>
-        <table {...getTableProps()}>
+        <BTable {...getTableProps()} responsive striped bordered hover>
           <thead>
             {headerGroups.map(headerGroup => (
               <tr {...headerGroup.getHeaderGroupProps()}>
@@ -119,7 +120,7 @@ class Table extends Component {
               );
             })}
           </tbody>
-        </table>
+        </BTable>
 
         <div className="pagination">
           <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
