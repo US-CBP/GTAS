@@ -7,7 +7,7 @@ Could update this later to read from a json file to dynamically determine which 
 Header example:
 
 ```js
-import "bulma/css/bulma.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 <section className="section card message is-success">
   <div>

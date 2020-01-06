@@ -21,43 +21,46 @@ const fetch = {
 
 function cb(e) {}
 
-<div className="section card message is-success">
-  <div className="card column is-4 is-offset-4">
-    <FilterForm title="Student Filter Form" service={fetch} id="loginform" callback={cb}>
-      <LabelledInput
-        inputType="text"
-        datafield
-        labelText="Name"
-        name="name"
-        callback={cb}
-        alt="name"
-      />
-      <LabelledInput
-        inputType="number"
-        datafield
-        labelText="Age"
-        name="age"
-        callback={cb}
-        alt="age"
-      />
-      <LabelledInput
-        inputType="text"
-        datafield
-        labelText="School"
-        name="school"
-        callback={cb}
-        alt="school"
-      />
-      <LabelledInput
-        inputType="number"
-        datafield
-        labelText="Grade"
-        name="grade"
-        callback={cb}
-        alt="grade"
-      />
-    </FilterForm>
-  </div>
+<div className="card column is-4 is-offset-4">
+  <FilterForm
+    title="Student Filter Form"
+    service={fetch.get}
+    id="loginform"
+    callback={cb}
+  >
+    <LabelledInput
+      inputType="text"
+      datafield
+      labelText="Name"
+      name="name"
+      callback={cb}
+      alt="name"
+    />
+    <LabelledInput
+      inputType="number"
+      datafield
+      labelText="Age"
+      name="age"
+      callback={cb}
+      alt="age"
+    />
+    <LabelledInput
+      inputType="text"
+      datafield
+      labelText="School"
+      name="school"
+      callback={cb}
+      alt="school"
+    />
+    <LabelledInput
+      inputType="number"
+      datafield
+      labelText="Grade"
+      name="grade"
+      callback={cb}
+      alt="grade"
+    />
+  </FilterForm>
 </div>;
 ```
 

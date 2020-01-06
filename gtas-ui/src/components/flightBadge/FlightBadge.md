@@ -5,8 +5,6 @@ Actual formatting is TBD
 FlightBadge example:
 
 ```js
-import "bulma/css/bulma.css";
-
 <section className="section card message is-warning">
   <div>
     <FlightBadge
@@ -17,7 +15,7 @@ import "bulma/css/bulma.css";
       etd="01/23/2019"
     />
   </div>
-</section>;
+</section>
 ```
 
 ---

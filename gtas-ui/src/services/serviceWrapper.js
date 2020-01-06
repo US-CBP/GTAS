@@ -26,7 +26,7 @@ const DELETEID = "The delete method requires a valid id parameter.";
 // SETOPS - builds an collection of crud operations for the entities to expose as object methods. Static entity data
 // (uri) is bound to the op methods here to keep the ops code dry and not force callers to pass it in as a param.
 // There are other ways to do it, but it means the setOps/crud ops code won't change for most new endpoints.
-function setOps(ctx, ...fxns) {
+export function setOps(ctx, ...fxns) {
   // context - allow just a uri string or an object for more params.
   const context = isObject(ctx)
     ? { uri: ctx.uri, contentType: ctx.contentType || APPLICATION_JSON }
@@ -40,7 +40,7 @@ function setOps(ctx, ...fxns) {
 }
 
 //  CRUD OPERATIONS
-function post(body) {
+export function post(body) {
   if (!hasData(body)) throw new TypeError(POSTBODY);
 
   return GenericService({
@@ -51,7 +51,7 @@ function post(body) {
   });
 }
 
-function authPost(body) {
+export function authPost(body) {
   Cookies.remove("JSESSIONID");
   if (!hasData(body)) throw new TypeError(POSTBODY);
   const username = body.username !== undefined ? body.username.toUpperCase() : "";
@@ -68,13 +68,13 @@ function authPost(body) {
   });
 }
 
-function get(id, params) {
+export function get(id, params) {
   const query = hasData(id) ? `/${id}` : hasData(params) ? params : "";
 
   return GenericService({ uri: this.uri + query, method: GET });
 }
 
-function put(body, id) {
+export function put(body, id) {
   if (!hasData(body)) throw new TypeError(PUTBODY);
   if (!hasData(id)) throw new TypeError(PUTID);
 
@@ -89,7 +89,7 @@ function put(body, id) {
 
 // APB shd params be an object so we can handle parsing it into a queryparam here?
 // PutParams - same as put, but use queryparams rather than a body
-function putp(params) {
+export function putp(params) {
   if (!hasData(params)) throw new TypeError(PUTPARAMS);
 
   const query = `${params}`;
@@ -99,7 +99,7 @@ function putp(params) {
   });
 }
 
-function del(id) {
+export function del(id) {
   if (!hasData(id)) throw new TypeError(DELETEID);
 
   const query = `\\${id}`;

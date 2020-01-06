@@ -1,7 +1,6 @@
 File input examples:
 
 ```js
-import "bulma/css/bulma.css";
 import File from "./File.js";
 
 const cb = () => {};

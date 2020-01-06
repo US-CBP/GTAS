@@ -6,9 +6,6 @@ import { Link } from "@reach/router";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import LabelledSelectInput from "../../components/inputs/LabelledSelectInput/LabelledSelectInput";
 import FilterForm from "../../components/filterForm/FilterForm";
-// import { useTranslation } from "react-i18next";
-import Xl8 from "../../components/xl8/Xl8";
-
 import { store } from "../../appContext";
 import { hasData } from "../../utils/text";
 import "react-datepicker/dist/react-datepicker.css";
@@ -49,8 +46,7 @@ const Flights = props => {
       }
     });
 
-    return paramObject;
-    // return "?request=" + encodeURIComponent(JSON.stringify(paramObject));
+    return "?request=" + encodeURIComponent(JSON.stringify(paramObject));
   };
 
   const Headers = [
@@ -91,7 +87,7 @@ const Flights = props => {
         <Col lg="3" md="3" xs="12">
           <div className="filter-side-nav">
             <FilterForm
-              service={flights.post}
+              service={flights.get}
               title="Filter"
               callback={setDataWrapper}
               paramAdapter={parameterAdapter}

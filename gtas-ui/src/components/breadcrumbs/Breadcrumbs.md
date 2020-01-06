@@ -6,12 +6,9 @@ It takes a **`uri`** prop and will format and render the crumbs for that path. H
 Breadcrumbs example:
 
 ```js
-
-<section className="section card message is-link">
-  <div>
-    <Breadcrumbs uri="/gtas/admin/settings" />
-  </div>
-</section>;
+<div>
+  <Breadcrumbs uri="/gtas/admin/settings" />
+</div>
 ```
 
 ---
