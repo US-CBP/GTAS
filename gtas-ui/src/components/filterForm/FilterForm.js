@@ -25,25 +25,13 @@ class FilterForm extends React.Component {
       const datafield = child.props.datafield;
 
       if (datafield) {
-        const noname = `unnamedfield${idx}`;
-        const componentname = child.props.name || noname;
-        const fieldname = datafield === true ? componentname : datafield;
-
-        // Either the name or datafield prop must contain a string
-        if (fieldname === noname) {
-          throw new Error(`The child collection contains a "datafield" element whose name is not defined in the 
-          "name" or "datafield" props. Remove the "datafield" prop or define a name for the element.`);
-        }
-        const getChildVal = val => {
-          if (val instanceof Date) {
-            return val.toISOString();
-          } else {
-            return val;
+        if (Array.isArray(datafield)) {
+          for (let dfield of datafield) {
+            this.addDataFieldFromArray(idx, child, dfield, fieldMap, fields, datafieldNames);
           }
-        };
-        fieldMap[componentname] = fieldname;
-        fields[fieldMap[componentname]] = getChildVal(child.props.inputVal);
-        datafieldNames.push(fieldname);
+        } else {
+          this.addDataField(idx, child, datafield, fieldMap, fields, datafieldNames);
+        }
       }
     });
 
@@ -58,7 +46,41 @@ class FilterForm extends React.Component {
     };
   }
 
-  // To reset the FilterForm, we clear the values of the input fields in state and re-render
+  addDataFieldFromArray(idx, child, datafield, fieldMap, fields, datafieldNames) {
+    const componentname = datafield;
+    const fieldname = datafield;
+    const getChildVal = this.getChildValue();
+    fieldMap[componentname] = fieldname;
+    fields[fieldMap[componentname]] = getChildVal(child.props.inputVal[datafield]);
+    datafieldNames.push(fieldname);
+  }
+
+  getChildValue() {
+    return val => {
+      if (val instanceof Date) {
+        return val.toISOString();
+      } else {
+        return val;
+      }
+    };
+  }
+
+  addDataField(idx, child, datafield, fieldMap, fields, datafieldNames) {
+    const noname = `unnamedfield${idx}`;
+    const componentname = child.props.name || noname;
+    const fieldname = datafield === true ? componentname : datafield;
+    // Either the name or datafield prop must contain a string
+    if (fieldname === noname) {
+      throw new Error(`The child collection contains a "datafield" element whose name is not defined in the 
+          "name" or "datafield" props. Remove the "datafield" prop or define a name for the element.`);
+    }
+    const getChildVal = this.getChildValue();
+    fieldMap[componentname] = fieldname;
+    fields[fieldMap[componentname]] = getChildVal(child.props.inputVal);
+    datafieldNames.push(fieldname);
+  }
+
+// To reset the FilterForm, we clear the values of the input fields in state and re-render
   // the cleared form by updating the form's key. We could also dynamically generate a ref for each
   // child field and clear each ref, but this is simpler.
   onReset = () => {

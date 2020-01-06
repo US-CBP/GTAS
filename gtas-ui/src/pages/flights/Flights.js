@@ -9,9 +9,10 @@ import FilterForm from "../../components/filterForm/FilterForm";
 import { store } from "../../appContext";
 import { hasData } from "../../utils/text";
 import "react-datepicker/dist/react-datepicker.css";
-import LabelledDateTimePicker from "../../components/inputs/LabelledDateTimePicker/LabelledDateTimePicker";
 import "./Flights.css";
 import { Container, Row, Col } from "react-bootstrap";
+import LabelledDateTimePickerStartEnd
+  from "../../components/inputs/LabelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
 
 const Flights = props => {
   const cb = () => {};
@@ -23,19 +24,20 @@ const Flights = props => {
     setData(dataOrEmptyArray);
   };
 
-  let startDate = new Date();
-  let endDate = new Date();
-  // let startDate = new Date(2018, 0, 0);
-  // let endDate = new Date(2020, 0, 0);
-
-  endDate.setDate(endDate.getDate() + 1);
-  startDate.setHours(startDate.getHours() - 1);
+  let sDate = new Date();
+  let eDate = new Date();
+  eDate.setDate(eDate.getDate() + 1);
+  sDate.setHours(sDate.getHours() - 1);
+  const [startDate, setStartData] = useState(sDate);
+  const [endDate, setEndData] = useState(eDate);
 
   useEffect(() => {
     console.log(globalState); // debug statement to prove user loaded.
     let user = JSON.parse(localStorage.getItem("user"));
     console.log(user); // debug statement to prove user was loaded in local storage.
-  }, [globalState]);
+    console.log(user); // debug statement to prove user was loaded in local storage.
+  }, [globalState, endDate, startDate]);
+
 
   const parameterAdapter = fields => {
     let paramObject = { pageSize: 20, pageNumber: 1 };
@@ -126,43 +128,25 @@ const Flights = props => {
                 ReturnString
                 options={directions}
               />
-              <LabelledDateTimePicker
-                datafield="etaStart"
-                name="etaStart"
-                alt="Start Date"
-                labelText="Start Date and Time"
+              <LabelledDateTimePickerStartEnd
+                datafield={['etaStart', 'etaEnd']}
+                name={['etaStart', 'etaEnd']}
+                alt="Start/End Datepicker"
                 inputType="dateTime"
                 dateFormat="yyyy-MM-dd h:mm aa"
                 callback={cb}
                 showTimeSelect
                 showYearDropdown
-                inputVal={startDate}
+                inputVal={{etaStart: startDate, etaEnd: endDate}}
                 startDate={startDate}
                 endDate={endDate}
-                dateRange={{
-                  position: "start"
-                }}
+                endMut={setEndData}
+                startMut={setStartData}
               />
-              <LabelledDateTimePicker
-                datafield="etaEnd"
-                name="etaEnd"
-                alt="End Date"
-                labelText="End Date and Time"
-                inputType="dateTime"
-                dateFormat="yyyy-MM-dd h:mm aa"
-                callback={cb}
-                showTimeSelect
-                inputVal={endDate}
-                startDate={startDate}
-                endDate={endDate}
-                showYearDropdown
-                end
-                dateRange={{
-                  position: "end"
-                }}
-              />
-            </FilterForm>
+          </FilterForm>
           </div>
+          <Row>
+          </Row>
         </Col>
 
         <Col lg="9" md="9" xs="12">

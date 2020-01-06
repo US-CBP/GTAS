@@ -5,19 +5,22 @@ import Title from "../../components/title/Title";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import FilterForm from "../../components/filterForm/FilterForm";
 import { hasData } from "../../utils/text";
-import LabelledDateTimePicker from "../../components/inputs/LabelledDateTimePicker/LabelledDateTimePicker";
 import { Col, Container } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
+import LabelledDateTimePickerStartEnd
+  from "../../components/inputs/LabelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
 
 const Vetting = props => {
   const onTableChange = () => {};
   const onTextChange = () => {};
   const cb = () => {};
 
-  let startDate = new Date();
-  let endDate = new Date();
-  endDate.setDate(endDate.getDate() + 1);
-  startDate.setHours(startDate.getHours() - 1);
+  let sDate = new Date();
+  let eDate = new Date();
+  eDate.setDate(eDate.getDate() + 1);
+  sDate.setHours(sDate.getHours() - 1);
+  const [startDate, setStartData] = useState(sDate);
+  const [endDate, setEndData] = useState(eDate);
 
   const [data, setData] = useState([{}]);
 
@@ -98,40 +101,20 @@ const Vetting = props => {
               callback={onTextChange}
               alt="nothing"
             />
-            <LabelledDateTimePicker
-              datafield="etaStart"
-              name="etaStart"
-              alt="Start Date ETA"
-              labelText="Start Date ETA"
-              inputType="dateTime"
-              dateFormat="yyyy-MM-dd h:mm aa"
-              callback={cb}
-              showTimeSelect
-              showYearDropdown
-              inputVal={startDate}
-              startDate={startDate}
-              endDate={endDate}
-              dateRange={{
-                position: "start"
-              }}
-            />
-            <LabelledDateTimePicker
-              datafield="etaEnd"
-              name="etaEnd"
-              alt="Start Date"
-              labelText="End Date ETD"
-              inputType="dateTime"
-              dateFormat="yyyy-MM-dd h:mm aa"
-              callback={cb}
-              showTimeSelect
-              inputVal={endDate}
-              startDate={startDate}
-              endDate={endDate}
-              showYearDropdown
-              end
-              dateRange={{
-                position: "end"
-              }}
+            <LabelledDateTimePickerStartEnd
+                datafield={['etaStart', 'etaEnd']}
+                name={['etaStart', 'etaEnd']}
+                alt="Start/End Datepicker"
+                inputType="dateTime"
+                dateFormat="yyyy-MM-dd h:mm aa"
+                callback={cb}
+                showTimeSelect
+                showYearDropdown
+                inputVal={{etaStart: startDate, etaEnd: endDate}}
+                startDate={startDate}
+                endDate={endDate}
+                endMut={setEndData}
+                startMut={setStartData}
             />
           </FilterForm>
         </Col>
