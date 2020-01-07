@@ -6,24 +6,24 @@
  *
  */
 
-import React from 'react';
-import {Row} from "react-bootstrap";
+import React from "react";
+import { Row } from "react-bootstrap";
 import PropTypes from "prop-types";
 const LabelledInputDisplayWrapper = Component => props => {
-    return  (
-        <div>
-            <Row className="control">
-                <label>{props.labelText}</label>
-            </Row>
-            <Row>
-                <Component {...props } />
-            </Row>
-        </div>
-    )
+  return (
+    <div>
+      <Row className="control">
+        <label>{props.labelText}</label>
+      </Row>
+      <Row>
+        <Component {...props} />
+      </Row>
+    </div>
+  );
 };
 
 LabelledInputDisplayWrapper.propTypes = {
-    labelText: PropTypes.string.isRequired
+  labelText: PropTypes.string.isRequired
 };
 
 export default LabelledInputDisplayWrapper;

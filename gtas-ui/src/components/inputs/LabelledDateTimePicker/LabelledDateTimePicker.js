@@ -71,12 +71,12 @@ const LabelledDateTimePicker = props => {
 
   const totalClasses = { ...classes, ...inputPasses };
   return (
-        <DatePicker
-          {...dateProperties}
-          className="form-input"
-          style={totalClasses}
-          onChange={onChange}
-        />
+    <DatePicker
+      {...dateProperties}
+      className="form-input"
+      style={totalClasses}
+      onChange={onChange}
+    />
   );
 };
 
@@ -95,7 +95,9 @@ LabelledDateTimePicker.propTypes = {
   readOnly: PropTypes.string,
   dateRange: PropTypes.object
 };
-export default LabelledInputDisplayWrapper(React.memo(LabelledDateTimePicker, (oldProps, newProps) => {
-  // True when an update should not happen.
-  return oldProps === newProps || oldProps.children === newProps.children;
-}));
+export default LabelledInputDisplayWrapper(
+  React.memo(LabelledDateTimePicker, (oldProps, newProps) => {
+    // True when an update should not happen.
+    return oldProps === newProps || oldProps.children === newProps.children;
+  })
+);

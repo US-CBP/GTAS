@@ -6,10 +6,9 @@
  *
  */
 
-
 /*TODO: ensure datepicker is mobile friendly*/
 @media (min-width: 500px) {
-    .react-datepicker {
-        display: inline-flex;
-    }
+  .react-datepicker {
+    display: inline-flex;
+  }
 }

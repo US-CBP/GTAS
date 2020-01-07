@@ -33,9 +33,9 @@ const LabelledSelectInput = props => {
   };
 
   return (
-        <div style={finalStyles}>
-          <Select style={finalStyles} {...props} onChange={onChange} />
-        </div>
+    <div style={finalStyles}>
+      <Select style={finalStyles} {...props} onChange={onChange} />
+    </div>
   );
 };
 

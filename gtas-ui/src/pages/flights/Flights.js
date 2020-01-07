@@ -4,15 +4,14 @@ import { flights } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
-import LabelledSelectInput from "../../components/inputs/LabelledSelectInput/LabelledSelectInput";
+import LabelledSelectInput from "../../components/inputs/labelledSelectInput/LabelledSelectInput";
 import FilterForm from "../../components/filterForm/FilterForm";
 import { store } from "../../appContext";
 import { hasData } from "../../utils/text";
 import "react-datepicker/dist/react-datepicker.css";
 import "./Flights.css";
 import { Container, Row, Col } from "react-bootstrap";
-import LabelledDateTimePickerStartEnd
-  from "../../components/inputs/LabelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
+import LabelledDateTimePickerStartEnd from "../../components/inputs/labelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
 
 const Flights = props => {
   const cb = () => {};
@@ -37,7 +36,6 @@ const Flights = props => {
     console.log(user); // debug statement to prove user was loaded in local storage.
     console.log(user); // debug statement to prove user was loaded in local storage.
   }, [globalState, endDate, startDate]);
-
 
   const parameterAdapter = fields => {
     let paramObject = { pageSize: 20, pageNumber: 1 };
@@ -129,29 +127,28 @@ const Flights = props => {
                 options={directions}
               />
               <LabelledDateTimePickerStartEnd
-                datafield={['etaStart', 'etaEnd']}
-                name={['etaStart', 'etaEnd']}
+                datafield={["etaStart", "etaEnd"]}
+                name={["etaStart", "etaEnd"]}
                 alt="Start/End Datepicker"
                 inputType="dateTime"
                 dateFormat="yyyy-MM-dd h:mm aa"
                 callback={cb}
                 showTimeSelect
                 showYearDropdown
-                inputVal={{etaStart: startDate, etaEnd: endDate}}
+                inputVal={{ etaStart: startDate, etaEnd: endDate }}
                 startDate={startDate}
                 endDate={endDate}
                 endMut={setEndData}
                 startMut={setStartData}
               />
-          </FilterForm>
+            </FilterForm>
           </div>
-          <Row>
-          </Row>
+          <Row></Row>
         </Col>
 
         <Col lg="9" md="9" xs="12">
           <Title title="Flights" uri={props.uri} />
-            <Table data={data} key={data} id="Flights" header={Headers} callback={cb} />
+          <Table data={data} key={data} id="Flights" header={Headers} callback={cb} />
         </Col>
       </Row>
     </Container>

@@ -7,8 +7,7 @@ import FilterForm from "../../components/filterForm/FilterForm";
 import { hasData } from "../../utils/text";
 import { Col, Container } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import LabelledDateTimePickerStartEnd
-  from "../../components/inputs/LabelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
+import LabelledDateTimePickerStartEnd from "../../components/inputs/labelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
 
 const Vetting = props => {
   const onTableChange = () => {};
@@ -37,7 +36,7 @@ const Vetting = props => {
         paramObject[name] = fields[name];
       }
     });
-     return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
+    return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
   };
 
   return (
@@ -101,19 +100,19 @@ const Vetting = props => {
               alt="nothing"
             />
             <LabelledDateTimePickerStartEnd
-                datafield={['etaStart', 'etaEnd']}
-                name={['etaStart', 'etaEnd']}
-                alt="Start/End Datepicker"
-                inputType="dateTime"
-                dateFormat="yyyy-MM-dd h:mm aa"
-                callback={cb}
-                showTimeSelect
-                showYearDropdown
-                inputVal={{etaStart: startDate, etaEnd: endDate}}
-                startDate={startDate}
-                endDate={endDate}
-                endMut={setEndData}
-                startMut={setStartData}
+              datafield={["etaStart", "etaEnd"]}
+              name={["etaStart", "etaEnd"]}
+              alt="Start/End Datepicker"
+              inputType="dateTime"
+              dateFormat="yyyy-MM-dd h:mm aa"
+              callback={cb}
+              showTimeSelect
+              showYearDropdown
+              inputVal={{ etaStart: startDate, etaEnd: endDate }}
+              startDate={startDate}
+              endDate={endDate}
+              endMut={setEndData}
+              startMut={setStartData}
             />
           </FilterForm>
         </Col>

@@ -14,66 +14,65 @@ import "../../../../node_modules/react-datepicker/dist/react-datepicker.css";
 import PropTypes from "prop-types";
 import classes from "./LabelledDateTimePickerStartEnd.css";
 import LabelledInputDisplayWrapper from "../LabelledInputDecorator";
-import {Container, Row} from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 const REQUIRED = "required";
 
 const LabelledDateTimePickerStartEnd = props => {
-
-    const changeEta = event => {
-        setStartDate(event);
-        props.startMut(event);
-        const update = {
-            name: 'etaStart',
-            value: event.toISOString()
-        };
-        props.callback(update);
+  const changeEta = event => {
+    setStartDate(event);
+    props.startMut(event);
+    const update = {
+      name: "etaStart",
+      value: event.toISOString()
     };
+    props.callback(update);
+  };
 
-    const changeEtd = event => {
-        setEndDate(event);
-        props.endMut(event);
-        const update = {
-            name: 'etaEnd',
-            value: event.toISOString()
-        };
-        props.callback(update);
+  const changeEtd = event => {
+    setEndDate(event);
+    props.endMut(event);
+    const update = {
+      name: "etaEnd",
+      value: event.toISOString()
     };
+    props.callback(update);
+  };
   const totalClasses = { ...classes, ...inputPasses };
   const [startDate, setStartDate] = useState(props.startDate);
   const [endDate, setEndDate] = useState(props.endDate);
 
   return (
-      <Container style={totalClasses}>
-          <div>
-              <Row>
-                  <label>Start Date</label>
-              </Row>
-              <Row>
-                  <DatePicker
-                      selected={startDate}
-                      onChange={changeEta}
-                      selectsStart
-                      {...props}
-                      startDate={startDate}
-                      endDate={endDate}
-                  />
-              </Row>
-              <Row>
-                  <label>End Date</label>
-              </Row>
-              <Row>
-                  <DatePicker
-                      selected={endDate}
-                      onChange={changeEtd}
-                      selectsEnd
-                      {...props}
-                      startDate={startDate}
-                      endDate={endDate}
-                      minDate={startDate}
-                  />
-              </Row>
-          </div>
-      </Container>
+    <Container style={totalClasses}>
+      <div>
+        <Row>
+          <label>Start Date</label>
+        </Row>
+        <Row>
+          <DatePicker
+            selected={startDate}
+            onChange={changeEta}
+            selectsStart
+            {...props}
+            startDate={startDate}
+            endDate={endDate}
+          />
+        </Row>
+        <Row>
+          <label>End Date</label>
+        </Row>
+        <Row>
+          <DatePicker
+            selected={endDate}
+            onChange={changeEtd}
+            selectsEnd
+            {...props}
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
+          />
+        </Row>
+      </div>
+    </Container>
   );
 };
 
@@ -92,7 +91,9 @@ LabelledDateTimePickerStartEnd.propTypes = {
   readOnly: PropTypes.string,
   dateRange: PropTypes.object
 };
-export default LabelledInputDisplayWrapper(React.memo(LabelledDateTimePickerStartEnd, (oldProps, newProps) => {
-  // True when an update should not happen.
-  return oldProps === newProps || oldProps.children === newProps.children;
-}));
+export default LabelledInputDisplayWrapper(
+  React.memo(LabelledDateTimePickerStartEnd, (oldProps, newProps) => {
+    // True when an update should not happen.
+    return oldProps === newProps || oldProps.children === newProps.children;
+  })
+);
