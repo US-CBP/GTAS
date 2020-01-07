@@ -166,8 +166,10 @@ const Flights = props => {
         </Col>
 
         <Col lg="9" md="9" xs="12">
+          <div className="flight-body-box">
           <Title title="Flights" uri={props.uri} />
             <Table data={data} key={data} id="Flights" header={Headers} callback={cb} />
+          </div>
         </Col>
       </Row>
     </Container>

@@ -6,3 +6,7 @@
 .card-table {
   max-height: unset !important;
 }
+
+.table {
+  border-radius: 10px;
+}
