@@ -23,10 +23,10 @@ const CheckboxGroup = props => {
       };
       props.callback(filterFormUpdate);
   };
-    let theCheckboxes = Object.keys(values).map(checkboxName => {
+    let theCheckboxes = Object.keys(values).map((checkboxName, index) => {
                         return <GroupCheckBox key={checkboxName}
                                               id={checkboxName}
-                                              name={checkboxName}
+                                              name={props.optionNames[index]}
                                               type={props.type}
                                               onChange={handleFieldChange}
                                               value={values[checkboxName]}
