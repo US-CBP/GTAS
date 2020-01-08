@@ -73,7 +73,6 @@ class FilterForm extends React.Component {
   addDataFieldFromObject(idx, child, datafield, fieldMap, fields, datafieldNames) {
     const componentname = child.props.name;
     const fieldname = child.props.name;
-    // Either the name or datafield prop must contain a string
     const getChildVal = this.getChildValue();
     fieldMap[componentname] = fieldname;
     fields[fieldMap[componentname]] = getChildVal(child.props.inputVal);

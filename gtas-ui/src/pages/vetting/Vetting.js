@@ -40,6 +40,8 @@ const Vetting = props => {
     return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
   };
 
+  let displayStatusCheckboxGroups = { NEW: true, REVIEWED: true, RE_OPENED: false };
+
   return (
     <Container fluid>
       <Title title="Priority Vetting" uri={props.uri} />
@@ -53,9 +55,8 @@ const Vetting = props => {
           >
             <hr />
             <CheckboxGroup
-              datafield={{ NEW: true, REVIEWED: true, RE_OPENED: false }}
-              inputVal={{ NEW: true, REVIEWED: true, RE_OPENED: false }}
-              options={{ NEW: true, REVIEWED: true, RE_OPENED: false }}
+              datafield={displayStatusCheckboxGroups}
+              inputVal={displayStatusCheckboxGroups}
               labelText="Passenger Hit Status"
               name="displayStatusCheckBoxes"
             />
