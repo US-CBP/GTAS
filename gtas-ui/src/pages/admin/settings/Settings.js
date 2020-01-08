@@ -4,8 +4,8 @@ import Form from "../../../components/form/Form";
 import LabelledInput from "../../../components/labelledInput/LabelledInput";
 
 const Settings = ({ name }) => {
-  const cb = function(result) {};
   const onChange = function(result) {};
+  // const cb = function() {};
 
   return (
     <div className="container">
@@ -15,7 +15,6 @@ const Settings = ({ name }) => {
             getService={settingsinfo.get}
             submitService={settingsinfo.put}
             title=""
-            callback={cb}
             action="edit"
             recordId="1"
           >
