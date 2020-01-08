@@ -53,10 +53,11 @@ const Vetting = props => {
           >
             <hr />
             <CheckboxGroup
-                datefield = {["New", "Open", "Reviewed"]}
-                options={{"New": true, "Open": true, "Reviewed": false}}
+              datafield={{ NEW: true, REVIEWED: true, RE_OPENED: false }}
+              inputVal={{ NEW: true, REVIEWED: true, RE_OPENED: false }}
+              options={{ NEW: true, REVIEWED: true, RE_OPENED: false }}
               labelText="Passenger Hit Status"
-                name="hitStatuses"
+              name="displayStatusCheckBoxes"
             />
             <LabelledInput
               datafield

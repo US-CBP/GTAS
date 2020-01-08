@@ -11,11 +11,17 @@ import GroupCheckBox from "./GroupCheckBox";
 import LabelledInputDisplayWrapper from "../LabelledInputDecorator";
 
 const CheckboxGroup = props => {
-  const [values, setValues] = useState({...props.options});
+  const [values, setValues] = useState({...props.inputVal});
 
   const handleFieldChange = (name) => {
       let update = !values[name];
-      setValues({ ...values, [name]: update });
+      let newValues = {...values, [name]: update};
+      setValues(newValues);
+      const filterFormUpdate = {
+          name: props.name,
+          value: newValues
+      };
+      props.callback(filterFormUpdate);
   };
     let theCheckboxes = Object.keys(values).map(checkboxName => {
                         return <GroupCheckBox key={checkboxName}
@@ -27,6 +33,7 @@ const CheckboxGroup = props => {
                                               checked={values[checkboxName]}
                         />;
             });
+    // useful debugging statement: <pre>{JSON.stringify(values, null, 2)}</pre>
   return (
       <div>
         {theCheckboxes}

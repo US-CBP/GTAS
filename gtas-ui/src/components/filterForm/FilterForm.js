@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
-import { hasData, asArray } from "../../utils/text";
+import { asArray, hasData } from "../../utils/text";
 import "./FilterForm.css";
-import { Form, Button, ButtonToolbar } from "react-bootstrap";
+import { Button, ButtonToolbar, Form } from "react-bootstrap";
 
 /**
  * **Generic filter form used to fetch data for use in another component.**
@@ -36,6 +36,15 @@ class FilterForm extends React.Component {
               datafieldNames
             );
           }
+        } else if (typeof datafield == "object") {
+          this.addDataFieldFromObject(
+            idx,
+            child,
+            datafield,
+            fieldMap,
+            fields,
+            datafieldNames
+          );
         } else {
           this.addDataField(idx, child, datafield, fieldMap, fields, datafieldNames);
         }
@@ -61,7 +70,15 @@ class FilterForm extends React.Component {
     fields[fieldMap[componentname]] = getChildVal(child.props.inputVal[datafield]);
     datafieldNames.push(fieldname);
   }
-
+  addDataFieldFromObject(idx, child, datafield, fieldMap, fields, datafieldNames) {
+    const componentname = child.props.name;
+    const fieldname = child.props.name;
+    // Either the name or datafield prop must contain a string
+    const getChildVal = this.getChildValue();
+    fieldMap[componentname] = fieldname;
+    fields[fieldMap[componentname]] = getChildVal(child.props.inputVal);
+    datafieldNames.push(fieldname);
+  }
   getChildValue() {
     return val => {
       if (val instanceof Date) {
@@ -97,7 +114,6 @@ class FilterForm extends React.Component {
     this.state.datafieldNames.forEach(function(name) {
       fields[name] = "";
     });
-
     this.setState({ fields: fields, formkey: ++key });
   };
 
@@ -161,15 +177,11 @@ class FilterForm extends React.Component {
       // We can also forward the event on to the original callback or to a parent
       // of FilterForm if needed.
       delete cleanprops.callback;
-
-      let newchild = React.cloneElement(child, {
+      return React.cloneElement(child, {
         key: idx,
         callback: this.onChange,
-        //  TODO: See if "value" is nessesary
-        // value: populatedFields[this.state.fieldMap[child.props.name]] || "",
         ...cleanprops
       });
-      return newchild;
     });
 
     this.setState({
