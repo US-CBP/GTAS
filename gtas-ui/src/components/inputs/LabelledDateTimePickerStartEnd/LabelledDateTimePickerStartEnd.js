@@ -23,7 +23,7 @@ const LabelledDateTimePickerStartEnd = props => {
     props.startMut(event);
     const update = {
       name: "etaStart",
-      value: event.toISOString()
+      value: event?.toISOString()
     };
     props.callback(update);
   };
@@ -33,7 +33,7 @@ const LabelledDateTimePickerStartEnd = props => {
     props.endMut(event);
     const update = {
       name: "etaEnd",
-      value: event.toISOString()
+      value: event?.toISOString()
     };
     props.callback(update);
   };
