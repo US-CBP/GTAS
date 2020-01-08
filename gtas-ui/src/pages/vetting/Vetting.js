@@ -7,7 +7,7 @@ import FilterForm from "../../components/filterForm/FilterForm";
 import { hasData } from "../../utils/text";
 import { Col, Container } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import LabelledDateTimePickerStartEnd from "../../components/inputs/labelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
+import LabelledDateTimePickerStartEnd from "../../components/inputs/LabelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
 
 const Vetting = props => {
   const onTableChange = () => {};
