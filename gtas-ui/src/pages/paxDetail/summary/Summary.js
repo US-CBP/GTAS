@@ -1,7 +1,6 @@
 import React from "react";
 import Table from "../../../components/table/Table";
 import { files } from "../../../services/serviceWrapper";
-import Title from "../../../components/title/Title";
 import { Row, Container } from "react-bootstrap";
 
 const Summary = props => {

@@ -1,7 +1,6 @@
 import React from "react";
 // import Table from "../../../components/table/Table";
 // import { company } from "../../../services/serviceWrapper";
-import Title from "../../../components/title/Title";
 import Graph from "../../../components/graph/Graph";
 import ErrorBoundary from "../../../components/errorBoundary/ErrorBoundary";
 
