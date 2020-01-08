@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-// import "./utils";
-import svgs from "./utils";
 import "../../services/configService";
 import { cypher, cypherAuth } from "../../services/configService";
 import * as d3 from "d3";
 import { provider, paxRelations, saves, palette } from "./structure";
 import "./Graph.css";
 
-const vaquita = require("vaquita/dist/vaquita");
+const vaquita = require("vaquita/dist/vaquita.min.js");
 
 class Graph extends React.Component {
   constructor(props) {
@@ -17,29 +15,30 @@ class Graph extends React.Component {
     this.activateGraph = this.activateGraph.bind(this);
 
     this.pax1 = {
+      dob: "1967-05-22",
+      updatedAt: "2019-07-16T17:12:31.561000000",
+      paxId: 23,
+      idTag: "c957ff6158dbd9d8145971f44c3ea66156338261",
+      firstName: "HIEU",
+      middleName: "EV?EN",
+      lastName: "KORANDAK",
       id: 70456,
       createdAt: 1575796218000,
       createdBy: "SYSTEM",
-      updatedAt: null,
       updatedBy: null,
-      firstName: "MAURO",
-      middleName: "CHAD",
-      lastName: "CHANDAR",
       suffix: null,
       gender: "M",
-      nationality: "GBR",
+      nationality: "ERI",
       passengerType: "P",
-      dob: "1989-01-12",
-      paxId: null,
       seat: null,
       flightId: "1",
       flightNumber: "0037",
-      fullFlightNumber: "SV0037",
-      carrier: "SV",
+      fullFlightNumber: "UA0861",
+      carrier: "UA",
       etd: 1576032600000,
       eta: 1576084800000,
-      flightOrigin: "RUH",
-      flightDestination: "IAD",
+      flightOrigin: "IAD",
+      flightDestination: "GRU",
       onRuleHitList: true,
       onGraphHitList: false,
       onWatchList: false,
@@ -122,7 +121,6 @@ class Graph extends React.Component {
   }
 
   shouldComponentUpdate() {
-    // Prevents component re-rendering
     return false;
   }
 
