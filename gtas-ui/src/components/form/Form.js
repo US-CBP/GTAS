@@ -1,19 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
-import { hasData, asArray } from "../../utils/text";
+import { hasData, asArray, isObject } from "../../utils/text";
 import { Button } from "react-bootstrap";
 import Title from "../title/Title";
 
 /**
  * **Generic form that can add a new record or fetch and edit an existing one.**
  */
-
-// The quick solution is to require the child elements to include a "datafield" prop
-// that we can use to identify the data-containing elements. There are probably other ways to
-// separate the data elements from non-data elements automatically without the user having to mark the
-// children, but using the "datafield" prop also lets the user define different names for the component
-// and the data field it should save to ("name" vs "datafield" props).
 
 class Form extends React.Component {
   constructor(props) {
@@ -59,11 +53,20 @@ class Form extends React.Component {
   fetchData() {
     let fields = [];
     if (this.isEdit()) {
-      this.props.service.get(this.props.id).then(res => {
+      this.props.getService(this.props.recordId).then(res => {
         if (hasData(res)) {
+          // If res is an object, let it pass
+          // If its an array with 1 object item, use that item
+          // otherwise, assume it's an invalid result. Use an empty object to set the form values.
+          let singleRecord = isObject(res)
+            ? res
+            : Array.isArray(res) && res.length === 1 && isObject(res[0])
+            ? res[0]
+            : {};
+
           let populatedFields = [];
           for (let field in this.state.fields) {
-            populatedFields[field] = res[field];
+            populatedFields[field] = singleRecord[field];
           }
           fields = populatedFields;
         }
@@ -101,31 +104,19 @@ class Form extends React.Component {
   onFormSubmit(e) {
     e.preventDefault();
 
-    const service = this.props.service;
+    let operation = this.props.submitService;
 
-    let operation = null;
-    switch (this.props.action) {
-      case "":
-      case "add":
-        operation = service.post;
-        break;
-      case "auth":
-        operation = service.authPost;
-        break;
-      case "edit":
-        operation = service.put;
-        break;
-      default:
-        throw new Error("Unsupported action on form. ");
-    }
-    let operationResult = operation({ ...this.state.fields }, this.props.id);
-    if (this.props.afterProcessed !== undefined) {
-      this.props.afterProcessed(operationResult);
+    if (operation === undefined) {
+      return this.fetchData();
     }
 
-    // handle confirmation here or pass through to parent??
-    // could expose the method of confirmation in the page-container context so we can swap it out easily ???
-    // then we can implement it as a page-level banner or popup, whatever. Try it?
+    let result = this.props.recordId
+      ? operation(this.props.recordId, { ...this.state.fields })
+      : operation({ ...this.state.fields });
+
+    if (this.props.afterProcessed) {
+      this.props.afterProcessed(result);
+    }
   }
 
   // bind children containing form data to the ev handler and state
@@ -180,9 +171,10 @@ class Form extends React.Component {
 Form.propTypes = {
   title: PropTypes.string,
   submitText: PropTypes.string,
-  service: PropTypes.any.isRequired,
+  getService: PropTypes.func,
+  submitService: PropTypes.func,
   action: PropTypes.oneOf(["add", "edit", "auth", ""]),
-  id: PropTypes.string,
+  recordId: PropTypes.string,
   afterProcessed: PropTypes.func
 };
 

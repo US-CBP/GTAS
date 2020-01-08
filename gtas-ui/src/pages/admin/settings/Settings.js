@@ -11,7 +11,14 @@ const Settings = ({ name }) => {
     <div className="container">
       <div className="columns">
         <div className="top column is-4 is-offset-4">
-          <Form service={settingsinfo} title="" callback={cb} action="edit" id="1">
+          <Form
+            getService={settingsinfo.get}
+            submitService={settingsinfo.put}
+            title=""
+            callback={cb}
+            action="edit"
+            recordId="1"
+          >
             <LabelledInput
               datafield
               labelText="Matching Threshold"
