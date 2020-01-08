@@ -8,19 +8,27 @@ services:
       context: ./gtas-parent/scripts/elastic
       dockerfile: install/docker/kibana/Dockerfile
     environment:
-      ELASTICSEARCH_HOST: 'elasticsearch'
+      ELASTICSEARCH_HOSTS: https://elasticsearch:9200
     ports:
       - 5601:5601
     restart: always
     volumes:
-      - '$PWD/gtas-parent/scripts/elastic:/config/kibana'
+      - $PWD/gtas-parent/scripts/elastic:/config/kibana
+      - kibana_conf:/usr/share/kibana/data
     networks: 
-      - GTAS_elastic-network
-      - GTAS_webapp-network
+      GTAS_elastic-network:
+        aliases:
+          - "kibana.local"
+      GTAS_webapp-network:
+    secrets:
+      - source: elasticsearch_ca
+        target: /etc/kibana/config/ca.crt
+      - source: kibana_crt
+        target: /etc/kibana/config/kibana.crt
+      - source: kibana_key
+        target: /etc/kibana/config/kibana.key
     depends_on:
       - elasticsearch
-    # secrets:
-    #  - kibana_keystore
 
   elasticsearch:
     container_name: elasticsearch
@@ -32,11 +40,17 @@ services:
       - 9200:9200
     restart: always
     volumes: 
-      - "es-data:/usr/share/elasticsearch/data"
+      - es-data:/usr/share/elasticsearch/data
+      - elasticsearch_conf:/usr/share/elasticsearch/config/
     networks: 
       - GTAS_elastic-network
-    # secrets:
-    #   - elastic_keystore
+    secrets:
+      - source: elasticsearch_ca
+        target: /usr/share/elasticsearch/config/certs/elasticsearch/elastic-ca.crt
+      - source: elasticsearch_instance_crt
+        target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.crt
+      - source: elasticsearch_instance_key
+        target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.key
 
   logstash:
     container_name: logstash
@@ -45,13 +59,17 @@ services:
       dockerfile: ./install/docker/logstash/Dockerfile
     environment: 
       MARIADB_HOST: 'mariadb'
-      ELASTIC_HOST: 'elasticsearch'
+      ELASTIC_HOST: 'https://elasticsearch'
+      XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
+      LOGSTASH_KEYSTORE_PASS: admin123
     restart: always
+    secrets:
+      - elasticsearch_ca
     networks:
       - GTAS_elastic-network
       - GTAS_logstash-network
     volumes:
-      - "logstash_keystore:/usr/share/logstash/config/"
+      - logstash_conf:/usr/share/logstash/config/
     depends_on:
       - elasticsearch
 
@@ -62,20 +80,19 @@ services:
       dockerfile: ./install/docker/elk-setup/Dockerfile
     environment:
       KIBANA_HOST: 'kibana'
-    tty:
-      false
+      ELASTICSEARCH_HOST: 'elasticsearch'
     volumes:
-      - "logstash_keystore:/logstash-keystore"
-      - "kibana_keystore:/kibana-keystore"
-      - "elasticsearch_keystore:/elasticsearch-keystore"
+      - logstash_conf:/logstash-conf
+      - kibana_conf:/kibana-conf
+      - elasticsearch_conf:/elasticsearch-conf
     secrets:
       - logstash_keystore_password
       - mysql_logstash_user
       - mysql_logstash_password
-      - elastic_user
       - elastic_password
       - elasticsearch_kibana_user
       - elasticsearch_kibana_password
+      - elastic_bootstrap_password
     networks:
       - GTAS_elastic-network
 
@@ -87,23 +104,29 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_user.txt
   mysql_logstash_password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_password.txt
-  elastic_user:
-    file: ./gtas-parent/gtas-commons/secrets/elastic_user.txt
   elastic_password:
     file: ./gtas-parent/gtas-commons/secrets/elastic_password.txt
   elasticsearch_kibana_user:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch_kibana_user.txt
   elasticsearch_kibana_password:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch_kibana_password.txt
-  # elastic_keystore:
-  #   file: ./gtas-parent/gtas-commons/secrets/elastic.keystore
-  # kibana_keystore:
-  #   file: ./gtas-parent/gtas-commons/secrets/kibana.keystore
+  elastic_bootstrap_password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic_bootstrap_password.txt
+  elasticsearch_ca:
+    file: ./gtas-parent/gtas-commons/secrets/elastic-ca.crt
+  elasticsearch_instance_crt:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.crt
+  elasticsearch_instance_key:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.key
+  kibana_crt:
+    file: ./gtas-parent/gtas-commons/secrets/kibana.crt
+  kibana_key:
+    file: ./gtas-parent/gtas-commons/secrets/kibana.key
 
 volumes:
-  logstash_keystore:
-  kibana_keystore:
-  elasticsearch_keystore:
+  logstash_conf:
+  kibana_conf:
+  elasticsearch_conf:
   es-data:
 
 networks:
