@@ -142,7 +142,6 @@ const Flights = props => {
               />
             </FilterForm>
           </div>
-          <Row></Row>
         </Col>
 
         <Col lg="9" md="9" xs="12">
