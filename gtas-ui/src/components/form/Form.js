@@ -4,6 +4,7 @@ import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 import { hasData, asArray, isObject } from "../../utils/text";
 import { Button } from "react-bootstrap";
 import Title from "../title/Title";
+import { Form as RBForm } from "react-bootstrap";
 
 /**
  * **Generic form that can add a new record or fetch and edit an existing one.**
@@ -42,7 +43,8 @@ class Form extends React.Component {
       fields: fields, // array of data fields and their current vals. This gets saved to the DB.
       fieldMap: fieldMap, // maps the names of the child components to the data fields.
       getSuccess: "",
-      kids: []
+      kids: [],
+      formkey: 1
     };
   }
 
@@ -137,9 +139,12 @@ class Form extends React.Component {
       return newchild;
     });
 
+    const newkey = this.state.formkey + 1;
+
     this.setState({
       kids: boundChildren,
       fields: populatedFields,
+      formkey: newkey,
       getSuccess: hasData(populatedFields)
     });
   }
@@ -150,7 +155,7 @@ class Form extends React.Component {
     return (
       <div>
         <Title title={this.props.title}></Title>
-        <form onSubmit={this.onFormSubmit}>
+        <RBForm onSubmit={this.onFormSubmit} key={this.state.formkey}>
           <ErrorBoundary message="Form children could not be rendered">
             {this.state.kids}
           </ErrorBoundary>
@@ -162,7 +167,7 @@ class Form extends React.Component {
               {this.props.submitText || "Submit"}
             </Button>
           </div>
-        </form>
+        </RBForm>
       </div>
     );
   }
