@@ -74,7 +74,7 @@ export function get(id, params) {
   return GenericService({ uri: this.uri + query, method: GET });
 }
 
-export function put(body, id) {
+export function put(id, body) {
   if (!hasData(body)) throw new TypeError(PUTBODY);
   if (!hasData(id)) throw new TypeError(PUTID);
 
@@ -140,6 +140,6 @@ export const flights = setOps(FLIGHTS, get, post);
 export const auditlog = setOps(AUDITLOG, get);
 export const errorlog = setOps(ERRORLOG, get);
 export const cases = setOps(CASES, get, post);
-export const settingsinfo = setOps(SETTINGSINFO, get, putp, put);
+export const settingsinfo = setOps(SETTINGSINFO, get, put);
 export const getrulecats = setOps(GETRULECATS, get);
 export const passengers = setOps(PAX, get);

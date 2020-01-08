@@ -1,567 +1,159 @@
 import React, { useState } from "react";
-import vaquita from "vaquita/dist/vaquita";
-import "./utils";
+// import "./utils";
 import svgs from "./utils";
 import "../../services/configService";
 import { cypher, cypherAuth } from "../../services/configService";
 import * as d3 from "d3";
+import { provider, paxRelations, saves, palette } from "./structure";
+import "./Graph.css";
 
-const Graph = props => {
-  // constructor(props) {
-  //   super(props);
-  // }
+const vaquita = require("vaquita/dist/vaquita");
 
-  const [passenger, setPassenger] = useState({});
+class Graph extends React.Component {
+  constructor(props) {
+    super(props);
 
-  const _setRef = componentNode => {
-    this._rootNode = componentNode;
-  };
-  const SvgType = 2;
-  let isReloaded = true;
+    this.onClickSavedGraph = this.onClickSavedGraph.bind(this);
+    this.activateGraph = this.activateGraph.bind(this);
 
-  cypher().then(function(result) {
-    vaquita.rest.CYPHER_URL = result;
-  });
-
-  cypherAuth().then(function(result) {
-    vaquita.rest.AUTHORIZATION = result;
-  });
-
-  vaquita.tools.TOGGLE_TAXONOMY = false;
-  vaquita.query.USE_RELATION_DIRECTION = false;
-  vaquita.tools.SAVE_GRAPH = false;
-  vaquita.query.RESULTS_PAGE_SIZE = 100;
-  vaquita.query.MAX_RESULTS_COUNT = 30;
-  // vaquita.logger.LEVEL = vaquita.logger.LogLevels.INFO;
-  vaquita.graph.link.SHOW_MARKER = false;
-  vaquita.graph.node.DONUT_WIDTH = 15;
-  vaquita.graph.HORIZONTAL_NODES = 1;
-
-  vaquita.graph.setZoom(0.5, 2);
-
-  const paxIdTag = passenger.paxIdTag;
-  const paxLastName = passenger.lastName;
-  const paxFlightIdTag = passenger.flightIdTag;
-  const paxFullFlightNumber = (passenger.carrier + passenger.flightNumber).toUpperCase();
-  const origin = passenger.embarkation;
-  const destination = passenger.debarkation;
-
-  const palette = {
-    address: "#2C17B1",
-    airport: "#1144AA",
-    creditcard: "#007676",
-    document: "#219E00",
-    email: "#D77B00",
-    flight: "#A90067",
-    hit: "#FF0D00",
-    passenger: "#5e166e",
-    phone: "#D74B00"
-  };
-
-  vaquita.provider.node.Provider = {
-    Address: {
-      returnAttributes: ["address_line_1", "country", "city"],
-      displayAttribute: "address_line_1",
-      getDisplayType: node => SvgType,
-      getColor: node => palette.address,
-      getSVGPaths: node => [
+    this.pax1 = {
+      id: 70456,
+      createdAt: 1575796218000,
+      createdBy: "SYSTEM",
+      updatedAt: null,
+      updatedBy: null,
+      firstName: "MAURO",
+      middleName: "CHAD",
+      lastName: "CHANDAR",
+      suffix: null,
+      gender: "M",
+      nationality: "GBR",
+      passengerType: "P",
+      dob: "1989-01-12",
+      paxId: null,
+      seat: null,
+      flightId: "1",
+      flightNumber: "0037",
+      fullFlightNumber: "SV0037",
+      carrier: "SV",
+      etd: 1576032600000,
+      eta: 1576084800000,
+      flightOrigin: "RUH",
+      flightDestination: "IAD",
+      onRuleHitList: true,
+      onGraphHitList: false,
+      onWatchList: false,
+      onWatchListDoc: false,
+      onWatchListLink: false,
+      documents: [
         {
-          d: svgs.getAddressPath(),
-          fill: vaquita.provider.node.getColor(node)
+          documentType: "P",
+          documentNumber: "374330695",
+          expirationDate: "2025-03-02",
+          issuanceDate: null,
+          issuanceCountry: "ERI",
+          firstName: null,
+          lastName: null
         }
       ]
-    },
-    Airport: {
-      returnAttributes: ["country_code", "airport_code"],
-      constraintAttribute: "airport_code",
-      displayAttribute: "airport_code",
-      getDisplayType: function(node) {
-        return SvgType;
-      },
-      getSVGPaths: function(node) {
-        return [
-          {
-            d: svgs.getAirportPath(),
-            fill: vaquita.provider.node.getColor(node)
-          }
-        ];
-      },
-      getColor: function(node) {
-        return palette.airport;
-      },
-      getIsTextDisplayed: function(node) {
-        return true;
-      }
-    },
-    Passenger: {
-      returnAttributes: [
-        "id_tag",
-        "first_name",
-        "middle_name",
-        "last_name",
-        "dob",
-        "gender",
-        "nationality",
-        "last_updated_on",
-        "gtas_passenger_id",
-        "gtas_message_create_dtm",
-        "gtas_message_id"
-      ],
-      constraintAttribute: "id_tag",
-      displayAttribute: "last_name",
-      getDisplayType: function(node) {
-        return SvgType;
-      },
-      getSVGPaths: function(node) {
-        return [
-          {
-            d: svgs.getPassengerPath(),
-            fill: vaquita.provider.node.getColor(node)
-          }
-        ];
-      },
-      getColor: function(node) {
-        return palette.passenger;
-      }
-    },
-    Phone: {
-      returnAttributes: ["number"],
-      displayAttribute: "number",
-      constraintAttribute: "number",
-      getDisplayType: function(node) {
-        return SvgType;
-      },
-      getSVGPaths: function(node) {
-        return [
-          {
-            d: svgs.getPhonePath(),
-            fill: vaquita.provider.node.getColor(node)
-          }
-        ];
-      },
-      getColor: function(node) {
-        return palette.phone;
-      },
-      getIsTextDisplayed: function(node) {
-        return true;
-      }
-    },
-    CreditCard: {
-      returnAttributes: ["number", "exp_date", "type", "account_holder"],
-      displayAttribute: "number",
-      constraintAttribute: "number",
-      getDisplayType: function(node) {
-        return SvgType;
-      },
-      getColor: function(node) {
-        return palette.creditcard;
-      },
-      getSVGPaths: function(node) {
-        return [
-          {
-            d: svgs.getCreditCardPath(),
-            fill: vaquita.provider.node.getColor(node)
-          }
-        ];
-      },
-      getIsTextDisplayed: function(node) {
-        return true;
-      }
-    },
-    Document: {
-      returnAttributes: ["number", "exp_date", "type", "issuance_country"],
-      displayAttribute: "number",
-      constraintAttribute: "number",
-      getDisplayType: function(node) {
-        return SvgType;
-      },
-      getSVGPaths: function(node) {
-        return [
-          {
-            d: svgs.getDocumentPath(),
-            fill: vaquita.provider.node.getColor(node)
-          }
-        ];
-      },
-      getColor: function(node) {
-        return palette.document;
-      },
-      getIsTextDisplayed: function(node) {
-        return true;
-      }
-    },
-    Email: {
-      returnAttributes: ["address"],
-      displayAttribute: "address",
-      getDisplayType: function(node) {
-        return SvgType;
-      },
-      getColor: function(node) {
-        return palette.email;
-      },
-      getSVGPaths: function(node) {
-        return [
-          {
-            d: svgs.getEmailPath(),
-            fill: vaquita.provider.node.getColor(node)
-          }
-        ];
-      }
-    },
-    Flight: {
-      returnAttributes: [
-        "full_flight_number",
-        "flight_id_tag",
-        "eta_date",
-        "full_eta_dtm",
-        "destination_country",
-        "gtas_message_id",
-        "flight_number",
-        "origin",
-        "destination",
-        "passenger_count",
-        "full_etd_dtm",
-        "origin_country",
-        "gtas_message_create_dtm",
-        "carrier",
-        "last_updated_on",
-        "etd_date",
-        "direction"
-      ],
-      constraintAttribute: "flight_id_tag",
-      displayAttribute: "full_flight_number",
-      getPredefinedConstraints: function() {
-        return ["$identifier.flight_id_tag is not null"];
-      },
-      getDisplayType: function(node) {
-        return SvgType;
-      },
-      getColor: function(node) {
-        return palette.flight; //
-      },
-      getSVGPaths: function(node) {
-        return [
-          {
-            d: svgs.getFlightPath(),
-            fill: vaquita.provider.node.getColor(node)
-          }
-        ];
-      }
-    },
-    Hit: {
-      returnAttributes: [
-        "rule_id",
-        "gtas_hit_detail_id",
-        "cond_text",
-        "description",
-        "hit_detail_create_date",
-        "title",
-        "hit_type"
-      ],
-      displayAttribute: "hit_type",
-      getDisplayType: function(node) {
-        return SvgType;
-      },
-      getSVGPaths: function(node) {
-        return [
-          {
-            d: svgs.getHitPath(),
-            fill: vaquita.provider.node.getColor(node)
-          }
-        ];
-      },
-      getColor: function(node) {
-        return palette.hit;
-      },
-      getIsTextDisplayed: function(node) {
-        return true;
-      }
-    }
-  };
+    };
 
-  vaquita.provider.link.Provider = {
-    getColor: function(link) {
-      return palette[link.source.label.toLowerCase()];
-    }
-  };
+    this.setRef = componentNode => {
+      Node.getRootNode = componentNode;
+    };
 
-  const thisPaxFlight = {
-    label: "Passenger",
-    rel: [
-      {
-        label: "flew_on",
-        target: {
-          label: "Flight",
-          value: [
-            {
-              flight_id_tag: paxFlightIdTag,
-              full_flight_number: paxFullFlightNumber
-            }
-          ]
-        }
+    const SvgType = 2;
+
+    vaquita.tools.TOGGLE_TAXONOMY = false;
+    vaquita.query.USE_RELATION_DIRECTION = false;
+    vaquita.tools.SAVE_GRAPH = false;
+    vaquita.query.RESULTS_PAGE_SIZE = 100;
+    vaquita.query.MAX_RESULTS_COUNT = 30;
+    // vaquita.logger.LEVEL = vaquita.logger.LogLevels.INFO;
+    vaquita.graph.link.SHOW_MARKER = false;
+    vaquita.graph.node.DONUT_WIDTH = 15;
+    vaquita.graph.HORIZONTAL_NODES = 1;
+
+    vaquita.graph.setZoom(0.5, 2);
+
+    vaquita.provider.node.Provider = provider(vaquita, SvgType);
+
+    vaquita.provider.link.Provider = {
+      getColor: function(link) {
+        return palette[link.source.label.toLowerCase()];
       }
-    ] // rel
-  };
+    };
 
-  const paxRelations = [
-    {
-      label: "flew_on",
-      target: {
-        label: "Flight",
-        value: [
-          {
-            flight_id_tag: paxFlightIdTag,
-            full_flight_number: paxFullFlightNumber
-          }
-        ]
-      }
-    },
-    {
-      label: "used_document",
-      target: { label: "Document" }
-    },
-    {
-      label: "used_email",
-      target: { label: "Email" }
-    },
-    {
-      label: "used_creditcard",
-      target: { label: "CreditCard" }
-    },
-    {
-      label: "lived_at",
-      target: { label: "Address" }
-    },
-    {
-      label: "used_phone",
-      target: { label: "Phone" }
-    },
-    {
-      label: "flagged",
-      target: { label: "Hit" }
-    }
-  ];
+    vaquita.result.onTotalResultCount(function(count) {
+      document.getElementById("result-total-count").innerHTML = "(" + count + ")";
+    });
 
-  const thisPax = {
-    label: "Passenger",
-    value: [
-      {
-        id_tag: paxIdTag,
-        last_name: paxLastName
-      }
-    ]
-  };
+    this.state = {
+      pax1: this.pax1,
+      svgType: 2,
+      isReloaded: true,
+      palette: palette,
+      paxIdTag: this.pax1.paxIdTag,
+      paxLastName: this.pax1.lastName,
+      paxFlightIdTag: this.pax1.flightIdTag,
+      paxFullFlightNumber: this.pax1.carrier + this.pax1.flightNumber,
+      origin: this.pax1.embarkation,
+      destination: this.pax1.debarkation,
+      vaquita: vaquita,
+      // thisPaxFlight: thisPaxFlight,
+      paxRelations: paxRelations(
+        this.pax1.flightIdTag,
+        this.pax1.carrier + this.pax1.flightNumber
+      ),
+      saves: saves(this.pax1)
+    };
+  }
 
-  const saves = {
-    pax: {
-      // this pax
-      label: "Passenger",
-      horiz: 1,
-      value: [
-        {
-          id_tag: paxIdTag,
-          last_name: paxLastName
-        }
-      ],
-      rel: paxRelations
-    },
-    flight: {
-      // this flight, all pax, ports
-      label: "Flight",
-      horiz: 1,
-      value: [
-        {
-          flight_id_tag: paxFlightIdTag,
-          full_flight_number: paxFullFlightNumber
-        }
-      ],
-      rel: [
-        {
-          label: "flew_on",
-          target: { label: "Passenger" }
-        },
-        {
-          label: "origin_of",
-          target: {
-            label: "Airport",
-            value: [{ airport_code: origin }]
-          }
-        },
-        {
-          label: "has_destination",
-          target: {
-            label: "Airport",
-            value: [{ airport_code: destination }]
-          }
-        }
-      ]
-    },
-    email: {
-      // all emails this pax
-      label: "Email",
-      horiz: 2,
-      rel: [
-        {
-          label: "used_email",
-          target: thisPax
-        }
-      ] // rel
-    },
-    address: {
-      //all addys this pax
-      label: "Address",
-      horiz: 2,
-      rel: [
-        {
-          label: "lived_at",
-          target: thisPax
-        }
-      ] // rel
-    },
-    document: {
-      //all docs this pax
-      label: "Document",
-      horiz: 2,
-      rel: [
-        {
-          label: "used_document",
-          target: thisPax
-        }
-      ] // rel
-    },
-    creditcard: {
-      //all ccards this pax
-      label: "CreditCard",
-      horiz: 2,
-      rel: [
-        {
-          label: "used_creditcard",
-          target: thisPax
-        }
-      ] // rel
-    },
-    phone: {
-      //all phones this pax
-      label: "Phone",
-      horiz: 2,
-      rel: [
-        {
-          label: "used_phone",
-          target: thisPax
-        }
-      ] // rel
-    },
-    hit: {
-      //  hits this pax
-      label: "Passenger",
-      horiz: 2,
-      value: [
-        {
-          id_tag: paxIdTag,
-          last_name: paxLastName
-        }
-      ],
-      rel: [
-        {
-          label: "flagged",
-          target: { label: "Hit" }
-        }
-      ]
-    }, // rel
+  componentDidMount() {
+    cypher.get().then(function(result) {
+      vaquita.rest.CYPHER_URL = "http://localhost:7474/db/data/transaction/commit"; //result;
+    });
 
-    emailall: {
-      //all emails this flight
-      label: "Email",
-      horiz: 3,
-      rel: [
-        {
-          label: "used_email",
-          target: thisPaxFlight
-        }
-      ] // rel
-    },
-    addressall: {
-      //all addys this flight
-      label: "Address",
-      horiz: 3,
-      rel: [
-        {
-          label: "lived_at",
-          target: thisPaxFlight
-        }
-      ] // rel
-    },
-    documentall: {
-      //all docs this flight
-      label: "Document",
-      horiz: 3,
-      rel: [
-        {
-          label: "used_document",
-          target: thisPaxFlight
-        }
-      ] // rel
-    },
-    creditcardall: {
-      //all ccards this flight
-      label: "CreditCard",
-      horiz: 3,
-      rel: [
-        {
-          label: "used_creditcard",
-          target: thisPaxFlight
-        }
-      ] // rel
-    },
-    phoneall: {
-      //all phones this flight
-      label: "Phone",
-      horiz: 3,
-      rel: [
-        {
-          label: "used_phone",
-          target: thisPaxFlight
-        }
-      ] // rel
-    },
-    hitall: {
-      // all pax with hits this flight
-      label: "Hit",
-      horiz: 3,
-      rel: [
-        {
-          label: "flagged",
-          target: thisPaxFlight
-        }
-      ] // rel
-    }
-  }; //saves
+    cypherAuth.get().then(function(result) {
+      vaquita.rest.AUTHORIZATION = "fake neo4j auth secret"; //result;
+    });
 
-  const documentPath = function() {
-    return svgs.getDocumentPath();
-  };
-  const airportPath = function() {
-    return svgs.getAirportPath();
-  };
+    this.activateGraph();
+  }
 
-  const activateGraph = function() {
-    const template = saves.pax;
-    vaquita.graph.HORIZONTAL_NODES = template.horiz || 1;
+  shouldComponentUpdate() {
+    // Prevents component re-rendering
+    return false;
+  }
+
+  // documentPath = function() {
+  //   return svgs.getDocumentPath();
+  // };
+
+  // airportPath = function() {
+  //   return svgs.getAirportPath();
+  // };
+
+  activateGraph = function() {
+    const template = this.state.saves.pax;
+
+    let vaq = this.state.vaquita;
+    vaq.graph.HORIZONTAL_NODES = template.horiz || 1;
 
     // call start only when there's no rootnode
     //TODO vaquita - expose a status field on graph?
     if (vaquita.dataModel.getRootNode() === undefined) {
-      vaquita.start(template);
-      isReloaded = false;
+      vaq.start(template);
+      this.setState({ isReloaded: false });
     }
     // refresh graph arena if the page reloads with new pax data
-    else if (isReloaded) {
-      vaquita.refresh(template);
-      isReloaded = false;
+    else if (this.state.isReloaded) {
+      vaq.refresh(template);
+      this.setState({ isReloaded: false });
     }
   };
 
-  const onClickSavedGraph = function(id) {
+  onClickSavedGraph = function(id) {
     // Update Graph title:
     if (!id) {
       d3.select("#save-header").text(
@@ -573,18 +165,264 @@ const Graph = props => {
       id = this.id;
     }
 
-    vaquita.graph.mainLabel = saves[id];
-    vaquita.graph.HORIZONTAL_NODES = saves[id].horiz || 1;
-    vaquita.tools.reset();
+    let vaq = this.state.vaquita;
+
+    vaq.graph.mainLabel = this.state.saves[id];
+    vaq.graph.HORIZONTAL_NODES = this.state.saves[id].horiz || 1;
+    vaq.tools.reset();
   };
 
-  vaquita.graph.onSave(function(graph) {});
+  render() {
+    return (
+      <div className="line-container" ref={this.setRef.bind(this)}>
+        <div className="flex flex-vert ie-fix-md full-width align-items-center scroll-container-outer">
+          <div className="cbp-card-container full-width">
+            <div className="cbp-card cbp-card-shadow">
+              <h4 className="h-label no-margin-top">Search</h4>
 
-  vaquita.result.onTotalResultCount(function(count) {
-    document.getElementById("result-total-count").innerHTML = "(" + count + ")";
-  });
+              <div className="ppt-body">
+                <section className="ppt-section-main">
+                  <div className="ppt-container-graph row">
+                    <nav id="popoto-saves" className="col-lg-2 ppt-taxo-nav">
+                      <div id="saves">
+                        <span className="ppt-header-span">This Passenger:</span>
+                        <table className="ppt-saved-ul">
+                          <tr id="Pax" onClick={() => this.onClickSavedGraph("pax")}>
+                            <td>
+                              <i className="fa fa-user-circle-o pptpassenger"></i>
+                            </td>
+                            <td>
+                              <span className="ppt-label" title="Passenger links">
+                                Passenger
+                              </span>
+                            </td>
+                          </tr>
+                          <tr
+                            id="Address"
+                            onClick={() => this.onClickSavedGraph("address")}
+                          >
+                            <td>
+                              <i class="fa fa-home pptaddress"></i>
+                            </td>
+                            <td>
+                              <span
+                                class="ppt-label"
+                                title="Addresses used by this passenger"
+                              >
+                                Address
+                              </span>
+                            </td>
+                          </tr>
+                          <tr
+                            id="CreditCard"
+                            onClick={() => this.onClickSavedGraph("creditcard")}
+                          >
+                            <td>
+                              <i class="fa fa-credit-card-alt pptcreditcard"></i>
+                            </td>
+                            <td>
+                              <span
+                                class="ppt-label"
+                                title="Credit cards used by this passenger"
+                              >
+                                Credit Card
+                              </span>
+                            </td>
+                          </tr>
+                          <tr id="Phone" onClick={() => this.onClickSavedGraph("phone")}>
+                            <td>
+                              <i class="fa fa-phone pptphone"></i>
+                            </td>
+                            <td>
+                              <span
+                                class="ppt-label"
+                                title="Phone numbers used by this passenger"
+                              >
+                                Phone
+                              </span>
+                            </td>
+                          </tr>
+                          <tr id="Email" onClick={() => this.onClickSavedGraph("email")}>
+                            <td>
+                              <i class="fa fa-envelope pptemail"></i>
+                            </td>
+                            <td>
+                              <span
+                                class="ppt-label"
+                                title="Email addresses used by this passenger"
+                              >
+                                Emails
+                              </span>
+                            </td>
+                          </tr>
+                          <tr id="Hit" onClick={() => this.onClickSavedGraph("hit")}>
+                            <td>
+                              <i class="fa fa-exclamation-circle ppthit"></i>
+                            </td>
+                            <td>
+                              <span class="ppt-label" title="Hits for this passenger">
+                                Hits
+                              </span>
+                            </td>
+                          </tr>
+                          <tr
+                            id="Document"
+                            onClick={() => this.onClickSavedGraph("document")}
+                          >
+                            <td>
+                              <img
+                                alt=""
+                                src="resources/img/document.svg"
+                                class="pptdocument"
+                              ></img>
+                            </td>
+                            <td>
+                              <span
+                                class="ppt-label"
+                                title="Documents used by this passenger"
+                              >
+                                Documents
+                              </span>
+                            </td>
+                          </tr>
+                        </table>
+                        <hr />
+                        <br />
 
-  return <div className="line-container" ref={this._setRef.bind(this)} />;
-};
+                        <span class="ppt-header-span">This FLight:</span>
+                        <table class="ppt-saved-ul">
+                          <tr
+                            id="Flight"
+                            onClick={() => this.onClickSavedGraph("flight")}
+                          >
+                            <td>
+                              <i class="fa fa-plane pptflight"></i>
+                            </td>
+                            <td>
+                              <span class="ppt-label" title="Flight links">
+                                Flight
+                              </span>
+                            </td>
+                          </tr>
+                          <tr
+                            id="Address"
+                            onClick={() => this.onClickSavedGraph("addressall")}
+                          >
+                            <td>
+                              <i class="fa fa-home pptaddress"></i>
+                            </td>
+                            <td>
+                              <span
+                                class="ppt-label"
+                                title="All passenger addresses for this flight"
+                              >
+                                All Addresses
+                              </span>
+                            </td>
+                          </tr>
+                          <tr
+                            id="CreditCard"
+                            onClick={() => this.onClickSavedGraph("creditcardall")}
+                          >
+                            <td>
+                              <i class="fa fa-credit-card-alt pptcreditcard"></i>
+                            </td>
+                            <td>
+                              <span
+                                class="ppt-label"
+                                title="All passenger credit cards for this flight"
+                              >
+                                All Credit Cards
+                              </span>
+                            </td>
+                          </tr>
+                          <tr
+                            id="Phone"
+                            onClick={() => this.onClickSavedGraph("phoneall")}
+                          >
+                            <td>
+                              <i class="fa fa-phone pptphone"></i>
+                            </td>
+                            <td>
+                              <span
+                                class="ppt-label"
+                                title="All passenger phone numbers for this flight"
+                              >
+                                All Phones
+                              </span>
+                            </td>
+                          </tr>
+                          <tr
+                            id="Email"
+                            onClick={() => this.onClickSavedGraph("emailall")}
+                          >
+                            <td>
+                              <i class="fa fa-envelope pptemail"></i>
+                            </td>
+                            <td>
+                              <span
+                                class="ppt-label"
+                                title="All passenger email addresses for this flight"
+                              >
+                                All Emails
+                              </span>
+                            </td>
+                          </tr>
+                          <tr id="Hit" onClick={() => this.onClickSavedGraph("hitall")}>
+                            <td>
+                              <i class="fa fa-exclamation-circle ppthit"></i>
+                            </td>
+                            <td>
+                              <span
+                                class="ppt-label"
+                                title="All passenger hits for this flight"
+                              >
+                                All Hits
+                              </span>
+                            </td>
+                          </tr>
+                          <tr
+                            id="Document"
+                            onClick={() => this.onClickSavedGraph("documentall")}
+                          >
+                            <td>
+                              <img
+                                alt=""
+                                src="resources/img/document.svg"
+                                class="pptdocument"
+                              ></img>
+                            </td>
+                            <td>
+                              <span
+                                class="ppt-label"
+                                title="All passenger documents for this flight"
+                              >
+                                All Documents
+                              </span>
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+                    </nav>
+                    <div id="popoto-graph" class="col-lg-10 ppt-div-graph"></div>
+                  </div>
+
+                  <div id="popoto-query" class="ppt-container-query"></div>
+
+                  <div class="ppt-section-header">
+                    RESULTS
+                    <span id="result-total-count" class="ppt-count-results"></span>
+                  </div>
+
+                  <div id="popoto-results" class="ppt-container-results"></div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
 
 export default Graph;

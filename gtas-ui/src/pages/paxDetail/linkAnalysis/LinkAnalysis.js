@@ -1,16 +1,18 @@
 import React from "react";
-import Table from "../../../components/table/Table";
-import { company } from "../../../services/serviceWrapper";
+// import Table from "../../../components/table/Table";
+// import { company } from "../../../services/serviceWrapper";
 import Title from "../../../components/title/Title";
+import Graph from "../../../components/graph/Graph";
+import ErrorBoundary from "../../../components/errorBoundary/ErrorBoundary";
 
 const LinkAnalysis = () => {
   return (
     <div className="container">
-      <Title title="LinkAnalysis"></Title>
-
       <div className="columns">
         <div className="top">
-          <Table service={company.get} id="foo"></Table>
+          <ErrorBoundary message="something went wrong here ...">
+            <Graph></Graph>
+          </ErrorBoundary>
         </div>
       </div>
     </div>
