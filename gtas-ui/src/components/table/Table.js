@@ -44,7 +44,7 @@ class Table extends Component {
       {
         columns,
         data,
-        initialState: { pageIndex: 1 }
+        initialState: { pageIndex: 0 }
       },
       useFilters,
       useSortBy,
