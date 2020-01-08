@@ -2,7 +2,9 @@ import React from "react";
 import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
 import Tabs from "../../components/tabs/Tabs";
-import { Row } from "react-bootstrap";
+import { Row, Container, Col, Form } from "react-bootstrap";
+import "./PaxDetail.css";
+import PaxInfo from "../../components/paxInfo/PaxInfo";
 
 const PaxDetail = props => {
   const tabcontent = props.children.props.children;
@@ -14,58 +16,20 @@ const PaxDetail = props => {
     { title: "Link Analysis", link: tabcontent[4] }
   ];
   return (
-    <div className="columns">
-      <Title title="Passenger Detail"></Title>
-      <Row>
-        <div className="column col-lg-3 col-md-3 col-12">
-          <div className="box2">
-            <aside className="menu">
-              <p className="menu-label">General</p>
-              <ul className="menu-list">
-                <li>
-                  <Link to="/Dashboard">Dashboard</Link>
-                </li>
-                <li>Customers</li>
-                <li>Other</li>
-              </ul>
-              <p className="menu-label">Administration</p>
-              <ul className="menu-list">
-                <li>Team Settings</li>
-                <li>
-                  Manage Your Team
-                  <ul>
-                    <li>Members</li>
-                    <li>Plugins</li>
-                    <li>Add a member</li>
-                    <li>Remove a member</li>
-                  </ul>
-                </li>
-                <li>Invitations</li>
-                <li>Cloud Storage Environment Settings</li>
-                <li>Authentication</li>
-                <li>Payments</li>
-              </ul>
-              <p className="menu-label">Transactions</p>
-              <ul className="menu-list">
-                <li>Payments</li>
-                <li>Transfers</li>
-                <li>Balance</li>
-                <li>Reports</li>
-              </ul>
-            </aside>
-          </div>
-        </div>
+    <Container fluid>
+      <Title title="Passenger Detail" uri={props.uri} />
+      <Row flex>
+        <Col lg="3" md="3" sm="3" className="box2">
+          <PaxInfo></PaxInfo>
+        </Col>
 
-        <div className="col-lg-9 col-md-9 col-12">
-          <div className="box2">
-            <div className="top">
-              <Tabs tabs={tabs} />
-              <div></div>
-            </div>
+        <Col lg="9" md="9" sm="9" className="box2">
+          <div>
+            <Tabs tabs={tabs} />
           </div>
-        </div>
+        </Col>
       </Row>
-    </div>
+    </Container>
   );
 };
 
