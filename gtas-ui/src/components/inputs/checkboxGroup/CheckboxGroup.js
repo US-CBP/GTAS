@@ -17,12 +17,7 @@ const CheckboxGroup = props => {
       let update = !values[name];
       setValues({ ...values, [name]: update });
   };
-
-    let theCheckboxes =
-        Object.keys(values)
-            .map(checkboxName => {
-                return [...Array(values[checkboxName])]
-                    .map((_, i) => {
+    let theCheckboxes = Object.keys(values).map(checkboxName => {
                         return <GroupCheckBox key={checkboxName}
                                               id={checkboxName}
                                               name={checkboxName}
@@ -31,12 +26,7 @@ const CheckboxGroup = props => {
                                               value={values[checkboxName]}
                                               checked={values[checkboxName]}
                         />;
-                    })
-            })
-            .reduce((arr, el) => {
-                return arr.concat(el);
-            }, []);
-        //Useful debug element: <pre>{JSON.stringify(values, null, 2)}</pre>
+            });
   return (
       <div>
         {theCheckboxes}
