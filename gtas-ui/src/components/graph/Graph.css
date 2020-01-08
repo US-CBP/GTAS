@@ -1,0 +1,208 @@
+.ppt-svg-graph {
+  background-color: white;
+  border: 1px solid #00416a !important;
+  flex-basis: 0;
+  flex-grow: 1;
+  max-width: 100%;
+  height: 100% !important;
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+.ppt-g-node-middleground > g > path.Address {
+  transform: scale(0.17) translate(-260px, -250px);
+}
+.ppt-g-node-middleground > g > path.Airport {
+  transform: scale(0.13) translate(-300px, -310px);
+}
+.ppt-g-node-middleground > g > path.CreditCard {
+  transform: scale(0.13) translate(-285px, -240px);
+}
+.ppt-g-node-middleground > g > path.Document {
+  transform: scale(0.14) translate(-220px, -230px);
+}
+.ppt-g-node-middleground > g > path.Email {
+  transform: scale(0.14) translate(-250px, -250px);
+}
+.ppt-g-node-middleground > g > path.Flight {
+  transform: scale(0.15) translate(-270px, -240px);
+}
+.ppt-g-node-middleground > g > path.Hit {
+  transform: scale(0.17) translate(-90px, -250px);
+}
+.ppt-g-node-middleground > g > path.Passenger {
+  transform: scale(0.14) translate(-220px, -260px);
+}
+.ppt-g-node-middleground > g > path.Phone {
+  transform: scale(0.13) translate(-260px, -250px);
+}
+.ppt-g-node-middleground > g > path,
+.ppt-segment {
+  fill-opacity: 0.8;
+}
+.ppt-node__back-text,
+.ppt-node__back-text--root--value-selected,
+.ppt-node__back-text--choose,
+.ppt-node__back-text--choose--disabled,
+.ppt-node__back-text--choose--value-selected,
+.ppt-node__back-text--root,
+.ppt-node__back-text--root--disabled,
+.ppt-node__back-text--choose--value-selected--disabled,
+.ppt-node__back-text--value {
+  fill-opacity: 0.9 !important;
+  fill: #333333 !important;
+}
+.ppt-segment.CreditCard:hover {
+  fill: #007676;
+}
+.ppt-segment.Address:hover {
+  fill: #2c17b1;
+}
+.ppt-segment.Airport:hover {
+  fill: #1144aa;
+}
+.ppt-segment.Document:hover {
+  fill: #219e00;
+}
+.ppt-segment.Email:hover {
+  fill: #d77b00;
+}
+.ppt-segment.Flight:hover {
+  fill: #a90067;
+}
+.ppt-segment.Hit:hover {
+  fill: #ff0d00;
+}
+.ppt-segment.Passenger:hover {
+  fill: #5e166e;
+}
+.ppt-segment.Phone:hover {
+  fill: #d74b00;
+}
+
+.pptcreditcard {
+  color: #007676;
+}
+.pptaddress {
+  color: #2c17b1;
+  transform: scale(1.45);
+}
+.pptairport {
+  fill: #1144aa;
+}
+.pptdocument {
+  color: rgb(205, 221, 201);
+  height: 18px;
+  fill: #219e00;
+}
+.pptemail {
+  color: #d77b00;
+}
+.pptflight {
+  color: #a90067;
+  transform: scale(1.3);
+}
+.ppthit {
+  color: #ff0d00;
+  transform: scale(1.3);
+}
+.pptpassenger {
+  color: #5e166e;
+  transform: scale(1.2);
+}
+.pptphone {
+  color: #d74b00;
+  transform: scale(1.3);
+}
+.ppt-count-box {
+  fill-opacity: 1 !important;
+  fill: black !important;
+  stroke: white !important;
+}
+.ppt-count-box.disabled,
+.ppt-count-text.disabled {
+  display: none !important;
+}
+.ppt-textpath {
+  stroke-width: 1px !important;
+}
+.ppt-glink:hover {
+  cursor: pointer;
+}
+.ppt-glink:hover > :not(.ppt-link__path--hover--value) {
+  stroke: #ee4e10;
+  stroke-width: 4px !important;
+  marker-mid: url(#cross);
+}
+.ppt-link__path--hover--value {
+  stroke: black !important;
+}
+
+.ppt-node__path--choose--disabled,
+.ppt-node__path--root--disabled {
+  fill: #484848 !important;
+}
+.ppt-taxo-nav {
+  border: 1px solid #00416a !important;
+  background: white !important;
+}
+.ppt-container-graph,
+.ppt-taxo-nav,
+.ppt-div-graph {
+  height: 70vh !important;
+}
+.ppt-body {
+  margin: 0px 10px !important;
+}
+.ppt-glink {
+  stroke-width: 4px;
+}
+.ppt-label {
+  color: #333333 !important;
+}
+.ppt-header-span {
+  font-family: Roboto, Calibri, Tahoma, Arial, sans-serif;
+  color: #333333 !important;
+  font-size: 14px;
+  text-align: center;
+  line-height: 24px;
+  padding: 12px 24px;
+  -webkit-transition: background-color 0.35s cubic-bezier(0.35, 0, 0.25, 1);
+  transition: background-color 0.35s cubic-bezier(0.35, 0, 0.25, 1);
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  text-transform: uppercase;
+  font-weight: 600;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ppt-count {
+  cursor: pointer;
+  color: rgb(63, 81, 181) !important;
+  font-weight: 600;
+}
+.ppt-count-results {
+  cursor: pointer;
+  color: white !important;
+  font-weight: 600;
+}
+
+.ppt-saved-ul {
+  list-style-type: none;
+  display: block;
+  padding: 0;
+  margin: 0;
+}
+.ppt-saved-ul > tbody > tr > td {
+  padding: 0px 5px;
+}
+.ppt-saved-ul > li > .ppt-label {
+  /* margin-left: 25px; */
+}
+.ppt-saved-ul > li > i,
+.ppt-saved-ul > li > svg {
+  vertical-align: text-top;
+}

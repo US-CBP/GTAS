@@ -2,6 +2,7 @@ import React from "react";
 import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
 import Tabs from "../../components/tabs/Tabs";
+import { Row } from "react-bootstrap";
 
 const PaxDetail = props => {
   const tabcontent = props.children.props.children;
@@ -13,11 +14,10 @@ const PaxDetail = props => {
     { title: "Link Analysis", link: tabcontent[4] }
   ];
   return (
-    <div className="container">
+    <div className="columns">
       <Title title="Passenger Detail"></Title>
-
-      <div className="columns">
-        <div className="column is-3">
+      <Row>
+        <div className="column col-lg-3 col-md-3 col-12">
           <div className="box2">
             <aside className="menu">
               <p className="menu-label">General</p>
@@ -56,7 +56,7 @@ const PaxDetail = props => {
           </div>
         </div>
 
-        <div className="column">
+        <div className="col-lg-9 col-md-9 col-12">
           <div className="box2">
             <div className="top">
               <Tabs tabs={tabs} />
@@ -64,7 +64,7 @@ const PaxDetail = props => {
             </div>
           </div>
         </div>
-      </div>
+      </Row>
     </div>
   );
 };

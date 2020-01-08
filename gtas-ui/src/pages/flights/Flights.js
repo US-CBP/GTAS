@@ -34,7 +34,6 @@ const Flights = props => {
     console.log(globalState); // debug statement to prove user loaded.
     let user = JSON.parse(localStorage.getItem("user"));
     console.log(user); // debug statement to prove user was loaded in local storage.
-    console.log(user); // debug statement to prove user was loaded in local storage.
   }, [globalState, endDate, startDate]);
 
   const parameterAdapter = fields => {
