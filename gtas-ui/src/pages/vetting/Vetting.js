@@ -8,6 +8,7 @@ import { hasData } from "../../utils/text";
 import { Col, Container } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import LabelledDateTimePickerStartEnd from "../../components/inputs/labelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
+import CheckboxGroup from "../../components/inputs/checkboxGroup/CheckboxGroup";
 
 const Vetting = props => {
   const onTableChange = () => {};
@@ -51,13 +52,11 @@ const Vetting = props => {
             paramAdapter={parameterAdapter}
           >
             <hr />
-            <LabelledInput
-              datafield
+            <CheckboxGroup
+                datefield = {["New", "Open", "Reviewed"]}
+                options={{"New": true, "Open": true, "Reviewed": false}}
               labelText="Passenger Hit Status"
-              inputType="text"
-              name="hitStatus"
-              callback={onTextChange}
-              alt="nothing"
+                name="hitStatuses"
             />
             <LabelledInput
               datafield
