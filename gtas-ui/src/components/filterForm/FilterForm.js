@@ -27,7 +27,14 @@ class FilterForm extends React.Component {
       if (datafield) {
         if (Array.isArray(datafield)) {
           for (let dfield of datafield) {
-            this.addDataFieldFromArray(idx, child, dfield, fieldMap, fields, datafieldNames);
+            this.addDataFieldFromArray(
+              idx,
+              child,
+              dfield,
+              fieldMap,
+              fields,
+              datafieldNames
+            );
           }
         } else {
           this.addDataField(idx, child, datafield, fieldMap, fields, datafieldNames);
@@ -58,7 +65,7 @@ class FilterForm extends React.Component {
   getChildValue() {
     return val => {
       if (val instanceof Date) {
-        return val.toISOString();
+        return val?.toISOString();
       } else {
         return val;
       }
@@ -80,14 +87,14 @@ class FilterForm extends React.Component {
     datafieldNames.push(fieldname);
   }
 
-// To reset the FilterForm, we clear the values of the input fields in state and re-render
+  // To reset the FilterForm, we clear the values of the input fields in state and re-render
   // the cleared form by updating the form's key. We could also dynamically generate a ref for each
   // child field and clear each ref, but this is simpler.
   onReset = () => {
     let key = this.state.formkey;
     let fields = [];
 
-    this.state.datafieldNames.forEach(function (name) {
+    this.state.datafieldNames.forEach(function(name) {
       fields[name] = "";
     });
 
@@ -186,7 +193,11 @@ class FilterForm extends React.Component {
           </ErrorBoundary>
           <br></br>
           <ButtonToolbar>
-            <Button type="reset" variant="outline-info"> {this.props.clearText || "Reset"}</Button>&nbsp;
+            <Button type="reset" variant="outline-info">
+              {" "}
+              {this.props.clearText || "Reset"}
+            </Button>
+            &nbsp;
             <Button type="submit" className="gradient-button" variant="outline-success">
               {this.props.submitText || "Search"}
             </Button>
