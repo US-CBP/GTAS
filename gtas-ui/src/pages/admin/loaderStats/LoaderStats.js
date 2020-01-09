@@ -23,7 +23,7 @@ return (
               inputType="text"
               name="lastMessageInSystem"
               alt="nothing"
-              readOnly=""
+              readOnly
               callback={onChange}
             
             />
@@ -33,6 +33,7 @@ return (
               inputType="text"
               name="lastMessageAnalyzedByDrools"
               callback={onChange}
+              readOnly
               alt="nothing"
             
             />
@@ -42,6 +43,7 @@ return (
               inputType="text"
               name="mostRecentRuleHit"
               callback={onChange}
+              readOnly
               alt="nothing"
              
             />
@@ -51,6 +53,7 @@ return (
               inputType="text"
               name="passengerCount"
               callback={onChange}
+              readOnly
               alt="nothing"
               
             />
@@ -60,6 +63,7 @@ return (
               inputType="text"
               name="totalLoadingParsingErrors"
               callback={onChange}
+              readOnly
               alt="nothing"
               
             />
@@ -70,6 +74,7 @@ return (
               inputType="text"
               name="totalRuleErros"
               callback={onChange}
+              readOnly
               alt="nothing"
               
             />
