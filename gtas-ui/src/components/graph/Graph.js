@@ -4,7 +4,7 @@ import { cypher, cypherAuth } from "../../services/configService";
 import * as d3 from "d3";
 import { provider, paxRelations, saves, palette } from "./structure";
 import "./Graph.css";
-
+import "../../../node_modules/vaquita/css/vaquita-svg.css";
 const vaquita = require("vaquita");
 
 class Graph extends React.Component {
