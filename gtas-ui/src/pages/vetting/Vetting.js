@@ -5,9 +5,9 @@ import Title from "../../components/title/Title";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import FilterForm from "../../components/filterForm/FilterForm";
 import { hasData } from "../../utils/text";
-import { Col, Container } from "react-bootstrap";
-import Row from "react-bootstrap/Row";
+import { Col, Container, Row } from "react-bootstrap";
 import LabelledDateTimePickerStartEnd from "../../components/inputs/LabelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
+import "./Vetting.css"
 
 const Vetting = props => {
   const onTableChange = () => {};
@@ -43,7 +43,8 @@ const Vetting = props => {
     <Container fluid>
       <Title title="Priority Vetting" uri={props.uri} />
       <Row>
-        <Col lg="2" md="3" sm="3" className="box2">
+        <Col lg="3" md="3" xs="12">
+        <div className="vetting-filter-side-nav">
           <FilterForm
             service={cases.get}
             title="Filter"
@@ -115,8 +116,10 @@ const Vetting = props => {
               startMut={setStartData}
             />
           </FilterForm>
+          </div>
         </Col>
-        <Col lg="10" md="9" sm="9" className="flight-body">
+        <Col lg="9" md="9" xs="12">
+          <div className="vetting-list-box">
           <Table
             data={data}
             id="FlightDataTable"
@@ -125,6 +128,7 @@ const Vetting = props => {
             ignoredFields={["countDown", "priorityVettingListRuleTypes", "ruleCatFilter"]}
             key={data}
           />
+          </div>
         </Col>
       </Row>
     </Container>
