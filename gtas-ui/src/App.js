@@ -15,7 +15,6 @@ import Summary from "./pages/paxDetail/summary/Summary";
 import APIS from "./pages/paxDetail/apis/APIS";
 import PNR from "./pages/paxDetail/pnr/PNR";
 import FlightHistory from "./pages/paxDetail/flightHistory/FlightHistory";
-import LinkAnalysis from "./pages/paxDetail/linkAnalysis/LinkAnalysis";
 import FlightPax from "./pages/flightPax/FlightPax";
 import Admin from "./pages/admin/Admin";
 import ManageUser from "./pages/admin/manageUsers/ManageUsers";
@@ -39,6 +38,13 @@ import AddUser from "./pages/admin/manageUsers/addUser/AddUser";
 
 import Page404 from "./pages/page404/Page404";
 import { StateProvider } from "./appContext";
+import ErrorBoundary from "./components/errorBoundary/ErrorBoundary";
+import Loading from "./components/loading/Loading";
+
+//Split Link Analysis (Graph component, d3, jquery deps) into a separate bundle
+const LinkAnalysis = React.lazy(() =>
+  import("./pages/paxDetail/linkAnalysis/LinkAnalysis")
+);
 
 export default class App extends React.Component {
   constructor(props) {
@@ -146,7 +152,11 @@ export default class App extends React.Component {
                     <APIS path="apis"></APIS>
                     <PNR path="pnr"></PNR>
                     <FlightHistory path="flighthistory"></FlightHistory>
-                    <LinkAnalysis path="linkanalysis"></LinkAnalysis>
+                    <ErrorBoundary>
+                      <Suspense fallback={<Loading></Loading>}>
+                        <LinkAnalysis path="linkanalysis"></LinkAnalysis>
+                      </Suspense>
+                    </ErrorBoundary>
                   </PaxDetail>
                   <Page404 default></Page404>
                 </Home>

@@ -5,7 +5,7 @@ import * as d3 from "d3";
 import { provider, paxRelations, saves, palette } from "./structure";
 import "./Graph.css";
 
-const vaquita = require("vaquita/dist/vaquita.min.js");
+const vaquita = require("vaquita");
 
 class Graph extends React.Component {
   constructor(props) {
