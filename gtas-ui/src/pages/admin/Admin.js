@@ -2,7 +2,7 @@ import React from "react";
 import Title from "../../components/title/Title";
 import Tabs from "../../components/tabs/Tabs";
 import Banner from "../../components/banner/Banner";
-import {Col, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 
 const Admin = props => {
   const tabcontent = props.children.props.children;
@@ -17,21 +17,18 @@ const Admin = props => {
   };
 
   return (
-    <>
-     <Container> <Title title="Admin" uri={props.uri}></Title></Container>
+    <Container fluid>
+      <Title title="Admin" uri={props.uri}></Title>
       <Banner
         id="banner"
         styleName="warning"
         text="Something has happened."
         defaultState={showBanner}
-      ></Banner>
-      <Container>
-      <Col className="box2">
+      />
+      <div className="box2">
         <Tabs tabs={tablist} />
-      </Col>
-      </Container>
-      </>
-    
+      </div>
+    </Container>
   );
 };
 

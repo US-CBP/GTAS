@@ -1,26 +1,19 @@
-import React from 'react';
-import Table from '../../../components/table/Table';
-import {hacks} from '../../../services/serviceWrapper';
-import Title from '../../../components/title/Title';
+import React from "react";
+import Table from "../../../components/table/Table";
+import { hacks } from "../../../services/serviceWrapper";
+import Title from "../../../components/title/Title";
+import { Container } from "react-bootstrap";
 
+const LoaderStats = ({ name }) => {
+  const cb = function(result) {};
 
-const LoaderStats = ({name}) => {
-  const cb = function(result){
-  
-  }
-  
   return (
-    <div className='container'>
+    <Container fluid>
       <Title title={name}></Title>
 
-      <div className='columns'>
-          <div className='top'>
-            <Table service={hacks.get} id='foo' callback={cb} ></Table>
-          </div>
-      </div>
-    </div>
-)
-
-}
+      <Table service={hacks.get} id="foo" callback={cb}></Table>
+    </Container>
+  );
+};
 
 export default LoaderStats;
