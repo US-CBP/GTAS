@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import Table from "../../components/table/Table";
 import { cases } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
@@ -34,18 +34,45 @@ const Vetting = props => {
 
     fieldNames.forEach(name => {
       if (hasData(fields[name])) {
-        paramObject[name] = fields[name];
+        if (name === "displayStatusCheckBoxes") {
+          const checkboxObject = fields[name];
+          const morphedArray = checkboxObject.map(cb => {
+            let name = cb.name;
+            let value = cb.checked;
+            return { [name]: value };
+          });
+          paramObject[name] = Object.assign({}, ...morphedArray);
+        } else {
+          paramObject[name] = fields[name];
+        }
       }
     });
     return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
   };
 
-  const options = 0;
-  const labels = 1;
-  let displayStatusCheckboxGroups = [
-    { NEW: true, REVIEWED: true, RE_OPENED: false },
-    ["New", "Reviewed", "Re Opened"]
-  ];
+  let displayStatusCheckboxGroups = {
+    name: "displayStatusCheckboxes",
+    value: [
+      {
+        name: "NEW",
+        label: "New:",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "REVIEWED",
+        label: "Reviewed:",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "RE_OPENED",
+        label: "Re Opened:",
+        type: "checkbox",
+        checked: false
+      }
+    ]
+  };
 
   return (
     <Container fluid>
@@ -60,9 +87,8 @@ const Vetting = props => {
           >
             <hr />
             <CheckboxGroup
-              datafield={displayStatusCheckboxGroups[options]}
-              inputVal={displayStatusCheckboxGroups[options]}
-              optionNames={displayStatusCheckboxGroups[labels]}
+              datafield={displayStatusCheckboxGroups}
+              inputVal={displayStatusCheckboxGroups.value}
               labelText="Passenger Hit Status"
               name="displayStatusCheckBoxes"
             />

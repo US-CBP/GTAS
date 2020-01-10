@@ -6,16 +6,16 @@
  *
  */
 
-import React, { useState } from "react";
+import React, {useState} from "react";
 import GroupCheckBox from "./GroupCheckBox";
 import LabelledInputDisplayWrapper from "../LabelledInputDecorator";
 
 const CheckboxGroup = props => {
-  const [values, setValues] = useState({...props.inputVal});
+  const [values, setValues] = useState([...props.inputVal]);
 
-  const handleFieldChange = (name) => {
-      let update = !values[name];
-      let newValues = {...values, [name]: update};
+  const handleFieldChange = (id) => {
+      const newValues = [...values];
+      newValues[id] = {...newValues[id], "checked": !newValues[id].checked};
       setValues(newValues);
       const filterFormUpdate = {
           name: props.name,
@@ -23,14 +23,14 @@ const CheckboxGroup = props => {
       };
       props.callback(filterFormUpdate);
   };
-    let theCheckboxes = Object.keys(values).map((checkboxName, index) => {
-                        return <GroupCheckBox key={checkboxName}
-                                              id={checkboxName}
-                                              name={props.optionNames[index]}
-                                              type={props.type}
+    let theCheckboxes = values.map((checkBox, index) => {
+                        return <GroupCheckBox key={index}
+                                              id={index}
+                                              name={checkBox.label}
+                                              type={checkBox.type}
                                               onChange={handleFieldChange}
-                                              value={values[checkboxName]}
-                                              checked={values[checkboxName]}
+                                              value={checkBox.checked}
+                                              checked={checkBox.checked}
                         />;
             });
     // useful debugging statement: <pre>{JSON.stringify(values, null, 2)}</pre>
