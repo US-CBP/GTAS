@@ -3,25 +3,19 @@ import Table from "../../components/table/Table";
 import { passengers } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
+import { Container } from "react-bootstrap";
 
 const FlightPax = () => {
   const cb = function(result) {};
 
   return (
-    <div className="container">
-      <Title title="Flight Passengers"></Title>
-
-      <div className="columns">
-        <div className="column">
-          <div className="box2">
-            <div className="top">
-              <Link to="/gtas/paxdetail">Passenger Details</Link>
-              <Table service={passengers.get} id="foo" callback={cb}></Table>
-            </div>
-          </div>
-        </div>
+    <Container fluid>
+      <div className="box2">
+        <Title title="Flight Passengers"></Title>
+        <Link to="/gtas/paxdetail">Passenger Details</Link>
+        <Table service={passengers.get} id="foo" callback={cb}></Table>
       </div>
-    </div>
+    </Container>
   );
 };
 
