@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useEffect, useState } from "react";
 import Table from "../../components/table/Table";
 import { cases } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
@@ -9,6 +9,7 @@ import { Col, Container } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import LabelledDateTimePickerStartEnd from "../../components/inputs/labelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
 import CheckboxGroup from "../../components/inputs/checkboxGroup/CheckboxGroup";
+import { useFetchHitCategories } from "../../services/dataInterface/HitCategoryService";
 
 const Vetting = props => {
   const onTableChange = () => {};
@@ -42,6 +43,14 @@ const Vetting = props => {
             return { [name]: value };
           });
           paramObject[name] = Object.assign({}, ...morphedArray);
+        } else if (name === "ruleCatFilter") {
+          const checkboxObject = fields[name];
+          const morphedArray = checkboxObject.map(cb => {
+            let name = cb.name;
+            let value = cb.checked;
+            return { name: name, value: value };
+          });
+          paramObject[name] = [...morphedArray];
         } else {
           paramObject[name] = fields[name];
         }
@@ -74,94 +83,135 @@ const Vetting = props => {
     ]
   };
 
-  return (
-    <Container fluid>
-      <Title title="Priority Vetting" uri={props.uri} />
-      <Row>
-        <Col lg="2" md="3" sm="3" className="box2">
-          <FilterForm
-            service={cases.get}
-            title="Filter"
-            callback={setDataWrapper}
-            paramAdapter={parameterAdapter}
-          >
-            <hr />
-            <CheckboxGroup
-              datafield={displayStatusCheckboxGroups}
-              inputVal={displayStatusCheckboxGroups.value}
-              labelText="Passenger Hit Status"
-              name="displayStatusCheckBoxes"
-            />
-            <LabelledInput
-              datafield
-              labelText="My Rules Only"
-              inputType="text"
-              name="myRules"
-              callback={onTextChange}
-              alt="nothing"
-            />
-            <LabelledInput
-              datafield
-              labelText="Rule Category"
-              inputType="text"
-              name="ruleCat"
-              callback={onTextChange}
-              alt="nothing"
-            />
-            <LabelledInput
-              datafield
-              labelText="Rule Type"
-              inputType="text"
-              name="ruleType"
-              callback={onTextChange}
-              alt="nothing"
-            />
-            <LabelledInput
-              datafield
-              labelText="Passenger Last Name"
-              inputType="text"
-              name="paxLastName"
-              callback={onTextChange}
-              alt="nothing"
-            />
-            <LabelledInput
-              datafield
-              labelText="Full Flight ID"
-              inputType="text"
-              name="fullFlightId"
-              callback={onTextChange}
-              alt="nothing"
-            />
-            <LabelledDateTimePickerStartEnd
-              datafield={["etaStart", "etaEnd"]}
-              name={["etaStart", "etaEnd"]}
-              alt="Start/End Datepicker"
-              inputType="dateTime"
-              dateFormat="yyyy-MM-dd h:mm aa"
-              callback={cb}
-              showTimeSelect
-              showYearDropdown
-              inputVal={{ etaStart: startDate, etaEnd: endDate }}
-              startDate={startDate}
-              endDate={endDate}
-              endMut={setEndData}
-              startMut={setStartData}
-            />
-          </FilterForm>
-        </Col>
-        <Col lg="10" md="9" sm="9" className="flight-body">
-          <Table
-            data={data}
-            id="FlightDataTable"
-            callback={onTableChange}
-            header={["flightId", "hitNames", "status"]}
-            ignoredFields={["countDown", "priorityVettingListRuleTypes", "ruleCatFilter"]}
-            key={data}
-          />
-        </Col>
-      </Row>
-    </Container>
+  const { hitCategories, loading } = useFetchHitCategories();
+  const [hitCategoryCheckboxes, setHitCategoryCheckboxes] = useState(
+    <div>Loading Checkboxes...</div>
   );
+
+  useEffect(() => {
+    if (hitCategories !== undefined) {
+      let tranformedResponse = hitCategories.map(hitCat => {
+        return {
+          ...hitCat,
+          label: hitCat.name,
+          type: "checkbox",
+          checked: true
+        };
+      });
+      const data = {
+        name: "hitCategories",
+        value: tranformedResponse
+      };
+      setHitCategoryCheckboxes(
+        <CheckboxGroup
+          datafield={data}
+          inputVal={data.value}
+          labelText="Passenger Hit Categories"
+          name="ruleCatFilter"
+        />
+      );
+    }
+  }, [hitCategories, loading]);
+
+  let renderedFilter;
+  if (loading) {
+    renderedFilter = <div>Loading Filter!</div>;
+  } else {
+    renderedFilter = (
+      <Container fluid>
+        <Title title="Priority Vetting" uri={props.uri} />
+        <Row>
+          <Col lg="2" md="3" sm="3" className="box2">
+            <FilterForm
+              service={cases.get}
+              title="Filter"
+              callback={setDataWrapper}
+              paramAdapter={parameterAdapter}
+            >
+              <hr />
+              <CheckboxGroup
+                datafield={displayStatusCheckboxGroups}
+                inputVal={displayStatusCheckboxGroups.value}
+                labelText="Passenger Hit Status"
+                name="displayStatusCheckBoxes"
+              />
+              {hitCategoryCheckboxes}
+              <LabelledInput
+                datafield
+                labelText="My Rules Only"
+                inputType="text"
+                name="myRules"
+                callback={onTextChange}
+                alt="nothing"
+              />
+              <LabelledInput
+                datafield
+                labelText="Rule Category"
+                inputType="text"
+                name="ruleCat"
+                callback={onTextChange}
+                alt="nothing"
+              />
+              <LabelledInput
+                datafield
+                labelText="Rule Type"
+                inputType="text"
+                name="ruleType"
+                callback={onTextChange}
+                alt="nothing"
+              />
+              <LabelledInput
+                datafield
+                labelText="Passenger Last Name"
+                inputType="text"
+                name="paxLastName"
+                callback={onTextChange}
+                alt="nothing"
+              />
+              <LabelledInput
+                datafield
+                labelText="Full Flight ID"
+                inputType="text"
+                name="fullFlightId"
+                callback={onTextChange}
+                alt="nothing"
+              />
+              <LabelledDateTimePickerStartEnd
+                datafield={["etaStart", "etaEnd"]}
+                name={["etaStart", "etaEnd"]}
+                alt="Start/End Datepicker"
+                inputType="dateTime"
+                dateFormat="yyyy-MM-dd h:mm aa"
+                callback={cb}
+                showTimeSelect
+                showYearDropdown
+                inputVal={{ etaStart: startDate, etaEnd: endDate }}
+                startDate={startDate}
+                endDate={endDate}
+                endMut={setEndData}
+                startMut={setStartData}
+              />
+            </FilterForm>
+          </Col>
+          <Col lg="10" md="9" sm="9" className="flight-body">
+            <Table
+              data={data}
+              id="FlightDataTable"
+              callback={onTableChange}
+              header={["flightId", "hitNames", "status"]}
+              ignoredFields={[
+                "countDown",
+                "priorityVettingListRuleTypes",
+                "ruleCatFilter"
+              ]}
+              key={data}
+            />
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+  return renderedFilter;
 };
 
 export default Vetting;
