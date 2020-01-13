@@ -47,7 +47,7 @@ public class Utils {
 
 			Files.move(file.toPath(), targetPath, StandardCopyOption.ATOMIC_MOVE);
 		} catch (Exception ex) {
-			throw new LoaderException("Could not move file to target dir: " + targetPath.toString() + "ex:" + ex.toString());
+			throw new LoaderException("Could not move file to target dir: " + targetPath.toString());
 		}
 
 		return targetPath.toFile();
