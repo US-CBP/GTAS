@@ -118,7 +118,7 @@ const EMPLOYEES = "http://localhost:3004/employees";
 const HACKS = "http://localhost:3004/hacks";
 const LOGINS = "http://localhost:8080/gtas/authenticate";
 const USERS = "http://localhost:8080/gtas/user";
-const WATCHLISTCATS = "http://localhost:3004/watchlistcats";
+const WATCHLISTCATS = "http://localhost:8080/gtas/wl/watchlistCategories";
 const FLIGHTS = "http://localhost:8080/gtas/flights";
 const AUDITLOG = "http://localhost:3004/auditlog?startDate=2019-11-04&endDate=2019-12-02";
 const ERRORLOG = "http://localhost:3004/errorlog?startDate=2019-11-04&endDate=2019-12-02";

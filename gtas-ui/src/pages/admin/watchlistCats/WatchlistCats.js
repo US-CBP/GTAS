@@ -11,7 +11,7 @@ const WatchlistCats = ({ name }) => {
     <Container fluid>
       <Title title={name}></Title>
 
-      <Table service={watchlistcats.get} id="foo" callback={cb}></Table>
+      <Table service={watchlistcats.get} id="Watchlist Catagory" callback={cb}></Table>
     </Container>
   );
 };
