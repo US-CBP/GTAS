@@ -126,6 +126,8 @@ const CASES = "http://localhost:8080/gtas/hits";
 const SETTINGSINFO = "http://localhost:3004/settingsinfo";
 const GETRULECATS = "http://localhost:3004/getRuleCats";
 const PAX = "http://localhost:3004/passengers";
+const LOADERSTATISTICS = "http://localhost:8080/gtas/api/statistics";
+const RULE_CATS = "http://localhost:8080/gtas/getRuleCats";
 
 // ENTITY METHODS
 export const company = setOps(COMPANY, get, post);
@@ -140,6 +142,8 @@ export const flights = setOps(FLIGHTS, get, post);
 export const auditlog = setOps(AUDITLOG, get);
 export const errorlog = setOps(ERRORLOG, get);
 export const cases = setOps(CASES, get, post);
+export const ruleCats = setOps(RULE_CATS, get);
 export const settingsinfo = setOps(SETTINGSINFO, get, put);
 export const getrulecats = setOps(GETRULECATS, get);
 export const passengers = setOps(PAX, get);
+export const loaderStats = setOps(LOADERSTATISTICS, get);

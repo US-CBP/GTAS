@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { hasData } from "../../utils/text";
 import RBTable from "react-bootstrap/Table";
 import "./SegmentTable.css";
-// import SegmentRow from "./SegmentRow";
 
 /**
  * Table for PNR data segments. Highlights and scrolls to rows with a class matching

@@ -24,7 +24,7 @@ const Login = () => {
             type: "login",
             user: response
           });
-          navigate(`/gtas/admin`, true);
+          navigate(`/gtas/flights`, true);
         })
         .catch(error => {
           //todo: error handling

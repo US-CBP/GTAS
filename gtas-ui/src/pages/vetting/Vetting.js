@@ -5,9 +5,11 @@ import Title from "../../components/title/Title";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import FilterForm from "../../components/filterForm/FilterForm";
 import { hasData } from "../../utils/text";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container } from "react-bootstrap";
+import Row from "react-bootstrap/Row";
 import LabelledDateTimePickerStartEnd from "../../components/inputs/LabelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
-import "./Vetting.css"
+import CheckboxGroup from "../../components/inputs/checkboxGroup/CheckboxGroup";
+import "./Vetting.css";
 
 const Vetting = props => {
   const onTableChange = () => {};
@@ -33,10 +35,44 @@ const Vetting = props => {
 
     fieldNames.forEach(name => {
       if (hasData(fields[name])) {
-        paramObject[name] = fields[name];
+        if (name === "displayStatusCheckBoxes") {
+          const checkboxObject = fields[name];
+          const morphedArray = checkboxObject.map(cb => {
+            let name = cb.name;
+            let value = cb.checked;
+            return { [name]: value };
+          });
+          paramObject[name] = Object.assign({}, ...morphedArray);
+        } else {
+          paramObject[name] = fields[name];
+        }
       }
     });
     return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
+  };
+
+  let displayStatusCheckboxGroups = {
+    name: "displayStatusCheckboxes",
+    value: [
+      {
+        name: "NEW",
+        label: "New:",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "REVIEWED",
+        label: "Reviewed:",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "RE_OPENED",
+        label: "Re Opened:",
+        type: "checkbox",
+        checked: false
+      }
+    ]
   };
 
   return (
@@ -44,90 +80,92 @@ const Vetting = props => {
       <Title title="Priority Vetting" uri={props.uri} />
       <Row>
         <Col lg="3" md="3" xs="12">
-        <div className="vetting-filter-side-nav">
-          <FilterForm
-            service={cases.get}
-            title="Filter"
-            callback={setDataWrapper}
-            paramAdapter={parameterAdapter}
-          >
-            <hr />
-            <LabelledInput
-              datafield
-              labelText="Passenger Hit Status"
-              inputType="text"
-              name="hitStatus"
-              callback={onTextChange}
-              alt="nothing"
-            />
-            <LabelledInput
-              datafield
-              labelText="My Rules Only"
-              inputType="text"
-              name="myRules"
-              callback={onTextChange}
-              alt="nothing"
-            />
-            <LabelledInput
-              datafield
-              labelText="Rule Category"
-              inputType="text"
-              name="ruleCat"
-              callback={onTextChange}
-              alt="nothing"
-            />
-            <LabelledInput
-              datafield
-              labelText="Rule Type"
-              inputType="text"
-              name="ruleType"
-              callback={onTextChange}
-              alt="nothing"
-            />
-            <LabelledInput
-              datafield
-              labelText="Passenger Last Name"
-              inputType="text"
-              name="paxLastName"
-              callback={onTextChange}
-              alt="nothing"
-            />
-            <LabelledInput
-              datafield
-              labelText="Full Flight ID"
-              inputType="text"
-              name="fullFlightId"
-              callback={onTextChange}
-              alt="nothing"
-            />
-            <LabelledDateTimePickerStartEnd
-              datafield={["etaStart", "etaEnd"]}
-              name={["etaStart", "etaEnd"]}
-              alt="Start/End Datepicker"
-              inputType="dateTime"
-              dateFormat="yyyy-MM-dd h:mm aa"
-              callback={cb}
-              showTimeSelect
-              showYearDropdown
-              inputVal={{ etaStart: startDate, etaEnd: endDate }}
-              startDate={startDate}
-              endDate={endDate}
-              endMut={setEndData}
-              startMut={setStartData}
-            />
-          </FilterForm>
+          <div className="vetting-filter-side-nav">
+            <FilterForm
+              service={cases.get}
+              title="Filter"
+              callback={setDataWrapper}
+              paramAdapter={parameterAdapter}
+            >
+              <hr />
+              <CheckboxGroup
+                datafield={displayStatusCheckboxGroups}
+                inputVal={displayStatusCheckboxGroups.value}
+                labelText="Passenger Hit Status"
+                name="displayStatusCheckBoxes"
+              />
+              <LabelledInput
+                datafield
+                labelText="My Rules Only"
+                inputType="text"
+                name="myRules"
+                callback={onTextChange}
+                alt="nothing"
+              />
+              <LabelledInput
+                datafield
+                labelText="Rule Category"
+                inputType="text"
+                name="ruleCat"
+                callback={onTextChange}
+                alt="nothing"
+              />
+              <LabelledInput
+                datafield
+                labelText="Rule Type"
+                inputType="text"
+                name="ruleType"
+                callback={onTextChange}
+                alt="nothing"
+              />
+              <LabelledInput
+                datafield
+                labelText="Passenger Last Name"
+                inputType="text"
+                name="paxLastName"
+                callback={onTextChange}
+                alt="nothing"
+              />
+              <LabelledInput
+                datafield
+                labelText="Full Flight ID"
+                inputType="text"
+                name="fullFlightId"
+                callback={onTextChange}
+                alt="nothing"
+              />
+              <LabelledDateTimePickerStartEnd
+                datafield={["etaStart", "etaEnd"]}
+                name={["etaStart", "etaEnd"]}
+                alt="Start/End Datepicker"
+                inputType="dateTime"
+                dateFormat="yyyy-MM-dd h:mm aa"
+                callback={cb}
+                showTimeSelect
+                showYearDropdown
+                inputVal={{ etaStart: startDate, etaEnd: endDate }}
+                startDate={startDate}
+                endDate={endDate}
+                endMut={setEndData}
+                startMut={setStartData}
+              />
+            </FilterForm>
           </div>
         </Col>
         <Col lg="9" md="9" xs="12">
           <div className="vetting-list-box">
-          <Table
-            data={data}
-            id="FlightDataTable"
-            callback={onTableChange}
-            header={["flightId", "hitNames", "status"]}
-            ignoredFields={["countDown", "priorityVettingListRuleTypes", "ruleCatFilter"]}
-            key={data}
-          />
+            <Table
+              data={data}
+              id="FlightDataTable"
+              callback={onTableChange}
+              header={["flightId", "hitNames", "status"]}
+              ignoredFields={[
+                "countDown",
+                "priorityVettingListRuleTypes",
+                "ruleCatFilter"
+              ]}
+              key={data}
+            />
           </div>
         </Col>
       </Row>

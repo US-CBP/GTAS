@@ -302,7 +302,7 @@ export const saves = pax => {
       horiz: 1,
       value: [
         {
-          id_tag: pax.id,
+          id_tag: pax.idTag,
           last_name: pax.lastName
         }
       ],
@@ -400,7 +400,7 @@ export const saves = pax => {
       horiz: 2,
       value: [
         {
-          id_tag: pax.id,
+          id_tag: pax.idTag,
           last_name: pax.lastName
         }
       ],
@@ -486,7 +486,7 @@ export const thisPax = pax => {
     label: "Passenger",
     value: [
       {
-        id_tag: pax.id,
+        id_tag: pax.idTag,
         last_name: pax.lastName
       }
     ]

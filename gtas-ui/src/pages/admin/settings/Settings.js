@@ -5,8 +5,8 @@ import LabelledInput from "../../../components/labelledInput/LabelledInput";
 import { Container, Col } from "react-bootstrap";
 
 const Settings = ({ name }) => {
-  const cb = function(result) {};
   const onChange = function(result) {};
+  // const cb = function() {};
 
   return (
     <Container>
@@ -15,7 +15,6 @@ const Settings = ({ name }) => {
           getService={settingsinfo.get}
           submitService={settingsinfo.put}
           title=""
-          callback={cb}
           action="edit"
           recordId="1"
         >

@@ -110,9 +110,9 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 				hitViewStatusEnumSet.add(HitViewStatusEnum.RE_OPENED);
 			}
 		}
-		// Special case. Unused value to give only new results.
+		// Special case. Unused value to give no results.
 		if (hitViewStatusEnumSet.isEmpty()) {
-			hitViewStatusEnumSet.add(HitViewStatusEnum.NEW);
+			hitViewStatusEnumSet.add(HitViewStatusEnum.NOT_USED);
 		}
 
 		Predicate hitViewStatus = cb.in(hitViewJoin.get("hitViewStatusEnum")).value(hitViewStatusEnumSet);
