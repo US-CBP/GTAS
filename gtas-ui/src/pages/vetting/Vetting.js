@@ -190,25 +190,9 @@ const Vetting = props => {
               />
               <LabelledInput
                 datafield
-                labelText="Rule Category"
-                inputType="text"
-                name="ruleCat"
-                callback={onTextChange}
-                alt="nothing"
-              />
-              <LabelledInput
-                datafield
-                labelText="Rule Type"
-                inputType="text"
-                name="ruleType"
-                callback={onTextChange}
-                alt="nothing"
-              />
-              <LabelledInput
-                datafield
                 labelText="Passenger Last Name"
                 inputType="text"
-                name="paxLastName"
+                name="paxName"
                 callback={onTextChange}
                 alt="nothing"
               />
@@ -216,7 +200,7 @@ const Vetting = props => {
                 datafield
                 labelText="Full Flight ID"
                 inputType="text"
-                name="fullFlightId"
+                name="flightId"
                 callback={onTextChange}
                 alt="nothing"
               />
