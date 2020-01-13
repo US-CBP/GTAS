@@ -2,6 +2,7 @@ import React from "react";
 import Table from "../../../components/table/Table";
 import { errorlog } from "../../../services/serviceWrapper";
 import Title from "../../../components/title/Title";
+import { Container } from "react-bootstrap";
 
 const ErrorLog = ({ name }) => {
   const cb = function(result) {};
@@ -9,20 +10,16 @@ const ErrorLog = ({ name }) => {
   const visibleCols = ["errorId", "errorCode", "errorDescription", "errorTimestamp"];
 
   return (
-    <div className="container">
+    <Container fluid>
       <Title title={name}></Title>
 
-      <div className="columns">
-        <div className="top">
-          <Table
-            service={errorlog.get}
-            id="foo"
-            callback={cb}
-            header={visibleCols}
-          ></Table>
-        </div>
-      </div>
-    </div>
+      <Table
+        service={errorlog.get}
+        id="errorLog"
+        callback={cb}
+        header={visibleCols}
+      ></Table>
+    </Container>
   );
 };
 
