@@ -83,7 +83,7 @@ const Vetting = props => {
       }
     ]
   };
-
+  
   const { hitCategories, loading } = useFetchHitCategories();
   const [hitCategoryCheckboxes, setHitCategoryCheckboxes] = useState(
     <div>Loading Checkboxes...</div>
@@ -138,12 +138,13 @@ const Vetting = props => {
               />
               {hitCategoryCheckboxes}
               <LabelledInput
-                datafield
-                labelText="My Rules Only"
-                inputType="text"
-                name="myRules"
-                callback={onTextChange}
-                alt="nothing"
+                  datafield="myRulesOnly"
+                  name="myRulesOnly"
+                  label="My Rules Only"
+                  inputType="checkbox"
+                  inputVal={false}
+                  callback={cb}
+                  selected={false}
               />
               <LabelledInput
                 datafield
