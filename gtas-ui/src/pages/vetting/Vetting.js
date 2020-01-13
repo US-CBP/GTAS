@@ -36,7 +36,7 @@ const Vetting = props => {
 
     fieldNames.forEach(name => {
       if (hasData(fields[name])) {
-        if (name === "displayStatusCheckBoxes") {
+        if (name === "displayStatusCheckBoxes" || name === "ruleTypes") {
           const checkboxObject = fields[name];
           const morphedArray = checkboxObject.map(cb => {
             let name = cb.name;
@@ -58,6 +58,42 @@ const Vetting = props => {
       }
     });
     return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
+  };
+
+  let ruleTypes = {
+    name: "ruleTypes",
+    value: [
+      {
+        name: "WATCHLIST",
+        label: "Watchlist:",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "USER_RULE",
+        label: "User Created Rule:",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "GRAPH_RULE",
+        label: "Graph Database Rule:",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "MANUAL",
+        label: "Manual: ",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "PARTIAL_WATCHLIST",
+        label: "Partial Watchlist:",
+        type: "checkbox",
+        checked: false
+      }
+    ]
   };
 
   let displayStatusCheckboxGroups = {
@@ -137,6 +173,12 @@ const Vetting = props => {
                 name="displayStatusCheckBoxes"
               />
               {hitCategoryCheckboxes}
+              <CheckboxGroup
+                  datafield={ruleTypes}
+                  inputVal={ruleTypes.value}
+                  labelText="Hit Types"
+                  name="ruleTypes"
+              />
               <LabelledInput
                   datafield="myRulesOnly"
                   name="myRulesOnly"
