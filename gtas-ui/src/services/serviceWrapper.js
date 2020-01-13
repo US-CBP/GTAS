@@ -123,7 +123,7 @@ const FLIGHTS = "http://localhost:8080/gtas/flights";
 const AUDITLOG = "http://localhost:3004/auditlog?startDate=2019-11-04&endDate=2019-12-02";
 const ERRORLOG = "http://localhost:3004/errorlog?startDate=2019-11-04&endDate=2019-12-02";
 const CASES = "http://localhost:8080/gtas/hits";
-const SETTINGSINFO = "http://localhost:3004/settingsinfo";
+const SETTINGSINFO = "http://localhost:8080/gtas/settingsinfo";
 const GETRULECATS = "http://localhost:3004/getRuleCats";
 const PAX = "http://localhost:3004/passengers";
 const LOADERSTATISTICS = "http://localhost:8080/gtas/api/statistics";

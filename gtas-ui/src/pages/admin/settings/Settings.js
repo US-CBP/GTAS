@@ -16,7 +16,6 @@ const Settings = ({ name }) => {
           submitService={settingsinfo.put}
           title=""
           action="edit"
-          recordId="1"
         >
           <LabelledInput
             datafield
