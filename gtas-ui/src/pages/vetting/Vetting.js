@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Table from "../../components/table/Table";
 import { cases } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
@@ -10,6 +10,7 @@ import Row from "react-bootstrap/Row";
 import LabelledDateTimePickerStartEnd from "../../components/inputs/LabelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
 import CheckboxGroup from "../../components/inputs/checkboxGroup/CheckboxGroup";
 import "./Vetting.css";
+import { useFetchHitCategories } from "../../services/dataInterface/HitCategoryService";
 
 const Vetting = props => {
   const onTableChange = () => {};
@@ -43,6 +44,14 @@ const Vetting = props => {
             return { [name]: value };
           });
           paramObject[name] = Object.assign({}, ...morphedArray);
+        } else if (name === "ruleCatFilter") {
+          const checkboxObject = fields[name];
+          const morphedArray = checkboxObject.map(cb => {
+            let name = cb.name;
+            let value = cb.checked;
+            return { name: name, value: value };
+          });
+          paramObject[name] = [...morphedArray];
         } else {
           paramObject[name] = fields[name];
         }
@@ -75,12 +84,45 @@ const Vetting = props => {
     ]
   };
 
-  return (
-    <Container fluid>
-      <Title title="Priority Vetting" uri={props.uri} />
-      <Row>
-        <Col lg="3" md="3" xs="12">
-          <div className="vetting-filter-side-nav">
+  const { hitCategories, loading } = useFetchHitCategories();
+  const [hitCategoryCheckboxes, setHitCategoryCheckboxes] = useState(
+    <div>Loading Checkboxes...</div>
+  );
+
+  useEffect(() => {
+    if (hitCategories !== undefined) {
+      let tranformedResponse = hitCategories.map(hitCat => {
+        return {
+          ...hitCat,
+          label: hitCat.name,
+          type: "checkbox",
+          checked: true
+        };
+      });
+      const data = {
+        name: "hitCategories",
+        value: tranformedResponse
+      };
+      setHitCategoryCheckboxes(
+        <CheckboxGroup
+          datafield={data}
+          inputVal={data.value}
+          labelText="Passenger Hit Categories"
+          name="ruleCatFilter"
+        />
+      );
+    }
+  }, [hitCategories, loading]);
+
+  let renderedFilter;
+  if (loading) {
+    renderedFilter = <div>Loading Filter!</div>;
+  } else {
+    renderedFilter = (
+      <Container fluid>
+        <Title title="Priority Vetting" uri={props.uri} />
+        <Row>
+          <Col lg="2" md="3" sm="3" className="box2">
             <FilterForm
               service={cases.get}
               title="Filter"
@@ -94,6 +136,7 @@ const Vetting = props => {
                 labelText="Passenger Hit Status"
                 name="displayStatusCheckBoxes"
               />
+              {hitCategoryCheckboxes}
               <LabelledInput
                 datafield
                 labelText="My Rules Only"
@@ -150,10 +193,8 @@ const Vetting = props => {
                 startMut={setStartData}
               />
             </FilterForm>
-          </div>
-        </Col>
-        <Col lg="9" md="9" xs="12">
-          <div className="vetting-list-box">
+          </Col>
+          <Col lg="10" md="9" sm="9" className="flight-body">
             <Table
               data={data}
               id="FlightDataTable"
@@ -166,11 +207,12 @@ const Vetting = props => {
               ]}
               key={data}
             />
-          </div>
-        </Col>
-      </Row>
-    </Container>
-  );
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+  return renderedFilter;
 };
 
 export default Vetting;
