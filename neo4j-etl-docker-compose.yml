@@ -46,7 +46,7 @@ services:
       ACTIVEMQ_HOST: activemq
     volumes:
       - type: bind
-        source: /Users/simbamarufu/Documents/gtas_documents
+        source: ## your local path to gtas_documents
         target: /usr/local/gtas_documents
         consistency: consistent
     secrets:
