@@ -9,6 +9,8 @@ services:
     environment: 
       - DB_HOST=mariadb
       - KIBANA_HOST=kibana
+      - NEO4J_HOST=neo4j
+      - ACTIVEMQ_HOST=activemq
     networks:
       - GTAS_webapp-network
       - GTAS_logstash-network
@@ -16,6 +18,8 @@ services:
     secrets:
      - mysql_webapp_user
      - mysql_webapp_password
+     - webapp_neo4j_user
+     - webapp_neo4j_password
     volumes:
       - m2:/root/.m2
     depends_on: 
@@ -27,7 +31,6 @@ services:
       dockerfile: 'Dockerfile-mariadb'
     container_name: mariadb
     environment:
-      MYSQL_DATABASE: gtas
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
     healthcheck:
       test: "mysql --user=$$(cat /run/secrets/mysql_healthcheck_user) --password=$$(cat /run/secrets/mysql_healthcheck_password) --execute \"SHOW DATABASES;\")"
@@ -78,6 +81,10 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
   mysql_root_password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_root_password.txt
+  webapp_neo4j_user:
+    file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_user.txt
+  webapp_neo4j_password:
+    file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_password.txt
 
 volumes:
   db-data:
