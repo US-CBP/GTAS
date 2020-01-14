@@ -608,52 +608,6 @@
       }
     ]
   },
-  "HitsSummary": {
-    "label": "HITS",
-    "columns": [
-      {
-        "id": "HitsSummary.isRuleHit",
-        "label": "Has Rule Hit",
-        "type": "boolean",
-        "operators": "EQUALS",
-        "input": "radio",
-        "values": {
-          "1": "Yes",
-          "0": "No"
-        },
-        "colors": {
-          "1": "success",
-          "0": "danger"
-        }
-      },
-      {
-        "id": "HitsSummary.isWatchListHit",
-        "label": "Has Watch List Hit",
-        "type": "boolean",
-        "operators": "EQUALS",
-        "input": "radio",
-        "values": {
-          "1": "Yes",
-          "0": "No"
-        },
-        "colors": {
-          "1": "success",
-          "0": "danger"
-        }
-      },
-      {
-        "id": "HitsSummary.id",
-        "label": "Rules Hit Id",
-        "type": "integer",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN"
-        ]                     
-      }
-    ]
-  },
   "Passenger": {
     "label": "PASSENGER",
     "columns": [
