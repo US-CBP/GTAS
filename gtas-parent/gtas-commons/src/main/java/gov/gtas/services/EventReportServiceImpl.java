@@ -134,10 +134,10 @@ public class EventReportServiceImpl implements EventReportService {
 				Pnr latestPnr = PaxDetailVoUtil.getLatestPnrFromList(pnrList);
 				passengerVo.setPnrVo(PaxDetailVoUtil.mapPnrToPnrVo(latestPnr));
 				paxDetailPdfDocRequest.setTripType(latestPnr.getTripType());
-
 			}
 
 			paxDetailPdfDocRequest.setPassengerVo(passengerVo);
+						
 			//HIT INFO
 			setHitInformation(paxDetailPdfDocRequest, paxId);
 			//HIT HISTORY

@@ -767,6 +767,24 @@ public abstract class EventReportPdfTemplateService {
 		cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
 		cell.setLeftPadding(5);
 	}
+	
+    protected Cell<PDPage> createRawPnrValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
+    {
+    			Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
+    		 	cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
+    		 	 cell.setFont(this.PLAIN_TIMES_ROMAN);
+    	        cell.setTopBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR, 1));
+    	        cell.setLeftBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
+    	        cell.setRightBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
+    	        cell.setBottomBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
+    	        cell.setFillColor(Color.WHITE);
+    	        cell.setAlign(HorizontalAlignment.LEFT);
+    	        cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
+ 
+    	
+    	return cell;
+    	
+    }
     
 	public String getFileName() {
 		return fileName;
