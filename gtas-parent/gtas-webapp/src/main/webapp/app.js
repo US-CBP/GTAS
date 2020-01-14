@@ -739,10 +739,6 @@ var app;
               alert("Error Loading Notifications: " + reason);
             });
 
-            notificationService.getWatchlistCount().then(function(value) {
-               $scope.hitCount = value;
-            });
-
             $scope.getHitCount = function() {
                     return $scope.hitCount;
             };
@@ -782,15 +778,6 @@ var app;
             $scope.$on('stateChanged', function (e, state, toParams) {
                 $scope.stateName = state.name;
                 $scope.mode = toParams.mode;
-                notificationService.getWatchlistCount().then(function(value) {
-                    $scope.hitCount = value;
-                });
-            });
-
-            $rootScope.$on('hitCountChange', function () {
-                notificationService.getWatchlistCount().then(function(value) {
-                    $scope.hitCount = value;
-                 });
             });
 
             $rootScope.$on('unauthorizedEvent', function () {

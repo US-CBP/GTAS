@@ -1111,7 +1111,6 @@
       paxDetailService.updatePassengerHitDetails(paxId, 'REVIEWED')
         .then(function (response) {
           $scope.refreshHitDetailsList();
-          $rootScope.$broadcast('hitCountChange');
         });
     };
 
@@ -1120,7 +1119,6 @@
       paxDetailService.updatePassengerHitDetails(paxId, 'Re_Opened')
           .then(function () {
             $scope.refreshHitDetailsList();
-            $rootScope.$broadcast('hitCountChange');
           });
     };
 
