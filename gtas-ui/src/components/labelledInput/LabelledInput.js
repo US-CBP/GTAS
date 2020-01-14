@@ -109,6 +109,7 @@ class LabelledInput extends Component {
           {this.props.labelText && <br />}
           <CheckboxInput
             className={inputStyle}
+            label={this.props.label}
             name={this.props.name}
             inputType={this.props.inputType}
             inputVal={this.props.inputVal}

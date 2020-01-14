@@ -36,7 +36,7 @@ const Vetting = props => {
 
     fieldNames.forEach(name => {
       if (hasData(fields[name])) {
-        if (name === "displayStatusCheckBoxes") {
+        if (name === "displayStatusCheckBoxes" || name === "ruleTypes") {
           const checkboxObject = fields[name];
           const morphedArray = checkboxObject.map(cb => {
             let name = cb.name;
@@ -58,6 +58,42 @@ const Vetting = props => {
       }
     });
     return "?requestDto=" + encodeURIComponent(JSON.stringify(paramObject));
+  };
+
+  let ruleTypes = {
+    name: "ruleTypes",
+    value: [
+      {
+        name: "WATCHLIST",
+        label: "Watchlist:",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "USER_RULE",
+        label: "User Created Rule:",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "GRAPH_RULE",
+        label: "Graph Database Rule:",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "MANUAL",
+        label: "Manual: ",
+        type: "checkbox",
+        checked: true
+      },
+      {
+        name: "PARTIAL_WATCHLIST",
+        label: "Partial Watchlist:",
+        type: "checkbox",
+        checked: false
+      }
+    ]
   };
 
   let displayStatusCheckboxGroups = {
@@ -83,7 +119,7 @@ const Vetting = props => {
       }
     ]
   };
-
+  
   const { hitCategories, loading } = useFetchHitCategories();
   const [hitCategoryCheckboxes, setHitCategoryCheckboxes] = useState(
     <div>Loading Checkboxes...</div>
@@ -137,35 +173,26 @@ const Vetting = props => {
                 name="displayStatusCheckBoxes"
               />
               {hitCategoryCheckboxes}
-              <LabelledInput
-                datafield
-                labelText="My Rules Only"
-                inputType="text"
-                name="myRules"
-                callback={onTextChange}
-                alt="nothing"
+              <CheckboxGroup
+                  datafield={ruleTypes}
+                  inputVal={ruleTypes.value}
+                  labelText="Hit Types"
+                  name="ruleTypes"
               />
               <LabelledInput
-                datafield
-                labelText="Rule Category"
-                inputType="text"
-                name="ruleCat"
-                callback={onTextChange}
-                alt="nothing"
-              />
-              <LabelledInput
-                datafield
-                labelText="Rule Type"
-                inputType="text"
-                name="ruleType"
-                callback={onTextChange}
-                alt="nothing"
+                  datafield="myRulesOnly"
+                  name="myRulesOnly"
+                  label="My Rules Only"
+                  inputType="checkbox"
+                  inputVal={false}
+                  callback={cb}
+                  selected={false}
               />
               <LabelledInput
                 datafield
                 labelText="Passenger Last Name"
                 inputType="text"
-                name="paxLastName"
+                name="paxName"
                 callback={onTextChange}
                 alt="nothing"
               />
@@ -173,7 +200,7 @@ const Vetting = props => {
                 datafield
                 labelText="Full Flight ID"
                 inputType="text"
-                name="fullFlightId"
+                name="flightId"
                 callback={onTextChange}
                 alt="nothing"
               />

@@ -1,39 +1,34 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 /**
  * **Checkbox and Radio input component.**
  */
 const CheckboxInput = props => {
-  const [selected, setSelected] = useState(!!props.selected);
-  const inputRef = useRef(null);
+  const [selected, setSelected] = useState(props.selected);
 
-  const onChange = ev => {
-    props.callback(ev);
-  };
-
-  // Allow the checkbox/radio text to be clickable by capturing the click event and passing it to the input
-  const onClick = ev => {
-    ev.stopPropagation();
+  const onChange = () => {
     setSelected(!selected);
-    inputRef.current.click();
+    const filterFormUpdate = {
+      name: props.name,
+      value: !selected
+    };
+    props.callback({target: filterFormUpdate});
   };
-
   const style = (props.className || "undefined").replace("undefined");
   const divstyle = style.replace("checkbox");
 
   return (
-    <div onClick={onClick} className={divstyle}>
+    <div className={divstyle}>
+      {` ${props.label}`}
       <input
-        ref={inputRef}
         name={props.name}
         onChange={onChange}
         className={style}
         type={props.inputType}
         value={props.inputVal}
         checked={selected}
-      ></input>
-      {` ${props.inputVal}`}
+      />
     </div>
   );
 };
