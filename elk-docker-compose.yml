@@ -1,0 +1,76 @@
+version: "3.7"
+
+services:
+  kibana:
+    image: kibana:7.2.0 
+    container_name: kibana
+    ports:
+      - 5601:5601
+    networks: 
+      - GTAS_elastic-network
+    environment: 
+      - SERVER_SSL_ENABLED=true
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=$ELASTIC_PASSWORD
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_URL=https://elasticsearch:9200
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+      - XPACK_SECURITY_ENABLED=true
+    depends_on:
+      - elasticsearch
+    volumes:
+      - '$PWD/gtas-parent/scripts/elastic:/config/kibana'
+
+  elasticsearch:
+    image: elasticsearch:7.2.0
+    # build:
+    #   context: ./gtas-parent/scripts/elastic
+    #   dockerfile: install/docker/elasticsearch/Dockerfile
+    container_name: elasticsearch
+    volumes: 
+      - "es-data:/usr/share/elasticsearch/data"
+    networks: 
+      - GTAS_elastic-network
+    ports: 
+      - 9300:9300
+      - 9200:9200
+    environment:
+      - node.name=elasticsearch
+      - discovery.seed_hosts=elasticsearch
+      - cluster.initial_master_nodes=elasticsearch
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD 
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.license.self_generated.type=trial 
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+  logstash:
+    build: 
+      dockerfile: ./install/docker/logstash/Dockerfile
+      context: ./gtas-parent/scripts/elastic
+      args: 
+        DB_HOST: 'mariahost'
+        ELASTIC_HOST: 'elasticsearch'
+    container_name: logstash
+    environment:
+      - JAVA_OPTS=-Xms1g -Xmx1g
+      - ES_PWD=$ES_PWD
+      - LOGSTASH_DIR=/usr/share/logstash
+      - LOGSTASH_LIB=/usr/share/logstash/logstash-core/lib/jars
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - XPACK_MONITORING_ENABLED=false
+      - XPACK_MONITORING_ELASTICSEARCH_USERNAME="elastic"
+      - XPACK_MONITORING_ELASTICSEARCH_PASSWORD=$ES_PWD
+      - XPACK_MONITORING_ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - XPACK_MONITORING_ELASTICSEARCH_SSL_VERIFICATION_MODE=none
+    networks:
+      - GTAS_elastic-network
+      - GTAS_logstash-network
+    depends_on:
+      - elasticsearch
+  networks:
+    GTAS_elastic-network:
+      driver: "bridge"
+    GTAS_logstash-network:
+      driver: "bridge"
+    GTAS_webapp-network:
+      driver: "bridge"

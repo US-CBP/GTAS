@@ -28,7 +28,9 @@ import gov.gtas.querybuilder.repository.QueryBuilderRepository;
 import gov.gtas.querybuilder.validation.util.QueryValidationUtils;
 import gov.gtas.querybuilder.vo.FlightQueryVo;
 import gov.gtas.querybuilder.vo.PassengerQueryVo;
+import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.PassengerService;
+import gov.gtas.services.SeatServiceImpl;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.vo.passenger.DocumentVo;
@@ -37,6 +39,7 @@ import gov.gtas.vo.passenger.PassengerGridItemVo;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -57,7 +60,8 @@ public class QueryBuilderService {
 	private QueryBuilderRepository queryRepository;
 	@Autowired
 	private PassengerService passengerService;
-
+	@Autowired
+	private SeatServiceImpl seatService;
 	/**
 	 * Persists a user defined query to the database
 	 * 
@@ -211,6 +215,10 @@ public class QueryBuilderService {
 					Passenger passenger = (Passenger) result[1];
 					Flight flight = (Flight) result[2];
 					PassengerGridItemVo vo = createPassengerGridItemVo(paxDocuments, passenger, flight);
+					
+					String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), passenger.getId());
+					vo.setSeat(seatNumber);
+					
 					passengerList.add(vo);
 				}
 			}

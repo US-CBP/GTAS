@@ -55,6 +55,10 @@
       "data:text/json;charset=utf-8," +
       encodeURIComponent(JSON.stringify($scope.passenger));
 
+    $scope.getCarrierCodeCodeTooltipData = function(code) {
+      let tooltip = codeTooltipService.getCodeTooltipData(code, "carrier");
+      return tooltip + " (" + code + ")";
+    };
     $scope.paxIdTag = $scope.passenger.paxIdTag;
     $scope.paxLastName = $scope.passenger.lastName;
     $scope.paxFlightIdTag = $scope.passenger.flightIdTag;
@@ -1331,7 +1335,11 @@
       );
     };
 
-
+    $scope.getCarrierCodeCodeTooltipData = function(code) {
+      let tooltip = codeTooltipService.getCodeTooltipData(code, "carrier");
+      return tooltip + " (" + code + ")";
+    };
+    
     var exporter = {
       csv: function() {
         $scope.gridApi.exporter.csvExport("all", "all");
@@ -1402,6 +1410,7 @@
               pax.flightOrigin = firstPassenger.flightOrigin;
               pax.flightDestination = firstPassenger.flightDestination;
               pax.flightNumber = firstPassenger.fullFlightNumber;
+              pax.carrier = firstPassenger.carrier;
             }
             $scope.pax = pax;
           },
@@ -1633,6 +1642,12 @@
           width: 50
         },
         {
+          field: "seat",
+          name: "seat",
+          displayName: $translate.instant('pass.seat'),
+          visible: false
+        },
+        {
           field: "lastName",
           name: "lastName",
           displayName: $translate.instant('pass.lastname'),
@@ -1750,6 +1765,12 @@
             '<span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList || row.entity.onWatchListLink" ' +
             "ng-class=\"(row.entity.onWatchListDoc || row.entity.onWatchList) ? 'danger-color' : 'alert-color'\" >" +
             '<i class="fa fa-flag" aria-hidden="true"></i></span></div>'
+        },
+        {
+          field: "seat",
+          name: "seat",
+          displayName: $translate.instant('pass.seat'),
+          visible: false
         },
         {
           name: "passengerType",

@@ -5,12 +5,11 @@
  */
 package gov.gtas.job.scheduler;
 
+import gov.gtas.job.config.JobSchedulerConfig;
 import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
-import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.MessageStatusRepository;
-import gov.gtas.services.AppConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +38,9 @@ public class RuleRunnerScheduler {
 	private ExecutorService exec;
 	private static final int DEFAULT_THREADS_ON_RULES = 5;
 	private MessageStatusRepository messageStatusRepository;
-	private final AppConfigurationService appConfigurationService;
 	private int maxNumOfThreads = DEFAULT_THREADS_ON_RULES;
 	private boolean graphDbOn;
+	private JobSchedulerConfig jobSchedulerConfig;
 
 	/* The targeting service. */
 
@@ -50,23 +49,21 @@ public class RuleRunnerScheduler {
 	 */
 	@Autowired
 	public RuleRunnerScheduler(ApplicationContext ctx, MessageStatusRepository messageStatusRepository,
-			AppConfigurationService appConfigurationService) {
+			JobSchedulerConfig jobSchedulerConfig) {
 		this.messageStatusRepository = messageStatusRepository;
-		this.appConfigurationService = appConfigurationService;
+		this.jobSchedulerConfig = jobSchedulerConfig;
 
 		try {
-			graphDbOn = Boolean.parseBoolean(
-					appConfigurationService.findByOption(AppConfigurationRepository.GRAPH_DB_TOGGLE).getValue());
+			graphDbOn = this.jobSchedulerConfig.getNeo4JRuleEngineEnabled();
 		} catch (Exception e) {
 			logger.error("Failed to get graph db toggle. Graph rules will be OFF.");
 		}
 		try {
-			maxNumOfThreads = Integer.parseInt(
-					appConfigurationService.findByOption(AppConfigurationRepository.THREADS_ON_RULES).getValue());
+			maxNumOfThreads = this.jobSchedulerConfig.getThreadsOnRules();
 		} catch (Exception e) {
 			logger.error(String.format(
-					"Failed to load application configuration: '%1$s' from the database... Number of threads set to use %2$s",
-					AppConfigurationRepository.THREADS_ON_RULES, DEFAULT_THREADS_ON_RULES));
+					"Failed to load application configuration: THREADS_ON_RULES from application properties... Number of threads set to use %1$s",
+					DEFAULT_THREADS_ON_RULES));
 		}
 		this.exec = Executors.newFixedThreadPool(maxNumOfThreads);
 		this.ctx = ctx;
@@ -83,12 +80,10 @@ public class RuleRunnerScheduler {
 	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
 	public void jobScheduling() throws InterruptedException {
 
-		int messageLimit = Integer.parseInt(
-				appConfigurationService.findByOption(AppConfigurationRepository.MAX_MESSAGES_PER_RULE_RUN).getValue());
+		int messageLimit = this.jobSchedulerConfig.getMaxMessagesPerRuleRun();
 		List<MessageStatus> source = messageStatusRepository.getMessagesFromStatus(MessageStatusEnum.LOADED.getName(),
 				messageLimit);
-		int maxPassengers = Integer.parseInt(appConfigurationService
-				.findByOption(AppConfigurationRepository.MAX_PASSENGERS_PER_RULE_RUN).getValue());
+		int maxPassengers = this.jobSchedulerConfig.getMaxPassengersPerRuleRun();
 		if (!source.isEmpty()) {
 			Map<Long, List<MessageStatus>> messageFlightMap = geFlightMessageMap(source);
 			int runningTotal = 0;

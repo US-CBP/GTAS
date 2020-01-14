@@ -1,0 +1,12 @@
+[Unit]
+Description=MariaDB Backup Service
+After=syslog.target network.target
+
+
+[Service]
+Type=forking
+WorkingDirectory=/var/mariadb/scripts
+ExecStart= /var/mariadb/scripts/./db-backup-job.sh
+
+[Install]
+WantedBy=multi-user.target

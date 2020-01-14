@@ -42,7 +42,7 @@ public class DateUtilsTest {
 		dates.put(2018, "181001");
 		dates.put(1940, "401001");
 		dates.put(2012, "120101");
-		dates.put(1920, "200101");
+		dates.put(2020, "200101");
 		dates.put(1983, "830101");
 		String DATE_FORMAT = "yyMMdd";
 

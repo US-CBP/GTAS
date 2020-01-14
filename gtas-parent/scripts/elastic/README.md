@@ -1,11 +1,13 @@
-## ELK stack installation
+## ELK stack installation (TLS enabled)
 ### Requirements
-    sudo yum install git, wget, maven -y
+    sudo yum install git wget unzip -y
 ### Configuration
 
   Configuration files can be found at `GTAS/gtas-parent/scripts/elastic/config/*`. 
 
-### Installation
+### Installation 
+
+`` Follow the steps below to set up ELK stack on a single server ``
 
 1. Linux
 
@@ -18,23 +20,15 @@
         ```bash
         cd GTAS/gtas-parent/scripts/elastic/install/linux/
         ```
-    * Manage all ELK stack
+    * Install all ELK stack (Installs elasticsearch, kibana, logstash and configures self-signed certificates)
 
         ```bash
-         ./(install/start/stop/uninstall)_all.sh 
+         ./install_all.sh
         ```
-
-        **install**: installs elastic search, kibana and logstash as a serivce. The services will start automatically on boot.
-
-        **start**: starts all ELK services.
-
-        **stop**: stops all ELK services.
-
-        **uninstall**: stops the serivces and remove the packges from the system.
 
     * Manage each ELK stack separately 
 
-        > Each script below uses systemd service to (start/stop) and yum to (install/remove). The scripts are also used to bootstrap Centos7 VM.
+        > Each script below uses yum to (install/remove) and systemd service to (start/stop).
 
         Elastic Search
         ```bash
@@ -52,3 +46,16 @@
          ```bash
         ./logstash/(install/start/stop/uninstall).sh
         ```
+
+        ** Create SSL certificates and enable TLS for the ELK stack **
+        
+        ```
+        ./setup-security.sh
+        ```
+
+        `` Note: ``
+
+        1. Prints randomly generated password on the logs
+        
+        2. Answer "y" to the following question: 
+            `the Failure to do so will result in reduced security. Continue without password protection on the keystore? [y/N]`

@@ -7,7 +7,7 @@
   -->
 
 <div class="flex align-items-center primary-back">
-    <h4 class="block-label margin-0">{{passenger.carrier + passenger.flightNumber | uppercase }}</h4>
+    <h4 class="block-label margin-0" tooltip-placement="right" uib-tooltip={{getCarrierCodeCodeTooltipData(passenger.carrier)}}>{{passenger.carrier + passenger.flightNumber | uppercase }}</h4>
     <h6 class="block-label flex margin-0 ">
         <table class="table table-condensed table-borderless margin-0">
             <tr>

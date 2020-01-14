@@ -1,10 +1,12 @@
 #!/bin/bash
 
-yum install wget unzip java-1.8.0-openjdk* -y
+sudo yum install git wget unzip -y
 
 ./logstash/install.sh
 
 ./elasticsearch/install.sh
 
 ./kibana/install.sh
+
+./setup-security.sh
 
