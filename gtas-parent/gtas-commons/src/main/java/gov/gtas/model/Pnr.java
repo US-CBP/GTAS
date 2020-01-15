@@ -430,16 +430,4 @@ public class Pnr extends Message {
 		return Objects.hash(this.recordLocator, this.carrier);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final Pnr other = (Pnr) obj;
-		return Objects.equals(this.recordLocator, other.recordLocator) && Objects.equals(this.carrier, other.carrier);
-	}
-
 }
