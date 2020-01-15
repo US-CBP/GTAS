@@ -12,27 +12,26 @@ const SelectInput = props => {
   };
 
   return (
-    <div className="input-select">
-      <select
-        type="select"
-        name={props.name}
-        required={props.required}
-        alt={props.alt}
-        onChange={onChange}
-        className="form-input"
-        value={selected}
-        disabled={props.readOnly === "readOnly" ? "disabled" : ""}
-      >
-        <option value="">{props.placeholder}</option>
-        {props.options.map(option => {
-          return (
-            <option key={option.value} value={option.value}>
-              {option.label}{" "}
-            </option>
-          );
-        })}
-      </select>
-    </div>
+    <select
+      className={`input-select ${props.className || ""}`}
+      type="select"
+      name={props.name}
+      required={props.required}
+      alt={props.alt}
+      onChange={onChange}
+      className="form-input"
+      value={selected}
+      disabled={props.readOnly === "readOnly" ? "disabled" : ""}
+    >
+      <option value="">{props.placeholder}</option>
+      {props.options.map(option => {
+        return (
+          <option key={option.value} value={option.value}>
+            {option.label}{" "}
+          </option>
+        );
+      })}
+    </select>
   );
 };
 
