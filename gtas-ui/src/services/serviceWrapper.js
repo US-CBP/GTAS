@@ -42,7 +42,7 @@ export function setOps(ctx, ...fxns) {
 //  CRUD OPERATIONS
 export function post(body) {
   if (!hasData(body)) throw new TypeError(POSTBODY);
-  console.log(body);
+
   return GenericService({
     uri: this.uri,
     method: POST,
