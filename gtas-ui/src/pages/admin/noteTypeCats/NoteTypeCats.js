@@ -1,6 +1,6 @@
 import React from "react";
 import Table from "../../../components/table/Table";
-import { hacks } from "../../../services/serviceWrapper";
+import { notetypes } from "../../../services/serviceWrapper";
 import Title from "../../../components/title/Title";
 import { Container } from "react-bootstrap";
 
@@ -10,7 +10,7 @@ const NoteTypeCats = ({ name }) => {
   return (
     <Container fluid>
       <Title title={name}></Title>
-      <Table service={hacks.get} id="foo" callback={cb}></Table>
+      <Table service={notetypes.get} id="noteTypes" callback={cb}></Table>
     </Container>
   );
 };
