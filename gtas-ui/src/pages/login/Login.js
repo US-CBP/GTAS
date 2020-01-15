@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Form from "../../components/form/Form";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
-import { logins, userService } from "../../services/serviceWrapper";
+import { logins, loggedinUser } from "../../services/serviceWrapper";
 import logo from "../../images/GTAS Logo blue 2.png";
 import "./Login.css";
 import { Figure, Jumbotron, Card } from "react-bootstrap";
@@ -17,7 +17,7 @@ const Login = () => {
 
   useEffect(() => {
     if (authenticate) {
-      userService
+      loggedinUser
         .get()
         .then(response => {
           dispatch({
