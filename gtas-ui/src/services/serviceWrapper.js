@@ -42,7 +42,7 @@ export function setOps(ctx, ...fxns) {
 //  CRUD OPERATIONS
 export function post(body) {
   if (!hasData(body)) throw new TypeError(POSTBODY);
-
+  console.log(body);
   return GenericService({
     uri: this.uri,
     method: POST,
@@ -117,8 +117,9 @@ const FILES = "http://localhost:3004/files";
 const EMPLOYEES = "http://localhost:3004/employees";
 const HACKS = "http://localhost:3004/hacks";
 const LOGINS = "http://localhost:8080/gtas/authenticate";
-const USERS = "http://localhost:8080/gtas/user";
+const USERS = "http://localhost:8080/gtas/users/";
 const WATCHLISTCATS = "http://localhost:8080/gtas/wl/watchlistCategories";
+const WATCHLISTCATSPOST = "http://localhost:8080/gtas/wlput/wlcat/";
 const FLIGHTS = "http://localhost:8080/gtas/flights";
 const AUDITLOG = "http://localhost:3004/auditlog?startDate=2019-11-04&endDate=2019-12-02";
 const ERRORLOG = "http://localhost:8080/gtas/errorlog";
@@ -128,6 +129,8 @@ const GETRULECATS = "http://localhost:3004/getRuleCats";
 const PAX = "http://localhost:3004/passengers";
 const LOADERSTATISTICS = "http://localhost:8080/gtas/api/statistics";
 const RULE_CATS = "http://localhost:8080/gtas/getRuleCats";
+const NOTE_TYPES = "http://localhost:8080/gtas/passengers/passenger/notetypes";
+const LOGGEDIN_USER = "http://localhost:8080/gtas/user";
 
 // ENTITY METHODS
 export const company = setOps(COMPANY, get, post);
@@ -135,9 +138,10 @@ export const foo = setOps(FOO, get, post, put, del);
 export const files = setOps(FILES, get, post, put, del);
 export const employees = setOps(EMPLOYEES, get, post);
 export const hacks = setOps(HACKS, get);
-export const watchlistcats = setOps(WATCHLISTCATS, get);
+export const watchlistcats = setOps(WATCHLISTCATS, get, post);
+export const watchlistcatspost = setOps(WATCHLISTCATSPOST, post);
 export const logins = setOps(LOGINS, authPost);
-export const userService = setOps(USERS, get);
+export const userService = setOps(USERS, get, post);
 export const flights = setOps(FLIGHTS, get, post);
 export const auditlog = setOps(AUDITLOG, get);
 export const errorlog = setOps(ERRORLOG, get);
@@ -147,3 +151,5 @@ export const settingsinfo = setOps(SETTINGSINFO, get, put);
 export const getrulecats = setOps(GETRULECATS, get);
 export const passengers = setOps(PAX, get);
 export const loaderStats = setOps(LOADERSTATISTICS, get);
+export const notetypes = setOps(NOTE_TYPES, get);
+export const loggedinUser = setOps(LOGGEDIN_USER, get);
