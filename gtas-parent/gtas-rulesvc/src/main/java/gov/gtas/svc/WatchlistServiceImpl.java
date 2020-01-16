@@ -88,7 +88,11 @@ public class WatchlistServiceImpl implements WatchlistService {
 	
 	@Override
 	public void deleteWatchlistItems(List<Long> watchlistItemIds) {
-		watchlistPersistenceService.deleteWatchlistItems(watchlistItemIds);
+		if (watchlistItemIds != null && !watchlistItemIds.isEmpty()) {
+			watchlistPersistenceService.deleteWatchlistItems(watchlistItemIds);
+		} else {
+			throw new IllegalArgumentException("An empty or null id list was provided.");
+		}
 	}
 
 	@Override

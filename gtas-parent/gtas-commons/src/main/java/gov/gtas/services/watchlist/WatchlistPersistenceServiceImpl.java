@@ -284,7 +284,7 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 
 	@Override
 	public void deleteWatchlistItems(List<Long> watchlistItemIds) {
-		this.watchlistItemRepository.deleteItemsByWatclistItemId(watchlistItemIds);
+		this.watchlistItemRepository.deleteItemsByWatchlistItemId(watchlistItemIds);
 	}
 
 }
