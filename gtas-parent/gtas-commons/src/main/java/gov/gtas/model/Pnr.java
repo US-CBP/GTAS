@@ -425,9 +425,4 @@ public class Pnr extends Message {
 		this.passengers = passengers;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.recordLocator, this.carrier);
-	}
-
 }
