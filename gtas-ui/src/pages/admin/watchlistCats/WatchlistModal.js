@@ -28,7 +28,7 @@ const WatchlistModal = props => {
           <Form
             submitService={watchlistcatspost.post}
             title=""
-            callback={cb}
+            callback={props.callback}
             action="add"
             submitText="Submit"
             afterProcessed={props.onHide}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Table from "../../../components/table/Table";
 import { watchlistcats } from "../../../services/serviceWrapper";
 import Title from "../../../components/title/Title";
@@ -8,6 +8,14 @@ import WatchlistModal from "./WatchlistModal";
 const WatchlistCats = ({ name }) => {
   const cb = function(result) {};
   const [showModal, setShowModal] = useState(false);
+  const [data, setData] = useState([{}]);
+
+  useEffect(() => {
+    watchlistcats.get().then(response => {
+      setData(response);
+    });
+  }, [cb]);
+
   return (
     <Container fluid>
       <Row>
@@ -18,11 +26,15 @@ const WatchlistCats = ({ name }) => {
           <Button variant="outline-dark" onClick={() => setShowModal(true)}>
             Add to Watchlist{" "}
           </Button>
-          <WatchlistModal show={showModal} onHide={() => setShowModal(false)} />
+          <WatchlistModal
+            show={showModal}
+            onHide={() => setShowModal(false)}
+            callback={cb}
+          />
         </Col>
       </Row>
 
-      <Table service={watchlistcats.get} id="Watchlist Catagory" callback={cb}></Table>
+      <Table data={data} key={data} id="Watchlist Catagory" callback={cb}></Table>
     </Container>
   );
 };
