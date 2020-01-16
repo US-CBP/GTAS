@@ -85,6 +85,11 @@ public class WatchlistServiceImpl implements WatchlistService {
 		return WatchlistServiceJsonResponseHelper.createResponse(true, "Create/Update", wlId, wlName, itemIdList,
 				StringUtils.EMPTY);
 	}
+	
+	@Override
+	public void deleteWatchlistItems(List<Long> watchlistItemIds) {
+		watchlistPersistenceService.deleteWatchlistItems(watchlistItemIds);
+	}
 
 	@Override
 	public JsonServiceResponse createUpdateWatchlistItems(String userId, WatchlistSpec wlToCreateUpdate) {

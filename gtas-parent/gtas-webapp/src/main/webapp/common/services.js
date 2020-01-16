@@ -1186,23 +1186,17 @@
 
                   return (request.then(handleSuccess, handleError));
               },
-              deleteItems: function (listTypeName, entity, watchlistItems) {
+              deleteItems: function (entity, watchlistItems) {
                   var request,
                       url = baseUrl + entity;
 
-                  if (!listTypeName || !watchlistItems || !watchlistItems.length) {
+                  if (!watchlistItems || !watchlistItems.length) {
                       return false;
                   }
 
                   request = $http({
-                      method: 'put',
-                      url: url,
-                      data: {
-                          "@class": "gov.gtas.model.watchlist.json.WatchlistSpec",
-                          "name": listTypeName,
-                          "entity": entity,
-                          "watchlistItems": watchlistItems
-                      }
+                      method: 'delete',
+                      url: url + "/" + watchlistItems,
                   });
 
                   return (request.then(handleSuccess, handleError));
