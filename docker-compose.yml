@@ -1,5 +1,16 @@
 version: '3.7'
 services:
+
+  httpproxy:
+    container_name: httpproxy
+    build: 
+      context: './gtas-parent/docker-resources'
+      dockerfile: 'proxy.Dockerfile'
+    ports:
+      - 80:80
+    networks:
+      - GTAS_elastic-network
+
   webapp:
     container_name: webapp
     build: './gtas-parent'
@@ -7,13 +18,17 @@ services:
       - 8080:8080
     environment: 
       - DB_HOST=mariadb
+      - KIBANA_HOST=kibana
+      - PROXY_HOST=httpproxy
     networks:
       - GTAS_webapp-network
       - GTAS_logstash-network
+      - GTAS_elastic-network
     restart: unless-stopped
     secrets:
      - mysql_webapp_user
      - mysql_webapp_password
+     - elastic_bootstrap_password
     volumes:
       - m2:/root/.m2
     depends_on: 
@@ -40,37 +55,52 @@ services:
      - mysql_webapp_password
      - mysql_healthcheck_user
      - mysql_healthcheck_password
+     - mysql_logstash_user
+     - mysql_logstash_password
      - mysql_root_password
     ports:
       - 3306:3306
     networks:
       - GTAS_webapp-network
+      - GTAS_logstash-network
     restart: unless-stopped
     volumes:
       - db-data:/var/lib/mysql
+
+
 secrets:
   mysql_etl_user:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_etl_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_etl_user.txt
   mysql_etl_password:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_etl_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_etl_password.txt
   mysql_healthcheck_user:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_healthcheck_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_healthcheck_user.txt
   mysql_healthcheck_password:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_healthcheck_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_healthcheck_password.txt
+  mysql_logstash_user:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_user.txt
+  mysql_logstash_password:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_password.txt
+  elastic_bootstrap_password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic_bootstrap_password.txt
   mysql_processor_user:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_processor_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_processor_user.txt
   mysql_processor_password:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_processor_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_processor_password.txt
   mysql_webapp_user:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_webapp_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_webapp_user.txt
   mysql_webapp_password:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_webapp_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
   mysql_root_password:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_root_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_root_password.txt
+
 volumes:
   db-data:
   m2:
+
 networks:
+  GTAS_elastic-network:
+    driver: "bridge"
   GTAS_logstash-network:
     driver: "bridge"
   GTAS_webapp-network:

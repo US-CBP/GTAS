@@ -9,4 +9,4 @@ RUN mvn hibernate:create -Dhibernate.schema.execute=false
 FROM mariadb:10.4
 
 COPY --from=build-db /gtas-parent/gtas-commons/target/create.sql /docker-entrypoint-initdb.d/b-create.sql
-COPY ./gtas-commons/mariadb/init/ /docker-entrypoint-initdb.d/
+COPY ./gtas-commons/secrets/init/ /docker-entrypoint-initdb.d/
