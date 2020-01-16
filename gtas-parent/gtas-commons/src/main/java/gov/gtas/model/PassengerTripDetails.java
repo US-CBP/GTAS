@@ -5,6 +5,8 @@
  */
 package gov.gtas.model;
 
+import org.hibernate.annotations.Formula;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -56,6 +58,15 @@ public class PassengerTripDetails extends BaseEntityAudit {
 
 	@Column(name = "travel_frequency")
 	private Integer travelFrequency = 0;
+
+	@Formula("( select (case when ref_number is not null then (select count(distinct pax_trip.ptd_id) "
+			+ " from passenger_trip_details pax_trip "
+			+ " where pax_trip.ptd_id in "
+			+ " (select flightPax2.passenger_id from flight_passenger flightPax2 "
+			+ " where  flightPax2.flight_id = "
+			+ " (select flightPax1.flight_id from flight_passenger flightPax1 where "
+			+ " flightPax1.passenger_id = 8)) and pax_trip.ref_number = ref_number)  else 0 end))")
+	private Integer coTravelerCount;
 
 	@Transient
 	private String totalBagWeight;
@@ -167,5 +178,13 @@ public class PassengerTripDetails extends BaseEntityAudit {
 	@Override
 	public int hashCode() {
 		return Objects.hash(getPaxId());
+	}
+
+	public Integer getCoTravelerCount() {
+		return coTravelerCount;
+	}
+
+	public void setCoTravelerCount(Integer coTravelerCount) {
+		this.coTravelerCount = coTravelerCount;
 	}
 }

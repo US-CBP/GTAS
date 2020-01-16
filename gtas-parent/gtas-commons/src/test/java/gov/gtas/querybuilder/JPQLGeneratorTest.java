@@ -85,4 +85,12 @@ public class JPQLGeneratorTest {
 
 	}
 
+	@Test
+	public void testApisFlightCoTravelers() throws InvalidQueryRepositoryException {
+
+		String joinCondition = JPQLGenerator.getJoinCondition(queryTypePassenger, queryTypePassenger);
+		Assert.assertEquals(" join f.passengers p", joinCondition);
+
+	}
+
 }
