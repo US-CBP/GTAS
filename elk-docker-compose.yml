@@ -20,6 +20,8 @@ services:
         aliases:
           - "kibana.local"
       GTAS_webapp-network:
+        aliases:
+          - "kibana.local"
     secrets:
       - source: elasticsearch_ca
         target: /etc/kibana/config/ca.crt

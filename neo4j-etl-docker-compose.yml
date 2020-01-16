@@ -1,0 +1,93 @@
+version: "3.7"
+
+services:
+
+  etl-job:
+    container_name: etl-job
+    build:
+      context: .
+      dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
+    environment:
+      NEO4J_HOSTNAME: neo4j
+      DB_HOSTNAME: mariadb
+    image: neo4j-etl-job
+    secrets:
+      - mysql_etl_user
+      - mysql_etl_password
+      - etl_neo4j_user
+      - etl_neo4j_password
+    networks: 
+      - GTAS_webapp-network
+    depends_on: 
+      - neo4j
+
+  neo4j:
+    container_name: neo4j
+    build:
+      context: .
+      dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
+    image: gtas-neo4j
+    ports:
+      - 7474:7474   
+      - 7687:7687
+    networks: 
+      - GTAS_webapp-network
+
+  gtas-scheduler:
+    container_name: gtas-scheduler
+    build:
+      context: .
+      dockerfile: gtas-parent/gtas-job-scheduler-war/Dockerfile
+    image: gtas-scheduler      
+    environment:
+      DB_HOST: mariadb
+      KIBANA_HOST: kibana
+      NEO4J_HOST: neo4j
+      ACTIVEMQ_HOST: activemq
+    volumes:
+      - type: bind
+        source: /Users/simbamarufu/Documents/gtas_documents
+        target: /usr/local/gtas_documents
+        consistency: consistent
+    secrets:
+      - mysql_processor_user
+      - mysql_processor_password
+      - webapp_neo4j_user
+      - webapp_neo4j_password
+    networks:
+      - GTAS_webapp-network
+    depends_on: 
+      - activemq
+
+
+  activemq:
+    image: rmohr/activemq
+    container_name: activemq
+    ports:
+      - 61616:61616
+      - 8161:8161
+    networks: 
+      - GTAS_webapp-network
+
+
+networks:
+  GTAS_webapp-network:
+    driver: "bridge"
+
+secrets:
+  mysql_processor_user:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_processor_user.txt
+  mysql_processor_password:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_processor_password.txt
+  mysql_etl_user:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_etl_user.txt
+  mysql_etl_password:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_etl_password.txt
+  etl_neo4j_user:
+    file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_user.txt
+  etl_neo4j_password:
+    file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_password.txt
+  webapp_neo4j_user:
+    file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_user.txt
+  webapp_neo4j_password:
+    file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_password.txt

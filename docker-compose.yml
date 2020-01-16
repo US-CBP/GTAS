@@ -1,6 +1,16 @@
 version: '3.7'
 services:
 
+  httpproxy:
+    container_name: httpproxy
+    build: 
+      context: './gtas-parent/docker-resources'
+      dockerfile: 'proxy.Dockerfile'
+    ports:
+      - 80:80
+    networks:
+      - GTAS_elastic-network
+
   webapp:
     container_name: webapp
     build: './gtas-parent'
@@ -9,13 +19,16 @@ services:
     environment: 
       - DB_HOST=mariadb
       - KIBANA_HOST=kibana
+      - PROXY_HOST=httpproxy
     networks:
       - GTAS_webapp-network
       - GTAS_logstash-network
+      - GTAS_elastic-network
     restart: unless-stopped
     secrets:
      - mysql_webapp_user
      - mysql_webapp_password
+     - elastic_bootstrap_password
     volumes:
       - m2:/root/.m2
     depends_on: 
@@ -68,6 +81,8 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_user.txt
   mysql_logstash_password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_password.txt
+  elastic_bootstrap_password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic_bootstrap_password.txt
   mysql_processor_user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_processor_user.txt
   mysql_processor_password:
@@ -84,6 +99,8 @@ volumes:
   m2:
 
 networks:
+  GTAS_elastic-network:
+    driver: "bridge"
   GTAS_logstash-network:
     driver: "bridge"
   GTAS_webapp-network:
