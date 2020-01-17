@@ -38,34 +38,9 @@
    <header class="header" title="GLOBAL TRAVEL ASSESSMENT SYSTEM"></header>
    <div ng-cloak class="login-container cbp-card-container gtas-card-container">
      <div class="cbp-card cbp-card-shadow">
-       <h3 class="login-header">GTAS Login</h3>
+       <h3 class="login-header">GTAS Sign Up</h3>
        <div class="panel-body">
-         <form role="form" id="loginform" class="form"
-          ng-controller="LoginController" ng-submit="login(credentials)">
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width">
-              <input class="mdl-textfield__input" type="text"
-                id="user_login" ng-model="credentials.j_username"
-                name="username" autocomplete="off" required disabled>
-              <label class="mdl-textfield__label" for="user_login">User Name</label>
-          </div>
-          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width">
-              <input class="mdl-textfield__input" type="password"
-                id="user_pass" ng-model="credentials.j_password"
-                name="password" required disabled>
-              <label class="mdl-textfield__label" for="user_pass">Password</label>
-          </div>
-          
-          <button type="submit" name="wp-submit" id="wp-submit" class="btn btn-primary full-width">
-         <i class="fa fa-sign-in" aria-hidden="true"></i>   Sign In
-          </button>
-          
-          <div class="form-group" style="margin-top: 20px;">
-	          	<a href="signup.html"><button type="button" name="wp-submit2" id="wp-submit2" class="btn btn-success pull-right"> 
-	          	<i class="fa fa-user-plus" aria-hidden="true"></i> Sign Up
-	          </button>
-	         </a>
-          </div>
-        </form>
+        Your sign up request has been submitted. 
        </div>
      </div>   
    </div>
@@ -138,5 +113,7 @@
 <script src='userSettings/UserSettingsController.js'></script>
 <script src='userSettings/FilterCtrl.js'></script>
 <script src='common/languagecontroller.js'></script>
+<script src='signup/SignupController.js'></script>
+<script src='signup/SignupService.js'></script>
 
 </html>

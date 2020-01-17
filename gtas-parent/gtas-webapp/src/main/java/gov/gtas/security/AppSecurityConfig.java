@@ -49,7 +49,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
 				"/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
 				"/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
-				"WEB-INF/**/*", "/data/**");
+				"WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
 	}
 
 	@Autowired
@@ -69,7 +69,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests()
 				.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**",
-						"/authenticate")
+						"/authenticate", "/signup.html", "/user/signup/new","/signup/**/*","/user/signup/**/*")
 				.permitAll().anyRequest().authenticated().and().formLogin().loginProcessingUrl("/authenticate")
 				.usernameParameter("username").passwordParameter("password")
 				.successHandler(new AjaxAuthenticationSuccessHandler(savedReqHandler))

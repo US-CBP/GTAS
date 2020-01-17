@@ -1081,6 +1081,42 @@
                           displayName: "Note Type",
                           type: "string"
                       }
+                  ],
+                  SIGNUP_REQUEST: [
+                      
+                      {
+                          field: "email",
+                          name: "email",
+                          displayName: "Email",
+                          type: "string"
+                      },
+                      {
+                          field: "username",
+                          name: "username",
+                          displayName: "Username",
+                          type: "string"
+                      },
+                      {
+                          field: "status",
+                          name: "requestStatus",
+                          displayName: "Request Status",
+                          type: "string"
+                      },
+                      {
+                          field: "physicalLocation",
+                          name: "physicalLocation",
+                          displayName: "Physical Location",
+                          type: "string"
+                      } ,
+                      {
+                          field: "id",
+                          name: "id",
+                          displayName: "ACTIONS",
+                          cellTemplate:
+                        	  '<div> <a class="btn btn-success" ng-click="grid.appScope.approveSignupRequest(row.entity)"><i class="fa fa-check"> Approve</i></a> <a class="btn btn-warning" ng-click="grid.appScope.rejectSignupRequest(row.entity)"><i class="fa fa-times">Reject</i></a> </div>',
+                          type: "int",
+                          width: "15%"
+                      }
                   ]
               }
             };

@@ -5,7 +5,7 @@
  */
 app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, codeService, caseService,
   errorService, $location, $mdToast, $document, $http, $rootScope, fileDownloadService, $translate, watchListService
-    , statisticService, paxNotesService) {
+    , statisticService, paxNotesService, SignupService) {
   'use strict';
   var CARRIER = 'carrier';
   var COUNTRY = 'country';
@@ -235,7 +235,25 @@ $scope.formatBytes = function(bytes, decimals = 2) {
         break;
     }
   });
+  
+  var removeRow = function(row, grid, gridApi) {
+	  grid.data.splice(grid.data.indexOf(row), 1);
+	  grid.data = grid.data;
+  }
 
+  $scope.approveSignupRequest = function(row) {
+	  SignupService.approveSignupRequest(row).then(function(data){
+		  removeRow(row, $scope.signupRequestsGrid, $scope.signupRequestsGridApi);
+	  });  
+	  
+  }
+  
+  $scope.rejectSignupRequest = function(row) {
+	  SignupService.rejectSignupRequest(row).then(function(){
+		  removeRow(row, $scope.signupRequestsGrid, $scope.signupRequestsGridApi); 
+	  });
+  }
+  
 
   $scope.viewCodes = function(tab) {
     $scope.activeCodeTab = tab;
@@ -558,6 +576,10 @@ $scope.formatBytes = function(bytes, decimals = 2) {
     paxNotesService.getNoteTypes().then(function(res){
         $scope.noteTypeGrid.data =  res.data;
   });
+    
+    SignupService.getAllNewSignupRequests().then(function(res){
+    	$scope.signupRequestsGrid.data = res.data;
+    });
   
   $scope.addWlCategory = function () {
         $scope.resetModels($scope);
@@ -605,6 +627,23 @@ $scope.formatBytes = function(bytes, decimals = 2) {
         exporterExcelFilename: 'note-list-types.xlsx',
         exporterExcelSheetName: 'Data'
     };
+    
+    $scope.signupRequestsGrid = {
+            paginationPageSizes: [10, 15, 20],
+            paginationPageSize: 10,
+            columnDefs: gridOptionsLookupService.getLookupColumnDefs('watchlist').SIGNUP_REQUEST,
+            enableGridMenu: true,
+            exporterPdfDefaultStyle: {fontSize: 9},
+            exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+            exporterPdfFooter: function ( currentPage, pageCount ) {
+                return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+            },
+            exporterPdfPageSize: 'LETTER',
+            exporterPdfMaxGridWidth: 500,
+            exporterCsvFilename: 'note-list-types.csv',
+            exporterExcelFilename: 'note-list-types.xlsx',
+            exporterExcelSheetName: 'Data'
+        };
 
     $scope.wlCatagoryGrid.onRegisterApi = function (gridApi) {
         $scope.wlGridApi = gridApi;
@@ -613,7 +652,10 @@ $scope.formatBytes = function(bytes, decimals = 2) {
     $scope.noteTypeGrid.onRegisterApi = function (gridApi) {
         $scope.noteTypeGridApi = gridApi;
     };
-
+    
+    $scope.signupRequestsGrid.onRegisterApi = function (gridApi) {
+        $scope.signupRequestsGridApi = gridApi;
+    };
 
     $scope.saveWlCategory = function () {
         watchListService.saveCategory($scope.wlCategoryModel).then(function () {
