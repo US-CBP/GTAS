@@ -29,6 +29,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -40,6 +41,10 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 
 	@PersistenceContext
 	private EntityManager em;
+
+	//Performance increase by offsetting hit creation date is substantial.
+	@Value("${pvl.hitDetails.createdAtDaysOffset}")
+	private Integer pvlHitCreationOffset;
 
 	@SuppressWarnings("DuplicatedCode")
 	@Override
@@ -188,7 +193,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 
 
 			LocalDateTime ldt = LocalDateTime.ofInstant(dto.getEtaStart().toInstant(), ZoneId.systemDefault());
-			ldt = ldt.minusDays(4);
+			ldt = ldt.minusDays(pvlHitCreationOffset);
 			Date etaMinusFour = Date.from(ldt.atZone(UTC).toInstant());
 
 			//HIT DETAIL PREDICATE FOR PERMANCE
