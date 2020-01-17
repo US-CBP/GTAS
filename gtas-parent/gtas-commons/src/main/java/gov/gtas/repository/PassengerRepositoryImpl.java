@@ -192,7 +192,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 			queryPredicates.add(relevantDateExpression);
 
 
-			LocalDateTime ldt = LocalDateTime.ofInstant(dto.getEtaStart().toInstant(), ZoneId.systemDefault());
+			LocalDateTime ldt = LocalDateTime.ofInstant(dto.getEtaStart().toInstant(), UTC);
 			ldt = ldt.minusDays(pvlHitCreationOffset);
 			Date etaMinusFour = Date.from(ldt.atZone(UTC).toInstant());
 
