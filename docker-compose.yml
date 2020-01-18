@@ -20,6 +20,7 @@ services:
       - DB_HOST=mariadb
       - KIBANA_HOST=kibana
       - PROXY_HOST=httpproxy
+      - ELASTICSEARCH=elasticsearch
     networks:
       - GTAS_webapp-network
       - GTAS_logstash-network
@@ -29,6 +30,12 @@ services:
      - mysql_webapp_user
      - mysql_webapp_password
      - elastic_bootstrap_password
+     - source: elastic_key
+       target: /usr/local/tomcat/conf/elasticsearch-node1.key
+     - source: elastic_ca
+       target: /usr/local/tomcat/conf/elastic-ca.crt
+     - source: elastic_cert
+       target: /usr/local/tomcat/conf/elasticsearch-node1.crt
     volumes:
       - m2:/root/.m2
     depends_on: 
@@ -93,6 +100,12 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
   mysql_root_password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_root_password.txt
+  elastic_key:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.key
+  elastic_ca:
+    file: ./gtas-parent/gtas-commons/secrets/elastic-ca.crt
+  elastic_cert:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.crt
 
 volumes:
   db-data:
