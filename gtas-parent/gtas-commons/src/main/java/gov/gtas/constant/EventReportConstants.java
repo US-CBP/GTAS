@@ -99,6 +99,7 @@ public class EventReportConstants {
 	final public static String PHONE_TITLE = "Phone Numbers";
 	final public static String EVENT_NOTES_TITLE = "Event Notes";
 	final public static String EVENT_NOTE_HISTORY_TITLE = "Event Notes History";
+	final public static String RAW_PNR_TITLE = "Raw PNR";
 	final public static String TRIP_TITLE = "Flight";
 
 }

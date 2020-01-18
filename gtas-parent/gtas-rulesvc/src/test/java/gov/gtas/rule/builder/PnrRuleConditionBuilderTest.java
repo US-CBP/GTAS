@@ -16,13 +16,7 @@ import gov.gtas.enumtype.CriteriaOperatorEnum;
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.enumtype.TypeEnum;
 import gov.gtas.model.udr.json.QueryTerm;
-import gov.gtas.querybuilder.mappings.AddressMapping;
-import gov.gtas.querybuilder.mappings.DocumentMapping;
-import gov.gtas.querybuilder.mappings.EmailMapping;
-import gov.gtas.querybuilder.mappings.FlightMapping;
-import gov.gtas.querybuilder.mappings.FrequentFlyerMapping;
-import gov.gtas.querybuilder.mappings.PNRMapping;
-import gov.gtas.querybuilder.mappings.PhoneMapping;
+import gov.gtas.querybuilder.mappings.*;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -149,6 +143,31 @@ public class PnrRuleConditionBuilderTest {
 				+ "$e2link:PnrEmailLink(pnrId == $pnr0.id, linkAttributeId == $e2.id)\n"
 				+ "$ff3link:PnrFrequentFlyerLink(pnrId == $pnr0.id, linkAttributeId == $ff3.id)\n"
 				+ "$plink:PnrPassengerLink(pnrId == $pnr0.id, linkAttributeId == $p.id)";
+		assertEquals(expectedDrools, result.toString().trim());
+	}
+
+	@Test
+	public void testCoTravelerCountRule() throws ParseException {
+		/*
+		 * test just one document condition. also test multiple PNR related entities.
+		 */
+
+		List<QueryTerm> queryTerms = new ArrayList<>();
+		QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.PASSENGER, PassengerMapping.APIS_CO_TRAVELERS,
+				CriteriaOperatorEnum.EQUAL, new String[] { "4" }, TypeEnum.INTEGER);
+		cond.setUuid(UUID.randomUUID());
+		queryTerms.add(cond);
+
+		RuleConditionBuilder testTarget = new RuleConditionBuilder(queryTerms);
+		for (QueryTerm qt : queryTerms) {
+			testTarget.addRuleCondition(qt);
+		}
+		StringBuilder result = new StringBuilder();
+		testTarget.buildConditionsAndApppend(result);
+		logger.info(result.toString());
+		assertTrue(result.length() > 0);
+		String expectedDrools = "$ptcb:PassengerTripDetails(coTravelerCount == 4)\n" +
+				"$p:Passenger(id == $ptcb.paxId)";
 		assertEquals(expectedDrools, result.toString().trim());
 	}
 }

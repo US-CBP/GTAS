@@ -96,9 +96,15 @@ public class PaymentForm implements Serializable {
 		// !this.id.equals(other.id))) {
 		// return false;
 		// }
-		if (this.getPaymentType().equals(other.getPaymentType()) && this.getPnr().equals(other.getPnr())) {
-			return true;
-		}
+		
+		/*
+		 * This equality check is insufficient for allowing a person to hold multiple
+		 * FOP, which is naturally a possibility Removing this in order to allow for
+		 * multiple forms
+		 * 
+		 * if (this.getPaymentType().equals(other.getPaymentType()) &&
+		 * this.getPnr().equals(other.getPnr())) { return true; }
+		 */
 		return false;
 	}
 

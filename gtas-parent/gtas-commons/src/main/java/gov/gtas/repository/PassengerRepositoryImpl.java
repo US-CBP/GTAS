@@ -15,7 +15,7 @@ import gov.gtas.services.dto.RuleCatFilterCheckbox;
 import gov.gtas.services.dto.SortOptionsDto;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.*;
 
 import javax.persistence.EntityManager;
@@ -29,8 +29,11 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import static java.time.ZoneOffset.UTC;
 
 @Component
 public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
@@ -38,6 +41,10 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 
 	@PersistenceContext
 	private EntityManager em;
+
+	//Performance increase by offsetting hit creation date is substantial.
+	@Value("${pvl.hitDetails.createdAtDaysOffset}")
+	private Integer pvlHitCreationOffset;
 
 	@SuppressWarnings("DuplicatedCode")
 	@Override
@@ -62,9 +69,9 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		List<Predicate> countQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, countQuery,
 				paxCount, userId);
 		countQuery.select(cb.countDistinct(paxCount.get("id"))).where(countQueryPredicate.toArray(new Predicate[] {}));
-		TypedQuery typedCountQuery = em.createQuery(countQuery);
-		Optional countResult = typedCountQuery.getResultList().stream().findFirst();
-		Long passengerCount = countResult.isPresent() ? (Long) countResult.get() : 0L;
+		TypedQuery<Long> typedCountQuery = em.createQuery(countQuery);
+		Optional<Long> countResult = typedCountQuery.getResultList().stream().findFirst();
+		Long passengerCount = countResult.orElse(0L);
 
 		return new ImmutablePair<>(passengerCount, results);
 	}
@@ -110,7 +117,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 				hitViewStatusEnumSet.add(HitViewStatusEnum.RE_OPENED);
 			}
 		}
-		// Special case. Unused value to give result of 0.
+		// Special case. Unused value to give no results.
 		if (hitViewStatusEnumSet.isEmpty()) {
 			hitViewStatusEnumSet.add(HitViewStatusEnum.NOT_USED);
 		}
@@ -183,6 +190,16 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 			Predicate endPredicate = cb.lessThanOrEqualTo(relevantDate, dto.getEtaEnd());
 			Predicate relevantDateExpression = cb.and(startPredicate, endPredicate);
 			queryPredicates.add(relevantDateExpression);
+
+
+			LocalDateTime ldt = LocalDateTime.ofInstant(dto.getEtaStart().toInstant(), UTC);
+			ldt = ldt.minusDays(pvlHitCreationOffset);
+			Date etaMinusFour = Date.from(ldt.atZone(UTC).toInstant());
+
+			//HIT DETAIL PREDICATE FOR PERMANCE
+			Predicate hitDetailPredicate = cb.and(cb.greaterThan(hitDetails.get("createdDate").as(Date.class), etaMinusFour));
+			queryPredicates.add(hitDetailPredicate);
+
 		}
 
 		// SORTING
