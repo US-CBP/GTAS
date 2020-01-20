@@ -126,8 +126,27 @@ public class EventReportPdfServiceTest {
 		
 	}
 	
-	
-	
+
+	@Test
+	public void createPnrValueCellTest() {
+		
+		try {
+			String pnrTestString = "UNA:+.?*'UNB+IATB";
+			document.addPage(passengerDetailPage);
+			BaseTable table = eventReportPdfService.createReportCoverlTable(document, coverPage);
+			Row<PDPage> row = eventReportPdfService.getRow(table);
+			Cell<PDPage> cell = eventReportPdfService.createRawPnrValueCell(row, 100, pnrTestString);
+			float expected[] = { eventReportPdfService.DEFAULT_CONTENT_FONT_SIZE };
+			float actual[] = { cell.getFontSize()};
+			Assert.assertArrayEquals(expected,actual, 0);
+			Assert.assertEquals(cell.getText(), pnrTestString);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 	
 	
 	

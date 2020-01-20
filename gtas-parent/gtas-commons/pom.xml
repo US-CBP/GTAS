@@ -11,7 +11,18 @@
 	</parent>
 	<artifactId>gtas-commons</artifactId>
 	<packaging>jar</packaging>
-
+	<repositories>
+		<repository>
+			<id>elasticsearch-releases</id>
+			<url>https://artifacts.elastic.co/maven</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<name>GTAS Common Classes</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -251,6 +262,11 @@
 		    <groupId>org.elasticsearch</groupId>
 		    <artifactId>elasticsearch</artifactId>
 		    <version>7.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>x-pack-transport</artifactId>
+			<version>7.2.0</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.elasticsearch.client</groupId>

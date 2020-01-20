@@ -1,6 +1,16 @@
 version: '3.7'
 services:
 
+  httpproxy:
+    container_name: httpproxy
+    build: 
+      context: './gtas-parent/docker-resources'
+      dockerfile: 'proxy.Dockerfile'
+    ports:
+      - 80:80
+    networks:
+      - GTAS_elastic-network
+
   webapp:
     container_name: webapp
     build: './gtas-parent'
@@ -11,15 +21,25 @@ services:
       - KIBANA_HOST=kibana
       - NEO4J_HOST=neo4j
       - ACTIVEMQ_HOST=activemq
+      - PROXY_HOST=httpproxy
+      - ELASTICSEARCH=elasticsearch
     networks:
       - GTAS_webapp-network
       - GTAS_logstash-network
+      - GTAS_elastic-network
     restart: unless-stopped
     secrets:
      - mysql_webapp_user
      - mysql_webapp_password
      - webapp_neo4j_user
      - webapp_neo4j_password
+     - elastic_bootstrap_password
+     - source: elastic_key
+       target: /usr/local/tomcat/conf/elasticsearch-node1.key
+     - source: elastic_ca
+       target: /usr/local/tomcat/conf/elastic-ca.crt
+     - source: elastic_cert
+       target: /usr/local/tomcat/conf/elasticsearch-node1.crt
     volumes:
       - m2:/root/.m2
     depends_on: 
@@ -71,6 +91,8 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_user.txt
   mysql_logstash_password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_password.txt
+  elastic_bootstrap_password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic_bootstrap_password.txt
   mysql_processor_user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_processor_user.txt
   mysql_processor_password:
@@ -85,12 +107,20 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_user.txt
   webapp_neo4j_password:
     file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_password.txt
+  elastic_key:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.key
+  elastic_ca:
+    file: ./gtas-parent/gtas-commons/secrets/elastic-ca.crt
+  elastic_cert:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.crt
 
 volumes:
   db-data:
   m2:
 
 networks:
+  GTAS_elastic-network:
+    driver: "bridge"
   GTAS_logstash-network:
     driver: "bridge"
   GTAS_webapp-network:

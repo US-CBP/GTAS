@@ -66,6 +66,7 @@ public class RuleTemplateConstants {
 		passengerTripDetailsMap.put("PASSENGERTRIPDETAILS.TRAVELFREQUENCY", "travelFrequency");
 		passengerTripDetailsMap.put("PASSENGERTRIPDETAILS.EMBARKCOUNTRY", "embarkCountry");
 		passengerTripDetailsMap.put("PASSENGERTRIPDETAILS.DEBARKCOUNTRY", "debarkCountry");
+		passengerTripDetailsMap.put("PASSENGERTRIPDETAILS.COTRAVELERCOUNT", "coTravelerCount");
 		passTripDetailsMap = Collections.unmodifiableMap(passengerTripDetailsMap);
 	}
 
