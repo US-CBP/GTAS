@@ -1,6 +1,6 @@
 FROM adoptopenjdk/maven-openjdk8 as build-stage
 
-RUN apt-get -y update && apt-get -y install nodejs && apt-get -y install git
+RUN apt-get -y update && apt-get -y install nodejs && apt-get -y install git && apt-get -y install dos2unix
 
 COPY ./ /gtas-parent/
 COPY ./docker-resources/hibernate.properties /gtas-parent/gtas-commons/src/main/resources/hibernate.properties
@@ -11,7 +11,6 @@ RUN cd / && rm -rf /gtas-parent
 
 RUN mkdir /temp-dos
 COPY ./docker-resources/setenv.sh /temp-dos/setenv.sh
-RUN apt-get update && apt-get -y install dos2unix
 RUN dos2unix /temp-dos/setenv.sh
 
 
