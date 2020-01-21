@@ -25,7 +25,7 @@ public class ElasticConfig {
     private static final String ELASTIC_CLUSTER_NAME = "elastic.cluster.name";
     private static final String ELASTIC_NODE_NAME = "elastic.node.name";
     private static final String ELASTIC_USERNAME = "elastic.username";
-    private static final String ELASTIC_PASSWORD = "elastic.password";
+    private static final String ELASTIC_PWD = "elastic.password";
     private static final String SSL_ENABLED = "elastic.ssl.enabled";
 
     public ElasticConfig() { }
@@ -63,7 +63,7 @@ public class ElasticConfig {
     }
 
     public String getElasticCredentials() {
-        return env.getRequiredProperty(ELASTIC_USERNAME) + ":" + env.getRequiredProperty(ELASTIC_PASSWORD);
+        return env.getRequiredProperty(ELASTIC_USERNAME) + ":" + env.getRequiredProperty(ELASTIC_PWD);
     }
 
     public boolean getSslEnabled() {
