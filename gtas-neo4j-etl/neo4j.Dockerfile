@@ -1,9 +1,8 @@
 FROM neo4j:3.5.11
 
-ENV NEO4J_AUTH=neo4j/admin \
-    NEO4J_dbms_active__database=gtas_db \
-    NEO4J_dbms_security_auth__enabled=true \
-    NEO4J_dbms_connectors_default__advertised__address=localhost \
-    NEO4J_dbms_connector_bolt_listen__address=:7687 \
-    NEO4J_dbms_connector_http_listen__address=:7474 
-    
+ENV NEO4j_AUTH=neo4j/admin
+ENV NEO4J_dbms_active__dabase=gtas_db
+ENV NEO4J_dmbs_security_auth__enabled=true
+ENV NEO4j_dmbs_connectors_default__advertised__address=localhost
+ENV NEO4J_dmbs_connector_bold_listen__address=:7687
+ENV NEO4J_dmbs_connector_http_listen__address=:7474
