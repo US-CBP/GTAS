@@ -1,4 +1,5 @@
-FROM neo4j
+FROM neo4j:3.5.11
+
 ENV NEO4j_AUTH=neo4j/admin
 ENV NEO4J_dbms_active__dabase=gtas_db
 ENV NEO4J_dmbs_security_auth__enabled=true
