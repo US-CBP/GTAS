@@ -19,6 +19,8 @@ services:
     environment: 
       - DB_HOST=mariadb
       - KIBANA_HOST=kibana
+      - NEO4J_HOST=neo4j
+      - ACTIVEMQ_HOST=activemq
       - PROXY_HOST=httpproxy
       - ELASTICSEARCH=elasticsearch
     networks:
@@ -29,6 +31,8 @@ services:
     secrets:
      - mysql_webapp_user
      - mysql_webapp_password
+     - webapp_neo4j_user
+     - webapp_neo4j_password
      - elastic_bootstrap_password
      - source: elastic_key
        target: /usr/local/tomcat/conf/elasticsearch-node1.key
@@ -47,7 +51,6 @@ services:
       dockerfile: 'Dockerfile-mariadb'
     container_name: mariadb
     environment:
-      MYSQL_DATABASE: gtas
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
     healthcheck:
       test: "mysql --user=$$(cat /run/secrets/mysql_healthcheck_user) --password=$$(cat /run/secrets/mysql_healthcheck_password) --execute \"SHOW DATABASES;\")"
@@ -100,6 +103,10 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
   mysql_root_password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_root_password.txt
+  webapp_neo4j_user:
+    file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_user.txt
+  webapp_neo4j_password:
+    file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_password.txt
   elastic_key:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.key
   elastic_ca:

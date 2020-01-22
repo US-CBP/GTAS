@@ -59,7 +59,6 @@ services:
     depends_on: 
       - activemq
 
-
   activemq:
     image: rmohr/activemq
     container_name: activemq
