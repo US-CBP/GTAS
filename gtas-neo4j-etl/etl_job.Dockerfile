@@ -45,6 +45,11 @@ COPY ./gtas-neo4j-etl/config ${GTAS_NEO4J_ETL_HOME}/config
 
 WORKDIR ${GTAS_NEO4J_ETL_HOME}/
 
+RUN apk add dos2unix
+RUN dos2unix config/application.properties
+RUN dos2unix config/gtas-neo4j-config.properties
+RUN dos2unix config/run-record.properties
+
 ENTRYPOINT export NEO4J_USER_NAME=$(cat /run/secrets/etl_neo4j_user) NEO4J_PASSWORD=$(cat /run/secrets/etl_neo4j_password) && \
     export GTAS_DB_USER_NAME=$(cat /run/secrets/mysql_etl_user) GTAS_DB_PASSWORD=$(cat /run/secrets/mysql_etl_password) && \
     sed -i.bak "/\(EXT_VAR_GTAS_DB_USER_NAME.*=\).*/ s//\1${GTAS_DB_USER_NAME}/" $CONFIG_FILE && \
