@@ -46,8 +46,8 @@ services:
       ACTIVEMQ_HOST: activemq
     volumes:
       - type: bind
-        source: /Users/simbamarufu/Documents/gtas_documents
-        target: /usr/local/gtas_documents
+        source: ./gtas-data
+        target: /usr/local/gtas-data
         consistency: consistent
     secrets:
       - mysql_processor_user
@@ -62,9 +62,6 @@ services:
   activemq:
     image: rmohr/activemq
     container_name: activemq
-    ports:
-      - 61616:61616
-      - 8161:8161
     networks: 
       - GTAS_webapp-network
 

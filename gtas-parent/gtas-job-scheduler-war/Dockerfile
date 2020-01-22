@@ -7,7 +7,7 @@ RUN mvn clean install -Dmaven.test.skip=true --projects gtas-job-scheduler-war -
 
 RUN apt-get -y update && apt-get -y install dos2unix
 RUN mkdir /temp-dos
-COPY ./docker-resources/setenv-scheduler.sh /temp-dos/setenv-scheduler.sh
+COPY ./gtas-parent/docker-resources/setenv-scheduler.sh /temp-dos/setenv-scheduler.sh
 RUN dos2unix /temp-dos/setenv-scheduler.sh
 
 FROM tomcat:9-jdk8-adoptopenjdk-openj9 as tomcat
