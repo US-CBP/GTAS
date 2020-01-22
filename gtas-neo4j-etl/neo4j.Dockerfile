@@ -1,4 +1,4 @@
-FROM neo4j
+FROM neo4j:3.5.11
 
 ENV NEO4J_AUTH=neo4j/admin \
     NEO4J_dbms_active__database=gtas_db \
