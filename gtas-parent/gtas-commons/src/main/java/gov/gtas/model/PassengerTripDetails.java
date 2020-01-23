@@ -65,7 +65,7 @@ public class PassengerTripDetails extends BaseEntityAudit {
 			+ " (select flightPax2.passenger_id from flight_passenger flightPax2 "
 			+ " where  flightPax2.flight_id = "
 			+ " (select flightPax1.flight_id from flight_passenger flightPax1 where "
-			+ " flightPax1.passenger_id = 8)) and pax_trip.ref_number = ref_number) - 1  else 0 end))")
+			+ " flightPax1.passenger_id = ptd_id)) and pax_trip.ref_number = ref_number) - 1  else 0 end))")
 	private Integer coTravelerCount;
 
 	@Transient
