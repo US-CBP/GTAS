@@ -5,42 +5,54 @@
  */
 package gov.gtas.parsers.tamr.jms;
 
+import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.support.destination.DestinationResolver;
 
 //Uncomment in order in part to re-enable queues
-/*@Configuration
-@EnableJms*/
+@Configuration
+@ConditionalOnProperty(prefix = "tamr", name = "enabled")
+@EnableJms
 public class TamrQueueConfig {
 
-	@Bean
-	public DefaultJmsListenerContainerFactory tamrJmsListenerContainerFactory() {
-		DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-		factory.setConnectionFactory(
-				// Add tamr connection details here.
-				new ActiveMQConnectionFactory(""));
-		factory.setDestinationResolver(new DestinationResolver() {
+    private final Logger logger = LoggerFactory.getLogger(TamrQueueConfig.class);
 
-			@Override
-			public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain)
-					throws JMSException {
-
-				// Create a destination
-				return session.createQueue("OutboundQueue");
-
-			}
-		});
-		factory.setSessionTransacted(true);
-		factory.setConcurrency("5");
-		return factory;
-	}
+    @Value("${tamr.activemq.broker.url}")
+    private String activeMQBrokerUrl;
+    
+    @Bean
+    public JmsListenerContainerFactory<?> tamrJmsListenerContainerFactory() {        
+        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        
+//        factory.setDestinationResolver(new DestinationResolver() {
+//            @Override
+//            public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain)
+//                    throws JMSException {
+//                logger.info("session = {}, destinationName = {}, pubSubDomain = {}",
+//                        session, destinationName, pubSubDomain);
+//                // Create a destination
+//                return session.createQueue("OutboundQueue");
+//            }
+//        });
+        factory.setConnectionFactory(
+                new ActiveMQConnectionFactory(activeMQBrokerUrl));
+        factory.setSessionTransacted(true);
+        factory.setConcurrency("5");
+        return factory;
+    }
 
 }
