@@ -16,6 +16,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Cassidy Laidlaw
  */
 public class TamrMessage {
+    /**
+     * The JMS message type, which is set by TamrMessageReceiver.
+     */
+    @JsonIgnore
+    private String messageType;
+
     private List<TamrTravelerResponse> travelerQuery;
 
     private List<TamrHistoryCluster> historyClusters;
@@ -24,9 +30,17 @@ public class TamrMessage {
 	private String error;
 	
 	private List<TamrRecordError> recordErrors;
-
+	
 	public TamrMessage() {
 	}
+    
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
 
     public List<TamrTravelerResponse> getTravelerQuery() {
         return travelerQuery;

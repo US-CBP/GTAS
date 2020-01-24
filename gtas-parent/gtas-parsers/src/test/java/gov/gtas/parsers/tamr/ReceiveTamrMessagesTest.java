@@ -12,6 +12,7 @@ import javax.jms.TextMessage;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import gov.gtas.parsers.ParserTestHelper;
@@ -143,5 +144,23 @@ public class ReceiveTamrMessagesTest implements ParserTestHelper {
 
         // Malformed messages should not make it through to the handler.
         verifyZeroInteractions(handler);
+    }
+    
+    /**
+     * Make sure the JMS message type is stored properly in the parsed
+     * TamrMessage.
+     */
+    @Test
+    public void testMessageTypeStored() throws JMSException {
+        TextMessage jmsMessage = mock(TextMessage.class);
+        given(jmsMessage.getJMSType()).willReturn("DC.REPLACE");
+        given(jmsMessage.getText()).willReturn("{}");
+        
+        receiver.receive(jmsMessage);
+
+        final ArgumentCaptor<TamrMessage> messageCaptor =
+                ArgumentCaptor.forClass(TamrMessage.class);
+        verify(handler).handleAcknowledgeResponse(messageCaptor.capture());
+        assertEquals("DC.REPLACE", messageCaptor.getValue().getMessageType());
     }
 }

@@ -65,6 +65,7 @@ public class TamrMessageReceiver {
         if (response == null) {
             return;
         }
+        response.setMessageType(messageType);
                 
         if (messageType.equals("QUERY")) {
             tamrMessageHandler.handleQueryResponse(response);
