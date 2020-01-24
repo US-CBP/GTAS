@@ -37,7 +37,7 @@ public class TamrMessageReceiver {
 	@JmsListener(containerFactory = "tamrJmsListenerContainerFactory",
 	        destination = "OutboundQueue")
 	public void receive(javax.jms.Message msg) {
-		logger.info("############### Tamr data received .... ################");
+		logger.debug("############### Tamr data received .... ################");
 		TextMessage textMessage = null;
 		String messageType, messageText;
 		
@@ -55,11 +55,11 @@ public class TamrMessageReceiver {
 			        e);
 			return;
 		}
-        logger.info("Message type: {}", messageType);
+        logger.debug("Message type: {}", messageType);
         if (messageText.length() > 1000)
-            logger.info("Raw JSON data: {}...", messageText.substring(0, 1000));
+            logger.debug("Raw JSON data: {}...", messageText.substring(0, 1000));
         else
-            logger.info("Raw JSON data: {}", messageText);
+            logger.debug("Raw JSON data: {}", messageText);
 
         TamrMessage response = this.parseMessage(messageText);
         if (response == null) {
