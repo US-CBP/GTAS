@@ -44,4 +44,10 @@ public class TamrDocumentSendObject {
 	public void setDOC_ID(String dOC_ID) {
 		DOC_ID = dOC_ID;
 	}
+
+	@Override
+	public String toString() {
+		return "TamrDocumentSendObject{" + "DOC_CTRY_CD='" + DOC_CTRY_CD + '\'' + ", DOC_TYP_NM='" + DOC_TYP_NM + '\''
+				+ ", DOC_ID='" + DOC_ID + '\'' + '}';
+	}
 }
