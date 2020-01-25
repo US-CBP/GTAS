@@ -1,18 +1,21 @@
 version: '3.7'
 services:
 
-  httpproxy:
-    container_name: httpproxy
+  http-proxy:
+    container_name: http-proxy
     build: 
       context: './gtas-parent/docker-resources'
       dockerfile: 'proxy.Dockerfile'
+    restart: always
+    secrets:
+      - elastic_bootstrap_password
     ports:
       - 80:80
     networks:
       - GTAS_elastic-network
 
-  webapp:
-    container_name: webapp
+  web-app:
+    container_name: web-app
     build: './gtas-parent'
     ports:
       - 8080:8080
@@ -27,7 +30,7 @@ services:
       - GTAS_webapp-network
       - GTAS_logstash-network
       - GTAS_elastic-network
-    restart: unless-stopped
+    restart: always
     secrets:
      - mysql_webapp_user
      - mysql_webapp_password
@@ -42,8 +45,44 @@ services:
        target: /usr/local/tomcat/conf/elasticsearch-node1.crt
     volumes:
       - m2:/root/.m2
+      - scheduler-logs:/scheduler-logs
     depends_on: 
       - mariadb
+
+  gtas-scheduler:
+    container_name: gtas-scheduler
+    build:
+      context: .
+      dockerfile: gtas-parent/gtas-job-scheduler-war/Dockerfile
+    image: gtas-scheduler
+    restart: always    
+    environment:
+      DB_HOST: mariadb
+      KIBANA_HOST: kibana
+      NEO4J_HOST: neo4j
+      ACTIVEMQ_HOST: activemq
+    volumes:
+      - scheduler-logs:/usr/local/tomcat/logs
+      - type: bind
+        source: ./gtas-data
+        target: /usr/local/gtas-data
+        consistency: consistent
+    secrets:
+      - mysql_processor_user
+      - mysql_processor_password
+      - webapp_neo4j_user
+      - webapp_neo4j_password
+    networks:
+      - GTAS_webapp-network
+    depends_on: 
+      - activemq
+
+  activemq:
+    image: rmohr/activemq
+    container_name: activemq
+    restart: always
+    networks: 
+      - GTAS_webapp-network
 
   mariadb:
     build:
@@ -73,7 +112,7 @@ services:
     networks:
       - GTAS_webapp-network
       - GTAS_logstash-network
-    restart: unless-stopped
+    restart: always
     volumes:
       - db-data:/var/lib/mysql
 
@@ -117,6 +156,7 @@ secrets:
 volumes:
   db-data:
   m2:
+  scheduler-logs:
 
 networks:
   GTAS_elastic-network:
