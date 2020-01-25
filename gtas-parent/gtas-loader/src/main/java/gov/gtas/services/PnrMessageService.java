@@ -164,7 +164,7 @@ public class PnrMessageService extends MessageLoaderService {
 			logger.error("ERROR", e);
 		} finally {
 			boolean success = createMessage(pnr);
-			if (success) {
+			if (!success) {
 				msgDto.getMessageStatus().setSuccess(false);
 				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			}
