@@ -23,7 +23,9 @@ public class ReceiveTamrMessagesTest implements ParserTestHelper {
     private static final String HISTORY_QUERY_RESPONSE = "/tamr-messages/history_query_response.json";  
     private static final String DEROG_QUERY_RESPONSE = "/tamr-messages/derog_query_response.json";  
     private static final String HISTORY_UPDATE_RESPONSE = "/tamr-messages/history_update_response.json";  
-    private static final String DEROG_REPLACE_RESPONSE = "/tamr-messages/derog_replace_response.json";  
+    private static final String DEROG_REPLACE_RESPONSE = "/tamr-messages/derog_replace_response.json"; 
+    private static final String CLUSTERS_MESSAGE = "/tamr-messages/clusters_message.json";
+    private static final String DELTAS_MESSAGE = "/tamr-messages/deltas_message.json";
     private static final String ERROR_MESSAGE = "/tamr-messages/error_message.json";  
     
     private TamrMessageReceiver receiver;
@@ -93,15 +95,31 @@ public class ReceiveTamrMessagesTest implements ParserTestHelper {
     }
 
     @Test
-    @Ignore("Waiting on test data")
-    public void testClustersMessage() {
-        fail("not implemented");
+    public void testClustersMessage() throws JMSException, IOException, URISyntaxException {
+        TextMessage message = mock(TextMessage.class);
+        given(message.getJMSType()).willReturn("TH.CLUSTERS");
+        given(message.getText()).willReturn(getMessageText(CLUSTERS_MESSAGE));
+        
+        receiver.receive(message);
+
+        verify(handler).handleTamrIdUpdate(any(TamrMessage.class));
+        verify(handler, never()).handleQueryResponse(any());
+        verify(handler, never()).handleAcknowledgeResponse(any());
+        verify(handler, never()).handleErrorResponse(any());
     }
     
     @Test
-    @Ignore("Waiting on test data")
-    public void testDeltasMessage() {
-        fail("not implemented");
+    public void testDeltasMessage() throws JMSException, IOException, URISyntaxException {
+        TextMessage message = mock(TextMessage.class);
+        given(message.getJMSType()).willReturn("TH.DELTAS");
+        given(message.getText()).willReturn(getMessageText(DELTAS_MESSAGE));
+        
+        receiver.receive(message);
+
+        verify(handler).handleTamrIdUpdate(any(TamrMessage.class));
+        verify(handler, never()).handleQueryResponse(any());
+        verify(handler, never()).handleAcknowledgeResponse(any());
+        verify(handler, never()).handleErrorResponse(any());
     }
     
     @Test
@@ -116,6 +134,12 @@ public class ReceiveTamrMessagesTest implements ParserTestHelper {
         verify(handler, never()).handleQueryResponse(any());
         verify(handler, never()).handleAcknowledgeResponse(any());
         verify(handler, never()).handleTamrIdUpdate(any());
+    }
+    
+    @Test
+    @Ignore("Waiting on test data")
+    public void testRecordErrors() {
+        fail("Not implemented");
     }
     
     @Test
