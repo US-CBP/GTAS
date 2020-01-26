@@ -119,6 +119,12 @@ public class ReceiveTamrMessagesTest implements ParserTestHelper {
     }
     
     @Test
+    @Ignore("Waiting on test data")
+    public void testRecordErrors() {
+        fail("Not implemented");
+    }
+    
+    @Test
     public void testUnknownMessageType() throws JMSException {
         TextMessage message = mock(TextMessage.class);
         given(message.getJMSType()).willReturn("UNKNOWN");
