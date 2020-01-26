@@ -36,7 +36,9 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
      */
     @Override
     public void handleAcknowledgeResponse(TamrMessage response) {
-        if (response.getAcknowledgment() == true) {
+        if (this.checkRecordErrors(response)) {
+            // Record errors are already logged.
+        } else if (response.getAcknowledgment() == true) {
             logger.info("{} request to Tamr acknowledged",
                     response.getMessageType());
         } else if (response.getAcknowledgment() == false) {
@@ -58,8 +60,6 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
         if (message.getError() != null) {
             logger.error("Tamr error during {} request: {}",
                     message.getMessageType(), message.getError());
-        } else if (this.checkRecordErrors(message)) {
-            return;
         } else {
             logger.info("TODO: handle Tamr ID updates");
         }

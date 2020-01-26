@@ -63,7 +63,7 @@ public class TamrStatusErrorMessagesTest implements ParserTestHelper {
     
     @Test
     public void testRecordErrors() {
-        String[] messageTypes = {"QUERY", "TH.DELTAS", "TH.CLUSTERS"};
+        String[] messageTypes = {"QUERY", "DC.REPLACE", "TH.UPDATE"};
         for (String messageType: messageTypes) {
             TamrMessage errorMessage = new TamrMessage();
             errorMessage.setMessageType(messageType);
@@ -77,7 +77,7 @@ public class TamrStatusErrorMessagesTest implements ParserTestHelper {
             if (messageType.equals("QUERY")) {
                 handler.handleQueryResponse(errorMessage);
             } else {
-                handler.handleTamrIdUpdate(errorMessage);
+                handler.handleAcknowledgeResponse(errorMessage);
             }
             
             // Make sure message type and all errors are logged as WARN.
