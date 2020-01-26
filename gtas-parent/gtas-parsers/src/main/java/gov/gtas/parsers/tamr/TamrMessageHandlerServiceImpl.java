@@ -5,6 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import gov.gtas.parsers.tamr.model.TamrMessage;
 import gov.gtas.repository.PassengerIDTagRepository;
 
@@ -22,6 +25,8 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
      */
     @Override
     public void handleQueryResponse(TamrMessage response) {
+        if (this.checkRecordErrors(response)) return;
+
         logger.info("TODO: handle QUERY response");
     }
 
@@ -31,7 +36,16 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
      */
     @Override
     public void handleAcknowledgeResponse(TamrMessage response) {
-        logger.info("TODO: handle acknowledgement");
+        if (response.getAcknowledgment() == true) {
+            logger.info("{} request to Tamr acknowledged",
+                    response.getMessageType());
+        } else if (response.getAcknowledgment() == false) {
+            logger.error("Error with {} request to Tamr: {}",
+                    response.getMessageType(), response.getError());
+        } else {
+            logger.warn("{} message received from Tamr with no " +
+                    "\"acknowledgment\" key. Ignoring...");
+        }
     }
 
     /**
@@ -39,8 +53,16 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
      * similar functionality: updating the Tamr cluster IDs.
      */
     @Override
-    public void handleTamrIdUpdate(TamrMessage response) {
-        logger.info("TODO: handle Tamr ID updates");
+    public void handleTamrIdUpdate(TamrMessage message) {
+        // The "error" field can be set on these.
+        if (message.getError() != null) {
+            logger.error("Tamr error during {} request: {}",
+                    message.getMessageType(), message.getError());
+        } else if (this.checkRecordErrors(message)) {
+            return;
+        } else {
+            logger.info("TODO: handle Tamr ID updates");
+        }
     }
     
     /**
@@ -49,6 +71,32 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
      */
     @Override
     public void handleErrorResponse(TamrMessage response) {
-        logger.info("TODO: handle Tamr error");
+        logger.error("{} message received from Tamr: {}",
+                response.getMessageType(), response.getError());
+    }
+    
+    /**
+     * Checks to see if recordErrors are present on the given response. If so,
+     * returns true and logs a warning message.
+     */
+    private boolean checkRecordErrors(TamrMessage response) {
+        boolean hasRecordErrors = response.getRecordErrors() != null &&
+                response.getRecordErrors().size() > 0;
+        if (hasRecordErrors) {
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                String recordErrorsJson = mapper
+                        .writerWithDefaultPrettyPrinter()
+                        .writeValueAsString(response.getRecordErrors());
+                logger.warn("Received recordErrors from Tamr for {} " +
+                        "request. recordErrors = {}",
+                        response.getMessageType(), recordErrorsJson);
+            } catch (JsonProcessingException e) {
+                logger.warn("Received recordErrors from Tamr for {} " +
+                        "request. Unable to display errors.",
+                        response.getMessageType());
+            }
+        }
+        return hasRecordErrors;
     }
 }
