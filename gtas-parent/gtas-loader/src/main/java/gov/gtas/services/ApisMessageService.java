@@ -135,7 +135,7 @@ public class ApisMessageService extends MessageLoaderService {
 			if (tamrEnabled) {
 				TamrAdapter tamrAdapter = new TamrAdapterImpl();
 				List<TamrPassenger> tamrPassengers = tamrAdapter
-						.convert(apis.getFlights().iterator().next(), apis.getPassengers());
+						.convertPassengers(apis.getFlights().iterator().next(), apis.getPassengers());
 				messageInformation.setTamrPassengers(tamrPassengers);
 			}
 		} catch (Exception e) {

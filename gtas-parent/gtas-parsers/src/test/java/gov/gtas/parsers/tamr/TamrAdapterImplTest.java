@@ -83,9 +83,9 @@ public class TamrAdapterImplTest {
 	}
 
 	@Test
-	public void tamrConversionTest() {
+	public void passengerConversionTest() {
 		TamrAdapterImpl tamrAdapter = new TamrAdapterImpl();
-		List<TamrPassenger> tamrPassengers = tamrAdapter.convert(
+		List<TamrPassenger> tamrPassengers = tamrAdapter.convertPassengers(
 		        testFlight, Collections.singleton(testPassenger));
 		TamrPassenger tamrPassenger = tamrPassengers.get(0);
 		Assert.assertEquals(birthDateTest, tamrPassenger.getDob());
@@ -95,9 +95,9 @@ public class TamrAdapterImplTest {
 	}
 	
 	@Test
-	public void jsonConversionTest() throws JsonProcessingException {
+	public void passengerJsonConversionTest() throws JsonProcessingException {
         TamrAdapterImpl tamrAdapter = new TamrAdapterImpl();
-        List<TamrPassenger> tamrPassengers = tamrAdapter.convert(
+        List<TamrPassenger> tamrPassengers = tamrAdapter.convertPassengers(
                 testFlight, Collections.singleton(testPassenger));
         TamrQuery tamrQuery = new TamrQuery(tamrPassengers);
         

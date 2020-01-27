@@ -154,7 +154,7 @@ public class PnrMessageService extends MessageLoaderService {
 			if (tamrEnabled) {
 				TamrAdapter tamrAdapter = new TamrAdapterImpl();
 				List<TamrPassenger> tamrPassengers = tamrAdapter
-						.convert(pnr.getFlights().iterator().next(), pnr.getPassengers());
+						.convertPassengers(pnr.getFlights().iterator().next(), pnr.getPassengers());
 				messageInformation.setTamrPassengers(tamrPassengers);
 			}
 		} catch (Exception e) {

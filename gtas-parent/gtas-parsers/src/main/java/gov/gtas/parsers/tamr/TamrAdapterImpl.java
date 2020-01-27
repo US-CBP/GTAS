@@ -8,7 +8,7 @@
 
 package gov.gtas.parsers.tamr;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +20,8 @@ import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.PassengerDetails;
+import gov.gtas.model.watchlist.WatchlistItem;
+import gov.gtas.parsers.tamr.model.TamrDerogListEntry;
 import gov.gtas.parsers.tamr.model.TamrDocument;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.services.FlightService;
@@ -30,7 +32,8 @@ public class TamrAdapterImpl implements TamrAdapter {
     FlightService flightService;
 
 	@Override
-	public List<TamrPassenger> convert(Flight flight, Set<Passenger> passengers) {
+	public List<TamrPassenger> convertPassengers(
+	        Flight flight, Set<Passenger> passengers) {
 	    return passengers.stream()
 	            .map(passenger ->
 	                    convertPassengerToTamrPassenger(flight, passenger))
@@ -70,4 +73,35 @@ public class TamrAdapterImpl implements TamrAdapter {
 
 		return tamrDocument;
 	}
+	
+    @Override
+    public List<TamrDerogListEntry> convertWatchlist(Collection<WatchlistItem> watchlistItems) {
+        return watchlistItems.stream()
+                .map(watchlistItem ->
+                        convertWatchlistItemToTamrDerogListEntry(watchlistItem))
+                .filter(derogListEntry -> derogListEntry != null)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Convert a GTAS watchlist item to a derog entry that can be sent to
+     * Tamr. This may return null for some watchlist items that should not
+     * be sent to Tamr.
+     */
+    private TamrDerogListEntry convertWatchlistItemToTamrDerogListEntry(
+            WatchlistItem watchlistItem) {
+        // TODO: finish implementation.
+        
+        TamrDerogListEntry derogListEntry = new TamrDerogListEntry();
+        
+        // We set both gtasId and derogId to the watchlist item ID from
+        // GTAS. Tamr can merge multiple derog list entries with the same
+        // derogId, but we don't use that functionality yet.
+        String itemIdStr = Long.toString(watchlistItem.getId());
+        derogListEntry.setGtasId(itemIdStr);
+        derogListEntry.setDerogId(itemIdStr);
+        
+        return derogListEntry;
+        
+    }
 }
