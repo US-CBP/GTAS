@@ -180,4 +180,13 @@ public class TamrPassengerSendObject {
 		this.documents = documents;
 	}
 
+	@Override
+	public String toString() {
+		return "TamrPassengerSendObject{" + "gtasId='" + gtasId + '\'' + ", first_name='" + first_name + '\''
+				+ ", last_name='" + last_name + '\'' + ", Uid='" + Uid + '\'' + ", ETA_DT=" + ETA_DT
+				+ ", IATA_CARR_CD='" + IATA_CARR_CD + '\'' + ", FLIT_NBR='" + FLIT_NBR + '\'' + ", flt='" + flt + '\''
+				+ ", APIS_DPRTR_APRT_CD='" + APIS_DPRTR_APRT_CD + '\'' + ", APIS_ARVL_APRT_CD='" + APIS_ARVL_APRT_CD
+				+ '\'' + ", NATIONALITY_CD=" + NATIONALITY_CD + ", DOB_Date=" + DOB_Date + ", GNDR_CD='" + GNDR_CD
+				+ '\'' + ", documents=" + documents + '}';
+	}
 }

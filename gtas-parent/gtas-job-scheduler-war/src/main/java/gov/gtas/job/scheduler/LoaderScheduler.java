@@ -12,42 +12,24 @@ package gov.gtas.job.scheduler;
  */
 import static gov.gtas.constant.GtasSecurityConstants.GTAS_APPLICATION_USERID;
 
-import gov.gtas.constant.RuleServiceConstants;
 import gov.gtas.enumtype.AuditActionType;
-import gov.gtas.error.ErrorDetailInfo;
-import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.MessageStatus;
+import gov.gtas.parsers.tamr.model.TamrPassengerSendObject;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.svc.TargetingService;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
@@ -110,12 +92,25 @@ public class LoaderScheduler {
 	@Value("${maxNumofFiles}")
 	private int maxNumofFiles;
 
+	@Value("${tamr.enabled}")
+	private Boolean tamrEnabled;
+
 	private void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) {
 		logger.debug(String.format("Processing %s", f.getAbsolutePath()));
 		ProcessedMessages processedMessages = loader.processMessage(f, primeFlightKey);
 		int[] result = processedMessages.getProcessed();
 		List<MessageStatus> messageStatusList = processedMessages.getMessageStatusList();
 		messageStatusRepository.saveAll(messageStatusList);
+
+		if (tamrEnabled) {
+			// post message on queue here. Dummy Code below:
+			// todo : write send logic
+			List<TamrPassengerSendObject> objectsToSend = processedMessages.getTamrPassengerSendObjectList();
+			for (TamrPassengerSendObject tpso : objectsToSend) {
+				logger.info(tpso.toString());
+			}
+		}
+
 		if (result != null) {
 			stats.incrementNumFilesProcessed();
 			stats.incrementNumMessagesProcessed(result[0]);
