@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import gov.gtas.model.MessageStatusEnum;
-import gov.gtas.parsers.tamr.model.TamrPassengerSendObject;
+import gov.gtas.parsers.tamr.model.TamrPassenger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,7 +102,7 @@ public class Loader {
 		msgDto.setFilepath(filePath);
 		rawMessages = msgDto.getRawMsgs();
 		List<MessageStatus> messageStatuses = new ArrayList<>();
-		List<TamrPassengerSendObject> tamrPassengerSendObjectList = new ArrayList<>();
+		List<TamrPassenger> tamrPassengers = new ArrayList<>();
 		for (String rawMessage : rawMessages) {
 			msgDto.setRawMsg(rawMessage);
 			MessageDto parsedMessageDto = svc.parse(msgDto);
@@ -110,7 +110,7 @@ public class Loader {
 				MessageInformation messageInformation = svc.load(parsedMessageDto);
 				MessageStatus messageStatus = messageInformation.getMessageStatus();
 				if (tamrEnabled) {
-					tamrPassengerSendObjectList.addAll(messageInformation.getTamrPassengerSendObjects());
+					tamrPassengers.addAll(messageInformation.getTamrPassengers());
 				}
 				messageStatuses.add(messageStatus);
 				if (messageStatus.isSuccess()) {
@@ -126,7 +126,7 @@ public class Loader {
 		ProcessedMessages processedMessages = new ProcessedMessages();
 		processedMessages.setProcessed(new int[] { successMsgCount, failedMsgCount });
 		processedMessages.setMessageStatusList(messageStatuses);
-		processedMessages.setTamrPassengerSendObjectList(tamrPassengerSendObjectList);
+		processedMessages.setTamrPassengers(tamrPassengers);
 		return processedMessages;
 	}
 

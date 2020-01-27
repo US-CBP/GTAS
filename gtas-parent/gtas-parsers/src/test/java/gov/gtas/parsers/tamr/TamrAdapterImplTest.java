@@ -8,16 +8,29 @@
 
 package gov.gtas.parsers.tamr;
 
-import gov.gtas.model.*;
-import gov.gtas.parsers.tamr.model.TamrPassengerSendObject;
+import static java.time.ZoneOffset.UTC;
+
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.util.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static java.time.ZoneOffset.UTC;
+import gov.gtas.model.Document;
+import gov.gtas.model.Flight;
+import gov.gtas.model.MutableFlightDetails;
+import gov.gtas.model.Passenger;
+import gov.gtas.model.PassengerDetails;
+import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.parsers.tamr.model.TamrQuery;
 
 public class TamrAdapterImplTest {
 
@@ -62,6 +75,7 @@ public class TamrAdapterImplTest {
 		d.setDocumentNumber("123123123");
 		d.setDocumentType("P");
 		d.setIssuanceCountry("USA");
+		documentSet.add(d);
 		p.setDocuments(documentSet);
 
 		testFlight = flight;
@@ -71,16 +85,27 @@ public class TamrAdapterImplTest {
 	@Test
 	public void tamrConversionTest() {
 		TamrAdapterImpl tamrAdapter = new TamrAdapterImpl();
-		List<TamrPassengerSendObject> tamrPassengerSendObjectList = tamrAdapter.convert(testFlight,
-				Collections.singleton(testPassenger));
-		TamrPassengerSendObject tpso = tamrPassengerSendObjectList.get(0);
-		Assert.assertEquals(birthDateTest, tpso.getDOB_Date());
-		Assert.assertEquals("WALLY", tpso.getFirst_name());
-		Assert.assertEquals(etaTestDate, tpso.getETA_DT());
-		Assert.assertEquals("IAD", tpso.getAPIS_ARVL_APRT_CD());
-		Assert.assertEquals("ABC", tpso.getAPIS_DPRTR_APRT_CD());
-		Assert.assertEquals("M", tpso.getGNDR_CD());
-		Assert.assertEquals("5", tpso.getGtasId());
-		Assert.assertEquals("HUND", tpso.getLast_name());
+		List<TamrPassenger> tamrPassengers = tamrAdapter.convert(
+		        testFlight, Collections.singleton(testPassenger));
+		TamrPassenger tamrPassenger = tamrPassengers.get(0);
+		Assert.assertEquals(birthDateTest, tamrPassenger.getDob());
+		Assert.assertEquals("WALLY", tamrPassenger.getFirstName());
+		Assert.assertEquals("5", tamrPassenger.getGtasId());
+		Assert.assertEquals("HUND", tamrPassenger.getLastName());
+	}
+	
+	@Test
+	public void jsonConversionTest() throws JsonProcessingException {
+        TamrAdapterImpl tamrAdapter = new TamrAdapterImpl();
+        List<TamrPassenger> tamrPassengers = tamrAdapter.convert(
+                testFlight, Collections.singleton(testPassenger));
+        TamrQuery tamrQuery = new TamrQuery(tamrPassengers);
+        
+        ObjectMapper mapper = new ObjectMapper();
+        String tamrQueryJson = mapper.writer()
+                .writeValueAsString(tamrQuery);
+        
+        Assert.assertEquals("{\"passengers\":[{\"gtasId\":\"5\",\"firstName\":\"WALLY\",\"middleName\":null,\"lastName\":\"HUND\",\"gender\":\"M\",\"dob\":\"1988-04-24\",\"documents\":[{\"documentId\":\"123123123\",\"documentType\":\"P\",\"documentIssuingCountry\":\"USA\"}],\"citizenshipCountry\":[\"USA\"]}]}",
+                tamrQueryJson);
 	}
 }

@@ -10,11 +10,11 @@ package gov.gtas.parsers.tamr;
 
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
-import gov.gtas.parsers.tamr.model.TamrPassengerSendObject;
+import gov.gtas.parsers.tamr.model.TamrPassenger;
 
 import java.util.List;
 import java.util.Set;
 
 public interface TamrAdapter {
-	List<TamrPassengerSendObject> convert(Flight flight, Set<Passenger> passengers);
+	List<TamrPassenger> convert(Flight flight, Set<Passenger> passengers);
 }
