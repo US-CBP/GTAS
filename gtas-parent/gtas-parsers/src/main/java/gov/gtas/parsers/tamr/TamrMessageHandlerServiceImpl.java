@@ -8,7 +8,11 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gov.gtas.model.PassengerIDTag;
+import gov.gtas.parsers.tamr.model.TamrDerogHit;
+import gov.gtas.parsers.tamr.model.TamrHistoryCluster;
 import gov.gtas.parsers.tamr.model.TamrMessage;
+import gov.gtas.parsers.tamr.model.TamrTravelerResponse;
 import gov.gtas.repository.PassengerIDTagRepository;
 
 @Component
@@ -27,7 +31,16 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
     public void handleQueryResponse(TamrMessage response) {
         if (this.checkRecordErrors(response)) return;
 
-        logger.info("TODO: handle QUERY response");
+        for (TamrTravelerResponse travelerResponse: response.getTravelerQuery()) {
+            if (travelerResponse.getTamrId() != null) {
+                this.updateTamrId(travelerResponse.getGtasId(),
+                        travelerResponse.getTamrId(),
+                        travelerResponse.getVersion());
+            }
+            for (TamrDerogHit derogHit: travelerResponse.getDerogIds()) {
+                // TODO: handle derog hit.
+            }
+        }
     }
 
     /**
@@ -58,10 +71,41 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
     public void handleTamrIdUpdate(TamrMessage message) {
         // The "error" field can be set on these.
         if (message.getError() != null) {
-            logger.error("Tamr error during {} request: {}",
+            logger.error("Tamr error in {} message: {}",
                     message.getMessageType(), message.getError());
+            return;
+        }
+
+        for (TamrHistoryCluster cluster: message.getHistoryClusters()) {
+            if (cluster.getAction() == null ||
+                    cluster.getAction().equals("UPDATE")) {
+                this.updateTamrId(cluster.getGtasId(),
+                        cluster.getTamrId(), cluster.getVersion());
+            } else if (cluster.getAction().equals("DELETE")) {
+                this.updateTamrId(cluster.getGtasId(),
+                        null, cluster.getVersion());
+            } else {
+                logger.warn("Unknown history cluster action \"{}\" received " +
+                        "from Tamr for passenger {}. Ignoring...",
+                        cluster.getAction(), cluster.getGtasId());
+            }
+        }
+    }
+    
+    /**
+     * Updates the tamrId for the traveler in GTAS with the given gtasId. This
+     * also checks to see if the traveler exists in GTAS; if they do not, it
+     * issues a warning.
+     */
+    private void updateTamrId(String gtasIdStr, String tamrId, int version) {
+        long gtasId = Long.parseLong(gtasIdStr);
+        PassengerIDTag currentPassengerIdTag =
+                passengerIDTagRepository.findByPaxId(gtasId);
+        if (currentPassengerIdTag == null) {
+            logger.warn("Unable to update tamrId of nonexistent passenger " +
+                    "with ID {}.", gtasId);
         } else {
-            logger.info("TODO: handle Tamr ID updates");
+            passengerIDTagRepository.updateTamrId(gtasId, tamrId);
         }
     }
     
