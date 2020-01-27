@@ -82,7 +82,6 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
                 this.updateTamrId(cluster.getGtasId(),
                         cluster.getTamrId(), cluster.getVersion());
             } else if (cluster.getAction().equals("DELETE")) {
-                // TODO: not sure what to do with these.
                 this.updateTamrId(cluster.getGtasId(),
                         null, cluster.getVersion());
             } else {
