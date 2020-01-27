@@ -20,8 +20,8 @@ public class ApisControllerServiceImpl implements ApisControllerService {
 	ApisMessageRepository apisMessageRepository;
 
 	@Transactional
-	public List<FlightPassengerVo> generateFlightPaxVoByApisRef(String ref) {
-		Set<FlightPax> fpList = apisMessageRepository.findFlightPaxByApisRef(ref);
+	public List<FlightPassengerVo> generateFlightPaxVoByApisRef(String ref, long flightId) {
+		Set<FlightPax> fpList = apisMessageRepository.findFlightPaxByApisRef(ref, flightId);
 		List<FlightPassengerVo> flightPassengerVos = new ArrayList<>();
 		for (FlightPax fp : fpList) {
 			FlightPassengerVo fpVo = new FlightPassengerVo();
