@@ -26,6 +26,7 @@ public class ReceiveTamrMessagesTest implements ParserTestHelper {
     private static final String DEROG_REPLACE_RESPONSE = "/tamr-messages/derog_replace_response.json"; 
     private static final String CLUSTERS_MESSAGE = "/tamr-messages/clusters_message.json";
     private static final String DELTAS_MESSAGE = "/tamr-messages/deltas_message.json";
+    private static final String RECORD_ERRORS_RESPONSE = "/tamr-messages/record_errors_response.json";
     private static final String ERROR_MESSAGE = "/tamr-messages/error_message.json";  
     
     private TamrMessageReceiver receiver;
@@ -123,6 +124,20 @@ public class ReceiveTamrMessagesTest implements ParserTestHelper {
     }
     
     @Test
+    public void testRecordErrors() throws JMSException, IOException, URISyntaxException {
+        TextMessage message = mock(TextMessage.class);
+        given(message.getJMSType()).willReturn("QUERY");
+        given(message.getText()).willReturn(getMessageText(RECORD_ERRORS_RESPONSE));
+        
+        receiver.receive(message);
+
+        verify(handler).handleQueryResponse(any(TamrMessage.class));
+        verify(handler, never()).handleAcknowledgeResponse(any());
+        verify(handler, never()).handleTamrIdUpdate(any());
+        verify(handler, never()).handleErrorResponse(any());
+    }
+    
+    @Test
     public void testErrorMessage() throws JMSException, IOException, URISyntaxException {
         TextMessage message = mock(TextMessage.class);
         given(message.getJMSType()).willReturn("ERROR");
@@ -134,12 +149,6 @@ public class ReceiveTamrMessagesTest implements ParserTestHelper {
         verify(handler, never()).handleQueryResponse(any());
         verify(handler, never()).handleAcknowledgeResponse(any());
         verify(handler, never()).handleTamrIdUpdate(any());
-    }
-    
-    @Test
-    @Ignore("Waiting on test data")
-    public void testRecordErrors() {
-        fail("Not implemented");
     }
     
     @Test
