@@ -10,7 +10,6 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.test.util.ReflectionTestUtils;

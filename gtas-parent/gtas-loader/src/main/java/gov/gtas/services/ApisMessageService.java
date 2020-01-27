@@ -12,7 +12,7 @@ import gov.gtas.model.*;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.tamr.TamrAdapter;
 import gov.gtas.parsers.tamr.TamrAdapterImpl;
-import gov.gtas.parsers.tamr.model.TamrPassengerSendObject;
+import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.repository.*;
 import org.apache.commons.lang3.StringUtils;
@@ -134,9 +134,9 @@ public class ApisMessageService extends MessageLoaderService {
 			apis.setPassengerCount(apis.getPassengers().size());
 			if (tamrEnabled) {
 				TamrAdapter tamrAdapter = new TamrAdapterImpl();
-				List<TamrPassengerSendObject> tamrPassengerSendObjectList = tamrAdapter
-						.convert(apis.getFlights().iterator().next(), apis.getPassengers());
-				messageInformation.setTamrPassengerSendObjects(tamrPassengerSendObjectList);
+				List<TamrPassenger> tamrPassengers = tamrAdapter
+						.convertPassengers(apis.getFlights().iterator().next(), apis.getPassengers());
+				messageInformation.setTamrPassengers(tamrPassengers);
 			}
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setSuccess(false);

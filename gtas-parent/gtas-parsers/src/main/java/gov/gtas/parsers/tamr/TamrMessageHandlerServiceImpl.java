@@ -1,5 +1,9 @@
 package gov.gtas.parsers.tamr;
 
+import java.util.Date;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +12,19 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gov.gtas.enumtype.HitTypeEnum;
+import gov.gtas.model.Passenger;
+import gov.gtas.model.PassengerIDTag;
+import gov.gtas.model.PendingHitDetails;
+import gov.gtas.model.watchlist.WatchlistItem;
+import gov.gtas.parsers.tamr.model.TamrDerogHit;
+import gov.gtas.parsers.tamr.model.TamrHistoryCluster;
 import gov.gtas.parsers.tamr.model.TamrMessage;
+import gov.gtas.parsers.tamr.model.TamrTravelerResponse;
 import gov.gtas.repository.PassengerIDTagRepository;
+import gov.gtas.repository.PassengerRepository;
+import gov.gtas.repository.PendingHitDetailRepository;
+import gov.gtas.repository.watchlist.WatchlistItemRepository;
 
 @Component
 public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService {
@@ -19,6 +34,15 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
     @Autowired
     private PassengerIDTagRepository passengerIDTagRepository;
     
+    @Autowired
+    private WatchlistItemRepository watchlistItemRepository;
+    
+    @Autowired
+    private PendingHitDetailRepository pendingHitDetailRepository;
+    
+    @Autowired
+    private PassengerRepository passengerRepository;
+    
     /**
      * Handle responses to Tamr QUERY requests. This handles both the "derog
      * matches" and "traveler history" responses.
@@ -27,7 +51,66 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
     public void handleQueryResponse(TamrMessage response) {
         if (this.checkRecordErrors(response)) return;
 
-        logger.info("TODO: handle QUERY response");
+        for (TamrTravelerResponse travelerResponse: response.getTravelerQuery()) {
+            if (travelerResponse.getTamrId() != null) {
+                this.updateTamrId(travelerResponse.getGtasId(),
+                        travelerResponse.getTamrId(),
+                        travelerResponse.getVersion());
+            }
+            for (TamrDerogHit derogHit: travelerResponse.getDerogIds()) {
+                this.createPendingHit(travelerResponse.getGtasId(), derogHit);
+            }
+        }
+    }
+    
+    /**
+     * Creates an instance of the PendingHitDetails model in GTAS based on a
+     * derog hit from Tamr.
+     */
+    private void createPendingHit(String gtasIdStr, TamrDerogHit derogHit) {
+       long gtasId = Long.parseLong(gtasIdStr);
+       PendingHitDetails pendingHit = new PendingHitDetails();
+
+       pendingHit.setTitle("Tamr Fuzzy Watchlist Hit");
+       pendingHit.setDescription("This passenger closely matches a watchlist " +
+               "entry, according to Tamr's proprietary fuzzy matching " +
+               "technology.");
+
+       pendingHit.setHitEnum(HitTypeEnum.PARTIAL_WATCHLIST);
+       pendingHit.setHitType(pendingHit.getHitEnum().toString());
+
+       // Try to get watchlist item based on derogId from Tamr.
+       long watchlistItemId = Long.parseLong(derogHit.getDerogId()); 
+       Optional<WatchlistItem> watchlistItem =
+               watchlistItemRepository.findById(watchlistItemId);
+       try {
+           pendingHit.setHitMakerId(watchlistItem.get().getId());
+           pendingHit.setPercentage(derogHit.getScore());
+
+           // Tamr doesn't return any details about the matching algorithm,
+           // so leave this empty.
+           pendingHit.setRuleConditions("");
+       } catch (NoSuchElementException e) {
+           logger.warn("Tamr returned derog hit for nonexistent watchlist " +
+                   "entry with ID {}.", watchlistItemId);
+           return;
+       }
+       
+       // Try to find passenger in GTAS so we can get the associated flight.
+       Optional<Passenger> passenger = passengerRepository.findById(gtasId);
+       try {
+           pendingHit.setFlightId(passenger.get().getFlight().getId());
+           pendingHit.setPassengerId(gtasId);
+       } catch (NoSuchElementException e) {
+           logger.warn("Tamr returned derog hit for nonexistent passenger " +
+                   "with ID {}.", gtasId);
+           return;
+       }
+
+       pendingHit.setCreatedDate(new Date());
+       
+       // Persist to database.
+       pendingHitDetailRepository.save(pendingHit);
     }
 
     /**
@@ -58,10 +141,41 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
     public void handleTamrIdUpdate(TamrMessage message) {
         // The "error" field can be set on these.
         if (message.getError() != null) {
-            logger.error("Tamr error during {} request: {}",
+            logger.error("Tamr error in {} message: {}",
                     message.getMessageType(), message.getError());
+            return;
+        }
+
+        for (TamrHistoryCluster cluster: message.getHistoryClusters()) {
+            if (cluster.getAction() == null ||
+                    cluster.getAction().equals("UPDATE")) {
+                this.updateTamrId(cluster.getGtasId(),
+                        cluster.getTamrId(), cluster.getVersion());
+            } else if (cluster.getAction().equals("DELETE")) {
+                this.updateTamrId(cluster.getGtasId(),
+                        null, cluster.getVersion());
+            } else {
+                logger.warn("Unknown history cluster action \"{}\" received " +
+                        "from Tamr for passenger {}. Ignoring...",
+                        cluster.getAction(), cluster.getGtasId());
+            }
+        }
+    }
+    
+    /**
+     * Updates the tamrId for the traveler in GTAS with the given gtasId. This
+     * also checks to see if the traveler exists in GTAS; if they do not, it
+     * issues a warning.
+     */
+    private void updateTamrId(String gtasIdStr, String tamrId, int version) {
+        long gtasId = Long.parseLong(gtasIdStr);
+        PassengerIDTag currentPassengerIdTag =
+                passengerIDTagRepository.findByPaxId(gtasId);
+        if (currentPassengerIdTag == null) {
+            logger.warn("Unable to update tamrId of nonexistent passenger " +
+                    "with ID {}.", gtasId);
         } else {
-            logger.info("TODO: handle Tamr ID updates");
+            passengerIDTagRepository.updateTamrId(gtasId, tamrId);
         }
     }
     
