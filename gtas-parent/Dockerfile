@@ -23,10 +23,15 @@ COPY ./docker-resources/default.application.properties /usr/local/tomcat/conf/ap
 COPY --from=build-stage /temp-dos/setenv.sh /usr/local/tomcat/bin/setenv.sh
 
 
+RUN apt-get -y update && apt-get install -y logrotate && apt-get install -y rename
+COPY ./docker-resources/logrotate.conf /
+RUN mkdir -p /logs/apache-tomcat-web && mkdir -p /logs/apache-tomcat && mkdir /temp
+
+
 WORKDIR /usr/local/tomcat/webapps/gtas
 
 RUN  jar -xvf /usr/local/tomcat/webapps/gtas.war
 
 WORKDIR /usr/local/tomcat/bin
 
-CMD ["catalina.sh", "run"]
+ENTRYPOINT mkdir -p /scheduler-logs/temp && logrotate /logrotate.conf && catalina.sh run
