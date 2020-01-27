@@ -104,6 +104,30 @@ public class HandleTamrDerogHitsTest implements ParserTestHelper {
     }
     
     /**
+     * Test when Tamr sends a nonexistent derogId.
+     */
+    @Test
+    public void handleNonexistentDerogId() {
+        TamrMessage derogMessage = getDerogMessage(
+                passenger.getId(), 35L, 0.22f);
+        handler.handleQueryResponse(derogMessage);
+        
+        verifyZeroInteractions(pendingHitDetailRepository);
+    }
+    
+    /**
+     * Test when Tamr sends a nonexistent gtasId.
+     */
+    @Test
+    public void handleNonexistentGtasId() {
+        TamrMessage derogMessage = getDerogMessage(
+                547L, watchlistItem.getId(), 0.28f);
+        handler.handleQueryResponse(derogMessage);
+        
+        verifyZeroInteractions(pendingHitDetailRepository);
+    }
+    
+    /**
      * Constructs a QUERY response TamrMessage that includes matching the
      * given passenger with the given wachlist item.
      */
