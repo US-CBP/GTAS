@@ -221,7 +221,8 @@ public class PassengerDetailsController {
 				apisVo.setBagWeight(apisMessageFlightPax.getBagWeight());
 			}
 
-			List<FlightPassengerVo> fpList = apisControllerService.generateFlightPaxVoByApisRef(refList.get(0));
+			List<FlightPassengerVo> fpList = apisControllerService.generateFlightPaxVoByApisRef(refList.get(0),
+					Long.parseLong(flightId));
 			for (FlightPassengerVo flightPassengerVo : fpList) {
 				apisVo.addFlightpax(flightPassengerVo);
 			}
