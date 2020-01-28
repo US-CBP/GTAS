@@ -257,7 +257,7 @@
                             <nodeVersion>v8.11.1</nodeVersion>
                         </configuration>
                     </execution>
-					<!-- <execution>
+					<execution>
 						<id>npm install</id>
 						<goals>
 							<goal>npm</goal>
@@ -265,7 +265,7 @@
 						<configuration>
 							 <arguments>install</arguments>
 						</configuration>
-					</execution> -->
+					</execution>
                 </executions>
             </plugin>
             <plugin>
