@@ -8,19 +8,29 @@
 
 package gov.gtas.parsers.tamr;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.PassengerDetails;
 import gov.gtas.model.watchlist.WatchlistItem;
+import gov.gtas.model.watchlist.json.WatchlistItemSpec;
+import gov.gtas.model.watchlist.json.WatchlistTerm;
 import gov.gtas.parsers.tamr.model.TamrDerogListEntry;
 import gov.gtas.parsers.tamr.model.TamrDocument;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
@@ -30,6 +40,10 @@ public class TamrAdapterImpl implements TamrAdapter {
 
     @Autowired
     FlightService flightService;
+    
+    private ObjectMapper mapper = new ObjectMapper();
+    
+    private Logger logger = LoggerFactory.getLogger(TamrAdapterImpl.class);
 
 	@Override
 	public List<TamrPassenger> convertPassengers(
@@ -89,10 +103,59 @@ public class TamrAdapterImpl implements TamrAdapter {
      * be sent to Tamr.
      */
     private TamrDerogListEntry convertWatchlistItemToTamrDerogListEntry(
-            WatchlistItem watchlistItem) {
-        // TODO: finish implementation.
-        
+            WatchlistItem watchlistItem) {        
         TamrDerogListEntry derogListEntry = new TamrDerogListEntry();
+
+        WatchlistItemSpec itemSpec;
+        try {
+            itemSpec = mapper.readValue(watchlistItem.getItemData(),
+                    WatchlistItemSpec.class);
+        } catch (IOException e) {
+            logger.warn("Error parsing watchlist item data {}. Ignoring...",
+                    watchlistItem.getItemData());
+            return null;
+        }
+        
+        for (WatchlistTerm term: itemSpec.getTerms()) {
+            if(term.getField().equals("firstName")) {
+                derogListEntry.setFirstName(term.getValue());
+            } else if (term.getField().equals("lastName")) {
+                derogListEntry.setLastName(term.getValue());
+            } else if (term.getField().equals("dob")) {
+                try {
+                    SimpleDateFormat parser =
+                            new SimpleDateFormat("yyyy-MM-dd");
+                    derogListEntry.setDob(parser.parse(term.getValue()));
+                } catch (ParseException e) {
+                    logger.warn("Unable to parse watchlist DOB {}. " +
+                            "Ignoring...", term.getValue());
+                }
+            } else if (term.getField().equals("documentType") ||
+                    term.getField().equals("documentNumber")) {
+                TamrDocument document;
+                if (derogListEntry.getDocuments() == null) {
+                    document = new TamrDocument();
+                    derogListEntry.setDocuments(
+                            Collections.singletonList(document));
+                } else {
+                    document = derogListEntry.getDocuments().get(0);
+                }
+                if (term.getField().equals("documentType")) {
+                    document.setDocumentType(term.getValue());
+                } else if (term.getField().equals("documentNumber")) {
+                    document.setDocumentId(term.getValue());
+                }
+            } else {
+                logger.warn("Unknown watchlist field \"{}\". Ignoring...",
+                        term.getField());
+            }
+        }
+        
+        if (derogListEntry.getLastName() == null) {
+            // We only add to the derog list entries where the last name
+            // at least is populated.
+            return null;
+        }
         
         // We set both gtasId and derogId to the watchlist item ID from
         // GTAS. Tamr can merge multiple derog list entries with the same
