@@ -17,7 +17,7 @@ import javax.transaction.Transactional;
 import gov.gtas.model.*;
 import gov.gtas.parsers.tamr.TamrAdapter;
 import gov.gtas.parsers.tamr.TamrAdapterImpl;
-import gov.gtas.parsers.tamr.model.TamrPassengerSendObject;
+import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -153,9 +153,9 @@ public class PnrMessageService extends MessageLoaderService {
 			pnr.setTripType(tripType.toString());
 			if (tamrEnabled) {
 				TamrAdapter tamrAdapter = new TamrAdapterImpl();
-				List<TamrPassengerSendObject> tamrPassengerSendObjectList = tamrAdapter
-						.convert(pnr.getFlights().iterator().next(), pnr.getPassengers());
-				messageInformation.setTamrPassengerSendObjects(tamrPassengerSendObjectList);
+				List<TamrPassenger> tamrPassengers = tamrAdapter
+						.convertPassengers(pnr.getFlights().iterator().next(), pnr.getPassengers());
+				messageInformation.setTamrPassengers(tamrPassengers);
 			}
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);

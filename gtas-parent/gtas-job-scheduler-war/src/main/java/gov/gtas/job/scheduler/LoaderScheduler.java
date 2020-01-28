@@ -16,7 +16,7 @@ import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.MessageStatus;
-import gov.gtas.parsers.tamr.model.TamrPassengerSendObject;
+import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
@@ -105,8 +105,8 @@ public class LoaderScheduler {
 		if (tamrEnabled) {
 			// post message on queue here. Dummy Code below:
 			// todo : write send logic
-			List<TamrPassengerSendObject> objectsToSend = processedMessages.getTamrPassengerSendObjectList();
-			for (TamrPassengerSendObject tpso : objectsToSend) {
+			List<TamrPassenger> objectsToSend = processedMessages.getTamrPassengers();
+			for (TamrPassenger tpso : objectsToSend) {
 				logger.info(tpso.toString());
 			}
 		}

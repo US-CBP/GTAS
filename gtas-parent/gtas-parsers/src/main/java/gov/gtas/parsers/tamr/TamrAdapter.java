@@ -8,13 +8,18 @@
 
 package gov.gtas.parsers.tamr;
 
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
-import gov.gtas.parsers.tamr.model.TamrPassengerSendObject;
-
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import gov.gtas.model.Flight;
+import gov.gtas.model.Passenger;
+import gov.gtas.model.watchlist.WatchlistItem;
+import gov.gtas.parsers.tamr.model.TamrDerogListEntry;
+import gov.gtas.parsers.tamr.model.TamrPassenger;
+
 public interface TamrAdapter {
-	List<TamrPassengerSendObject> convert(Flight flight, Set<Passenger> passengers);
+	List<TamrPassenger> convertPassengers(Flight flight, Set<Passenger> passengers);
+	
+	List<TamrDerogListEntry> convertWatchlist(Collection<WatchlistItem> watchlistItems);
 }

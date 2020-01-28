@@ -1,14 +1,14 @@
 package gov.gtas.services;
 
 import gov.gtas.model.MessageStatus;
-import gov.gtas.parsers.tamr.model.TamrPassengerSendObject;
+import gov.gtas.parsers.tamr.model.TamrPassenger;
 
 import java.util.List;
 
 public class ProcessedMessages {
 	private int[] processed;
 	private List<MessageStatus> messageStatusList;
-	private List<TamrPassengerSendObject> tamrPassengerSendObjectList;
+	private List<TamrPassenger> tamrPassengers;
 	public int[] getProcessed() {
 		return processed;
 	}
@@ -25,11 +25,11 @@ public class ProcessedMessages {
 		this.messageStatusList = messageStatusList;
 	}
 
-	public List<TamrPassengerSendObject> getTamrPassengerSendObjectList() {
-		return tamrPassengerSendObjectList;
+	public List<TamrPassenger> getTamrPassengers() {
+		return tamrPassengers;
 	}
 
-	public void setTamrPassengerSendObjectList(List<TamrPassengerSendObject> tamrPassengerSendObjectList) {
-		this.tamrPassengerSendObjectList = tamrPassengerSendObjectList;
+	public void setTamrPassengers(List<TamrPassenger> tamrPassengers) {
+		this.tamrPassengers = tamrPassengers;
 	}
 }
