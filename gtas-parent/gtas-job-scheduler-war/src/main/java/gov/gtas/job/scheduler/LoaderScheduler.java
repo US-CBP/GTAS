@@ -16,11 +16,13 @@ import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.MessageStatus;
+import gov.gtas.parsers.tamr.jms.TamrMessageSender;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.svc.TargetingService;
+
 
 import java.io.File;
 import java.util.Date;
@@ -77,6 +79,9 @@ public class LoaderScheduler {
 	@Autowired
 	private MessageStatusRepository messageStatusRepository;
 
+	@Autowired
+	private TamrMessageSender tamrMessageSender;
+
 	@Value("${message.dir.processed}")
 	private String messageProcessedDir;
 
@@ -95,20 +100,18 @@ public class LoaderScheduler {
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
 
-	private void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) {
+	private void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) throws Exception {
 		logger.debug(String.format("Processing %s", f.getAbsolutePath()));
 		ProcessedMessages processedMessages = loader.processMessage(f, primeFlightKey);
 		int[] result = processedMessages.getProcessed();
 		List<MessageStatus> messageStatusList = processedMessages.getMessageStatusList();
 		messageStatusRepository.saveAll(messageStatusList);
 
+
 		if (tamrEnabled) {
-			// post message on queue here. Dummy Code below:
-			// todo : write send logic
-			List<TamrPassenger> objectsToSend = processedMessages.getTamrPassengers();
-			for (TamrPassenger tpso : objectsToSend) {
-				logger.info(tpso.toString());
-			}
+			List<TamrPassenger> passToSend = processedMessages.getTamrPassengers();
+			logger.info(String.valueOf(passToSend.size()));
+			tamrMessageSender.sendMessageToTamr("InboundQueue", passToSend);
 		}
 
 		if (result != null) {
@@ -126,8 +129,12 @@ public class LoaderScheduler {
 		logger.debug("MESSAGE RECEIVED FROM QUEUE: " + messageWorkingDir + File.separator + fileName);
 
 		File f = new File(messageWorkingDir + File.separator + fileName);
-		processSingleFile(f, stats, primeFlightKey);
-		saveProcessedFile(f);
+		try {
+			processSingleFile(f, stats, primeFlightKey);
+			saveProcessedFile(f);
+		} catch (Exception ex) {
+			logger.error("Unable to process file!");
+		}
 	}
 
 	// Moves the file from the working dir to the processed, returns true on
