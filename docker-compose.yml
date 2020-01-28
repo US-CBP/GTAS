@@ -2,6 +2,7 @@ version: '3.7'
 services:
 
   http-proxy:
+    image: simbam1/http-proxy:1.0
     container_name: http-proxy
     build: 
       context: './gtas-parent/docker-resources'
@@ -15,6 +16,7 @@ services:
       - GTAS_elastic-network
 
   web-app:
+    image: simbam1/web-app:1.0
     container_name: web-app
     build: './gtas-parent'
     ports:
@@ -50,11 +52,11 @@ services:
       - mariadb
 
   gtas-scheduler:
+    image: simbam1/gtas-scheduler:1.0
     container_name: gtas-scheduler
     build:
       context: .
       dockerfile: gtas-parent/gtas-job-scheduler-war/Dockerfile
-    image: gtas-scheduler
     restart: always    
     environment:
       DB_HOST: mariadb
@@ -85,6 +87,7 @@ services:
       - GTAS_webapp-network
 
   mariadb:
+    image: simbam1/mariadb:1.0
     build:
       context: './gtas-parent'
       dockerfile: 'Dockerfile-mariadb'
@@ -160,8 +163,8 @@ volumes:
 
 networks:
   GTAS_elastic-network:
-    driver: "bridge"
+    driver: "overlay"
   GTAS_logstash-network:
-    driver: "bridge"
+    driver: "overlay"
   GTAS_webapp-network:
-    driver: "bridge"
+    driver: "overlay"

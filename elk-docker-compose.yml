@@ -133,8 +133,8 @@ volumes:
 
 networks:
   GTAS_elastic-network:
-    driver: "bridge"
+    driver: "overlay"
   GTAS_logstash-network:
-    driver: "bridge"
+    driver: "overlay"
   GTAS_webapp-network:
-    driver: "bridge"
+    driver: "overlay"
