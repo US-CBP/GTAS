@@ -35,11 +35,6 @@ public class TamrMessageSender {
 	@Autowired
 	TamrQueueConfig queueConfig;
 
-	public ConnectionFactory connectionFactory() {
-		// Add tamr connection details here.
-		return new ActiveMQConnectionFactory("");
-	}
-
 	public boolean sendMessageToTamr(String queue, List<TamrPassenger> passengers) throws Exception {
 		logger.info("############### Attempting to craft tamr message .... ################");
 		jmsTemplateFile.setDefaultDestinationName(queue);

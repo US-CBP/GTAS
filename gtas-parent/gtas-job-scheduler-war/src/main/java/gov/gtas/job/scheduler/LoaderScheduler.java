@@ -115,7 +115,7 @@ public class LoaderScheduler {
 		if (tamrEnabled) {
 			List<TamrPassenger> passToSend = processedMessages.getTamrPassengers();
 			logger.info(String.valueOf(passToSend.size()));
-			tamrMessageSender.sendMessageToTamr("Inbound", passToSend);
+			tamrMessageSender.sendMessageToTamr("InboundQueue", passToSend);
 		}
 
 		if (result != null) {
