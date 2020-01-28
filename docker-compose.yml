@@ -94,10 +94,6 @@ services:
     container_name: mariadb
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
-    healthcheck:
-      test: "mysql --user=$$(cat /run/secrets/mysql_healthcheck_user) --password=$$(cat /run/secrets/mysql_healthcheck_password) --execute \"SHOW DATABASES;\")"
-      interval: 5s
-      retries: 36
     secrets:
      - mysql_etl_user
      - mysql_etl_password
