@@ -16,12 +16,8 @@ import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.MessageStatus;
-<<<<<<< HEAD
-import gov.gtas.parsers.tamr.model.TamrPassengerSendObject;
 import gov.gtas.parsers.tamr.jms.TamrMessageSender;
-=======
 import gov.gtas.parsers.tamr.model.TamrPassenger;
->>>>>>> 2d163024... Update Tamr query objects to correct format for JSON serialization, and rename TamrPassengerSendObject to TamrPassenger
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
