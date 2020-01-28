@@ -19,7 +19,7 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
 
 @Configuration
-//@ConditionalOnProperty(prefix = "tamr", name = "enabled")
+@ConditionalOnProperty(prefix = "tamr", name = "enabled")
 @EnableJms
 public class TamrQueueConfig {
 
