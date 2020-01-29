@@ -26,6 +26,15 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
 			+ "SELECT pxtag.pax_id FROM PassengerIDTag pxtag WHERE pxtag.idTag IN (SELECT p.idTag FROM PassengerIDTag p WHERE p.pax_id = (:pax_id) ))")
 	List<Passenger> getBookingDetailsByPassengerIdTag(@Param("pax_id") Long pax_id);
 
+    @Query("SELECT pax FROM Passenger pax " + "left join fetch pax.passengerDetails  "
+            + "left join fetch pax.bookingDetails " + "left join fetch pax.flightPaxList pfpl "
+            + "left join fetch pax.passengerTripDetails " + "left join fetch pfpl.flight "
+            + "left join fetch pfpl.passenger  WHERE pax.id IN ("
+            + "SELECT pxtag.pax_id FROM PassengerIDTag pxtag WHERE "
+            + "pxtag.tamrId IN (SELECT p.tamrId FROM PassengerIDTag p WHERE p.pax_id = (:pax_id)) "
+            + "AND pxtag.tamrId IS NOT NULL)")
+	List<Passenger> getBookingDetailsByTamrId(@Param("pax_id") Long pax_id);
+	
 	@Query("Select bd from BookingDetail bd " + "where bd.fullFlightNumber = :fullFlightNumber "
 			+ "and bd.destination = :destination " + "and bd.origin = :origin " + "and bd.etd = :etd "
 			+ "and bd.flight.id = :flightId")
