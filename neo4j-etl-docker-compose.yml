@@ -15,7 +15,7 @@ services:
     environment:
       NEO4J_HOSTNAME: neo4j
       DB_HOSTNAME: mariadb
-    image: neo4j-etl-job
+    image: simbam1/neo4j-etl-job:1.0
     restart: always
     secrets:
       - mysql_etl_user
@@ -37,7 +37,7 @@ services:
     build:
       context: .
       dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
-    image: gtas-neo4j
+    image: simbam1/neo4j:1.0
     restart: always
     ports:
       - 7474:7474   

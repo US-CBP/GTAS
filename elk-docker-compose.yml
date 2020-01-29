@@ -9,6 +9,7 @@ services:
         constraints:
           - node.hostname == elk-node
     container_name: kibana
+    image: simbam1/kibana:1.0
     build:
       context: ./gtas-parent/scripts/elastic
       dockerfile: install/docker/kibana/Dockerfile
@@ -43,6 +44,7 @@ services:
       placement:
         constraints:
           - node.hostname == elk-node
+    image: simbam1/elasticsearch:1.0
     container_name: elasticsearch
     build:
       context: ./gtas-parent/scripts/elastic
@@ -70,6 +72,7 @@ services:
       placement:
         constraints:
           - node.hostname == elk-node
+    image: simbam1/logstash:1.0
     container_name: logstash
     build:
       context: ./gtas-parent/scripts/elastic
@@ -96,6 +99,7 @@ services:
       placement:
         constraints:
           - node.hostname == elk-node
+    image: simbam1/elk-setup:1.0
     container_name: elk-setup
     build:
       context: ./gtas-parent/scripts/elastic
