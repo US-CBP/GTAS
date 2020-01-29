@@ -2,6 +2,11 @@ version: '3.7'
 services:
 
   http-proxy:
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == gtas-node
     image: simbam1/http-proxy:1.0
     container_name: http-proxy
     build: 
@@ -16,6 +21,11 @@ services:
       - GTAS_elastic-network
 
   web-app:
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == gtas-node
     image: simbam1/web-app:1.0
     container_name: web-app
     build: './gtas-parent'
@@ -52,6 +62,11 @@ services:
       - mariadb
 
   gtas-scheduler:
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == gtas-node
     image: simbam1/gtas-scheduler:1.0
     container_name: gtas-scheduler
     build:
@@ -80,6 +95,11 @@ services:
       - activemq
 
   activemq:
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == gtas-node
     image: rmohr/activemq
     container_name: activemq
     restart: always
@@ -87,6 +107,11 @@ services:
       - GTAS_webapp-network
 
   mariadb:
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == gtas-node
     image: simbam1/mariadb:1.0
     build:
       context: './gtas-parent'

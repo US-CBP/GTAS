@@ -3,6 +3,11 @@ version: "3.7"
 services:
 
   etl-job:
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == neo4j-node
     container_name: etl-job
     build:
       context: .
@@ -23,6 +28,11 @@ services:
       - neo4j
 
   neo4j:
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == neo4j-node
     container_name: neo4j
     build:
       context: .

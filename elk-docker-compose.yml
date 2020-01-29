@@ -3,6 +3,11 @@ version: "3.7"
 services:
 
   kibana:
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == elk-node
     container_name: kibana
     build:
       context: ./gtas-parent/scripts/elastic
@@ -33,6 +38,11 @@ services:
       - elasticsearch
 
   elasticsearch:
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == elk-node
     container_name: elasticsearch
     build:
       context: ./gtas-parent/scripts/elastic
@@ -55,6 +65,11 @@ services:
         target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.key
 
   logstash:
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == elk-node
     container_name: logstash
     build:
       context: ./gtas-parent/scripts/elastic
@@ -76,6 +91,11 @@ services:
       - elasticsearch
 
   elk-setup:
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname == elk-node
     container_name: elk-setup
     build:
       context: ./gtas-parent/scripts/elastic
