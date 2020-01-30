@@ -16,7 +16,7 @@ public class MessageStatus {
 	@Column(name = "ms_message_id", columnDefinition = "bigint unsigned")
 	private Long messageId;
 
-	@OneToOne(optional = false, fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "ms_message_id", referencedColumnName = "id", updatable = false, insertable = false)
 	private Message message;
 
