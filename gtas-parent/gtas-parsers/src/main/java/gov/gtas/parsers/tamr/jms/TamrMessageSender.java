@@ -26,35 +26,41 @@ import gov.gtas.parsers.tamr.model.TamrQuery;
 @ConditionalOnProperty(prefix = "tamr", name = "enabled")
 public class TamrMessageSender {
 
-	private final Logger logger = LoggerFactory.getLogger(TamrMessageSender.class);
+    private final Logger logger = LoggerFactory.getLogger(TamrMessageSender.class);
 
-	JmsTemplate jmsTemplate;
+    JmsTemplate jmsTemplate;
 
-	@Autowired
-	TamrQueueConfig queueConfig;
-	
-	public boolean sendMessageToTamr(String queue, List<TamrPassenger> passengers) throws Exception {
-		logger.info("Sending passengers to Tamr...");
-		if (jmsTemplate == null) {
-		    this.jmsTemplate = new JmsTemplate(
-	                queueConfig.senderConnectionFactory());
-		}
-
-		TamrQuery tamrQuery = new TamrQuery(passengers);
-		ObjectMapper mapper = new ObjectMapper();
-		String tamrQueryJson = mapper.writer().writeValueAsString(tamrQuery);
-
-		logger.debug("QUERY {}", tamrQueryJson);
-
-		jmsTemplate.send(queue, new MessageCreator() {
-			public Message createMessage(Session session) throws JMSException {
-				Message message = session.createTextMessage(tamrQueryJson);
-				message.setJMSType("QUERY");
-				return message;
-			}
-		});
-
-		return true;
-	}
+    @Autowired
+    TamrQueueConfig queueConfig;
+    
+    public void sendMessageToTamr(String messageType, Object messageObject) {
+        String messageJson;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            messageJson = mapper.writer().writeValueAsString(messageObject);
+        } catch (JsonProcessingException e) {
+            logger.error("Could not send {} message (type={}) to Tamr: {}",
+                    messageObject.getClass(), messageType, e);
+            return;
+        }
+        this.sendMessageToTamr(messageType, messageJson);
+    }
+    
+    public void sendMessageToTamr(String messageType, String messageText) {
+        if (jmsTemplate == null) {
+            this.jmsTemplate = new JmsTemplate(
+                    queueConfig.senderConnectionFactory());
+        }
+        logger.info("Sending {} message to Tamr.", messageType);
+        logger.debug(messageText);
+ 
+        jmsTemplate.send("InboundQueue", new MessageCreator() {
+            public Message createMessage(Session session) throws JMSException {
+                Message message = session.createTextMessage(messageText);
+                message.setJMSType(messageType);
+                return message;
+            }
+        });
+    }
 
 }
