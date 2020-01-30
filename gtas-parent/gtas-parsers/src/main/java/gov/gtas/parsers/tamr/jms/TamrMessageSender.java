@@ -27,27 +27,26 @@ import gov.gtas.parsers.tamr.model.TamrQuery;
 public class TamrMessageSender {
 
 	private final Logger logger = LoggerFactory.getLogger(TamrMessageSender.class);
-	private TamrAdapterImpl tamrAdapter = new TamrAdapterImpl();
 
-	@Autowired
-	JmsTemplate jmsTemplateFile;
+	JmsTemplate jmsTemplate;
 
 	@Autowired
 	TamrQueueConfig queueConfig;
-
+	
 	public boolean sendMessageToTamr(String queue, List<TamrPassenger> passengers) throws Exception {
-		logger.info("############### Attempting to craft tamr message .... ################");
-		jmsTemplateFile.setDefaultDestinationName(queue);
-		jmsTemplateFile.setConnectionFactory(queueConfig.cachingConnectionFactory());
+		logger.info("Sending passengers to Tamr...");
+		if (jmsTemplate == null) {
+		    this.jmsTemplate = new JmsTemplate(
+	                queueConfig.senderConnectionFactory());
+		}
 
 		TamrQuery tamrQuery = new TamrQuery(passengers);
 		ObjectMapper mapper = new ObjectMapper();
 		String tamrQueryJson = mapper.writer().writeValueAsString(tamrQuery);
 
-		logger.info("Query:");
-		logger.info(tamrQueryJson);
+		logger.debug("QUERY {}", tamrQueryJson);
 
-		jmsTemplateFile.send(new MessageCreator() {
+		jmsTemplate.send(queue, new MessageCreator() {
 			public Message createMessage(Session session) throws JMSException {
 				Message message = session.createTextMessage(tamrQueryJson);
 				message.setJMSType("QUERY");
@@ -57,4 +56,5 @@ public class TamrMessageSender {
 
 		return true;
 	}
+
 }
