@@ -210,14 +210,17 @@ public class HitDetail extends BaseEntity {
 	
 	public static HitDetail from(PendingHitDetails pendingHitDetails) {
 		HitDetail hitDetail = new HitDetail(pendingHitDetails.getHitEnum());
-		hitDetail.setHitType(pendingHitDetails.getHitEnum().toString());
+		hitDetail.setFlightId(pendingHitDetails.getFlightId());
+		hitDetail.setHitType(pendingHitDetails.getHitType());
+		hitDetail.setHitEnum(pendingHitDetails.getHitEnum());
 		hitDetail.setPassengerId(pendingHitDetails.getPassengerId());
 		hitDetail.setHitMakerId(pendingHitDetails.getHitMakerId());
 		hitDetail.setRuleId(pendingHitDetails.getHitMakerId()); //Set as hitmaker Id - this field is typically based on drools hit.
 		hitDetail.setDescription(pendingHitDetails.getDescription());
-		hitDetail.setCreatedDate(new Date());
+		hitDetail.setCreatedDate(pendingHitDetails.getCreatedDate());
 		hitDetail.setTitle(pendingHitDetails.getTitle());
 		hitDetail.setRuleConditions(pendingHitDetails.getRuleConditions());
+		hitDetail.setPercentage(pendingHitDetails.getPercentage());
 		return hitDetail;
 	}
 

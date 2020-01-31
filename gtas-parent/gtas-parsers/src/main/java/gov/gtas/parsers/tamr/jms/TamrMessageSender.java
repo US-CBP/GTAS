@@ -26,35 +26,41 @@ import gov.gtas.parsers.tamr.model.TamrQuery;
 @ConditionalOnProperty(prefix = "tamr", name = "enabled")
 public class TamrMessageSender {
 
-	private final Logger logger = LoggerFactory.getLogger(TamrMessageSender.class);
-	private TamrAdapterImpl tamrAdapter = new TamrAdapterImpl();
+    private final Logger logger = LoggerFactory.getLogger(TamrMessageSender.class);
 
-	@Autowired
-	JmsTemplate jmsTemplateFile;
+    JmsTemplate jmsTemplate;
 
-	@Autowired
-	TamrQueueConfig queueConfig;
+    @Autowired
+    TamrQueueConfig queueConfig;
+    
+    public void sendMessageToTamr(String messageType, Object messageObject) {
+        String messageJson;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            messageJson = mapper.writer().writeValueAsString(messageObject);
+        } catch (JsonProcessingException e) {
+            logger.error("Could not send {} message (type={}) to Tamr: {}",
+                    messageObject.getClass(), messageType, e);
+            return;
+        }
+        this.sendTextMessageToTamr(messageType, messageJson);
+    }
+    
+    public void sendTextMessageToTamr(String messageType, String messageText) {
+        if (jmsTemplate == null) {
+            this.jmsTemplate = new JmsTemplate(
+                    queueConfig.senderConnectionFactory());
+        }
+        logger.info("Sending {} message to Tamr.", messageType);
+        logger.debug(messageText);
+ 
+        jmsTemplate.send("InboundQueue", new MessageCreator() {
+            public Message createMessage(Session session) throws JMSException {
+                Message message = session.createTextMessage(messageText);
+                message.setJMSType(messageType);
+                return message;
+            }
+        });
+    }
 
-	public boolean sendMessageToTamr(String queue, List<TamrPassenger> passengers) throws Exception {
-		logger.info("############### Attempting to craft tamr message .... ################");
-		jmsTemplateFile.setDefaultDestinationName(queue);
-		jmsTemplateFile.setConnectionFactory(queueConfig.cachingConnectionFactory());
-
-		TamrQuery tamrQuery = new TamrQuery(passengers);
-		ObjectMapper mapper = new ObjectMapper();
-		String tamrQueryJson = mapper.writer().writeValueAsString(tamrQuery);
-
-		logger.info("Query:");
-		logger.info(tamrQueryJson);
-
-		jmsTemplateFile.send(new MessageCreator() {
-			public Message createMessage(Session session) throws JMSException {
-				Message message = session.createTextMessage(tamrQueryJson);
-				message.setJMSType("QUERY");
-				return message;
-			}
-		});
-
-		return true;
-	}
 }

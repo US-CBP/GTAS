@@ -18,6 +18,7 @@ import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.tamr.jms.TamrMessageSender;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.parsers.tamr.model.TamrQuery;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
@@ -110,8 +111,8 @@ public class LoaderScheduler {
 
 		if (tamrEnabled) {
 			List<TamrPassenger> passToSend = processedMessages.getTamrPassengers();
-			logger.info(String.valueOf(passToSend.size()));
-			tamrMessageSender.sendMessageToTamr("InboundQueue", passToSend);
+			TamrQuery tamrQuery = new TamrQuery(passToSend);
+			tamrMessageSender.sendMessageToTamr("QUERY", tamrQuery);
 		}
 
 		if (result != null) {
