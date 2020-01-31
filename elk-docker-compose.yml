@@ -3,11 +3,6 @@ version: "3.7"
 services:
 
   kibana:
-    deploy:
-      mode: global
-      placement:
-        constraints:
-          - node.hostname == elk-node
     container_name: kibana
     image: simbam1/kibana:1.0
     build:
@@ -19,7 +14,6 @@ services:
       - 5601:5601
     restart: always
     volumes:
-      - $PWD/gtas-parent/scripts/elastic:/config/kibana
       - kibana_conf:/usr/share/kibana/data
     networks: 
       GTAS_elastic-network:
@@ -37,13 +31,12 @@ services:
         target: /etc/kibana/config/kibana.key
     depends_on:
       - elasticsearch
-
-  elasticsearch:
     deploy:
-      mode: global
       placement:
         constraints:
           - node.hostname == elk-node
+
+  elasticsearch:
     image: simbam1/elasticsearch:1.0
     container_name: elasticsearch
     build:
@@ -65,13 +58,12 @@ services:
         target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.crt
       - source: elasticsearch_instance_key
         target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.key
-
-  logstash:
     deploy:
-      mode: global
       placement:
         constraints:
           - node.hostname == elk-node
+
+  logstash:
     image: simbam1/logstash:1.0
     container_name: logstash
     build:
@@ -92,13 +84,12 @@ services:
       - logstash_conf:/usr/share/logstash/config/
     depends_on:
       - elasticsearch
-
-  elk-setup:
     deploy:
-      mode: global
       placement:
         constraints:
           - node.hostname == elk-node
+
+  elk-setup:
     image: simbam1/elk-setup:1.0
     container_name: elk-setup
     build:
@@ -121,6 +112,10 @@ services:
       - elastic_bootstrap_password
     networks:
       - GTAS_elastic-network
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == elk-node
 
 
 secrets:

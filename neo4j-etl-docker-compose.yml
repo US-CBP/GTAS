@@ -4,7 +4,6 @@ services:
 
   etl-job:
     deploy:
-      mode: global
       placement:
         constraints:
           - node.hostname == neo4j-node
@@ -29,7 +28,6 @@ services:
 
   neo4j:
     deploy:
-      mode: global
       placement:
         constraints:
           - node.hostname == neo4j-node
