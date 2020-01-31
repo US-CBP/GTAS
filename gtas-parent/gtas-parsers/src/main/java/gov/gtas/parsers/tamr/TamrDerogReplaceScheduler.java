@@ -3,7 +3,7 @@
  *
  * Please see LICENSE.txt for details.
  */
-package gov.gtas.job.scheduler;
+package gov.gtas.parsers.tamr;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,8 +21,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import gov.gtas.model.watchlist.WatchlistItem;
-import gov.gtas.parsers.tamr.TamrAdapter;
-import gov.gtas.parsers.tamr.TamrAdapterImpl;
 import gov.gtas.parsers.tamr.jms.TamrMessageSender;
 import gov.gtas.parsers.tamr.model.TamrDerogListEntry;
 import gov.gtas.parsers.tamr.model.TamrDerogListUpdate;

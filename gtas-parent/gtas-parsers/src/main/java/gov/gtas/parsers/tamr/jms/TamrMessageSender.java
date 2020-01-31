@@ -43,10 +43,10 @@ public class TamrMessageSender {
                     messageObject.getClass(), messageType, e);
             return;
         }
-        this.sendMessageToTamr(messageType, messageJson);
+        this.sendTextMessageToTamr(messageType, messageJson);
     }
     
-    public void sendMessageToTamr(String messageType, String messageText) {
+    public void sendTextMessageToTamr(String messageType, String messageText) {
         if (jmsTemplate == null) {
             this.jmsTemplate = new JmsTemplate(
                     queueConfig.senderConnectionFactory());
