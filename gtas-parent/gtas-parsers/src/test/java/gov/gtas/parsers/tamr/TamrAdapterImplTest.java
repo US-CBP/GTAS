@@ -97,19 +97,26 @@ public class TamrAdapterImplTest {
         "{\"id\":null,\"action\":null,\"terms\":[{\"field\":\"firstName\",\"type\":\"string\",\"value\":\"FRIEDA\"},{\"field\":\"lastName\",\"type\":\"string\",\"value\":\"DARRINGTON\"},{\"field\":\"dob\",\"type\":\"date\",\"value\":\"1963-08-13\"}]}",
         "{\"id\":null,\"action\":null,\"terms\":[{\"field\":\"documentType\",\"type\":\"string\",\"value\":\"P\"},{\"field\":\"documentNumber\",\"type\":\"string\",\"value\":\"899294368\"}]}"
 	};
+	public static final String expectedDerogListJson = "{\"passengers\":[" +
+            "{\"gtasId\":\"1\",\"firstName\":\"SHING\",\"middleName\":null,\"lastName\":\"QUAN\",\"gender\":null,\"dob\":\"1998-08-08\",\"documents\":null,\"citizenshipCountry\":null,\"derogId\":\"1\"}," +
+            "{\"gtasId\":\"3\",\"firstName\":\"FRIEDA\",\"middleName\":null,\"lastName\":\"DARRINGTON\",\"gender\":null,\"dob\":\"1963-08-13\",\"documents\":null,\"citizenshipCountry\":null,\"derogId\":\"3\"}" +
+            "]}";
+	
+	public static List<WatchlistItem> getWatchlistItems() {
+        List<WatchlistItem> watchlistItems = new ArrayList<>();
+        for (int i = 0; i < WATCHLIST_ITEMS.length; i++) {
+            WatchlistItem watchlistItem = new WatchlistItem();
+            watchlistItem.setItemData(WATCHLIST_ITEMS[i]);
+            watchlistItem.setId((long) i + 1);
+            watchlistItems.add(watchlistItem);
+        }
+        return watchlistItems;
+	}
 	
 	@Test
 	public void testWatchlistConversion() throws JsonProcessingException {
-	    List<WatchlistItem> watchlistItems = new ArrayList<>();
-	    for (int i = 0; i < WATCHLIST_ITEMS.length; i++) {
-	        WatchlistItem watchlistItem = new WatchlistItem();
-	        watchlistItem.setItemData(WATCHLIST_ITEMS[i]);
-	        watchlistItem.setId((long) i + 1);
-	        watchlistItems.add(watchlistItem);
-	    }
-	    
 	    List<TamrDerogListEntry> derogList = 
-	            tamrAdapter.convertWatchlist(watchlistItems);
+	            tamrAdapter.convertWatchlist(getWatchlistItems());
 	  
 	    // Only 2 entries in the derog list, since document entries should
 	    // be filtered out.
