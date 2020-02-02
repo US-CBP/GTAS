@@ -8,9 +8,11 @@ package gov.gtas.job.scheduler;
 import static org.junit.Assert.*;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +39,11 @@ public class TamrMock {
     private final static String queryRegex =
             "\\{\"passengers\":\\[(?:" + queryPassengerRegex + ",?)+\\]\\}";
     
+    private final static String derogEntryRegex =
+            "\\{\"gtasId\":\"(?<gtasId>\\d+)\",\"firstName\":\"(?<firstName>[^\"]+)\",\"middleName\":[\"\\w ]+,\"lastName\":\"(?<lastName>[^\"]+)\",\"gender\":null,\"dob\":\"(?<dob>[^\"]+)\",\"documents\":null,\"citizenshipCountry\":null,\"derogId\":\"(?<derogId>\\d+)\"\\}";
+    private final static String derogRegex =
+            "\\{\"passengers\":\\[(?:" + derogEntryRegex + ",?)+\\]\\}";
+    
     private final static Map<String, String> nameToTamrId = new HashMap<String, String>() {{
         put("HSIUYUAN JIANG", "00738a54-e024-3dcf-9df0-6a982022c8ea");
         put("XIUYUAN JIANG", "00738a54-e024-3dcf-9df0-6a982022c8ea");
@@ -44,23 +51,31 @@ public class TamrMock {
         
         put("GAYLA JOSEPH", "00647e30-95ba-31a9-8660-2143e7dae0d3");
         put("GAELLA JOSEPH", "00647e30-95ba-31a9-8660-2143e7dae0d3");
+        
+        put("RUBEN THEBAULT", "75c317a7-e8f1-39e5-8faa-f18b757dba79");
+        put("REUBEN THEBAULT", "75c317a7-e8f1-39e5-8faa-f18b757dba79");
     }};
+    
+    private Map<String, String> tamrIdToDerogId = new HashMap<>();
     
     @Autowired
     private TamrIntegrationTestUtils tamrUtils;
+    
+    private String getTamrIdFromName(String name) {
+        String tamrId = nameToTamrId.get(name);
+        if (tamrId == null) {
+            tamrId = UUID.randomUUID().toString();
+        }
+        return tamrId;
+    }
     
     /**
      * Get the JSON clustering information Tamr should return for a single
      * passenger with the given gtasId and name.
      */
     private String getPassengerHistoryResponse(String gtasId, String name) {
-        String tamrId = nameToTamrId.get(name);
-        if (tamrId == null) {
-            tamrId = UUID.randomUUID().toString();
-        }
-        
         return String.format("{\"gtasId\":\"%s\",\"derogIds\":[],\"tamrId\":\"%s\",\"version\":1,\"score\":1.0}",
-                gtasId, tamrId);
+                gtasId, getTamrIdFromName(name));
     }
     
     /**
@@ -68,9 +83,14 @@ public class TamrMock {
      * passenger with the given gtasId and name.
      */
     private String getPassengerDerogResponse(String gtasId, String name) {
-        // TODO: implement
-        return String.format("{\"gtasId\":\"%s\",\"derogIds\":[],\"tamrId\":null,\"version\":-1,\"score\":0.0}",
-                gtasId);
+        String derogHit = "";
+        String derogId = tamrIdToDerogId.get(getTamrIdFromName(name));
+        if (derogId != null) {
+            derogHit = String.format("{\"derogId\":\"%s\",\"score\":0.6}",
+                    derogId);
+        }
+        return String.format("{\"gtasId\":\"%s\",\"derogIds\":[%s],\"tamrId\":null,\"version\":-1,\"score\":0.0}",
+                gtasId, derogHit);
     }
     
     /**
@@ -120,5 +140,42 @@ public class TamrMock {
                 derogsResponseJoiner.toString());
         
         return passengersProcessed;
+    }
+    
+    /**
+     * Respond to a DC.REPLACE message sent to Tamr. Returns the number of
+     * derog list entries received.
+     */
+    public int respondToDerogReplace() throws JMSException {
+        TextMessage derogMessage = tamrUtils.getMessageSentToTamr();
+        assertNotNull(derogMessage);
+        assertEquals("DC.REPLACE", derogMessage.getJMSType());
+
+        String derogJson = derogMessage.getText();
+        logger.info("Processing DC.REPLACE message.");
+        
+        // First, make sure the entire message is well-formed.
+        Matcher derogMatcher = Pattern.compile(derogRegex).matcher(derogJson);
+        assertTrue(derogMatcher.matches());
+        
+        // Then, extract the entries and make a new derog list from them.
+        int derogCount = 0;
+        tamrIdToDerogId.clear();
+        Matcher entryMatcher = Pattern.compile(derogEntryRegex)
+                .matcher(derogJson);
+        while (entryMatcher.find()) {
+            String derogId = entryMatcher.group("derogId");
+            String name = entryMatcher.group("firstName") + " " +
+                    entryMatcher.group("lastName");
+            tamrIdToDerogId.put(getTamrIdFromName(name), derogId);
+            derogCount += 1;
+        }
+        
+        // Finally, send an acknowledgement back to GTAS.
+        logger.info("Processed {} derog entries. Responding with acknowledgement.",
+                derogCount);
+        tamrUtils.sendMessageToGtasFromTamr("DC.REPLACE",
+                "{\"acknowledgment\":true,\"error\":null}");
+        return derogCount;
     }
 }
