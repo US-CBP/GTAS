@@ -80,7 +80,7 @@ public class LoaderScheduler {
 	@Autowired
 	private MessageStatusRepository messageStatusRepository;
 
-	@Autowired
+	@Autowired(required=false)
 	private TamrMessageSender tamrMessageSender;
 
 	@Value("${message.dir.processed}")
@@ -107,7 +107,6 @@ public class LoaderScheduler {
 		int[] result = processedMessages.getProcessed();
 		List<MessageStatus> messageStatusList = processedMessages.getMessageStatusList();
 		messageStatusRepository.saveAll(messageStatusList);
-
 
 		if (tamrEnabled) {
 			List<TamrPassenger> passToSend = processedMessages.getTamrPassengers();

@@ -5,14 +5,20 @@
  */
 package gov.gtas.job.scheduler;
 
+import java.io.File;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -20,8 +26,14 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.listener.MessageListenerContainer;
 import org.springframework.stereotype.Component;
 
+import gov.gtas.enumtype.EntityEnum;
+import gov.gtas.model.watchlist.json.WatchlistItemSpec;
+import gov.gtas.model.watchlist.json.WatchlistSpec;
+import gov.gtas.model.watchlist.json.WatchlistTerm;
 import gov.gtas.parsers.tamr.jms.TamrMessageReceiver;
 import gov.gtas.parsers.tamr.jms.TamrQueueConfig;
+import gov.gtas.services.LoaderStatistics;
+import gov.gtas.svc.WatchlistService;
 
 
 /**
@@ -34,19 +46,32 @@ public class TamrIntegrationTestUtils {
     
     private JmsTemplate jmsTemplate;
     
+    private ClassLoader classLoader = getClass().getClassLoader();
+    
     @Autowired
     private JmsListenerEndpointRegistry jmsListenerRegistry;
-    
-    @Autowired
-    private TamrQueueConfig tamrQueueConfig;
-    
-    @Autowired
+        
+    @Autowired(required=false)
     private TamrMessageReceiver tamrMessageReceiver;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    @Autowired
+    private LoaderScheduler loaderScheduler;
+    
+    @Autowired
+    private WatchlistService watchlistService;
+
+    @Value("${tamr.activemq.broker.url}")
+    private String activeMQBrokerUrl;
     
     private void configureJmsTemplate() {
         if (jmsTemplate == null) {
-            this.jmsTemplate = new JmsTemplate(
-                    tamrQueueConfig.senderConnectionFactory());
+            ActiveMQConnectionFactory aMQConnection =
+                    new ActiveMQConnectionFactory();
+            aMQConnection.setBrokerURL(activeMQBrokerUrl);
+            this.jmsTemplate = new JmsTemplate(aMQConnection);
             this.jmsTemplate.setReceiveTimeout(1000);
         }
     }
@@ -103,6 +128,41 @@ public class TamrIntegrationTestUtils {
             messagesProcessed += 1;
         }
         return messagesProcessed;
+    }
+    
+    private WatchlistItemSpec createWatchlistItemSpec(
+            String firstName, String lastName, String dob) {
+        return new WatchlistItemSpec(null, "create", new WatchlistTerm[] {
+            new WatchlistTerm("firstName", "String", firstName),
+            new WatchlistTerm("lastName", "String", lastName),
+            new WatchlistTerm("dob", "String", dob)
+        });
+    }
+    
+    /**
+     * Create some sample watchlist items.
+     */
+    public void createWatchlistItems() {
+        WatchlistSpec spec = new WatchlistSpec("Watchlist",
+                EntityEnum.PASSENGER.getEntityName());
+        spec.addWatchlistItem(createWatchlistItemSpec(
+                "RUBEN", "THEBAULT", "1945-01-11"));
+        spec.addWatchlistItem(createWatchlistItemSpec(
+                "KIM", "OSAYUWAME", "1971-09-16"));
+        spec.addWatchlistItem(createWatchlistItemSpec(
+                "ALICIA", "DAVIES", "1962-05-21"));
+        watchlistService.createUpdateDeleteWatchlistItems("ADMIN", spec, 1L);
+    }
+    
+    /**
+     * Load a flight with the given path and prime flight key.
+     */
+    public void loadFlight(String messageFilePath, String[] primeFlightKey)
+            throws Exception {
+        File messageFile = new File(classLoader.getResource(
+                messageFilePath).getFile());
+        LoaderStatistics stats = new LoaderStatistics();
+        loaderScheduler.processSingleFile(messageFile, stats, primeFlightKey);
     }
     
 }

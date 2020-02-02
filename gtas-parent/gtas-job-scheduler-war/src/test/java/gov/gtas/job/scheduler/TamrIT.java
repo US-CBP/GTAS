@@ -7,7 +7,6 @@ package gov.gtas.job.scheduler;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,7 +15,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -31,14 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Iterables;
 
-import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.watchlist.WatchlistItem;
-import gov.gtas.model.watchlist.json.WatchlistItemSpec;
-import gov.gtas.model.watchlist.json.WatchlistSpec;
-import gov.gtas.model.watchlist.json.WatchlistTerm;
 import gov.gtas.parsers.tamr.TamrDerogReplaceScheduler;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.HitDetailRepository;
@@ -46,7 +40,6 @@ import gov.gtas.repository.PassengerIDTagRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
-import gov.gtas.services.LoaderStatistics;
 import gov.gtas.services.PassengerService;
 import gov.gtas.svc.WatchlistService;
 
@@ -60,17 +53,12 @@ import gov.gtas.svc.WatchlistService;
 @Rollback(true)
 public class TamrIT extends AbstractTransactionalJUnit4SpringContextTests {
     private Logger logger = LoggerFactory.getLogger(TamrIT.class);
-    
-    private ClassLoader classLoader;
-    
+        
     @Autowired
     private ApplicationContext applicationContext;
 
     @PersistenceContext
     private EntityManager entityManager;
-    
-    @Autowired
-    private LoaderScheduler loaderScheduler;
 
     @Autowired
     private FlightRepository flightRepository;
@@ -83,9 +71,6 @@ public class TamrIT extends AbstractTransactionalJUnit4SpringContextTests {
     
     @Autowired
     private PassengerIDTagRepository passengerIDTagRepository;
-    
-    @Autowired
-    private WatchlistService watchlistService;
     
     @Autowired
     private PendingHitDetailRepository pendingHitDetailRepository;
@@ -104,40 +89,6 @@ public class TamrIT extends AbstractTransactionalJUnit4SpringContextTests {
     
     @Autowired
     private TamrMock tamrMock;
-
-    @Before
-    public void setUp() throws Exception {
-        classLoader = getClass().getClassLoader();
-    }
-    
-    private WatchlistItemSpec createWatchlistItemSpec(
-            String firstName, String lastName, String dob) {
-        return new WatchlistItemSpec(null, "create", new WatchlistTerm[] {
-            new WatchlistTerm("firstName", "String", firstName),
-            new WatchlistTerm("lastName", "String", lastName),
-            new WatchlistTerm("dob", "String", dob)
-        });
-    }
-    
-    private void createWatchlistItems() {
-        WatchlistSpec spec = new WatchlistSpec("Watchlist",
-                EntityEnum.PASSENGER.getEntityName());
-        spec.addWatchlistItem(createWatchlistItemSpec(
-                "RUBEN", "THEBAULT", "1945-01-11"));
-        spec.addWatchlistItem(createWatchlistItemSpec(
-                "KIM", "OSAYUWAME", "1971-09-16"));
-        spec.addWatchlistItem(createWatchlistItemSpec(
-                "ALICIA", "DAVIES", "1962-05-21"));
-        watchlistService.createUpdateDeleteWatchlistItems("ADMIN", spec, 1L);
-    }
-    
-    private void loadFlight(String messageFilePath, String[] primeFlightKey)
-            throws Exception {
-        File messageFile = new File(classLoader.getResource(
-                messageFilePath).getFile());
-        LoaderStatistics stats = new LoaderStatistics();
-        loaderScheduler.processSingleFile(messageFile, stats, primeFlightKey);
-    }
     
     private long getPassengerIdFromName(String firstName, String lastName) {
         Long passengerId = null;
@@ -224,7 +175,7 @@ public class TamrIT extends AbstractTransactionalJUnit4SpringContextTests {
     public void testTamrIntegration() throws Exception {
         tamrUtils.disableJmsListeners();
         
-        this.createWatchlistItems();
+        tamrUtils.createWatchlistItems();
         derogReplaceScheduler.jobScheduling();
         // 3 derog entries should be processed by Tamr.
         assertEquals(3, tamrMock.respondToDerogReplace());
@@ -232,7 +183,7 @@ public class TamrIT extends AbstractTransactionalJUnit4SpringContextTests {
         assertEquals(1, tamrUtils.synchronouslyProcessMessagesFromTamr());
 
         // Flight 1
-        this.loadFlight(
+        tamrUtils.loadFlight(
            "tamr-integration-data/flight1.txt",
             new String[] { "SCL", "JFK", "LA", "0532",
                     "1579392000000", "1579394000000" }
@@ -243,7 +194,7 @@ public class TamrIT extends AbstractTransactionalJUnit4SpringContextTests {
         assertEquals(2, tamrUtils.synchronouslyProcessMessagesFromTamr());
 
         // Flight 2
-        this.loadFlight(
+        tamrUtils.loadFlight(
             "tamr-integration-data/flight2.txt",
             new String[] { "KEF", "JFK", "FI", "0615",
                     "1582675200000", "1582675400000" }
@@ -252,7 +203,7 @@ public class TamrIT extends AbstractTransactionalJUnit4SpringContextTests {
         assertEquals(10, tamrMock.respondToQuery());
         
         // Flight 3
-        this.loadFlight(
+        tamrUtils.loadFlight(
             "tamr-integration-data/flight3.txt",
             new String[] { "IAD", "BRU", "YY", "0123",
                     "1587686400000", "1587686500000" }
