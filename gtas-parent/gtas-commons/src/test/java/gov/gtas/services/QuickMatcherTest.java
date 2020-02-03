@@ -8,8 +8,15 @@
 
 package gov.gtas.services;
 
-import static gov.gtas.services.matcher.quickmatch.MatchingContext.DOB_YEAR_OFFSET;
-import static org.junit.Assert.assertEquals;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.gtas.model.Passenger;
+import gov.gtas.model.PassengerDetails;
+import gov.gtas.model.watchlist.json.WatchlistItemSpec;
+import gov.gtas.services.matcher.quickmatch.DerogHit;
+import gov.gtas.services.matcher.quickmatch.MatchingResult;
+import gov.gtas.services.matcher.quickmatch.QuickMatcher;
+import gov.gtas.services.matcher.quickmatch.QuickMatcherImpl;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -18,17 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import gov.gtas.services.matcher.quickmatch.QuickMatcherImpl;
-import org.junit.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import gov.gtas.model.Passenger;
-import gov.gtas.model.PassengerDetails;
-import gov.gtas.model.watchlist.json.WatchlistItemSpec;
-import gov.gtas.services.matcher.quickmatch.DerogHit;
-import gov.gtas.services.matcher.quickmatch.MatchingResult;
-import gov.gtas.services.matcher.quickmatch.QuickMatcher;
+import static gov.gtas.services.matcher.quickmatch.MatchingContext.DOB_YEAR_OFFSET;
+import static org.junit.Assert.assertEquals;
 
 public class QuickMatcherTest {
 
@@ -70,6 +68,36 @@ public class QuickMatcherTest {
 
 		QuickMatcher qm = new QuickMatcherImpl(derogList);
 		MatchingResult result = qm.match(p, .80F, DOB_YEAR_OFFSET);
+		result.getResponses();
+
+		assertEquals(1, result.getTotalHits());
+
+	}
+
+	@Test
+	public void testLowDataOptimizedDobYear() throws IOException {
+
+		Passenger p = getTestPassenger(1, "John", "Doe", null, "1988-01-01");
+
+		List<HashMap<String, String>> derogList = getTestWL(11, "John", "Doe", "1988-03-15");
+
+		QuickMatcher qm = new QuickMatcherImpl(derogList, "lowDataOptimized");
+		MatchingResult result = qm.match(p);
+		result.getResponses();
+
+		assertEquals(1, result.getTotalHits());
+
+	}
+
+	@Test
+	public void testLowDataOptimizedNYSIIS() throws IOException {
+
+		Passenger p = getTestPassenger(1, "Josh", "MCKENZIE", null, "1988-01-01");
+
+		List<HashMap<String, String>> derogList = getTestWL(11, "Joshua", "MACKENZIE", "1988-03-15");
+
+		QuickMatcher qm = new QuickMatcherImpl(derogList, "lowDataOptimized");
+		MatchingResult result = qm.match(p);
 		result.getResponses();
 
 		assertEquals(1, result.getTotalHits());
