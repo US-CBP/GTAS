@@ -5,18 +5,13 @@
  */
 package gov.gtas.services.matcher.quickmatch;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import gov.gtas.model.Passenger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import gov.gtas.model.Passenger;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class QuickMatcherImpl implements QuickMatcher {
 
@@ -28,6 +23,7 @@ public class QuickMatcherImpl implements QuickMatcher {
 	private final MatchingContext cxt;
 	private static final Set<Long> EMPTY_DEROGLIST = new HashSet<>();
 
+	// For normal operations, the MatchingContext gets accuracyMode from config files
 	public QuickMatcherImpl(final List<HashMap<String, String>> watchListItems) {
 		this.cxt = new MatchingContext();
 
@@ -36,6 +32,17 @@ public class QuickMatcherImpl implements QuickMatcher {
 			this.cxt.initialize(new ArrayList<>());
 		else
 			this.cxt.initialize(watchListItems);
+	}
+
+	// For testing, to force and accuracyMode
+	public QuickMatcherImpl(final List<HashMap<String, String>> watchListItems, final String accuracyMode) {
+		this.cxt = new MatchingContext();
+
+		// sanity check
+		if (watchListItems == null)
+			this.cxt.initialize(new ArrayList<>(), accuracyMode);
+		else
+			this.cxt.initialize(watchListItems, accuracyMode);
 	}
 
 	public MatchingContext getCxt() {
