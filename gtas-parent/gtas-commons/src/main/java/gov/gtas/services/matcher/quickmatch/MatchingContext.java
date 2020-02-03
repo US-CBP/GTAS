@@ -105,6 +105,7 @@ public class MatchingContext {
 
 	// For normal operation: get accuracyMode from config
 	public void initialize(final List<HashMap<String, String>> watchListItems) {
+		this.initializeConfig();
 		this.initialize(watchListItems, this.config.getAccuracyMode());
 	}
 
@@ -117,7 +118,6 @@ public class MatchingContext {
 
 		this.derogList = watchListItems;
 		this.derogList = this.prepareAttributes(this.derogList);
-
 		/**
 		 * Split the list into sets where each matchClause applies; Then, for each
 		 * query, we need only apply a clause to derog records where it is valid.
@@ -402,7 +402,7 @@ public class MatchingContext {
 	/**
 	 * 
 	 * @param travelerDate
-	 * @param deragDate
+	 * @param derogDate
 	 * @return
 	 * @throws ParseException
 	 */
@@ -422,7 +422,7 @@ public class MatchingContext {
 	 * Compares the two Dates for equality
 	 * 
 	 * @param travelerDate
-	 * @param deragDate
+	 * @param derogDate
 	 * @return
 	 */
 	private boolean isSameDOBYearMonthDay(String travelerDate, String derogDate) {
@@ -452,7 +452,6 @@ public class MatchingContext {
 		// one.
 		// but leave the original renames list untouched.
 		HashMap<String, String> batchRenames = new HashMap<>(config.getAttributeRenames());
-
 		// Begin per-record renames and pre-processing
 		// Use iterator so we can remove records with critical errors
 		Iterator<HashMap<String, String>> recordIterator = parsedRecords.iterator();
