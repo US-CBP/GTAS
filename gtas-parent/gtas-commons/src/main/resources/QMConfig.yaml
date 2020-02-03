@@ -3,6 +3,7 @@
 # Balanced
 # HighRecall
 # HighPrecision
+# LowDataOptimized
 accuracyMode: gtasDefault
 
 derogFilterOutRegex: "^(UNKNOWN|other|NA|\\?|_)$"

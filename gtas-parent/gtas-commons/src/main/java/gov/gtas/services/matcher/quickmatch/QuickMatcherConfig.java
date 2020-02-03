@@ -52,6 +52,12 @@ public class QuickMatcherConfig {
 	 * extra algorithm finds more true hits than Balanced mode alone, for some
 	 * queries where Balanced mode may struggle. On other queries, though, it simple
 	 * returns hits that Balanced mode already found.
+     *
+     * LowDataOptimized: Higher recall and precision than other modes when both
+     * (a) the watchlist contains only first name, last name, and DOB, and
+     * (b) the DOBs contain accurate years but a majority of dummy birtdays, e.g.
+     * it is known that a traveler or watchlist person was born in 1991, but the
+     * birthday is arbitrarily chosen to a default value like "January 1."
 	 * 
 	 * gtasDefault: The default:
 	 * 
