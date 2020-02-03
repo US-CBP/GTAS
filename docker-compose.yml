@@ -13,7 +13,7 @@ services:
     ports:
       - 80:80
     networks:
-      - GTAS_elastic-network
+      - GTAS_webapp-network
     deploy:
       placement:
         constraints:
@@ -34,8 +34,6 @@ services:
       - ELASTICSEARCH=elasticsearch
     networks:
       - GTAS_webapp-network
-      - GTAS_logstash-network
-      - GTAS_elastic-network
     restart: always
     secrets:
      - mysql_webapp_user
@@ -126,7 +124,6 @@ services:
       - 3306:3306
     networks:
       - GTAS_webapp-network
-      - GTAS_logstash-network
     restart: always
     volumes:
       - db-data:/var/lib/mysql
@@ -178,9 +175,6 @@ volumes:
   scheduler-logs:
 
 networks:
-  GTAS_elastic-network:
-    driver: "overlay"
-  GTAS_logstash-network:
-    driver: "overlay"
   GTAS_webapp-network:
     driver: "overlay"
+    attachable: true

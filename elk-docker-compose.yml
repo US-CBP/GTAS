@@ -15,10 +15,7 @@ services:
     restart: always
     volumes:
       - kibana_conf:/usr/share/kibana/data
-    networks: 
-      GTAS_elastic-network:
-        aliases:
-          - "kibana.local"
+    networks:
       GTAS_webapp-network:
         aliases:
           - "kibana.local"
@@ -50,7 +47,7 @@ services:
       - es-data:/usr/share/elasticsearch/data
       - elasticsearch_conf:/usr/share/elasticsearch/config/
     networks: 
-      - GTAS_elastic-network
+      - GTAS_webapp-network
     secrets:
       - source: elasticsearch_ca
         target: /usr/share/elasticsearch/config/certs/elasticsearch/elastic-ca.crt
@@ -78,8 +75,7 @@ services:
     secrets:
       - elasticsearch_ca
     networks:
-      - GTAS_elastic-network
-      - GTAS_logstash-network
+      - GTAS_webapp-network
     volumes:
       - logstash_conf:/usr/share/logstash/config/
     depends_on:
@@ -111,7 +107,7 @@ services:
       - elasticsearch_kibana_password
       - elastic_bootstrap_password
     networks:
-      - GTAS_elastic-network
+      - GTAS_webapp-network
     deploy:
       placement:
         constraints:
@@ -151,9 +147,6 @@ volumes:
   es-data:
 
 networks:
-  GTAS_elastic-network:
-    driver: "overlay"
-  GTAS_logstash-network:
-    driver: "overlay"
   GTAS_webapp-network:
     driver: "overlay"
+    attachable: true

@@ -1,4 +1,4 @@
-server.host: kibana.local
+server.host: 0.0.0.0
 server.name: kibana
 server.ssl.enabled: true
 server.ssl.certificate: /etc/kibana/config/kibana.crt
