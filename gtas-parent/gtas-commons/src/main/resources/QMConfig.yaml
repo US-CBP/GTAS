@@ -99,4 +99,14 @@ gtasDefault:
         - first_name
         - DOB_Date
         - metaphones
-        
+
+lowDataOptimized:
+    -
+        - full_name
+        - dob_year
+    -
+        - metaphones
+        - dob_year
+    -
+        - nysiis
+        - dob_year
