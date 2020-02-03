@@ -80,7 +80,7 @@ public class LoaderScheduler {
 	@Autowired
 	private MessageStatusRepository messageStatusRepository;
 
-	@Autowired
+	@Autowired(required=false)
 	private TamrMessageSender tamrMessageSender;
 
 	@Value("${message.dir.processed}")
@@ -101,13 +101,12 @@ public class LoaderScheduler {
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
 
-	private void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) throws Exception {
+	void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) throws Exception {
 		logger.debug(String.format("Processing %s", f.getAbsolutePath()));
 		ProcessedMessages processedMessages = loader.processMessage(f, primeFlightKey);
 		int[] result = processedMessages.getProcessed();
 		List<MessageStatus> messageStatusList = processedMessages.getMessageStatusList();
 		messageStatusRepository.saveAll(messageStatusList);
-
 
 		if (tamrEnabled) {
 			List<TamrPassenger> passToSend = processedMessages.getTamrPassengers();
