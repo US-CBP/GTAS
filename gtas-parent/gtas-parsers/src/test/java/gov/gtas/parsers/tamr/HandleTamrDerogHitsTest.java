@@ -116,12 +116,39 @@ public class HandleTamrDerogHitsTest implements ParserTestHelper {
     }
     
     /**
+     * Test when Tamr sends an invalid (non-numeric) derogId.
+     */
+    @Test
+    public void handleInvalidDerogId() {
+        TamrMessage derogMessage = getDerogMessage(
+                passenger.getId(), watchlistItem.getId(), 1);
+        derogMessage.getTravelerQuery().get(0).getDerogIds().get(0)
+            .setDerogId("abc");
+        handler.handleQueryResponse(derogMessage);
+        
+        verifyZeroInteractions(pendingHitDetailRepository);
+    }
+    
+    /**
      * Test when Tamr sends a nonexistent gtasId.
      */
     @Test
     public void handleNonexistentGtasId() {
         TamrMessage derogMessage = getDerogMessage(
                 547L, watchlistItem.getId(), 0.28f);
+        handler.handleQueryResponse(derogMessage);
+        
+        verifyZeroInteractions(pendingHitDetailRepository);
+    }
+    
+    /**
+     * Test when Tamr sends an invalid (non-numeric) gtasId.
+     */
+    @Test
+    public void handleInvalidGtasId() {
+        TamrMessage derogMessage = getDerogMessage(
+                passenger.getId(), watchlistItem.getId(), 1);
+        derogMessage.getTravelerQuery().get(0).setGtasId("abc");
         handler.handleQueryResponse(derogMessage);
         
         verifyZeroInteractions(pendingHitDetailRepository);

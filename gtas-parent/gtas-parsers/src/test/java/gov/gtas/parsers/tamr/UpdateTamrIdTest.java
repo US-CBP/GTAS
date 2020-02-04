@@ -1,10 +1,16 @@
 package gov.gtas.parsers.tamr;
 
 import static org.junit.Assert.*;
+import static org.mockito.AdditionalMatchers.not;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +49,8 @@ public class UpdateTamrIdTest implements ParserTestHelper {
         passengerIdTag.setPax_id(gtasId);
         given(passengerIDTagRepository.findByPaxId(gtasId)).willReturn(
                 passengerIdTag);
+        given(passengerIDTagRepository.findByPaxId(not(eq(gtasId))))
+            .willReturn(null);
     }
     
     @Test
@@ -112,5 +120,36 @@ public class UpdateTamrIdTest implements ParserTestHelper {
 
         verify(passengerIDTagRepository).updateTamrId(
                 gtasId, newTamrId);
+    }
+    
+    /**
+     * Make sure invalid or nonexistent gtasIds are handled correctly.
+     */
+    @Test
+    public void testInvalidGtasId() {
+        List<TamrTravelerResponse> travelerResponses = new ArrayList<>();
+        
+        TamrTravelerResponse travelerResponse = new TamrTravelerResponse();
+        travelerResponse.setGtasId("abc");
+        travelerResponse.setDerogIds(Collections.emptyList());
+        travelerResponse.setTamrId(newTamrId);
+        travelerResponse.setVersion(1);
+        travelerResponse.setScore(1);
+        travelerResponses.add(travelerResponse);
+        
+        travelerResponse = new TamrTravelerResponse();
+        travelerResponse.setGtasId("3");
+        travelerResponse.setDerogIds(Collections.emptyList());
+        travelerResponse.setTamrId(newTamrId);
+        travelerResponse.setVersion(1);
+        travelerResponse.setScore(1);
+        travelerResponses.add(travelerResponse);
+        
+        TamrMessage message = new TamrMessage();
+        message.setTravelerQuery(travelerResponses);
+
+        handler.handleQueryResponse(message);
+        
+        verify(passengerIDTagRepository, never()).updateTamrId(any(), any());
     }
 }
