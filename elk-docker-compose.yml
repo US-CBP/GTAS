@@ -4,7 +4,7 @@ services:
 
   kibana:
     container_name: kibana
-    image: simbam1/kibana:1.0
+    image: wcogtas/kibana:1.0.0
     build:
       context: ./gtas-parent/scripts/elastic
       dockerfile: install/docker/kibana/Dockerfile
@@ -16,9 +16,7 @@ services:
     volumes:
       - kibana_conf:/usr/share/kibana/data
     networks:
-      GTAS_webapp-network:
-        aliases:
-          - "kibana.local"
+      - GTAS_webapp-network
     secrets:
       - source: elasticsearch_ca
         target: /etc/kibana/config/ca.crt
@@ -34,7 +32,7 @@ services:
           - node.hostname == elk-node
 
   elasticsearch:
-    image: simbam1/elasticsearch:1.0
+    image: wcogtas/elasticsearch:1.0.0
     container_name: elasticsearch
     build:
       context: ./gtas-parent/scripts/elastic
@@ -61,7 +59,7 @@ services:
           - node.hostname == elk-node
 
   logstash:
-    image: simbam1/logstash:1.0
+    image: wcogtas/logstash:1.0.0
     container_name: logstash
     build:
       context: ./gtas-parent/scripts/elastic
@@ -86,7 +84,7 @@ services:
           - node.hostname == elk-node
 
   elk-setup:
-    image: simbam1/elk-setup:1.0
+    image: wcogtas/elk-setup:1.0.0
     container_name: elk-setup
     build:
       context: ./gtas-parent/scripts/elastic

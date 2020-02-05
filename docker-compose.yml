@@ -2,7 +2,7 @@ version: '3.7'
 services:
 
   http-proxy:
-    image: simbam1/http-proxy:1.0
+    image: wcogtas/http-proxy:1.0.0
     container_name: http-proxy
     build: 
       context: './gtas-parent/docker-resources'
@@ -20,7 +20,7 @@ services:
           - node.hostname == gtas-node
 
   web-app:
-    image: simbam1/web-app:1.0
+    image: wcogtas/web-app:1.0.0
     container_name: web-app
     build: './gtas-parent'
     ports:
@@ -58,7 +58,7 @@ services:
           - node.hostname == gtas-node
 
   gtas-scheduler:
-    image: simbam1/gtas-scheduler:1.0
+    image: wcogtas/gtas-scheduler:1.0.0
     container_name: gtas-scheduler
     build:
       context: .
@@ -71,10 +71,6 @@ services:
       ACTIVEMQ_HOST: activemq
     volumes:
       - scheduler-logs:/usr/local/tomcat/logs
-      - type: bind
-        source: ./gtas-data
-        target: /usr/local/gtas-data
-        consistency: consistent
     secrets:
       - mysql_processor_user
       - mysql_processor_password
@@ -101,7 +97,7 @@ services:
           - node.hostname == gtas-node
 
   mariadb:
-    image: simbam1/mariadb:1.0
+    image: wcogtas/mariadb:1.0.0
     build:
       context: './gtas-parent'
       dockerfile: 'Dockerfile-mariadb'

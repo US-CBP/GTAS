@@ -1,9 +1,6 @@
 networks:
-  GTAS_elastic-network:
-    driver: overlay
-  GTAS_logstash-network:
-    driver: overlay
   GTAS_webapp-network:
+    attachable: true
     driver: overlay
 secrets:
   elastic_bootstrap_password:
@@ -26,6 +23,10 @@ secrets:
     file: /Users/simbamarufu/Documents/GitHub/GTAS/gtas-parent/gtas-commons/secrets/elasticsearch_kibana_password.txt
   elasticsearch_kibana_user:
     file: /Users/simbamarufu/Documents/GitHub/GTAS/gtas-parent/gtas-commons/secrets/elasticsearch_kibana_user.txt
+  etl_neo4j_password:
+    file: /Users/simbamarufu/Documents/GitHub/GTAS/gtas-parent/gtas-commons/secrets/etl_neo4j_password.txt
+  etl_neo4j_user:
+    file: /Users/simbamarufu/Documents/GitHub/GTAS/gtas-parent/gtas-commons/secrets/etl_neo4j_user.txt
   kibana_crt:
     file: /Users/simbamarufu/Documents/GitHub/GTAS/gtas-parent/gtas-commons/secrets/kibana.crt
   kibana_key:
@@ -78,9 +79,9 @@ services:
       placement:
         constraints:
         - node.hostname == elk-node
-    image: simbam1/elasticsearch:1.0
+    image: wcogtas/elasticsearch:1.0.0
     networks:
-      GTAS_elastic-network: {}
+      GTAS_webapp-network: {}
     ports:
     - published: 9200
       target: 9200
@@ -109,9 +110,9 @@ services:
     environment:
       ELASTICSEARCH_HOST: elasticsearch
       KIBANA_HOST: kibana
-    image: simbam1/elk-setup:1.0
+    image: wcogtas/elk-setup:1.0.0
     networks:
-      GTAS_elastic-network: {}
+      GTAS_webapp-network: {}
     secrets:
     - source: elastic_bootstrap_password
     - source: elastic_password
@@ -124,6 +125,29 @@ services:
     - elasticsearch_conf:/elasticsearch-conf:rw
     - kibana_conf:/kibana-conf:rw
     - logstash_conf:/logstash-conf:rw
+  etl-job:
+    build:
+      context: /Users/simbamarufu/Documents/GitHub/GTAS
+      dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
+    container_name: etl-job
+    depends_on:
+    - neo4j
+    deploy:
+      placement:
+        constraints:
+        - node.hostname == neo4j-node
+    environment:
+      DB_HOSTNAME: mariadb
+      NEO4J_HOSTNAME: neo4j
+    image: wcogtas/neo4j-etl-job:1.0.0
+    networks:
+      GTAS_webapp-network: {}
+    restart: always
+    secrets:
+    - source: etl_neo4j_password
+    - source: etl_neo4j_user
+    - source: mysql_etl_password
+    - source: mysql_etl_user
   gtas-scheduler:
     build:
       context: /Users/simbamarufu/Documents/GitHub/GTAS
@@ -140,7 +164,7 @@ services:
       DB_HOST: mariadb
       KIBANA_HOST: kibana
       NEO4J_HOST: neo4j
-    image: simbam1/gtas-scheduler:1.0
+    image: wcogtas/gtas-scheduler:1.0.0
     networks:
       GTAS_webapp-network: {}
     restart: always
@@ -151,7 +175,7 @@ services:
     - source: webapp_neo4j_user
     volumes:
     - consistency: consistent
-      source: /Users/simbamarufu/Documents/GitHub/GTAS/gtas-data
+      source: /mnt
       target: /usr/local/gtas-data
       type: bind
     - scheduler-logs:/usr/local/tomcat/logs:rw
@@ -164,9 +188,9 @@ services:
       placement:
         constraints:
         - node.hostname == gtas-node
-    image: simbam1/http-proxy:1.0
+    image: wcogtas/http-proxy:1.0.0
     networks:
-      GTAS_elastic-network: {}
+      GTAS_webapp-network: {}
     ports:
     - published: 80
       target: 80
@@ -186,14 +210,9 @@ services:
         - node.hostname == elk-node
     environment:
       ELASTICSEARCH_HOSTS: https://elasticsearch:9200
-    image: simbam1/kibana:1.0
+    image: wcogtas/kibana:1.0.0
     networks:
-      GTAS_elastic-network:
-        aliases:
-        - kibana.local
-      GTAS_webapp-network:
-        aliases:
-        - kibana.local
+      GTAS_webapp-network: {}
     ports:
     - published: 5601
       target: 5601
@@ -223,10 +242,9 @@ services:
       LOGSTASH_KEYSTORE_PASS: admin123
       MARIADB_HOST: mariadb
       XPACK_MONITORING_ELASTICSEARCH_HOSTS: elasticsearch
-    image: simbam1/logstash:1.0
+    image: wcogtas/logstash:1.0.0
     networks:
-      GTAS_elastic-network: {}
-      GTAS_logstash-network: {}
+      GTAS_webapp-network: {}
     restart: always
     secrets:
     - source: elasticsearch_ca
@@ -243,9 +261,8 @@ services:
         - node.hostname == gtas-node
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
-    image: simbam1/mariadb:1.0
+    image: wcogtas/mariadb:1.0.0
     networks:
-      GTAS_logstash-network: {}
       GTAS_webapp-network: {}
     ports:
     - published: 3306
@@ -265,6 +282,24 @@ services:
     - source: mysql_webapp_user
     volumes:
     - db-data:/var/lib/mysql:rw
+  neo4j:
+    build:
+      context: /Users/simbamarufu/Documents/GitHub/GTAS
+      dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
+    container_name: neo4j
+    deploy:
+      placement:
+        constraints:
+        - node.hostname == neo4j-node
+    image: wcogtas/neo4j:1.0.0
+    networks:
+      GTAS_webapp-network: {}
+    ports:
+    - published: 7474
+      target: 7474
+    - published: 7687
+      target: 7687
+    restart: always
   web-app:
     build:
       context: /Users/simbamarufu/Documents/GitHub/GTAS/gtas-parent
@@ -282,10 +317,8 @@ services:
       KIBANA_HOST: kibana
       NEO4J_HOST: neo4j
       PROXY_HOST: httpproxy
-    image: simbam1/web-app:1.0
+    image: wcogtas/web-app:1.0.0
     networks:
-      GTAS_elastic-network: {}
-      GTAS_logstash-network: {}
       GTAS_webapp-network: {}
     ports:
     - published: 8080

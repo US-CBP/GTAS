@@ -17,4 +17,4 @@ COPY --from=scheduler-builder /root/.m2/repository/gov/gtas/gtas-job-scheduler-w
 COPY ./gtas-parent/docker-resources/default.application.properties /usr/local/tomcat/conf/application.properties
 COPY --from=scheduler-builder /temp-dos/setenv-scheduler.sh /usr/local/tomcat/bin/setenv.sh
 
-CMD ["catalina.sh", "run"]
+CMD mkdir -p /usr/local/gtas-data/processed /usr/local/gtas-data/error /usr/local/gtas-data/input /usr/local/gtas-data/working && catalina.sh run
