@@ -68,49 +68,63 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
      * derog hit from Tamr.
      */
     private void createPendingHit(String gtasIdStr, TamrDerogHit derogHit) {
-       long gtasId = Long.parseLong(gtasIdStr);
-       PendingHitDetails pendingHit = new PendingHitDetails();
+        long gtasId;
+        try {
+            gtasId = Long.parseLong(gtasIdStr);
+        } catch (NumberFormatException e) {
+            logger.warn("Tamr returned derog hit for passenger with invalid " +
+                    "ID \"{}\".", gtasIdStr);
+            return;
+        }
+        PendingHitDetails pendingHit = new PendingHitDetails(); 
 
-       pendingHit.setTitle("Tamr Fuzzy Watchlist Hit");
-       pendingHit.setDescription("This passenger closely matches a watchlist " +
-               "entry, according to Tamr's proprietary fuzzy matching " +
-               "technology.");
+        pendingHit.setTitle("Tamr Fuzzy Watchlist Hit");
+        pendingHit.setDescription("This passenger closely matches a watchlist " +
+                "entry, according to Tamr's proprietary fuzzy matching " +
+                "technology.");
 
-       pendingHit.setHitEnum(HitTypeEnum.PARTIAL_WATCHLIST);
-       pendingHit.setHitType(pendingHit.getHitEnum().toString());
+        pendingHit.setHitEnum(HitTypeEnum.PARTIAL_WATCHLIST);
+        pendingHit.setHitType(pendingHit.getHitEnum().toString());
 
-       // Try to get watchlist item based on derogId from Tamr.
-       long watchlistItemId = Long.parseLong(derogHit.getDerogId()); 
-       Optional<WatchlistItem> watchlistItem =
-               watchlistItemRepository.findById(watchlistItemId);
-       try {
-           pendingHit.setHitMakerId(watchlistItem.get().getId());
-           pendingHit.setPercentage(derogHit.getScore());
+        // Try to get watchlist item based on derogId from Tamr.
+        long watchlistItemId;
+        try {
+            watchlistItemId = Long.parseLong(derogHit.getDerogId()); 
+        } catch (NumberFormatException e) {
+            logger.warn("Tamr returned derog hit for watchlist entry with " +
+                    "invalid ID \"{}\".", derogHit.getDerogId());
+            return;
+        }
+        Optional<WatchlistItem> watchlistItem =
+                watchlistItemRepository.findById(watchlistItemId);
+        try {
+            pendingHit.setHitMakerId(watchlistItem.get().getId());
+            pendingHit.setPercentage(derogHit.getScore()); 
 
-           // Tamr doesn't return any details about the matching algorithm,
-           // so leave this empty.
-           pendingHit.setRuleConditions("");
-       } catch (NoSuchElementException e) {
-           logger.warn("Tamr returned derog hit for nonexistent watchlist " +
-                   "entry with ID {}.", watchlistItemId);
-           return;
-       }
+            // Tamr doesn't return any details about the matching algorithm,
+            // so leave this empty.
+            pendingHit.setRuleConditions("");
+        } catch (NoSuchElementException e) {
+            logger.warn("Tamr returned derog hit for nonexistent watchlist " +
+                    "entry with ID {}.", watchlistItemId);
+            return;
+        }
+        
+        // Try to find passenger in GTAS so we can get the associated flight.
+        Optional<Passenger> passenger = passengerRepository.findById(gtasId);
+        try {
+            pendingHit.setFlightId(passenger.get().getFlight().getId());
+            pendingHit.setPassengerId(gtasId);
+        } catch (NoSuchElementException e) {
+            logger.warn("Tamr returned derog hit for nonexistent passenger " +
+                    "with ID {}.", gtasId);
+            return;
+        }
+
+        pendingHit.setCreatedDate(new Date());
        
-       // Try to find passenger in GTAS so we can get the associated flight.
-       Optional<Passenger> passenger = passengerRepository.findById(gtasId);
-       try {
-           pendingHit.setFlightId(passenger.get().getFlight().getId());
-           pendingHit.setPassengerId(gtasId);
-       } catch (NoSuchElementException e) {
-           logger.warn("Tamr returned derog hit for nonexistent passenger " +
-                   "with ID {}.", gtasId);
-           return;
-       }
-
-       pendingHit.setCreatedDate(new Date());
-       
-       // Persist to database.
-       pendingHitDetailRepository.save(pendingHit);
+        // Persist to database.
+        pendingHitDetailRepository.save(pendingHit);
     }
 
     /**
@@ -168,7 +182,14 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
      * issues a warning.
      */
     private void updateTamrId(String gtasIdStr, String tamrId, int version) {
-        long gtasId = Long.parseLong(gtasIdStr);
+        long gtasId;
+        try {
+            gtasId = Long.parseLong(gtasIdStr);
+        } catch (NumberFormatException e) {
+            logger.warn("Unable to update tamrId of passenger with invalid " +
+                    "ID \"{}\".", gtasIdStr);
+            return;
+        }
         PassengerIDTag currentPassengerIdTag =
                 passengerIDTagRepository.findByPaxId(gtasId);
         if (currentPassengerIdTag == null) {
