@@ -5,15 +5,20 @@ services:
     image: wcogtas/http-proxy:1.0.0
     container_name: http-proxy
     build: 
-      context: './gtas-parent/docker-resources'
-      dockerfile: 'proxy.Dockerfile'
+      context: './gtas-parent'
+      dockerfile: 'docker-resources/proxy.Dockerfile'
     restart: always
-    secrets:
-      - elastic_bootstrap_password
     ports:
+      - 443:443
       - 80:80
     networks:
       - GTAS_webapp-network
+    secrets:
+      - elastic_bootstrap_password
+      - source: webapp_cert
+        target: /wcogtas.org.crt
+      - source: webapp_key
+        target: /wcogtas.org.key
     deploy:
       placement:
         constraints:
@@ -86,7 +91,7 @@ services:
           - node.hostname == gtas-node
 
   activemq:
-    image: rmohr/activemq
+    image: rmohr/activemq:5.15.9
     container_name: activemq
     restart: always
     networks: 
@@ -164,6 +169,10 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/elastic-ca.crt
   elastic_cert:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.crt
+  webapp_cert:
+    file: ./gtas-parent/gtas-commons/secrets/wcogtas.org.crt
+  webapp_key:
+    file: ./gtas-parent/gtas-commons/secrets/wcogtas.org.key
 
 volumes:
   db-data:

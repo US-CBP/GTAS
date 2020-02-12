@@ -756,7 +756,7 @@ var app;
             });
 
             $scope.getNeo4JUrl = function() {
-                return $scope.neo4jUrl;
+                return 'https://' + location.hostname + ":443" + $scope.neo4jUrl;
             };
 
             let oneDayLookoutUser = false;
