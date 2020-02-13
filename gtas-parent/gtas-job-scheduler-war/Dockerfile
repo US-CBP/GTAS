@@ -17,4 +17,9 @@ COPY --from=scheduler-builder /root/.m2/repository/gov/gtas/gtas-job-scheduler-w
 COPY ./gtas-parent/docker-resources/default.application.properties /usr/local/tomcat/conf/application.properties
 COPY --from=scheduler-builder /temp-dos/setenv-scheduler.sh /usr/local/tomcat/bin/setenv.sh
 
-CMD mkdir -p /usr/local/gtas-data/processed /usr/local/gtas-data/error /usr/local/gtas-data/input /usr/local/gtas-data/working && catalina.sh run
+RUN apt-get -y update && apt-get -y install wget
+RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
+RUN tar -C /usr/local/bin -xvzf dockerize-linux-amd64-v0.6.1.tar.gz
+
+
+ENTRYPOINT mkdir -p /usr/local/gtas-data/processed /usr/local/gtas-data/error /usr/local/gtas-data/input /usr/local/gtas-data/working && dockerize -wait tcp://${DB_HOST}:3306 -timeout 1000s catalina.sh run

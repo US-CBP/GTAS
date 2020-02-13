@@ -22,8 +22,13 @@ COPY --from=build-stage /root/.m2/repository/gov/gtas/gtas-webapp/1.0.0-BUILD-SN
 COPY ./docker-resources/default.application.properties /usr/local/tomcat/conf/application.properties
 COPY --from=build-stage /temp-dos/setenv.sh /usr/local/tomcat/bin/setenv.sh
 
+RUN apt-get -y update && apt-get install -y logrotate && apt-get install -y rename && apt-get -y install wget
 
-RUN apt-get -y update && apt-get install -y logrotate && apt-get install -y rename
+
+RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
+RUN tar -C /usr/local/bin -xvzf dockerize-linux-amd64-v0.6.1.tar.gz
+
+
 COPY ./docker-resources/logrotate.conf /
 RUN mkdir -p /logs/apache-tomcat-web && mkdir -p /logs/apache-tomcat && mkdir /temp
 
@@ -34,4 +39,4 @@ RUN  jar -xvf /usr/local/tomcat/webapps/gtas.war
 
 WORKDIR /usr/local/tomcat/bin
 
-ENTRYPOINT mkdir -p /scheduler-logs/temp && logrotate /logrotate.conf && catalina.sh run
+ENTRYPOINT mkdir -p /scheduler-logs/temp && dockerize -wait tcp://${DB_HOST}:3306 -timeout 1000s logrotate /logrotate.conf && catalina.sh run
