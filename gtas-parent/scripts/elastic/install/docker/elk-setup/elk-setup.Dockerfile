@@ -4,7 +4,7 @@ FROM docker.elastic.co/logstash/logstash:7.2.0 as logstash-base
 
 USER root
 
-RUN mkdir kibana && mkdir /kibana-conf
+RUN mkdir kibana /kibana-conf
 COPY --from=kibana-base /usr/share/kibana/ kibana
 
 RUN mkdir /usr/share/logstash/pipeline/config/
@@ -23,7 +23,7 @@ COPY --chown=logstash config/logstash/flightpax_template.json /usr/share/logstas
 RUN mkdir elasticsearch
 COPY --from=elasticsearch-base /usr/share/elasticsearch/ elasticsearch
 
-RUN mkdir /elasticsearch-conf && mkdir /logstash-conf
+RUN mkdir /elasticsearch-conf /logstash-conf
 RUN cp -r ./elasticsearch/config/* /elasticsearch-conf/
 RUN cp -r /usr/share/logstash/config/* /logstash-conf/
 

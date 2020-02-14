@@ -46,7 +46,6 @@ services:
 
 networks:
   GTAS_webapp-network:
-    driver: "overlay"
     attachable: true
 
 secrets:

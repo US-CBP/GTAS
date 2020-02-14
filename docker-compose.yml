@@ -5,8 +5,8 @@ services:
     image: wcogtas/http-proxy:1.0.0
     container_name: http-proxy
     build: 
-      context: './gtas-parent'
-      dockerfile: 'docker-resources/proxy.Dockerfile'
+      context: ./gtas-parent
+      dockerfile: docker-resources/proxy.Dockerfile
     restart: always
     ports:
       - 443:443
@@ -27,9 +27,12 @@ services:
   web-app:
     image: wcogtas/web-app:1.0.0
     container_name: web-app
-    build: './gtas-parent'
+    build: 
+      context: ./gtas-parent
+      dockerfile: web-app.Dockerfile
     ports:
       - 8080:8080
+      - 8443:8443
     environment: 
       - DB_HOST=mariadb
       - KIBANA_HOST=kibana
@@ -46,17 +49,19 @@ services:
      - webapp_neo4j_user
      - webapp_neo4j_password
      - elastic_bootstrap_password
+     - source: webapp_cert
+       target: /usr/local/tomcat/conf/wcogtas.org.crt
+     - source: webapp_key
+       target: /usr/local/tomcat/conf/wcogtas.org.key
+     - source: elastic_cert
+       target: /usr/local/tomcat/conf/elasticsearch-node1.crt
      - source: elastic_key
        target: /usr/local/tomcat/conf/elasticsearch-node1.key
      - source: elastic_ca
        target: /usr/local/tomcat/conf/elastic-ca.crt
-     - source: elastic_cert
-       target: /usr/local/tomcat/conf/elasticsearch-node1.crt
     volumes:
       - m2:/root/.m2
       - scheduler-logs:/scheduler-logs
-    depends_on: 
-      - mariadb
     deploy:
       placement:
         constraints:
@@ -65,10 +70,10 @@ services:
   gtas-scheduler:
     image: wcogtas/gtas-scheduler:1.0.0
     container_name: gtas-scheduler
-    build:
+    build: 
       context: .
-      dockerfile: gtas-parent/gtas-job-scheduler-war/Dockerfile
-    restart: always    
+      dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
+    restart: always
     environment:
       DB_HOST: mariadb
       KIBANA_HOST: kibana
@@ -104,8 +109,8 @@ services:
   mariadb:
     image: wcogtas/mariadb:1.0.0
     build:
-      context: './gtas-parent'
-      dockerfile: 'Dockerfile-mariadb'
+      context: ./gtas-parent
+      dockerfile: mariadb.Dockerfile
     container_name: mariadb
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
@@ -181,5 +186,4 @@ volumes:
 
 networks:
   GTAS_webapp-network:
-    driver: "overlay"
     attachable: true

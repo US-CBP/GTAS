@@ -7,7 +7,7 @@ services:
     image: wcogtas/kibana:1.0.0
     build:
       context: ./gtas-parent/scripts/elastic
-      dockerfile: install/docker/kibana/Dockerfile
+      dockerfile: install/docker/kibana/kibana.Dockerfile
     environment:
       ELASTICSEARCH_HOSTS: https://elasticsearch:9200
     ports:
@@ -36,7 +36,7 @@ services:
     container_name: elasticsearch
     build:
       context: ./gtas-parent/scripts/elastic
-      dockerfile: install/docker/elasticsearch/Dockerfile
+      dockerfile: install/docker/elasticsearch/elasticsearch.Dockerfile
     ports:
       - 9300:9300
       - 9200:9200
@@ -63,7 +63,7 @@ services:
     container_name: logstash
     build:
       context: ./gtas-parent/scripts/elastic
-      dockerfile: ./install/docker/logstash/Dockerfile
+      dockerfile: ./install/docker/logstash/logstash.Dockerfile
     environment: 
       MARIADB_HOST: 'mariadb'
       ELASTIC_HOST: 'https://elasticsearch'
@@ -88,7 +88,7 @@ services:
     container_name: elk-setup
     build:
       context: ./gtas-parent/scripts/elastic
-      dockerfile: ./install/docker/elk-setup/Dockerfile
+      dockerfile: ./install/docker/elk-setup/elk-setup.Dockerfile
     environment:
       KIBANA_HOST: 'kibana'
       ELASTICSEARCH_HOST: 'elasticsearch'
@@ -146,5 +146,4 @@ volumes:
 
 networks:
   GTAS_webapp-network:
-    driver: "overlay"
     attachable: true

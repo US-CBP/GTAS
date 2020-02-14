@@ -6,3 +6,8 @@ services:
         source: /mnt
         target: /usr/local/gtas-data
         consistency: consistent
+
+networks:
+  GTAS_webapp-network:
+    driver: "overlay"
+    attachable: true
