@@ -285,7 +285,7 @@ public class ElasticHelper {
 		int startIndex = (pageNumber - 1) * pageSize;
 		QueryBuilder qb = QueryBuilders.multiMatchQuery(query, searchFields)
 				.type(MultiMatchQueryBuilder.Type.MOST_FIELDS);
-		SearchResponse response = client.prepareSearch(INDEX_NAME).setTypes(FLIGHTPAX_TYPE)
+		SearchResponse response = client.prepareSearch(INDEX_NAME)
 				.setSearchType(SearchType.QUERY_THEN_FETCH).setQuery(qb).setFrom(startIndex).setSize(pageSize)
 				.addSort(column, sortOrder).setExplain(true).execute().actionGet();
 		return response.getHits();
