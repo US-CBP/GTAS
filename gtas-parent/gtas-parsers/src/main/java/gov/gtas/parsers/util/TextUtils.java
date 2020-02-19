@@ -47,7 +47,7 @@ public final class TextUtils {
 	/**
 	 * Eliminate all line terminators as well as any whitespace immediately
 	 * following line terminators.
-	 * 
+	 *
 	 * @param str
 	 *            input string
 	 * @return a concatenation of all the lines in 'str' excluding any leading or
@@ -82,15 +82,30 @@ public final class TextUtils {
 
 	/**
 	 * Just like String.indexOf but allows use of a regex.
-	 * 
-	 * Returns the index within this string of the first occurrence of the specified
-	 * character or -1 if the character does not occur.
+	 *
+	 * @param regex
+	 *            regex to use. Must contain segment name targeted.
+	 * @param segmentName
+	 *            Segment name used
+	 * @param message
+	 *            String of text to search for regex.
+	 *
+	 *            Returns the index in the message where the segment name starts OR
+	 *            returns -1 if segment does not occur.
 	 */
-	public static int indexOfRegex(String regex, CharSequence input) {
+	public static int indexOfRegex(String regex, String segmentName, CharSequence message) {
 		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(input);
+		Matcher matcher = pattern.matcher(message);
 		if (matcher.find()) {
-			return matcher.start();
+			CharSequence patternSubString = message.subSequence(matcher.start(), matcher.end());
+			Pattern segmentMatch = Pattern.compile(segmentName);
+			Matcher segmentMatcher = segmentMatch.matcher(patternSubString);
+			segmentMatcher.find(); // segmentName is a part of the regex hit. It is not possible to not find a
+									// match.
+			int indexRegexStartsMatching = matcher.start();
+			int indexSegmentStartsMatching = segmentMatcher.start();
+			int startOfSegment = indexRegexStartsMatching + indexSegmentStartsMatching;
+			return startOfSegment;
 		}
 		return -1;
 	}
