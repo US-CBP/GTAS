@@ -233,7 +233,7 @@ public class ElasticHelper {
 		// upgrade to 5.6.0
 		HighlightBuilder builder = new HighlightBuilder();
 		builder.field("documents.documentNumber").field("pnr").preTags();
-		SearchResponse response = client.prepareSearch(INDEX_NAME).setTypes(FLIGHTPAX_TYPE)
+		SearchResponse response = client.prepareSearch(INDEX_NAME)
 				.setSearchType(SearchType.QUERY_THEN_FETCH).setQuery(qb)
 				// .addHighlightedField("documents.documentNumber")
 				// .addHighlightedField("pnr")
