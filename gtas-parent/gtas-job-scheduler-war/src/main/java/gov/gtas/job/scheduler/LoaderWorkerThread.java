@@ -84,7 +84,7 @@ public class LoaderWorkerThread implements Runnable {
 						} else {
 							logger.warn("PESSIMISTIC LOCK FAIL COUNT  " + lockExceptionCount + " FOR PRIME FLIGHT KEY:"
 									+ primeFlightKey + "PUTTING MESSAGE BACK ON QUEUE!");
-							queue.add(msg);
+							processCommand();
 						}
 					} catch (Exception e) {
 						logger.error("Catastrophic failure, " + "uncaught exception would cause"
