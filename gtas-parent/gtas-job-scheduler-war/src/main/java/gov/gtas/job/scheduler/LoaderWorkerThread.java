@@ -67,6 +67,7 @@ public class LoaderWorkerThread implements Runnable {
 					logger.debug(Thread.currentThread().getName() + " FileName = " + fileName);
 					try {
 						processCommand();
+						lockExceptionCount = 0; // reset tries on a per file bases.
 					} catch (PessimisticLockingFailureException plfe) {
 						/*
 						 * The loader is in a long transaction. Occasionally there is contention for the
@@ -84,7 +85,7 @@ public class LoaderWorkerThread implements Runnable {
 						} else {
 							logger.warn("PESSIMISTIC LOCK FAIL COUNT  " + lockExceptionCount + " FOR PRIME FLIGHT KEY:"
 									+ primeFlightKey + "PUTTING MESSAGE BACK ON QUEUE!");
-							processCommand();
+							queue.add(msg);
 						}
 					} catch (Exception e) {
 						logger.error("Catastrophic failure, " + "uncaught exception would cause"
