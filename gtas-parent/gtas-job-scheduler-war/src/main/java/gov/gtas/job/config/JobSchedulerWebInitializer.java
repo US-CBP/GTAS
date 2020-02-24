@@ -7,6 +7,7 @@ package gov.gtas.job.config;
 
 import gov.gtas.config.CommonServicesConfig;
 
+import gov.gtas.job.config.servlet.ServletContextConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 /**
@@ -24,12 +25,11 @@ public class JobSchedulerWebInitializer extends AbstractAnnotationConfigDispatch
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class<?>[] {};
+		return new Class<?>[] { ServletContextConfig.class };
 	}
 
 	@Override
 	protected String[] getServletMappings() {
-		return new String[] {};
+		return new String[] { "/" };
 	}
-
 }
