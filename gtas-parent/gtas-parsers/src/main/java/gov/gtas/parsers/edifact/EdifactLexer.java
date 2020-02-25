@@ -62,7 +62,7 @@ public final class EdifactLexer {
 			 * Example looks like (?<!\?)(\?\?)*\\s*'\s*SRC(\+|\') when using default UNA
 			 * characters.
 			 */
-			format = "(?<!\\%c)(\\%c\\%c)*\\s*%c\\s*%s(\\%c|\\%c)";
+			format = "(?<!\\%c)(\\%c\\%c)*\\s*\\%c\\s*%s(\\%c|\\%c)";
 			regex = String.format(format, this.una.getReleaseCharacter(), // first %c (a ? by default UNA)
 					this.una.getReleaseCharacter(), // second %c (? on default UNA)
 					this.una.getReleaseCharacter(), // third %c (? on default UNA)
