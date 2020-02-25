@@ -11,7 +11,6 @@ package gov.gtas.job.scheduler.services;
 import gov.gtas.job.localFileIntake.InboundQMessageSender;
 import gov.gtas.job.scheduler.controller.WebMessage;
 import gov.gtas.job.scheduler.service.MessageReceiverServiceImpl;
-import gov.gtas.services.LoaderRuntimeException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -31,12 +30,12 @@ public class MessageReceiverServiceImplTest {
 	@InjectMocks
 	private MessageReceiverServiceImpl messageReceiverService;
 
-	@Test(expected = LoaderRuntimeException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testNullMessage() {
 		messageReceiverService.putMessageOnQueue(null);
 	}
 
-	@Test(expected = LoaderRuntimeException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testNullPayload() {
 		messageReceiverService.putMessageOnQueue(new WebMessage());
 	}

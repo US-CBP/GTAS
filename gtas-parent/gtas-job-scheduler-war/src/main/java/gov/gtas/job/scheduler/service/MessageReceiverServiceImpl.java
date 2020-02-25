@@ -10,7 +10,6 @@ package gov.gtas.job.scheduler.service;
 
 import gov.gtas.job.localFileIntake.InboundQMessageSender;
 import gov.gtas.job.scheduler.controller.WebMessage;
-import gov.gtas.services.LoaderRuntimeException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,10 +30,11 @@ public class MessageReceiverServiceImpl implements MessageReceiverService {
 	@Override
 	public void putMessageOnQueue(WebMessage messagePayload) {
 		if (messagePayload == null || messagePayload.getMessagePayload() == null) {
-			throw new LoaderRuntimeException("Message payload or contents of message payload is null");
+			throw new IllegalArgumentException("Message payload or contents of message payload is null");
 		} else {
 			String fileContent = messagePayload.getMessagePayload();
-			String fileName = UUID.randomUUID().toString();
+			String fileName = messagePayload.getMessageName() == null ? UUID.randomUUID().toString()
+					: messagePayload.getMessageName();
 			sender.sendFileContent(outboundLoaderQueue, fileContent, fileName);
 		}
 	}

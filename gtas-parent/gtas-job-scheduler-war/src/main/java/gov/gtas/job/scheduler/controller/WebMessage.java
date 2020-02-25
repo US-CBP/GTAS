@@ -13,10 +13,14 @@ import java.io.Serializable;
 //Message for endpoint.
 public class WebMessage implements Serializable {
 
+	private static final long serialVersionUID = 2219542569468670294L;
+
 	public WebMessage() {
 	}
 
 	private String messagePayload;
+
+	private String messageName;
 
 	@SuppressWarnings("unused")
 	public String getMessagePayload() {
@@ -25,5 +29,13 @@ public class WebMessage implements Serializable {
 
 	public void setMessagePayload(String messagePayload) {
 		this.messagePayload = messagePayload;
+	}
+
+	public String getMessageName() {
+		return messageName;
+	}
+
+	public void setMessageName(String messageName) {
+		this.messageName = messageName;
 	}
 }
