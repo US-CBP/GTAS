@@ -37,22 +37,42 @@ public final class EdifactLexer {
 	 * Find the starting index of a segment. There are two possibilities: first, the
 	 * segment name followed by the data element separator, e.g., NAD+. Second, the
 	 * segment name followed by the segment terminator, .e.g, SRC'.
-	 * 
+	 *
 	 * @return the starting index of the 'segmentName' in 'msg'. Return -1 if does
 	 *         not exist.
 	 */
 	public int getStartOfSegment(String segmentName) {
-		String format;
 		String regex;
-		if (segmentName.equalsIgnoreCase("UNT")) {
-			format = "%s\\s*(\\%c[0-9])";
-			regex = String.format(format, segmentName, this.una.getDataElementSeparator());
-		} else {
+		String format;
+		if (segmentName.equalsIgnoreCase("UNB")) {
+			/*
+			 * UNB is not guaranteed to have a separator before it and will be processed
+			 * differently than other segments.
+			 */
 			format = "%s\\s*(\\%c|\\%c)";
 			regex = String.format(format, segmentName, this.una.getDataElementSeparator(),
 					this.una.getSegmentTerminator());
+		} else {
+			/*
+			 * Regex logic is as follows: Match 0-many even number character releases (look
+			 * behind isn't a release character followed by two release characters in a
+			 * row). followed by match of 0-many white space/line terminator followed by a
+			 * match of the segment terminator followed by a match of the segment followed
+			 * by a match of either the segment terminator OR the data element separator.\
+			 * Example looks like (?<!\?)(\?\?)*\\s*'\s*SRC(\+|\') when using default UNA
+			 * characters.
+			 */
+			format = "(?<!\\%c)(\\%c\\%c)*\\s*%c\\s*%s(\\%c|\\%c)";
+			regex = String.format(format, this.una.getReleaseCharacter(), // first %c (a ? by default UNA)
+					this.una.getReleaseCharacter(), // second %c (? on default UNA)
+					this.una.getReleaseCharacter(), // third %c (? on default UNA)
+					this.una.getSegmentTerminator(), // fourth %c (' on default UNA)
+					segmentName, // first %s - Segment name
+					this.una.getDataElementSeparator(), // fifth %c (+ on default UNA)
+					this.una.getSegmentTerminator()); // sixth %c (' on default UNA)
 		}
-		return TextUtils.indexOfRegex(regex, this.message);
+
+		return TextUtils.indexOfRegex(regex, segmentName, this.message);
 	}
 
 	/**
