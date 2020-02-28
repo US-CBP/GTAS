@@ -19,10 +19,6 @@ services:
         target: /wcogtas.org.crt
       - source: webapp_key
         target: /wcogtas.org.key
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == gtas-node
 
   web-app:
     image: wcogtas/web-app:1.0.0
@@ -62,10 +58,6 @@ services:
     volumes:
       - m2:/root/.m2
       - scheduler-logs:/scheduler-logs
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == gtas-node
 
   gtas-scheduler:
     image: wcogtas/gtas-scheduler:1.0.0
@@ -90,10 +82,6 @@ services:
       - GTAS_webapp-network
     depends_on: 
       - activemq
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == gtas-node
 
   activemq:
     image: rmohr/activemq:5.15.9
@@ -101,10 +89,6 @@ services:
     restart: always
     networks: 
       - GTAS_webapp-network
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == gtas-node
 
   mariadb:
     image: wcogtas/mariadb:1.0.0
@@ -133,10 +117,6 @@ services:
     restart: always
     volumes:
       - db-data:/var/lib/mysql
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == gtas-node
 
 
 secrets:

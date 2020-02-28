@@ -5,18 +5,17 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-app-node
+  web-app:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-app-node
   gtas-scheduler:
     volumes:
       - type: bind
         source: /mnt
         target: /usr/local/gtas-data
         consistency: consistent
-  web-app:
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == gtas-app-node
-  gtas-scheduler:    
     deploy:
       placement:
         constraints:
@@ -51,11 +50,6 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-elk-node
-  elt-job:
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == gtas-app-node
   neo4j:
     deploy:
       placement:

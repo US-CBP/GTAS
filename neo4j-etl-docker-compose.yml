@@ -19,12 +19,12 @@ services:
       - etl_neo4j_password
     networks: 
       - GTAS_webapp-network
-    depends_on: 
-      - neo4j
     deploy:
       placement:
         constraints:
-          - node.hostname == neo4j-node
+          - node.hostname == gtas-app-node
+    depends_on: 
+      - neo4j
 
   neo4j:
     container_name: neo4j
@@ -38,10 +38,6 @@ services:
       - 7687:7687
     networks: 
       - GTAS_webapp-network
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == neo4j-node
 
 
 networks:

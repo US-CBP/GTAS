@@ -26,10 +26,6 @@ services:
         target: /etc/kibana/config/kibana.key
     depends_on:
       - elasticsearch
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == elk-node
 
   elasticsearch:
     image: wcogtas/elasticsearch:1.0.0
@@ -53,10 +49,6 @@ services:
         target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.crt
       - source: elasticsearch_instance_key
         target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.key
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == elk-node
 
   logstash:
     image: wcogtas/logstash:1.0.0
@@ -78,10 +70,6 @@ services:
       - logstash_conf:/usr/share/logstash/config/
     depends_on:
       - elasticsearch
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == elk-node
 
   elk-setup:
     image: wcogtas/elk-setup:1.0.0
@@ -106,10 +94,6 @@ services:
       - elastic_bootstrap_password
     networks:
       - GTAS_webapp-network
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == elk-node
 
 
 secrets:
