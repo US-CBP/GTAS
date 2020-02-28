@@ -33,4 +33,8 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
 			@Param("destination") String destination, @Param("origin") String origin, @Param("etd") Date etd,
 			@Param("flightId") Long flightId);
 
+	@Query("Select bd from BookingDetail bd left join bd.passengers pax where bd.flightId = :flightId and :passenger in (pax.id)")
+	List<BookingDetail> bookingDetailsByPassengerId(@Param("passenger") Long passenger,
+			@Param("flightId") long flightId);
+
 }

@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
+import gov.gtas.repository.BookingDetailRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.*;
 import gov.gtas.services.dto.PassengerNoteSetDto;
@@ -64,6 +65,9 @@ public class PassengerDetailsController {
 
 	@Autowired
 	private FlightService fService;
+
+	@Autowired
+	private BookingDetailRepository bookingDetailService;
 
 	@Autowired
 	private PnrService pnrService;
@@ -297,26 +301,32 @@ public class PassengerDetailsController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/flighthistory", method = RequestMethod.GET)
 	public List<FlightVo> getTravelHistoryByPassengerAndItinerary(@RequestParam String paxId,
-			@RequestParam String flightId) throws ParseException {
-
-		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
-		List<String> pnrRefList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId),
-				Long.parseLong(paxId));
-		String pnrRef = !pnrRefList.isEmpty() ? pnrRefList.get(0) : null;
-		Long pnrId = !pnrs.isEmpty() ? pnrs.get(0).getId() : null;
-
-		if (pnrId != null || pnrRef != null) {
-			return pService.getTravelHistoryByItinerary(pnrId, pnrRef).stream().map(flight -> {
-				FlightVo flightVo = new FlightVo();
-				copyModelToVo(flight, flightVo);
-				copyModelToVo(flight.getMutableFlightDetails(), flightVo);
-				flightVo.setId(flight.getId());
-				return flightVo;
-			}).collect(Collectors.toCollection(LinkedList::new));
-		} else {
-			return new ArrayList<FlightVo>();
+			@RequestParam String flightId) {
+		if (paxId == null || flightId == null) {
+			throw new IllegalArgumentException("flightId and passengerID required.");
 		}
-
+		long longPaxId = Long.parseLong(paxId);
+		long longFlightId = Long.parseLong(flightId);
+		Passenger p = pService.findById(longPaxId);
+		List<Flight> passengerFlights = fService.getFlightByPaxId(longPaxId);
+		List<BookingDetail> passengerBookingDetails = bookingDetailService.bookingDetailsByPassengerId(longPaxId,
+				longFlightId);
+		/*
+		 * FlightVo is returned here for backwards compatibility. On fields that booking
+		 * detail doesn't have or doesnt make sense null is returned.
+		 */
+		// Passenger only ever has 1 flight, the rest are booking details. They are will
+		// always have a flight so this will never throw index out of bounds.
+		FlightVo flightVo = FlightVo.from(passengerFlights.get(0));
+		List<FlightVo> flightVoList = new ArrayList<>();
+		flightVoList.add(flightVo);
+		if (!passengerBookingDetails.isEmpty()) {
+			List<FlightVo> mappedBookingDetails = passengerBookingDetails.stream().map(FlightVo::from)
+					.collect(toList());
+			flightVoList.addAll(mappedBookingDetails);
+		}
+		flightVoList.sort(Comparator.comparing(FlightVo::getEta));
+		return flightVoList;
 	}
 
 	/**

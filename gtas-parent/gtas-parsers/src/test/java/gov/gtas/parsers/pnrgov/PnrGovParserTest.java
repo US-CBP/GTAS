@@ -44,6 +44,7 @@ public class PnrGovParserTest implements ParserTestHelper {
     private static final String failingMessage1 = "/pnr-messages/failingMessage1.txt";
     private static final String PNR_DOCO = "/pnr-messages/pnrWithDoco.txt";
     private static final String PNR_NO_ORG_MSG = "/pnr-messages/pnrNoOrgMsg.txt";
+	private static final String PNR_META_CHARACTERS = "/pnr-messages/danglingMetaCharacter.txt";
     private static final String PNR_WITH_PREFIXES_AND_BOOKING_DETAIL_BAGS = "/pnr-messages/pnrWithPrefixesAndBookingDetailBags.txt";
     private EdifactParser<PnrVo> parser;
 
@@ -222,4 +223,11 @@ public class PnrGovParserTest implements ParserTestHelper {
         assertEquals(bagVo.isPrimeFlight(), Boolean.FALSE);
         
     }
+
+	@Test
+	public void theMetaCharacterTest() throws IOException, URISyntaxException, ParseException {
+		String pnrExample = getMessageText(PNR_META_CHARACTERS);
+		PnrVo vo = this.parser.parse(pnrExample);
+		assertNotNull(vo);
+	}
 }
