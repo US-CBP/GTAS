@@ -20,12 +20,14 @@ import gov.gtas.bo.match.PnrTravelAgencyLink;
 import gov.gtas.model.*;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import gov.gtas.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -81,6 +83,12 @@ public class RuleEngineRequestBuilder {
 	private final FlightPaxRepository flightPaxRepository;
 
 	private final DocumentRepository documentRepository;
+
+	@Value("${ruleRunner.makeEmptyApisBagsOnNullBag}")
+	private Boolean makeEmptyApisBagsOnNullBag;
+
+	@Value("${ruleRunner.makeEmptyPnrBagsOnNullBag}")
+	private Boolean makeEmptyPnrBagsOnNullBag;
 
 	@Autowired
 	public RuleEngineRequestBuilder(PnrRepository pnrRepository, PassengerTripRepository passengerTripRepository,
@@ -173,6 +181,22 @@ public class RuleEngineRequestBuilder {
 		addFlights(passengerSet);
 		Set<Flight> flightSet = addFlights(passengerSet);
 		addFlights(flightSet);
+		logger.debug("APIS bags");
+		Set<Long> paxIds = passengerSet.stream().map(Passenger::getId).collect(Collectors.toSet());
+		Set<Long> flightIds = passengerSet.stream().map(p -> p.getFlight().getId()).collect(Collectors.toSet());
+		Map<Long, Passenger> passengerMap = passengerSet.stream()
+				.collect(Collectors.toMap(Passenger::getId, Function.identity()));
+		Set<Bag> bags = bagRepository.getAllByPaxId(paxIds, flightIds);
+		if (makeEmptyApisBagsOnNullBag) {
+			Set<Long> passengerWhoHaveBagsId = bags.stream().map(Bag::getPassengerId).collect(Collectors.toSet());
+			Set<Long> passengersWithoutBags = new HashSet<>(paxIds);
+			passengersWithoutBags.removeAll(passengerWhoHaveBagsId);
+			for (Long baglessPaxId : passengersWithoutBags) {
+				bags.add(makeEmptyBag(passengerMap.get(baglessPaxId), true));
+			}
+		}
+
+		addToRequestObjectSet(bags);
 		addPassengerInfo(passengerSet);
 		logger.debug("APIS done loading.");
 		if (this.requestType == null || this.requestType == RuleServiceRequestType.APIS_MESSAGE) {
@@ -213,6 +237,59 @@ public class RuleEngineRequestBuilder {
 		addPaymentFormObjects(paymentForms);
 
 		Set<Passenger> passengersFromPnr = pnrRepository.getPassengersWithFlight(pnrIds);
+		logger.debug("pnr bags");
+		Set<Long> flightIds = passengersFromPnr.stream().map(p -> p.getFlight().getId()).collect(Collectors.toSet());
+		Set<Long> paxIds = passengersFromPnr.stream().map(Passenger::getId).collect(Collectors.toSet());
+		Set<Bag> bags = bagRepository.getAllByPaxId(paxIds, flightIds);
+		if (makeEmptyPnrBagsOnNullBag) {
+			Map<Long, Passenger> passengerMap = passengersFromPnr.stream()
+					.collect(Collectors.toMap(Passenger::getId, Function.identity()));
+			// generating same thing as p.getBags().
+			// The database joins can be expensive
+			// and performance is critical here
+			// So map bags are mapped in memory with data already pulled back instead.
+			Map<Long, Set<Bag>> passengerBags = passengerBagMap(bags);
+
+			// Create empty bags by booking detail (which are mapped to pnr).
+			// Search the booking details for bags, if any passengers do not have a
+			// record of a bag but are on a booking detail create an empty bag to run rules
+			// against (measurement = 0, weight =0).
+			for (long pnrId : pnrIds) {
+				Set<BookingDetail> bookingDetailSet = bookingDetailObjects.get(pnrId);
+				Set<Passenger> passengerSet = paxMap.get(pnrId);
+				Set<Long> paxIdSetFromPassengerSet = passengerSet.stream().map(Passenger::getId)
+						.collect(Collectors.toSet());
+
+				// Populate a bag with 0 on bag measurement on any booking details with no bag
+				// info.
+				if (bookingDetailSet != null) {
+					for (BookingDetail bd : bookingDetailSet) {
+						Set<Bag> bagBdSet = bd.getBags();
+						Set<Long> paxIdsWithBags = bagBdSet.stream().map(Bag::getPassengerId)
+								.collect(Collectors.toSet());
+						Set<Long> paxWithNoBags = new HashSet<>(paxIdSetFromPassengerSet);
+						paxWithNoBags.removeAll(paxIdsWithBags);
+						for (Long paxId : paxWithNoBags) {
+							bags.add(makeEmptyBag(passengerMap.get(paxId), false));
+						}
+					}
+				}
+				// Populate a bag with 0 on bag measurement on any prime flight details with no
+				// bag info.
+				for (long paxId : paxIds) {
+					Set<Bag> pBagsSet = passengerBags.get(paxId);
+					if (pBagsSet == null) {
+						bags.add(makeEmptyBag(passengerMap.get(paxId), true));
+					} else {
+						boolean primeFlightBagPresent = pBagsSet.stream().anyMatch(Bag::isPrimeFlight);
+						if (!primeFlightBagPresent) {
+							bags.add(makeEmptyBag(passengerMap.get(paxId), true));
+						}
+					}
+				}
+			}
+		}
+		addToRequestObjectSet(bags);
 		Set<Flight> flightSet = addFlights(passengersFromPnr);
 		addFlights(flightSet);
 		addPassengerInfo(passengersFromPnr);
@@ -239,6 +316,40 @@ public class RuleEngineRequestBuilder {
 		}
 	}
 
+	// generating same thing as p.getBags().
+	// The database joins can be expensive/time consuming
+	// and performance is critical here
+	// So map bags are mapped in memory instead.
+	protected Map<Long, Set<Bag>> passengerBagMap(Set<Bag> bags) {
+		Map<Long, Set<Bag>> passengerBags = new HashMap<>();
+
+		for (Bag bag : bags) {
+			long passengerId = bag.getPassengerId();
+			if (passengerBags.get(passengerId) != null) {
+				passengerBags.get(passengerId).add(bag);
+			} else {
+				Set<Bag> bags1 = new HashSet<>();
+				bags1.add(bag);
+				passengerBags.put(passengerId, bags1);
+			}
+		}
+		return passengerBags;
+	}
+
+	protected Bag makeEmptyBag(Passenger passenger, boolean primeFlight) {
+		Bag bag = new Bag();
+		bag.setPassengerId(passenger.getId());
+		bag.setPassenger(passenger);
+		bag.setPrimeFlight(primeFlight);
+		bag.setFlight(passenger.getFlight());
+		BagMeasurements bMeasurement = new BagMeasurements();
+		bMeasurement.setBagCount(0);
+		bMeasurement.setWeight(0D);
+		bMeasurement.setRawWeight(0D);
+		bag.setBagMeasurements(bMeasurement);
+		return bag;
+	}
+
 	private void addPassengerInfo(Set<Passenger> passengerSet) {
 		addToRequestObjectSet(passengerSet);
 		addPassengesInformationFacts(passengerSet);
@@ -256,8 +367,6 @@ public class RuleEngineRequestBuilder {
 		Set<Long> paxIds = passengerSet.stream().map(Passenger::getId).collect(Collectors.toSet());
 		logger.debug("seatMap");
 		Set<Seat> paxSeats = seatRepository.getByPaxId(paxIds);
-		logger.debug("bags map");
-		Set<Bag> bags = bagRepository.getAllByPaxId(paxIds);
 		logger.debug("flightpax");
 		Set<FlightPax> flightPaxSet = flightPaxRepository.findFlightFromPassIdList(paxIds);
 		logger.debug("document");
@@ -265,7 +374,6 @@ public class RuleEngineRequestBuilder {
 		addToRequestObjectSet(passengerTripDetails);
 		addToRequestObjectSet(passengerDetails);
 		addToRequestObjectSet(paxSeats);
-		addToRequestObjectSet(bags);
 		addToRequestObjectSet(flightPaxSet);
 		addToRequestObjectSet(documentSet);
 		logger.debug("pax info done");
