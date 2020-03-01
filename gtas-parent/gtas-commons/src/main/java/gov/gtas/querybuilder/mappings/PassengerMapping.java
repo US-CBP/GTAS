@@ -35,6 +35,9 @@ public enum PassengerMapping implements IEntityMapping {
 
 	APIS_CO_TRAVELERS("passengerTripDetails.coTravelerCount", "APIS Co Travelers", TypeEnum.INTEGER.getType()),
 
+	HOURS_BEFORE_TAKE_OFF("passengerTripDetails.hoursBeforeTakeOff", "Hours Before Take Off",
+			TypeEnum.INTEGER.getType()),
+
 	SEAT("seat", "Seat", TypeEnum.STRING.getType()),
 
 	PASSENGER_TYPE("passengerDetails.passengerType", "Type", TypeEnum.STRING.getType()),

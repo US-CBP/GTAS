@@ -62,6 +62,9 @@ public class PassengerTripDetails extends BaseEntityAudit {
 	@Column(name = "apis_co_traveler_count")
 	private Integer coTravelerCount;
 
+	@Column(name = "hours_before_takeoff")
+	private Integer hoursBeforeTakeOff;
+
 	@Transient
 	private String totalBagWeight;
 
@@ -149,6 +152,14 @@ public class PassengerTripDetails extends BaseEntityAudit {
 
 	public void setNumberOfDaysVisaValid(Integer numberOfDaysVisaValid) {
 		this.numberOfDaysVisaValid = numberOfDaysVisaValid;
+	}
+
+	public Integer getHoursBeforeTakeOff() {
+		return hoursBeforeTakeOff;
+	}
+
+	public void setHoursBeforeTakeOff(Integer hoursBeforeTakeOff) {
+		this.hoursBeforeTakeOff = hoursBeforeTakeOff;
 	}
 
 	public void setPaxId(Long paxId) {

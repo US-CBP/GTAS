@@ -10,6 +10,7 @@ import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
+import gov.gtas.vo.passenger.CountDownVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static gov.gtas.services.LoaderUtils.getNullPropertyNames;
 
@@ -333,12 +335,46 @@ public class GtasLoaderImpl implements GtasLoader {
 		Set<Passenger> oldPassengers = new HashSet<>();
 		Set<Long> oldPassengersId = new HashSet<>();
 		Map<Long, Set<BookingDetail>> bookingDetailsAPassengerOwns = new HashMap<>();
+
+		// Both PNR and APIS have a transmission date.
+		// To be backwards compatible we will check each value instead of
+		// changing the data model to bring up the edifact message to the message
+		// instead of the sub classes.
+		Integer hoursBeforeTakeOff = null;
+		Date transmissionDate;
+		if (message instanceof Pnr) {
+			Pnr thisMessage = (Pnr) message;
+			transmissionDate = thisMessage.getEdifactMessage().getTransmissionDate();
+		} else {
+			ApisMessage thisMessage = (ApisMessage) message;
+			transmissionDate = thisMessage.getEdifactMessage().getTransmissionDate();
+		}
+
+		if (transmissionDate != null && primeFlight.getMutableFlightDetails().getEtd() != null) {
+			Date flightDate = primeFlight.getMutableFlightDetails().getEtd();
+			CountDownCalculator countDownCalculator = new CountDownCalculator(transmissionDate);
+			CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(flightDate);
+			if (countDownVo.getMillisecondsFromDate() > 0
+					&& countDownVo.getMillisecondsFromDate() <= Integer.MAX_VALUE) {
+				hoursBeforeTakeOff = (int) TimeUnit.MILLISECONDS.toHours(countDownVo.getMillisecondsFromDate());
+			} else if (countDownVo.getMillisecondsFromDate() >= Integer.MAX_VALUE) {
+				logger.error("Hours before take off was difference of *2,147,483,647+* hours! "
+						+ "This indicates a likely data issue!");
+				hoursBeforeTakeOff = Integer.MAX_VALUE;
+			} else {
+				hoursBeforeTakeOff = 0;
+			}
+		}
+
 		for (PassengerVo pvo : passengers) {
 			Passenger existingPassenger = loaderServices.findPassengerOnFlight(primeFlight, pvo);
 			if (existingPassenger == null) {
 				Passenger newPassenger = utils.createNewPassenger(pvo);
 				newPassenger.getBookingDetails().addAll(bookingDetails);
 				newPassenger.setParserUUID(pvo.getPassengerVoUUID());
+				if (hoursBeforeTakeOff != null) {
+					newPassenger.getPassengerTripDetails().setHoursBeforeTakeOff(hoursBeforeTakeOff);
+				}
 				for (DocumentVo dvo : pvo.getDocuments()) {
 					newPassenger.addDocument(utils.createNewDocument(dvo));
 				}
@@ -350,6 +386,9 @@ public class GtasLoaderImpl implements GtasLoader {
 				existingPassenger.getBookingDetails().addAll(bookingDetails);
 				oldPassengersId.add(existingPassenger.getId());
 				updatePassenger(existingPassenger, pvo);
+				if (hoursBeforeTakeOff != null) {
+					existingPassenger.getPassengerTripDetails().setHoursBeforeTakeOff(hoursBeforeTakeOff);
+				}
 				messagePassengers.add(existingPassenger);
 				logger.debug("@ createSeatAssignment");
 				createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, primeFlight);
