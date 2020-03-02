@@ -22,8 +22,8 @@ public interface BagRepository extends CrudRepository<Bag, Long> {
 	List<Bag> findFromFlightAndPassenger(@Param("flightId") Long flightId, @Param("passengerId") Long passengerId);
 
 	@Transactional
-	@Query("SELECT bags from Bag bags where bags.passenger.id in :paxIds")
-	Set<Bag> getAllByPaxId(@Param("paxIds") Set<Long> paxIds);
+	@Query("SELECT bags from Bag bags where bags.passenger.id in :paxIds and bags.flight.id in :flightIds")
+	Set<Bag> getAllByPaxId(@Param("paxIds") Set<Long> paxIds, @Param("flightIds") Set<Long> flightIds);
 
 	@Transactional
 	@Query(" SELECT bags from Bag bags left join fetch bags.bookingDetail where bags.passenger.id in :passengerIds ")

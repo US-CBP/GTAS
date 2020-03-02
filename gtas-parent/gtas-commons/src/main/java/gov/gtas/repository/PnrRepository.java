@@ -69,7 +69,7 @@ public interface PnrRepository extends MessageRepository<Pnr> {
 	List<Object[]> getFrequentFlyerByPnrId(@Param("pnrIds") Set<Long> pnrIds);
 
 	@Transactional
-	@Query(" SELECT pnr.id, bd from Pnr pnr join pnr.bookingDetails bd where pnr.id in :pnrIds")
+	@Query(" SELECT pnr.id, bd from Pnr pnr join pnr.bookingDetails bd join fetch bd.bags where pnr.id in :pnrIds")
 	List<Object[]> getBookingDetailsByPnrId(@Param("pnrIds") Set<Long> pnrIds);
 
 	@Transactional

@@ -434,6 +434,36 @@
         ]                   
       },
       {
+        "id": "Passenger.passengerTripDetails.coTravelerCount",
+        "label": "APIS Co-Passengers",
+        "type": "integer",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]
+      },
+      {
+        "id": "Passenger.passengerTripDetails.hoursBeforeTakeOff",
+        "label": "Hours Before Take Off",
+        "type": "integer",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]
+      },
+      {
         "id": "Passenger.nationality",
         "label": "Nationality",
         "type": "string",
