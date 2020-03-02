@@ -16,6 +16,7 @@ public class WebMessage implements Serializable {
 	private static final long serialVersionUID = 2219542569468670294L;
 
 	public WebMessage() {
+		// default constructor.
 	}
 
 	private String messagePayload;
