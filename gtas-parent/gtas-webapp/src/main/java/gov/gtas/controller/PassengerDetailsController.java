@@ -307,7 +307,6 @@ public class PassengerDetailsController {
 		}
 		long longPaxId = Long.parseLong(paxId);
 		long longFlightId = Long.parseLong(flightId);
-		Passenger p = pService.findById(longPaxId);
 		List<Flight> passengerFlights = fService.getFlightByPaxId(longPaxId);
 		List<BookingDetail> passengerBookingDetails = bookingDetailService.bookingDetailsByPassengerId(longPaxId,
 				longFlightId);
