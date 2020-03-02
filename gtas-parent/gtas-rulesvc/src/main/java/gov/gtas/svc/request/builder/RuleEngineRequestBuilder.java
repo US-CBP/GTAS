@@ -70,11 +70,7 @@ public class RuleEngineRequestBuilder {
 
 	private final ApisMessageRepository apisMessageRepository;
 
-	private final PassengerTripRepository passengerTripRepository;
-
 	private final PassengerRepository passengerRepository;
-
-	private final PassengerDetailRepository passengerDetailRepository;
 
 	private final SeatRepository seatRepository;
 
@@ -91,8 +87,7 @@ public class RuleEngineRequestBuilder {
 	private Boolean makeEmptyPnrBagsOnNullBag;
 
 	@Autowired
-	public RuleEngineRequestBuilder(PnrRepository pnrRepository, PassengerTripRepository passengerTripRepository,
-			PassengerDetailRepository passengerDetailRepository, SeatRepository seatRepository,
+	public RuleEngineRequestBuilder(PnrRepository pnrRepository, SeatRepository seatRepository,
 			BagRepository bagRepository, FlightPaxRepository flightPaxRepository, DocumentRepository documentRepository,
 			ApisMessageRepository apisMessageRepository, PassengerRepository passengerRepository) {
 		this.passengerRepository = passengerRepository;
@@ -118,8 +113,6 @@ public class RuleEngineRequestBuilder {
 		this.pnrBookingLinks = new HashSet<>();
 		this.requestType = null;
 		this.pnrRepository = pnrRepository;
-		this.passengerTripRepository = passengerTripRepository;
-		this.passengerDetailRepository = passengerDetailRepository;
 		this.seatRepository = seatRepository;
 		this.bagRepository = bagRepository;
 		this.flightPaxRepository = flightPaxRepository;
