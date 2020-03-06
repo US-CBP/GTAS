@@ -19,7 +19,7 @@ public class MutableFlightDetails {
 	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
 	private Long flightId;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
 	private Flight flight;
 

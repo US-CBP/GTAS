@@ -10,7 +10,7 @@ public class FlightHitsWatchlist {
 	@Column(name = "fhw_flight_id", columnDefinition = "bigint unsigned")
 	private Long flightId;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "fhw_flight_id", referencedColumnName = "id", updatable = false, insertable = false)
 	Flight flight;
 
