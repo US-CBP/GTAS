@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -44,6 +45,12 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
     @Autowired
     private PassengerRepository passengerRepository;
     
+    @Value("${tamr.derog_hit.title}")
+    String derogHitTitle;
+    
+    @Value("${tamr.derog_hit.description}")
+    String derogHitDescription;
+    
     /**
      * Handle responses to Tamr QUERY requests. This handles both the "derog
      * matches" and "traveler history" responses.
@@ -79,10 +86,8 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
         }
         PendingHitDetails pendingHit = new PendingHitDetails(); 
 
-        pendingHit.setTitle("Tamr Fuzzy Watchlist Hit");
-        pendingHit.setDescription("This passenger closely matches a watchlist " +
-                "entry, according to Tamr's proprietary fuzzy matching " +
-                "technology.");
+        pendingHit.setTitle(derogHitTitle);
+        pendingHit.setDescription(derogHitDescription);
 
         pendingHit.setHitEnum(HitTypeEnum.PARTIAL_WATCHLIST);
         pendingHit.setHitType(pendingHit.getHitEnum().toString());
