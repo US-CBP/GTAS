@@ -20,7 +20,7 @@ public class TamrMessage {
      * The JMS message type, which is set by TamrMessageReceiver.
      */
     @JsonIgnore
-    private String messageType;
+    private TamrMessageType messageType;
 
     private List<TamrTravelerResponse> travelerQuery;
 
@@ -34,11 +34,11 @@ public class TamrMessage {
 	public TamrMessage() {
 	}
     
-    public String getMessageType() {
+    public TamrMessageType getMessageType() {
         return messageType;
     }
 
-    public void setMessageType(String messageType) {
+    public void setMessageType(TamrMessageType messageType) {
         this.messageType = messageType;
     }
 

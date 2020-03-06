@@ -17,6 +17,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import gov.gtas.parsers.ParserTestHelper;
 import gov.gtas.parsers.tamr.model.TamrMessage;
+import gov.gtas.parsers.tamr.model.TamrMessageType;
 import gov.gtas.parsers.tamr.model.TamrRecordError;
 
 /**
@@ -49,22 +50,23 @@ public class TamrStatusErrorMessagesTest implements ParserTestHelper {
     @Test
     public void testAcknowledgmentError() {
         TamrMessage acknowledgmentMessage = new TamrMessage();
-        acknowledgmentMessage.setMessageType("TH.UPDATE");
+        acknowledgmentMessage.setMessageType(TamrMessageType.TH_UPDATE);
         acknowledgmentMessage.setAcknowledgment(false);
         acknowledgmentMessage.setError("Here is an error.");
         this.handler.handleAcknowledgeResponse(acknowledgmentMessage);
 
         // Make sure message type and error is logged as ERROR.
-        this.assertTextLogged("ERROR",
-                acknowledgmentMessage.getMessageType());
+        this.assertTextLogged("ERROR", "TH.UPDATE");
         this.assertTextLogged("ERROR",
                 acknowledgmentMessage.getError());
     }
     
     @Test
     public void testRecordErrors() {
-        String[] messageTypes = {"QUERY", "DC.REPLACE", "TH.UPDATE"};
-        for (String messageType: messageTypes) {
+        String[] messageTypeStrs = {"QUERY", "DC.REPLACE", "TH.UPDATE"};
+        for (String messageTypeStr: messageTypeStrs) {
+            TamrMessageType messageType = TamrMessageType
+                    .fromString(messageTypeStr);
             TamrMessage errorMessage = new TamrMessage();
             errorMessage.setMessageType(messageType);
             List<TamrRecordError> recordErrors = new ArrayList<TamrRecordError>();
@@ -74,14 +76,14 @@ public class TamrStatusErrorMessagesTest implements ParserTestHelper {
             recordErrors.add(recordError);
             errorMessage.setRecordErrors(recordErrors);
             
-            if (messageType.equals("QUERY")) {
+            if (messageType == TamrMessageType.QUERY) {
                 handler.handleQueryResponse(errorMessage);
             } else {
                 handler.handleAcknowledgeResponse(errorMessage);
             }
             
             // Make sure message type and all errors are logged as WARN.
-            this.assertTextLogged("WARN", messageType);
+            this.assertTextLogged("WARN", messageTypeStr);
             for (String error: recordError.getErrors()) {
                 this.assertTextLogged("WARN", error);
             }
@@ -94,7 +96,7 @@ public class TamrStatusErrorMessagesTest implements ParserTestHelper {
     @Test
     public void testErrorMessages() {
         TamrMessage errorMessage = new TamrMessage();
-        errorMessage.setMessageType("ERROR");
+        errorMessage.setMessageType(TamrMessageType.ERROR);
         errorMessage.setAcknowledgment(false);
         errorMessage.setError("Error error");
         
@@ -104,10 +106,10 @@ public class TamrStatusErrorMessagesTest implements ParserTestHelper {
         this.assertTextLogged("ERROR", errorMessage.getError());
     }
     
-    private TamrMessage buildAcknowledgmentResponse(String messageType) {
+    private TamrMessage buildAcknowledgmentResponse(String messageTypeStr) {
         TamrMessage message = new TamrMessage();
         message.setAcknowledgment(true);
-        message.setMessageType(messageType);
+        message.setMessageType(TamrMessageType.fromString(messageTypeStr));
         return message;
     }
     
@@ -125,8 +127,8 @@ public class TamrStatusErrorMessagesTest implements ParserTestHelper {
             if (logLevel.toLowerCase().equals(
                     invocation.getMethod().getName())) {
                 for (Object argument: invocation.getArguments()) {
-                    if (argument instanceof String) {
-                        if (((String) argument).contains(messagePart)) {
+                    if (argument != null) {
+                        if (argument.toString().contains(messagePart)) {
                             messagePartPresent = true;
                         }
                     }

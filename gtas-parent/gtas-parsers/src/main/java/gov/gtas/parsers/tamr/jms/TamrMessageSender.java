@@ -17,6 +17,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 import gov.gtas.model.Flight;
+import gov.gtas.parsers.tamr.model.TamrMessageType;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.tamr.jms.TamrQueueConfig;
 import gov.gtas.parsers.tamr.TamrAdapterImpl;
@@ -33,7 +34,7 @@ public class TamrMessageSender {
     @Autowired
     TamrQueueConfig queueConfig;
     
-    public void sendMessageToTamr(String messageType, Object messageObject) {
+    public void sendMessageToTamr(TamrMessageType messageType, Object messageObject) {
         String messageJson;
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -46,7 +47,8 @@ public class TamrMessageSender {
         this.sendTextMessageToTamr(messageType, messageJson);
     }
     
-    public void sendTextMessageToTamr(String messageType, String messageText) {
+    public void sendTextMessageToTamr(
+            TamrMessageType messageType, String messageText) {
         if (jmsTemplate == null) {
             this.jmsTemplate = new JmsTemplate(
                     queueConfig.senderConnectionFactory());
@@ -57,7 +59,7 @@ public class TamrMessageSender {
         jmsTemplate.send("InboundQueue", new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 Message message = session.createTextMessage(messageText);
-                message.setJMSType(messageType);
+                message.setJMSType(messageType.toString());
                 return message;
             }
         });

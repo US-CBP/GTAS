@@ -17,6 +17,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import gov.gtas.parsers.ParserTestHelper;
 import gov.gtas.parsers.tamr.jms.TamrMessageReceiver;
 import gov.gtas.parsers.tamr.model.TamrMessage;
+import gov.gtas.parsers.tamr.model.TamrMessageType;
 
 public class ReceiveTamrMessagesTest implements ParserTestHelper { 
     private static final String HISTORY_QUERY_RESPONSE = "/tamr-messages/history_query_response.json";  
@@ -193,6 +194,7 @@ public class ReceiveTamrMessagesTest implements ParserTestHelper {
         final ArgumentCaptor<TamrMessage> messageCaptor =
                 ArgumentCaptor.forClass(TamrMessage.class);
         verify(handler).handleAcknowledgeResponse(messageCaptor.capture());
-        assertEquals("DC.REPLACE", messageCaptor.getValue().getMessageType());
+        assertEquals(TamrMessageType.DC_REPLACE,
+                messageCaptor.getValue().getMessageType());
     }
 }

@@ -5,6 +5,7 @@
  */
 package gov.gtas.parsers.tamr.jms;
 
+import java.awt.TrayIcon.MessageType;
 import java.io.IOException;
 
 import javax.jms.JMSException;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.gtas.parsers.tamr.TamrMessageHandlerService;
 import gov.gtas.parsers.tamr.model.TamrMessage;
+import gov.gtas.parsers.tamr.model.TamrMessageType;
 import gov.gtas.repository.PassengerIDTagRepository;
 
 @Component
@@ -39,7 +41,8 @@ public class TamrMessageReceiver {
 	public void receive(javax.jms.Message msg) {
 		logger.debug("############### Tamr data received .... ################");
 		TextMessage textMessage = null;
-		String messageType, messageText;
+		String jmsMessageType, messageText;
+		TamrMessageType messageType;
 		
 		if (msg == null) {
 		    logger.warn("Received null JMS message from Tamr");
@@ -48,14 +51,14 @@ public class TamrMessageReceiver {
 		
 		textMessage = (TextMessage) msg;
 		try {
-		    messageType = textMessage.getJMSType();
+		    jmsMessageType = textMessage.getJMSType();
 		    messageText = textMessage.getText();
 		} catch (JMSException e) {
 			logger.error("Error handling Tamr JMS message: {}",
 			        e);
 			return;
 		}
-        logger.debug("Message type: {}", messageType);
+        logger.debug("Message type: {}", jmsMessageType);
         if (messageText.length() > 1000)
             logger.debug("Raw JSON data: {}...", messageText.substring(0, 1000));
         else
@@ -65,21 +68,26 @@ public class TamrMessageReceiver {
         if (response == null) {
             return;
         }
-        response.setMessageType(messageType);
+        try {
+            messageType = TamrMessageType.fromString(jmsMessageType);
+            response.setMessageType(messageType);
+        } catch (IllegalArgumentException e) {
+            // If the message type is invalid.
+            logger.warn("Ignoring unknown Tamr JMS message type.", e);
+            return;
+        }
                 
-        if (messageType.equals("QUERY")) {
+        if (messageType == TamrMessageType.QUERY) {
             tamrMessageHandler.handleQueryResponse(response);
-        } else if (messageType.equals("DC.REPLACE") || messageType.equals("TH.UPDATE")) {
+        } else if (messageType == TamrMessageType.DC_REPLACE
+                || messageType == TamrMessageType.TH_UPDATE) {
             // These responses should be an acknowledgement.
             tamrMessageHandler.handleAcknowledgeResponse(response);
-        } else if (messageType.equals("TH.CLUSTERS") || messageType.equals("TH.DELTAS")) {
+        } else if (messageType == TamrMessageType.TH_CLUSTERS
+                || messageType == TamrMessageType.TH_DELTAS) {
             tamrMessageHandler.handleTamrIdUpdate(response);
-        } else if (messageType.equals("ERROR")) {
+        } else if (messageType == TamrMessageType.ERROR) {
             tamrMessageHandler.handleErrorResponse(response);
-        } else {
-            logger.warn("Unknown Tamr JMS message type \"{}\". Ignoring...",
-                    messageType);
-            return;
         }
             
 	}

@@ -24,6 +24,7 @@ import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.parsers.tamr.jms.TamrMessageSender;
 import gov.gtas.parsers.tamr.model.TamrDerogListEntry;
 import gov.gtas.parsers.tamr.model.TamrDerogListUpdate;
+import gov.gtas.parsers.tamr.model.TamrMessageType;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
 
@@ -55,7 +56,7 @@ public class TamrDerogReplaceScheduler {
     private Date lastRun = null;
 
     /**
-     * Replace the watchlist in Tamr if the GTAS ons has changed.
+     * Replace the watchlist in Tamr if the GTAS one has changed.
      **/
     @Scheduled(fixedDelayString = "${tamr.derogReplace.fixedDelay.in.milliseconds}",
             initialDelayString = "${tamr.derogReplace.initialDelay.in.milliseconds}")
@@ -82,7 +83,8 @@ public class TamrDerogReplaceScheduler {
                     tamrAdapter.convertWatchlist(watchlistItems);
             TamrDerogListUpdate derogReplace =
                     new TamrDerogListUpdate(derogListEntries);
-            tamrMessageSender.sendMessageToTamr("DC.REPLACE", derogReplace);
+            tamrMessageSender.sendMessageToTamr(
+                    TamrMessageType.DC_REPLACE, derogReplace);
             
             lastRun = new Date();
         } else {

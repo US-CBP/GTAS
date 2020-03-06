@@ -19,6 +19,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import gov.gtas.model.PassengerIDTag;
 import gov.gtas.parsers.ParserTestHelper;
 import gov.gtas.parsers.tamr.model.TamrHistoryCluster;
+import gov.gtas.parsers.tamr.model.TamrHistoryClusterAction;
 import gov.gtas.parsers.tamr.model.TamrMessage;
 import gov.gtas.parsers.tamr.model.TamrTravelerResponse;
 import gov.gtas.repository.PassengerIDTagRepository;
@@ -77,7 +78,7 @@ public class UpdateTamrIdTest implements ParserTestHelper {
         historyCluster.setGtasId(Long.toString(gtasId));
         historyCluster.setTamrId(newTamrId);
         historyCluster.setVersion(1);
-        historyCluster.setAction("UPDATE");
+        historyCluster.setAction(TamrHistoryClusterAction.UPDATE);
         
         TamrMessage message = new TamrMessage();
         message.setHistoryClusters(Collections.singletonList(historyCluster));
@@ -94,7 +95,7 @@ public class UpdateTamrIdTest implements ParserTestHelper {
         historyCluster.setGtasId(Long.toString(gtasId));
         historyCluster.setTamrId(null);
         historyCluster.setVersion(1);
-        historyCluster.setAction("DELETE");
+        historyCluster.setAction(TamrHistoryClusterAction.DELETE);
         
         TamrMessage message = new TamrMessage();
         message.setHistoryClusters(Collections.singletonList(historyCluster));

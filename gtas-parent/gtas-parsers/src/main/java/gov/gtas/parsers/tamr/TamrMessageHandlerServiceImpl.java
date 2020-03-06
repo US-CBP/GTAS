@@ -19,6 +19,7 @@ import gov.gtas.model.PendingHitDetails;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.parsers.tamr.model.TamrDerogHit;
 import gov.gtas.parsers.tamr.model.TamrHistoryCluster;
+import gov.gtas.parsers.tamr.model.TamrHistoryClusterAction;
 import gov.gtas.parsers.tamr.model.TamrMessage;
 import gov.gtas.parsers.tamr.model.TamrTravelerResponse;
 import gov.gtas.repository.PassengerIDTagRepository;
@@ -162,10 +163,10 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
 
         for (TamrHistoryCluster cluster: message.getHistoryClusters()) {
             if (cluster.getAction() == null ||
-                    cluster.getAction().equals("UPDATE")) {
+                    cluster.getAction() == TamrHistoryClusterAction.UPDATE) {
                 this.updateTamrId(cluster.getGtasId(),
                         cluster.getTamrId(), cluster.getVersion());
-            } else if (cluster.getAction().equals("DELETE")) {
+            } else if (cluster.getAction() == TamrHistoryClusterAction.DELETE) {
                 this.updateTamrId(cluster.getGtasId(),
                         null, cluster.getVersion());
             } else {

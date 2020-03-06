@@ -24,6 +24,7 @@ import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.parsers.tamr.TamrDerogReplaceScheduler;
 import gov.gtas.parsers.tamr.jms.TamrMessageSender;
+import gov.gtas.parsers.tamr.model.TamrMessageType;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
 
@@ -68,13 +69,13 @@ public class TamrDerogReplaceSchedulerTest {
     public void testSendWatchlist() throws InterruptedException {
         scheduler.jobScheduling();
 
-        ArgumentCaptor<String> messageTypeCaptor =
-                ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<TamrMessageType> messageTypeCaptor =
+                ArgumentCaptor.forClass(TamrMessageType.class);
         ArgumentCaptor<String> messageTextCaptor =
                 ArgumentCaptor.forClass(String.class);
         verify(messageSender).sendTextMessageToTamr(
                 messageTypeCaptor.capture(), messageTextCaptor.capture());
-        assertEquals("DC.REPLACE", messageTypeCaptor.getValue());
+        assertEquals(TamrMessageType.DC_REPLACE, messageTypeCaptor.getValue());
         assertEquals(TamrAdapterImplTest.expectedDerogListJson,
                 messageTextCaptor.getValue());
     }

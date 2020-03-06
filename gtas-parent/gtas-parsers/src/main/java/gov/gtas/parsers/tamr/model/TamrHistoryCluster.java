@@ -11,7 +11,7 @@ public class TamrHistoryCluster {
     private String gtasId;
     private String tamrId;
     private int version;
-    private String action;
+    private TamrHistoryClusterAction action;
     
     public TamrHistoryCluster() {
     }
@@ -40,11 +40,11 @@ public class TamrHistoryCluster {
         this.gtasId = gtasId;
     }
     
-    public String getAction() {
+    public TamrHistoryClusterAction getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(TamrHistoryClusterAction action) {
         this.action = action;
     }
 }
