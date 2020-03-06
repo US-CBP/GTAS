@@ -200,7 +200,7 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
                 passengerIDTagRepository.findByPaxId(gtasId);
         if (currentPassengerIdTag == null) {
             logger.warn("Unable to update tamrId of nonexistent passenger " +
-                    "with ID {}.", gtasId);
+                    "ID tag {}.", gtasId);
         } else {
             passengerIDTagRepository.updateTamrId(gtasId, tamrId);
         }
