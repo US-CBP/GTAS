@@ -103,29 +103,31 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
         }
         Optional<WatchlistItem> watchlistItem =
                 watchlistItemRepository.findById(watchlistItemId);
-        try {
+        if (watchlistItem.isPresent()) {
             pendingHit.setHitMakerId(watchlistItem.get().getId());
-            pendingHit.setPercentage(derogHit.getScore()); 
-
-            // Tamr doesn't return any details about the matching algorithm,
-            // so leave this empty.
-            pendingHit.setRuleConditions("");
-        } catch (NoSuchElementException e) {
+        } else {
             logger.warn("Tamr returned derog hit for nonexistent watchlist " +
                     "entry with ID {}.", watchlistItemId);
             return;
         }
         
+        pendingHit.setPercentage(derogHit.getScore()); 
+
+        // Tamr doesn't return any details about the matching algorithm,
+        // so leave this empty.
+        pendingHit.setRuleConditions("");
+        
         // Try to find passenger in GTAS so we can get the associated flight.
         Optional<Passenger> passenger = passengerRepository.findById(gtasId);
-        try {
+        if (passenger.isPresent()) {
             pendingHit.setFlightId(passenger.get().getFlight().getId());
-            pendingHit.setPassengerId(gtasId);
-        } catch (NoSuchElementException e) {
+        } else {
             logger.warn("Tamr returned derog hit for nonexistent passenger " +
                     "with ID {}.", gtasId);
             return;
         }
+
+        pendingHit.setPassengerId(gtasId);
 
         pendingHit.setCreatedDate(new Date());
        
