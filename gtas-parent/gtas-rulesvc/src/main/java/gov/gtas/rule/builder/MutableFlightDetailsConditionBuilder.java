@@ -1,7 +1,11 @@
 package gov.gtas.rule.builder;
 
+import gov.gtas.enumtype.CriteriaOperatorEnum;
+import gov.gtas.enumtype.TypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.ParseException;
 
 public class MutableFlightDetailsConditionBuilder extends EntityConditionBuilder {
 
@@ -25,5 +29,14 @@ public class MutableFlightDetailsConditionBuilder extends EntityConditionBuilder
 
 	public String getFlightIdLinkExpression() {
 		return getDrlVariableName() + ".flightId";
+	}
+
+	@Override
+	public void addCondition(final CriteriaOperatorEnum opCode, final String attributeName,
+			final TypeEnum attributeType, String[] values) throws ParseException {
+		if (this.isEmpty()) {
+			this.addConditionAsString("flightId == $f.id");
+		}
+		super.addCondition(opCode, attributeName, attributeType, values);
 	}
 }

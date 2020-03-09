@@ -100,7 +100,6 @@ public class RuleServiceImpl implements RuleService {
 
 		StatelessKieSession ksession = kbase.newStatelessKieSession();
 		ksession.setGlobal(RuleServiceConstants.RULE_RESULT_LIST_NAME, new ArrayList<Object>());
-
 		/*
 		 * object where execution statistics are collected.
 		 */
@@ -108,7 +107,8 @@ public class RuleServiceImpl implements RuleService {
 
 		List<EventListener> listeners = createEventListeners(stats);
 		RuleEventListenerUtils.addEventListenersToKieSEssion(ksession, listeners);
-
+		// ksession.addEventListener(new DebugAgendaEventListener());
+		// ksession.addEventListener(new DebugRuleRuntimeEventListener());
 		logger.debug("About to run rules.");
 		Collection<?> requestObjects = req.getRequestObjects();
 		ksession.execute(requestObjects);

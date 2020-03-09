@@ -89,8 +89,9 @@ public class RuleTemplateConstants {
 
 	static final String PASSENGER_TRIP_DETAILS_NAME = "PassengerTripDetails";
 
-	static final String PASSENGER_VARIABLE_NAME = "$p";
+	public static final String PASSENGER_VARIABLE_NAME = "$p";
 	static final String PASSENGER_DETAILS_VARIABLE_NAME = "$pcb";
+	static final String FLIGHT_PASSENGER_LINK_VARIABLE_NAME = "$flpaxlk";
 	static final String PASSENGER_TRIP_VARIABLE_NAME = "$ptcb";
 	public static final String DOCUMENT_VARIABLE_NAME = "$d";
 	static final String FLIGHT_VARIABLE_NAME = "$f";

@@ -6,21 +6,15 @@
 package gov.gtas.svc.request.builder;
 
 import gov.gtas.bo.BasicRuleServiceRequest;
+import gov.gtas.bo.FlightPassengerLink;
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceRequestType;
-import gov.gtas.bo.match.PnrAddressLink;
-import gov.gtas.bo.match.PnrBookingLink;
-import gov.gtas.bo.match.PnrCreditCardLink;
-import gov.gtas.bo.match.PnrDwellTimeLink;
-import gov.gtas.bo.match.PnrEmailLink;
-import gov.gtas.bo.match.PnrFrequentFlyerLink;
-import gov.gtas.bo.match.PnrPassengerLink;
-import gov.gtas.bo.match.PnrPhoneLink;
-import gov.gtas.bo.match.PnrTravelAgencyLink;
+import gov.gtas.bo.match.*;
 import gov.gtas.model.*;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import gov.gtas.repository.*;
@@ -53,6 +47,7 @@ public class RuleEngineRequestBuilder {
 	private Set<Long> frequentFlyerIdSet;
 	private Set<Long> travelAgencyIdSet;
 	private Set<Long> dwellTimeIdSet;
+	private Set<Long> paymentFormIdSet;
 	private Set<Long> bookingDetailIdSet;
 	private Set<PnrAddressLink> addressLinks;
 	private Set<PnrPhoneLink> phoneLinks;
@@ -61,8 +56,10 @@ public class RuleEngineRequestBuilder {
 	private Set<PnrFrequentFlyerLink> frequentFlyerLinks;
 	private Set<PnrTravelAgencyLink> travelAgencyLinks;
 	private Set<PnrDwellTimeLink> dwellTimeLinks;
+	private Set<PnrFormOfPaymentLink> pnrFormOfPaymentLinks;
 	private Set<PnrBookingLink> pnrBookingLinks;
 	private Set<PassengerFlightTuple> passengerFlightSet;
+	private Set<FlightPassengerLink> flightPassengerLinks;
 
 	private RuleServiceRequestType requestType;
 
@@ -102,7 +99,9 @@ public class RuleEngineRequestBuilder {
 		this.phoneIdSet = new HashSet<>();
 		this.travelAgencyIdSet = new HashSet<>();
 		this.passengerFlightSet = new HashSet<>();
+		this.flightPassengerLinks = new HashSet<>();
 		this.dwellTimeIdSet = new HashSet<>();
+		this.paymentFormIdSet = new HashSet<>();
 		this.addressLinks = new HashSet<>();
 		this.phoneLinks = new HashSet<>();
 		this.emailLinks = new HashSet<>();
@@ -110,6 +109,7 @@ public class RuleEngineRequestBuilder {
 		this.frequentFlyerLinks = new HashSet<>();
 		this.travelAgencyLinks = new HashSet<>();
 		this.dwellTimeLinks = new HashSet<>();
+		this.pnrFormOfPaymentLinks = new HashSet<>();
 		this.pnrBookingLinks = new HashSet<>();
 		this.requestType = null;
 		this.pnrRepository = pnrRepository;
@@ -126,6 +126,7 @@ public class RuleEngineRequestBuilder {
 	 * @return the request object.
 	 */
 	public RuleServiceRequest build() {
+		addToRequestObjectSet(flightPassengerLinks);
 		BasicRuleServiceRequest basicRuleServiceRequest = new BasicRuleServiceRequest(requestObjectList,
 				this.requestType);
 		this.requestObjectList = new ArrayList<>(300000);
@@ -139,6 +140,7 @@ public class RuleEngineRequestBuilder {
 		this.phoneIdSet = new HashSet<>();
 		this.travelAgencyIdSet = new HashSet<>();
 		this.passengerFlightSet = new HashSet<>();
+		this.flightPassengerLinks = new HashSet<>();
 		this.dwellTimeIdSet = new HashSet<>();
 		this.addressLinks = new HashSet<>();
 		this.phoneLinks = new HashSet<>();
@@ -170,6 +172,9 @@ public class RuleEngineRequestBuilder {
 		Set<Long> apisIds = apisMessage.stream().map(ApisMessage::getId).collect(Collectors.toSet());
 		Set<Long> paxId = apisMessageRepository.getPassengerWithFlightInfo(apisIds);
 		logger.debug("FlightGot");
+		if (paxId.isEmpty()) {
+			return;
+		}
 		Set<Passenger> passengerSet = passengerRepository.getPassengersWithFlightDetails(paxId);
 		addFlights(passengerSet);
 		Set<Flight> flightSet = addFlights(passengerSet);
@@ -185,7 +190,7 @@ public class RuleEngineRequestBuilder {
 			Set<Long> passengersWithoutBags = new HashSet<>(paxIds);
 			passengersWithoutBags.removeAll(passengerWhoHaveBagsId);
 			for (Long baglessPaxId : passengersWithoutBags) {
-				bags.add(makeEmptyBag(passengerMap.get(baglessPaxId), true));
+				bags.add(makeEmptyBag(passengerMap.get(baglessPaxId), "APIS", true));
 			}
 		}
 
@@ -203,6 +208,7 @@ public class RuleEngineRequestBuilder {
 		Set<Flight> flightSet = new HashSet<>();
 		for (Passenger p : passengerSet) {
 			passengerFlightSet.add(new PassengerFlightTuple(p, p.getFlight()));
+			flightPassengerLinks.add(new FlightPassengerLink(p.getFlight().getId(), p.getId()));
 			flightSet.add(p.getFlight());
 		}
 		return flightSet;
@@ -226,8 +232,7 @@ public class RuleEngineRequestBuilder {
 		Map<Long, Set<Agency>> travelAgency = createTravelAgencyMap(pnrIds);
 		Map<Long, Set<DwellTime>> dwellMap = createDwellTime(pnrIds);
 		Map<Long, Set<Passenger>> paxMap = createPaxMap(pnrIds);
-		Set<PaymentForm> paymentForms = pnrRepository.getPaymentFormsByPnrIds(pnrIds);
-		addPaymentFormObjects(paymentForms);
+		Map<Long, Set<PaymentForm>> pnrPaymentForm = createPaymentFormMap(pnrIds);
 
 		Set<Passenger> passengersFromPnr = pnrRepository.getPassengersWithFlight(pnrIds);
 		logger.debug("pnr bags");
@@ -250,33 +255,44 @@ public class RuleEngineRequestBuilder {
 			for (long pnrId : pnrIds) {
 				Set<BookingDetail> bookingDetailSet = bookingDetailObjects.get(pnrId);
 				Set<Passenger> passengerSet = paxMap.get(pnrId);
-				Set<Long> paxIdSetFromPassengerSet = passengerSet.stream().map(Passenger::getId)
-						.collect(Collectors.toSet());
+				if (passengerSet != null) {
+					Set<Long> paxIdSetFromPassengerSet = passengerSet.stream().map(Passenger::getId)
+							.collect(Collectors.toSet());
 
-				// Populate a bag with 0 on bag measurement on any booking details with no bag
-				// info.
-				if (bookingDetailSet != null) {
-					for (BookingDetail bd : bookingDetailSet) {
-						Set<Bag> bagBdSet = bd.getBags();
-						Set<Long> paxIdsWithBags = bagBdSet.stream().map(Bag::getPassengerId)
-								.collect(Collectors.toSet());
-						Set<Long> paxWithNoBags = new HashSet<>(paxIdSetFromPassengerSet);
-						paxWithNoBags.removeAll(paxIdsWithBags);
-						for (Long paxId : paxWithNoBags) {
-							bags.add(makeEmptyBag(passengerMap.get(paxId), false));
+					// Populate a bag with 0 on bag measurement on any booking details with no bag
+					// info.
+					if (bookingDetailSet != null) {
+						for (BookingDetail bd : bookingDetailSet) {
+							Set<Bag> bagBdSet = bd.getBags();
+							Set<Long> paxIdsWithBags = bagBdSet.stream().map(Bag::getPassengerId)
+									.collect(Collectors.toSet());
+							Set<Long> paxWithNoBags = new HashSet<>(paxIdSetFromPassengerSet);
+							paxWithNoBags.removeAll(paxIdsWithBags);
+							for (Long paxId : paxWithNoBags) {
+								bags.add(makeEmptyBag(passengerMap.get(paxId), "PNR", false));
+							}
+
+							// For all bags that *are* with a bd already make a new bag representing a non
+							// prime flight bag.
+							// Bags that are prime flights are not distinguished from bd bags.
+							// TODO: Update data model to allow for multiple bags to be created on a
+							// per-flight baises.
+							Set<Bag> bdBagSet = bagBdSet.stream().filter(Bag::isPrimeFlight)
+									.map(this::createBookingDetailBag).collect(Collectors.toSet());
+							bags.addAll(bdBagSet);
 						}
 					}
-				}
-				// Populate a bag with 0 on bag measurement on any prime flight details with no
-				// bag info.
-				for (long paxId : paxIds) {
-					Set<Bag> pBagsSet = passengerBags.get(paxId);
-					if (pBagsSet == null) {
-						bags.add(makeEmptyBag(passengerMap.get(paxId), true));
-					} else {
-						boolean primeFlightBagPresent = pBagsSet.stream().anyMatch(Bag::isPrimeFlight);
-						if (!primeFlightBagPresent) {
-							bags.add(makeEmptyBag(passengerMap.get(paxId), true));
+					// Populate a bag with 0 on bag measurement on any prime flight details with no
+					// bag info.
+					for (long paxId : paxIds) {
+						Set<Bag> pBagsSet = passengerBags.get(paxId);
+						if (pBagsSet == null) {
+							bags.add(makeEmptyBag(passengerMap.get(paxId), "PNR", true));
+						} else {
+							boolean primeFlightBagPresent = pBagsSet.stream().anyMatch(Bag::isPrimeFlight);
+							if (!primeFlightBagPresent) {
+								bags.add(makeEmptyBag(passengerMap.get(paxId), "PNR", true));
+							}
 						}
 					}
 				}
@@ -299,6 +315,7 @@ public class RuleEngineRequestBuilder {
 			addTravelAgencyObjects(pnrId, travelAgency.get(pnrId));
 			addDwellTimeObjects(pnrId, dwellMap.get(pnrId));
 			addPassengerObjects(pnrId, paxMap.get(pnrId));
+			addPaymentFormObjects(pnrId, pnrPaymentForm.get(pnrId));
 		}
 		logger.debug("all done we go");
 
@@ -309,6 +326,12 @@ public class RuleEngineRequestBuilder {
 		}
 	}
 
+	private Bag createBookingDetailBag(Bag bdBagThatIsAlsoPrimeFlight) {
+		Bag bookingDetailBag = Bag.fromBag(bdBagThatIsAlsoPrimeFlight);
+		bookingDetailBag.setBagId(UUID.randomUUID().toString() + bdBagThatIsAlsoPrimeFlight.getBagId());
+		bookingDetailBag.setPrimeFlight(false);
+		return bookingDetailBag;
+	}
 	// generating same thing as p.getBags().
 	// The database joins can be expensive/time consuming
 	// and performance is critical here
@@ -329,12 +352,15 @@ public class RuleEngineRequestBuilder {
 		return passengerBags;
 	}
 
-	protected Bag makeEmptyBag(Passenger passenger, boolean primeFlight) {
+	protected Bag makeEmptyBag(Passenger passenger, String source, boolean primeFlight) {
 		Bag bag = new Bag();
 		bag.setPassengerId(passenger.getId());
 		bag.setPassenger(passenger);
 		bag.setPrimeFlight(primeFlight);
 		bag.setFlight(passenger.getFlight());
+		bag.setFlightId(passenger.getFlight().getId());
+		bag.setData_source(source);
+		bag.setBagId(UUID.randomUUID().toString());
 		BagMeasurements bMeasurement = new BagMeasurements();
 		bMeasurement.setBagCount(0);
 		bMeasurement.setWeight(0D);
@@ -378,6 +404,17 @@ public class RuleEngineRequestBuilder {
 		for (Object[] answerKey : oList) {
 			Long pnrId = (Long) answerKey[0];
 			Passenger object = (Passenger) answerKey[1];
+			processObject(object, objectMap, pnrId);
+		}
+		return objectMap;
+	}
+
+	private Map<Long, Set<PaymentForm>> createPaymentFormMap(Set<Long> pnrIds) {
+		Map<Long, Set<PaymentForm>> objectMap = new HashMap<>();
+		List<Object[]> oList = pnrRepository.getPaymentFormsByPnrIds(pnrIds);
+		for (Object[] answerKey : oList) {
+			Long pnrId = (Long) answerKey[0];
+			PaymentForm object = (PaymentForm) answerKey[1];
 			processObject(object, objectMap, pnrId);
 		}
 		return objectMap;
@@ -635,6 +672,26 @@ public class RuleEngineRequestBuilder {
 		}
 	}
 
+	private void addPaymentFormObjects(final Long pnrId, final Collection<PaymentForm> paymentForms) {
+
+		if (CollectionUtils.isEmpty(paymentForms)) {
+			return;
+		}
+		for (PaymentForm a : paymentForms) {
+			Long id = a.getId();
+			if (!this.paymentFormIdSet.contains(id)) {
+				this.requestObjectList.add(a);
+				this.paymentFormIdSet.add(id);
+			}
+
+			PnrFormOfPaymentLink pnrFormOfPaymentLink = new PnrFormOfPaymentLink(pnrId, a.getId());
+			if (!this.pnrFormOfPaymentLinks.contains(pnrFormOfPaymentLink)) {
+				this.requestObjectList.add(pnrFormOfPaymentLink);
+				this.pnrFormOfPaymentLinks.add(pnrFormOfPaymentLink);
+			}
+		}
+	}
+
 	private void addTravelAgencyObjects(final Long pnrId, final Collection<Agency> agencies) {
 		if (CollectionUtils.isEmpty(agencies)) {
 			return;
@@ -681,9 +738,4 @@ public class RuleEngineRequestBuilder {
 		}
 	}
 
-	private void addPaymentFormObjects(final Collection<PaymentForm> paymentFormList) {
-		if (paymentFormList != null && !paymentFormList.isEmpty()) {
-			this.requestObjectList.addAll(paymentFormList);
-		}
-	}
 }

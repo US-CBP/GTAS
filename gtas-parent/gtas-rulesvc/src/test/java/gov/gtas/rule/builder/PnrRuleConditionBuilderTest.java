@@ -5,11 +5,6 @@
  */
 package gov.gtas.rule.builder;
 
-import static gov.gtas.rule.builder.RuleTemplateConstants.LINK_ATTRIBUTE_ID;
-import static gov.gtas.rule.builder.RuleTemplateConstants.LINK_PNR_ID;
-import static gov.gtas.rule.builder.RuleTemplateConstants.LINK_VARIABLE_SUFFIX;
-import static gov.gtas.rule.builder.RuleTemplateConstants.PASSENGER_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.PNR_VARIABLE_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.gtas.enumtype.CriteriaOperatorEnum;
@@ -56,11 +51,11 @@ public class PnrRuleConditionBuilderTest {
 		StringBuilder result = new StringBuilder();
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
+		String rule = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$pnr0:Pnr(bagCount == 0)\n" + "$plink:PnrPassengerLink(pnrId == $pnr0.id, linkAttributeId == $p.id)";
 		assertEquals(
-				PNR_VARIABLE_NAME + "0:" + EntityEnum.PNR.getEntityName() + "(" + PNRMapping.BAG_COUNT.getFieldName()
-						+ " == 0)\n" + PASSENGER_VARIABLE_NAME + ":" + EntityEnum.PASSENGER.getEntityName() + "()\n"
-						+ PASSENGER_VARIABLE_NAME + LINK_VARIABLE_SUFFIX + ":PnrPassengerLink(" + LINK_PNR_ID + " == "
-						+ PNR_VARIABLE_NAME + "0.id, " + LINK_ATTRIBUTE_ID + " == " + PASSENGER_VARIABLE_NAME + ".id)",
+				rule,
 				result.toString().trim());
 	}
 
@@ -95,11 +90,11 @@ public class PnrRuleConditionBuilderTest {
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
 
-		String expectedOutcome = "$a1:Address(country != \"USA\", city in (\"FOO\", \"BAR\"))\n"
-				+ "$fp:FlightPax(id > 0)\n" + "$p:Passenger(id == $fp.passenger.id)\n"
-				+ "$f:Flight(destination in (\"DBY\", \"XYZ\", \"PQR\"), id == $fp.flight.id)\n" + "$pnr0:Pnr()\n"
-				+ "$a1link:PnrAddressLink(pnrId == $pnr0.id, linkAttributeId == $a1.id)\n"
-				+ "$plink:PnrPassengerLink(pnrId == $pnr0.id, linkAttributeId == $p.id)";
+		String expectedOutcome = "$p:Passenger()\n" + "$f:Flight(destination in (\"DBY\", \"XYZ\", \"PQR\"))\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n" + "$pnr0:Pnr()\n"
+				+ "$a1link:PnrAddressLink(pnrId == $pnr0.id)\n"
+				+ "$plink:PnrPassengerLink(pnrId == $pnr0.id, linkAttributeId == $p.id)\n"
+				+ "$a1:Address(id == $a1link.linkAttributeId, country != \"USA\", city in (\"FOO\", \"BAR\"))";
 
 		assertEquals(expectedOutcome, result.toString().trim());
 	}
@@ -135,14 +130,15 @@ public class PnrRuleConditionBuilderTest {
 		testTarget.buildConditionsAndApppend(result);
 		logger.info(result.toString());
 		assertTrue(result.length() > 0);
-		String expectedDrools = "$ph1:Phone(number != null, number not matches \".*456.*\")\n"
-				+ "$e2:Email(domain != null, domain not matches \".*.COM\")\n"
-				+ "$ff3:FrequentFlyer(carrier != \"NZ\")\n" + "$d1:Document(issuanceCountry != \"US\")\n"
-				+ "$p:Passenger(id == $d1.passenger.id)\n" + "$pnr0:Pnr()\n"
-				+ "$ph1link:PnrPhoneLink(pnrId == $pnr0.id, linkAttributeId == $ph1.id)\n"
-				+ "$e2link:PnrEmailLink(pnrId == $pnr0.id, linkAttributeId == $e2.id)\n"
-				+ "$ff3link:PnrFrequentFlyerLink(pnrId == $pnr0.id, linkAttributeId == $ff3.id)\n"
-				+ "$plink:PnrPassengerLink(pnrId == $pnr0.id, linkAttributeId == $p.id)";
+		String expectedDrools = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$d1:Document(passengerId == $p.id, issuanceCountry != \"US\")\n" + "$pnr0:Pnr()\n"
+				+ "$ph1link:PnrPhoneLink(pnrId == $pnr0.id)\n" + "$e2link:PnrEmailLink(pnrId == $pnr0.id)\n"
+				+ "$ff3link:PnrFrequentFlyerLink(pnrId == $pnr0.id)\n"
+				+ "$plink:PnrPassengerLink(pnrId == $pnr0.id, linkAttributeId == $p.id)\n"
+				+ "$ph1:Phone(id == $ph1link.linkAttributeId, number != null, number not matches \".*456.*\")\n"
+				+ "$e2:Email(id == $e2link.linkAttributeId, domain != null, domain not matches \".*.COM\")\n"
+				+ "$ff3:FrequentFlyer(id == $ff3link.linkAttributeId, carrier != \"NZ\")";
 		assertEquals(expectedDrools, result.toString().trim());
 	}
 
@@ -166,8 +162,9 @@ public class PnrRuleConditionBuilderTest {
 		testTarget.buildConditionsAndApppend(result);
 		logger.info(result.toString());
 		assertTrue(result.length() > 0);
-		String expectedDrools = "$ptcb:PassengerTripDetails(coTravelerCount == 4)\n" +
-				"$p:Passenger(id == $ptcb.paxId)";
+		String expectedDrools = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$ptcb:PassengerTripDetails(passengerId == $p.id, coTravelerCount == 4)";
 		assertEquals(expectedDrools, result.toString().trim());
 	}
 }

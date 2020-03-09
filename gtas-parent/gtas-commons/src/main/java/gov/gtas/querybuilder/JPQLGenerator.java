@@ -443,6 +443,10 @@ public class JPQLGenerator {
 			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.DWELL_TIME.getEntityReference()
 					+ " " + EntityEnum.DWELL_TIME.getAlias();
 			break;
+		case Constants.PAYMENTFORM:
+			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias()
+					+ EntityEnum.FORM_OF_PAYMENT.getEntityReference() + " " + EntityEnum.FORM_OF_PAYMENT.getAlias();
+			break;
 		case Constants.CREDITCARD:
 			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias()
 					+ EntityEnum.CREDIT_CARD.getEntityReference() + " " + EntityEnum.CREDIT_CARD.getAlias();
@@ -523,7 +527,8 @@ public class JPQLGenerator {
 				if (entityEnum == EntityEnum.ADDRESS || entityEnum == EntityEnum.CREDIT_CARD
 						|| entityEnum == EntityEnum.EMAIL || entityEnum == EntityEnum.FREQUENT_FLYER
 						|| entityEnum == EntityEnum.PHONE || entityEnum == EntityEnum.PNR
-						|| entityEnum == EntityEnum.TRAVEL_AGENCY || entityEnum == EntityEnum.DWELL_TIME) {
+						|| entityEnum == EntityEnum.TRAVEL_AGENCY || entityEnum == EntityEnum.DWELL_TIME
+						|| entityEnum == EntityEnum.FORM_OF_PAYMENT) {
 					return true;
 				}
 			}

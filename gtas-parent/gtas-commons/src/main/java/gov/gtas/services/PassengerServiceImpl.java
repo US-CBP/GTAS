@@ -243,7 +243,7 @@ public class PassengerServiceImpl implements PassengerService {
 		Set<Document> docSet = documentRepository.getAllByPaxId(passengerIds);
 		Map<Long, Set<Document>> mappedValues = new HashMap<>();
 		for (Document document : docSet) {
-			Long paxId = document.getPaxId();
+			Long paxId = document.getPassengerId();
 			if (mappedValues.containsKey(paxId)) {
 				mappedValues.get(paxId).add(document);
 			} else {
