@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -91,19 +92,19 @@ public class TamrAdapterImpl implements TamrAdapter {
     @Override
     public List<TamrDerogListEntry> convertWatchlist(Collection<WatchlistItem> watchlistItems) {
         return watchlistItems.stream()
-                .map(watchlistItem ->
-                        convertWatchlistItemToTamrDerogListEntry(watchlistItem))
-                .filter(derogListEntry -> derogListEntry != null)
+                .map(this::convertWatchlistItemToTamrDerogListEntry)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
     }
     
     /**
      * Convert a GTAS watchlist item to a derog entry that can be sent to
-     * Tamr. This may return null for some watchlist items that should not
-     * be sent to Tamr.
+     * Tamr. This may return an empty optional for some watchlist items that
+     * should not be sent to Tamr.
      */
-    private TamrDerogListEntry convertWatchlistItemToTamrDerogListEntry(
-            WatchlistItem watchlistItem) {        
+    private Optional<TamrDerogListEntry> convertWatchlistItemToTamrDerogListEntry(
+            WatchlistItem watchlistItem) {
         TamrDerogListEntry derogListEntry = new TamrDerogListEntry();
 
         WatchlistItemSpec itemSpec;
@@ -113,7 +114,7 @@ public class TamrAdapterImpl implements TamrAdapter {
         } catch (IOException e) {
             logger.warn("Error parsing watchlist item data {}. Ignoring...",
                     watchlistItem.getItemData());
-            return null;
+            return Optional.empty();
         }
         
         for (WatchlistTerm term: itemSpec.getTerms()) {
@@ -154,7 +155,7 @@ public class TamrAdapterImpl implements TamrAdapter {
         if (derogListEntry.getLastName() == null) {
             // We only add to the derog list entries where the last name
             // at least is populated.
-            return null;
+            return Optional.empty();
         }
         
         // We set both gtasId and derogId to the watchlist item ID from
@@ -164,7 +165,6 @@ public class TamrAdapterImpl implements TamrAdapter {
         derogListEntry.setGtasId(itemIdStr);
         derogListEntry.setDerogId(itemIdStr);
         
-        return derogListEntry;
-        
+        return Optional.of(derogListEntry);
     }
 }
