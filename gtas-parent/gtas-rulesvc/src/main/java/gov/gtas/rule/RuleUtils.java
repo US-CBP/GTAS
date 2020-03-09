@@ -29,7 +29,6 @@ import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.Message;
 import org.kie.api.builder.Results;
-import org.kie.api.conf.EqualityBehaviorOption;
 import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.event.rule.DefaultAgendaEventListener;
 import org.kie.api.event.rule.DefaultRuleRuntimeEventListener;
@@ -215,7 +214,6 @@ public class RuleUtils {
 		// config.setOption(SequentialAgendaOption.DYNAMIC);
 		config.setOption(SequentialOption.YES);
 		config.setProperty("drools.sequential", "true");// Set Stream
-		config.setOption(EqualityBehaviorOption.EQUALITY);
 		config.setOption(EventProcessingOption.STREAM);
 		return kieContainer.newKieBase(config);
 	}
