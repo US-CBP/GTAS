@@ -5,15 +5,7 @@
  */
 package gov.gtas.rule.builder.pnr;
 
-import gov.gtas.bo.match.PnrAddressLink;
-import gov.gtas.bo.match.PnrBookingLink;
-import gov.gtas.bo.match.PnrCreditCardLink;
-import gov.gtas.bo.match.PnrEmailLink;
-import gov.gtas.bo.match.PnrFrequentFlyerLink;
-import gov.gtas.bo.match.PnrPassengerLink;
-import gov.gtas.bo.match.PnrPhoneLink;
-import gov.gtas.bo.match.PnrTravelAgencyLink;
-import gov.gtas.bo.match.PnrDwellTimeLink;
+import gov.gtas.bo.match.*;
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.enumtype.CriteriaOperatorEnum;
@@ -28,6 +20,7 @@ import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 
 import static gov.gtas.rule.builder.RuleTemplateConstants.*;
+import static gov.gtas.rule.builder.util.ConditionBuilderUtils.handleMultipleObjectTypeOnSameRule;
 
 public class PnrRuleConditionBuilder {
 	private List<AddressConditionBuilder> addressConditionBuilder = new ArrayList<>();
@@ -38,9 +31,9 @@ public class PnrRuleConditionBuilder {
 	private List<TravelAgencyConditionBuilder> travelAgencyConditionBuilder = new ArrayList<>();
 	private List<DwellTimeConditionBuilder> dwellTimeConditionBuilder = new ArrayList<>();
 	private List<BookingDetailConditionBuilder> bookingDetailConditionBuilder = new ArrayList<>();
+	private List<PaymentFormConditionBuilder> paymentFormConditionBuilders = new ArrayList<>();
 
 	private PnrConditionBuilder pnrConditionBuilder;
-	private PaymentFormConditionBuilder paymentFormConditionBuilder;
 	private SeatConditionBuilder pnrSeatConditionBuilder;
 
 	private Map<UUID, EntityConditionBuilder> conditionBuilderMap = new HashMap<>();
@@ -55,8 +48,6 @@ public class PnrRuleConditionBuilder {
 			orderedUUIDList.add(qt.getUuid());
 		}
 		int groupNumber = 0;
-		paymentFormConditionBuilder = new PaymentFormConditionBuilder(
-				RuleTemplateConstants.PAYMENT_FORM_VARIABLE_NAME + groupNumber);
 		pnrSeatConditionBuilder = new SeatConditionBuilder(RuleTemplateConstants.PNR_SEAT + groupNumber, false);
 		this.pnrConditionBuilder = new PnrConditionBuilder(DOLLAR_SIGN + EntityEnum.PNR.getAlias() + groupNumber);
 		EntityConditionBuilder ecb;
@@ -67,48 +58,63 @@ public class PnrRuleConditionBuilder {
 			case DWELL_TIME:
 				groupNumber = conditionBuilderMap.size() + 1;
 				ecb = getEntityConditionBuilder(entityEnum, groupNumber);
+				ecb.setGroupNumber(groupNumber);
 				conditionBuilderMap.put(uuid, ecb);
 				dwellTimeConditionBuilder.add((DwellTimeConditionBuilder) ecb);
+				break;
+			case FORM_OF_PAYMENT:
+				groupNumber = conditionBuilderMap.size() + 1;
+				ecb = getEntityConditionBuilder(entityEnum, groupNumber);
+				ecb.setGroupNumber(groupNumber);
+				conditionBuilderMap.put(uuid, ecb);
+				paymentFormConditionBuilders.add((PaymentFormConditionBuilder) ecb);
 				break;
 			case TRAVEL_AGENCY:
 				groupNumber = conditionBuilderMap.size() + 1;
 				ecb = getEntityConditionBuilder(entityEnum, groupNumber);
+				ecb.setGroupNumber(groupNumber);
 				conditionBuilderMap.put(uuid, ecb);
 				travelAgencyConditionBuilder.add((TravelAgencyConditionBuilder) ecb);
 				break;
 			case ADDRESS:
 				groupNumber = conditionBuilderMap.size() + 1;
 				ecb = getEntityConditionBuilder(entityEnum, groupNumber);
+				ecb.setGroupNumber(groupNumber);
 				conditionBuilderMap.put(uuid, ecb);
 				addressConditionBuilder.add((AddressConditionBuilder) ecb);
 				break;
 			case PHONE:
 				groupNumber = conditionBuilderMap.size() + 1;
 				ecb = getEntityConditionBuilder(entityEnum, groupNumber);
+				ecb.setGroupNumber(groupNumber);
 				conditionBuilderMap.put(uuid, ecb);
 				phoneConditionBuilder.add((PhoneConditionBuilder) ecb);
 				break;
 			case EMAIL:
 				groupNumber = conditionBuilderMap.size() + 1;
 				ecb = getEntityConditionBuilder(entityEnum, groupNumber);
+				ecb.setGroupNumber(groupNumber);
 				conditionBuilderMap.put(uuid, ecb);
 				emailConditionBuilder.add((EmailConditionBuilder) ecb);
 				break;
 			case BOOKING_DETAIL:
 				groupNumber = conditionBuilderMap.size() + 1;
 				ecb = getEntityConditionBuilder(entityEnum, groupNumber);
+				ecb.setGroupNumber(groupNumber);
 				conditionBuilderMap.put(uuid, ecb);
 				bookingDetailConditionBuilder.add((BookingDetailConditionBuilder) ecb);
 				break;
 			case FREQUENT_FLYER:
 				groupNumber = conditionBuilderMap.size() + 1;
 				ecb = getEntityConditionBuilder(entityEnum, groupNumber);
+				ecb.setGroupNumber(groupNumber);
 				conditionBuilderMap.put(uuid, ecb);
 				frequentFlyerConditionBuilder.add((FrequentFlyerConditionBuilder) ecb);
 				break;
 			case CREDIT_CARD:
 				groupNumber = conditionBuilderMap.size() + 1;
 				ecb = getEntityConditionBuilder(entityEnum, groupNumber);
+				ecb.setGroupNumber(groupNumber);
 				conditionBuilderMap.put(uuid, ecb);
 				creditCardConditionBuilder.add((CreditCardConditionBuilder) ecb);
 				break;
@@ -147,6 +153,9 @@ public class PnrRuleConditionBuilder {
 		case DWELL_TIME:
 			ecb = new DwellTimeConditionBuilder(drlVariableName);
 			break;
+		case FORM_OF_PAYMENT:
+			ecb = new PaymentFormConditionBuilder(drlVariableName);
+			break;
 		case PNR:
 		case FLIGHT_PAX:
 		case HITS:
@@ -170,72 +179,73 @@ public class PnrRuleConditionBuilder {
 		final StringBuilder linkStringBuilder = new StringBuilder();
 		final String pnrVarName = pnrConditionBuilder.getDrlVariableName();
 
-		if (!paymentFormConditionBuilder.isEmpty()) {
-			this.getPnrConditionBuilder()
-					.addConditionAsString("id == " + paymentFormConditionBuilder.getDrlVariableName() + ".pnr.id");
-		}
 
 		if (!addressConditionBuilder.isEmpty()) {
 			for (AddressConditionBuilder acb : addressConditionBuilder) {
 				addLinkCondition(linkStringBuilder, acb.getLinkVariableName(), PnrAddressLink.class.getSimpleName(),
-						pnrVarName, acb);
+						pnrVarName);
 			}
 		}
 		if (!phoneConditionBuilder.isEmpty()) {
 			for (PhoneConditionBuilder pcb : phoneConditionBuilder) {
 				addLinkCondition(linkStringBuilder, pcb.getLinkVariableName(), PnrPhoneLink.class.getSimpleName(),
-						pnrVarName, pcb);
+						pnrVarName);
 			}
 		}
 		if (!bookingDetailConditionBuilder.isEmpty()) {
 			for (BookingDetailConditionBuilder bdcb : bookingDetailConditionBuilder) {
 				addLinkCondition(linkStringBuilder, bdcb.getLinkVariableName(), PnrBookingLink.class.getSimpleName(),
-						pnrVarName, bdcb);
+						pnrVarName);
 			}
 		}
 		if (!emailConditionBuilder.isEmpty()) {
 			for (EmailConditionBuilder ecb : emailConditionBuilder) {
 				addLinkCondition(linkStringBuilder, ecb.getLinkVariableName(), PnrEmailLink.class.getSimpleName(),
-						pnrVarName, ecb);
+						pnrVarName);
 			}
 		}
 		if (!creditCardConditionBuilder.isEmpty()) {
 			for (CreditCardConditionBuilder creditCardBuilder : creditCardConditionBuilder) {
 				addLinkCondition(linkStringBuilder, creditCardBuilder.getLinkVariableName(),
-						PnrCreditCardLink.class.getSimpleName(), pnrVarName, creditCardBuilder);
+						PnrCreditCardLink.class.getSimpleName(), pnrVarName);
 			}
 		}
 
 		if (!frequentFlyerConditionBuilder.isEmpty()) {
 			for (FrequentFlyerConditionBuilder ffCb : frequentFlyerConditionBuilder) {
 				addLinkCondition(linkStringBuilder, ffCb.getLinkVariableName(),
-						PnrFrequentFlyerLink.class.getSimpleName(), pnrVarName, ffCb);
+						PnrFrequentFlyerLink.class.getSimpleName(), pnrVarName);
 			}
 		}
 		if (!travelAgencyConditionBuilder.isEmpty()) {
 			for (TravelAgencyConditionBuilder travelCb : travelAgencyConditionBuilder) {
 				addLinkCondition(linkStringBuilder, travelCb.getLinkVariableName(),
-						PnrTravelAgencyLink.class.getSimpleName(), pnrVarName, travelCb);
+						PnrTravelAgencyLink.class.getSimpleName(), pnrVarName);
 			}
 		}
 		if (!dwellTimeConditionBuilder.isEmpty()) {
 			for (DwellTimeConditionBuilder dtCb : dwellTimeConditionBuilder) {
 				addLinkCondition(linkStringBuilder, dtCb.getLinkVariableName(), PnrDwellTimeLink.class.getSimpleName(),
-						pnrVarName, dtCb);
+						pnrVarName);
 
+			}
+		}
+		if (!paymentFormConditionBuilders.isEmpty()) {
+			for (PaymentFormConditionBuilder pfcb : paymentFormConditionBuilders) {
+				addLinkCondition(linkStringBuilder, pfcb.getLinkVariableName(),
+						PnrFormOfPaymentLink.class.getSimpleName(), pnrVarName);
 			}
 		}
 		return linkStringBuilder.toString();
 	}
 
 	private void addLinkCondition(final StringBuilder parentStringBuilder, final String linkVarName,
-			final String linkClassName, final String pnrVarName, final EntityConditionBuilder entBuilder) {
+			final String linkClassName, final String pnrVarName) {
 		parentStringBuilder.append(linkVarName).append(RuleTemplateConstants.COLON_CHAR).append(linkClassName)
 				.append(RuleTemplateConstants.LEFT_PAREN_CHAR).append(LINK_PNR_ID).append(" == ").append(pnrVarName)
-				.append(".id, ").append(LINK_ATTRIBUTE_ID).append(" == ").append(entBuilder.getDrlVariableName())
 				.append(".id)\n");
-
 	}
+
 
 	/**
 	 * Appends the generated "when" part (i.e., the LHS) of the rule to the rule
@@ -244,13 +254,28 @@ public class PnrRuleConditionBuilder {
 	 * @param parentStringBuilder
 	 *            the rule document builder.
 	 */
-	public void buildConditionsAndApppend(final StringBuilder parentStringBuilder) {
+	public void buildConditionsAndApppend(final StringBuilder parentStringBuilder,
+			PassengerConditionBuilder passengerBuilder) {
+		// Make and ignore the link conditions. (We need to have the objects first)
+		String linkConditions = generatePnrLinks();
+		handleMultiVariableObjects();
+		// make pnr object.
+		if (pnrConditionBuilder.isEmpty() && StringUtils.isNotEmpty(linkConditions)) {
+			pnrConditionBuilder.addConditionAsString(StringUtils.EMPTY);
+		}
+
+		parentStringBuilder.append(pnrConditionBuilder.build());
+		addPnrLinkConditions(parentStringBuilder);
+
+		// Link passenger to PNR
+		if (!pnrConditionBuilder.isEmpty() || StringUtils.isNotEmpty(linkConditions)) {
+			parentStringBuilder.append("$plink:PnrPassengerLink(pnrId == $pnr0.id, linkAttributeId == $p.id)\n");
+		}
 
 		if (!pnrSeatConditionBuilder.isEmpty()) {
 			pnrSeatConditionBuilder.addApisCondition();
 			parentStringBuilder.append(pnrSeatConditionBuilder.build());
 		}
-		parentStringBuilder.append(paymentFormConditionBuilder.build());
 		for (AddressConditionBuilder acb : addressConditionBuilder) {
 			parentStringBuilder.append(acb.build());
 		}
@@ -272,31 +297,20 @@ public class PnrRuleConditionBuilder {
 		for (DwellTimeConditionBuilder dtCb : dwellTimeConditionBuilder) {
 			parentStringBuilder.append(dtCb.build());
 		}
+		for (PaymentFormConditionBuilder pfcb : paymentFormConditionBuilders) {
+			parentStringBuilder.append(pfcb.build());
+		}
 		for (BookingDetailConditionBuilder bdCb : bookingDetailConditionBuilder) {
 			parentStringBuilder.append(bdCb.build());
 		}
 	}
 
-	public void addPnrLinkConditions(StringBuilder parentStringBuilder, boolean passengerConditionExists,
-			PassengerConditionBuilder passengerBuilder) {
+	public void addPnrLinkConditions(StringBuilder parentStringBuilder) {
 		String linkConditions = generatePnrLinks();
 		if (pnrConditionBuilder.isEmpty() && StringUtils.isNotEmpty(linkConditions)) {
 			pnrConditionBuilder.addConditionAsString(StringUtils.EMPTY);
 		}
-		parentStringBuilder.append(pnrConditionBuilder.build());
 		parentStringBuilder.append(linkConditions);
-
-		// add a passenger link condition if PNR conditions exist
-		if (!passengerConditionExists && !pnrConditionBuilder.isEmpty()) {
-			passengerBuilder.addConditionAsString(StringUtils.EMPTY);
-			parentStringBuilder.append(passengerBuilder.build());
-		}
-		// assert at this point passenger condition exists!
-		if (!pnrConditionBuilder.isEmpty()) {
-			addLinkCondition(parentStringBuilder,
-					passengerBuilder.getDrlVariableName() + RuleTemplateConstants.LINK_VARIABLE_SUFFIX,
-					PnrPassengerLink.class.getSimpleName(), pnrConditionBuilder.getDrlVariableName(), passengerBuilder);
-		}
 	}
 
 	public void reset() {
@@ -308,8 +322,8 @@ public class PnrRuleConditionBuilder {
 		frequentFlyerConditionBuilder = new ArrayList<>();
 		dwellTimeConditionBuilder = new ArrayList<>();
 		bookingDetailConditionBuilder = new ArrayList<>();
+		paymentFormConditionBuilders = new ArrayList<>();
 		pnrConditionBuilder.reset();
-		paymentFormConditionBuilder.reset();
 		pnrSeatConditionBuilder.reset();
 	}
 
@@ -324,20 +338,14 @@ public class PnrRuleConditionBuilder {
 		try {
 			switch (entity) {
 			case PNR:
-				switch (trm.getField().toLowerCase()) {
-				case PAYMENT_FORM_FIELD_ALIAS_LOWERCASE:
-					paymentFormConditionBuilder.addCondition(opCode, RuleTemplateConstants.PAYMENT_TYPE_ATTRIBUTE_NAME,
+				if (SEAT_ENTITY_NAME_LOWERCASE.equals(trm.getField().toLowerCase())) {
+					pnrSeatConditionBuilder.addCondition(opCode, SEAT_ATTRIBUTE_NAME,
 							attributeType, trm.getValue());
-					break;
-				case RuleTemplateConstants.SEAT_ENTITY_NAME_LOWERCASE:
-					pnrSeatConditionBuilder.addCondition(opCode, RuleTemplateConstants.SEAT_ATTRIBUTE_NAME,
-							attributeType, trm.getValue());
-					break;
-				default:
+				} else {
 					pnrConditionBuilder.addCondition(opCode, trm.getField(), attributeType, trm.getValue());
-					break;
 				}
 				break;
+			case FORM_OF_PAYMENT:
 			case ADDRESS:
 			case BOOKING_DETAIL:
 			case PHONE:
@@ -379,12 +387,29 @@ public class PnrRuleConditionBuilder {
 
 	}
 
-	private PnrConditionBuilder getPnrConditionBuilder() {
+	private void handleMultiVariableObjects() {
+		handleMultipleObjectTypeOnSameRule(addressConditionBuilder);
+		handleMultipleObjectTypeOnSameRule(phoneConditionBuilder);
+		handleMultipleObjectTypeOnSameRule(emailConditionBuilder);
+		handleMultipleObjectTypeOnSameRule(creditCardConditionBuilder);
+		handleMultipleObjectTypeOnSameRule(frequentFlyerConditionBuilder);
+		handleMultipleObjectTypeOnSameRule(travelAgencyConditionBuilder);
+		handleMultipleObjectTypeOnSameRule(dwellTimeConditionBuilder);
+		handleMultipleObjectTypeOnSameRule(bookingDetailConditionBuilder);
+		handleMultipleObjectTypeOnSameRule(paymentFormConditionBuilders);
+
+	}
+
+	public PnrConditionBuilder getPnrConditionBuilder() {
 		return pnrConditionBuilder;
 	}
 
 	public boolean hasSeats() {
 		return !pnrSeatConditionBuilder.isEmpty();
+	}
+
+	public SeatConditionBuilder getPnrSeatBuilder() {
+		return pnrSeatConditionBuilder;
 	}
 
 	public String getSeatVarName() {

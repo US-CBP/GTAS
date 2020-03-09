@@ -11,7 +11,7 @@ import java.util.Set;
 public interface PassengerTripRepository extends CrudRepository<PassengerTripDetails, Long> {
 
 	@Transactional
-	@Query("Select ptd from PassengerTripDetails ptd where ptd.paxId in :paxIds ")
+	@Query("Select ptd from PassengerTripDetails ptd where ptd.passengerId in :paxIds ")
 	Set<PassengerTripDetails> getTripDetailsByPaxId(@Param("paxIds") Set<Long> paxIds);
 
 	@Query(value = "( select (case when :ref_number is not null then (select count(distinct pax_trip.ptd_id) "

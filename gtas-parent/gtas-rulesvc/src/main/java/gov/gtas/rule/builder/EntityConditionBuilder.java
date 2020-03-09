@@ -48,7 +48,17 @@ public abstract class EntityConditionBuilder {
 	 * If this flag is true then an empty DRL condition is generated even if the
 	 * condition list is empty. For example: $p:Passenger()
 	 */
-	private boolean generateEmptyClause;
+	protected boolean generateEmptyClause;
+
+	public int getGroupNumber() {
+		return groupNumber;
+	}
+
+	public void setGroupNumber(int groupNumber) {
+		this.groupNumber = groupNumber;
+	}
+
+	private int groupNumber = 0;
 
 	/**
 	 * The protected constructor to be invoked by derived classes.
@@ -61,6 +71,15 @@ public abstract class EntityConditionBuilder {
 	protected EntityConditionBuilder(final String varName, final String entityClassName) {
 		this.entityClassName = entityClassName;
 		this.drlVariableName = varName;
+		this.andConnectorIsComma = true;
+		this.conditionList = new LinkedList<String>();
+		attributesWithNotEmptyCondition = new HashSet<String>();
+	}
+
+	protected EntityConditionBuilder(final String varName, final String entityClassName, int groupNumber) {
+		this.entityClassName = entityClassName;
+		this.drlVariableName = varName;
+		this.groupNumber = groupNumber;
 		this.andConnectorIsComma = true;
 		this.conditionList = new LinkedList<String>();
 		attributesWithNotEmptyCondition = new HashSet<String>();
@@ -105,6 +124,7 @@ public abstract class EntityConditionBuilder {
 
 	public void addCondition(final CriteriaOperatorEnum opCode, final String attributeName,
 			final TypeEnum attributeType, String[] values) throws ParseException {
+
 		final StringBuilder bldr = new StringBuilder();
 		switch (opCode) {
 		case EQUAL:
@@ -251,5 +271,6 @@ public abstract class EntityConditionBuilder {
 	public void setGenerateEmptyClause(boolean generateEmptyClause) {
 		this.generateEmptyClause = generateEmptyClause;
 	}
+
 
 }

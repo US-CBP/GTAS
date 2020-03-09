@@ -45,8 +45,8 @@ public interface PnrRepository extends MessageRepository<Pnr> {
 	Set<Flight> getFlightsByPnrIds(@Param("pnrIds") Set<Long> pnrIds);
 
 	@Transactional
-	@Query("SELECT paymentForm from Pnr pnr join pnr.paymentForms paymentForm where pnr.id in :pnrIds ")
-	Set<PaymentForm> getPaymentFormsByPnrIds(@Param("pnrIds") Set<Long> pnrIds);
+	@Query("SELECT pnr.id, paymentForm from Pnr pnr join pnr.paymentForms paymentForm where pnr.id in :pnrIds ")
+	List<Object[]> getPaymentFormsByPnrIds(@Param("pnrIds") Set<Long> pnrIds);
 
 	@Transactional
 	@Query("SELECT passenger from Pnr pnr join pnr.passengers passenger left join fetch passenger.flight where pnr.id in :pnrIds ")

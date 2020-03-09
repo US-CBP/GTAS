@@ -1093,6 +1093,40 @@
 
   	]
   },
+  "PaymentForm": {
+  "label": "FORM OF PAYMENT",
+  "columns": [
+    {
+      "id": "PaymentForm.wholeDollarAmount",
+      "label": "Monetary Amount(No Decimal)",
+      "type": "integer",
+      "operators": [
+        "EQUAL",
+        "NOT_EQUAL",
+        "LESS",
+        "LESS_OR_EQUAL",
+        "GREATER",
+        "GREATER_OR_EQUAL",
+        "BETWEEN",
+        "NOT_BETWEEN"
+      ]
+    },
+    {
+      "id": "PaymentForm.paymentType",
+      "label": "Form of Payment",
+      "type": "string",
+      "operators": [
+        "EQUAL",
+        "NOT_EQUAL",
+        "IN",
+        "NOT_IN"
+      ],
+      "input": "text",
+      "plugin": "selectize",
+      "dataSource": "form_of_payment_types"
+    }
+  ]
+},
   "Pnr": {
     "label": "PNR",
     "columns": [
@@ -1109,7 +1143,7 @@
           "GREATER_OR_EQUAL",
           "BETWEEN",
           "NOT_BETWEEN"
-        ]                       
+        ]
       },
       {
         "id": "Pnr.baggageWeight",
@@ -1205,18 +1239,6 @@
           "NOT_BETWEEN"
         ],
         "plugin": "datepicker"
-      },
-      {
-        "id": "Pnr.paymentForms",
-        "label": "Form of Payment",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL"
-        ],
-        "input": "text",
-        "plugin": "selectize",
-        "dataSource": "form_of_payment_types"
       },
       {
         "id": "Pnr.id",

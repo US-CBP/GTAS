@@ -52,7 +52,7 @@ public class RuleEngineRequestBuilderTest {
 		f.setId(1L);
 		Passenger p = new Passenger();
 		p.setFlight(f);
-		Bag b = ruleEngineRequestBuilder.makeEmptyBag(p, false);
+		Bag b = ruleEngineRequestBuilder.makeEmptyBag(p, "PNR", false);
 		Assert.assertNotNull(b);
 		Assert.assertNotNull(b.getFlight());
 		Assert.assertEquals(1L, b.getFlight().getId().longValue());

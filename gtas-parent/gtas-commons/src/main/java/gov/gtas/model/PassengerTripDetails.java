@@ -14,11 +14,23 @@ import java.util.Objects;
 @Table(name = "passenger_trip_details")
 public class PassengerTripDetails extends BaseEntityAudit {
 
+	private static final long serialVersionUID = 1980994941299623326L;
 	public PassengerTripDetails() {
 	}
 
 	@Column(name = "ptd_id", columnDefinition = "bigint unsigned", updatable = false, insertable = false)
 	private Long paxId;
+
+	public Long getPassengerId() {
+		return passengerId;
+	}
+
+	public void setPassengerId(Long passengerId) {
+		this.passengerId = passengerId;
+	}
+
+	@Column(name = "ptd_id", columnDefinition = "bigint unsigned", updatable = false, insertable = false)
+	private Long passengerId;
 
 	public PassengerTripDetails(Passenger p) {
 		this.passenger = p;
@@ -33,15 +45,17 @@ public class PassengerTripDetails extends BaseEntityAudit {
 	}
 
 	@OneToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ptd_id", referencedColumnName = "id")
+	@JoinColumn(name = "ptd_id")
 	Passenger passenger;
 
 	/** calculated field */
 	@Column(name = "days_visa_valid")
 	private Integer numberOfDaysVisaValid;
 
+	@Column(name = "embarkation")
 	private String embarkation;
 
+	@Column(name = "debarkation")
 	private String debarkation;
 
 	@Column(name = "embark_country")
@@ -177,12 +191,55 @@ public class PassengerTripDetails extends BaseEntityAudit {
 		if (!(o instanceof PassengerTripDetails))
 			return false;
 		PassengerTripDetails that = (PassengerTripDetails) o;
-		return getPaxId().equals(that.getPaxId());
+
+		if (passengerId == null) {
+			if (that.passengerId != null)
+				return false;
+		} else if (!passengerId.equals(that.getPassengerId())) {
+			return false;
+		}
+		if (!paxId.equals(that.paxId))
+			return false;
+
+		if (numberOfDaysVisaValid != null ? !numberOfDaysVisaValid.equals(that.numberOfDaysVisaValid)
+				: that.numberOfDaysVisaValid != null)
+			return false;
+		if (embarkation != null ? !embarkation.equals(that.embarkation) : that.embarkation != null)
+			return false;
+		if (debarkation != null ? !debarkation.equals(that.debarkation) : that.debarkation != null)
+			return false;
+		if (embarkCountry != null ? !embarkCountry.equals(that.embarkCountry) : that.embarkCountry != null)
+			return false;
+		if (debarkCountry != null ? !debarkCountry.equals(that.debarkCountry) : that.debarkCountry != null)
+			return false;
+		if (reservationReferenceNumber != null ? !reservationReferenceNumber.equals(that.reservationReferenceNumber)
+				: that.reservationReferenceNumber != null)
+			return false;
+		if (pnrReservationReferenceNumber != null
+				? !pnrReservationReferenceNumber.equals(that.pnrReservationReferenceNumber)
+				: that.pnrReservationReferenceNumber != null)
+			return false;
+		if (travelFrequency != null ? !travelFrequency.equals(that.travelFrequency) : that.travelFrequency != null)
+			return false;
+		return coTravelerCount != null ? coTravelerCount.equals(that.coTravelerCount) : that.coTravelerCount == null;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getPaxId());
+		int result = 10;
+		result = 31 * result + paxId.hashCode();
+		result = 31 * result + passengerId.hashCode();
+		result = 31 * result + (numberOfDaysVisaValid != null ? numberOfDaysVisaValid.hashCode() : 0);
+		result = 31 * result + (embarkation != null ? embarkation.hashCode() : 0);
+		result = 31 * result + (debarkation != null ? debarkation.hashCode() : 0);
+		result = 31 * result + (embarkCountry != null ? embarkCountry.hashCode() : 0);
+		result = 31 * result + (debarkCountry != null ? debarkCountry.hashCode() : 0);
+		result = 31 * result + (reservationReferenceNumber != null ? reservationReferenceNumber.hashCode() : 0);
+		result = 31 * result + (pnrReservationReferenceNumber != null ? pnrReservationReferenceNumber.hashCode() : 0);
+		result = 31 * result + (travelFrequency != null ? travelFrequency.hashCode() : 0);
+		result = 31 * result + (coTravelerCount != null ? coTravelerCount.hashCode() : 0);
+		result = 31 * result + (hoursBeforeTakeOff != null ? hoursBeforeTakeOff.hashCode() : 0);
+		return result;
 	}
 
 	public Integer getCoTravelerCount() {

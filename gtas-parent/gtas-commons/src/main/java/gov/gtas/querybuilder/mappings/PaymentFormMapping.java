@@ -7,35 +7,25 @@ package gov.gtas.querybuilder.mappings;
 
 import gov.gtas.enumtype.TypeEnum;
 
-public enum DocumentMapping implements IEntityMapping {
+public enum PaymentFormMapping implements IEntityMapping {
 
-	ISSUANCE_COUNTRY("issuanceCountry", "Issuance Country", TypeEnum.STRING.getType()),
+	PAYMENT_AMOUNT("wholeDollarAmount", "Whole Monetary Amount", TypeEnum.INTEGER.getType()),
 
-	EXPIRATION_DATE("expirationDate", "Expiration Date", TypeEnum.DATE.getType()),
-
-	ISSUANCE_DATE("issuanceDate", "Issuance Date", TypeEnum.DATE.getType()),
-
-	DOCUMENT_NUMBER("documentNumber", "Number", TypeEnum.STRING.getType()),
-
-	DOCUMENT_TYPE("documentType", "Type", TypeEnum.STRING.getType()),
-
-	DOCUMENT_WATCHLIST_CATEGORY("categoryId", "Category", TypeEnum.INTEGER.getType()),
-
-	DOCUMENT_OWNER_ID("passengerId", "Owner Id", TypeEnum.INTEGER.getType(), false);
+	FORM_OF_PAYMENT("paymentType", "Payment Type", TypeEnum.STRING.getType());
 
 	private String fieldName;
 	private String friendlyName;
 	private String fieldType;
 	private boolean displayField;
 
-	private DocumentMapping(String fieldName, String friendlyName, String fieldType, boolean displayField) {
+	PaymentFormMapping(String fieldName, String friendlyName, String fieldType, boolean displayField) {
 		this.fieldName = fieldName;
 		this.friendlyName = friendlyName;
 		this.fieldType = fieldType;
 		this.displayField = displayField;
 	}
 
-	private DocumentMapping(String fieldName, String friendlyName, String fieldType) {
+	PaymentFormMapping(String fieldName, String friendlyName, String fieldType) {
 		this(fieldName, friendlyName, fieldType, true);
 	}
 

@@ -17,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -483,7 +484,7 @@ public class GtasLoaderImpl implements GtasLoader {
 				s.setPassenger(p);
 				s.setFlight(f);
 				s.setNumber(seat.getNumber());
-				s.setPaxId(p.getId());
+				s.setPassengerId(p.getId());
 				s.setApis(seat.getApis());
 				Boolean alreadyExistsSeat = Boolean.FALSE;
 				for (Seat s2 : p.getSeatAssignments()) {
@@ -506,6 +507,16 @@ public class GtasLoaderImpl implements GtasLoader {
 			PaymentForm pf = new PaymentForm();
 			pf.setPaymentType(pvo.getPaymentType());
 			pf.setPaymentAmount(pvo.getPaymentAmount());
+			if (pvo.getPaymentAmount() != null) {
+				try {
+					String paymentAmount = pvo.getPaymentAmount();
+					paymentAmount = paymentAmount.replaceAll("[\\D.]", ".");
+					double dollarAmount = Double.parseDouble(paymentAmount);
+					pf.setWholeDollarAmount((int) dollarAmount);
+				} catch (NumberFormatException nfe) {
+					logger.warn("Payment amount is likely corrupt! Unable to create double or set int!");
+				}
+			}
 			pf.setPnr(pnr);
 			chkList.add(pf);
 		}

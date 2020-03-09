@@ -174,6 +174,9 @@ public class QueryValidationUtils {
 				case Constants.FLIGHTPAX:
 					validField = validateField(FlightPaxMapping.values(), field);
 					break;
+				case Constants.PAYMENTFORM:
+					validField = validateField(PaymentFormMapping.values(), field);
+					break;
 				}
 				if (!validField) {
 					errors.reject("", "entity: \'" + entity + "\' has an invalid field value, field: \'" + field

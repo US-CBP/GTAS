@@ -84,8 +84,7 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 	@Query("Select p from Passenger p left join fetch p.hitDetails left join fetch p.flight where p.id in :passengerIds")
 	Set<Passenger> getPassengersWithHitDetails(@Param("passengerIds") Set<Long> passengerIds);
 
-	@EntityGraph(value = "passengerGraph", type = EntityGraph.EntityGraphType.FETCH)
-	@Query("Select p from Passenger p left join p.flight where p.id in :passengerIds")
+	@Query("Select p from Passenger p left join fetch p.flight where p.id in :passengerIds")
 	Set<Passenger> getPassengersWithFlightDetails(@Param("passengerIds") Set<Long> passengerIds);
 
 	@Query("select p from Passenger p inner join fetch p.flight inner join fetch p.documents inner join fetch p.hitDetails hd inner join fetch"
