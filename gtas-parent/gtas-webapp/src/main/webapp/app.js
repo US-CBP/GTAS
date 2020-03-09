@@ -750,13 +750,17 @@ var app;
             $scope.getAgencyName = function() {
             	return $scope.agencyName;
             };
-            
+
+            configService.neo4jProtocol().then(function(value) {
+                $scope.neo4jProtocol = value.data;
+            });
+
             configService.neo4j().then(function(value) {
                $scope.neo4jUrl = value.data;
             });
 
             $scope.getNeo4JUrl = function() {
-                return 'https://' + location.hostname + ":443" + $scope.neo4jUrl;
+                return $scope.neo4jProtocol + '://' + location.hostname + ":443" + $scope.neo4jUrl;
             };
 
             let oneDayLookoutUser = false;

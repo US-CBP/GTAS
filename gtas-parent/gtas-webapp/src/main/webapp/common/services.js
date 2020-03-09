@@ -1636,6 +1636,24 @@
               return dfd.promise;
           }
 
+          function neo4jProtocol() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: CONFIG_URL + "/neo4jProtocol/"
+              }));
+              return dfd.promise;
+          }
+
+          function kibanaProtocol() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: CONFIG_URL + "/kibanaProtocol/"
+              }));
+              return dfd.promise;
+          }
+
           function neo4j() {
               var dfd = $q.defer();
               dfd.resolve($http({
@@ -1699,6 +1717,8 @@
           return ({
               defaultHomePage: defaultHomePage,
               neo4j: neo4j,
+              kibanaProtocol: kibanaProtocol,
+              neo4jProtocol: neo4jProtocol,
               kibanaUrl: kibanaUrl,
               cypherUrl: cypherUrl,
               cypherAuth: cypherAuth,
