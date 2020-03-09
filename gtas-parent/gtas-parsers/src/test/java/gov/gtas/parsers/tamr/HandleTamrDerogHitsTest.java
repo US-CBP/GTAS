@@ -2,7 +2,6 @@ package gov.gtas.parsers.tamr;
 
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 import static org.mockito.AdditionalMatchers.*;
 
 import java.util.Collections;
@@ -13,13 +12,11 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.test.util.ReflectionTestUtils;
 
-
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.PendingHitDetails;
 import gov.gtas.model.watchlist.WatchlistItem;
-import gov.gtas.parsers.ParserTestHelper;
 import gov.gtas.parsers.tamr.model.TamrDerogHit;
 import gov.gtas.parsers.tamr.model.TamrMessage;
 import gov.gtas.parsers.tamr.model.TamrTravelerResponse;
@@ -27,17 +24,24 @@ import gov.gtas.repository.PassengerRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 
-public class HandleTamrDerogHitsTest implements ParserTestHelper {
+public class HandleTamrDerogHitsTest {
     private TamrMessageHandlerService handler;
     private WatchlistItem watchlistItem;
     private WatchlistItemRepository watchlistItemRepository;
     private PendingHitDetailRepository pendingHitDetailRepository;
     private Passenger passenger;
     private PassengerRepository passengerRepository;
+    
+    private String derogHitTitle = "Derog Title";
+    private String derogHitDescription = "Derog description.";
 
     @Before
     public void setUp() {
         this.handler = new TamrMessageHandlerServiceImpl();
+        ReflectionTestUtils.setField(handler, "derogHitTitle",
+                derogHitTitle);
+        ReflectionTestUtils.setField(handler, "derogHitDescription",
+                derogHitDescription);
 
         this.watchlistItem = new WatchlistItem();
         watchlistItem.setId(94L);
@@ -87,10 +91,8 @@ public class HandleTamrDerogHitsTest implements ParserTestHelper {
         verify(pendingHitDetailRepository).save(pendingHitCaptor.capture());
         PendingHitDetails pendingHit = pendingHitCaptor.getValue();
         
-        // We should mention Tamr somewhere in the title and description for
-        // the derog hit so it's clear where it came from.
-        assertTrue(pendingHit.getTitle().contains("Tamr"));
-        assertTrue(pendingHit.getDescription().contains("Tamr"));
+        assertTrue(pendingHit.getTitle().equals(derogHitTitle));
+        assertTrue(pendingHit.getDescription().equals(derogHitDescription));
 
         assertEquals(pendingHit.getHitEnum().toString(),
                 pendingHit.getHitType());
