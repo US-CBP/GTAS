@@ -1117,7 +1117,9 @@
       "type": "string",
       "operators": [
         "EQUAL",
-        "NOT_EQUAL"
+        "NOT_EQUAL",
+        "IN",
+        "NOT_IN"
       ],
       "input": "text",
       "plugin": "selectize",
