@@ -564,18 +564,16 @@ public class PassengerDetailsController {
 					flVo.setFlightNumber(fl.getFlight().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getFlight().getOrigin());
 					flVo.setDestinationAirport(fl.getFlight().getDestination());
-					flVo.setEtd(
-							DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEtd()));
-					flVo.setEta(
-							DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEta()));
+					flVo.setEtd(fl.getFlight().getMutableFlightDetails().getEtd());
+					flVo.setEta(fl.getFlight().getMutableFlightDetails().getEta());
 					flVo.setFlightId(Long.toString(fl.getFlight().getId()));
 					flVo.setDirection(fl.getFlight().getDirection());
 				} else {
 					flVo.setFlightNumber(fl.getBookingDetail().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getBookingDetail().getOrigin());
 					flVo.setDestinationAirport(fl.getBookingDetail().getDestination());
-					flVo.setEtd(DateCalendarUtils.formatJsonDateTime(fl.getBookingDetail().getEtd()));
-					flVo.setEta(DateCalendarUtils.formatJsonDateTime(fl.getBookingDetail().getEta()));
+					flVo.setEtd(fl.getBookingDetail().getEtd());
+					flVo.setEta(fl.getBookingDetail().getEta());
 					flVo.setBookingDetailId(Long.toString(fl.getBookingDetail().getId()));
 				}
 				target.getFlightLegs().add(flVo);

@@ -424,7 +424,8 @@
                                                 <tr ng-repeat="leg in passenger.pnrVo.flightLegs" ng-click="highlightClass('TVL'+leg.originAirport)">
                                                     <td style="align-items: center;">{{leg.legNumber }}</td>
                                                     <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;">
-                                                        <a class="primary-link" title="{{'msg.showflightdetails' | translate}}" ng-class="{'disabled': disableLinks}" href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
+                                                        <a class="primary-link" title="{{'msg.showflightdetails' | translate}}" ng-class="{'disabled': disableLinks}"
+                                                           href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta | date:'MM/dd/yyyy HH:mm'}}/{{leg.etd | date:'MM/dd/yyyy HH:mm'}}">{{leg.flightNumber | nospace }}</a></td>
                                                     <td ng-if="leg.bookingDetailId" style="align-items: left; width: 10%;">{{leg.flightNumber | nospace }}</td>
                                                     <td>
                                       <span ng-mouseleave="resetTooltip()">{{leg.originAirport }}
@@ -435,8 +436,8 @@
                                       </span>
                                                     </td>
                                                     <!--<td>{{leg.destinationAirport }}</td>-->
-                                                    <td>{{leg.etd }}</td>
-                                                    <td>{{leg.eta }}</td>
+                                                    <td>{{leg.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                                                    <td>{{leg.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
