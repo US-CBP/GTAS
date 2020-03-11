@@ -73,22 +73,13 @@ public class PassengerDetailsController {
 	private PnrService pnrService;
 
 	@Autowired
-	private UserService uService;
-
-	@Autowired
 	private MatchingService matchingService;
 
 	@Resource
 	private BagRepository bagRepository;
 
 	@Resource
-	private SeatRepository seatRepository;
-
-	@Resource
 	private ApisMessageRepository apisMessageRepository;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private HitDetailService hitDetailService;
@@ -225,10 +216,14 @@ public class PassengerDetailsController {
 				apisVo.setBagWeight(apisMessageFlightPax.getBagWeight());
 			}
 
-			List<FlightPassengerVo> fpList = apisControllerService.generateFlightPaxVoByApisRef(refList.get(0),
-					Long.parseLong(flightId));
-			for (FlightPassengerVo flightPassengerVo : fpList) {
-				apisVo.addFlightpax(flightPassengerVo);
+			if (!refList.isEmpty()) {
+				List<FlightPassengerVo> fpList = apisControllerService.generateFlightPaxVoByApisRef(refList.get(0),
+						Long.parseLong(flightId));
+				for (FlightPassengerVo flightPassengerVo : fpList) {
+					apisVo.addFlightpax(flightPassengerVo);
+				}
+			} else {
+				logger.warn("There is no APIS Ref number here!");
 			}
 
 			for (Bag b : bagList) {
@@ -661,7 +656,7 @@ public class PassengerDetailsController {
 				// Doc Numbers
 				if (currString.contains(DOC)) {
 					for (DocumentVo d : targetVo.getDocuments()) {
-						if (currString.contains(d.getDocumentNumber())) {
+						if (d.getDocumentNumber() != null && currString.contains(d.getDocumentNumber())) {
 							segment.append(DOC);
 							segment.append(d.getDocumentNumber());
 							segment.append(" ");
