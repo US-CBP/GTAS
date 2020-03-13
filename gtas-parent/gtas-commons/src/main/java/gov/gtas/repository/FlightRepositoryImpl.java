@@ -227,36 +227,6 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 	}
 
 	@Override
-	@Transactional
-	@PreAuthorize(PRIVILEGE_ADMIN)
-	public void deleteAllMessages() throws Exception {
-		String[] sqlScript = { "delete from hits_disposition_comments_attachment",
-				"delete from hits_disposition_comments", "delete from hits_disposition", "delete from cases",
-				"delete from ticket_fare", "delete from bag", "delete from disposition", "delete from payment_form",
-				"delete from apis_message_flight_pax", "delete from flight_pax", "delete from hit_detail",
-				"delete from hits_summary", "delete from document", "delete from apis_message_passenger",
-				"delete from flight_passenger", "delete from apis_message_flight", "delete from flight_leg",
-				"delete from seat", "delete from apis_message_reporting_party", "delete from reporting_party",
-				"delete from apis_message", "delete from pnr_passenger", "delete from pnr_flight",
-				"delete from pnr_codeshares", "delete from code_share_flight", "delete from flight_hit_rule",
-				"delete from flight_hit_watchlist", "delete from flight", "delete from pnr_agency",
-				"delete from agency", "delete from pnr_credit_card", "delete from credit_card",
-				"delete from pnr_frequent_flyer", "delete from frequent_flyer", "delete from pnr_phone",
-				"delete from phone", "delete from pnr_email", "delete from email", "delete from pnr_address",
-				"delete from pnr_dwelltime", "delete from pnr_booking", "delete from pax_booking",
-				"delete from BookingDetail", "delete from address", "delete from dwell_time", "delete from  pnr",
-				"delete from  message", "delete from attachment", "delete from passenger_id_tag",
-				"delete from  passenger", "delete from loader_audit_logs", "delete from error_detail",
-				"delete from audit_log", "delete from dashboard_message_stats", };
-
-		Session session = em.unwrap(Session.class);
-		for (String sql : sqlScript) {
-			SQLQuery q = session.createSQLQuery(sql);
-			q.executeUpdate();
-		}
-	}
-
-	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef) {

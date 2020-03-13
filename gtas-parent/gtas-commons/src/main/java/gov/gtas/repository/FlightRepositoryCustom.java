@@ -27,14 +27,6 @@ public interface FlightRepositoryCustom {
 	 */
 	public Pair<Long, List<Flight>> findByCriteria(FlightsRequestDto dto);
 
-	/**
-	 * Delete all messages.
-	 *
-	 * @throws Exception
-	 *             the exception
-	 */
-	public void deleteAllMessages() throws Exception;
-
 	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);
 
 	public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef);
