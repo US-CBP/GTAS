@@ -259,27 +259,31 @@ public class RuleEngineRequestBuilder {
 					Set<Long> paxIdSetFromPassengerSet = passengerSet.stream().map(Passenger::getId)
 							.collect(Collectors.toSet());
 
-					// Populate a bag with 0 on bag measurement on any booking details with no bag
-					// info.
 					if (bookingDetailSet != null) {
 						for (BookingDetail bd : bookingDetailSet) {
 							Set<Bag> bagBdSet = bd.getBags();
-							Set<Long> paxIdsWithBags = bagBdSet.stream().map(Bag::getPassengerId)
-									.collect(Collectors.toSet());
-							Set<Long> paxWithNoBags = new HashSet<>(paxIdSetFromPassengerSet);
-							paxWithNoBags.removeAll(paxIdsWithBags);
-							for (Long paxId : paxWithNoBags) {
-								bags.add(makeEmptyBag(passengerMap.get(paxId), "PNR", false));
-							}
-
 							// For all bags that *are* with a bd already make a new bag representing a non
 							// prime flight bag.
 							// Bags that are prime flights are not distinguished from bd bags.
 							// TODO: Update data model to allow for multiple bags to be created on a
 							// per-flight baises.
-							Set<Bag> bdBagSet = bagBdSet.stream().filter(Bag::isPrimeFlight)
+							Set<Bag> primeFlightBdBagsForBDFlights = bagBdSet.stream().filter(Bag::isPrimeFlight)
 									.map(this::createBookingDetailBag).collect(Collectors.toSet());
-							bags.addAll(bdBagSet);
+							bags.addAll(primeFlightBdBagsForBDFlights);
+
+							// Populate a bag with 0 on bag measurement on any booking details with no bag
+							// info. Only perform this check on booking details that are BEFORE the prime
+							// flight.
+							if (bd.getEtd() != null
+									&& bd.getEtd().before(bd.getFlight().getMutableFlightDetails().getEtd())) {
+								Set<Long> paxIdsWithBags = bagBdSet.stream().map(Bag::getPassengerId)
+										.collect(Collectors.toSet());
+								Set<Long> paxWithNoBags = new HashSet<>(paxIdSetFromPassengerSet);
+								paxWithNoBags.removeAll(paxIdsWithBags);
+								for (Long paxId : paxWithNoBags) {
+									bags.add(makeEmptyBag(passengerMap.get(paxId), "PNR", false));
+								}
+							}
 						}
 					}
 					// Populate a bag with 0 on bag measurement on any prime flight details with no
