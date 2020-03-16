@@ -37,7 +37,7 @@ import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.tamr.model.TamrQuery;
 
 public class TamrAdapterImplTest {
-    private TamrAdapterImpl tamrAdapter = new TamrAdapterImpl();
+    private TamrAdapterImpl tamrAdapter = new TamrAdapterImpl(null);
 
 	@Test
 	public void testPassengerConversion() throws JsonProcessingException {

@@ -50,6 +50,8 @@ public class PnrMessageService extends MessageLoaderService {
 	private final FlightPaxRepository flightPaxRepository;
 
 	private final BookingBagRepository bookingBagRepository;
+    
+    private final TamrAdapter tamrAdapter;
 
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
@@ -57,13 +59,14 @@ public class PnrMessageService extends MessageLoaderService {
 	@Autowired
 	public PnrMessageService(PnrRepository msgDao, LoaderUtils utils, LookUpRepository lookupRepo,
 			FlightPaxRepository flightPaxRepository, BagRepository bagRepository,
-			BookingBagRepository bookingBagRepository) {
+			BookingBagRepository bookingBagRepository, TamrAdapter tamrAdapter) {
 		this.msgDao = msgDao;
 		this.utils = utils;
 		this.lookupRepo = lookupRepo;
 		this.flightPaxRepository = flightPaxRepository;
 		this.bagDao = bagRepository;
 		this.bookingBagRepository = bookingBagRepository;
+		this.tamrAdapter = tamrAdapter;
 	}
 
 	@Override
@@ -152,7 +155,6 @@ public class PnrMessageService extends MessageLoaderService {
 			TripTypeEnum tripType = calculateTripType(pnr.getFlightLegs(), pnr.getDwellTimes());
 			pnr.setTripType(tripType.toString());
 			if (tamrEnabled) {
-				TamrAdapter tamrAdapter = new TamrAdapterImpl();
 				List<TamrPassenger> tamrPassengers = tamrAdapter
 						.convertPassengers(pnr.getFlights().iterator().next(), pnr.getPassengers());
 				messageInformation.setTamrPassengers(tamrPassengers);

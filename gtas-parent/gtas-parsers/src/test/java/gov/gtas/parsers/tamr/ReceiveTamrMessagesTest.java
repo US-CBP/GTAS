@@ -34,9 +34,8 @@ public class ReceiveTamrMessagesTest implements ParserTestHelper {
 
     @Before
     public void setUp() {
-        this.receiver = new TamrMessageReceiver();
         this.handler = mock(TamrMessageHandlerService.class);
-        ReflectionTestUtils.setField(receiver, "tamrMessageHandler", handler);
+        this.receiver = new TamrMessageReceiver(handler);
     }
     
     @Test

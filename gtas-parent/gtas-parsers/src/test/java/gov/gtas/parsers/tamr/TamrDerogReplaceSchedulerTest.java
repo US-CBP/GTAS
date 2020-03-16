@@ -37,28 +37,26 @@ public class TamrDerogReplaceSchedulerTest {
 
     @Before
     public void setUp() {
-        scheduler = new TamrDerogReplaceScheduler();
-        
         watchlist = new Watchlist();
         watchlist.setId(1L);
         watchlist.setEditTimestamp(new Date());
         watchlistRepository = mock(WatchlistRepository.class);
-        ReflectionTestUtils.setField(scheduler, "watchlistRepository",
-                watchlistRepository);
         given(watchlistRepository.findAll())
                 .willReturn(Collections.singletonList(watchlist));
         
         List<WatchlistItem> watchlistItems =
                 TamrAdapterImplTest.getWatchlistItems();
         watchlistItemRepository = mock(WatchlistItemRepository.class);
-        ReflectionTestUtils.setField(scheduler, "watchlistItemRepository",
-                watchlistItemRepository);
         given(watchlistItemRepository.findAll()).willReturn(watchlistItems);
    
         messageSender = mock(TamrMessageSender.class);
-        ReflectionTestUtils.setField(scheduler, "tamrMessageSender",
-                messageSender);
         doCallRealMethod().when(messageSender).sendMessageToTamr(any(), any());
+
+        scheduler = new TamrDerogReplaceScheduler(
+                watchlistRepository,
+                watchlistItemRepository,
+                messageSender,
+                new TamrAdapterImpl(null));
     }
     
     /**

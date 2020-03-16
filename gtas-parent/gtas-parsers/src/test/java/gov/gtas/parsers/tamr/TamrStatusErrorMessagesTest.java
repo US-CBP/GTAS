@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.Invocation;
 import org.slf4j.Logger;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -30,7 +29,8 @@ public class TamrStatusErrorMessagesTest implements ParserTestHelper {
 
     @Before
     public void setUp() {
-        this.handler = new TamrMessageHandlerServiceImpl();
+        this.handler = new TamrMessageHandlerServiceImpl(
+                null, null, null, null);
         this.logger = mock(Logger.class);
         ReflectionTestUtils.setField(handler, "logger", logger);
     }

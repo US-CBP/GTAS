@@ -37,18 +37,10 @@ public class HandleTamrDerogHitsTest {
 
     @Before
     public void setUp() {
-        this.handler = new TamrMessageHandlerServiceImpl();
-        ReflectionTestUtils.setField(handler, "derogHitTitle",
-                derogHitTitle);
-        ReflectionTestUtils.setField(handler, "derogHitDescription",
-                derogHitDescription);
-
         this.watchlistItem = new WatchlistItem();
         watchlistItem.setId(94L);
         
         watchlistItemRepository = mock(WatchlistItemRepository.class);
-        ReflectionTestUtils.setField(handler, "watchlistItemRepository",
-                watchlistItemRepository);
         // Set up WatchlistItemRepository to return a fake watchlist item.
         given(watchlistItemRepository.findById(watchlistItem.getId()))
             .willReturn(Optional.of(watchlistItem));
@@ -57,13 +49,8 @@ public class HandleTamrDerogHitsTest {
             .willReturn(Optional.empty());
    
         pendingHitDetailRepository = mock(PendingHitDetailRepository.class);
-        ReflectionTestUtils.setField(handler, "pendingHitDetailRepository",
-                pendingHitDetailRepository);
-
 
         passengerRepository = mock(PassengerRepository.class);
-        ReflectionTestUtils.setField(handler, "passengerRepository",
-                passengerRepository);
 
         // Set up the PassengerRepository to return a dummy instance when
         // queried.
@@ -77,6 +64,17 @@ public class HandleTamrDerogHitsTest {
         // Otherwise return null.
         given(passengerRepository.findById(not(eq(passenger.getId()))))
             .willReturn(Optional.empty());
+
+        this.handler = new TamrMessageHandlerServiceImpl(
+                null,
+                watchlistItemRepository,
+                pendingHitDetailRepository,
+                passengerRepository);
+        ReflectionTestUtils.setField(handler, "derogHitTitle",
+                derogHitTitle);
+        ReflectionTestUtils.setField(handler, "derogHitDescription",
+                derogHitDescription);
+
     }
     
     @Test

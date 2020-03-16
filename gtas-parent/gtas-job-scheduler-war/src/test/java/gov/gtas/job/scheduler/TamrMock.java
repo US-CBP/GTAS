@@ -56,8 +56,11 @@ public class TamrMock {
     
     private Map<String, String> tamrIdToDerogId = new HashMap<>();
     
-    @Autowired
     private TamrIntegrationTestUtils tamrUtils;
+    
+    public TamrMock(TamrIntegrationTestUtils tamrUtils) {
+        this.tamrUtils = tamrUtils;
+    }
     
     private String getTamrIdFromName(String name) {
         String tamrId = nameToTamrId.get(name);

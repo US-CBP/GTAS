@@ -27,6 +27,7 @@ import gov.gtas.parsers.tamr.model.TamrDerogListUpdate;
 import gov.gtas.parsers.tamr.model.TamrMessageType;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
+import gov.gtas.services.FlightService;
 
 /**
  * Scheduler class for sending the derog list (watchlist) to Tamr when changed.
@@ -42,18 +43,26 @@ public class TamrDerogReplaceScheduler {
     private static final Logger logger =
             LoggerFactory.getLogger(TamrDerogReplaceScheduler.class);
     
-    @Autowired
     WatchlistRepository watchlistRepository;
     
-    @Autowired
     WatchlistItemRepository watchlistItemRepository;
     
-    TamrAdapter tamrAdapter = new TamrAdapterImpl();
+    TamrAdapter tamrAdapter;
     
-    @Autowired
     TamrMessageSender tamrMessageSender;
 
     private Date lastRun = null;
+
+    public TamrDerogReplaceScheduler(
+            WatchlistRepository watchlistRepository,
+            WatchlistItemRepository watchlistItemRepository,
+            TamrMessageSender tamrMessageSender,
+            TamrAdapter tamrAdapter) {
+        this.watchlistRepository = watchlistRepository;
+        this.watchlistItemRepository = watchlistItemRepository;
+        this.tamrMessageSender = tamrMessageSender;
+        this.tamrAdapter = tamrAdapter;
+    }
 
     /**
      * Replace the watchlist in Tamr if the GTAS one has changed.

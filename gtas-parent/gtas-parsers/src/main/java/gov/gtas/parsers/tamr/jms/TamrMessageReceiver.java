@@ -5,7 +5,6 @@
  */
 package gov.gtas.parsers.tamr.jms;
 
-import java.awt.TrayIcon.MessageType;
 import java.io.IOException;
 
 import javax.jms.JMSException;
@@ -13,7 +12,6 @@ import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
@@ -25,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.parsers.tamr.TamrMessageHandlerService;
 import gov.gtas.parsers.tamr.model.TamrMessage;
 import gov.gtas.parsers.tamr.model.TamrMessageType;
-import gov.gtas.repository.PassengerIDTagRepository;
 
 @Component
 @ConditionalOnProperty(prefix = "tamr", name = "enabled")
@@ -33,9 +30,12 @@ public class TamrMessageReceiver {
 
 	private final Logger logger = LoggerFactory.getLogger(TamrMessageReceiver.class);
 
-    @Autowired
     private TamrMessageHandlerService tamrMessageHandler;
 	
+    public TamrMessageReceiver(TamrMessageHandlerService tamrMessageHandler) {
+        this.tamrMessageHandler = tamrMessageHandler;
+    }
+    
 	@JmsListener(containerFactory = "tamrJmsListenerContainerFactory",
 	        destination = "OutboundQueue")
 	public void receive(javax.jms.Message msg) {

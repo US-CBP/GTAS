@@ -6,6 +6,7 @@
 package gov.gtas.job.scheduler;
 
 import java.io.File;
+import java.util.Optional;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -48,24 +49,33 @@ public class TamrIntegrationTestUtils {
     
     private ClassLoader classLoader = getClass().getClassLoader();
     
-    @Autowired
     private JmsListenerEndpointRegistry jmsListenerRegistry;
         
-    @Autowired(required=false)
-    private TamrMessageReceiver tamrMessageReceiver;
+    private Optional<TamrMessageReceiver> tamrMessageReceiver;
     
     @PersistenceContext
     private EntityManager entityManager;
     
-    @Autowired
     private LoaderScheduler loaderScheduler;
     
-    @Autowired
     private WatchlistService watchlistService;
 
     @Value("${tamr.activemq.broker.url}")
     private String activeMQBrokerUrl;
     
+    public TamrIntegrationTestUtils(
+            JmsListenerEndpointRegistry jmsListenerRegistry,
+            Optional<TamrMessageReceiver> tamrMessageReceiver,
+            EntityManager entityManager,
+            LoaderScheduler loaderScheduler,
+            WatchlistService watchlistService) {
+        this.jmsListenerRegistry = jmsListenerRegistry;
+        this.tamrMessageReceiver = tamrMessageReceiver;
+        this.entityManager = entityManager;
+        this.loaderScheduler = loaderScheduler;
+        this.watchlistService = watchlistService;
+    }
+
     private void configureJmsTemplate() {
         if (jmsTemplate == null) {
             ActiveMQConnectionFactory aMQConnection =
@@ -124,7 +134,7 @@ public class TamrIntegrationTestUtils {
         int messagesProcessed = 0;
         Message message;
         while ((message = jmsTemplate.receive("OutboundQueue")) != null) {
-            tamrMessageReceiver.receive(message);
+            tamrMessageReceiver.get().receive(message);
             messagesProcessed += 1;
         }
         return messagesProcessed;

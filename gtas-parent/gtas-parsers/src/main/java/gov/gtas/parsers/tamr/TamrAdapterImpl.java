@@ -13,7 +13,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,15 +36,19 @@ import gov.gtas.parsers.tamr.model.TamrDocument;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.services.FlightService;
 
+@Component
 public class TamrAdapterImpl implements TamrAdapter {
 
-    @Autowired
     FlightService flightService;
     
     private ObjectMapper mapper = new ObjectMapper();
     
     private Logger logger = LoggerFactory.getLogger(TamrAdapterImpl.class);
 
+    public TamrAdapterImpl(FlightService flightService) {
+        this.flightService = flightService;
+    }
+    
 	@Override
 	public List<TamrPassenger> convertPassengers(
 	        Flight flight, Set<Passenger> passengers) {

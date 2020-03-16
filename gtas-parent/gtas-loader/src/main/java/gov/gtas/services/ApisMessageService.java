@@ -49,6 +49,9 @@ public class ApisMessageService extends MessageLoaderService {
 
 	@Autowired
 	private BookingBagRepository bookingBagRepository;
+	
+	@Autowired
+	private TamrAdapter tamrAdapter;
 
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
@@ -133,7 +136,6 @@ public class ApisMessageService extends MessageLoaderService {
 			msgDto.getMessageStatus().setFlight(primeFlight);
 			apis.setPassengerCount(apis.getPassengers().size());
 			if (tamrEnabled) {
-				TamrAdapter tamrAdapter = new TamrAdapterImpl();
 				List<TamrPassenger> tamrPassengers = tamrAdapter
 						.convertPassengers(apis.getFlights().iterator().next(), apis.getPassengers());
 				messageInformation.setTamrPassengers(tamrPassengers);

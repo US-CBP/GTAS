@@ -10,11 +10,9 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import gov.gtas.model.PassengerIDTag;
 import gov.gtas.parsers.ParserTestHelper;
@@ -39,10 +37,7 @@ public class UpdateTamrIdTest implements ParserTestHelper {
 
     @Before
     public void setUp() {
-        this.handler = new TamrMessageHandlerServiceImpl();
         this.passengerIDTagRepository = mock(PassengerIDTagRepository.class);
-        ReflectionTestUtils.setField(handler,
-                "passengerIDTagRepository", passengerIDTagRepository);
 
         // Set up the PassengerIDTagRepository to return a dummy instance when
         // queried.
@@ -52,6 +47,10 @@ public class UpdateTamrIdTest implements ParserTestHelper {
                 passengerIdTag);
         given(passengerIDTagRepository.findByPaxId(not(eq(gtasId))))
             .willReturn(null);
+
+        this.handler = new TamrMessageHandlerServiceImpl(
+                passengerIDTagRepository,
+                null, null, null);
     }
     
     @Test

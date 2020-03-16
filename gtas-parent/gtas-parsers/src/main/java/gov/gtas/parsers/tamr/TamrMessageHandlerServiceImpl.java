@@ -33,16 +33,12 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
 
     private final Logger logger = LoggerFactory.getLogger(TamrMessageHandlerServiceImpl.class);
 
-    @Autowired
     private PassengerIDTagRepository passengerIDTagRepository;
     
-    @Autowired
     private WatchlistItemRepository watchlistItemRepository;
     
-    @Autowired
     private PendingHitDetailRepository pendingHitDetailRepository;
     
-    @Autowired
     private PassengerRepository passengerRepository;
     
     @Value("${tamr.derog_hit.title}")
@@ -51,6 +47,17 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
     @Value("${tamr.derog_hit.description}")
     String derogHitDescription;
     
+    public TamrMessageHandlerServiceImpl(
+            PassengerIDTagRepository passengerIDTagRepository,
+            WatchlistItemRepository watchlistItemRepository,
+            PendingHitDetailRepository pendingHitDetailRepository,
+            PassengerRepository passengerRepository) {
+        this.passengerIDTagRepository = passengerIDTagRepository;
+        this.watchlistItemRepository = watchlistItemRepository;
+        this.pendingHitDetailRepository = pendingHitDetailRepository;
+        this.passengerRepository = passengerRepository;
+    }
+
     /**
      * Handle responses to Tamr QUERY requests. This handles both the "derog
      * matches" and "traveler history" responses.
