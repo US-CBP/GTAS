@@ -1,5 +1,6 @@
+DROP VIEW IF EXISTS neo4j_vw;
 CREATE VIEW neo4j_vw AS
-SELECT 
+(SELECT 
 	pit.idTag,
 	pd.pd_first_name as first_name,
 	pd.pd_middle_name as middle_name,
@@ -95,10 +96,10 @@ LEFT JOIN gtas.email em ON pne.email_id = em.id
 WHERE mst.ms_status = 'ANALYZED'
 AND pit.idTag IS NOT NULL 
 AND f.id_tag IS NOT NULL 
-
-
+Limit 50000
+)
 UNION ALL
-
+(
 SELECT 
 	pit.idTag,
 	pd.pd_first_name as first_name,
@@ -186,4 +187,7 @@ FROM gtas.message msg
 WHERE mst.ms_status = 'ANALYZED'
 AND pit.idTag IS NOT NULL 
 AND f.id_tag IS NOT NULL 
-ORDER BY gtas_message_id,flight_id,gtas_passenger_id 
+Limit 50000
+
+)
+ORDER BY gtas_message_id,flight_id,gtas_passenger_id ASC Limit 100000; 
