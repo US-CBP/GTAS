@@ -1,3 +1,4 @@
+
 DROP VIEW IF EXISTS neo4j_vw;
 CREATE VIEW neo4j_vw AS
 (SELECT 
