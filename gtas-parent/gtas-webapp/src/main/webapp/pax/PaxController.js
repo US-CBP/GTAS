@@ -79,7 +79,7 @@
     });
 
     configService.cypherUrl().then(function(result){
-      vaquita.rest.CYPHER_URL = $scope.neo4jProtocol + '://' + location.hostname + ':443' + result;
+      vaquita.rest.CYPHER_URL = result;
     });
 
     configService.cypherAuth().then(function(result){
