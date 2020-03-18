@@ -148,13 +148,8 @@ public class LoaderScheduler {
 			return saved;
 
 		String destinationDir = messageProcessedDir;
-
-		try {
-			Utils.moveToDirectory(destinationDir, file);
-		} catch (Exception ex) {
-			logger.error("Unable to move file '" + file.getName() + "' to directory: " + destinationDir, ex);
-		}
-
+		Utils.moveToDirectory(destinationDir, file);
+		
 		return saved;
 	}
 
