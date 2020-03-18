@@ -5,6 +5,10 @@
  */
 package gov.gtas.querybuilder;
 
+import gov.gtas.model.udr.json.QueryEntity;
+import gov.gtas.model.udr.json.QueryObject;
+import gov.gtas.model.udr.json.QueryTerm;
+import gov.gtas.querybuilder.model.QueryRequest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +17,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.querybuilder.exceptions.InvalidQueryRepositoryException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JPQLGeneratorTest {
@@ -91,6 +98,206 @@ public class JPQLGeneratorTest {
 		String joinCondition = JPQLGenerator.getJoinCondition(queryTypePassenger, queryTypePassenger);
 		Assert.assertEquals(" join f.passengers p", joinCondition);
 
+	}
+
+	@Test
+	public void testNotInWhereClauseForEmail() throws InvalidQueryRepositoryException {
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join" +
+				" p.flight f  left join p.pnrs pnr left join pnr.emails e where (e.domain not in (?1) and " +
+				"pnr.id not in (select pnr.id from Pnr pnr left join pnr.emails e where e.domain in (?1)))";
+
+		QueryObject mockQueryObject  = new QueryObject();
+		QueryTerm mockQueryTerm = new QueryTerm();
+
+		mockQueryTerm.setUuid(null);
+		mockQueryTerm.setType("string");
+		mockQueryTerm.setEntity("Email");
+		mockQueryTerm.setOperator("NOT_IN");
+		mockQueryTerm.setValue(new String[]{"HOTMAIL.COM"});
+		mockQueryTerm.setField("domain");
+
+		List<QueryEntity> mockQTList = new ArrayList<>();
+		mockQTList.add(mockQueryTerm);
+
+		mockQueryObject.setCondition("AND");
+		mockQueryObject.setRules(mockQTList);
+
+		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		Assert.assertEquals(expectedQuery, query);
+	}
+
+	@Test
+	public void testInWhereClauseForEmail() throws InvalidQueryRepositoryException {
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f  " +
+				"left join p.pnrs pnr left join pnr.emails e where (e.domain in ?1)";
+
+		QueryObject mockQueryObject  = new QueryObject();
+		QueryTerm mockQueryTerm = new QueryTerm();
+
+		mockQueryTerm.setUuid(null);
+		mockQueryTerm.setType("string");
+		mockQueryTerm.setEntity("Email");
+		mockQueryTerm.setOperator("IN");
+		mockQueryTerm.setValue(new String[]{"HOTMAIL.COM"});
+		mockQueryTerm.setField("domain");
+
+		List<QueryEntity> mockQTList = new ArrayList<>();
+		mockQTList.add(mockQueryTerm);
+
+		mockQueryObject.setCondition("AND");
+		mockQueryObject.setRules(mockQTList);
+
+		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		Assert.assertEquals(expectedQuery, query);
+	}
+
+	@Test
+	public void testNotEqualsWhereClauseForEmail() throws InvalidQueryRepositoryException {
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join" +
+				" p.flight f  left join p.pnrs pnr left join pnr.emails e where (e.domain not in (?1) and " +
+				"pnr.id not in (select pnr.id from Pnr pnr left join pnr.emails e where e.domain in (?1)))";
+
+		QueryObject mockQueryObject  = new QueryObject();
+		QueryTerm mockQueryTerm = new QueryTerm();
+
+		mockQueryTerm.setUuid(null);
+		mockQueryTerm.setType("string");
+		mockQueryTerm.setEntity("Email");
+		mockQueryTerm.setOperator("NOT_EQUAL");
+		mockQueryTerm.setValue(new String[]{"HOTMAIL.COM"});
+		mockQueryTerm.setField("domain");
+
+		List<QueryEntity> mockQTList = new ArrayList<>();
+		mockQTList.add(mockQueryTerm);
+
+		mockQueryObject.setCondition("AND");
+		mockQueryObject.setRules(mockQTList);
+
+		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		Assert.assertEquals(expectedQuery, query);
+	}
+
+	@Test
+	public void testEqualsWhereClauseForEmail() throws InvalidQueryRepositoryException {
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f" +
+				"  left join p.pnrs pnr left join pnr.emails e where (e.domain = ?1)";
+
+		QueryObject mockQueryObject  = new QueryObject();
+		QueryTerm mockQueryTerm = new QueryTerm();
+
+		mockQueryTerm.setUuid(null);
+		mockQueryTerm.setType("string");
+		mockQueryTerm.setEntity("Email");
+		mockQueryTerm.setOperator("EQUALS");
+		mockQueryTerm.setValue(new String[]{"HOTMAIL.COM"});
+		mockQueryTerm.setField("domain");
+
+		List<QueryEntity> mockQTList = new ArrayList<>();
+		mockQTList.add(mockQueryTerm);
+
+		mockQueryObject.setCondition("AND");
+		mockQueryObject.setRules(mockQTList);
+
+		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		Assert.assertEquals(expectedQuery, query);
+	}
+
+	@Test
+	public void testNotInWhereClauseForDocument() throws InvalidQueryRepositoryException {
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f" +
+				"  join p.documents d where (d.type not in (?1) and p.id not in (select p.id from Passenger p left join p.documents d where d.type in (?1)))";
+
+		QueryObject mockQueryObject  = new QueryObject();
+		QueryTerm mockQueryTerm = new QueryTerm();
+
+		mockQueryTerm.setUuid(null);
+		mockQueryTerm.setType("string");
+		mockQueryTerm.setEntity("Document");
+		mockQueryTerm.setOperator("NOT_IN");
+		mockQueryTerm.setValue(new String[]{"V"});
+		mockQueryTerm.setField("type");
+
+		List<QueryEntity> mockQTList = new ArrayList<>();
+		mockQTList.add(mockQueryTerm);
+
+		mockQueryObject.setCondition("AND");
+		mockQueryObject.setRules(mockQTList);
+
+		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		Assert.assertEquals(expectedQuery, query);
+	}
+
+	@Test
+	public void testInWhereClauseForDocument() throws InvalidQueryRepositoryException {
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f  join p.documents d where (d.type in ?1)";
+
+		QueryObject mockQueryObject  = new QueryObject();
+		QueryTerm mockQueryTerm = new QueryTerm();
+
+		mockQueryTerm.setUuid(null);
+		mockQueryTerm.setType("string");
+		mockQueryTerm.setEntity("Document");
+		mockQueryTerm.setOperator("IN");
+		mockQueryTerm.setValue(new String[]{"V"});
+		mockQueryTerm.setField("type");
+
+		List<QueryEntity> mockQTList = new ArrayList<>();
+		mockQTList.add(mockQueryTerm);
+
+		mockQueryObject.setCondition("AND");
+		mockQueryObject.setRules(mockQTList);
+
+		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		Assert.assertEquals(expectedQuery, query);
+	}
+
+	@Test
+	public void testNotEqualsWhereClauseForDocument() throws InvalidQueryRepositoryException {
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f  " +
+				"join p.documents d where (d.type not in (?1) and p.id not in (select p.id from Passenger p left join p.documents d where d.type in (?1)))";
+
+		QueryObject mockQueryObject  = new QueryObject();
+		QueryTerm mockQueryTerm = new QueryTerm();
+
+		mockQueryTerm.setUuid(null);
+		mockQueryTerm.setType("string");
+		mockQueryTerm.setEntity("Document");
+		mockQueryTerm.setOperator("NOT_EQUAL");
+		mockQueryTerm.setValue(new String[]{"V"});
+		mockQueryTerm.setField("type");
+
+		List<QueryEntity> mockQTList = new ArrayList<>();
+		mockQTList.add(mockQueryTerm);
+
+		mockQueryObject.setCondition("AND");
+		mockQueryObject.setRules(mockQTList);
+
+		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		Assert.assertEquals(expectedQuery, query);
+	}
+
+	@Test
+	public void testEqualsWhereClauseForDocument() throws InvalidQueryRepositoryException {
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f  join p.documents d where (d.type = ?1)";
+
+		QueryObject mockQueryObject  = new QueryObject();
+		QueryTerm mockQueryTerm = new QueryTerm();
+
+		mockQueryTerm.setUuid(null);
+		mockQueryTerm.setType("string");
+		mockQueryTerm.setEntity("Document");
+		mockQueryTerm.setOperator("EQUAL");
+		mockQueryTerm.setValue(new String[]{"V"});
+		mockQueryTerm.setField("type");
+
+		List<QueryEntity> mockQTList = new ArrayList<>();
+		mockQTList.add(mockQueryTerm);
+
+		mockQueryObject.setCondition("AND");
+		mockQueryObject.setRules(mockQTList);
+
+		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		Assert.assertEquals(expectedQuery, query);
 	}
 
 }
