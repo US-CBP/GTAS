@@ -42,7 +42,7 @@
           <id>LINES_READ</id>
           <enabled>Y</enabled>
           <name>LINES_READ</name>
-          <subject/>
+          <subject>Neo4J Output - merge passenger-hit</subject>
         </field>
         <field>
           <id>LINES_WRITTEN</id>
@@ -1405,7 +1405,7 @@
     <directory>%%java.io.tmpdir%%</directory>
     <prefix>out</prefix>
     <sort_size>1000000</sort_size>
-    <free_memory/>
+    <free_memory>30</free_memory>
     <compress>N</compress>
     <compress_variable/>
     <unique_rows>Y</unique_rows>
@@ -1453,7 +1453,7 @@
       <schema_name/>
     </partitioning>
     <connection>gtas-db</connection>
-    <sql>SELECT * FROM neo4j_hit_vw</sql>
+    <sql>SELECT * FROM neo4j_hit_vw Limit 50000</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
