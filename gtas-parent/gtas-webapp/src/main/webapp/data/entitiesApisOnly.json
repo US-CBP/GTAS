@@ -1,132 +1,4 @@
 {
-  "Address": {
-    "label": "ADDRESS",
-    "columns": [
-      {
-        "id": "Address.city",
-        "label": "City",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]      
-      },
-      {
-        "id": "Address.country",
-        "label": "Country",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "countries"       
-      },
-      {
-        "id": "Address.line1",
-        "label": "Line 1",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]              
-      },
-      {
-        "id": "Address.line2",
-        "label": "Line 2",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]               
-      },
-      {
-        "id": "Address.line3",
-        "label": "Line 3",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]              
-      },
-      {
-        "id": "Address.postalCode",
-        "label": "Postal Code",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]               
-      },
-      {
-        "id": "Address.state",
-        "label": "State/Province",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]            
-      }
-    ]
-  },
   "Document": {
     "label": "DOCUMENT",
     "columns": [
@@ -206,7 +78,7 @@
           "NOT_ENDS_WITH",
           "IS_NULL",
           "IS_NOT_NULL"
-        ]                     
+        ]
       },
       {
         "id": "Document.documentType",
@@ -343,7 +215,7 @@
         }
       },
       {
-        "id": "Flight.etaDate",
+        "id": "Flight.mutableFlightDetails.etaDate",
         "label": "ETA",
         "type": "date",
         "operators": [
@@ -389,7 +261,7 @@
           "NOT_CONTAINS",
           "ENDS_WITH",
           "NOT_ENDS_WITH"
-        ]                      
+        ]
       },
       {
         "id": "Flight.isOperatingFlight",
@@ -419,7 +291,7 @@
     "label": "PASSENGER",
     "columns": [
       {
-        "id": "Passenger.age",
+        "id": "Passenger.passengerDetails.age",
         "label": "Age",
         "type": "integer",
         "operators": [
@@ -431,7 +303,7 @@
           "GREATER_OR_EQUAL",
           "BETWEEN",
           "NOT_BETWEEN"
-        ]                   
+        ]
       },
       {
         "id": "Passenger.passengerTripDetails.coTravelerCount",
@@ -464,7 +336,7 @@
         ]
       },
       {
-        "id": "Passenger.nationality",
+        "id": "Passenger.passengerDetails.nationality",
         "label": "Nationality",
         "type": "string",
         "operators": [
@@ -487,7 +359,7 @@
         "dataSource": "countries"
       },
       {
-        "id": "Passenger.debarkation",
+        "id": "Passenger.passengerTripDetails.debarkation",
         "label": "Debarkation Airport",
         "type": "string",
         "operators": [
@@ -510,7 +382,7 @@
         "dataSource": "airports"
       },
       {
-        "id": "Passenger.debarkCountry",
+        "id": "Passenger.passengerTripDetails.debarkCountry",
         "label": "Debarkation Country",
         "type": "string",
         "operators": [
@@ -531,7 +403,7 @@
         "dataSource": "countries"
       },
       {
-        "id": "Passenger.dob",
+        "id": "Passenger.passengerDetails.dob",
         "label": "DOB",
         "type": "date",
         "operators": [
@@ -549,7 +421,7 @@
         "plugin": "datepicker"
       },
       {
-        "id": "Passenger.embarkation",
+        "id": "Passenger.passengerTripDetails.embarkation",
         "label": "Embarkation Airport",
         "type": "string",
         "operators": [
@@ -572,7 +444,7 @@
         "dataSource": "airports"
       },
       {
-        "id": "Passenger.embarkCountry",
+        "id": "Passenger.passengerTripDetails.embarkCountry",
         "label": "Embarkation Country",
         "type": "string",
         "operators": [
@@ -593,7 +465,7 @@
         "dataSource": "countries"
       },
       {
-        "id": "Passenger.gender",
+        "id": "Passenger.passengerDetails.gender",
         "label": "Gender",
         "type": "string",
         "operators": [
@@ -614,7 +486,7 @@
         "dataSource": "genders"
       },
       {
-        "id": "Passenger.firstName",
+        "id": "Passenger.passengerDetails.firstName",
         "label": "Name - First",
         "type": "string",
         "operators": [
@@ -630,10 +502,10 @@
           "NOT_ENDS_WITH",
           "IS_NULL",
           "IS_NOT_NULL"
-        ]                       
+        ]
       },
       {
-        "id": "Passenger.lastName",
+        "id": "Passenger.passengerDetails.lastName",
         "label": "Name - Last",
         "type": "string",
         "operators": [
@@ -649,10 +521,10 @@
           "NOT_ENDS_WITH",
           "IS_NULL",
           "IS_NOT_NULL"
-        ]                      
+        ]
       },
       {
-        "id": "Passenger.middleName",
+        "id": "Passenger.passengerDetails.middleName",
         "label": "Name - Middle",
         "type": "string",
         "operators": [
@@ -668,10 +540,10 @@
           "NOT_ENDS_WITH",
           "IS_NULL",
           "IS_NOT_NULL"
-        ]                        
+        ]
       },
       {
-        "id": "Passenger.residencyCountry",
+        "id": "Passenger.passengerDetails.residencyCountry",
         "label": "Residency Country",
         "type": "string",
         "operators": [
@@ -706,10 +578,10 @@
           "NOT_CONTAINS",
           "ENDS_WITH",
           "NOT_ENDS_WITH"
-        ]               
+        ]
       },
       {
-        "id": "Passenger.passengerType",
+        "id": "Passenger.passengerDetails.passengerType",
         "label": "Type",
         "type": "string",
         "operators": [
@@ -724,7 +596,7 @@
         "dataSource": "passenger_types"
       },
       {
-        "id": "Passenger.travelFrequency",
+        "id": "Passenger.passengerTripDetails.travelFrequency",
         "label": "Travel Frequency",
         "type": "integer",
         "operators": [
@@ -736,41 +608,19 @@
           "GREATER_OR_EQUAL",
           "BETWEEN",
           "NOT_BETWEEN"
-        ]                       
-      }
-    ]
-  },
-  "Phone": {
-    "label": "PHONE",
-    "columns": [
-      {
-        "id": "Phone.number",
-        "label": "Number",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]                       
+        ]
       }
     ]
   },
   "Bag":{
-  "label": "BAG",
-  	"columns": [
-  	  {
-  	  	"id":"Bag.airline",
-  	  	"label":"Airline",
-  	  	"type":"string",
-  	  	"operators": [
-  	  	  "EQUAL",
+    "label": "BAG",
+    "columns": [
+      {
+        "id":"Bag.airline",
+        "label":"Airline",
+        "type":"string",
+        "operators": [
+          "EQUAL",
           "NOT_EQUAL",
           "BEGINS_WITH",
           "NOT_BEGINS_WITH",
@@ -778,14 +628,14 @@
           "NOT_CONTAINS",
           "ENDS_WITH",
           "NOT_ENDS_WITH"
-  	  	]
-  	  },
-  	   {
-  	  	"id":"Bag.bagId",
-  	  	"label":"Bag Identifier",
-  	  	"type":"string",
-  	  	"operators": [
-  	  	  "EQUAL",
+        ]
+      },
+      {
+        "id":"Bag.bagId",
+        "label":"Bag Identifier",
+        "type":"string",
+        "operators": [
+          "EQUAL",
           "NOT_EQUAL",
           "BEGINS_WITH",
           "NOT_BEGINS_WITH",
@@ -793,13 +643,13 @@
           "NOT_CONTAINS",
           "ENDS_WITH",
           "NOT_ENDS_WITH"
-  	  	]
-  	  }, {
-  	  	"id":"Bag.data_source",
-  	  	"label":"Data Source",
-  	  	"type":"string",
-  	  	"operators": [
-  	  	  "EQUAL",
+        ]
+      }, {
+        "id":"Bag.data_source",
+        "label":"Data Source",
+        "type":"string",
+        "operators": [
+          "EQUAL",
           "NOT_EQUAL",
           "BEGINS_WITH",
           "NOT_BEGINS_WITH",
@@ -807,13 +657,13 @@
           "NOT_CONTAINS",
           "ENDS_WITH",
           "NOT_ENDS_WITH"
-  	  	]
-  	  }, {
-  	  	"id":"Bag.destination",
-  	  	"label":"Destination Country",
-  	  	"type":"string",
-  	  	"operators": [
-  	  	  "EQUAL",
+        ]
+      }, {
+        "id":"Bag.country",
+        "label":"Destination Country",
+        "type":"string",
+        "operators": [
+          "EQUAL",
           "NOT_EQUAL",
           "BEGINS_WITH",
           "NOT_BEGINS_WITH",
@@ -821,17 +671,17 @@
           "NOT_CONTAINS",
           "ENDS_WITH",
           "NOT_ENDS_WITH"
-  	  	],
-  	  	"input": "select",
+        ],
+        "input": "select",
         "multiple": true,
         "plugin": "selectize",
         "dataSource": "countries"
-  	  }, {
-  	  	"id":"Bag.destinationAirport",
-  	  	"label":"Destination Airport",
-  	  	"type":"string",
-  	  	"operators": [
-  	  	  "EQUAL",
+      }, {
+        "id":"Bag.destinationAirport",
+        "label":"Destination Airport",
+        "type":"string",
+        "operators": [
+          "EQUAL",
           "NOT_EQUAL",
           "BEGINS_WITH",
           "NOT_BEGINS_WITH",
@@ -839,136 +689,26 @@
           "NOT_CONTAINS",
           "ENDS_WITH",
           "NOT_ENDS_WITH"
-  	  	],
-  	  	"input": "select",
+        ],
+        "input": "select",
         "multiple": true,
         "plugin": "selectize",
         "dataSource": "airports"
-  	  }	  
-  	]
-  },
-  "FlightPax": {
-    "label": "FLIGHT-PASSENGER",
-    "columns": [    
-      {
-        "id": "FlightPax.portOfFirstArrival",
-        "label": "First Arrival Port",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "CONTAINS",
-          "NOT_CONTAINS"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "airports"        
       },
       {
-        "id": "FlightPax.embarkation",
-        "label": "Embarkation - Airport",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "airports"       
-      },
+        "id": "Bag.primeFlight",
+        "label": "Is Prime Flight",
+        "type": "boolean",
+        "operators": "EQUALS",
+        "input": "radio",
+        "values": {
+          "1": "Yes",
+          "0": "No"
+        }
+      } ,
       {
-        "id": "FlightPax.debarkation",
-        "label": "Debarkation - Airport",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "airports"       
-      },
-      {
-        "id": "FlightPax.reservationReferenceNumber",
-        "label": "Reservation Reference Number",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]    
-      },
-      {
-        "id": "FlightPax.embarkationCountry",
-        "label": "Embarkation - Country",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "countries"       
-      },
-      {
-        "id": "FlightPax.debarkationCountry",
-        "label": "Debarkation -  Country",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "countries"       
-      },
-      {
-        "id": "FlightPax.bagWeight",
-        "label": "Bag - Weight (kg)",
+        "id": "Bag.bagMeasurements.weight",
+        "label": "Bag Weight Measurement (kg)",
         "type": "double",
         "operators": [
           "EQUAL",
@@ -979,11 +719,11 @@
           "GREATER_OR_EQUAL",
           "BETWEEN",
           "NOT_BETWEEN"
-        ]       
-      },
+        ]
+      } ,
       {
-        "id": "FlightPax.bagCount",
-        "label": "Bag - Count",
+        "id": "Bag.bagMeasurements.bagCount",
+        "label": "Bag Measurement Count",
         "type": "integer",
         "operators": [
           "EQUAL",
@@ -994,24 +734,20 @@
           "GREATER_OR_EQUAL",
           "BETWEEN",
           "NOT_BETWEEN"
-        ]  
+        ]
       },
       {
-        "id": "FlightPax.averageBagWeight",
-        "label": "Bag - Average Total Weight (kg)",
-        "type": "double",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "LESS",
-          "LESS_OR_EQUAL",
-          "GREATER",
-          "GREATER_OR_EQUAL",
-          "BETWEEN",
-          "NOT_BETWEEN"
-        ]   
+        "id": "Bag.headPool",
+        "label": "Is Head Of a Baggage Pool",
+        "type": "boolean",
+        "operators": "EQUALS",
+        "input": "radio",
+        "values": {
+          "1": "Yes",
+          "0": "No"
+        }
       }
+
     ]
   }
 }
-
