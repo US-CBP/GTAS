@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "ammap3": "^3.18.3",
-    "angular": "1.5.11",
+    "angular": "1.7.9",
     "angular-animate": "~1.5.11",
     "angular-aria": "~1.5.3",
     "angular-chart.js": "^1.1.1",
