@@ -131,12 +131,9 @@ public class LoaderScheduler {
 		logger.debug("MESSAGE RECEIVED FROM QUEUE: " + messageWorkingDir + File.separator + fileName);
 
 		File f = new File(messageWorkingDir + File.separator + fileName);
-		try {
-			processSingleFile(f, stats, primeFlightKey);
-			saveProcessedFile(f);
-		} catch (Exception ex) {
-			logger.error("Unable to process file!");
-		}
+		processSingleFile(f, stats, primeFlightKey);
+		saveProcessedFile(f);
+		
 	}
 
 	// Moves the file from the working dir to the processed, returns true on
@@ -148,7 +145,11 @@ public class LoaderScheduler {
 			return saved;
 
 		String destinationDir = messageProcessedDir;
-		Utils.moveToDirectory(destinationDir, file);
+		try {	
+			Utils.moveToDirectory(destinationDir, file);	
+		} catch (Exception ex) {	
+			logger.error("Unable to move file '" + file.getName() + "' to directory: " + destinationDir, ex);	
+		}
 		
 		return saved;
 	}
