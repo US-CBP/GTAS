@@ -28,10 +28,7 @@ import gov.gtas.querybuilder.vo.PassengerQueryVo;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -450,6 +447,15 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
 							for (String val : values) {
 								vals.add(dtFormat.parse(val));
 							}
+						}
+						query.setParameter(positionalParameter.intValue(), vals);
+					} else if (entityEnum.toString().equalsIgnoreCase(EntityEnum.EMAIL.toString()) ||
+								entityEnum.toString().equalsIgnoreCase(EntityEnum.DOCUMENT.toString()) ||
+								entityEnum.toString().equalsIgnoreCase(EntityEnum.CREDIT_CARD.toString())) {
+						List<String> vals = new ArrayList<>();
+						if (values != null) {
+							for (String val : values)
+								Collections.addAll(vals, val.split(","));
 						}
 						query.setParameter(positionalParameter.intValue(), vals);
 					} else {

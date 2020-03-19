@@ -253,7 +253,7 @@ public class QueryBuilderServiceTest {
 		hits.add(hitsSummary);
 
 		Document document = new Document();
-		document.setPaxId(PAX_ID);
+		document.setPassengerId(PAX_ID);
 		document.setPassenger(passenger);
 		document.setDocumentType("p");
 		document.setIssuanceCountry("iss");

@@ -1,0 +1,62 @@
+version: '3.7'
+services:
+  http-proxy:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-app-node
+  web-app:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-app-node
+  gtas-scheduler:
+    volumes:
+      - type: bind
+        source: /mnt
+        target: /usr/local/gtas-data
+        consistency: consistent
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-app-node
+  activemq:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-db-node
+  mariadb:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-db-node
+  kibana:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-elk-node
+  elasticsearch:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-elk-node
+  logstash:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-elk-node
+  elk-setup:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-elk-node
+  neo4j:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-app-node
+
+networks:
+  GTAS_webapp-network:
+    driver: "overlay"
+    attachable: true

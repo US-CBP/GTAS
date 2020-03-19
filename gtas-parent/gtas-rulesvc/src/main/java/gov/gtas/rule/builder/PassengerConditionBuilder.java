@@ -15,6 +15,7 @@ public class PassengerConditionBuilder extends EntityConditionBuilder {
 
 	public PassengerConditionBuilder(final String drlVariableName) {
 		super(drlVariableName, EntityEnum.PASSENGER.getEntityName());
+		this.generateEmptyClause = true;
 	}
 
 	@Override

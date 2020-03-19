@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
+import gov.gtas.repository.BookingDetailRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.*;
 import gov.gtas.services.dto.PassengerNoteSetDto;
@@ -66,10 +67,10 @@ public class PassengerDetailsController {
 	private FlightService fService;
 
 	@Autowired
-	private PnrService pnrService;
+	private BookingDetailRepository bookingDetailService;
 
 	@Autowired
-	private UserService uService;
+	private PnrService pnrService;
 
 	@Autowired
 	private MatchingService matchingService;
@@ -78,13 +79,7 @@ public class PassengerDetailsController {
 	private BagRepository bagRepository;
 
 	@Resource
-	private SeatRepository seatRepository;
-
-	@Resource
 	private ApisMessageRepository apisMessageRepository;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private HitDetailService hitDetailService;
@@ -221,9 +216,14 @@ public class PassengerDetailsController {
 				apisVo.setBagWeight(apisMessageFlightPax.getBagWeight());
 			}
 
-			List<FlightPassengerVo> fpList = apisControllerService.generateFlightPaxVoByApisRef(refList.get(0));
-			for (FlightPassengerVo flightPassengerVo : fpList) {
-				apisVo.addFlightpax(flightPassengerVo);
+			if (!refList.isEmpty()) {
+				List<FlightPassengerVo> fpList = apisControllerService.generateFlightPaxVoByApisRef(refList.get(0),
+						Long.parseLong(flightId));
+				for (FlightPassengerVo flightPassengerVo : fpList) {
+					apisVo.addFlightpax(flightPassengerVo);
+				}
+			} else {
+				logger.warn("There is no APIS Ref number here!");
 			}
 
 			for (Bag b : bagList) {
@@ -296,26 +296,31 @@ public class PassengerDetailsController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/flighthistory", method = RequestMethod.GET)
 	public List<FlightVo> getTravelHistoryByPassengerAndItinerary(@RequestParam String paxId,
-			@RequestParam String flightId) throws ParseException {
-
-		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
-		List<String> pnrRefList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId),
-				Long.parseLong(paxId));
-		String pnrRef = !pnrRefList.isEmpty() ? pnrRefList.get(0) : null;
-		Long pnrId = !pnrs.isEmpty() ? pnrs.get(0).getId() : null;
-
-		if (pnrId != null || pnrRef != null) {
-			return pService.getTravelHistoryByItinerary(pnrId, pnrRef).stream().map(flight -> {
-				FlightVo flightVo = new FlightVo();
-				copyModelToVo(flight, flightVo);
-				copyModelToVo(flight.getMutableFlightDetails(), flightVo);
-				flightVo.setId(flight.getId());
-				return flightVo;
-			}).collect(Collectors.toCollection(LinkedList::new));
-		} else {
-			return new ArrayList<FlightVo>();
+			@RequestParam String flightId) {
+		if (paxId == null || flightId == null) {
+			throw new IllegalArgumentException("flightId and passengerID required.");
 		}
-
+		long longPaxId = Long.parseLong(paxId);
+		long longFlightId = Long.parseLong(flightId);
+		List<Flight> passengerFlights = fService.getFlightByPaxId(longPaxId);
+		List<BookingDetail> passengerBookingDetails = bookingDetailService.bookingDetailsByPassengerId(longPaxId,
+				longFlightId);
+		/*
+		 * FlightVo is returned here for backwards compatibility. On fields that booking
+		 * detail doesn't have or doesnt make sense null is returned.
+		 */
+		// Passenger only ever has 1 flight, the rest are booking details. They are will
+		// always have a flight so this will never throw index out of bounds.
+		FlightVo flightVo = FlightVo.from(passengerFlights.get(0));
+		List<FlightVo> flightVoList = new ArrayList<>();
+		flightVoList.add(flightVo);
+		if (!passengerBookingDetails.isEmpty()) {
+			List<FlightVo> mappedBookingDetails = passengerBookingDetails.stream().map(FlightVo::from)
+					.collect(toList());
+			flightVoList.addAll(mappedBookingDetails);
+		}
+		flightVoList.sort(Comparator.comparing(FlightVo::getEta));
+		return flightVoList;
 	}
 
 	/**
@@ -554,18 +559,16 @@ public class PassengerDetailsController {
 					flVo.setFlightNumber(fl.getFlight().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getFlight().getOrigin());
 					flVo.setDestinationAirport(fl.getFlight().getDestination());
-					flVo.setEtd(
-							DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEtd()));
-					flVo.setEta(
-							DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEta()));
+					flVo.setEtd(fl.getFlight().getMutableFlightDetails().getEtd());
+					flVo.setEta(fl.getFlight().getMutableFlightDetails().getEta());
 					flVo.setFlightId(Long.toString(fl.getFlight().getId()));
 					flVo.setDirection(fl.getFlight().getDirection());
 				} else {
 					flVo.setFlightNumber(fl.getBookingDetail().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getBookingDetail().getOrigin());
 					flVo.setDestinationAirport(fl.getBookingDetail().getDestination());
-					flVo.setEtd(DateCalendarUtils.formatJsonDateTime(fl.getBookingDetail().getEtd()));
-					flVo.setEta(DateCalendarUtils.formatJsonDateTime(fl.getBookingDetail().getEta()));
+					flVo.setEtd(fl.getBookingDetail().getEtd());
+					flVo.setEta(fl.getBookingDetail().getEta());
 					flVo.setBookingDetailId(Long.toString(fl.getBookingDetail().getId()));
 				}
 				target.getFlightLegs().add(flVo);
@@ -653,7 +656,7 @@ public class PassengerDetailsController {
 				// Doc Numbers
 				if (currString.contains(DOC)) {
 					for (DocumentVo d : targetVo.getDocuments()) {
-						if (currString.contains(d.getDocumentNumber())) {
+						if (d.getDocumentNumber() != null && currString.contains(d.getDocumentNumber())) {
 							segment.append(DOC);
 							segment.append(d.getDocumentNumber());
 							segment.append(" ");

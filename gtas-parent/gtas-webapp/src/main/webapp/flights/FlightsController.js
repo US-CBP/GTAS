@@ -387,10 +387,10 @@
               visible: true
           },
           {
-              name: 'flightNumber',
+              name: 'fullFlightNumber',
               displayName: $translate.instant('flight.flight'),
-              cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()" ng-disabled="row.entity.codeshares.length === 0">'
-                  + '<md-tooltip class="multi-tooltip" md-direction="left"><div ng-repeat="item in row.entity.codeshares">Codeshare Flight #: {{item.marketingFlightNumber}}</div></md-tooltip>{{COL_FIELD}}'
+              cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+                  + '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(row.entity.carrier,"carrier")}}</div></md-tooltip>{{COL_FIELD}}'
                   + '</md-button>'
           },
           {

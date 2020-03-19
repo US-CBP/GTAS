@@ -21,9 +21,9 @@ public enum BagMapping implements IEntityMapping {
 
 	DESTINATION_AIRPORT("destinationAirport", "Destination - Airport", TypeEnum.STRING.getType()),
 
-	BAG_PAX_OWNER_ID("passenger.id", "Passenger Owner Id", TypeEnum.STRING.getType(), false),
+	BAG_PAX_OWNER_ID("passengerId", "Passenger Owner Id", TypeEnum.INTEGER.getType(), false),
 
-	BAG_FLIGHT_OWNER_ID("flight.id", "Flight Owner Id", TypeEnum.STRING.getType(), false),
+	BAG_FLIGHT_OWNER_ID("flightId", "Flight Owner Id", TypeEnum.INTEGER.getType(), false),
 
 	BAG_PRIME_FLIGHT("primeFlight", "Bag on Prime Flight", TypeEnum.BOOLEAN.getType()),
 

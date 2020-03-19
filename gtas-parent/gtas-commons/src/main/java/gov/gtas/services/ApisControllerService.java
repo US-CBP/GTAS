@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ApisControllerService {
 
-	List<FlightPassengerVo> generateFlightPaxVoByApisRef(String ref);
+	List<FlightPassengerVo> generateFlightPaxVoByApisRef(String ref, long flightId);
 }

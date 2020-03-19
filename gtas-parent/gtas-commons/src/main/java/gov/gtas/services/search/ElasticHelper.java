@@ -37,8 +37,8 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +61,14 @@ public class ElasticHelper {
 	private static final Logger logger = LoggerFactory.getLogger(ElasticHelper.class);
 	private static final String INDEX_NAME = "flightpax";
 	private static final String FLIGHTPAX_TYPE = "doc";
+	private static final String CREDENTIALS = "xpack.security.user";
+	private static final String NODE_NAME = "node.name";
+	private static final String CLUSTER_NAME = "cluster.name";
+	private static final String SSL_KEY = "xpack.security.transport.ssl.key";
+	private static final String SSL_CERT = "xpack.security.transport.ssl.certificate";
+	private static final String SSL_CA = "xpack.security.transport.ssl.certificate_authorities";
+	private static final String VERIFICATION_MODE = "xpack.security.transport.ssl.verification_mode";
+	private static final String SSL_ENABLED = "xpack.security.transport.ssl.enabled";
 
 	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
 	private SimpleDateFormat dateParser = new SimpleDateFormat(DATE_FORMAT);
@@ -84,7 +92,16 @@ public class ElasticHelper {
 		}
 		System.setProperty("es.set.netty.runtime.available.processors", "false");
 		int port = Integer.valueOf(portStr);
-		client = new PreBuiltTransportClient(Settings.EMPTY); // TransportClient.builder().build();
+		client = new PreBuiltXPackTransportClient(Settings.builder()
+				.put(SSL_ENABLED, elasticConfig.getSslEnabled())
+				.put(CREDENTIALS, elasticConfig.getElasticCredentials())
+				.put(NODE_NAME, elasticConfig.getElasticNodeName())
+				.put(CLUSTER_NAME, elasticConfig.getElasticClusterName())
+				.put(SSL_KEY, elasticConfig.getElasticSslKey())
+				.put(SSL_CERT, elasticConfig.getElasticSslCert())
+				.put(SSL_CA, elasticConfig.getElasticSslCa())
+				.put(VERIFICATION_MODE, elasticConfig.getElasticSslVerificationMode()).build());
+
 		logger.info("ElasticSearch Client Init: " + hostname + ":" + port);
 		try {
 			client.addTransportAddress(new TransportAddress(InetAddress.getByName(hostname), port));
@@ -216,7 +233,7 @@ public class ElasticHelper {
 		// upgrade to 5.6.0
 		HighlightBuilder builder = new HighlightBuilder();
 		builder.field("documents.documentNumber").field("pnr").preTags();
-		SearchResponse response = client.prepareSearch(INDEX_NAME).setTypes(FLIGHTPAX_TYPE)
+		SearchResponse response = client.prepareSearch(INDEX_NAME)
 				.setSearchType(SearchType.QUERY_THEN_FETCH).setQuery(qb)
 				// .addHighlightedField("documents.documentNumber")
 				// .addHighlightedField("pnr")
@@ -268,7 +285,7 @@ public class ElasticHelper {
 		int startIndex = (pageNumber - 1) * pageSize;
 		QueryBuilder qb = QueryBuilders.multiMatchQuery(query, searchFields)
 				.type(MultiMatchQueryBuilder.Type.MOST_FIELDS);
-		SearchResponse response = client.prepareSearch(INDEX_NAME).setTypes(FLIGHTPAX_TYPE)
+		SearchResponse response = client.prepareSearch(INDEX_NAME)
 				.setSearchType(SearchType.QUERY_THEN_FETCH).setQuery(qb).setFrom(startIndex).setSize(pageSize)
 				.addSort(column, sortOrder).setExplain(true).execute().actionGet();
 		return response.getHits();

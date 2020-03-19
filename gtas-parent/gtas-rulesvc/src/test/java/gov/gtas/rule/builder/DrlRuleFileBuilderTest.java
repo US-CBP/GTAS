@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.api.KieBase;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.StatelessKieSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,9 +137,8 @@ public class DrlRuleFileBuilderTest {
 		byte[] blobCopy = Arrays.copyOf(blob, blob.length);
 		kbase = RuleUtils.convertKieBasefromBytes(blobCopy);
 		assertNotNull("ERROR - could not get KieBase from blob", kbase);
-		KieSession s = RuleUtils.createSession(kbase);
-		assertNotNull("Could not Create KieSession from copied KieBase", s);
-		s.dispose();
+		StatelessKieSession ksession = kbase.newStatelessKieSession();
+		assertNotNull("Could not Create KieSession from copied KieBase", ksession);
 
 	}
 }

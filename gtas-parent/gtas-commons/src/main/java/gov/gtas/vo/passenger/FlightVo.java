@@ -9,14 +9,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import gov.gtas.model.BookingDetail;
+import gov.gtas.model.Flight;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import gov.gtas.vo.BaseVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 
 public class FlightVo extends BaseVo {
+
+	private static Logger logger = LoggerFactory.getLogger(FlightVo.class);
 	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
 	static final String SHORT_DATE_FORMAT = "yyyy-MM-dd";
 	private SimpleDateFormat dtFormat = new SimpleDateFormat(DATE_FORMAT);
@@ -53,6 +60,32 @@ public class FlightVo extends BaseVo {
 	private int paxListHit;
 	private int docListHit;
 	private List<CodeShareVo> codeshares;
+
+	public static FlightVo from(Flight flight) {
+		FlightVo flightVo = new FlightVo();
+		try {
+			BeanUtils.copyProperties(flight, flightVo);
+			BeanUtils.copyProperties(flight.getMutableFlightDetails(), flightVo);
+			flightVo.setId(flight.getId());
+		} catch (Exception e) {
+			logger.error("failure to copy proeprties", e);
+		}
+		return flightVo;
+	}
+
+	public static FlightVo from(BookingDetail bookingDetail) {
+		FlightVo flightVo = new FlightVo();
+		flightVo.setDestination(bookingDetail.getDestination());
+		flightVo.setDestinationCountry(bookingDetail.getDestinationCountry());
+		flightVo.setEta(bookingDetail.getEta());
+		flightVo.setEtaDate(bookingDetail.getEtaDate());
+		flightVo.setOrigin(bookingDetail.getOrigin());
+		flightVo.setOriginCountry(bookingDetail.getOriginCountry());
+		flightVo.setEtd(bookingDetail.getEtd());
+		flightVo.setEtdDate(bookingDetail.getEtdDate());
+		flightVo.setFullFlightNumber(bookingDetail.getFullFlightNumber());
+		return flightVo;
+	}
 
 	public int getRuleHits() {
 		return ruleHits;

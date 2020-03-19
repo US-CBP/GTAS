@@ -6,12 +6,18 @@
 package gov.gtas.parsers.pnrgov;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
+import gov.gtas.parsers.ParserTestHelper;
 import org.junit.Test;
 
 import gov.gtas.parsers.edifact.EdifactLexer;
 
-public class PnrUtilsTest {
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+public class PnrUtilsTest implements ParserTestHelper {
+	private static final String BIG_PNR = "/pnr-messages/bigbigPnr.txt";
 
 	@Test
 	public void testgetSinglePnr() {
@@ -26,5 +32,13 @@ public class PnrUtilsTest {
 		assertEquals("SRC'RCI+DL:MFN4TI2'", PnrUtils.getSinglePnr(lexer, 1));
 		assertEquals("SRC'RCI+DL:MFN4TI3'", PnrUtils.getSinglePnr(lexer, 2));
 		assertEquals(null, PnrUtils.getSinglePnr(lexer, 3));
+	}
+
+	@Test
+	public void testBigFile() throws IOException, URISyntaxException {
+		String msg = getMessageText(BIG_PNR);
+		EdifactLexer lexer = new EdifactLexer(msg);
+		Object foo = PnrUtils.getSinglePnr(lexer, 46);
+		assertNotNull(foo);
 	}
 }

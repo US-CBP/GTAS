@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+  gtas-scheduler:
+    volumes:
+      - type: bind
+        source: ./gtas-data
+        target: /usr/local/gtas-data
+        consistency: consistent

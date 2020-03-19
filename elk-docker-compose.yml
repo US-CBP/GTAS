@@ -1,76 +1,133 @@
 version: "3.7"
 
 services:
+
   kibana:
-    image: kibana:7.2.0 
     container_name: kibana
+    image: wcogtas/kibana:1.0.0
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: install/docker/kibana/kibana.Dockerfile
+    environment:
+      ELASTICSEARCH_HOSTS: https://elasticsearch:9200
     ports:
       - 5601:5601
-    networks: 
-      - GTAS_elastic-network
-    environment: 
-      - SERVER_SSL_ENABLED=true
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=$ELASTIC_PASSWORD
-      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
-      - ELASTICSEARCH_URL=https://elasticsearch:9200
-      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
-      - XPACK_SECURITY_ENABLED=true
+    restart: always
+    volumes:
+      - kibana_conf:/usr/share/kibana/data
+    networks:
+      - GTAS_webapp-network
+    secrets:
+      - source: elasticsearch_ca
+        target: /etc/kibana/config/ca.crt
+      - source: kibana_crt
+        target: /etc/kibana/config/kibana.crt
+      - source: kibana_key
+        target: /etc/kibana/config/kibana.key
     depends_on:
       - elasticsearch
-    volumes:
-      - '$PWD/gtas-parent/scripts/elastic:/config/kibana'
 
   elasticsearch:
-    image: elasticsearch:7.2.0
-    # build:
-    #   context: ./gtas-parent/scripts/elastic
-    #   dockerfile: install/docker/elasticsearch/Dockerfile
+    image: wcogtas/elasticsearch:1.0.0
     container_name: elasticsearch
-    volumes: 
-      - "es-data:/usr/share/elasticsearch/data"
-    networks: 
-      - GTAS_elastic-network
-    ports: 
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: install/docker/elasticsearch/elasticsearch.Dockerfile
+    ports:
       - 9300:9300
       - 9200:9200
-    environment:
-      - node.name=elasticsearch
-      - discovery.seed_hosts=elasticsearch
-      - cluster.initial_master_nodes=elasticsearch
-      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD 
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.license.self_generated.type=trial 
-      - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=true
+    restart: always
+    volumes: 
+      - es-data:/usr/share/elasticsearch/data
+      - elasticsearch_conf:/usr/share/elasticsearch/config/
+    networks: 
+      - GTAS_webapp-network
+    secrets:
+      - source: elasticsearch_ca
+        target: /usr/share/elasticsearch/config/certs/elasticsearch/elastic-ca.crt
+      - source: elasticsearch_instance_crt
+        target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.crt
+      - source: elasticsearch_instance_key
+        target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.key
+
   logstash:
-    build: 
-      dockerfile: ./install/docker/logstash/Dockerfile
-      context: ./gtas-parent/scripts/elastic
-      args: 
-        DB_HOST: 'mariahost'
-        ELASTIC_HOST: 'elasticsearch'
+    image: wcogtas/logstash:1.0.0
     container_name: logstash
-    environment:
-      - JAVA_OPTS=-Xms1g -Xmx1g
-      - ES_PWD=$ES_PWD
-      - LOGSTASH_DIR=/usr/share/logstash
-      - LOGSTASH_LIB=/usr/share/logstash/logstash-core/lib/jars
-      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
-      - XPACK_MONITORING_ENABLED=false
-      - XPACK_MONITORING_ELASTICSEARCH_USERNAME="elastic"
-      - XPACK_MONITORING_ELASTICSEARCH_PASSWORD=$ES_PWD
-      - XPACK_MONITORING_ELASTICSEARCH_HOSTS=https://elasticsearch:9200
-      - XPACK_MONITORING_ELASTICSEARCH_SSL_VERIFICATION_MODE=none
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: ./install/docker/logstash/logstash.Dockerfile
+    environment: 
+      MARIADB_HOST: 'mariadb'
+      ELASTIC_HOST: 'https://elasticsearch'
+      XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
+      LOGSTASH_KEYSTORE_PASS: admin123
+    restart: always
+    secrets:
+      - elasticsearch_ca
     networks:
-      - GTAS_elastic-network
-      - GTAS_logstash-network
+      - GTAS_webapp-network
+    volumes:
+      - logstash_conf:/usr/share/logstash/config/
     depends_on:
       - elasticsearch
-  networks:
-    GTAS_elastic-network:
-      driver: "bridge"
-    GTAS_logstash-network:
-      driver: "bridge"
-    GTAS_webapp-network:
-      driver: "bridge"
+
+  elk-setup:
+    image: wcogtas/elk-setup:1.0.0
+    container_name: elk-setup
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: ./install/docker/elk-setup/elk-setup.Dockerfile
+    environment:
+      KIBANA_HOST: 'kibana'
+      ELASTICSEARCH_HOST: 'elasticsearch'
+    volumes:
+      - logstash_conf:/logstash-conf
+      - kibana_conf:/kibana-conf
+      - elasticsearch_conf:/elasticsearch-conf
+    secrets:
+      - logstash_keystore_password
+      - mysql_logstash_user
+      - mysql_logstash_password
+      - elastic_password
+      - elasticsearch_kibana_user
+      - elasticsearch_kibana_password
+      - elastic_bootstrap_password
+    networks:
+      - GTAS_webapp-network
+
+
+secrets:
+  logstash_keystore_password:
+    file: ./gtas-parent/gtas-commons/secrets/logstash_keystore_password.txt
+  mysql_logstash_user:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_user.txt
+  mysql_logstash_password:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_password.txt
+  elastic_password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic_password.txt
+  elasticsearch_kibana_user:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch_kibana_user.txt
+  elasticsearch_kibana_password:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch_kibana_password.txt
+  elastic_bootstrap_password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic_bootstrap_password.txt
+  elasticsearch_ca:
+    file: ./gtas-parent/gtas-commons/secrets/elastic-ca.crt
+  elasticsearch_instance_crt:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.crt
+  elasticsearch_instance_key:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.key
+  kibana_crt:
+    file: ./gtas-parent/gtas-commons/secrets/kibana.crt
+  kibana_key:
+    file: ./gtas-parent/gtas-commons/secrets/kibana.key
+
+volumes:
+  logstash_conf:
+  kibana_conf:
+  elasticsearch_conf:
+  es-data:
+
+networks:
+  GTAS_webapp-network:
+    attachable: true

@@ -41,6 +41,8 @@ public enum EntityEnum {
 
 	DWELL_TIME("DWELL TIME", "DwellTime", "dwell", ".dwellTimes"),
 
+	FORM_OF_PAYMENT("FORM OF PAYMENT", "PaymentForm", "fop", ".paymentForms"),
+
 	BAG("BAG", "Bag", "bag", ".bags"),
 
 	FLIGHT_PAX("FLIGHT PAX", "FlightPax", "flightpax", ".flightPaxList"),

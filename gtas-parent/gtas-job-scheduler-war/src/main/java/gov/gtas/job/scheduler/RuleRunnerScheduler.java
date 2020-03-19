@@ -114,6 +114,7 @@ public class RuleRunnerScheduler {
 				worker.setMessageStatuses(ruleThread);
 				list.add(worker);
 			}
+			source = null; // Alert that source can be GC'd.
 			exec.invokeAll(list);
 		}
 
@@ -149,6 +150,7 @@ public class RuleRunnerScheduler {
 					worker.setMessageStatuses(ruleThread);
 					list.add(worker);
 				}
+				source = null; // Alert that source can be GC'd.
 				exec.invokeAll(list);
 			}
 		}

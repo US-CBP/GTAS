@@ -1,36 +1,104 @@
 version: '3.7'
 services:
-  webapp:
-    container_name: webapp
-    build: './gtas-parent'
+
+  http-proxy:
+    image: wcogtas/http-proxy:1.0.0
+    container_name: http-proxy
+    build: 
+      context: ./gtas-parent
+      dockerfile: docker-resources/proxy.Dockerfile
+    restart: always
     ports:
-      - 8080:8080
-    environment: 
-      - DB_HOST=mariadb
+      - 443:443
+      - 80:80
     networks:
       - GTAS_webapp-network
-      - GTAS_logstash-network
-    restart: unless-stopped
+    secrets:
+      - elastic_bootstrap_password
+      - source: webapp_cert
+        target: /wcogtas.org.crt
+      - source: webapp_key
+        target: /wcogtas.org.key
+
+  web-app:
+    image: wcogtas/web-app:1.0.0
+    container_name: web-app
+    build: 
+      context: ./gtas-parent
+      dockerfile: web-app.Dockerfile
+    ports:
+      - 8080:8080
+      - 8443:8443
+    environment: 
+      - DB_HOST=mariadb
+      - KIBANA_HOST=kibana
+      - NEO4J_HOST=neo4j
+      - ACTIVEMQ_HOST=activemq
+      - PROXY_HOST=httpproxy
+      - ELASTICSEARCH=elasticsearch
+    networks:
+      - GTAS_webapp-network
+    restart: always
     secrets:
      - mysql_webapp_user
      - mysql_webapp_password
+     - webapp_neo4j_user
+     - webapp_neo4j_password
+     - elastic_bootstrap_password
+     - source: webapp_cert
+       target: /usr/local/tomcat/conf/wcogtas.org.crt
+     - source: webapp_key
+       target: /usr/local/tomcat/conf/wcogtas.org.key
+     - source: elastic_cert
+       target: /usr/local/tomcat/conf/elasticsearch-node1.crt
+     - source: elastic_key
+       target: /usr/local/tomcat/conf/elasticsearch-node1.key
+     - source: elastic_ca
+       target: /usr/local/tomcat/conf/elastic-ca.crt
     volumes:
       - m2:/root/.m2
+      - scheduler-logs:/scheduler-logs
+
+  gtas-scheduler:
+    image: wcogtas/gtas-scheduler:1.0.0
+    container_name: gtas-scheduler
+    build: 
+      context: .
+      dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
+    restart: always
+    environment:
+      DB_HOST: mariadb
+      KIBANA_HOST: kibana
+      NEO4J_HOST: neo4j
+      ACTIVEMQ_HOST: activemq
+      JAVA_OPTS: "-Xms8048m -Xmx16000m -Duser.timezone=UTC"
+    volumes:
+      - scheduler-logs:/usr/local/tomcat/logs
+    secrets:
+      - mysql_processor_user
+      - mysql_processor_password
+      - webapp_neo4j_user
+      - webapp_neo4j_password
+    networks:
+      - GTAS_webapp-network
     depends_on: 
-      - mariadb
+      - activemq
+
+  activemq:
+    image: rmohr/activemq:5.15.9
+    container_name: activemq
+    restart: always
+    networks: 
+      - GTAS_webapp-network
 
   mariadb:
+    image: wcogtas/mariadb:1.0.0
     build:
-      context: './gtas-parent'
-      dockerfile: 'Dockerfile-mariadb'
+      context: ./gtas-parent
+      dockerfile: mariadb.Dockerfile
     container_name: mariadb
     environment:
-      MYSQL_DATABASE: gtas
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
-    healthcheck:
-      test: "mysql --user=$$(cat /run/secrets/mysql_healthcheck_user) --password=$$(cat /run/secrets/mysql_healthcheck_password) --execute \"SHOW DATABASES;\")"
-      interval: 5s
-      retries: 36
     secrets:
      - mysql_etl_user
      - mysql_etl_password
@@ -40,38 +108,63 @@ services:
      - mysql_webapp_password
      - mysql_healthcheck_user
      - mysql_healthcheck_password
+     - mysql_logstash_user
+     - mysql_logstash_password
      - mysql_root_password
     ports:
       - 3306:3306
     networks:
       - GTAS_webapp-network
-    restart: unless-stopped
+    restart: always
     volumes:
       - db-data:/var/lib/mysql
+
+
 secrets:
   mysql_etl_user:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_etl_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_etl_user.txt
   mysql_etl_password:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_etl_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_etl_password.txt
   mysql_healthcheck_user:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_healthcheck_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_healthcheck_user.txt
   mysql_healthcheck_password:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_healthcheck_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_healthcheck_password.txt
+  mysql_logstash_user:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_user.txt
+  mysql_logstash_password:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_password.txt
+  elastic_bootstrap_password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic_bootstrap_password.txt
   mysql_processor_user:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_processor_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_processor_user.txt
   mysql_processor_password:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_processor_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_processor_password.txt
   mysql_webapp_user:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_webapp_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_webapp_user.txt
   mysql_webapp_password:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_webapp_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
   mysql_root_password:
-    file: ./gtas-parent/gtas-commons/mariadb/mysql_root_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql_root_password.txt
+  webapp_neo4j_user:
+    file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_user.txt
+  webapp_neo4j_password:
+    file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_password.txt
+  elastic_key:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.key
+  elastic_ca:
+    file: ./gtas-parent/gtas-commons/secrets/elastic-ca.crt
+  elastic_cert:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.crt
+  webapp_cert:
+    file: ./gtas-parent/gtas-commons/secrets/wcogtas.org.crt
+  webapp_key:
+    file: ./gtas-parent/gtas-commons/secrets/wcogtas.org.key
+
 volumes:
   db-data:
   m2:
+  scheduler-logs:
+
 networks:
-  GTAS_logstash-network:
-    driver: "bridge"
   GTAS_webapp-network:
-    driver: "bridge"
+    attachable: true

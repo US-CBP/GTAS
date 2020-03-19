@@ -46,6 +46,9 @@ public class ApisMessageService extends MessageLoaderService {
 	@Autowired
 	private BookingBagRepository bookingBagRepository;
 
+	@Autowired
+	private PassengerTripRepository passengerTripRepository;
+
 	@Override
 	public List<String> preprocess(String message) {
 		return Collections.singletonList(message);
@@ -113,6 +116,7 @@ public class ApisMessageService extends MessageLoaderService {
 			int createdPassengers = loaderRepo.createPassengers(passengerInformationDTO.getNewPax(),
 					passengerInformationDTO.getOldPax(), apis.getPassengers(), primeFlight, apis.getBookingDetails());
 
+			updateApisCoTravelerCount(apis);
 			// MUST be after creation of passengers - otherwise APIS will have empty list of
 			// passengers.
 			createBagInformation(m, apis, primeFlight);
@@ -134,6 +138,13 @@ public class ApisMessageService extends MessageLoaderService {
 
 		}
 		return msgDto.getMessageStatus();
+	}
+
+	private void updateApisCoTravelerCount(ApisMessage apis) {
+		for (Passenger p : apis.getPassengers()) {
+			int apisCoTravelerCount = passengerTripRepository.getCoTravelerCount(p.getId(), p.getPassengerTripDetails().getReservationReferenceNumber());
+			p.getPassengerTripDetails().setCoTravelerCount(apisCoTravelerCount);
+		}
 	}
 
 	/*

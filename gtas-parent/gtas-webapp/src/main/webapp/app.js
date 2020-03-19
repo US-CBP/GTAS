@@ -739,10 +739,6 @@ var app;
               alert("Error Loading Notifications: " + reason);
             });
 
-            notificationService.getWatchlistCount().then(function(value) {
-               $scope.hitCount = value;
-            });
-
             $scope.getHitCount = function() {
                     return $scope.hitCount;
             };
@@ -754,7 +750,11 @@ var app;
             $scope.getAgencyName = function() {
             	return $scope.agencyName;
             };
-            
+
+            configService.neo4jProtocol().then(function(value) {
+                $scope.neo4jProtocol = value.data;
+            });
+
             configService.neo4j().then(function(value) {
                $scope.neo4jUrl = value.data;
             });
@@ -782,15 +782,6 @@ var app;
             $scope.$on('stateChanged', function (e, state, toParams) {
                 $scope.stateName = state.name;
                 $scope.mode = toParams.mode;
-                notificationService.getWatchlistCount().then(function(value) {
-                    $scope.hitCount = value;
-                });
-            });
-
-            $rootScope.$on('hitCountChange', function () {
-                notificationService.getWatchlistCount().then(function(value) {
-                    $scope.hitCount = value;
-                 });
             });
 
             $rootScope.$on('unauthorizedEvent', function () {

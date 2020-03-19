@@ -73,8 +73,13 @@
         $uibModalInstance.close(answer);
       }
     };
+
+    configService.neo4jProtocol().then(function(value) {
+      $scope.neo4jProtocol = value.data;
+    });
+
     configService.cypherUrl().then(function(result){
-      vaquita.rest.CYPHER_URL = result;  
+      vaquita.rest.CYPHER_URL = result;
     });
 
     configService.cypherAuth().then(function(result){
@@ -1111,7 +1116,6 @@
       paxDetailService.updatePassengerHitDetails(paxId, 'REVIEWED')
         .then(function (response) {
           $scope.refreshHitDetailsList();
-          $rootScope.$broadcast('hitCountChange');
         });
     };
 
@@ -1120,7 +1124,6 @@
       paxDetailService.updatePassengerHitDetails(paxId, 'Re_Opened')
           .then(function () {
             $scope.refreshHitDetailsList();
-            $rootScope.$broadcast('hitCountChange');
           });
     };
 

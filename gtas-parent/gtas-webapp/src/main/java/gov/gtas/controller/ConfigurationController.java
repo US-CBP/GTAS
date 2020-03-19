@@ -25,6 +25,12 @@ public class ConfigurationController {
 	@Value("${default.landing.page}")
 	String defaultLandingPage;
 
+	@Value("${neo4j.protocol}")
+	String neo4jProtocol;
+
+	@Value("${kibana.protocol}")
+	String kibanaProtocol;
+
 	@Value("${neo4j.url}")
 	String neo4jUrl;
 
@@ -56,6 +62,16 @@ public class ConfigurationController {
 			landingPage = defaultLandingPage;
 		}
 		return landingPage;
+	}
+
+	@GetMapping(value = "/api/config/kibanaProtocol", produces = "text/plain")
+	public String getKibanaProtocol() {
+		return kibanaProtocol;
+	}
+
+	@GetMapping(value = "/api/config/neo4jProtocol", produces = "text/plain")
+	public String getNeo4JProtocol() {
+		return neo4jProtocol;
 	}
 
 	@GetMapping(value = "/api/config/kibanaUrl", produces = "text/plain")

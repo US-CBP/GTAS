@@ -23,26 +23,29 @@ public class Seat extends BaseEntity {
 
 	/** true if the seat number was derived from APIS data */
 	@Column(nullable = false)
-	private Boolean apis = Boolean.valueOf(false);
+	private Boolean apis = Boolean.FALSE;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "passenger_id", nullable = false)
 	private Passenger passenger;
 
-	public Long getPaxId() {
-		return paxId;
+	public Long getPassengerId() {
+		return passengerId;
 	}
 
-	public void setPaxId(Long paxId) {
-		this.paxId = paxId;
+	public void setPassengerId(Long paxId) {
+		this.passengerId = paxId;
 	}
 
 	@Column(name = "passenger_id", updatable = false, insertable = false, columnDefinition = "bigint unsigned")
-	private Long paxId;
+	private Long passengerId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "flight_id", referencedColumnName = "id", nullable = false)
 	private Flight flight;
+
+	@Column(name = "flight_id", updatable = false, insertable = false, columnDefinition = "bigint unsigned")
+	private Long flightId;
 
 	public String getNumber() {
 		return number;
@@ -76,13 +79,21 @@ public class Seat extends BaseEntity {
 		this.flight = flight;
 	}
 
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
+
 	@Override
 	public int hashCode() {
 		String num = this.number == null ? null : this.number.toUpperCase();
 		if (num != null) {
 			num = num.replaceAll("\\\\", "");
 		}
-		return Objects.hash(num, this.apis, this.paxId);
+		return Objects.hash(num, this.apis, this.passengerId);
 	}
 
 	@Override
@@ -101,6 +112,6 @@ public class Seat extends BaseEntity {
 			num2 = num2.replaceAll("\\\\", "");
 		}
 		return Objects.equals(num, num2) && Objects.equals(this.apis, other.apis)
-				&& Objects.equals(this.paxId, other.paxId);
+				&& Objects.equals(this.passengerId, other.passengerId);
 	}
 }

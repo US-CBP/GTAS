@@ -44,7 +44,7 @@ public class Document extends BaseEntity {
 	private Passenger passenger;
 
 	@Column(name = "passenger_id", columnDefinition = "bigint unsigned", insertable = false, updatable = false)
-	private Long paxId;
+	private Long passengerId;
 
 	/** calculated field */
 	@Column(name = "days_valid")
@@ -102,12 +102,12 @@ public class Document extends BaseEntity {
 		return passenger;
 	}
 
-	public Long getPaxId() {
-		return paxId;
+	public Long getPassengerId() {
+		return passengerId;
 	}
 
-	public void setPaxId(Long paxId) {
-		this.paxId = paxId;
+	public void setPassengerId(Long paxId) {
+		this.passengerId = paxId;
 	}
 
 	public void setPassenger(Passenger passenger) {
@@ -116,7 +116,7 @@ public class Document extends BaseEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.documentNumber, this.issuanceCountry, this.documentType, this.paxId);
+		return Objects.hash(this.documentNumber, this.issuanceCountry, this.documentType, this.passengerId);
 	}
 
 	@Override
@@ -126,6 +126,7 @@ public class Document extends BaseEntity {
 		if (!(obj instanceof Document))
 			return false;
 		final Document other = (Document) obj;
-		return Objects.equals(this.documentNumber, other.documentNumber) && Objects.equals(this.paxId, other.paxId);
+		return Objects.equals(this.documentNumber, other.documentNumber)
+				&& Objects.equals(this.passengerId, other.passengerId);
 	}
 }

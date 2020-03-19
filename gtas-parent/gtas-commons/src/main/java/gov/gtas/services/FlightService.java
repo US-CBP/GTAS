@@ -34,6 +34,7 @@ public interface FlightService {
 	public Flight getUniqueFlightByCriteria(String carrier, String flightNumber, String origin, String destination,
 			Date flightDate);
 
+	// always a list of 1.
 	public List<Flight> getFlightByPaxId(Long paxId);
 
 	public List<Flight> getFlightsByDates(Date startDate, Date endDate);

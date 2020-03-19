@@ -410,7 +410,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 						cc.setAccountHolder(msgs.get(0));
 						if (msgs.size() > 1) {
 							cc.setAccountHolderAddress(msgs.get(1));
-							cc.setAccountHolderPhone(msgs.get(2));
+							if (msgs.size() > 2) {
+								cc.setAccountHolderPhone(msgs.get(2));
+							}
 						}
 
 					}

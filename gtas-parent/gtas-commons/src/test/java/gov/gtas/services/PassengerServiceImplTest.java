@@ -54,7 +54,7 @@ public class PassengerServiceImplTest {
 		passengerSeat.setFlight(f);
 		passengerSeat.setNumber(SEAT_NUMBER);
 		passengerSeat.setPassenger(p);
-		passengerSeat.setPaxId(p.getId());
+		passengerSeat.setPassengerId(p.getId());
 		passengerSeat.setApis(false);
 
 		p.setSeatAssignments(paxSeats);

@@ -45,12 +45,13 @@ public final class Constants {
 	public static final String WL_GET_BY_NAME = "/wl/{entity}/{name}";
 	public static final String WL_GETALL = "/wl";
 	public static final String WL_GETDRL = "/wl_drl";
-	public static final String WL_CREATE_UPDATE_DELETE_ITEMS = "/wl/{entity}";// POST/PUT
+	public static final String WL_CREATE_UPDATE_ITEMS = "/wl/{entity}";// POST/PUT
 	public static final String WL_ADD_WL_CAT = "/wlput/wlcat/";// POST/PUT
 	public static final String WL_DELETE = "/wl/{entity}/{name}";
 	public static final String WL_COMPILE = "/wl/compile";// GET
 	public static final String WL_TEST = "/testwl";// GET
 	public static final String WL_CATEGORY_GETALL = "/wl/watchlistCategories";
+	public static final String WL_DELETE_ITEMS = "/wl/watchlistItem/{watchlistItemIds}"; // DELETE
 	// Query Messages
 	public static final String QUERY_SAVED_SUCCESS_MSG = "Query saved successfully";
 	public static final String QUERY_EDITED_SUCCESS_MSG = "Query updated successfully";
