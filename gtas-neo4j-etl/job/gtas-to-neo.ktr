@@ -42,7 +42,7 @@
           <id>LINES_READ</id>
           <enabled>Y</enabled>
           <name>LINES_READ</name>
-          <subject/>
+          <subject>Dummy - after passenger sort</subject>
         </field>
         <field>
           <id>LINES_WRITTEN</id>
@@ -66,7 +66,7 @@
           <id>LINES_OUTPUT</id>
           <enabled>Y</enabled>
           <name>LINES_OUTPUT</name>
-          <subject/>
+          <subject>Text file output-gtas_message_id</subject>
         </field>
         <field>
           <id>LINES_REJECTED</id>
@@ -496,8 +496,8 @@
     </notepad>
     <notepad>
       <note>Read from GTAS (MariaDB)</note>
-      <xloc>144</xloc>
-      <yloc>1904</yloc>
+      <xloc>176</xloc>
+      <yloc>2064</yloc>
       <width>191</width>
       <heigth>30</heigth>
       <fontname>Segoe UI</fontname>
@@ -521,7 +521,7 @@ the last idTag record
 as a global variable 
 for logging purposes</note>
       <xloc>1088</xloc>
-      <yloc>1296</yloc>
+      <yloc>1456</yloc>
       <width>153</width>
       <heigth>90</heigth>
       <fontname>Segoe UI</fontname>
@@ -746,28 +746,13 @@ for logging purposes</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values-format last update date</from>
-      <to>Neo4J Output -passenger-flight</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Dummy (do nothing) 4</from>
       <to>Filter rows 2</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Dummy (do nothing) 4</from>
-      <to>Text file output - ALL MESSAGES</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Filter rows 2</from>
       <to>Dummy (do nothing) 5</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Filter rows 2</from>
-      <to>Text file output-PNR MESSAGE</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -778,11 +763,6 @@ for logging purposes</note>
     <hop>
       <from>Select values - converting gtas IDs</from>
       <to>Sort rows - flight - passenger</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Table input - read passenger data</from>
-      <to>Filter rows - check message id</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -836,13 +816,108 @@ for logging purposes</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Text file output - ALL MESSAGES</from>
-      <to>Unique rows - gtas_message_id</to>
+      <from>Table input - read passenger data</from>
+      <to>Add sequence</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Unique rows - gtas_message_id</from>
-      <to>Text file output - write gtas_message_id</to>
+      <from>Add sequence</from>
+      <to>Filter rows - check message id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort rows - message_id</from>
+      <to>Text file output-gtas_message_id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort rows - sort passengers</from>
+      <to>Dummy - after passenger sort</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort rows - psgr-doc</from>
+      <to>Text file output - passenger-document</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing) 4</from>
+      <to>Sort rows - message_id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing) 4</from>
+      <to>Sort rows - psgr-doc</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing) 4</from>
+      <to>Sort rows - flight-id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort rows - flight-id</from>
+      <to>Text file output -flights</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows 2</from>
+      <to>Dummy - pnr data</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy - pnr data</from>
+      <to>Sort rows-creditcard</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort rows-creditcard</from>
+      <to>Text file output-credit card</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy - pnr data</from>
+      <to>Sort rows - email</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort rows - email</from>
+      <to>Text file output-email</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy - pnr data</from>
+      <to>Sort rows-phone</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort rows-phone</from>
+      <to>Text file output-phone</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy - pnr data</from>
+      <to>Sort rows-address</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort rows-address</from>
+      <to>Text file output-address</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values-format last update date</from>
+      <to>Dummy (do nothing) 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing) 2</from>
+      <to>Sort rows - sort passengers</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing) 2</from>
+      <to>Neo4J Output -passenger-flight</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -1266,6 +1341,41 @@ for logging purposes</note>
     </GUI>
   </step>
   <step>
+    <name>Add sequence</name>
+    <type>Sequence</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <valuename>row_number</valuename>
+    <use_database>N</use_database>
+    <connection>gtas-db</connection>
+    <schema/>
+    <seqname>SEQ_</seqname>
+    <use_counter>Y</use_counter>
+    <counter_name/>
+    <start_at>1</start_at>
+    <increment_by>1</increment_by>
+    <max_value>999999999</max_value>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>112</xloc>
+      <yloc>1968</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Dummy (do nothing)</name>
     <type>Dummy</type>
     <description/>
@@ -1360,8 +1470,58 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>800</xloc>
-      <yloc>720</yloc>
+      <xloc>448</xloc>
+      <yloc>784</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy - after passenger sort</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1088</xloc>
+      <yloc>608</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy - pnr data</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>560</xloc>
+      <yloc>992</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1385,8 +1545,8 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>352</xloc>
-      <yloc>1312</yloc>
+      <xloc>304</xloc>
+      <yloc>1376</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1688,7 +1848,7 @@ for logging purposes</note>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Text file output-PNR MESSAGE</send_true_to>
+    <send_true_to>Dummy - pnr data</send_true_to>
     <send_false_to>Dummy (do nothing) 5</send_false_to>
     <compare>
       <condition>
@@ -1716,8 +1876,8 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>640</xloc>
-      <yloc>720</yloc>
+      <xloc>560</xloc>
+      <yloc>752</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2144,8 +2304,8 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1312</xloc>
-      <yloc>416</yloc>
+      <xloc>1328</xloc>
+      <yloc>480</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2858,6 +3018,12 @@ for logging purposes</note>
         <variable_type>ROOT_JOB</variable_type>
         <default_value/>
       </field>
+      <field>
+        <field_name>row_number</field_name>
+        <variable_name>VAR_LAST_ROW_NUMBER</variable_name>
+        <variable_type>ROOT_JOB</variable_type>
+        <default_value/>
+      </field>
     </fields>
     <use_formatting>Y</use_formatting>
     <attributes/>
@@ -2937,7 +3103,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>320</xloc>
+      <xloc>304</xloc>
       <yloc>608</yloc>
       <draw>Y</draw>
     </GUI>
@@ -2971,7 +3137,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>320</xloc>
+      <xloc>304</xloc>
       <yloc>960</yloc>
       <draw>Y</draw>
     </GUI>
@@ -3005,7 +3171,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>336</xloc>
+      <xloc>304</xloc>
       <yloc>736</yloc>
       <draw>Y</draw>
     </GUI>
@@ -3104,8 +3270,58 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>336</xloc>
-      <yloc>864</yloc>
+      <xloc>304</xloc>
+      <yloc>848</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Sort rows - email</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <sort_size>1000000</sort_size>
+    <free_memory>30</free_memory>
+    <compress>N</compress>
+    <compress_variable/>
+    <unique_rows>Y</unique_rows>
+    <fields>
+      <field>
+        <name>idTag</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>gtas_email_id</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>1168</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -3123,7 +3339,7 @@ for logging purposes</note>
     <directory>%%java.io.tmpdir%%</directory>
     <prefix>out</prefix>
     <sort_size>1000000</sort_size>
-    <free_memory>50</free_memory>
+    <free_memory>30</free_memory>
     <compress>N</compress>
     <compress_variable/>
     <unique_rows>Y</unique_rows>
@@ -3160,6 +3376,332 @@ for logging purposes</note>
     </GUI>
   </step>
   <step>
+    <name>Sort rows - flight-id</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <sort_size>1000000</sort_size>
+    <free_memory/>
+    <compress>N</compress>
+    <compress_variable/>
+    <unique_rows>Y</unique_rows>
+    <fields>
+      <field>
+        <name>gtas_flight_id</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1056</xloc>
+      <yloc>752</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Sort rows - message_id</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <sort_size>1000000</sort_size>
+    <free_memory>35</free_memory>
+    <compress>N</compress>
+    <compress_variable/>
+    <unique_rows>Y</unique_rows>
+    <fields>
+      <field>
+        <name>gtas_message_id</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>704</xloc>
+      <yloc>752</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Sort rows - psgr-doc</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <sort_size>1000000</sort_size>
+    <free_memory/>
+    <compress>N</compress>
+    <compress_variable/>
+    <unique_rows>Y</unique_rows>
+    <fields>
+      <field>
+        <name>idTag</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>gtas_document_id</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>880</xloc>
+      <yloc>752</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Sort rows - sort passengers</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <sort_size>1000000</sort_size>
+    <free_memory>30</free_memory>
+    <compress>N</compress>
+    <compress_variable/>
+    <unique_rows>Y</unique_rows>
+    <fields>
+      <field>
+        <name>idTag</name>
+        <ascending>Y</ascending>
+        <case_sensitive>Y</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1088</xloc>
+      <yloc>480</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Sort rows-address</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <sort_size>1000000</sort_size>
+    <free_memory>30</free_memory>
+    <compress>N</compress>
+    <compress_variable/>
+    <unique_rows>Y</unique_rows>
+    <fields>
+      <field>
+        <name>idTag</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>gtas_address_id</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1200</xloc>
+      <yloc>1184</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Sort rows-creditcard</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <sort_size>1000000</sort_size>
+    <free_memory>30</free_memory>
+    <compress>N</compress>
+    <compress_variable/>
+    <unique_rows>Y</unique_rows>
+    <fields>
+      <field>
+        <name>idTag</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>gtas_creditcard_id</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>560</xloc>
+      <yloc>1168</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Sort rows-phone</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <sort_size>1000000</sort_size>
+    <free_memory>30</free_memory>
+    <compress>N</compress>
+    <compress_variable/>
+    <unique_rows>Y</unique_rows>
+    <fields>
+      <field>
+        <name>idTag</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>gtas_phone_id</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>976</xloc>
+      <yloc>1184</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Table input - read passenger data</name>
     <type>TableInput</type>
     <description/>
@@ -3171,7 +3713,7 @@ for logging purposes</note>
       <schema_name/>
     </partitioning>
     <connection>gtas-db</connection>
-    <sql>select * from neo4j_vw</sql>
+    <sql>select * from neo4j_vw Limit 100000</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
@@ -3187,15 +3729,252 @@ for logging purposes</note>
     </remotesteps>
     <GUI>
       <xloc>112</xloc>
-      <yloc>1952</yloc>
+      <yloc>2080</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Text file output - ALL MESSAGES</name>
+    <name>Text file output - passenger-document</name>
     <type>TextFileOutput</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>|</separator>
+    <enclosure/>
+    <enclosure_forced>N</enclosure_forced>
+    <enclosure_fix_disabled>N</enclosure_fix_disabled>
+    <header>Y</header>
+    <footer>N</footer>
+    <format>UNIX</format>
+    <compression>None</compression>
+    <encoding/>
+    <endedLine>EOF</endedLine>
+    <fileNameInField>N</fileNameInField>
+    <fileNameField/>
+    <create_parent_folder>Y</create_parent_folder>
+    <file>
+      <name>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_GTAS_DOCUMENT_FILE}</name>
+      <servlet_output>N</servlet_output>
+      <do_not_open_new_file_init>N</do_not_open_new_file_init>
+      <extention/>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <SpecifyFormat>N</SpecifyFormat>
+      <date_time_format/>
+      <add_to_result_filenames>Y</add_to_result_filenames>
+      <pad>N</pad>
+      <fast_dump>N</fast_dump>
+      <splitevery/>
+    </file>
+    <fields>
+      <field>
+        <name>DOCUMENT_CREATED</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>DOCUMENT_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>IS_DOCUMENT_AVAILABLE</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>PASSENGER_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>document_number</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>document_type</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>expiration_date</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>gtas_document_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>idTag</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>isLastRow</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>issuance_country</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>issuance_date</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>gtas_message_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>gtas_passenger_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>message_type</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>880</xloc>
+      <yloc>912</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Text file output -flights</name>
+    <type>TextFileOutput</type>
+    <description/>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -3234,102 +4013,6 @@ for logging purposes</note>
     </file>
     <fields>
       <field>
-        <name>ADDRESS_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>ADDRESS_LABEL_1</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>CREDIT_CARD_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>DOCUMENT_CREATED</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>DOCUMENT_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>EMAIL_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>EMAIL_LABEL_1</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>FLIGHT_CREATED</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
         <name>FLIGHT_LABEL</name>
         <type>String</type>
         <format/>
@@ -3339,306 +4022,6 @@ for logging purposes</note>
         <nullif/>
         <trim_type>both</trim_type>
         <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_ADDRESS_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_CREDIT_CARD_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_DOCUMENT_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_EMAIL_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_FLIGHT_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_PASSENGER_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_PHONE_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>NEO4J_PARAMETER_ID</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>0</precision>
-      </field>
-      <field>
-        <name>PASSENGER_CREATED</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>PASSENGER_FLIGHT_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>PASSENGER_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>PHONE_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>PHONE_LABEL_1</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>account_holder</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>address</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>address_update_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>card_type</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>carrier</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>nationality</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>city</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>country</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>credit_card_number</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>days_visa_valid</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>9</length>
-        <precision>0</precision>
-      </field>
-      <field>
-        <name>debark_country</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>debarkation</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -3666,102 +4049,6 @@ for logging purposes</note>
         <precision>-1</precision>
       </field>
       <field>
-        <name>direction</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>dob</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>document_number</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>document_type</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>3</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>domain</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>email_update_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>embark_country</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>embarkation</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
         <name>eta_date</name>
         <type>String</type>
         <format/>
@@ -3786,66 +4073,6 @@ for logging purposes</note>
         <precision>-1</precision>
       </field>
       <field>
-        <name>expiration</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>expiration_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>first_name</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>flight_hit_rule_count</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>9</length>
-        <precision>0</precision>
-      </field>
-      <field>
-        <name>flight_hit_watchlist_count</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>9</length>
-        <precision>0</precision>
-      </field>
-      <field>
         <name>full_flight_number</name>
         <type>String</type>
         <format/>
@@ -3855,66 +4082,6 @@ for logging purposes</note>
         <nullif/>
         <trim_type>both</trim_type>
         <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gender</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>2</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gtas_address_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>16</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gtas_creditcard_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>16</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gtas_document_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>16</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gtas_email_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>16</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -3930,30 +4097,6 @@ for logging purposes</note>
         <precision>-1</precision>
       </field>
       <field>
-        <name>gtas_phone_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>16</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>idTag</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
         <name>isLastRow</name>
         <type>String</type>
         <format/>
@@ -3963,90 +4106,6 @@ for logging purposes</note>
         <nullif/>
         <trim_type>both</trim_type>
         <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>issuance_country</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>issuance_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>last_name</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>line1</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>line2</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>line3</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>middle_name</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -4072,162 +4131,6 @@ for logging purposes</note>
         <trim_type>both</trim_type>
         <length>3</length>
         <precision>-1</precision>
-      </field>
-      <field>
-        <name>passenger_count</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>9</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>passenger_td_crt_dtm</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>passenger_td_upd_dtm</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>passenger_update_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>phone_number</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>pid_tag_creat_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>pnr_record_locator</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>20</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>postal_code</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>ref_number</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>state</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>suffix</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>title</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>travel_frequency</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>9</length>
-        <precision>0</precision>
       </field>
       <field>
         <name>flight_number</name>
@@ -4278,30 +4181,6 @@ for logging purposes</note>
         <precision>-1</precision>
       </field>
       <field>
-        <name>gtas_passenger_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gtas_message_create_dtm</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
         <name>message_type</name>
         <type>String</type>
         <format/>
@@ -4335,13 +4214,13 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>880</xloc>
-      <yloc>592</yloc>
+      <xloc>1056</xloc>
+      <yloc>848</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Text file output - write gtas_message_id</name>
+    <name>Text file output-address</name>
     <type>TextFileOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -4356,6 +4235,549 @@ for logging purposes</note>
     <enclosure_forced>N</enclosure_forced>
     <enclosure_fix_disabled>N</enclosure_fix_disabled>
     <header>Y</header>
+    <footer>N</footer>
+    <format>UNIX</format>
+    <compression>None</compression>
+    <encoding/>
+    <endedLine>EOF</endedLine>
+    <fileNameInField>N</fileNameInField>
+    <fileNameField/>
+    <create_parent_folder>Y</create_parent_folder>
+    <file>
+      <name>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_PNR_ADDRESS_FILE}</name>
+      <servlet_output>N</servlet_output>
+      <do_not_open_new_file_init>N</do_not_open_new_file_init>
+      <extention/>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <SpecifyFormat>N</SpecifyFormat>
+      <date_time_format/>
+      <add_to_result_filenames>Y</add_to_result_filenames>
+      <pad>N</pad>
+      <fast_dump>N</fast_dump>
+      <splitevery/>
+    </file>
+    <fields>
+      <field>
+        <name>IS_ADDRESS_AVAILABLE</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>ADDRESS_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>PASSENGER_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>gtas_address_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>idTag</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>line1</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>line2</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>line3</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>city</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>state</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>postal_code</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>country</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1200</xloc>
+      <yloc>1296</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Text file output-credit card</name>
+    <type>TextFileOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>|</separator>
+    <enclosure/>
+    <enclosure_forced>N</enclosure_forced>
+    <enclosure_fix_disabled>N</enclosure_fix_disabled>
+    <header>Y</header>
+    <footer>N</footer>
+    <format>UNIX</format>
+    <compression>None</compression>
+    <encoding/>
+    <endedLine>EOF</endedLine>
+    <fileNameInField>N</fileNameInField>
+    <fileNameField/>
+    <create_parent_folder>Y</create_parent_folder>
+    <file>
+      <name>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_PNR_CREDITCARD_FILE}</name>
+      <servlet_output>N</servlet_output>
+      <do_not_open_new_file_init>N</do_not_open_new_file_init>
+      <extention/>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <SpecifyFormat>N</SpecifyFormat>
+      <date_time_format/>
+      <add_to_result_filenames>Y</add_to_result_filenames>
+      <pad>N</pad>
+      <fast_dump>N</fast_dump>
+      <splitevery/>
+    </file>
+    <fields>
+      <field>
+        <name>CREDIT_CARD_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>IS_CREDIT_CARD_AVAILABLE</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>PASSENGER_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>account_holder</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>card_type</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>credit_card_number</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>expiration</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>gtas_creditcard_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>idTag</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>gtas_message_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>560</xloc>
+      <yloc>1280</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Text file output-email</name>
+    <type>TextFileOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>|</separator>
+    <enclosure/>
+    <enclosure_forced>N</enclosure_forced>
+    <enclosure_fix_disabled>N</enclosure_fix_disabled>
+    <header>Y</header>
+    <footer>N</footer>
+    <format>UNIX</format>
+    <compression>None</compression>
+    <encoding/>
+    <endedLine>EOF</endedLine>
+    <fileNameInField>N</fileNameInField>
+    <fileNameField/>
+    <create_parent_folder>Y</create_parent_folder>
+    <file>
+      <name>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_PNR_EMAIL_FILE}</name>
+      <servlet_output>N</servlet_output>
+      <do_not_open_new_file_init>N</do_not_open_new_file_init>
+      <extention/>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <SpecifyFormat>N</SpecifyFormat>
+      <date_time_format/>
+      <add_to_result_filenames>Y</add_to_result_filenames>
+      <pad>N</pad>
+      <fast_dump>N</fast_dump>
+      <splitevery/>
+    </file>
+    <fields>
+      <field>
+        <name>IS_EMAIL_AVAILABLE</name>
+        <type>None</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>EMAIL_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>PASSENGER_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>address</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>domain</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>email_update_date</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>gtas_email_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>idTag</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>gtas_message_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>1280</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Text file output-gtas_message_id</name>
+    <type>TextFileOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>|</separator>
+    <enclosure/>
+    <enclosure_forced>N</enclosure_forced>
+    <enclosure_fix_disabled>N</enclosure_fix_disabled>
+    <header>N</header>
     <footer>N</footer>
     <format>UNIX</format>
     <compression>None</compression>
@@ -4394,6 +4816,18 @@ for logging purposes</note>
         <length>-1</length>
         <precision>-1</precision>
       </field>
+      <field>
+        <name>message_type</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -4404,13 +4838,13 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1104</xloc>
-      <yloc>736</yloc>
+      <xloc>704</xloc>
+      <yloc>848</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Text file output-PNR MESSAGE</name>
+    <name>Text file output-phone</name>
     <type>TextFileOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -4434,7 +4868,7 @@ for logging purposes</note>
     <fileNameField/>
     <create_parent_folder>Y</create_parent_folder>
     <file>
-      <name>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_GTAS_PNR_FLIGHT_FILE}</name>
+      <name>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_PNR_PHONE_FILE}</name>
       <servlet_output>N</servlet_output>
       <do_not_open_new_file_init>N</do_not_open_new_file_init>
       <extention/>
@@ -4452,235 +4886,7 @@ for logging purposes</note>
     </file>
     <fields>
       <field>
-        <name>ADDRESS_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>ADDRESS_LABEL_1</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>CREDIT_CARD_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>DOCUMENT_CREATED</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>DOCUMENT_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>EMAIL_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>EMAIL_LABEL_1</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>FLIGHT_CREATED</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>FLIGHT_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_ADDRESS_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_CREDIT_CARD_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_DOCUMENT_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_EMAIL_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_FLIGHT_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>IS_PASSENGER_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
         <name>IS_PHONE_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>NEO4J_PARAMETER_ID</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>0</precision>
-      </field>
-      <field>
-        <name>PASSENGER_CREATED</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>PASSENGER_FLIGHT_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>PASSENGER_LABEL</name>
         <type>String</type>
         <format/>
         <currency/>
@@ -4704,450 +4910,6 @@ for logging purposes</note>
         <precision>-1</precision>
       </field>
       <field>
-        <name>PHONE_LABEL_1</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>account_holder</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>address</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>address_update_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>card_type</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>carrier</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>nationality</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>city</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>country</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>credit_card_number</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>days_visa_valid</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>9</length>
-        <precision>0</precision>
-      </field>
-      <field>
-        <name>debark_country</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>debarkation</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>destination</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>destination_country</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>3</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>direction</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>dob</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>document_number</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>document_type</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>3</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>domain</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>email_update_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>embark_country</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>embarkation</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>eta_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>etd_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>expiration</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>expiration_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>first_name</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>flight_hit_rule_count</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>9</length>
-        <precision>0</precision>
-      </field>
-      <field>
-        <name>flight_hit_watchlist_count</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>9</length>
-        <precision>0</precision>
-      </field>
-      <field>
-        <name>full_flight_number</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gender</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>2</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gtas_address_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>16</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gtas_creditcard_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>16</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gtas_document_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>16</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gtas_email_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>16</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gtas_flight_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>16</length>
-        <precision>-1</precision>
-      </field>
-      <field>
         <name>gtas_phone_id</name>
         <type>String</type>
         <format/>
@@ -5156,7 +4918,7 @@ for logging purposes</note>
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>16</length>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -5168,175 +4930,7 @@ for logging purposes</note>
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>isLastRow</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
         <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>issuance_country</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>issuance_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>last_name</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>line1</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>line2</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>line3</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>middle_name</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>origin</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>origin_country</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>3</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>passenger_count</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>9</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>passenger_td_crt_dtm</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>passenger_td_upd_dtm</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>passenger_update_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -5348,138 +4942,6 @@ for logging purposes</note>
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>pid_tag_creat_date</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>0</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>pnr_record_locator</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>20</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>postal_code</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>ref_number</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>state</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>suffix</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>title</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>travel_frequency</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal>.</decimal>
-        <group>,</group>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>9</length>
-        <precision>0</precision>
-      </field>
-      <field>
-        <name>flight_number</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>full_eta_dtm</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>full_etd_dtm</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -5496,43 +4958,7 @@ for logging purposes</note>
         <precision>-1</precision>
       </field>
       <field>
-        <name>gtas_passenger_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>gtas_message_create_dtm</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>message_type</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>flight_id_tag</name>
+        <name>PASSENGER_LABEL</name>
         <type>String</type>
         <format/>
         <currency/>
@@ -5553,43 +4979,8 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>640</xloc>
-      <yloc>864</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Unique rows - gtas_message_id</name>
-    <type>Unique</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <count_rows>N</count_rows>
-    <count_field/>
-    <reject_duplicate_row>N</reject_duplicate_row>
-    <error_description/>
-    <fields>
-      <field>
-        <name>gtas_message_id</name>
-        <case_insensitive>N</case_insensitive>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1104</xloc>
-      <yloc>592</yloc>
+      <xloc>976</xloc>
+      <yloc>1296</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -5704,6 +5095,31 @@ for logging purposes</note>
     <GUI>
       <xloc>496</xloc>
       <yloc>1584</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (do nothing) 2</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1216</xloc>
+      <yloc>416</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
