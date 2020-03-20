@@ -86,7 +86,7 @@ public class LoaderWorkerThread implements Runnable {
 		}
 	}
 
-	private void processCommand() {
+	private void processCommand() throws Exception {
 		loader.receiveMessage(text, fileName, primeFlightKeyArray);
 	}
 
