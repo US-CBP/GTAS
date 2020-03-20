@@ -150,15 +150,15 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
     public void handleAcknowledgeResponse(TamrMessage response) {
         if (this.checkRecordErrors(response)) {
             // Record errors are already logged.
-        } else if (response.getAcknowledgment() == true) {
-            logger.info("{} request to Tamr acknowledged",
-                    response.getMessageType());
-        } else if (response.getAcknowledgment() == false) {
-            logger.error("Error with {} request to Tamr: {}",
-                    response.getMessageType(), response.getError());
-        } else {
+        } else if (response.getAcknowledgment() == null) {
             logger.warn("{} message received from Tamr with no " +
                     "\"acknowledgment\" key. Ignoring...");
+        } else if (response.getAcknowledgment()) {
+            logger.info("{} request to Tamr acknowledged",
+                    response.getMessageType());
+        } else {
+            logger.error("Error with {} request to Tamr: {}",
+                    response.getMessageType(), response.getError());
         }
     }
 

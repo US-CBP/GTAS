@@ -62,6 +62,17 @@ public class TamrStatusErrorMessagesTest implements ParserTestHelper {
     }
     
     @Test
+    public void testEmptyAcknowledgement() {
+        TamrMessage acknowledgmentMessage = new TamrMessage();
+        acknowledgmentMessage.setMessageType(TamrMessageType.TH_UPDATE);
+        this.handler.handleAcknowledgeResponse(acknowledgmentMessage);
+
+        // Make sure warning is printed about missing acknowledgment key.
+        this.assertTextLogged("WARN", "acknowledgment");
+        this.assertTextLogged("WARN", "key");
+    }
+    
+    @Test
     public void testRecordErrors() {
         String[] messageTypeStrs = {"QUERY", "DC.REPLACE", "TH.UPDATE"};
         for (String messageTypeStr: messageTypeStrs) {
