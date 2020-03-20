@@ -27,12 +27,7 @@ public interface WatchlistItemRepository
 
 	@Query("DELETE FROM WatchlistItem wli WHERE wli.watchlist.watchlistName = :watchlistName")
 	public void deleteItemsByWatchlistName(@Param("watchlistName") String watchlistName);
-	
-	@Transactional
-	@Modifying
-	@Query("DELETE FROM WatchlistItem wli WHERE wli.id IN :watchlistItemIds")
-	public void deleteItemsByWatchlistItemId(@Param("watchlistItemIds")List<Long> watchlistItemIds);
-	
+
 	default WatchlistItem findOne(Long id) {
 		return findById(id).orElse(null);
 	}
