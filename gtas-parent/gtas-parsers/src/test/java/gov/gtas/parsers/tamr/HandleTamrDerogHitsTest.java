@@ -84,10 +84,11 @@ public class HandleTamrDerogHitsTest {
                 passenger.getId(), watchlistItem.getId(), score);
         handler.handleQueryResponse(derogMessage);
 
-        final ArgumentCaptor<PendingHitDetails> pendingHitCaptor =
-                ArgumentCaptor.forClass(PendingHitDetails.class);
-        verify(pendingHitDetailRepository).save(pendingHitCaptor.capture());
-        PendingHitDetails pendingHit = pendingHitCaptor.getValue();
+        final ArgumentCaptor<Iterable<PendingHitDetails>> pendingHitCaptor =
+                ArgumentCaptor.forClass(Iterable.class);
+        verify(pendingHitDetailRepository).saveAll(pendingHitCaptor.capture());
+        PendingHitDetails pendingHit = pendingHitCaptor.getValue()
+                .iterator().next();
         
         assertTrue(pendingHit.getTitle().equals(derogHitTitle));
         assertTrue(pendingHit.getDescription().equals(derogHitDescription));

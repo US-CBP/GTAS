@@ -2,8 +2,7 @@ package gov.gtas.parsers.tamr;
 
 import static org.junit.Assert.*;
 import static org.mockito.AdditionalMatchers.not;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -13,6 +12,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
 
 import gov.gtas.model.PassengerIDTag;
 import gov.gtas.parsers.ParserTestHelper;
@@ -43,14 +44,42 @@ public class UpdateTamrIdTest implements ParserTestHelper {
         // queried.
         PassengerIDTag passengerIdTag = new PassengerIDTag();
         passengerIdTag.setPax_id(gtasId);
-        given(passengerIDTagRepository.findByPaxId(gtasId)).willReturn(
-                passengerIdTag);
-        given(passengerIDTagRepository.findByPaxId(not(eq(gtasId))))
-            .willReturn(null);
+        
+        ArgumentMatcher<Iterable<Long>> containsGtasId =
+                new ArgumentMatcher<Iterable<Long>>() {
+            @Override
+            public boolean matches(Iterable<Long> ids) {
+                if (ids == null) return false;
+                for (Long id: ids) {
+                    if (id == gtasId) return true;
+                }
+                return false;
+            }
+        };
+        
+        given(passengerIDTagRepository.findAllById(argThat(containsGtasId)))
+                .willReturn(Collections.singleton(passengerIdTag));
+        given(passengerIDTagRepository.findAllById(not(argThat(containsGtasId))))
+                .willReturn(Collections.EMPTY_LIST);
 
         this.handler = new TamrMessageHandlerServiceImpl(
                 passengerIDTagRepository,
                 null, null, null);
+    }
+    
+    private void verifyTamrIdUpated(long gtasId, String newTamrId) {
+        final ArgumentCaptor<Iterable<PassengerIDTag>> passengerIDTagsCaptor =
+                ArgumentCaptor.forClass(Iterable.class);
+        verify(passengerIDTagRepository).saveAll(
+                passengerIDTagsCaptor.capture());
+        boolean tamrIdUpdated = false;
+        for(PassengerIDTag passengerIDTag: passengerIDTagsCaptor.getValue()) {
+            if (passengerIDTag.getPax_id() == gtasId) {
+                assertEquals(passengerIDTag.getTamrId(), newTamrId);
+                tamrIdUpdated = true;
+            }
+        }
+        assertTrue(tamrIdUpdated);
     }
     
     @Test
@@ -67,8 +96,7 @@ public class UpdateTamrIdTest implements ParserTestHelper {
         
         handler.handleQueryResponse(message);
 
-        verify(passengerIDTagRepository).updateTamrId(
-                gtasId, newTamrId);
+        verifyTamrIdUpated(gtasId, newTamrId);
     }
     
     @Test
@@ -84,8 +112,7 @@ public class UpdateTamrIdTest implements ParserTestHelper {
         
         handler.handleTamrIdUpdate(message);
 
-        verify(passengerIDTagRepository).updateTamrId(
-                gtasId, newTamrId);
+        verifyTamrIdUpated(gtasId, newTamrId);
     }
     
     @Test
@@ -101,8 +128,7 @@ public class UpdateTamrIdTest implements ParserTestHelper {
         
         handler.handleTamrIdUpdate(message);
 
-        verify(passengerIDTagRepository).updateTamrId(
-                gtasId, null);
+        verifyTamrIdUpated(gtasId, null);
     }
     
     @Test
@@ -118,8 +144,7 @@ public class UpdateTamrIdTest implements ParserTestHelper {
         
         handler.handleTamrIdUpdate(message);
 
-        verify(passengerIDTagRepository).updateTamrId(
-                gtasId, newTamrId);
+        verifyTamrIdUpated(gtasId, newTamrId);
     }
     
     /**
@@ -149,7 +174,14 @@ public class UpdateTamrIdTest implements ParserTestHelper {
         message.setTravelerQuery(travelerResponses);
 
         handler.handleQueryResponse(message);
-        
-        verify(passengerIDTagRepository, never()).updateTamrId(any(), any());
+
+        final ArgumentCaptor<Iterable<PassengerIDTag>> passengerIDTagsCaptor =
+                ArgumentCaptor.forClass(Iterable.class);
+        verify(passengerIDTagRepository).saveAll(
+                passengerIDTagsCaptor.capture());
+        List<PassengerIDTag> updatedPassengerIDTags =
+                new ArrayList<PassengerIDTag>();
+        passengerIDTagsCaptor.getValue().forEach(updatedPassengerIDTags::add);
+        assertTrue(updatedPassengerIDTags.isEmpty());
     }
 }

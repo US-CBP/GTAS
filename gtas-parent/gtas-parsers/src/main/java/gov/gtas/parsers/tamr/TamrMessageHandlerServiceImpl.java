@@ -1,12 +1,14 @@
 package gov.gtas.parsers.tamr;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.NoSuchElementException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -66,30 +68,41 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
     public void handleQueryResponse(TamrMessage response) {
         if (this.checkRecordErrors(response)) return;
 
+        Map<Long, String> gtasIdToTamrId = new HashMap<Long, String>();
         for (TamrTravelerResponse travelerResponse: response.getTravelerQuery()) {
             if (travelerResponse.getTamrId() != null) {
-                this.updateTamrId(travelerResponse.getGtasId(),
-                        travelerResponse.getTamrId(),
-                        travelerResponse.getVersion());
+                this.addTamrIdUpdate(gtasIdToTamrId, travelerResponse.getGtasId(),
+                        travelerResponse.getTamrId());
             }
+        }
+        this.updateTamrIds(gtasIdToTamrId);
+        
+        List<PendingHitDetails> pendingHits = new ArrayList<>();
+        for (TamrTravelerResponse travelerResponse: response.getTravelerQuery()) {
             for (TamrDerogHit derogHit: travelerResponse.getDerogIds()) {
-                this.createPendingHit(travelerResponse.getGtasId(), derogHit);
+                PendingHitDetails pendingHit = this.createPendingHit(
+                        travelerResponse.getGtasId(), derogHit);
+                if (pendingHit != null) pendingHits.add(pendingHit);
             }
+        }
+        if (!pendingHits.isEmpty()) {
+            pendingHitDetailRepository.saveAll(pendingHits);
         }
     }
     
     /**
      * Creates an instance of the PendingHitDetails model in GTAS based on a
-     * derog hit from Tamr.
+     * derog hit from Tamr. Returns the instance (does not save it) or null
+     * if the derog hit is invalid.
      */
-    private void createPendingHit(String gtasIdStr, TamrDerogHit derogHit) {
+    private PendingHitDetails createPendingHit(String gtasIdStr, TamrDerogHit derogHit) {
         long gtasId;
         try {
             gtasId = Long.parseLong(gtasIdStr);
         } catch (NumberFormatException e) {
             logger.warn("Tamr returned derog hit for passenger with invalid " +
                     "ID \"{}\".", gtasIdStr);
-            return;
+            return null;
         }
         PendingHitDetails pendingHit = new PendingHitDetails(); 
 
@@ -106,7 +119,7 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
         } catch (NumberFormatException e) {
             logger.warn("Tamr returned derog hit for watchlist entry with " +
                     "invalid ID \"{}\".", derogHit.getDerogId());
-            return;
+            return null;
         }
         Optional<WatchlistItem> watchlistItem =
                 watchlistItemRepository.findById(watchlistItemId);
@@ -115,7 +128,7 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
         } else {
             logger.warn("Tamr returned derog hit for nonexistent watchlist " +
                     "entry with ID {}.", watchlistItemId);
-            return;
+            return null;
         }
         
         pendingHit.setPercentage(derogHit.getScore()); 
@@ -131,15 +144,14 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
         } else {
             logger.warn("Tamr returned derog hit for nonexistent passenger " +
                     "with ID {}.", gtasId);
-            return;
+            return null;
         }
 
         pendingHit.setPassengerId(gtasId);
 
         pendingHit.setCreatedDate(new Date());
        
-        // Persist to database.
-        pendingHitDetailRepository.save(pendingHit);
+        return pendingHit;
     }
 
     /**
@@ -163,8 +175,8 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
     }
 
     /**
-     * Handles TH.CLUSTERS and TH.DELTAS messages from Tamr. These both require
-     * similar functionality: updating the Tamr cluster IDs.
+     * Handles QUERY, TH.CLUSTERS, and TH.DELTAS messages from Tamr. These all
+     * require similar functionality: updating the Tamr cluster IDs.
      */
     @Override
     public void handleTamrIdUpdate(TamrMessage message) {
@@ -175,28 +187,30 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
             return;
         }
 
+        Map<Long, String> gtasIdToTamrId = new HashMap<Long, String>();
         for (TamrHistoryCluster cluster: message.getHistoryClusters()) {
             if (cluster.getAction() == null ||
                     cluster.getAction() == TamrHistoryClusterAction.UPDATE) {
-                this.updateTamrId(cluster.getGtasId(),
-                        cluster.getTamrId(), cluster.getVersion());
+                addTamrIdUpdate(gtasIdToTamrId, cluster.getGtasId(),
+                        cluster.getTamrId());
             } else if (cluster.getAction() == TamrHistoryClusterAction.DELETE) {
-                this.updateTamrId(cluster.getGtasId(),
-                        null, cluster.getVersion());
+                addTamrIdUpdate(gtasIdToTamrId, cluster.getGtasId(), null);
             } else {
                 logger.warn("Unknown history cluster action \"{}\" received " +
                         "from Tamr for passenger {}. Ignoring...",
                         cluster.getAction(), cluster.getGtasId());
             }
         }
+        
+        updateTamrIds(gtasIdToTamrId);
     }
     
     /**
-     * Updates the tamrId for the traveler in GTAS with the given gtasId. This
-     * also checks to see if the traveler exists in GTAS; if they do not, it
-     * issues a warning.
+     * Add a (GTAS ID, Tamr ID) pair to a map that can then be passed to
+     * updateTamrIds.
      */
-    private void updateTamrId(String gtasIdStr, String tamrId, int version) {
+    private void addTamrIdUpdate(Map<Long, String> gtasIdToTamrId,
+            String gtasIdStr, String tamrId) {
         long gtasId;
         try {
             gtasId = Long.parseLong(gtasIdStr);
@@ -205,14 +219,33 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
                     "ID \"{}\".", gtasIdStr);
             return;
         }
-        PassengerIDTag currentPassengerIdTag =
-                passengerIDTagRepository.findByPaxId(gtasId);
-        if (currentPassengerIdTag == null) {
-            logger.warn("Unable to update tamrId of nonexistent passenger " +
-                    "ID tag {}.", gtasId);
-        } else {
-            passengerIDTagRepository.updateTamrId(gtasId, tamrId);
-        }
+        gtasIdToTamrId.put(gtasId, tamrId);
+    }
+    
+    /**
+     * Given a map from GTAS IDs to Tamr IDs (or null, if a Tamr ID should be
+     * deleted), this will update the Passenger ID Tags for the given IDs
+     * to have the given Tamr IDs.
+     */
+    private void updateTamrIds(Map<Long, String> gtasIdToTamrId) {
+        if (gtasIdToTamrId.isEmpty()) return;
+        
+        // Get existing PassengerIDTags.
+        Map<Long, PassengerIDTag> passengerIDTags = new HashMap<>();
+        passengerIDTagRepository.findAllById(gtasIdToTamrId.keySet())
+                .forEach((passengerIDTag) -> passengerIDTags.put(
+                        passengerIDTag.getPax_id(), passengerIDTag));
+        
+        // Update PassengerIDTags and save to database in one batch.
+        gtasIdToTamrId.forEach((gtasId, tamrId) -> {
+            if (passengerIDTags.containsKey(gtasId)) {
+                passengerIDTags.get(gtasId).setTamrId(tamrId);
+            } else {
+                logger.warn("Unable to update tamrId of nonexistent passenger " +
+                        "ID tag {}.", gtasId);
+            }
+        });
+        passengerIDTagRepository.saveAll(passengerIDTags.values());
     }
     
     /**
