@@ -153,7 +153,7 @@ public class TamrIntegrationTestUtils {
      * Create some sample watchlist items.
      */
     public void createWatchlistItems() {
-        WatchlistSpec spec = new WatchlistSpec("Watchlist",
+        WatchlistSpec spec = new WatchlistSpec("Passenger",
                 EntityEnum.PASSENGER.getEntityName());
         spec.addWatchlistItem(createWatchlistItemSpec(
                 "RUBEN", "THEBAULT", "1945-01-11"));

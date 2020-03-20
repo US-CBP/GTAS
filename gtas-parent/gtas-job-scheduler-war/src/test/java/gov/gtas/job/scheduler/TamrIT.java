@@ -41,7 +41,6 @@ import gov.gtas.repository.PassengerRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.services.PassengerService;
-import gov.gtas.svc.WatchlistService;
 
 /**
  * End-to-end integration tests with Tamr.

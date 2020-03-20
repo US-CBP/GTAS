@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.parsers.tamr.jms.TamrMessageSender;
 import gov.gtas.parsers.tamr.model.TamrDerogListEntry;
@@ -42,6 +43,8 @@ public class TamrDerogReplaceScheduler {
 
     private static final Logger logger =
             LoggerFactory.getLogger(TamrDerogReplaceScheduler.class);
+ 
+    private final String PASSENGER_WATCHLIST_NAME = "Passenger";
     
     WatchlistRepository watchlistRepository;
     
@@ -72,22 +75,21 @@ public class TamrDerogReplaceScheduler {
     public void jobScheduling() throws InterruptedException {
         logger.info("Checking for watchlist edits to send to Tamr...");
         
-        // Get the latest time that a watchlist was edited.
-        Optional<Date> latestWatchlistEdit = StreamSupport.stream(
-                watchlistRepository.findAll().spliterator(), false)
-            .map((watchlist) -> watchlist.getEditTimestamp())
-            .collect(Collectors.maxBy(Comparator.naturalOrder()));
+        Watchlist passengerWatchlist =
+                watchlistRepository.getWatchlistByName(PASSENGER_WATCHLIST_NAME);
+        if (passengerWatchlist == null) return;
         
-        // Return if there are no watchlists to send.
-        if (!latestWatchlistEdit.isPresent()) return;
+        // Check the latest time the watchlist was edited.
+        Date latestWatchlistEdit = passengerWatchlist.getEditTimestamp();
         
         // If there has been an edit to a watchlist since the last time this
         // job was run...
-        if (lastRun == null || lastRun.before(latestWatchlistEdit.get())) {
+        if (lastRun == null || lastRun.before(latestWatchlistEdit)) {
             logger.info("Sending latest watchlist to Tamr.");
           
-            List<WatchlistItem> watchlistItems = new ArrayList<>();
-            watchlistItemRepository.findAll().forEach(watchlistItems::add);
+            List<WatchlistItem> watchlistItems =
+                    watchlistItemRepository.getItemsByWatchlistName(
+                            PASSENGER_WATCHLIST_NAME);
             List<TamrDerogListEntry> derogListEntries =
                     tamrAdapter.convertWatchlist(watchlistItems);
             TamrDerogListUpdate derogReplace =

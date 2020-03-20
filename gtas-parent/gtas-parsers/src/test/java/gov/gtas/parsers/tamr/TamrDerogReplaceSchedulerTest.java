@@ -18,8 +18,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.test.util.ReflectionTestUtils;
 
+import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.parsers.tamr.TamrDerogReplaceScheduler;
@@ -32,22 +32,26 @@ public class TamrDerogReplaceSchedulerTest {
     private TamrDerogReplaceScheduler scheduler;
     private TamrMessageSender messageSender;
     private WatchlistItemRepository watchlistItemRepository;
-    private Watchlist watchlist;
+    private Watchlist passengerWatchlist;
     private WatchlistRepository watchlistRepository;
 
     @Before
     public void setUp() {
-        watchlist = new Watchlist();
-        watchlist.setId(1L);
-        watchlist.setEditTimestamp(new Date());
+        passengerWatchlist = new Watchlist("Passenger", EntityEnum.PASSENGER);
+        passengerWatchlist.setId(1L);
+        passengerWatchlist.setEditTimestamp(new Date());
         watchlistRepository = mock(WatchlistRepository.class);
         given(watchlistRepository.findAll())
-                .willReturn(Collections.singletonList(watchlist));
+                .willReturn(Collections.singletonList(passengerWatchlist));
+        given(watchlistRepository.getWatchlistByName("Passenger"))
+                .willReturn(passengerWatchlist);
         
         List<WatchlistItem> watchlistItems =
                 TamrAdapterImplTest.getWatchlistItems();
         watchlistItemRepository = mock(WatchlistItemRepository.class);
         given(watchlistItemRepository.findAll()).willReturn(watchlistItems);
+        given(watchlistItemRepository.getItemsByWatchlistName("Passenger"))
+            .willReturn(watchlistItems);
    
         messageSender = mock(TamrMessageSender.class);
         doCallRealMethod().when(messageSender).sendMessageToTamr(any(), any());
@@ -94,7 +98,7 @@ public class TamrDerogReplaceSchedulerTest {
                 any(), any());
         
         // Now update edited time...
-        watchlist.setEditTimestamp(new Date());
+        passengerWatchlist.setEditTimestamp(new Date());
         // ...and another message should be sent.
         scheduler.jobScheduling();
         scheduler.jobScheduling();
