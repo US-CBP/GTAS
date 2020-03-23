@@ -1,11 +1,13 @@
 package gov.gtas.parsers.tamr;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +18,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.gtas.enumtype.HitTypeEnum;
-import gov.gtas.model.Passenger;
 import gov.gtas.model.PassengerIDTag;
 import gov.gtas.model.PendingHitDetails;
 import gov.gtas.model.watchlist.WatchlistItem;
@@ -25,8 +26,8 @@ import gov.gtas.parsers.tamr.model.TamrHistoryCluster;
 import gov.gtas.parsers.tamr.model.TamrHistoryClusterAction;
 import gov.gtas.parsers.tamr.model.TamrMessage;
 import gov.gtas.parsers.tamr.model.TamrTravelerResponse;
+import gov.gtas.repository.FlightPassengerRepository;
 import gov.gtas.repository.PassengerIDTagRepository;
-import gov.gtas.repository.PassengerRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 
@@ -40,8 +41,8 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
     private WatchlistItemRepository watchlistItemRepository;
     
     private PendingHitDetailRepository pendingHitDetailRepository;
-    
-    private PassengerRepository passengerRepository;
+        
+    private FlightPassengerRepository flightPassengerRepository;
     
     @Value("${tamr.derog_hit.title}")
     String derogHitTitle;
@@ -53,11 +54,11 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
             PassengerIDTagRepository passengerIDTagRepository,
             WatchlistItemRepository watchlistItemRepository,
             PendingHitDetailRepository pendingHitDetailRepository,
-            PassengerRepository passengerRepository) {
+            FlightPassengerRepository flightPassengerRepository) {
         this.passengerIDTagRepository = passengerIDTagRepository;
         this.watchlistItemRepository = watchlistItemRepository;
         this.pendingHitDetailRepository = pendingHitDetailRepository;
-        this.passengerRepository = passengerRepository;
+        this.flightPassengerRepository = flightPassengerRepository;
     }
 
     /**
@@ -77,81 +78,112 @@ public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService 
         }
         this.updateTamrIds(gtasIdToTamrId);
         
-        List<PendingHitDetails> pendingHits = new ArrayList<>();
-        for (TamrTravelerResponse travelerResponse: response.getTravelerQuery()) {
-            for (TamrDerogHit derogHit: travelerResponse.getDerogIds()) {
-                PendingHitDetails pendingHit = this.createPendingHit(
-                        travelerResponse.getGtasId(), derogHit);
-                if (pendingHit != null) pendingHits.add(pendingHit);
-            }
-        }
-        if (!pendingHits.isEmpty()) {
-            pendingHitDetailRepository.saveAll(pendingHits);
-        }
+        this.createPendingHits(response.getTravelerQuery());
     }
     
     /**
-     * Creates an instance of the PendingHitDetails model in GTAS based on a
-     * derog hit from Tamr. Returns the instance (does not save it) or null
-     * if the derog hit is invalid.
+     * Creates and saves PendingHitDetails instances to the database for all
+     * the given traveler responses from Tamr which contain derog hits.
      */
-    private PendingHitDetails createPendingHit(String gtasIdStr, TamrDerogHit derogHit) {
-        long gtasId;
-        try {
-            gtasId = Long.parseLong(gtasIdStr);
-        } catch (NumberFormatException e) {
-            logger.warn("Tamr returned derog hit for passenger with invalid " +
-                    "ID \"{}\".", gtasIdStr);
-            return null;
-        }
-        PendingHitDetails pendingHit = new PendingHitDetails(); 
+    private void createPendingHits(List<TamrTravelerResponse> travelerResponses) {
+        // List of (GTAS passenger ID, derog hit) pairs.
+        List<AbstractMap.SimpleEntry<Long, TamrDerogHit>> derogHits =
+                new ArrayList<>();
 
-        pendingHit.setTitle(derogHitTitle);
-        pendingHit.setDescription(derogHitDescription);
+        Set<Long> passengerIds = new HashSet<>();
+        Set<Long> watchlistItemIds = new HashSet<>();
 
-        pendingHit.setHitEnum(HitTypeEnum.PARTIAL_WATCHLIST);
-        pendingHit.setHitType(pendingHit.getHitEnum().toString());
-
-        // Try to get watchlist item based on derogId from Tamr.
-        long watchlistItemId;
-        try {
-            watchlistItemId = Long.parseLong(derogHit.getDerogId()); 
-        } catch (NumberFormatException e) {
-            logger.warn("Tamr returned derog hit for watchlist entry with " +
-                    "invalid ID \"{}\".", derogHit.getDerogId());
-            return null;
-        }
-        Optional<WatchlistItem> watchlistItem =
-                watchlistItemRepository.findById(watchlistItemId);
-        if (watchlistItem.isPresent()) {
-            pendingHit.setHitMakerId(watchlistItem.get().getId());
-        } else {
-            logger.warn("Tamr returned derog hit for nonexistent watchlist " +
-                    "entry with ID {}.", watchlistItemId);
-            return null;
+        for (TamrTravelerResponse travelerResponse: travelerResponses) {
+            for (TamrDerogHit derogHit: travelerResponse.getDerogIds()) {
+                long gtasId, watchlistItemId;
+                try {
+                    gtasId = Long.parseLong(travelerResponse.getGtasId());
+                } catch (NumberFormatException e) {
+                    logger.warn("Tamr returned derog hit for passenger with " +
+                            "invalid ID \"{}\".", travelerResponse.getGtasId());
+                    continue;
+                }
+                try {
+                    watchlistItemId = Long.parseLong(derogHit.getDerogId()); 
+                } catch (NumberFormatException e) {
+                    logger.warn("Tamr returned derog hit for watchlist " +
+                            "entry with invalid ID \"{}\".",
+                            derogHit.getDerogId());
+                    continue;
+                }
+                
+                passengerIds.add(gtasId);
+                watchlistItemIds.add(watchlistItemId);
+                derogHits.add(new AbstractMap.SimpleEntry<>(gtasId, derogHit));
+            }
         }
         
-        pendingHit.setPercentage(derogHit.getScore()); 
+        if (derogHits.isEmpty()) return;
 
-        // Tamr doesn't return any details about the matching algorithm,
-        // so leave this empty.
-        pendingHit.setRuleConditions("");
-        
-        // Try to find passenger in GTAS so we can get the associated flight.
-        Optional<Passenger> passenger = passengerRepository.findById(gtasId);
-        if (passenger.isPresent()) {
-            pendingHit.setFlightId(passenger.get().getFlight().getId());
-        } else {
-            logger.warn("Tamr returned derog hit for nonexistent passenger " +
-                    "with ID {}.", gtasId);
-            return null;
+        // Construct a map from passenger IDs to flight IDs...
+        Map<Long, Long> passengerFlightIds = new HashMap<>();
+        flightPassengerRepository.findAllByPassengerIds(passengerIds)
+                .forEach((flightPassenger) -> passengerFlightIds.put(
+                        flightPassenger.getPassengerId(),
+                        flightPassenger.getFlightId()));
+
+        // ...and from watchlist item IDs to watchlist items.
+        Map<Long, WatchlistItem> watchlistItems = new HashMap<>();
+        watchlistItemRepository.findAllById(watchlistItemIds)
+                .forEach((watchlistItem) -> watchlistItems.put(
+                        watchlistItem.getId(), watchlistItem));
+
+
+        // Now, make a list of valid pending hits.
+        List<PendingHitDetails> pendingHits = new ArrayList<>();
+        for(AbstractMap.SimpleEntry<Long, TamrDerogHit> derogHitWithId:
+                derogHits) {
+            long gtasId = derogHitWithId.getKey();
+            TamrDerogHit derogHit = derogHitWithId.getValue();
+
+            PendingHitDetails pendingHit = new PendingHitDetails(); 
+
+            pendingHit.setTitle(derogHitTitle);
+            pendingHit.setDescription(derogHitDescription);
+
+            pendingHit.setHitEnum(HitTypeEnum.PARTIAL_WATCHLIST);
+            pendingHit.setHitType(pendingHit.getHitEnum().toString());
+
+            long watchlistItemId = Long.parseLong(derogHit.getDerogId());
+            WatchlistItem watchlistItem = watchlistItems.get(watchlistItemId);
+            if (watchlistItem != null) {
+                pendingHit.setHitMakerId(watchlistItem.getId());
+            } else {
+                logger.warn("Tamr returned derog hit for nonexistent watchlist " +
+                        "entry with ID {}.", watchlistItemId);
+                continue;
+            }
+            
+            pendingHit.setPercentage(derogHit.getScore()); 
+
+            // Tamr doesn't return any details about the matching algorithm,
+            // so leave this empty.
+            pendingHit.setRuleConditions("");
+            
+            // Find associated flight ID for passenger.
+            if (!passengerFlightIds.containsKey(gtasId)) {
+                logger.warn("Tamr returned derog hit for nonexistent passenger " +
+                        "with ID {}.", gtasId);
+                continue;
+            }
+            pendingHit.setFlightId(passengerFlightIds.get(gtasId));
+
+            pendingHit.setPassengerId(gtasId);
+
+            pendingHit.setCreatedDate(new Date());
+            
+            pendingHits.add(pendingHit);
         }
-
-        pendingHit.setPassengerId(gtasId);
-
-        pendingHit.setCreatedDate(new Date());
-       
-        return pendingHit;
+        
+        // Finally, save them all to the database.
+        if (!pendingHits.isEmpty()) {
+            pendingHitDetailRepository.saveAll(pendingHits);
+        }
     }
 
     /**
