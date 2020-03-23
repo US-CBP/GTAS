@@ -16,7 +16,10 @@ import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -45,6 +48,9 @@ public class TamrDerogReplaceScheduler {
             LoggerFactory.getLogger(TamrDerogReplaceScheduler.class);
  
     private final String PASSENGER_WATCHLIST_NAME = "Passenger";
+    
+    @Value("${tamr.derogReplace.batchSize}")
+    private Integer batchSize;
     
     WatchlistRepository watchlistRepository;
     
@@ -86,12 +92,27 @@ public class TamrDerogReplaceScheduler {
         // job was run...
         if (lastRun == null || lastRun.before(latestWatchlistEdit)) {
             logger.info("Sending latest watchlist to Tamr.");
-          
-            List<WatchlistItem> watchlistItems =
-                    watchlistItemRepository.getItemsByWatchlistName(
-                            PASSENGER_WATCHLIST_NAME);
+
             List<TamrDerogListEntry> derogListEntries =
-                    tamrAdapter.convertWatchlist(watchlistItems);
+                    new ArrayList<TamrDerogListEntry>();
+            
+            // Loop through the watchlist items in batches to avoid too much
+            // database load.
+            List<WatchlistItem> watchlistItemsBatch;
+            int batchIndex = 0;
+            do {
+                Pageable batchPage = PageRequest.of(
+                        batchIndex, batchSize);
+                watchlistItemsBatch = watchlistItemRepository
+                        .getItemsByWatchlistName(
+                                PASSENGER_WATCHLIST_NAME, batchPage);
+                logger.info("watchlistItemsBatch = {}", watchlistItemsBatch);
+                derogListEntries.addAll(tamrAdapter.convertWatchlist(
+                        watchlistItemsBatch));
+
+                batchIndex++;
+            } while (watchlistItemsBatch.size() == batchSize);
+            
             TamrDerogListUpdate derogReplace =
                     new TamrDerogListUpdate(derogListEntries);
             tamrMessageSender.sendMessageToTamr(

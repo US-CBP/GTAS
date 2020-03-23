@@ -18,6 +18,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.model.watchlist.Watchlist;
@@ -52,6 +56,18 @@ public class TamrDerogReplaceSchedulerTest {
         given(watchlistItemRepository.findAll()).willReturn(watchlistItems);
         given(watchlistItemRepository.getItemsByWatchlistName("Passenger"))
             .willReturn(watchlistItems);
+        doAnswer(new Answer<List<WatchlistItem>>() {
+            public List<WatchlistItem> answer(InvocationOnMock invocation) {
+                Pageable pageable = invocation.getArgument(1);
+                int fromIndex = Math.min(
+                        (int) pageable.getOffset(), watchlistItems.size());
+                int toIndex = Math.min(
+                        (int) pageable.getOffset() + pageable.getPageSize(),
+                        watchlistItems.size());
+                return watchlistItems.subList(fromIndex, toIndex);
+            }
+        }).when(watchlistItemRepository).getItemsByWatchlistName(
+                eq("Passenger"), any(Pageable.class));
    
         messageSender = mock(TamrMessageSender.class);
         doCallRealMethod().when(messageSender).sendMessageToTamr(any(), any());
@@ -61,6 +77,8 @@ public class TamrDerogReplaceSchedulerTest {
                 watchlistItemRepository,
                 messageSender,
                 new TamrAdapterImpl(null));
+        
+        ReflectionTestUtils.setField(scheduler, "batchSize", 3);
     }
     
     /**
