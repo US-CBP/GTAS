@@ -300,4 +300,46 @@ public class JPQLGeneratorTest {
 		Assert.assertEquals(expectedQuery, query);
 	}
 
+	@Test
+	public void testGenericQueryPrefixForFlight() throws InvalidQueryRepositoryException {
+		//This does not test any specific clauses or entities. This is to test the leading query prefix to insure it properly uses the passenger as the junction
+
+		String expectedQuery = "select distinct f from Flight f left join f.passengers p join p.documents d where (d.type in ?1)";
+		String expectedQuery2 = "select distinct f from Flight f left join f.passengers p left join f.pnrs pnr left join pnr.emails e where (e.domain in ?1)";
+		String expectedQuery3 = "select distinct f from Flight f left join f.passengers p left join f.pnrs pnr left join pnr.creditCards cc where (cc.type in ?1)";
+
+		QueryObject mockQueryObject  = new QueryObject();
+		QueryTerm mockQueryTerm = new QueryTerm();
+
+		mockQueryTerm.setUuid(null);
+		mockQueryTerm.setType("string");
+		mockQueryTerm.setEntity("Document");
+		mockQueryTerm.setOperator("IN");
+		mockQueryTerm.setValue(new String[]{"V"});
+		mockQueryTerm.setField("type");
+
+		List<QueryEntity> mockQTList = new ArrayList<>();
+		mockQTList.add(mockQueryTerm);
+
+		mockQueryObject.setCondition("AND");
+		mockQueryObject.setRules(mockQTList);
+
+		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.FLIGHT);
+		Assert.assertEquals(expectedQuery, query);
+
+		mockQueryTerm.setEntity("Email");
+		mockQueryTerm.setValue(new String[]{"HOTMAIL.COM"});
+		mockQueryTerm.setField("domain");
+
+		String query2 = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.FLIGHT);
+		Assert.assertEquals(expectedQuery2, query2);
+
+		mockQueryTerm.setEntity("Creditcard");
+		mockQueryTerm.setValue(new String[]{"VI"});
+		mockQueryTerm.setField("type");
+
+		String query3 = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.FLIGHT);
+		Assert.assertEquals(expectedQuery3, query3);
+	}
+
 }
