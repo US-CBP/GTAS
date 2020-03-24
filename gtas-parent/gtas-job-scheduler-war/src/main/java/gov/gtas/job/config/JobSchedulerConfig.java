@@ -34,6 +34,8 @@ public class JobSchedulerConfig implements SchedulingConfigurer {
 	private static final String THREADS_ON_RULES = "threadsOnRules";
 	private static final String THREADS_ON_LOADER= "threadsOnLoader";
 	private static final String MAX_MESSAGES_PER_RULE_RUN="maxMessagesPerRuleRun";
+	private static final String MAX_FLIGHTS_PER_RULE_RUN="maxFlightsPerRuleRun";
+	private static final String MAX_FLIGHTS_PROCESSED_PER_THREAD="maxFlightsProcessedPerThread";
 	private static final String MAX_PASSENGERS_PER_RULE_RUN="maxPassengersPerRuleRun";
 
 	@Resource
@@ -81,4 +83,11 @@ public class JobSchedulerConfig implements SchedulingConfigurer {
 		return Integer.parseInt(env.getRequiredProperty(MAX_MESSAGES_PER_RULE_RUN));
 	}
 
+	public int getMaxFlightsPerRuleRun() {
+		return Integer.parseInt(env.getRequiredProperty(MAX_FLIGHTS_PER_RULE_RUN));
+	}
+
+	public int getMaxFlightsProcessedPerThread() {
+		return Integer.parseInt(env.getRequiredProperty(MAX_FLIGHTS_PROCESSED_PER_THREAD));
+	}
 }

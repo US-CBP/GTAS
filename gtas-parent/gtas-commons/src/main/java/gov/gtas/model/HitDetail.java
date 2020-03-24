@@ -20,7 +20,7 @@ import gov.gtas.enumtype.HitTypeEnum;
 public class HitDetail extends BaseEntity {
 	private static final long serialVersionUID = 5219262569468670275L;
 
-	HitDetail() {
+	public HitDetail() {
 	}
 
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "hitDetail", fetch = FetchType.LAZY)
@@ -206,6 +206,22 @@ public class HitDetail extends BaseEntity {
 
 	public void setHitMakerId(Long hitMakerId) {
 		this.hitMakerId = hitMakerId;
+	}
+	
+	public static HitDetail from(PendingHitDetails pendingHitDetails) {
+		HitDetail hitDetail = new HitDetail(pendingHitDetails.getHitEnum());
+		hitDetail.setFlightId(pendingHitDetails.getFlightId());
+		hitDetail.setHitType(pendingHitDetails.getHitType());
+		hitDetail.setHitEnum(pendingHitDetails.getHitEnum());
+		hitDetail.setPassengerId(pendingHitDetails.getPassengerId());
+		hitDetail.setHitMakerId(pendingHitDetails.getHitMakerId());
+		hitDetail.setRuleId(pendingHitDetails.getHitMakerId()); //Set as hitmaker Id - this field is typically based on drools hit.
+		hitDetail.setDescription(pendingHitDetails.getDescription());
+		hitDetail.setCreatedDate(pendingHitDetails.getCreatedDate());
+		hitDetail.setTitle(pendingHitDetails.getTitle());
+		hitDetail.setRuleConditions(pendingHitDetails.getRuleConditions());
+		hitDetail.setPercentage(pendingHitDetails.getPercentage());
+		return hitDetail;
 	}
 
 	public static HitDetail from(RuleHitDetail ruleHitDetail) {
