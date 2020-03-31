@@ -1,11 +1,13 @@
-FROM docker.elastic.co/kibana/kibana:7.2.0 as kibana-base
-FROM docker.elastic.co/elasticsearch/elasticsearch:7.2.0 as elasticsearch-base
-FROM docker.elastic.co/logstash/logstash:7.2.0 as logstash-base
+FROM wcogtas/kibana:ppc64le as kibana-base
+FROM wcogtas/elasticsearch:ppc64le as elasticsearch-base
+FROM wcogtas/logstash:ppc64le as logstash-base
 
 USER root
+WORKDIR /usr/share
 
-RUN mkdir kibana /kibana-conf
+RUN mkdir kibana elasticsearch /kibana-conf
 COPY --from=kibana-base /usr/share/kibana/ kibana
+COPY --from=elasticsearch-base /usr/share/elasticsearch/ elasticsearch
 
 RUN mkdir /usr/share/logstash/pipeline/config/
 COPY config/logstash/pipelines.yml /usr/share/logstash/config/pipelines.yml
@@ -20,24 +22,35 @@ COPY --chown=logstash config/logstash/flight_legs.sql /usr/share/logstash/config
 COPY --chown=logstash config/logstash/cases_mapping.json /usr/share/logstash/config/cases_mapping.json
 COPY --chown=logstash config/logstash/flightpax_template.json /usr/share/logstash/config/flightpax_template.json
 
-RUN mkdir elasticsearch
-COPY --from=elasticsearch-base /usr/share/elasticsearch/ elasticsearch
-
 RUN mkdir /elasticsearch-conf /logstash-conf
 RUN cp -r ./elasticsearch/config/* /elasticsearch-conf/
 RUN cp -r /usr/share/logstash/config/* /logstash-conf/
 
-COPY ./install/docker/elk-setup/kibana.default-dashboard.json .
+RUN yum update -y && yum install -y java-1.8.0-openjdk
 
-ENTRYPOINT echo y | ./elasticsearch/bin/elasticsearch-keystore create \
+
+RUN curl -sL https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh -o install_nvm.sh
+RUN /bin/bash install_nvm.sh && .  /root/.nvm/nvm.sh && nvm install 10.15.2 && nvm use 10.15.2 && npm install -g yarn
+
+ENV NVM_DIR /root/.nvm
+ENV NODE_PATH $NVM_DIR/v10.15.2/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v10.15.2/bin:$PATH
+
+RUN sed -i '17d' /usr/share/kibana/bin/kibana-keystore
+RUN sed -i '17iNODE=/root/.nvm/versions/node/v10.15.2/bin/node' /usr/share/kibana/bin/kibana-keystore
+
+# RUN chown -R 1000:1000 /logstash-conf /elasticsearch-conf ./elasticsearch ./kibana
+
+COPY ./install/docker/elk-setup/kibana.default-dashboard.json .
+CMD echo y | ./elasticsearch/bin/elasticsearch-keystore create \
 	&& ./elasticsearch/bin/elasticsearch-keystore add bootstrap.password </run/secrets/elastic_bootstrap_password \
 	&& cp ./elasticsearch/config/elasticsearch.keystore /elasticsearch-conf/elasticsearch.keystore \
 	&& export LOGSTASH_KEYSTORE_PASS=$(cat /run/secrets/logstash_keystore_password) \
-	&& echo y | ./bin/logstash-keystore create \
-	&& ./bin/logstash-keystore add MARIADB_USER </run/secrets/mysql_logstash_user \
-	&& ./bin/logstash-keystore add MARIADB_PASSWORD </run/secrets/mysql_logstash_password \
-	&& ./bin/logstash-keystore add ES_PASSWORD </run/secrets/elastic_password \
-	&& cp ./config/logstash.keystore /logstash-conf/logstash.keystore \
+	&& echo y | ./logstash/bin/logstash-keystore create \
+	&& ./logstash/bin/logstash-keystore add MARIADB_USER </run/secrets/mysql_logstash_user \
+	&& ./logstash/bin/logstash-keystore add MARIADB_PASSWORD </run/secrets/mysql_logstash_password \
+	&& ./logstash/bin/logstash-keystore add ES_PASSWORD </run/secrets/elastic_password \
+	&& cp ./logstash/config/logstash.keystore /logstash-conf/logstash.keystore \
 	&& echo y | ./kibana/bin/kibana-keystore --allow-root create \
 	&& echo kibana | ./kibana/bin/kibana-keystore --allow-root add elasticsearch.username --stdin \
 	&& ./kibana/bin/kibana-keystore --allow-root add elasticsearch.password --stdin </run/secrets/elasticsearch_kibana_password \

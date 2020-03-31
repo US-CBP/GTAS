@@ -85,7 +85,7 @@ services:
       - activemq
 
   activemq:
-    image: rmohr/activemq:5.15.9
+    image: ibmcom/activemq-ppc64le:latest
     container_name: activemq
     restart: always
     networks: 
