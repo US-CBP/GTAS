@@ -1,5 +1,8 @@
 version: '3.7'
 services:
+  web-app:
+    environment:
+      PROXY_IP: localhost
   gtas-scheduler:
     volumes:
       - type: bind

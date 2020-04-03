@@ -36,7 +36,6 @@ services:
       - ACTIVEMQ_HOST=activemq
       - PROXY_HOST=httpproxy
       - ELASTICSEARCH=elasticsearch
-      - PROXY_IP=localhost
     networks:
       - GTAS_webapp-network
     restart: always
