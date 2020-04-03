@@ -29,6 +29,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.springframework.util.StringUtils;
 
 /**
  * The configuration class can be imported into an XML configuration by:<br>
@@ -94,6 +95,10 @@ public class CommonServicesConfig {
 
 	@Value("${spring.mail.properties.mail.smtp.starttls.enable}")
 	private String mail_sender_smtp_starttls_enable;
+
+
+	@Value("${spring.mail.properties.ssl.trust.host}")
+	private String mailSenderSslTrustHost;
 
 	@SuppressWarnings("Duplicates")
 	private Properties hibProperties() {
@@ -182,6 +187,7 @@ public class CommonServicesConfig {
 		return transactionManager;
 	}
 
+
 	@Bean
 	public JavaMailSenderImpl javaMailSenderImpl() {
 
@@ -195,6 +201,10 @@ public class CommonServicesConfig {
 		props.put("mail.smtp.starttls.enable", mail_sender_smtp_starttls_enable);
 		props.put("mail.smtp.host", mailSenderHost);
 		props.put("mail.smtp.port", mailSenderPort);
+
+		if(!StringUtils.isEmpty(mailSenderSslTrustHost)) {
+			props.put("mail.smtp.ssl.trust", mailSenderSslTrustHost);
+		}
 
 		mailSender.setJavaMailProperties(props);
 

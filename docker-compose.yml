@@ -36,6 +36,9 @@ services:
       - ACTIVEMQ_HOST=activemq
       - PROXY_HOST=httpproxy
       - ELASTICSEARCH=elasticsearch
+      - PROXY_IP=localhost
+      - OPTS="-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=GMT"
+      - J_HOME="/opt/jdk1.8.0_191-amd64/jre"
     networks:
       - GTAS_webapp-network
     restart: always
@@ -58,6 +61,10 @@ services:
     volumes:
       - m2:/root/.m2
       - scheduler-logs:/scheduler-logs
+      - type: bind
+        source: /var/opt/tomcat/java_version/java8
+        target: /opt/java_from_host
+        consistency: consistent
 
   gtas-scheduler:
     image: wcogtas/gtas-scheduler:1.0.0
@@ -72,6 +79,8 @@ services:
       NEO4J_HOST: neo4j
       ACTIVEMQ_HOST: activemq
       JAVA_OPTS: "-Xms8048m -Xmx16000m -Duser.timezone=UTC"
+      OPTS: "-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=GMT"
+      J_HOME: "/opt/jdk1.8.0_191-amd64/jre"
     volumes:
       - scheduler-logs:/usr/local/tomcat/logs
     secrets:
