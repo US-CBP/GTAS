@@ -35,7 +35,7 @@
             });
 
             $scope.getKibanaUrl = function() {
-                return $sce.trustAsResourceUrl($scope.kibanaProtocol + '://' + location.hostname + ':80' + $scope.dashUrl);
+                return $sce.trustAsResourceUrl($scope.dashUrl);
             };
 
             $scope.sampleData = sampleData;
