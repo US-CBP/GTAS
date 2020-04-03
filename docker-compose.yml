@@ -72,9 +72,6 @@ services:
       KIBANA_HOST: kibana
       NEO4J_HOST: neo4j
       ACTIVEMQ_HOST: activemq
-      JAVA_OPTS: "-Xms8048m -Xmx16000m -Duser.timezone=UTC"
-      OPTS: "-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=GMT"
-      J_HOME: "/opt/jdk1.8.0_191-amd64/jre"
     volumes:
       - scheduler-logs:/usr/local/tomcat/logs
     secrets:
