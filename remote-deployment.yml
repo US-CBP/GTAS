@@ -9,6 +9,7 @@ services:
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
       JAVA_HOME: "/usr/local/gtas-java-jre"
+      JAVA_OPTS: "-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=GMT"
       PROXY_IP: ""
     volumes:
       - type: bind
