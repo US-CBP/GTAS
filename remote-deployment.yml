@@ -9,7 +9,11 @@ services:
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
       JAVA_HOME: "/usr/local/gtas-java-jre"
-      JAVA_OPTS: "-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=GMT"
+      JAVA_OPTS: "-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=UTC"
+      EMAIL_SENDER_USERNAME: ""
+      EMAIL_SENDER_PASSWORD: ""
+      EMAIL_SENDER_HOST: ""
+      SSL_TRUST_HOST: ""
       PROXY_IP: ""
     volumes:
       - type: bind
