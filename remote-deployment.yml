@@ -36,7 +36,7 @@ services:
         target: /usr/local/tomcat/conf
       - type: bind
         source: /mnt
-        target: /var/opt/tomcat/gtas-data
+        target: /usr/local/gtas-data
         consistency: consistent
     deploy:
       placement:
