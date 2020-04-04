@@ -1,5 +1,11 @@
 package gov.gtas.services;
 
+import gov.gtas.services.dto.PaxDetailPdfDocRequest;
+import gov.gtas.services.dto.PaxDetailPdfDocResponse;
+import gov.gtas.vo.HitDetailVo;
+import gov.gtas.vo.NoteTypeVo;
+import gov.gtas.vo.NoteVo;
+import gov.gtas.vo.passenger.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -9,12 +15,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import be.quodlibet.boxable.BaseTable;
 import be.quodlibet.boxable.Cell;
 import be.quodlibet.boxable.HorizontalAlignment;
 import be.quodlibet.boxable.Row;
+
+import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EventReportPdfServiceTest {
@@ -35,6 +42,74 @@ public class EventReportPdfServiceTest {
 		//passenger detail page
 		passengerDetailPage = new PDPage(PDRectangle.A4);
 	
+	}
+
+	@Test
+	public void createPaxDetailReportTest() throws Exception {
+		PaxDetailPdfDocRequest paxDetailPdfDocRequest = new PaxDetailPdfDocRequest();
+		PassengerVo wally = TestData.getPassengerVo();
+		paxDetailPdfDocRequest.setPassengerVo(wally);
+		LinkedHashSet<NoteVo> noteVoList = new LinkedHashSet<>();
+
+		HitDetailVo hitDetailVo = TestData.getHitDetailVo();
+
+		LinkedHashSet<HitDetailVo> hitDetailVoList = new LinkedHashSet<>();
+		hitDetailVoList.add(hitDetailVo);
+		paxDetailPdfDocRequest.setHitDetailVoList(hitDetailVoList);
+
+		List<HitDetailVo> hitDetailVos = new ArrayList<>(hitDetailVoList);
+		paxDetailPdfDocRequest.setHitDetailHistoryVoList(hitDetailVos);
+
+		List<FlightVoForFlightHistory> flightHistoryVos = TestData.getFlightVoForFlightHistories();
+
+		paxDetailPdfDocRequest.setFlightHistoryVoList(flightHistoryVos);
+
+		List<EmailVo> emailVos = TestData.getEmailVos();
+
+		List<PhoneVo> phoneVos = TestData.getPhoneVos();
+
+		PnrVo pnrVo = new PnrVo();
+
+		pnrVo.setRaw("Fooey");
+		pnrVo.setPhoneNumbers(phoneVos);
+		pnrVo.setEmails(emailVos);
+
+		List<DocumentVo> documentVos = new ArrayList<>();
+		DocumentVo fakeDoc = TestData.getDocumentVo();
+		documentVos.add(fakeDoc);
+
+		List<PassengerVo> passengerVos = new ArrayList<>();
+		passengerVos.add(wally);
+		pnrVo.setPassengers(passengerVos);
+
+		paxDetailPdfDocRequest.setAlert("This is a bad dog!");
+
+		List<CreditCardVo> creditCardVos = TestData.getCreditCardVos();
+
+		wally.setDocuments(documentVos);
+
+		pnrVo.setCreditCards(creditCardVos);
+		wally.setPnrVo(pnrVo);
+
+		getNoteVoHashSet(noteVoList);
+
+		paxDetailPdfDocRequest.setEventNotesSet(noteVoList);
+
+		paxDetailPdfDocRequest.setEventHistoricalNotesSet(noteVoList);
+		PaxDetailPdfDocResponse pdPDFDocR = eventReportPdfService.createPaxDetailReport(paxDetailPdfDocRequest);
+		Assert.assertNotNull(pdPDFDocR);
+	}
+
+	protected void getNoteVoHashSet(LinkedHashSet<NoteVo> noteVoList) {
+		NoteVo noteVo = new NoteVo();
+		noteVo.setPlainTextNote("Silly FooBar!");
+		Set<NoteTypeVo> noteTypeVos = new HashSet<>();
+		NoteTypeVo noteTypeVo = new NoteTypeVo();
+		noteTypeVo.setId(1L);
+		noteTypeVo.setNoteType("Tester");
+		noteTypeVos.add(noteTypeVo);
+		noteVo.setNoteTypeVoSet(noteTypeVos);
+		noteVoList.add(noteVo);
 	}
 
 	/** Tests cover page table creation */

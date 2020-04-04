@@ -10,9 +10,7 @@ import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.Attachment;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.*;
-import gov.gtas.util.ApisGeneratorUtil;
 import gov.gtas.vo.passenger.AttachmentVo;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialException;
-import java.io.File;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -48,18 +43,6 @@ public class UploadController {
 	@Autowired
 	private AttachmentRepository attRepo;
 
-	@ResponseStatus(HttpStatus.OK)
-	@PostMapping(value = "/upload")
-	public void upload(@RequestParam("file") MultipartFile file, @RequestParam("username") String username)
-			throws IOException {
-		if (file.isEmpty()) {
-			logger.info("empty file!");
-			return;
-		}
-
-		writeFile(file);
-		logger.info(String.format("received %s from %s", file.getOriginalFilename(), username));
-	}
 
 	@ResponseStatus(HttpStatus.OK)
 	@PostMapping(value = "/uploadattachments")
@@ -111,7 +94,7 @@ public class UploadController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/getattachments", method = RequestMethod.GET)
 	public @ResponseBody List<AttachmentVo> getAttachments(@RequestParam String paxId)
-			throws IOException, SerialException, SQLException {
+			throws SQLException {
 		List<Attachment> returnSet = attRepo.findAllAttachmentsByPassengerId(Long.parseLong(paxId));
 
 		List<AttachmentVo> attVoList = new ArrayList<AttachmentVo>();
@@ -146,58 +129,4 @@ public class UploadController {
 		return new JsonServiceResponse(Status.SUCCESS, "Successfully deleted attachment with id: " + attachmentId);
 	}
 
-	@ResponseStatus(HttpStatus.OK)
-	@GetMapping(value = "/deleteall")
-	public void wipeAllMessages() throws Exception {
-		logger.info("DELETE ALL MESSAGES");
-		flightRespository.deleteAllMessages();
-	}
-
-	/**
-	 * for writing uploaded files to disk.
-	 * 
-	 * @param file
-	 * @throws IOException
-	 */
-	private void writeFile(MultipartFile file) throws IOException {
-		FileOutputStream output = null;
-		String uploadDir = lookupRepo.getAppConfigOption(AppConfigurationRepository.UPLOAD_DIR);
-
-		try {
-			if (!file.isEmpty()) {
-				if (ApisGeneratorUtil.isUgandaManifest(multipartToFile(file))) {
-					StringBuilder modifiedContent = ApisGeneratorUtil.processAndConvertFile(multipartToFile(file));
-					byte[] modified_bytes = modifiedContent.toString().getBytes();
-					String filename = uploadDir + File.separator + file.getOriginalFilename();
-					output = new FileOutputStream(new File(filename));
-					IOUtils.write(modified_bytes, output);
-
-				} else {
-					byte[] bytes = file.getBytes();
-					String filename = uploadDir + File.separator + file.getOriginalFilename();
-					output = new FileOutputStream(new File(filename));
-					IOUtils.write(bytes, output);
-				}
-
-			}
-		} finally {
-			if (output != null) {
-				output.close();
-			}
-		}
-	}
-
-	public File multipartToFile(MultipartFile multipart) throws IllegalStateException, IOException {
-		File convFile = null;
-		try {
-			byte[] bytes = multipart.getBytes();
-			final Path path = Files.createTempFile("gtasTempFile", ".txt");
-			Files.write(path, bytes);
-			convFile = path.toFile();
-		} catch (Exception e) {
-
-		}
-
-		return convFile;
-	}
 }

@@ -73,8 +73,13 @@
         $uibModalInstance.close(answer);
       }
     };
+
+    configService.neo4jProtocol().then(function(value) {
+      $scope.neo4jProtocol = value.data;
+    });
+
     configService.cypherUrl().then(function(result){
-      vaquita.rest.CYPHER_URL = 'https://' + location.hostname + ':443' + result;
+      vaquita.rest.CYPHER_URL = result;
     });
 
     configService.cypherAuth().then(function(result){

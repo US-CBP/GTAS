@@ -48,7 +48,8 @@ public class JPQLGenerator {
 
 			if (queryType == EntityEnum.FLIGHT) {
 				queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.FLIGHT.getAlias() + " " + Constants.FROM
-						+ " " + EntityEnum.FLIGHT.getEntityName() + " " + EntityEnum.FLIGHT.getAlias();
+						+ " " + EntityEnum.FLIGHT.getEntityName() + " " + EntityEnum.FLIGHT.getAlias() +
+						Constants.LEFT_JOIN + EntityEnum.FLIGHT.getAlias() + ".passengers " + EntityEnum.PASSENGER.getAlias();
 
 				if (seatCondition.isTrue()) {
 					joinEntities.add(EntityEnum.PASSENGER);
@@ -317,6 +318,51 @@ public class JPQLGenerator {
 					where.append(EntityEnum.BOOKING_DETAIL.getAlias()).append(".").append(field).append(" ")
 							.append(opEnum.getOperator()).append(" ?").append(positionalParameter);
 
+				}
+
+			} else if (entityEnum.toString().equalsIgnoreCase(Constants.EMAIL) ||
+					entityEnum.toString().equalsIgnoreCase(Constants.CREDITCARD) ||
+					entityEnum.toString().equalsIgnoreCase(Constants.DOCUMENT)) {
+
+				/* Due to a lack of direct connection between passenger and email/creditcard/etc...
+				 * IN/NOT_IN (and equals/not equals) behaviour does not work as intended through HQL, particularly because the order in
+				 * which the HQL separates the groupings goes from smallest -> largest, which allows for bad data
+				 * Example: A PNR 1, has 2 emails with domains: Gmail (2), and Hotmal (3). If Not In Gmail is used
+				 * 1 -> 2 would be false, but 1 -> 3 is true. This returns pnr 1 when it DOES contain gmail (which
+				 * in turn returns a passenger erroneously)
+				 * */
+
+				if (OperatorEnum.NOT_IN.toString().equalsIgnoreCase(operator)
+						|| OperatorEnum.NOT_EQUAL.toString().equalsIgnoreCase(operator)
+							) {
+					positionalParameter.increment();
+					//The inner join being made here swaps the value of the in or not in operator value
+					//in order to produce valid results, as we take the intersection of the haves vs have-nots
+					String whereClauseBridgeEntity;
+					String whereClauseBridgeEntityAlias;
+					// not in produces equivalent problems for not equal
+
+					//Different where clauses for document vs email/credit card
+					if(entityEnum.toString().equalsIgnoreCase((Constants.DOCUMENT))) {
+						whereClauseBridgeEntityAlias = "p";
+						whereClauseBridgeEntity = "Passenger";
+					} else {
+						whereClauseBridgeEntityAlias = "pnr";
+						whereClauseBridgeEntity = "Pnr";
+					}
+					//Construct special inner select statement in where clause with conditions
+					where.append(entityEnum.getAlias() + "." + field + " ");
+					where.append("not in" + (" (?") + positionalParameter + ") ");
+					where.append(Constants.AND + " " + whereClauseBridgeEntityAlias + ".id not in (");
+					where.append(Constants.SELECT + " " + whereClauseBridgeEntityAlias +".id from " + whereClauseBridgeEntity + " " + whereClauseBridgeEntityAlias);
+					where.append(Constants.LEFT_JOIN + whereClauseBridgeEntityAlias + entityEnum.getEntityReference() + " " + entityEnum.getAlias() + " ");
+					where.append(Constants.WHERE + " " + entityEnum.getAlias() + "." + field + " " + "in" + " (?" + positionalParameter + "))");
+
+				} else {
+					//default where
+					positionalParameter.increment();
+					where.append(entityEnum.getAlias()).append(".").append(field).append(" ")
+							.append(opEnum.getOperator()).append(" ?").append(positionalParameter);
 				}
 
 			} else {

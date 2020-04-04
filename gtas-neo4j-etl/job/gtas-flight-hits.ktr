@@ -1189,7 +1189,7 @@
     <directory>%%java.io.tmpdir%%</directory>
     <prefix>out</prefix>
     <sort_size>1000000</sort_size>
-    <free_memory/>
+    <free_memory>30</free_memory>
     <compress>N</compress>
     <compress_variable/>
     <unique_rows>N</unique_rows>

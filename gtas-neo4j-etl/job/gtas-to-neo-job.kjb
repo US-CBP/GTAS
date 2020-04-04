@@ -311,7 +311,7 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>1440</yloc>
+      <yloc>1648</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -329,7 +329,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>1328</yloc>
+      <yloc>1536</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -341,8 +341,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>240</xloc>
-      <yloc>1152</yloc>
+      <xloc>272</xloc>
+      <yloc>1328</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -359,7 +359,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>1104</yloc>
+      <yloc>1264</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -397,7 +397,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>624</yloc>
+      <yloc>768</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -411,8 +411,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1392</xloc>
-      <yloc>704</yloc>
+      <xloc>1120</xloc>
+      <yloc>640</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -450,7 +450,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>1392</xloc>
-      <yloc>800</yloc>
+      <yloc>640</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -466,21 +466,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Write to log - delete temp files</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>** ....... DELETING TEMP FILES .......................</logmessage>
-      <loglevel>Minimal</loglevel>
-      <logsubject>log-update-neo4j-parameters</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>1392</xloc>
-      <yloc>1360</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
       <name>Write To Log - gtas-to-hits ERROR</name>
       <description/>
       <type>WRITE_TO_LOG</type>
@@ -492,7 +477,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>1120</xloc>
-      <yloc>800</yloc>
+      <yloc>736</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -500,18 +485,65 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>********************************************************************************************
+      <logmessage>
 
-+ + +  THE GTAS-TO-NEO JOB COMPLETED PROCESSING SUCCESSFULLY  + + +
- 
-********************************************************************************************</logmessage>
+*************************************************************************************
+
+
+	+ + +  THE GTAS-TO-NEO JOB COMPLETED PROCESSING SUCCESSFULLY  + + +
+
+	
+_____________________________________________________________________________________
+
+
+					 PROCESSING SUMMARY  
+
+_____________________________________________________________________________________
+
+	1. NUMBER OF ROWS READ FROM GTAS VIEW						= ${VAR_LAST_ROW_NUMBER}
+_____________________________________________________________________________________
+
+	2. NUMBER OF UNIQUE MESSAGES READ FROM GTAS					= ${NUM_MESSAGES_READ}
+_____________________________________________________________________________________
+
+             NUMBER OF APIS MESSAGES UPDATED IN GTAS	= ${NUM_APIS_MESSAGES}
+
+             NUMBER OF PNR MESSAGES UPDATED IN GTAS 	= ${NUM_PNR_MESSAGES}
+                                                    		________________________
+	
+	3. TOTAL NUMBER OF MESSAGES UPDATED IN GTAS					= ${NUM_UPDATED_MESSAGES}
+_____________________________________________________________________________________
+
+	4. NUMBER OF PROCESSED FLIGHTS                				= ${NUM_FLIGHTS}
+_____________________________________________________________________________________
+
+	5. NUMBER OF PROCESSED PASSENGERS            				= ${NUM_PROCESSED_PASSENGERS}
+_____________________________________________________________________________________
+.
+	6. NUMBER OF HITS									= ${NUM_HITS}
+_____________________________________________________________________________________
+
+
+
+
+
+
+	 * See total processing time at the end of this log
+
+
+*************************************************************************************
+
+
+
+
+</logmessage>
       <loglevel>Minimal</loglevel>
       <logsubject>SUCCESS</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1408</xloc>
-      <yloc>1616</yloc>
+      <xloc>1392</xloc>
+      <yloc>1504</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -548,8 +580,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1392</xloc>
-      <yloc>256</yloc>
+      <xloc>1136</xloc>
+      <yloc>240</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -586,8 +618,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>880</xloc>
-      <yloc>256</yloc>
+      <xloc>864</xloc>
+      <yloc>368</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -625,7 +657,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>1392</xloc>
-      <yloc>432</yloc>
+      <yloc>336</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -662,8 +694,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>624</xloc>
-      <yloc>448</yloc>
+      <xloc>464</xloc>
+      <yloc>512</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -701,7 +733,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>1392</xloc>
-      <yloc>608</yloc>
+      <yloc>544</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -739,7 +771,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>1216</yloc>
+      <yloc>1392</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -803,7 +835,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>800</yloc>
+      <yloc>880</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -817,8 +849,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>880</xloc>
-      <yloc>448</yloc>
+      <xloc>864</xloc>
+      <yloc>512</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -833,7 +865,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>1392</xloc>
-      <yloc>352</yloc>
+      <yloc>240</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -847,8 +879,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1136</xloc>
-      <yloc>256</yloc>
+      <xloc>864</xloc>
+      <yloc>240</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -863,7 +895,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>1392</xloc>
-      <yloc>512</yloc>
+      <yloc>432</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -882,26 +914,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Delete Temp Files</name>
-      <description/>
-      <type>DELETE_FILES</type>
-      <attributes/>
-      <arg_from_previous>N</arg_from_previous>
-      <include_subfolders>N</include_subfolders>
-      <fields>
-        <field>
-          <name>${Internal.Entry.Current.Directory}/job/temp</name>
-          <filemask>*</filemask>
-        </field>
-      </fields>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>1392</xloc>
-      <yloc>1472</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
       <name>Write to log-</name>
       <description/>
       <type>WRITE_TO_LOG</type>
@@ -912,8 +924,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>288</xloc>
-      <yloc>624</yloc>
+      <xloc>416</xloc>
+      <yloc>768</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -927,8 +939,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>624</xloc>
-      <yloc>352</yloc>
+      <xloc>464</xloc>
+      <yloc>416</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1018,8 +1030,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>624</xloc>
-      <yloc>256</yloc>
+      <xloc>464</xloc>
+      <yloc>336</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1033,7 +1045,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>352</xloc>
+      <xloc>464</xloc>
       <yloc>256</yloc>
       <attributes_kjc/>
     </entry>
@@ -1072,8 +1084,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>400</xloc>
-      <yloc>496</yloc>
+      <xloc>368</xloc>
+      <yloc>656</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1097,7 +1109,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>1392</xloc>
-      <yloc>928</yloc>
+      <yloc>880</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1112,7 +1124,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>1152</xloc>
-      <yloc>928</yloc>
+      <yloc>880</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1149,8 +1161,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1216</xloc>
-      <yloc>1616</yloc>
+      <xloc>1152</xloc>
+      <yloc>1504</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1532,6 +1544,127 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <yloc>1472</yloc>
       <attributes_kjc/>
     </entry>
+    <entry>
+      <name>JavaScript-compute_stats</name>
+      <description/>
+      <type>EVAL</type>
+      <attributes/>
+      <script>
+
+parent_job.setVariable("NUM_UPDATED_MESSAGES", previous_result.getNrLinesUpdated() );
+
+
+parent_job.setVariable("NUM_PNR_MESSAGES", previous_result.getNrLinesRead() );
+
+
+parent_job.setVariable("NUM_APIS_MESSAGES", previous_result.getNrLinesWritten() );
+
+
+true;</script>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>1392</xloc>
+      <yloc>1360</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>JavaScript-compute_stats 2</name>
+      <description/>
+      <type>EVAL</type>
+      <attributes/>
+      <script>
+
+
+parent_job.setVariable("NUM_MESSAGES_READ", previous_result.getNrLinesOutput() );
+
+parent_job.setVariable("NUM_PROCESSED_PASSENGERS", previous_result.getNrLinesRead() );
+
+
+
+
+
+true;</script>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>112</xloc>
+      <yloc>656</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>JavaScript-flight count</name>
+      <description/>
+      <type>EVAL</type>
+      <attributes/>
+      <script>
+
+parent_job.setVariable("NUM_FLIGHTS", previous_result.getNrLinesRead() );
+
+
+
+
+true;</script>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>272</xloc>
+      <yloc>224</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Delete temp file on start</name>
+      <description/>
+      <type>DELETE_FILES</type>
+      <attributes/>
+      <arg_from_previous>N</arg_from_previous>
+      <include_subfolders>N</include_subfolders>
+      <fields>
+        <field>
+          <name>${Internal.Entry.Current.Directory}/temp</name>
+          <filemask>.*\.txt</filemask>
+        </field>
+      </fields>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>112</xloc>
+      <yloc>1072</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log - delete temp files 2</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>** ....... DELETING TEMP FILES .......................</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>log-update-neo4j-parameters</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>112</xloc>
+      <yloc>1168</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>JavaScript - hit count</name>
+      <description/>
+      <type>EVAL</type>
+      <attributes/>
+      <script>
+parent_job.setVariable("NUM_HITS", previous_result.getNrLinesRead() );
+
+
+
+true;</script>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>1392</xloc>
+      <yloc>752</yloc>
+      <attributes_kjc/>
+    </entry>
   </entries>
   <hops>
     <hop>
@@ -1598,15 +1731,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Trans-create passenger document rship</from>
-      <to>Write to log - psngr-email</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
       <from>Write to log - psngr-email</from>
       <to>Trans-create passenger-email rship</to>
       <from_nr>0</from_nr>
@@ -1616,44 +1740,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Trans-create passenger-credit card rhip</from>
-      <to>Write to log - psngr-phone rship</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log - psngr-phone rship</from>
-      <to>Trans-create passenger-phone rship</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Trans-create passenger-email rship</from>
-      <to>Write to log-psngr-creditcard rship</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
       <from>Write to log-psngr-creditcard rship</from>
       <to>Trans-create passenger-credit card rhip</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Trans-create passenger-phone rship</from>
-      <to>Write to log-psngr-address rship</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -1672,24 +1760,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
     <hop>
       <from>Write to log - flight-hits rship</from>
       <to>Transformation - flight-hits</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Trans-create passenger-address rship</from>
-      <to>Write to log - psngr-hit-rship</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Delete Temp Files</from>
-      <to>Write To Log - success</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -1724,15 +1794,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Transformation - flight-origin</from>
-      <to>Write to log - flight destination</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
       <from>Write to log - flight destination</from>
       <to>Transformation - flight destination</to>
       <from_nr>0</from_nr>
@@ -1749,15 +1810,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation-gtas-to-neo</from>
-      <to>Simple evaluation</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
     </hop>
     <hop>
       <from>Simple evaluation</from>
@@ -1780,15 +1832,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
     <hop>
       <from>Write to log - No message</from>
       <to>Success</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation - passenger-hits</from>
-      <to>Simple evaluation - hit data</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -1841,15 +1884,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Transformation-gtas_message_staus_update</from>
-      <to>Write to log - delete temp files</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
       <from>Transformation - flight-hits</from>
       <to>Dummy - after hits</to>
       <from_nr>0</from_nr>
@@ -1875,24 +1909,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log - delete temp files</from>
-      <to>Delete Temp Files</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Set variables - job configuration</from>
-      <to>Dummy</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
     </hop>
     <hop>
       <from>Dummy</from>
@@ -2074,26 +2090,179 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <evaluation>N</evaluation>
       <unconditional>Y</unconditional>
     </hop>
+    <hop>
+      <from>Transformation-gtas_message_staus_update</from>
+      <to>JavaScript-compute_stats</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation-gtas-to-neo</from>
+      <to>JavaScript-compute_stats 2</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>JavaScript-compute_stats 2</from>
+      <to>Simple evaluation</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation - flight-origin</from>
+      <to>JavaScript-flight count</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>JavaScript-flight count</from>
+      <to>Write to log - flight destination</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Delete temp file on start</from>
+      <to>Dummy</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Set variables - job configuration</from>
+      <to>Write to log - delete temp files 2</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log - delete temp files 2</from>
+      <to>Delete temp file on start</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>JavaScript-compute_stats</from>
+      <to>Write To Log - success</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log - psngr-phone rship</from>
+      <to>Trans-create passenger-phone rship</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation - passenger-hits</from>
+      <to>JavaScript - hit count</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>JavaScript - hit count</from>
+      <to>Simple evaluation - hit data</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Trans-create passenger document rship</from>
+      <to>Write to log - psngr-email</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Trans-create passenger-email rship</from>
+      <to>Write to log-psngr-creditcard rship</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Trans-create passenger-credit card rhip</from>
+      <to>Write to log - psngr-phone rship</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Trans-create passenger-phone rship</from>
+      <to>Write to log-psngr-address rship</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Trans-create passenger-address rship</from>
+      <to>Transformation - passenger-hits</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
   </hops>
   <notepads>
     <notepad>
       <note>This ETL job pulls data  from GTAS MariaDB database (neo4j view) and merge the data into a Neo4j Graph database using parameters
 stored in the GTAS database. Once processing is done successfully, the parameters will be updated so that next time when the job starts to pull data
 it uses the time shown on the timestamp of the updated parameters as a staring point</note>
-      <xloc>144</xloc>
-      <yloc>128</yloc>
+      <xloc>112</xloc>
+      <yloc>96</yloc>
       <width>1171</width>
       <heigth>79</heigth>
       <fontname>Times New Roman</fontname>
       <fontsize>12</fontsize>
       <fontbold>N</fontbold>
       <fontitalic>N</fontitalic>
-      <fontcolorred>0</fontcolorred>
-      <fontcolorgreen>0</fontcolorgreen>
-      <fontcolorblue>0</fontcolorblue>
-      <backgroundcolorred>202</backgroundcolorred>
-      <backgroundcolorgreen>228</backgroundcolorgreen>
-      <backgroundcolorblue>255</backgroundcolorblue>
+      <fontcolorred>255</fontcolorred>
+      <fontcolorgreen>255</fontcolorgreen>
+      <fontcolorblue>255</fontcolorblue>
+      <backgroundcolorred>0</backgroundcolorred>
+      <backgroundcolorgreen>0</backgroundcolorgreen>
+      <backgroundcolorblue>64</backgroundcolorblue>
       <bordercolorred>100</bordercolorred>
       <bordercolorgreen>100</bordercolorgreen>
       <bordercolorblue>100</bordercolorblue>

@@ -26,12 +26,16 @@
                 }
             ];
 
+            configService.kibanaProtocol().then(function(value) {
+                $scope.kibanaProtocol = value.data;
+            });
+
             configService.kibanaUrl().then(function(value) {
                 $scope.dashUrl = value.data;
             });
 
             $scope.getKibanaUrl = function() {
-                return $sce.trustAsResourceUrl('https://' + location.hostname + ':80' + $scope.dashUrl);
+                return $sce.trustAsResourceUrl($scope.dashUrl);
             };
 
             $scope.sampleData = sampleData;

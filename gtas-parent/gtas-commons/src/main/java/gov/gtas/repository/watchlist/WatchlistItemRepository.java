@@ -5,11 +5,11 @@
  */
 package gov.gtas.repository.watchlist;
 
-import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.watchlist.WatchlistItem;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,14 +25,12 @@ public interface WatchlistItemRepository
 	@Query("SELECT wli FROM WatchlistItem wli WHERE wli.watchlist.watchlistName = :watchlistName")
 	public List<WatchlistItem> getItemsByWatchlistName(@Param("watchlistName") String watchlistName);
 
+	@Query("SELECT wli FROM WatchlistItem wli WHERE wli.watchlist.watchlistName = :watchlistName")
+    public List<WatchlistItem> getItemsByWatchlistName(@Param("watchlistName") String watchlistName, Pageable pageable);
+	
 	@Query("DELETE FROM WatchlistItem wli WHERE wli.watchlist.watchlistName = :watchlistName")
 	public void deleteItemsByWatchlistName(@Param("watchlistName") String watchlistName);
-	
-	@Transactional
-	@Modifying
-	@Query("DELETE FROM WatchlistItem wli WHERE wli.id IN :watchlistItemIds")
-	public void deleteItemsByWatchlistItemId(@Param("watchlistItemIds")List<Long> watchlistItemIds);
-	
+
 	default WatchlistItem findOne(Long id) {
 		return findById(id).orElse(null);
 	}

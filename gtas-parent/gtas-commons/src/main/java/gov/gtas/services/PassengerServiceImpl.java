@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +66,11 @@ public class PassengerServiceImpl implements PassengerService {
 	@Autowired
 	AppConfigurationService appConfigurationService;
 
+	@Value("${tamr.enabled}")
+	boolean tamrEnabled;
+	@Value("${tamr.resolve_passenger_history}")
+	boolean tamrResolvePassengerHistory;
+	
 	@Override
 	@Transactional
 	public Passenger create(Passenger passenger) {
@@ -214,7 +220,23 @@ public class PassengerServiceImpl implements PassengerService {
 	@Override
 	@Transactional
 	public List<Passenger> getBookingDetailHistoryByPaxID(Long pId) {
-		return bookingDetailRepository.getBookingDetailsByPassengerIdTag(pId);
+	    List<Passenger> tamrIdMatches;
+	    if (tamrEnabled && tamrResolvePassengerHistory) {
+        	    tamrIdMatches = 
+        	            bookingDetailRepository.getBookingDetailsByTamrId(pId);
+	    } else {
+	        tamrIdMatches = Collections.emptyList();
+	    }
+
+	    if (tamrIdMatches.size() > 0) {
+	        return tamrIdMatches;
+	    } else {
+	        // If there are no tamrId matches, this means the tamrId must be
+	        // NULL or Tamr history resolving is disabled. In that case, just
+	        // do normal matching.
+	        return bookingDetailRepository
+	                .getBookingDetailsByPassengerIdTag(pId);
+	    }
 	}
 
 	@Override

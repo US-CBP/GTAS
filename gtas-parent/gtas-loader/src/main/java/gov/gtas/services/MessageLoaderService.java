@@ -51,7 +51,7 @@ public abstract class MessageLoaderService {
 
 	public abstract MessageDto parse(MessageDto msgDto);
 
-	public abstract MessageStatus load(MessageDto msgDto);
+	public abstract MessageInformation load(MessageDto msgDto);
 
 	WeightCountDto getBagStatistics(Set<Bag> bagSet) {
 		Set<BagMeasurements> bagMeasurementsSet = bagSet.stream().map(Bag::getBagMeasurements).filter(Objects::nonNull)

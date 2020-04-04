@@ -5,42 +5,44 @@
  */
 package gov.gtas.parsers.tamr.jms;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Session;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
-import org.springframework.jms.support.destination.DestinationResolver;
+import org.springframework.jms.config.JmsListenerContainerFactory;
 
-//Uncomment in order in part to re-enable queues
-/*@Configuration
-@EnableJms*/
+@Configuration
+@ConditionalOnProperty(prefix = "tamr", name = "enabled")
+@EnableJms
 public class TamrQueueConfig {
 
-	@Bean
-	public DefaultJmsListenerContainerFactory tamrJmsListenerContainerFactory() {
-		DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-		factory.setConnectionFactory(
-				// Add tamr connection details here.
-				new ActiveMQConnectionFactory(""));
-		factory.setDestinationResolver(new DestinationResolver() {
+    private final Logger logger = LoggerFactory.getLogger(TamrQueueConfig.class);
 
-			@Override
-			public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain)
-					throws JMSException {
+    @Value("${tamr.activemq.broker.url}")
+    private String activeMQBrokerUrl;
+    
+    @Bean
+    public JmsListenerContainerFactory<?> tamrJmsListenerContainerFactory() {        
+        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+                
+        factory.setConnectionFactory(
+                new ActiveMQConnectionFactory(activeMQBrokerUrl));
+        factory.setSessionTransacted(true);
+        factory.setConcurrency("5");
+        return factory;
+    }
 
-				// Create a destination
-				return session.createQueue("OutboundQueue");
+    @Bean
+    public ActiveMQConnectionFactory senderConnectionFactory() {
+        ActiveMQConnectionFactory aMQConnection = new ActiveMQConnectionFactory();
+        aMQConnection.setBrokerURL(activeMQBrokerUrl);
 
-			}
-		});
-		factory.setSessionTransacted(true);
-		factory.setConcurrency("5");
-		return factory;
-	}
+        return aMQConnection;
+    }
 
 }

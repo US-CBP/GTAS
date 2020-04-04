@@ -73,22 +73,13 @@ public class PassengerDetailsController {
 	private PnrService pnrService;
 
 	@Autowired
-	private UserService uService;
-
-	@Autowired
 	private MatchingService matchingService;
 
 	@Resource
 	private BagRepository bagRepository;
 
 	@Resource
-	private SeatRepository seatRepository;
-
-	@Resource
 	private ApisMessageRepository apisMessageRepository;
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private HitDetailService hitDetailService;
@@ -225,10 +216,14 @@ public class PassengerDetailsController {
 				apisVo.setBagWeight(apisMessageFlightPax.getBagWeight());
 			}
 
-			List<FlightPassengerVo> fpList = apisControllerService.generateFlightPaxVoByApisRef(refList.get(0),
-					Long.parseLong(flightId));
-			for (FlightPassengerVo flightPassengerVo : fpList) {
-				apisVo.addFlightpax(flightPassengerVo);
+			if (!refList.isEmpty()) {
+				List<FlightPassengerVo> fpList = apisControllerService.generateFlightPaxVoByApisRef(refList.get(0),
+						Long.parseLong(flightId));
+				for (FlightPassengerVo flightPassengerVo : fpList) {
+					apisVo.addFlightpax(flightPassengerVo);
+				}
+			} else {
+				logger.warn("There is no APIS Ref number here!");
 			}
 
 			for (Bag b : bagList) {
@@ -564,18 +559,16 @@ public class PassengerDetailsController {
 					flVo.setFlightNumber(fl.getFlight().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getFlight().getOrigin());
 					flVo.setDestinationAirport(fl.getFlight().getDestination());
-					flVo.setEtd(
-							DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEtd()));
-					flVo.setEta(
-							DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEta()));
+					flVo.setEtd(fl.getFlight().getMutableFlightDetails().getEtd());
+					flVo.setEta(fl.getFlight().getMutableFlightDetails().getEta());
 					flVo.setFlightId(Long.toString(fl.getFlight().getId()));
 					flVo.setDirection(fl.getFlight().getDirection());
 				} else {
 					flVo.setFlightNumber(fl.getBookingDetail().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getBookingDetail().getOrigin());
 					flVo.setDestinationAirport(fl.getBookingDetail().getDestination());
-					flVo.setEtd(DateCalendarUtils.formatJsonDateTime(fl.getBookingDetail().getEtd()));
-					flVo.setEta(DateCalendarUtils.formatJsonDateTime(fl.getBookingDetail().getEta()));
+					flVo.setEtd(fl.getBookingDetail().getEtd());
+					flVo.setEta(fl.getBookingDetail().getEta());
 					flVo.setBookingDetailId(Long.toString(fl.getBookingDetail().getId()));
 				}
 				target.getFlightLegs().add(flVo);
@@ -663,7 +656,7 @@ public class PassengerDetailsController {
 				// Doc Numbers
 				if (currString.contains(DOC)) {
 					for (DocumentVo d : targetVo.getDocuments()) {
-						if (currString.contains(d.getDocumentNumber())) {
+						if (d.getDocumentNumber() != null && currString.contains(d.getDocumentNumber())) {
 							segment.append(DOC);
 							segment.append(d.getDocumentNumber());
 							segment.append(" ");
