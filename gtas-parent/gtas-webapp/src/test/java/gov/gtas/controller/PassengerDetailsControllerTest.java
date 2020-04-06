@@ -71,14 +71,14 @@ public class PassengerDetailsControllerTest {
 	public void passengerDetailControllerHappyPathTest() throws SQLException {
 		Passenger wally = TestData.getPassenger();
 		Mockito.when(fService.findById(2L)).thenReturn(TestData.getFlight());
-		Mockito.when(pService.findByIdWithFlightPaxAndDocuments(1L)).thenReturn(wally);
+		Mockito.when(pService.findByIdWithFlightAndDocuments(1L)).thenReturn(wally);
 		List<Pnr> pnrs = TestData.getPnrList();
 		Mockito.when(pnrService.findPnrByPassengerIdAndFlightId(1L, 2L)).thenReturn(pnrs);
 		Mockito.when(bagRepository.findFromFlightAndPassenger(2L, 1L)).thenReturn(TestData.getBags());
 		Mockito.when(apisMessageRepository.findByFlightIdAndPassengerId(2L, 1L))
 				.thenReturn(Collections.singletonList(TestData.getApisMessage()));
-		Mockito.when(apisMessageRepository.findFlightPaxByFlightIdandPassengerId(2L, 1L))
-				.thenReturn(Collections.singletonList(TestData.getFlightPax()));
+		Mockito.when(apisMessageRepository.findPaxByFlightIdandPassengerId(2L, 1L))
+				.thenReturn(TestData.getPassenger());
 		PassengerVo passengerVo = passengerDetailsController.getPassengerByPaxIdAndFlightId("1", "2");
 		Assert.assertNotNull(passengerVo);
 	}

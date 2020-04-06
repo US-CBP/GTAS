@@ -79,14 +79,6 @@ public class ApisMessageVo extends MessageVo {
 		bags.add(b);
 	}
 
-	public Set<FlightPassengerVo> getFlightpaxs() {
-		return flightpaxs;
-	}
-
-	public void setFlightpaxs(Set<FlightPassengerVo> flightpaxs) {
-		this.flightpaxs = flightpaxs;
-	}
-
 	public void addFlightpax(FlightPassengerVo flightpax) {
 		this.flightpaxs.add(flightpax);
 	}

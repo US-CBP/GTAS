@@ -60,7 +60,6 @@ import gov.gtas.vo.passenger.LinkPassengerVo;
 public class ElasticHelper {
 	private static final Logger logger = LoggerFactory.getLogger(ElasticHelper.class);
 	private static final String INDEX_NAME = "flightpax";
-	private static final String FLIGHTPAX_TYPE = "doc";
 	private static final String CREDENTIALS = "xpack.security.user";
 	private static final String NODE_NAME = "node.name";
 	private static final String CLUSTER_NAME = "cluster.name";
