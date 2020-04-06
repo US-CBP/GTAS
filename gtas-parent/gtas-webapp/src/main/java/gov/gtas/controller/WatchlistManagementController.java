@@ -128,7 +128,7 @@ public class WatchlistManagementController {
 	 *            the input spec
 	 * @return the json service response
 	 */
-	@PostMapping(value = Constants.WL_CREATE_UPDATE_DELETE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = Constants.WL_CREATE_UPDATE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
 	public JsonServiceResponse createWatchlist(@PathVariable String entity, @RequestBody WatchlistSpec inputSpec) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		logger.info("******** Received Watchlist Create request by user: {}", userId);
@@ -145,28 +145,12 @@ public class WatchlistManagementController {
 	 *            the input spec
 	 * @return the json service response
 	 */
-	@PutMapping(value = Constants.WL_CREATE_UPDATE_DELETE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = Constants.WL_CREATE_UPDATE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
 	public JsonServiceResponse updateWatchlist(@PathVariable String entity, @RequestBody WatchlistSpec inputSpec) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		logger.info("******** Received Watchlist Update request by user: {}", userId);
 
 		return createUpdateWatchlist(inputSpec);
-	}
-
-	/**
-	 * Delete all watchlist items.
-	 *
-	 * @param name
-	 *            the name
-	 * @return the json service response
-	 */
-	@RequestMapping(value = Constants.WL_DELETE, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public JsonServiceResponse deleteAllWatchlistItems(@PathVariable String name) {
-		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		logger.info("******** Received Watchlist DeleteAll request for watch list =" + name + " by user " + userId);
-		// return watchlistService.deleteWatchlist(userId,name);
-
-		return watchlistService.deleteWatchlist(userId, "NONE");
 	}
 
 	/**
@@ -193,6 +177,11 @@ public class WatchlistManagementController {
 
 		List<JsonLookupData> result = watchlistService.findWatchlistCategories();
 		return result;
+	}
+	
+	@RequestMapping(value = Constants.WL_DELETE_ITEMS, method = RequestMethod.DELETE)
+	public void deleteWatchlistItems(@PathVariable List<Long> watchlistItemIds){	
+		watchlistService.deleteWatchlistItems(watchlistItemIds);
 	}
 
 	/**

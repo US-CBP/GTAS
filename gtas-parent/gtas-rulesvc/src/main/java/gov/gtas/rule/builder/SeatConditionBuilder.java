@@ -5,6 +5,11 @@
  */
 package gov.gtas.rule.builder;
 
+import gov.gtas.enumtype.CriteriaOperatorEnum;
+import gov.gtas.enumtype.TypeEnum;
+
+import java.text.ParseException;
+
 public class SeatConditionBuilder extends EntityConditionBuilder {
 
 	private boolean apis;
@@ -31,6 +36,16 @@ public class SeatConditionBuilder extends EntityConditionBuilder {
 	 */
 	public boolean isApis() {
 		return apis;
+	}
+
+	@Override
+	public void addCondition(final CriteriaOperatorEnum opCode, final String attributeName,
+			final TypeEnum attributeType, String[] values) throws ParseException {
+		if (this.isEmpty()) {
+			this.addConditionAsString("passengerId == $p.id");
+			this.addConditionAsString("flightId == " + "$f.id");
+		}
+		super.addCondition(opCode, attributeName, attributeType, values);
 	}
 
 }

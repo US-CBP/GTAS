@@ -15,7 +15,6 @@ import gov.gtas.model.User;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.UserRepository;
 import gov.gtas.services.CountDownCalculator;
-import gov.gtas.services.GtasEmailService;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.EmailDTO;
 import gov.gtas.vo.passenger.CountDownVo;
@@ -24,7 +23,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.*;

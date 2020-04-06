@@ -5,12 +5,13 @@
  */
 package gov.gtas.job.scheduler;
 
+import gov.gtas.job.config.JobSchedulerConfig;
 import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
-import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.model.PendingHitDetails;
 import gov.gtas.repository.MessageStatusRepository;
-import gov.gtas.services.AppConfigurationService;
+import gov.gtas.repository.PendingHitDetailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,9 +41,10 @@ public class RuleRunnerScheduler {
 	private ExecutorService exec;
 	private static final int DEFAULT_THREADS_ON_RULES = 5;
 	private MessageStatusRepository messageStatusRepository;
-	private final AppConfigurationService appConfigurationService;
 	private int maxNumOfThreads = DEFAULT_THREADS_ON_RULES;
 	private boolean graphDbOn;
+	private JobSchedulerConfig jobSchedulerConfig;
+	private PendingHitDetailRepository pendingHitDetailRepository;
 
 	/* The targeting service. */
 
@@ -50,45 +53,66 @@ public class RuleRunnerScheduler {
 	 */
 	@Autowired
 	public RuleRunnerScheduler(ApplicationContext ctx, MessageStatusRepository messageStatusRepository,
-			AppConfigurationService appConfigurationService) {
+			JobSchedulerConfig jobSchedulerConfig, PendingHitDetailRepository pendingHitDetailRepository) {
 		this.messageStatusRepository = messageStatusRepository;
-		this.appConfigurationService = appConfigurationService;
+		this.jobSchedulerConfig = jobSchedulerConfig;
+		this.pendingHitDetailRepository = pendingHitDetailRepository;
 
 		try {
-			graphDbOn = Boolean.parseBoolean(
-					appConfigurationService.findByOption(AppConfigurationRepository.GRAPH_DB_TOGGLE).getValue());
+			graphDbOn = this.jobSchedulerConfig.getNeo4JRuleEngineEnabled();
 		} catch (Exception e) {
 			logger.error("Failed to get graph db toggle. Graph rules will be OFF.");
 		}
 		try {
-			maxNumOfThreads = Integer.parseInt(
-					appConfigurationService.findByOption(AppConfigurationRepository.THREADS_ON_RULES).getValue());
+			maxNumOfThreads = this.jobSchedulerConfig.getThreadsOnRules();
 		} catch (Exception e) {
 			logger.error(String.format(
-					"Failed to load application configuration: '%1$s' from the database... Number of threads set to use %2$s",
-					AppConfigurationRepository.THREADS_ON_RULES, DEFAULT_THREADS_ON_RULES));
+					"Failed to load application configuration: THREADS_ON_RULES from application properties... Number of threads set to use %1$s",
+					DEFAULT_THREADS_ON_RULES));
 		}
 		this.exec = Executors.newFixedThreadPool(maxNumOfThreads);
 		this.ctx = ctx;
 	}
 
 	/**
-	 * Job scheduling.
-	 */
-	// This is commented out as a scheduled task in order to remove concurrency
-	// issues in the DB involving loader and rule runner. This may not be the final
-	// solution to the problem
-	// but it suffices for now. The rule running portion of the scheduler is now
-	// tacked into the loader portion at the bottom to insure sequential operation.
+	 * rule engine
+	 **/
 	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
 	public void jobScheduling() throws InterruptedException {
 
-		int messageLimit = Integer.parseInt(
-				appConfigurationService.findByOption(AppConfigurationRepository.MAX_MESSAGES_PER_RULE_RUN).getValue());
+
+		int flightLimit = this.jobSchedulerConfig.getMaxFlightsPerRuleRun();
+		Set<Number> flightIdsForPendingHits = pendingHitDetailRepository.getFlightsWithPendingHitsByLimit(flightLimit);
+		if (!flightIdsForPendingHits.isEmpty()) {
+			int flightsPerThread =  this.jobSchedulerConfig.getMaxFlightsProcessedPerThread();
+			List<AsyncHitPersistenceThread> list = new ArrayList<>();
+			int runningTotal = 0;
+			Set<Long> flightIds = new HashSet<>();
+			for (Number flightId : flightIdsForPendingHits) {
+				flightIds.add(flightId.longValue());
+				runningTotal++;
+				if (runningTotal >= flightsPerThread) {
+					AsyncHitPersistenceThread worker = ctx.getBean(AsyncHitPersistenceThread.class);
+					worker.setFlightIds(flightIds);
+					list.add(worker);
+					runningTotal = 0;
+				}
+				if (list.size() >= maxNumOfThreads - 1) {
+					break;
+				}
+			}
+			if (runningTotal != 0) {
+				AsyncHitPersistenceThread worker = ctx.getBean(AsyncHitPersistenceThread.class);
+				worker.setFlightIds(flightIds);
+				list.add(worker);
+			}
+			exec.invokeAll(list);
+		}
+
+		int messageLimit = this.jobSchedulerConfig.getMaxMessagesPerRuleRun();
 		List<MessageStatus> source = messageStatusRepository.getMessagesFromStatus(MessageStatusEnum.LOADED.getName(),
 				messageLimit);
-		int maxPassengers = Integer.parseInt(appConfigurationService
-				.findByOption(AppConfigurationRepository.MAX_PASSENGERS_PER_RULE_RUN).getValue());
+		int maxPassengers = this.jobSchedulerConfig.getMaxPassengersPerRuleRun();
 		if (!source.isEmpty()) {
 			Map<Long, List<MessageStatus>> messageFlightMap = geFlightMessageMap(source);
 			int runningTotal = 0;
@@ -119,6 +143,7 @@ public class RuleRunnerScheduler {
 				worker.setMessageStatuses(ruleThread);
 				list.add(worker);
 			}
+			source = null; // Alert that source can be GC'd.
 			exec.invokeAll(list);
 		}
 
@@ -154,6 +179,7 @@ public class RuleRunnerScheduler {
 					worker.setMessageStatuses(ruleThread);
 					list.add(worker);
 				}
+				source = null; // Alert that source can be GC'd.
 				exec.invokeAll(list);
 			}
 		}

@@ -7,13 +7,9 @@ package gov.gtas.services.search;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -24,23 +20,14 @@ import java.util.Set;
 
 import javax.annotation.PreDestroy;
 
-import org.elasticsearch.plugins.NetworkPlugin;
-import org.elasticsearch.transport.Netty4Plugin;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import gov.gtas.config.ElasticConfig;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -50,34 +37,20 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.elasticsearch.search.sort.SortOrder;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import gov.gtas.model.Address;
-import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
-import gov.gtas.model.Pnr;
-import gov.gtas.repository.AppConfigurationRepository;
-import gov.gtas.repository.LookUpRepository;
 import gov.gtas.services.dto.AdhocQueryDto;
 import gov.gtas.services.dto.LinkAnalysisDto;
-import gov.gtas.util.LobUtils;
-import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.LinkPassengerVo;
-import gov.gtas.vo.passenger.PassengerVo;
-
-import org.apache.logging.log4j.message.Message;
 
 /**
  * Methods for interfacing with elastic search engine: indexing and search.
@@ -88,6 +61,14 @@ public class ElasticHelper {
 	private static final Logger logger = LoggerFactory.getLogger(ElasticHelper.class);
 	private static final String INDEX_NAME = "flightpax";
 	private static final String FLIGHTPAX_TYPE = "doc";
+	private static final String CREDENTIALS = "xpack.security.user";
+	private static final String NODE_NAME = "node.name";
+	private static final String CLUSTER_NAME = "cluster.name";
+	private static final String SSL_KEY = "xpack.security.transport.ssl.key";
+	private static final String SSL_CERT = "xpack.security.transport.ssl.certificate";
+	private static final String SSL_CA = "xpack.security.transport.ssl.certificate_authorities";
+	private static final String VERIFICATION_MODE = "xpack.security.transport.ssl.verification_mode";
+	private static final String SSL_ENABLED = "xpack.security.transport.ssl.enabled";
 
 	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
 	private SimpleDateFormat dateParser = new SimpleDateFormat(DATE_FORMAT);
@@ -95,25 +76,32 @@ public class ElasticHelper {
 	private TransportClient client;
 
 	@Autowired
-	private LookUpRepository lookupRepo;
-
-	////////////////////////////////////////////////////////////////////
-	// init methods
+	private ElasticConfig elasticConfig;
 
 	void initClient() {
 		if (isUp()) {
 			return;
 		}
 
-		String hostname = lookupRepo.getAppConfigOption(AppConfigurationRepository.ELASTIC_HOSTNAME);
-		String portStr = lookupRepo.getAppConfigOption(AppConfigurationRepository.ELASTIC_PORT);
+		String hostname = elasticConfig.getElasticHost();
+		String portStr = elasticConfig.getElasticPort();
+
 		if (hostname == null || portStr == null) {
 			logger.info("ElasticSearch configuration not found");
 			return;
 		}
 		System.setProperty("es.set.netty.runtime.available.processors", "false");
 		int port = Integer.valueOf(portStr);
-		client = new PreBuiltTransportClient(Settings.EMPTY); // TransportClient.builder().build();
+		client = new PreBuiltXPackTransportClient(Settings.builder()
+				.put(SSL_ENABLED, elasticConfig.getSslEnabled())
+				.put(CREDENTIALS, elasticConfig.getElasticCredentials())
+				.put(NODE_NAME, elasticConfig.getElasticNodeName())
+				.put(CLUSTER_NAME, elasticConfig.getElasticClusterName())
+				.put(SSL_KEY, elasticConfig.getElasticSslKey())
+				.put(SSL_CERT, elasticConfig.getElasticSslCert())
+				.put(SSL_CA, elasticConfig.getElasticSslCa())
+				.put(VERIFICATION_MODE, elasticConfig.getElasticSslVerificationMode()).build());
+
 		logger.info("ElasticSearch Client Init: " + hostname + ":" + port);
 		try {
 			client.addTransportAddress(new TransportAddress(InetAddress.getByName(hostname), port));
@@ -154,25 +142,6 @@ public class ElasticHelper {
 
 	public boolean isDown() {
 		return client == null;
-	}
-
-	////////////////////////////////////////////////////////////////////
-	// index, search
-
-	public void indexPnr(Pnr pnr) {
-		String pnrRaw = LobUtils.convertClobToString(pnr.getRaw());
-		if (!(pnr == null || pnr.getFlights() == null || pnr.getPassengers() == null)) {
-			indexFlightPax(pnr.getFlights(), pnr.getPassengers(), null, pnrRaw, null, pnr);
-		}
-
-	}
-
-	public void indexApis(ApisMessage apis) {
-		String apisRaw = LobUtils.convertClobToString(apis.getRaw());
-		if (!(apis == null || apis.getFlights() == null || apis.getPassengers() == null)) {
-			indexFlightPax(apis.getFlights(), apis.getPassengers(), apisRaw, null, apis, null);
-		}
-
 	}
 
 	AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir)
@@ -264,7 +233,7 @@ public class ElasticHelper {
 		// upgrade to 5.6.0
 		HighlightBuilder builder = new HighlightBuilder();
 		builder.field("documents.documentNumber").field("pnr").preTags();
-		SearchResponse response = client.prepareSearch(INDEX_NAME).setTypes(FLIGHTPAX_TYPE)
+		SearchResponse response = client.prepareSearch(INDEX_NAME)
 				.setSearchType(SearchType.QUERY_THEN_FETCH).setQuery(qb)
 				// .addHighlightedField("documents.documentNumber")
 				// .addHighlightedField("pnr")
@@ -295,8 +264,6 @@ public class ElasticHelper {
 		return new LinkAnalysisDto(lp, hits.getHits().length);
 	}
 
-	////////////////////////////////////////////////////////////////////
-	// helpers,
 	private Hashtable<String, List<String>> converHighlightsTable(Set<Entry<String, HighlightField>> highlights) {
 		Hashtable<String, List<String>> highlightStrings = new Hashtable<String, List<String>>();
 		for (Map.Entry<String, HighlightField> highlight : highlights) {
@@ -309,26 +276,6 @@ public class ElasticHelper {
 		return highlightStrings;
 	}
 
-	private String convertHighlights(Set<Entry<String, HighlightField>> highlights) {
-		StringBuilder highlightString = new StringBuilder();
-		for (Map.Entry<String, HighlightField> highlight : highlights) {
-			highlightString.append("Field: ");
-			highlightString.append(highlight.getKey());
-			highlightString.append("\n");
-			for (Text text : highlight.getValue().fragments()) {
-				highlightString.append("\n");
-				highlightString.append("Fragment: ");
-				highlightString.append(text.string());
-				highlightString.append("... ");
-				highlightString.append("\n");
-			}
-			highlightString.append("\n");
-			highlightString.append("---- ");
-			highlightString.append("\n");
-		}
-		return highlightString.toString();
-	}
-
 	private SearchHits search(String query, int pageNumber, int pageSize, String column, String dir) {
 		SortOrder sortOrder = ("asc".equals(dir.toLowerCase())) ? SortOrder.ASC : SortOrder.DESC;
 
@@ -338,83 +285,10 @@ public class ElasticHelper {
 		int startIndex = (pageNumber - 1) * pageSize;
 		QueryBuilder qb = QueryBuilders.multiMatchQuery(query, searchFields)
 				.type(MultiMatchQueryBuilder.Type.MOST_FIELDS);
-		SearchResponse response = client.prepareSearch(INDEX_NAME).setTypes(FLIGHTPAX_TYPE)
+		SearchResponse response = client.prepareSearch(INDEX_NAME)
 				.setSearchType(SearchType.QUERY_THEN_FETCH).setQuery(qb).setFrom(startIndex).setSize(pageSize)
 				.addSort(column, sortOrder).setExplain(true).execute().actionGet();
 		return response.getHits();
 	}
 
-	private void indexFlightPax(Collection<Flight> flights, Collection<Passenger> passengers, String apis, String pnr,
-			ApisMessage am, Pnr pm) {
-		Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
-		for (Passenger p : passengers) {
-			for (Flight f : flights) {
-				String id = createElasticId(f.getId(), p.getId());
-
-				GetRequest getRequest = new GetRequest(INDEX_NAME, FLIGHTPAX_TYPE, id);
-				GetResponse response = client.get(getRequest).actionGet();
-				if (response.isExists()) {
-					// update
-					UpdateRequest updateRequest = new UpdateRequest(INDEX_NAME, FLIGHTPAX_TYPE, id);
-					String field;
-					String val;
-					if (apis != null) {
-						field = "apis";
-						val = apis;
-					} else {
-						field = "pnr";
-						val = pnr;
-					}
-
-					try {
-						XContentBuilder builder = XContentFactory.jsonBuilder().startObject().field(field, val)
-								.endObject();
-						updateRequest.doc(builder);
-						client.update(updateRequest).get();
-					} catch (Exception e) {
-						logger.error("error: ", e);
-					}
-
-				} else {
-					// index new
-					IndexRequest indexRequest = new IndexRequest(INDEX_NAME, FLIGHTPAX_TYPE, id);
-					FlightPassengerVo vo = new FlightPassengerVo();
-					BeanUtils.copyProperties(p, vo);
-					// Need to manually add documents to vo since it contains passengers
-					Set<DocumentVo> documents = new HashSet<DocumentVo>();
-					for (Document d : p.getDocuments()) {
-						DocumentVo temp = new DocumentVo();
-						temp.setDocumentNumber(d.getDocumentNumber() != null ? d.getDocumentNumber() : "");
-						temp.setDocumentType(d.getDocumentType() != null ? d.getDocumentType() : "");
-						temp.setExpirationDate(d.getExpirationDate() != null ? d.getExpirationDate() : new Date());
-						temp.setFirstName(d.getPassenger().getPassengerDetails().getFirstName() != null
-								? d.getPassenger().getPassengerDetails().getFirstName()
-								: "");
-						temp.setLastName(d.getPassenger().getPassengerDetails().getLastName() != null
-								? d.getPassenger().getPassengerDetails().getLastName()
-								: "");
-						temp.setIssuanceCountry(d.getIssuanceCountry() != null ? d.getIssuanceCountry() : "");
-						temp.setIssuanceDate(d.getIssuanceDate() != null ? d.getIssuanceDate() : new Date());
-						documents.add(temp);
-					}
-					vo.setDocuments(documents);
-					vo.setPassengerId(p.getId());
-					BeanUtils.copyProperties(f, vo);
-					vo.setFlightId(f.getId());
-					if (apis != null) {
-						vo.setApis(apis);
-					} else {
-						vo.setPnr(pnr);
-						vo.setAddresses(pm.getAddresses());
-					}
-					indexRequest.source(gson.toJson(vo), XContentType.JSON);
-					client.index(indexRequest).actionGet();
-				}
-			}
-		}
-	}
-
-	private String createElasticId(long flightId, long paxId) {
-		return String.format("%d-%d", flightId, paxId);
-	}
 }

@@ -34,6 +34,7 @@ public final class Constants {
 	public static final String DWELLTIME = "DWELLTIME";
 	public static final String BAG = "BAG";
 	public static final String FLIGHTPAX = "FLIGHTPAX";
+	public static final String PAYMENTFORM = "PAYMENTFORM";
 	// public static final String FLIGHTLEG = "FLIGHTLEG";
 	public static final String BOOKINGDETAIL = "BOOKINGDETAIL";
 

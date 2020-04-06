@@ -9,16 +9,10 @@ import static gov.gtas.rule.builder.RuleTemplateConstants.GLOBAL_RESULT_DECLARAT
 import static gov.gtas.rule.builder.RuleTemplateConstants.IMPORT_PREFIX;
 import static gov.gtas.rule.builder.RuleTemplateConstants.NEW_LINE;
 import static gov.gtas.rule.builder.RuleTemplateConstants.RULE_PACKAGE_NAME;
+
+import gov.gtas.bo.FlightPassengerLink;
+import gov.gtas.bo.match.*;
 import gov.gtas.model.RuleHitDetail;
-import gov.gtas.bo.match.PnrAddressLink;
-import gov.gtas.bo.match.PnrBookingLink;
-import gov.gtas.bo.match.PnrCreditCardLink;
-import gov.gtas.bo.match.PnrDwellTimeLink;
-import gov.gtas.bo.match.PnrEmailLink;
-import gov.gtas.bo.match.PnrFrequentFlyerLink;
-import gov.gtas.bo.match.PnrPassengerLink;
-import gov.gtas.bo.match.PnrPhoneLink;
-import gov.gtas.bo.match.PnrTravelAgencyLink;
 import gov.gtas.model.*;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.UdrRule;
@@ -41,7 +35,8 @@ public class DrlRuleFileBuilder {
 			FrequentFlyer.class, CreditCard.class, BookingDetail.class, Agency.class, DwellTime.class, FlightPax.class,
 			Bag.class, PnrAddressLink.class, PnrCreditCardLink.class, PnrEmailLink.class, PnrFrequentFlyerLink.class,
 			PnrBookingLink.class, PnrPassengerLink.class, PnrPhoneLink.class, PnrTravelAgencyLink.class,
-			PnrDwellTimeLink.class, Seat.class, PaymentForm.class, MutableFlightDetails.class };
+			PnrDwellTimeLink.class, Seat.class, PaymentForm.class, MutableFlightDetails.class,
+			PnrFormOfPaymentLink.class, FlightPassengerLink.class };
 
 	private StringBuilder stringBuilder;
 

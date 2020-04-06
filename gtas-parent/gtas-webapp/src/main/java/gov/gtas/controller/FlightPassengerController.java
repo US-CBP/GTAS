@@ -6,7 +6,6 @@
 package gov.gtas.controller;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,20 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gov.gtas.common.UserLocationSetting;
 import gov.gtas.common.UserLocationStatus;
-import gov.gtas.constants.Constants;
-import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.security.service.GtasSecurityUtils;
-import gov.gtas.services.AppConfigurationService;
-import gov.gtas.services.DataManagementService;
 import gov.gtas.services.FlightService;
 import gov.gtas.services.PassengerService;
-import gov.gtas.services.UserLocationService;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.services.security.UserService;
-import gov.gtas.vo.passenger.UserLocationVo;
 
 @RestController
 public class FlightPassengerController {
@@ -48,9 +41,6 @@ public class FlightPassengerController {
 
 	@Autowired
 	private PassengerService paxService;
-
-	@Autowired
-	private DataManagementService dataManagementService;
 
 	@Autowired
 	private UserService userService;

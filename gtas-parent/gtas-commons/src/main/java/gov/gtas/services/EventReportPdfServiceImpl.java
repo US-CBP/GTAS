@@ -40,6 +40,7 @@ import gov.gtas.vo.passenger.EmailVo;
 import gov.gtas.vo.passenger.FlightVoForFlightHistory;
 import gov.gtas.vo.passenger.PassengerVo;
 import gov.gtas.vo.passenger.PhoneVo;
+import gov.gtas.vo.passenger.PnrVo;
 
 @Service
 public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
@@ -57,6 +58,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 	private BaseTable emailTable;
 	private BaseTable phoneTable;
 	private BaseTable eventNotesTable;
+	private BaseTable rawPnrTable;
 	private BaseTable eventNoteHistoryTable;
 	private static final Logger logger = LoggerFactory.getLogger(EventReportPdfServiceImpl.class);
 
@@ -112,6 +114,9 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		this.createEventNotesSection(document, passengerDetail2ndPage, paxDetailPdfDocRequest);
 		// EVENT NOTES HISTORY
 		this.createEventNoteHistorySection(document, passengerDetail2ndPage, paxDetailPdfDocRequest);
+		// RAW PNR SECTION
+		this.createPnrSection(document, passengerDetail2ndPage, paxDetailPdfDocRequest);
+		
 		// close secondpage's content stream
 		pd2ndContentStream.close();
 
@@ -762,6 +767,35 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 	}
 
 
+	   // RAW PNR
+		public void createPnrSection(PDDocument document, PDPage passengerDetailPage,
+				PaxDetailPdfDocRequest paxDetailPdfDocRequest) throws Exception {
+			final float EVENT_NOTES_COLUMN_1 = 100;
+			
+			PnrVo pnrVo = paxDetailPdfDocRequest.getPassengerVo().getPnrVo();
+			if(pnrVo!=null && pnrVo.getRaw()!=null)
+			{
+				this.rawPnrTable = createRawPnrTable(document, passengerDetailPage);
+				this.addHorizontalReportSectionHeader(this.rawPnrTable, RAW_PNR_TITLE);
+				Row<PDPage> rawPnrContentRow;
+				String pnrString = pnrVo.getRaw();
+				String[] pnrStringArray = pnrString.split("\\n");
+				 
+				for(int i=0;i < pnrStringArray.length;i++)
+				{
+					rawPnrContentRow = this.getRow(this.rawPnrTable);
+					this.createRawPnrValueCell(rawPnrContentRow, EVENT_NOTES_COLUMN_1, pnrStringArray[i]);
+				}
+			
+				rawPnrTable.draw();
+			}
+
+			
+
+		}
+	
+	
+	
 
 	public void addReportSectionHeader(BaseTable table, String headerTitle) {
 		final float REPORT_SECTION_HEADER_COLUMN_1_WIDTH = 100;
@@ -949,7 +983,18 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		return table;
 	}
 
+	public BaseTable createRawPnrTable(PDDocument document, PDPage page) throws Exception {
+		float tableStartPosition = DEFAULT_Y_TABLE_START_POSITION - this.creditCardTable.getHeaderAndDataHeight()
+				- this.emailTable.getHeaderAndDataHeight() - this.phoneTable.getHeaderAndDataHeight()
+				- this.flightHistoryTable.getHeaderAndDataHeight() - this.eventNotesTable.getHeaderAndDataHeight() - this.eventNoteHistoryTable.getHeaderAndDataHeight()
+				- 140.0f;
 
+		BaseTable table = new BaseTable(tableStartPosition, this.getDefaultReportPageStartYposition(page),
+				this.DEFAULT_BOTTOM_MARGIN, this.getDefaultTableWidth(page), this.DEFAULT_MARGIN, document, page, true,
+				this.REPORT_DRAW_CONTENT);
+
+		return table;
+	}
 
 
 	

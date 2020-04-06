@@ -310,8 +310,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>960</yloc>
+      <xloc>128</xloc>
+      <yloc>928</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -332,85 +332,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>544</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Get File SFTP- Apache Tomact-rotated-log</name>
-      <description/>
-      <type>SFTP</type>
-      <attributes/>
-      <servername>${EXT_VAR_REMOTE_DATA_PROC_SERVER}</servername>
-      <serverport>${EXT_VAR_REMOTE_DATA_PROC_SERVER_PORT}</serverport>
-      <username>${EXT_VAR_REMOTE_DATA_PROC_SERVER_USER_NAME}</username>
-      <password>Encrypted </password>
-      <sftpdirectory>${EXT_VAR_REMOTE_TOMCAT_LOG_DIR}</sftpdirectory>
-      <targetdirectory>${EXT_VAR_TEMP_TOMCAT_DIR}</targetdirectory>
-      <wildcard>${EXT_VAR_TOMCAT_ROTATED_LOG_WC}</wildcard>
-      <remove>Y</remove>
-      <isaddresult>Y</isaddresult>
-      <createtargetfolder>N</createtargetfolder>
-      <copyprevious>N</copyprevious>
-      <usekeyfilename>Y</usekeyfilename>
-      <keyfilename>${EXT_VAR_REMOTE_DATA_PROC_SERVER_PRIVATE_KEY}</keyfilename>
-      <keyfilepass>${EXT_VAR_REMOTE_DATA_PROC_SERVER_PASSPHRASE}</keyfilepass>
-      <compression>none</compression>
-      <proxyType/>
-      <proxyHost/>
-      <proxyPort/>
-      <proxyUsername/>
-      <proxyPassword>Encrypted </proxyPassword>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>448</xloc>
-      <yloc>176</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>--->>>> Starting SFTP communication to SERVER = ${EXT_VAR_REMOTE_DATA_PROC_SERVER}  to get the Apache Tomcat log</logmessage>
-      <loglevel>Minimal</loglevel>
-      <logsubject>GET GTAS LOG ON SFTP</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>416</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log - 2</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>--->>>> ZIPPING APACHE TOMCAT lLOG</logmessage>
-      <loglevel>Minimal</loglevel>
-      <logsubject>Zip APACHE TOMCAT LOG</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>736</xloc>
-      <yloc>176</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log 2</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>######--->>>>> ERROR! ROTATED APACHE TOMCAT LOGS CAN NOT BE COLLECTED BECAUSE THE SFTP CALL TO THE REMOTE SERVER ${EXT_VAR_REMOTE_DATA_PROC_SERVER} FAILED</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>SFTP CALL FAILED</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>592</xloc>
-      <yloc>256</yloc>
+      <xloc>128</xloc>
+      <yloc>304</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -426,480 +349,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>656</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Transformation-get file names</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>${Internal.Entry.Current.Directory}/gtas-apache_tomcat-log-names-trans.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>Y</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>960</xloc>
-      <yloc>176</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Transformation- zip logs</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>${Internal.Entry.Current.Directory}/gtas-zip-log-files-trans.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>Y</params_from_previous>
-      <exec_per_row>Y</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-        <parameter>
-          <name>filename</name>
-          <stream_name>filename</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>short_filename</name>
-          <stream_name>short_filename</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>path</name>
-          <stream_name>path</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>type</name>
-          <stream_name>type</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>exists</name>
-          <stream_name>exists</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>lastmodifiedtime</name>
-          <stream_name>lastmodifiedtime</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>size</name>
-          <stream_name>size</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>extension</name>
-          <stream_name>extension</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>uri</name>
-          <stream_name>uri</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>rooturi</name>
-          <stream_name>rooturi</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>zip_dir</name>
-          <stream_name>zip_dir</stream_name>
-          <value/>
-        </parameter>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>1232</xloc>
-      <yloc>176</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Get File SFTP- Apache Tomact-log</name>
-      <description/>
-      <type>SFTP</type>
-      <attributes/>
-      <servername>${EXT_VAR_REMOTE_DATA_PROC_SERVER}</servername>
-      <serverport>${EXT_VAR_REMOTE_DATA_PROC_SERVER_PORT}</serverport>
-      <username>${EXT_VAR_REMOTE_DATA_PROC_SERVER_USER_NAME}</username>
-      <password>Encrypted </password>
-      <sftpdirectory>${EXT_VAR_REMOTE_TOMCAT_LOG_DIR}</sftpdirectory>
-      <targetdirectory>${EXT_VAR_TEMP_TOMCAT_DIR}</targetdirectory>
-      <wildcard>${EXT_VAR_TOMCAT_CURRENT_LOG_WC}</wildcard>
-      <remove>N</remove>
-      <isaddresult>Y</isaddresult>
-      <createtargetfolder>N</createtargetfolder>
-      <copyprevious>N</copyprevious>
-      <usekeyfilename>Y</usekeyfilename>
-      <keyfilename>${EXT_VAR_REMOTE_DATA_PROC_SERVER_PRIVATE_KEY}</keyfilename>
-      <keyfilepass>${EXT_VAR_REMOTE_DATA_PROC_SERVER_PASSPHRASE}</keyfilepass>
-      <compression>none</compression>
-      <proxyType/>
-      <proxyHost/>
-      <proxyPort/>
-      <proxyUsername/>
-      <proxyPassword>Encrypted </proxyPassword>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>272</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log-1</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>--->>>>> ERROR! THE CURRENT APACHE TOMCAT LOGS CAN NOT BE COLLECTED BECAUSE THE SFTP CALL TO THE REMOTE SERVER ${EXT_VAR_REMOTE_DATA_PROC_SERVER} FAILED</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>SFTP CALL FAILED</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>432</xloc>
-      <yloc>304</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log 3</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>####### ERROR! AN ERROR HAS OCCURRED WHEN RETRIEVING LOG FILE NAMES FOR APACHE TOMCAT</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>GET FILE NAMES FAILED - Apache Tomcat</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>944</xloc>
-      <yloc>256</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log 4</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>####### ERROR! AN ERROR HAS OCCURRED WHEN ZIPPING APACHE TOMCAT LOGS.</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>ZIP LOG FILES FAILED</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>1104</xloc>
-      <yloc>272</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Copy files - tomcat-web</name>
-      <description/>
-      <type>COPY_FILES</type>
-      <attributes/>
-      <copy_empty_folders>Y</copy_empty_folders>
-      <arg_from_previous>N</arg_from_previous>
-      <overwrite_files>N</overwrite_files>
-      <include_subfolders>N</include_subfolders>
-      <remove_source_files>N</remove_source_files>
-      <add_result_filesname>N</add_result_filesname>
-      <destination_is_a_file>N</destination_is_a_file>
-      <create_destination_folder>N</create_destination_folder>
-      <fields>
-        <field>
-          <source_filefolder>EMPTY_SOURCE_URL-0-${EXT_VAR_LOCAL_TOMCAT_WEB_LOG_DIR}</source_filefolder>
-          <source_configuration_name>LOCAL-SOURCE-FILE-0</source_configuration_name>
-          <destination_filefolder>EMPTY_DEST_URL-0-${EXT_VAR_TEMP_TOMCAT_WEB_LOG_DIR}</destination_filefolder>
-          <destination_configuration_name>LOCAL-DEST-FILE-0</destination_configuration_name>
-          <wildcard>${EXT_VAR_TOMCAT_WEB_CURRENT_LOG_WC}</wildcard>
-        </field>
-      </fields>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>288</xloc>
-      <yloc>528</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Transformation - zip-apache-web-logs</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>${Internal.Entry.Current.Directory}/gtas-zip-log-files-web-trans.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>Y</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-        <parameter>
-          <name>filename</name>
-          <stream_name>filename</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>short_filename</name>
-          <stream_name>short_filename</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>path</name>
-          <stream_name>path</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>type</name>
-          <stream_name>type</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>exists</name>
-          <stream_name>exists</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>lastmodifiedtime</name>
-          <stream_name>lastmodifiedtime</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>size</name>
-          <stream_name>size</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>extension</name>
-          <stream_name>extension</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>uri</name>
-          <stream_name>uri</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>rooturi</name>
-          <stream_name>rooturi</stream_name>
-          <value/>
-        </parameter>
-        <parameter>
-          <name>zip_dir</name>
-          <stream_name>zip_dir</stream_name>
-          <value/>
-        </parameter>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>1136</xloc>
-      <yloc>608</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Transformation-get-tomcat-web-filenames</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>${Internal.Entry.Current.Directory}/gtas-apache_tomcat-web-log-names-trans.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>816</xloc>
-      <yloc>608</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log 5</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>#### ERROR >>> AN ERROR HAS OCCURRED WHEN TRYING TO COPY LOGS FROM LOCAL SERVER TO TEMP FOLDER. #########</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>Copy Files -Failed</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>624</xloc>
-      <yloc>384</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log 6</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>####### ERROR! AN ERROR HAS OCCURRED WHEN RETRIEVING LOG FILE NAMES FOR APACHE TOMCAT WEB.</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>GET FILE NAMES FAILED - Apache Tomcat Web</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>848</xloc>
-      <yloc>496</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log 7</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>####### ERROR! AN ERROR HAS OCCURRED WHEN ZIPPING APACHE TOMCAT WEB LOGS.</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>ZIP LOG FILES FAILED</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>1072</xloc>
-      <yloc>480</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Copy files - tomcat-web-rotated</name>
-      <description/>
-      <type>COPY_FILES</type>
-      <attributes/>
-      <copy_empty_folders>Y</copy_empty_folders>
-      <arg_from_previous>N</arg_from_previous>
-      <overwrite_files>Y</overwrite_files>
-      <include_subfolders>N</include_subfolders>
-      <remove_source_files>Y</remove_source_files>
-      <add_result_filesname>N</add_result_filesname>
-      <destination_is_a_file>N</destination_is_a_file>
-      <create_destination_folder>N</create_destination_folder>
-      <fields>
-        <field>
-          <source_filefolder>EMPTY_SOURCE_URL-0-${EXT_VAR_LOCAL_TOMCAT_WEB_LOG_DIR}</source_filefolder>
-          <source_configuration_name>LOCAL-SOURCE-FILE-0</source_configuration_name>
-          <destination_filefolder>EMPTY_DEST_URL-0-${EXT_VAR_TEMP_TOMCAT_WEB_LOG_DIR}</destination_filefolder>
-          <destination_configuration_name>LOCAL-DEST-FILE-0</destination_configuration_name>
-          <wildcard>${EXT_VAR_TOMCAT_WEB_ROTATED_LOG_WC}</wildcard>
-        </field>
-      </fields>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>512</xloc>
-      <yloc>528</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log 8</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>######## ERROR! AN ERROR HAS OCCURRED WHEN COPYING APACHE TOMCAT WEB ROTATED LOGS TO TEMP FOLDER IN THE LOCAL SERVER.########</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>Copy File Failed</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>720</xloc>
-      <yloc>464</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log 9</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>--->>>> Starting SFTP communication to SERVER = ${EXT_VAR_REMOTE_DATA_PROC_SERVER}  to get the Apache Tomcat Rotated log</logmessage>
-      <loglevel>Minimal</loglevel>
-      <logsubject>GET GTAS LOG ON SFTP</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>224</xloc>
-      <yloc>176</yloc>
+      <xloc>128</xloc>
+      <yloc>560</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -922,8 +373,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1344</xloc>
-      <yloc>736</yloc>
+      <xloc>1312</xloc>
+      <yloc>432</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -960,8 +411,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1344</xloc>
-      <yloc>1024</yloc>
+      <xloc>1312</xloc>
+      <yloc>800</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -975,8 +426,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1056</xloc>
-      <yloc>736</yloc>
+      <xloc>1088</xloc>
+      <yloc>432</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1013,8 +464,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1072</xloc>
-      <yloc>1264</yloc>
+      <xloc>1312</xloc>
+      <yloc>1152</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1037,8 +488,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1344</xloc>
-      <yloc>928</yloc>
+      <xloc>1312</xloc>
+      <yloc>672</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1057,8 +508,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1056</xloc>
-      <yloc>928</yloc>
+      <xloc>1104</xloc>
+      <yloc>672</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1095,8 +546,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1344</xloc>
-      <yloc>832</yloc>
+      <xloc>1312</xloc>
+      <yloc>544</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1110,8 +561,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1056</xloc>
-      <yloc>1024</yloc>
+      <xloc>1104</xloc>
+      <yloc>800</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1125,8 +576,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>816</xloc>
-      <yloc>1264</yloc>
+      <xloc>848</xloc>
+      <yloc>1152</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1140,8 +591,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1056</xloc>
-      <yloc>832</yloc>
+      <xloc>1088</xloc>
+      <yloc>544</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1155,8 +606,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1344</xloc>
-      <yloc>560</yloc>
+      <xloc>1312</xloc>
+      <yloc>304</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1175,8 +626,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1344</xloc>
-      <yloc>1136</yloc>
+      <xloc>1312</xloc>
+      <yloc>928</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1190,30 +641,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1072</xloc>
-      <yloc>1136</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Dummy- completed zipping</name>
-      <description/>
-      <type>SPECIAL</type>
-      <attributes/>
-      <start>N</start>
-      <dummy>Y</dummy>
-      <repeat>N</repeat>
-      <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
-      <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>1248</xloc>
-      <yloc>384</yloc>
+      <xloc>1120</xloc>
+      <yloc>928</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1224,8 +653,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>752</xloc>
-      <yloc>768</yloc>
+      <xloc>848</xloc>
+      <yloc>800</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1237,8 +666,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>768</yloc>
+      <xloc>128</xloc>
+      <yloc>688</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1255,8 +684,8 @@ GTAS LOG COLLECTOR ETL JOB IS STARTING...........................
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>864</yloc>
+      <xloc>128</xloc>
+      <yloc>800</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1268,39 +697,145 @@ GTAS LOG COLLECTOR ETL JOB IS STARTING...........................
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>336</xloc>
-      <yloc>768</yloc>
+      <xloc>272</xloc>
+      <yloc>688</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Job - remote-app-log-collector-tomcat</name>
+      <description/>
+      <type>JOB</type>
+      <attributes/>
+      <specification_method>filename</specification_method>
+      <job_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/gtas-remote-app-log-processor.kjb</filename>
+      <jobname/>
+      <directory/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Nothing</loglevel>
+      <slave_server_name/>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <expand_remote_job>N</expand_remote_job>
+      <create_parent_folder>N</create_parent_folder>
+      <pass_export>N</pass_export>
+      <run_configuration>Pentaho local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <set_append_logfile>N</set_append_logfile>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>480</xloc>
+      <yloc>176</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Job - local-app-log-collector-tomcat</name>
+      <description/>
+      <type>JOB</type>
+      <attributes/>
+      <specification_method>filename</specification_method>
+      <job_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/gtas-local-app-log-processor.kjb</filename>
+      <jobname/>
+      <directory/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Nothing</loglevel>
+      <slave_server_name/>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <expand_remote_job>N</expand_remote_job>
+      <create_parent_folder>N</create_parent_folder>
+      <pass_export>N</pass_export>
+      <run_configuration>Pentaho local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <set_append_logfile>N</set_append_logfile>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>496</xloc>
+      <yloc>304</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Dummy - end of log processing</name>
+      <description/>
+      <type>SPECIAL</type>
+      <attributes/>
+      <start>N</start>
+      <dummy>Y</dummy>
+      <repeat>N</repeat>
+      <schedulerType>0</schedulerType>
+      <intervalSeconds>0</intervalSeconds>
+      <intervalMinutes>60</intervalMinutes>
+      <hour>12</hour>
+      <minutes>0</minutes>
+      <weekDay>1</weekDay>
+      <DayOfMonth>1</DayOfMonth>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>864</xloc>
+      <yloc>304</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Job -remote-catalina-log-collector-tomcat</name>
+      <description/>
+      <type>JOB</type>
+      <attributes/>
+      <specification_method>filename</specification_method>
+      <job_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/gtas-remote-catalina-log-processor.kjb</filename>
+      <jobname/>
+      <directory/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Nothing</loglevel>
+      <slave_server_name/>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <expand_remote_job>N</expand_remote_job>
+      <create_parent_folder>N</create_parent_folder>
+      <pass_export>N</pass_export>
+      <run_configuration>Pentaho local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <set_append_logfile>N</set_append_logfile>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>496</xloc>
+      <yloc>416</yloc>
       <attributes_kjc/>
     </entry>
   </entries>
   <hops>
-    <hop>
-      <from>Dummy</from>
-      <to>Write to log</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Get File SFTP- Apache Tomact-rotated-log</from>
-      <to>Write to log - 2</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Get File SFTP- Apache Tomact-rotated-log</from>
-      <to>Write to log 2</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
     <hop>
       <from>Set variables</from>
       <to>Dummy</to>
@@ -1309,150 +844,6 @@ GTAS LOG COLLECTOR ETL JOB IS STARTING...........................
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log - 2</from>
-      <to>Transformation-get file names</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation-get file names</from>
-      <to>Transformation- zip logs</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log</from>
-      <to>Get File SFTP- Apache Tomact-log</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Get File SFTP- Apache Tomact-log</from>
-      <to>Write to log-1</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation-get file names</from>
-      <to>Write to log 3</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation- zip logs</from>
-      <to>Write to log 4</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Dummy</from>
-      <to>Copy files - tomcat-web</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation-get-tomcat-web-filenames</from>
-      <to>Transformation - zip-apache-web-logs</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Copy files - tomcat-web</from>
-      <to>Write to log 5</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation-get-tomcat-web-filenames</from>
-      <to>Write to log 6</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation - zip-apache-web-logs</from>
-      <to>Write to log 7</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Copy files - tomcat-web</from>
-      <to>Copy files - tomcat-web-rotated</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Copy files - tomcat-web-rotated</from>
-      <to>Transformation-get-tomcat-web-filenames</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Copy files - tomcat-web-rotated</from>
-      <to>Write to log 8</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Get File SFTP- Apache Tomact-log</from>
-      <to>Write to log 9</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log 9</from>
-      <to>Get File SFTP- Apache Tomact-rotated-log</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Simple evaluation  delete job enabled?</from>
@@ -1563,105 +954,6 @@ GTAS LOG COLLECTOR ETL JOB IS STARTING...........................
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Transformation- zip logs</from>
-      <to>Dummy- completed zipping</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation - zip-apache-web-logs</from>
-      <to>Dummy- completed zipping</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log 7</from>
-      <to>Dummy- completed zipping</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log 6</from>
-      <to>Dummy- completed zipping</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log 8</from>
-      <to>Dummy- completed zipping</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log 5</from>
-      <to>Dummy- completed zipping</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log-1</from>
-      <to>Dummy- completed zipping</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log 4</from>
-      <to>Dummy- completed zipping</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log 3</from>
-      <to>Dummy- completed zipping</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log 2</from>
-      <to>Dummy- completed zipping</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Dummy- completed zipping</from>
-      <to>Write to log 15</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
       <from>Write to log 10</from>
       <to>Success</to>
       <from_nr>0</from_nr>
@@ -1759,6 +1051,69 @@ GTAS LOG COLLECTOR ETL JOB IS STARTING...........................
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy</from>
+      <to>Job - remote-app-log-collector-tomcat</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy</from>
+      <to>Job - local-app-log-collector-tomcat</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Job - remote-app-log-collector-tomcat</from>
+      <to>Dummy - end of log processing</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Job - local-app-log-collector-tomcat</from>
+      <to>Dummy - end of log processing</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy - end of log processing</from>
+      <to>Write to log 15</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy</from>
+      <to>Job -remote-catalina-log-collector-tomcat</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Job -remote-catalina-log-collector-tomcat</from>
+      <to>Dummy - end of log processing</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
   </hops>
   <notepads>

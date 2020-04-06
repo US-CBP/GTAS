@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  web-app:
+    environment:
+      EMAIL_SENDER_USERNAME: ""
+      EMAIL_SENDER_PASSWORD: ""
+      EMAIL_SENDER_HOST: ""
+      SSL_TRUST_HOST: ""
+      AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: false
+      MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: false
+      PROXY_IP: localhost
+  gtas-scheduler:
+    volumes:
+      - type: bind
+        source: ./gtas-data
+        target: /usr/local/gtas-data
+        consistency: consistent

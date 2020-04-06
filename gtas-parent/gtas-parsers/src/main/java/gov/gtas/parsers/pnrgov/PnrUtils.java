@@ -343,7 +343,37 @@ public class PnrUtils {
 			}
 		}
 	}
+	
+	public static String removePrefixesFromFirstName(String first) {
+		String firstName = first; //guarantees to at least return what was input
+		if (first != null) {
+			for (String prefix : PREFIXES) {
+				if (first.startsWith(prefix)) {
+					firstName = first.substring(prefix.length()).trim();
+				} else if (first.endsWith(prefix)) {
+					firstName = first.substring(0, first.length() - prefix.length()).trim();
+				}
+			}
+		}
+		return firstName;
+	}
 
+	public static String removeSuffixesFromLastName(String last){
+		String lastName = last; //Insures returns at minimum what you give it.
+		if (last != null) {
+			if (last.indexOf("-1") > 0) {
+				last = last.substring(0, last.indexOf("-1"));
+			}
+			for (String suffix : SUFFIXES) {
+				if (last.endsWith(suffix)) {
+					lastName = last.substring(0, last.length() - suffix.length()).trim();
+					break;
+				}
+			}
+		}
+		return lastName;
+	}
+	
 	private static List<String> splitSsrFreeText(SSR ssr) {
 		if (ssr.getFreeText() != null) {
 			List<String> strs = new ArrayList<>();

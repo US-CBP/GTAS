@@ -5,11 +5,9 @@
  */
 package gov.gtas.vo.passenger;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
 
 public class FlightLegVo {
-
-	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
 
 	private String flightReference;
 	private String pnrReference;
@@ -19,10 +17,8 @@ public class FlightLegVo {
 	private String originAirport;
 	private String destinationAirport;
 	private String flightDate;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
-	private String etd;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
-	private String eta;
+	private Date etd;
+	private Date eta;
 	private String flightId;
 	private String direction;
 	private String bookingDetailId;
@@ -43,11 +39,11 @@ public class FlightLegVo {
 		this.direction = direction;
 	}
 
-	public String getEta() {
+	public Date getEta() {
 		return eta;
 	}
 
-	public void setEta(String eta) {
+	public void setEta(Date eta) {
 		this.eta = eta;
 	}
 
@@ -115,11 +111,11 @@ public class FlightLegVo {
 		this.flightDate = flightDate;
 	}
 
-	public String getEtd() {
+	public Date getEtd() {
 		return etd;
 	}
 
-	public void setEtd(String etd) {
+	public void setEtd(Date etd) {
 		this.etd = etd;
 	}
 

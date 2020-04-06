@@ -1,5 +1,9 @@
-# Default Kibana configuration for docker target
+server.host: 0.0.0.0
 server.name: kibana
-server.host: "0"
-elasticsearch.hosts: [ "https://elasticsearch:9200" ]
-xpack.monitoring.ui.container.elasticsearch.enabled: true
+server.ssl.enabled: true
+server.ssl.certificate: /etc/kibana/config/kibana.crt
+server.ssl.key: /etc/kibana/config/kibana.key
+elasticsearch.ssl.verificationMode: none
+elasticsearch.ssl.certificateAuthorities: /etc/kibana/config/ca.crt
+xpack.monitoring.elasticsearch.ssl.certificateAuthorities: /etc/kibana/config/ca.crt
+elasticsearch.requestHeadersWhitelist: [ "Authorization", "x-forwarded-port", "x-forwarded-for", "x-proxy-user", "x-proxy-roles" ]

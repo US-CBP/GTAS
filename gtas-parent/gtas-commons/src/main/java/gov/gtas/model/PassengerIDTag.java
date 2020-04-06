@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "passenger_id_tag", indexes = { @Index(columnList = "idTag", name = "id_index"),
-		@Index(columnList = "doc_hash_id", name = "doc_hash_id_index") })
+		@Index(columnList = "tamr_id", name = "tamr_id_index") })
 public class PassengerIDTag extends BaseEntityAudit {
 	private static final long serialVersionUID = 1L;
 

@@ -49,7 +49,10 @@ GTAS accomplishes these goals through providing all the necessary decision suppo
 ## Where is GTAS currently Deployed?
 
 * Maldives | Maldives Customs Service http://www.wcoomd.org/es-es/media/newsroom/2019/july/gtas-go-live-in-maldives.aspx
-* Two other deployments scheduled before the end of 2019
+* Pakistan | Federal Board of Revenue http://www.wcoomd.org/en/media/newsroom/2019/november/pakistan-gtas-implementation.aspx
+* Uganda | Uganda Revenue Authority https://www.theeastafrican.co.ke/business/Entebbe-rolls-out-travel-assessment-system/2560-5443676-ly5fciz/index.html
+
+Three other deployments scheduled before JUN 2020
 
 ## About the code
 GTAS is developed in Java and uses open source software components and platforms.

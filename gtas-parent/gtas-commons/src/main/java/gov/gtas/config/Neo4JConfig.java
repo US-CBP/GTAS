@@ -27,8 +27,18 @@ public class Neo4JConfig {
 	private static final String PROPERTY_NAME_USERNAME = "neo4jusername";
 	private static final String PROPERTY_NAME_CRED = "neo4jpassword";
 	private static final String NEO_4_J_ENABLED = "neo4jEnabled";
+	private static final String NEO_4_J_GRAPH_DB_URL = "neo4jUrl";
+	private static final String NEO_4_J_RULE_ENGINE_ENABLED="neo4jRuleEngineEnabled";
 
 	public Neo4JConfig() {
+	}
+
+	public boolean getNeo4JRuleEngineEnabled() {
+		return Boolean.parseBoolean(env.getRequiredProperty(NEO_4_J_RULE_ENGINE_ENABLED));
+	}
+
+	public String getNeo4JGraphDbUrl() {
+		return env.getRequiredProperty(NEO_4_J_GRAPH_DB_URL);
 	}
 
 	public String neoUserName() {
