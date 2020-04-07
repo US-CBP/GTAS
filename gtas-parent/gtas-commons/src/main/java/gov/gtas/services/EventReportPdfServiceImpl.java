@@ -181,8 +181,17 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		Row<PDPage> row = this.getRow(reportCoverTable);
 		this.createEmptyWhiteCell(row, FIRST_COLUMN_WIDTH);
 		this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, COVER_PAGE_TABLE_COLUMN_LABEL_NAME);
-		this.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
+		if(passengerVo.getMiddleName()!=null && !passengerVo.getMiddleName().isEmpty())
+		{
+			this.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
 				passengerVo.getLastName() + ", " + passengerVo.getFirstName() + ", " + passengerVo.getMiddleName());
+		}
+		else
+		{
+			this.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
+					passengerVo.getLastName() + ", " + passengerVo.getFirstName());
+		}
+			
 		this.createEmptyWhiteCell(row, FOUR_COLUMN_WIDTH);
 		// Flight row
 		row = this.getRow(reportCoverTable);
@@ -317,8 +326,17 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		Cell<PDPage> cell = this.creatPassengerVerticalColumnLabelCell(row, FIRST_COLUMN_WIDTH,
 				PASSENGER_TABLE_COLUMN_LABEL_NAME);
 		cell.setRightBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR, 0));
+		
+		if(passengerVo.getMiddleName()!=null && !passengerVo.getMiddleName().isEmpty())
+		{
 		this.createPassengerFirstVerticalColumnValueCell(row, SECOND_COLUMN_WIDTH,
 				passengerVo.getLastName() + ", " + passengerVo.getFirstName() + " " + passengerVo.getMiddleName());
+		}
+		else
+		{
+			this.createPassengerFirstVerticalColumnValueCell(row, SECOND_COLUMN_WIDTH,
+					passengerVo.getLastName() + ", " + passengerVo.getFirstName() );
+		}
 	
 		this.createFieldValueCell(row, COLUMN_SEPARATOR_WIDTH, "");
 		cell = this.creatVerticalColumnLabelCell(row, THIRD_COLUMN_WIDTH, TRIP_TABLE_COLUMN_LABEL_FLIGHT_NUMBER);
@@ -511,7 +529,14 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 
 					cotravelerRow = this.getRow(cotravelerTable);
 					this.createFirstColoredCell(cotravelerRow, HIT_HISTORY_COLUMN_1, cotraveler.getFirstName(), i);
-					this.createColoredCell(cotravelerRow, HIT_HISTORY_COLUMN_2, cotraveler.getMiddleName(), i);
+					if(cotraveler.getMiddleName()!=null && !cotraveler.getMiddleName().isEmpty())
+					{
+						this.createColoredCell(cotravelerRow, HIT_HISTORY_COLUMN_2, cotraveler.getMiddleName(), i);
+					}
+					else
+					{
+						this.createColoredCell(cotravelerRow, HIT_HISTORY_COLUMN_2, "", i);
+					}
 					this.createColoredCell(cotravelerRow, HIT_HISTORY_COLUMN_3, cotraveler.getLastName(), i);
 					this.createColoredCell(cotravelerRow, HIT_HISTORY_COLUMN_4, cotraveler.getGender(), i);
 					this.createLastColoredCell(cotravelerRow, HIT_HISTORY_COLUMN_5, changeToString(cotraveler.getAge()),

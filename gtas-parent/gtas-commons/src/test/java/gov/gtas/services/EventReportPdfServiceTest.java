@@ -221,6 +221,78 @@ public class EventReportPdfServiceTest {
 		}
 		
 	}
+	
+	@Test
+	public void createValueCellWithRighBottomtBorderTest() {
+		
+		try {
+			
+			int THIRD_COLUMN_WIDTH = 30;
+			PassengerVo passengerVo = new PassengerVo();
+			passengerVo.setFirstName("First");
+			passengerVo.setMiddleName("Middle");
+			passengerVo.setLastName("Last");
+			document.addPage(passengerDetailPage);
+			BaseTable table = eventReportPdfService.createReportCoverlTable(document, coverPage);
+			Row<PDPage> row = eventReportPdfService.getRow(table);
+			Cell<PDPage> cell = eventReportPdfService.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
+					passengerVo.getLastName() + ", " + passengerVo.getFirstName() + ", " + passengerVo.getMiddleName());
+			String cellText = cell.getText();
+			String []name = cellText.split(",");
+			Assert.assertEquals(name.length,3);
+			Assert.assertEquals(name[2].trim(),"Middle");
+			
+			passengerVo.setFirstName("First");
+			passengerVo.setLastName("Last");
+			cell = eventReportPdfService.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
+					passengerVo.getLastName() + ", " + passengerVo.getFirstName() );
+			String cellText2 = cell.getText();
+			String []name2 = cellText2.split(",");
+			Assert.assertEquals(name2.length,2);
+		
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@Test
+	public void createPassengerFirstVerticalColumnValueCellTest()
+	{
+		
+		try {
+			
+			int THIRD_COLUMN_WIDTH = 30;
+			PassengerVo passengerVo = new PassengerVo();
+			passengerVo.setFirstName("First");
+			passengerVo.setMiddleName("Middle");
+			passengerVo.setLastName("Last");
+			document.addPage(passengerDetailPage);
+			
+			BaseTable table = eventReportPdfService.createReportCoverlTable(document, coverPage);
+			Row<PDPage> row = eventReportPdfService.getRow(table);
+			Cell<PDPage> cell = eventReportPdfService.createPassengerFirstVerticalColumnValueCell(row, THIRD_COLUMN_WIDTH,
+					passengerVo.getLastName() + ", " + passengerVo.getFirstName() + ", " + passengerVo.getMiddleName());
+			String cellText = cell.getText();
+			String []name = cellText.split(",");
+			Assert.assertEquals(name.length,3);
+			Assert.assertEquals(name[2].trim(),"Middle");
+			
+			passengerVo.setFirstName("First");
+			passengerVo.setLastName("Last");
+			cell = eventReportPdfService.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
+					passengerVo.getLastName() + ", " + passengerVo.getFirstName() );
+			String cellText2 = cell.getText();
+			String []name2 = cellText2.split(",");
+			Assert.assertEquals(name2.length,2);
+		
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 
 	
 	
