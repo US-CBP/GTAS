@@ -10,6 +10,7 @@ import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.querybuilder.mappings.FlightPaxMapping;
 import gov.gtas.rule.builder.EntityConditionBuilder;
 
+@Deprecated
 public class FlightPaxConditionBuilder extends EntityConditionBuilder {
 
 	public FlightPaxConditionBuilder(final String drlVariableName) {

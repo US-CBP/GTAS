@@ -116,7 +116,7 @@ public class HitEmailNotificationService {
 
     public EmailDTO generateManualNotificationEmailDTO(String[] to, String note, Long paxId, String userID) throws IOException, TemplateException {
         User sender = userRepository.userAndGroups(userID).orElseThrow(RuntimeException::new);
-        Passenger passenger = passengerService.findByIdWithFlightPaxAndDocumentsAndHitDetails(paxId);
+        Passenger passenger = passengerService.findByIdWithFlightAndDocumentsAndHitDetails(paxId);
         EmailDTO emailDTO = new EmailDTO();
 
         HitEmailDTO hitEmailDTO = generateHitEmailDTO(passenger, note, sender);

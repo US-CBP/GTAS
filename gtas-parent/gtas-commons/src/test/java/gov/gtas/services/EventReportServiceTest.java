@@ -141,10 +141,13 @@ public class EventReportServiceTest {
 		try {
 			eventReportService.setFlightHistory(paxDetailPdfDocRequest, 1L);
 			List<FlightVoForFlightHistory> flightHistory = paxDetailPdfDocRequest.getFlightHistoryVoList();
-			Assert.assertNotNull(flightHistory);
-			FlightVoForFlightHistory flightVoForFlightHistory = flightHistory.get(0);
-			Assert.assertEquals(String.valueOf("22"), flightVoForFlightHistory.getFlightId());
-			Assert.assertEquals(String.valueOf("501"), flightVoForFlightHistory.getFlightNumber());
+			Assert.assertEquals(2, flightHistory.size());
+			FlightVoForFlightHistory fHistory = flightHistory.get(0);
+			FlightVoForFlightHistory bdHistory = flightHistory.get(1);
+			Assert.assertEquals(String.valueOf("150"), fHistory.getFlightId());
+			Assert.assertEquals(String.valueOf("501"), bdHistory.getFlightNumber());
+			Assert.assertEquals(String.valueOf("22"), bdHistory.getFlightId());
+			Assert.assertEquals(String.valueOf("501"), bdHistory.getFlightNumber());
 
 		} catch (Exception e) {
 			e.printStackTrace();
