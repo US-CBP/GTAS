@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.messaging.Message;
@@ -26,6 +27,8 @@ public class LoaderWorkerThread implements Runnable {
 	@Autowired
 	private LoaderScheduler loader;
 
+	@Value("${loader.worker.thread.timeout}")
+	private Integer timeout;
 	private String text;
 	private String fileName;
 	private String[] primeFlightKeyArray;
@@ -53,7 +56,7 @@ public class LoaderWorkerThread implements Runnable {
 		while (true) {
 			Message<?> msg = null;
 			try {
-				msg = queue.poll(5000, TimeUnit.MILLISECONDS);
+				msg = queue.poll(timeout, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				logger.error("error polling queue", e);
 				Thread.currentThread().interrupt();
