@@ -44,7 +44,12 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 	private final UserRepository userRepository;
 	private final PhysicalLocationRepository physicalLocationRepository;
 	private final UserService userService;
-	
+
+	/**
+	 * This should be implemented by adding a new role. All users who has the new
+	 * role will be authorized to review sign up requests and will receive sign up
+	 * request notification emails.
+	 */
 	@Value("#{'${admin.list.of.integers}'.split(',')}")
 	private List<Integer> adminIds;
 
@@ -123,7 +128,7 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 	public void sendEmailNotificationToAdmin(SignupRequestDTO signupRequestDTO)
 			throws MessagingException, IOException, TemplateException {
 		EmailDTO email = new EmailDTO();
-		
+
 		String[] adminEmails = this.userRepository.findEmailsByRoleIds(adminIds).toArray(new String[0]);
 		email.setTo(adminEmails);
 		email.setSubject("Signup Request Confirmation");
