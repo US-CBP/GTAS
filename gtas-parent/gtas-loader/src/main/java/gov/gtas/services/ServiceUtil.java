@@ -173,7 +173,7 @@ public class ServiceUtil implements LoaderServices {
 			return null;
 		}
 
-		Set<Passenger> flightPaxList;
+		Set<Passenger> passengerSet;
 		Passenger existingPassenger = null;
 
 		Long flightId = f.getId();
@@ -195,18 +195,18 @@ public class ServiceUtil implements LoaderServices {
 
 		// Resolve passenger by Flight -> pnr recordLocator# -> pnr REF number
 		if (newPaxHasRecordLocator && newPaxHasRef) {
-			flightPaxList = passengerRepository.getPassengerUsingREF(flightId, ref, recordLocator);
-			foundPassenger = !CollectionUtils.isEmpty(flightPaxList);
-			existingPassenger = foundPassenger ? flightPaxList.iterator().next() : null;
+			passengerSet = passengerRepository.getPassengerUsingREF(flightId, ref, recordLocator);
+			foundPassenger = !CollectionUtils.isEmpty(passengerSet);
+			existingPassenger = foundPassenger ? passengerSet.iterator().next() : null;
 		}
 
-		flightPaxList = passengerRepository.returnAPassengerFromParameters(flightId, firstName, lastName);
-		if (!foundPassenger && !CollectionUtils.isEmpty(flightPaxList)) {
+		passengerSet = passengerRepository.returnAPassengerFromParameters(flightId, firstName, lastName);
+		if (!foundPassenger && !CollectionUtils.isEmpty(passengerSet)) {
 
 			// Resolve passenger by passengerIdTag
 			if (newPaxHasGender && newPaxHasDob) {
 				String passengerIdTag = createPassengerIdTag(pvo);
-				for (Passenger pax : flightPaxList) {
+				for (Passenger pax : passengerSet) {
 					if (pax.getPassengerIDTag() != null) {
 						String paxIdTag = pax.getPassengerIDTag().getIdTag();
 						if (paxIdTag.equals(passengerIdTag)) {
@@ -221,7 +221,7 @@ public class ServiceUtil implements LoaderServices {
 			if (!foundPassenger && allowLoosenResolution) {
 				// Find passenger by First Name, Last Name, document# and dob
 				if (newPaxHasDocument && newPaxHasDob) {
-					for (Passenger pax : flightPaxList) {
+					for (Passenger pax : passengerSet) {
 						if (haveSameDocument(pax, pvo) && haveSameDateOfBirth(pax, pvo)) {
 							existingPassenger = pax;
 							foundPassenger = true;
@@ -232,7 +232,7 @@ public class ServiceUtil implements LoaderServices {
 
 				// Find passenger by First Name, Last Name, document# and gender
 				if (!foundPassenger && newPaxHasDocument && newPaxHasGender) {
-					for (Passenger pax : flightPaxList) {
+					for (Passenger pax : passengerSet) {
 						if (haveSameDocument(pax, pvo) && haveSameGender(pax, pvo)) {
 							existingPassenger = pax;
 							foundPassenger = true;
@@ -243,7 +243,7 @@ public class ServiceUtil implements LoaderServices {
 
 				// Find passenger by First Name, Last Name, and document#
 				if (!foundPassenger && newPaxHasDocument) {
-					for (Passenger pax : flightPaxList) {
+					for (Passenger pax : passengerSet) {
 						if (haveSameDocument(pax, pvo)) {
 							existingPassenger = pax;
 							foundPassenger = true;
@@ -254,7 +254,7 @@ public class ServiceUtil implements LoaderServices {
 
 				// Find passenger by First Name, Last Name, and dob
 				if (!foundPassenger && newPaxHasDob) {
-					for (Passenger pax : flightPaxList) {
+					for (Passenger pax : passengerSet) {
 						if (haveSameDateOfBirth(pax, pvo)) {
 							existingPassenger = pax;
 							break;
@@ -264,7 +264,7 @@ public class ServiceUtil implements LoaderServices {
 
 				// Find passenger by First Name, Last Name, and gender
 				if (!foundPassenger && newPaxHasGender) {
-					for (Passenger pax : flightPaxList) {
+					for (Passenger pax : passengerSet) {
 						if (haveSameGender(pax, pvo) && isNull(pax.getPassengerDetails().getDob())
 								&& isNull(pax.getDocuments())) {
 							existingPassenger = pax;
@@ -275,7 +275,7 @@ public class ServiceUtil implements LoaderServices {
 
 				// Find passenger by First Name and Last Name
 				if (!foundPassenger) {
-					for (Passenger pax : flightPaxList) {
+					for (Passenger pax : passengerSet) {
 						if (isNull(pax.getPassengerDetails().getDob()) && isNull(pax.getPassengerDetails().getGender())
 								&& isNull(pax.getDocuments())) {
 							existingPassenger = pax;

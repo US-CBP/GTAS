@@ -5,7 +5,6 @@
  */
 package gov.gtas.repository;
 
-import gov.gtas.model.FlightPax;
 import gov.gtas.model.lookup.Country;
 
 import java.util.List;

@@ -61,9 +61,6 @@ public class PassengerServiceImpl implements PassengerService {
 	PassengerRepository passengerRepository;
 
 	@Autowired
-	FlightPaxRepository flightPaxRepository;
-
-	@Autowired
 	AppConfigurationService appConfigurationService;
 
 	@Value("${tamr.enabled}")
@@ -120,15 +117,15 @@ public class PassengerServiceImpl implements PassengerService {
 			}
 
 			// grab flight info
-			Flight flightPaxOn = passenger.getFlight();
-			vo.setFlightId(flightPaxOn.getId().toString());
-			vo.setFlightNumber(flightPaxOn.getFlightNumber());
-			vo.setFullFlightNumber(flightPaxOn.getFullFlightNumber());
-			vo.setCarrier(flightPaxOn.getCarrier());
-			vo.setFlightOrigin(flightPaxOn.getOrigin());
-			vo.setFlightDestination(flightPaxOn.getDestination());
-			vo.setEtd(flightPaxOn.getMutableFlightDetails().getEtd());
-			vo.setEta(flightPaxOn.getMutableFlightDetails().getEta());
+			Flight passengerFlight = passenger.getFlight();
+			vo.setFlightId(passengerFlight.getId().toString());
+			vo.setFlightNumber(passengerFlight.getFlightNumber());
+			vo.setFullFlightNumber(passengerFlight.getFullFlightNumber());
+			vo.setCarrier(passengerFlight.getCarrier());
+			vo.setFlightOrigin(passengerFlight.getOrigin());
+			vo.setFlightDestination(passengerFlight.getDestination());
+			vo.setEtd(passengerFlight.getMutableFlightDetails().getEtd());
+			vo.setEta(passengerFlight.getMutableFlightDetails().getEta());
 			rv.add(vo);
 			count++;
 		}
@@ -195,14 +192,14 @@ public class PassengerServiceImpl implements PassengerService {
 
 	@Override
 	@Transactional
-	public Passenger findByIdWithFlightPaxAndDocuments(Long paxId) {
-		return passengerRepository.findByIdWithFlightPaxAndDocuments(paxId);
+	public Passenger findByIdWithFlightAndDocuments(Long paxId) {
+		return passengerRepository.findByIdWithFlightAndDocuments(paxId);
 	}
 	
 	@Override
 	@Transactional
-	public Passenger findByIdWithFlightPaxAndDocumentsAndHitDetails(Long paxId) {
-		return passengerRepository.findByIdWithFlightPaxAndDocumentsAndHitDetails(paxId);
+	public Passenger findByIdWithFlightAndDocumentsAndHitDetails(Long paxId) {
+		return passengerRepository.findByIdWithFlightAndDocumentsAndHitDetails(paxId);
 	}
 
 	@Override
@@ -240,8 +237,8 @@ public class PassengerServiceImpl implements PassengerService {
 	}
 
 	@Override
-	public Set<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList) {
-		return flightPaxRepository.findFlightFromPassIdList(passengerIdList);
+	public Set<Passenger> findPassengerFromPassengerIds(List<Long> passengerIdList) {
+		return new HashSet<>(passengerRepository.getPassengersById(passengerIdList));
 	}
 
 	@Override

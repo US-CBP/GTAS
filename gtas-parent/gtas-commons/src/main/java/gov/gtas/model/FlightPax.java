@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+@Deprecated
 @Entity
 @Table(name = "flight_pax", indexes = @Index(columnList = "ref_number", name = "flight_pax_ref_number_index"))
 public class FlightPax implements Serializable {
@@ -31,10 +32,6 @@ public class FlightPax implements Serializable {
 
 	@Column(name = "residence_country")
 	private String residenceCountry;
-
-	@ManyToOne
-	@JoinColumn(name = "install_address_id", nullable = true, referencedColumnName = "id")
-	private Address installationAddress;
 
 	@Column(name = "embarkation")
 	private String embarkation;
@@ -148,14 +145,6 @@ public class FlightPax implements Serializable {
 
 	public void setResidenceCountry(String residenceCountry) {
 		this.residenceCountry = residenceCountry;
-	}
-
-	public Address getInstallationAddress() {
-		return installationAddress;
-	}
-
-	public void setInstallationAddress(Address installationAddress) {
-		this.installationAddress = installationAddress;
 	}
 
 	public String getEmbarkation() {
