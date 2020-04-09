@@ -67,3 +67,4 @@ gradle*
 
 # scheduler messages folder
 **__data**
+tomcat/
