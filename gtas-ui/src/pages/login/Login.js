@@ -2,9 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import Form from "../../components/form/Form";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import { logins, loggedinUser } from "../../services/serviceWrapper";
-import logo from "../../images/GTAS Logo blue 2.png";
 import "./Login.css";
-import { Figure, Jumbotron, Card } from "react-bootstrap";
+import { Alert, Card } from "react-bootstrap";
 import { navigate } from "@reach/router";
 import { store } from "../../appContext";
 
@@ -49,23 +48,12 @@ const Login = () => {
       });
   };
 
-  let failedLoginDiv = (
-    <div className="failed-login">
-      <p>Authorization failed!</p>
-      <br />
-      <p>Incorrect username or password</p>
-    </div>
-  );
-
   return (
     <div className="login-page-container">
-      <Card className="transparent-white text-center mx-auto">
-        <Figure className="avatar">
-          <Figure.Image width={100} height={100} alt="logo" src={logo} />
-        </Figure>
+      <Card className="transparent-white-card text-center mx-auto">
+        <div className="login-logo"></div>
+        <div className="login-brand">GTAS</div>
         <Card.Body>
-          <Card.Title>GTAS</Card.Title>
-          {failedLogin ? failedLoginDiv : null}
           <Form
             title=""
             submitText="LOG IN"
@@ -84,6 +72,7 @@ const Login = () => {
               required="required"
               inputVal=""
               autofocus="true"
+              className="login-labeled-input"
             />
             <LabelledInput
               inputType="password"
@@ -94,9 +83,19 @@ const Login = () => {
               datafield="password"
               required="required"
               inputVal=""
+              className="login-labeled-input"
             />
           </Form>
         </Card.Body>
+        <Alert
+          variant="danger"
+          show={failedLogin}
+          onClose={() => setFailedLogIn(false)}
+          dismissible
+          className="login-alert"
+        >
+          Incorrect username or password
+        </Alert>
       </Card>
     </div>
   );
