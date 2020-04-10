@@ -19,7 +19,7 @@ import freemarker.template.TemplateException;
 import gov.gtas.email.EmailTemplateLoader;
 import gov.gtas.enumtype.SignupRequestStatus;
 import gov.gtas.model.SignupRequest;
-import gov.gtas.repository.PhysicalLocationRepository;
+import gov.gtas.repository.SignupLocationRepository;
 import gov.gtas.repository.SignupRequestRepository;
 import gov.gtas.repository.UserRepository;
 import gov.gtas.services.dto.EmailDTO;
@@ -42,7 +42,7 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 	private final GtasEmailService emailService;
 	private final EmailTemplateLoader emailTemplateLoader;
 	private final UserRepository userRepository;
-	private final PhysicalLocationRepository physicalLocationRepository;
+	private final SignupLocationRepository signupLocationRepository;
 	private final UserService userService;
 
 	/**
@@ -56,12 +56,12 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 	@Autowired
 	public SignupRequestServiceImpl(SignupRequestRepository signupRequestRepositor, GtasEmailService emailService,
 			EmailTemplateLoader emailTemplateLoader, UserRepository userRepository,
-			PhysicalLocationRepository physicalLocationRepository, UserService userService) {
+			SignupLocationRepository signupLocationRepository, UserService userService) {
 		this.signupRequestRepository = signupRequestRepositor;
 		this.emailService = emailService;
 		this.emailTemplateLoader = emailTemplateLoader;
 		this.userRepository = userRepository;
-		this.physicalLocationRepository = physicalLocationRepository;
+		this.signupLocationRepository = signupLocationRepository;
 		this.userService = userService;
 	}
 
@@ -82,16 +82,16 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 	private SignupRequest convertToEntity(SignupRequestDTO dto) {
 		SignupRequest signupRequest = new SignupRequest();
 		org.springframework.beans.BeanUtils.copyProperties(dto, signupRequest);
-		signupRequest.setPhysicalLocation(
-				this.physicalLocationRepository.findById(signupRequest.getPhysicalLocationId()).orElse(null));
-		dto.setPhysicalLocation(signupRequest.getPhysicalLocation().getName());
+		signupRequest.setSignupLocation(
+				this.signupLocationRepository.findById(signupRequest.getSignupLocationId()).orElse(null));
+		dto.setSignupLocation(signupRequest.getSignupLocationn().getName());
 		return signupRequest;
 	}
 
 	private SignupRequestDTO convertToDTO(SignupRequest model) {
 		SignupRequestDTO dto = new SignupRequestDTO();
 		org.springframework.beans.BeanUtils.copyProperties(model, dto);
-		dto.setPhysicalLocation(model.getPhysicalLocation().getName());
+		dto.setSignupLocation(model.getSignupLocationn().getName());
 		return dto;
 	}
 

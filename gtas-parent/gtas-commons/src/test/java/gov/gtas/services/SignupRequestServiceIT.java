@@ -33,7 +33,7 @@ public class SignupRequestServiceIT {
 		SignupRequestDTO signupRequestDTO = new SignupRequestDTO();
 		signupRequestDTO.setEmail("tsegay.gtas@outlook.com");
 		signupRequestDTO.setUsername("testusername");
-		signupRequestDTO.setPhysicalLocation("test");
+		signupRequestDTO.setSignupLocation("test");
 		signupRequestDTO.setSupervisor("John");
 		signupRequestDTO.setStatus(SignupRequestStatus.NEW);
 		SignupRequest request = this.signupRequestService.save(signupRequestDTO);
@@ -54,7 +54,7 @@ public class SignupRequestServiceIT {
 		SignupRequestDTO signupRequestDTO = new SignupRequestDTO();
 		signupRequestDTO.setEmail("tsegay.gtas@outlook.com");
 		signupRequestDTO.setUsername("testusername");
-		signupRequestDTO.setPhysicalLocation("tsst");
+		signupRequestDTO.setSignupLocation("tsst");
 		signupRequestDTO.setSupervisor("John Doe");
 		signupRequestDTO.setStatus(SignupRequestStatus.NEW);
 		this.signupRequestService.sendEmailNotificationToAdmin(signupRequestDTO);

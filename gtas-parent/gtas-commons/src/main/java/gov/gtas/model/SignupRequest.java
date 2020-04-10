@@ -30,12 +30,12 @@ public class SignupRequest extends BaseEntityAudit {
 	@Column
 	private String supervisor;
 
-	@Column(name = "physical_location_id", insertable = false, updatable = false, nullable = false, columnDefinition = "bigint unsigned")
-	private Long physicalLocationId;
+	@Column(name = "signup_location_id", insertable = false, updatable = false, nullable = false, columnDefinition = "bigint unsigned")
+	private Long signupLocationId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "physical_location_id", updatable = false)
-	private PhysicalLocation physicalLocation;
+	@JoinColumn(name = "signup_location_id", updatable = false)
+	private SignupLocation signupLocation;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "request_status")
@@ -47,12 +47,12 @@ public class SignupRequest extends BaseEntityAudit {
 	@Column(name = "reviewed_date")
 	private Date reviewedDate;
 
-	public Long getPhysicalLocationId() {
-		return physicalLocationId;
+	public Long getSignupLocationId() {
+		return signupLocationId;
 	}
 
-	public void setPhysicalLocationId(Long physicalLocationId) {
-		this.physicalLocationId = physicalLocationId;
+	public void setSignupLocationId(Long  signupLocationId) {
+		this.signupLocationId = signupLocationId;
 	}
 
 	public String getUsername() {
@@ -79,12 +79,12 @@ public class SignupRequest extends BaseEntityAudit {
 		this.supervisor = supervisor;
 	}
 
-	public PhysicalLocation getPhysicalLocation() {
-		return physicalLocation;
+	public SignupLocation getSignupLocationn() {
+		return signupLocation;
 	}
 
-	public void setPhysicalLocation(PhysicalLocation physicalLocation) {
-		this.physicalLocation = physicalLocation;
+	public void setSignupLocation(SignupLocation signupLocation) {
+		this.signupLocation = signupLocation;
 	}
 
 	public SignupRequestStatus getStatus() {

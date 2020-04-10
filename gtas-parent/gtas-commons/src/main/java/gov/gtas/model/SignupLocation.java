@@ -4,8 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "airport_physical_location")
-public class PhysicalLocation extends BaseEntity {
+@Table(name = "signup_location")
+public class SignupLocation extends BaseEntity {
 
 	/**
 	 * 

@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.enumtype.SignupRequestStatus;
-import gov.gtas.model.PhysicalLocation;
+import gov.gtas.model.SignupLocation;
 import gov.gtas.model.SignupRequest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -32,12 +32,12 @@ public class SignupRequestRepositoryIT {
 	@Before
 	public void setup() {
 		this.signupRequest = new SignupRequest();
-		PhysicalLocation location = new PhysicalLocation();
+		SignupLocation location = new SignupLocation();
 		location.setActive(true);
 		location.setId(1L);
 		location.setName("Test");
-		signupRequest.setPhysicalLocation(location);
-		signupRequest.setPhysicalLocationId(1L);
+		signupRequest.setSignupLocation(location);
+		signupRequest.setSignupLocationId(1L);
 		signupRequest.setUsername("test");
 		signupRequest.setEmail("test@gmail.com");
 	}

@@ -27,8 +27,8 @@ public class SignupRequestDTO {
 	private String supervisor;
 
 	@NotNull
-	private Long physicalLocationId;
-	private String physicalLocation;
+	private Long signupLocationId;
+	private String signupLocation;
 
 	private SignupRequestStatus status;
 
@@ -69,20 +69,20 @@ public class SignupRequestDTO {
 		this.supervisor = supervisor;
 	}
 
-	public Long getPhysicalLocationId() {
-		return physicalLocationId;
+	public Long getSignupLocationId() {
+		return signupLocationId;
 	}
 
-	public void setPhysicalLocationId(Long physicalLocationId) {
-		this.physicalLocationId = physicalLocationId;
+	public void setSignupLocationId(Long signupLocationId) {
+		this.signupLocationId = signupLocationId;
 	}
 
-	public String getPhysicalLocation() {
-		return physicalLocation;
+	public String getSignupLocation() {
+		return signupLocation;
 	}
 
-	public void setPhysicalLocation(String physicalLocation) {
-		this.physicalLocation = physicalLocation;
+	public void setSignupLocation(String signupLocation) {
+		this.signupLocation = signupLocation;
 	}
 
 	public SignupRequestStatus getStatus() {

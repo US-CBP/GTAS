@@ -7,7 +7,7 @@
 There is a new signup request submitted. You can login into GTAS applicaton to review the request. 
 <br>
 			<b>Username: </b>${signupRequest.username}<br>
-            <b>Physical Location: </b>${signupRequest.physicalLocation}<br>
+            <b>Physical Location: </b>${signupRequest.signupLocation}<br>
             <b>Supervisor: </b>${signupRequest.supervisor}<br>
             <b>Email: </b>${signupRequest.email}<br>
            

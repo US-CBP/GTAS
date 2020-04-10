@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import freemarker.template.TemplateException;
 import gov.gtas.enumtype.SignupRequestStatus;
-import gov.gtas.model.PhysicalLocation;
-import gov.gtas.repository.PhysicalLocationRepository;
+import gov.gtas.model.SignupLocation;
+import gov.gtas.repository.SignupLocationRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.SignupRequestService;
 import gov.gtas.services.dto.SignupRequestDTO;
@@ -38,7 +38,7 @@ public class SignupController {
 	private SignupRequestService signupRequestService;
 
 	@Autowired
-	private PhysicalLocationRepository physicalLocationRepository;
+	private SignupLocationRepository signupLocationRepository;
 
 	@PostMapping(value = "/user/signup/new")
 	public ResponseEntity<Object> signup(@RequestBody @Valid SignupRequestDTO signupRequestDTO, BindingResult result) {
@@ -90,7 +90,7 @@ public class SignupController {
 	@GetMapping(value = "/user/signup/physiclLocations")
 	public ResponseEntity<Object> getAllActivePhysicalLocations() {
 
-		List<PhysicalLocation> physicalLocations = this.physicalLocationRepository.findAllActivePhysicalLocation();
+		List<SignupLocation> physicalLocations = this.signupLocationRepository.findAllActiveSignupLocations();
 
 		return new ResponseEntity<>(physicalLocations, HttpStatus.OK);
 	}
