@@ -9,4 +9,4 @@ COPY ./install/docker/kibana/config/kibana.yml /usr/share/kibana/config/kibana.y
 # RUN tar -C /usr/local/bin -xvzf dockerize-linux-amd64-v0.6.1.tar.gz
 USER kibana
 
-ENTRYPOINT while [ ! -f /usr/share/kibana/data/kibana.keystore ]; do sleep 5; done && /usr/share/kibana/bin/kibana
+CMD while [ ! -f /usr/share/kibana/data/kibana.keystore ]; do sleep 5; done && /usr/share/kibana/bin/kibana

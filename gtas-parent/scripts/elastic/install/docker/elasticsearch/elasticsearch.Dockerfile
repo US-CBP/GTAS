@@ -1,6 +1,7 @@
 FROM wcogtas/elasticsearch:ppc64le
 
-COPY ./install/docker/elasticsearch/config/elasticsearch.yml /usr/share/elasticsearch/config/
+RUN rm -f /usr/share/elasticsearch/config/elasticsearch.yml
+COPY ./install/docker/elasticsearch/config/elasticsearch.yml /usr/share/elasticsearch/config
 
 ENV node.name=elasticsearch
 ENV discovery.seed_hosts=elasticsearch
@@ -25,10 +26,10 @@ ENV xpack.ml.enabled=false
 ENV xpack.monitoring.enabled=false
 ENV xpack.watcher.enabled=false
 
-RUN sed -i '1 a while [ ! -f /usr/share/elasticsearch/config/elasticsearch.keystore ]; do sleep 5; done' /usr/local/bin/docker-entrypoint.sh
-
 RUN mkdir -p /usr/share/elasticsearch/data
 RUN chown -R 1000:1000 /usr/share/elasticsearch
-USER 1000
 
-CMD ["/usr/local/bin/docker-entrypoint.sh"]
+RUN sed -i '2iwhile [ ! -f /usr/share/elasticsearch/config/elasticsearch.keystore ]; do sleep 5; done' /usr/local/bin/docker-entrypoint.sh
+
+USER 1000
+CMD [ "/usr/local/bin/docker-entrypoint.sh" ]

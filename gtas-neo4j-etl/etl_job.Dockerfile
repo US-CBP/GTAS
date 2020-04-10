@@ -11,9 +11,10 @@ FROM alpine as pentaho-extractor
 ENV PDI_VERSION=8.2.0.3-519 
 
 RUN mkdir /opt/pentaho
-RUN /usr/bin/wget https://s3.amazonaws.com/kettle-neo4j/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip \
-    -O /tmp/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip
-RUN /usr/bin/unzip -q /tmp/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip -d  /opt/pentaho
+RUN /usr/bin/wget https://s3.amazonaws.com/kettle-neo4j/kettle-neo4j-remix-8.2.0.3-519-REMIX.zip -O /tmp/kettle-neo4j-remix-8.2.0.3-519-REMIX.zip
+RUN /usr/bin/unzip -q /tmp/kettle-neo4j-remix-8.2.0.3-519-REMIX.zip -d  /opt/pentaho
+RUN sed -i -e 's/ppc64)/ppc64le)/g' /opt/pentaho/data-integration/spoon.sh 
+RUN sed -i -e 's/ppc64)/ppc64le)/g' /opt/pentaho/data-integration/spoon.sh.orig
 RUN rm /tmp/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip
 
 

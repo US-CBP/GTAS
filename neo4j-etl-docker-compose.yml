@@ -42,7 +42,6 @@ services:
 
 networks:
   GTAS_webapp-network:
-    attachable: true
 
 secrets:
   mysql_etl_user:

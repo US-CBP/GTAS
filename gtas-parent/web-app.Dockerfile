@@ -32,4 +32,6 @@ RUN tar -C /usr/local/bin -xzf dockerize-linux-amd64-v0.6.1.tar.gz
 
 
 WORKDIR /usr/local/tomcat/bin
-ENTRYPOINT mkdir -p /scheduler-logs/temp && logrotate /logrotate.conf && catalina.sh run
+
+RUN mkdir /temp-conf && cp -a /usr/local/tomcat/conf/. /temp-conf
+ENTRYPOINT cp -a /temp-conf/. /usr/local/tomcat/conf && mkdir -p /scheduler-logs/temp && logrotate /logrotate.conf && catalina.sh run
