@@ -235,6 +235,9 @@ public class RuleEngineRequestBuilder {
 		Map<Long, Set<PaymentForm>> pnrPaymentForm = createPaymentFormMap(pnrIds);
 
 		Set<Passenger> passengersFromPnr = pnrRepository.getPassengersWithFlight(pnrIds);
+		if (passengersFromPnr.isEmpty()) {
+			return;
+		}
 		logger.debug("pnr bags");
 		Set<Long> flightIds = passengersFromPnr.stream().map(p -> p.getFlight().getId()).collect(Collectors.toSet());
 		Set<Long> paxIds = passengersFromPnr.stream().map(Passenger::getId).collect(Collectors.toSet());
