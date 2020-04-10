@@ -37,19 +37,9 @@ RUN mkdir node && tar -xvf node-v10.15.2-linux-ppc64le.tar.gz -C node
 RUN mkdir -p /root/.nvm/versions/node/v10.15.2/bin && mv node/node-v10.15.2-linux-ppc64le/bin/* /root/.nvm/versions/node/v10.15.2/bin
 
 
-# RUN curl -sL https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh -o install_nvm.sh
-# RUN /bin/bash install_nvm.sh && .  /root/.nvm/nvm.sh && nvm install v10.15.2
-
-# ENV NVM_DIR /root/.nvm
-# ENV NODE_PATH $NVM_DIR/v10.15.2/lib/node_modules
-# ENV PATH $NVM_DIR/versions/node/v10.15.2/bin:$PATH
-
-# RUN nvm use v10.15.2 && npm install -g yarn
-
 RUN sed -i '17d' /usr/share/kibana/bin/kibana-keystore
 RUN sed -i '17iNODE=/root/.nvm/versions/node/v10.15.2/bin/node' /usr/share/kibana/bin/kibana-keystore
 
-# RUN chown -R 1000:1000 /logstash-conf /elasticsearch-conf ./elasticsearch ./kibana
 
 COPY ./install/docker/elk-setup/kibana.default-dashboard.json .
 RUN rm -v /bin/sh && ln -sv /bin/bash /bin/sh
