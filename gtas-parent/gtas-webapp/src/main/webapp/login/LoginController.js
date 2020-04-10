@@ -18,9 +18,9 @@
                 $mdDialog.show(
                         $mdDialog.alert()
                             .clickOutsideToClose(false)
-                            .textContent("{{'msg.sessiontimeout' | translate}}")
-                            .ariaLabel("{{'msg.usertimeout' | translate}}")
-                            .ok("{{'msg.ok' | translate}}")
+                            .textContent("Your session has timed out. For security reasons you have been logged out automatically.")
+                            .ariaLabel("User Timeout")
+                            .ok("OK")
                             .openFrom({
                                 left: 1500
                             })
