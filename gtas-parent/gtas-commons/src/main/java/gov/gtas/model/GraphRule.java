@@ -35,8 +35,20 @@ public class GraphRule extends HitMaker {
 	@Column(name = "displayCondition")
 	private String displayCondition;
 
+
+	@Column(name = "enabled")
+	private boolean enabled = true;
+
 	@OneToMany(mappedBy = "graphRule")
 	private Set<GraphRuleParameter> graphParameter = new HashSet<>();
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
 	public String getCipherQuery() {
 		return cipherQuery;

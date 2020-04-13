@@ -70,27 +70,29 @@ public class GraphRulesServiceImpl implements GraphRulesService {
 		}
 
 		for (GraphRule graphRule : graphRules) {
-			Set<String> passengerHitIds = getPassengerHitIds(graphRule, paxMap.keySet()); // This command runs the
-																							// graph rules!
-			for (String idTag : passengerHitIds) {
-				for (Passenger passenger : paxMap.get(idTag)) {
-					RuleHitDetail rhd = new RuleHitDetail(HitTypeEnum.GRAPH_HIT);
-					rhd.setFlightId(passenger.getFlight().getId());
-					rhd.setPassenger(passenger);
-					rhd.setPassengerName(passenger.getPassengerDetails().getFirstName() + " "
-							+ passenger.getPassengerDetails().getLastName());
-					rhd.setTitle(graphRule.getTitle());
-					rhd.setDescription(graphRule.getDescription());
-					rhd.setHitRule(graphRule.getDescription() + ":" + graphRule.getId());
-					rhd.setHitCount(1);
-					rhd.setRuleId(graphRule.getId());
-					rhd.setPassengerId(passenger.getId());
-					rhd.setPassengerType(PassengerTypeCode.P);
-					rhd.setFlightId(passenger.getFlight().getId());
-					rhd.setHitMakerId(graphRule.getId());
-					rhd.setCipherQuery(graphRule.getCipherQuery());
-					rhd.setGraphHitDisplay(graphRule.getDisplayCondition());
-					ruleHitDetails.add(rhd);
+			if (graphRule.isEnabled()) {
+				Set<String> passengerHitIds = getPassengerHitIds(graphRule, paxMap.keySet()); // This command runs the
+				// graph rules!
+				for (String idTag : passengerHitIds) {
+					for (Passenger passenger : paxMap.get(idTag)) {
+						RuleHitDetail rhd = new RuleHitDetail(HitTypeEnum.GRAPH_HIT);
+						rhd.setFlightId(passenger.getFlight().getId());
+						rhd.setPassenger(passenger);
+						rhd.setPassengerName(passenger.getPassengerDetails().getFirstName() + " "
+								+ passenger.getPassengerDetails().getLastName());
+						rhd.setTitle(graphRule.getTitle());
+						rhd.setDescription(graphRule.getDescription());
+						rhd.setHitRule(graphRule.getDescription() + ":" + graphRule.getId());
+						rhd.setHitCount(1);
+						rhd.setRuleId(graphRule.getId());
+						rhd.setPassengerId(passenger.getId());
+						rhd.setPassengerType(PassengerTypeCode.P);
+						rhd.setFlightId(passenger.getFlight().getId());
+						rhd.setHitMakerId(graphRule.getId());
+						rhd.setCipherQuery(graphRule.getCipherQuery());
+						rhd.setGraphHitDisplay(graphRule.getDisplayCondition());
+						ruleHitDetails.add(rhd);
+					}
 				}
 			}
 		}
