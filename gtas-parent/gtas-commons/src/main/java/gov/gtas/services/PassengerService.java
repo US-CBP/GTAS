@@ -28,10 +28,10 @@ public interface PassengerService {
 	Passenger findById(Long id);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	Passenger findByIdWithFlightPaxAndDocuments(Long paxId);
-	
+	Passenger findByIdWithFlightAndDocuments(Long paxId);
+
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	Passenger findByIdWithFlightPaxAndDocumentsAndHitDetails(Long paxId);
+	Passenger findByIdWithFlightAndDocumentsAndHitDetails(Long paxId);
 
 	/**
 	 * Gets the passengers by criteria.
@@ -54,7 +54,7 @@ public interface PassengerService {
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	List<Passenger> getBookingDetailHistoryByPaxID(Long pId);
 
-	Set<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList);
+	Set<Passenger> findPassengerFromPassengerIds(List<Long> passengerIdList);
 
 	void setAllFlights(Set<Flight> flights, Long id);
 

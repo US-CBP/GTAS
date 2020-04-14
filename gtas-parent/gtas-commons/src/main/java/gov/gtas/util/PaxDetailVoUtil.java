@@ -2,13 +2,7 @@ package gov.gtas.util;
 
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,7 +20,6 @@ import gov.gtas.model.Document;
 import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightLeg;
-import gov.gtas.model.FlightPax;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Phone;
@@ -50,15 +43,11 @@ public class PaxDetailVoUtil {
 
 	public static List<FlightVoForFlightHistory> copyBookingDetailFlightModelToVo(
 			List<Passenger> allPassengersRelatingToSingleIdTag) {
-
 		List<FlightVoForFlightHistory> flightsAndBookingDetailsRelatingToSamePaxIdTag = new ArrayList<>();
-
 		try {
-
-			List<FlightPax> flightPassengersList = getFlightPaxes(allPassengersRelatingToSingleIdTag);
-
+			Set<Passenger> flightPassengersList = new HashSet<>(allPassengersRelatingToSingleIdTag);
 			Set<Pair<Passenger, Flight>> associatedPaxFlights = flightPassengersList.stream()
-					.map(flightPax -> new ImmutablePair<>(flightPax.getPassenger(), flightPax.getFlight()))
+					.map(p -> new ImmutablePair<>(p, p.getFlight()))
 					.collect(Collectors.toSet());
 
 			List<FlightVoForFlightHistory> flightHistory = associatedPaxFlights.stream().map(passengerFlightPair -> {
@@ -89,23 +78,6 @@ public class PaxDetailVoUtil {
 		}
 
 		return flightsAndBookingDetailsRelatingToSamePaxIdTag;
-	}
-
-	public static List<FlightPax> getFlightPaxes(List<Passenger> allPassengersRelatingToSingleIdTag) {
-
-		List<FlightPax> flightPaxes = allPassengersRelatingToSingleIdTag.stream()
-				.flatMap(p -> p.getFlightPaxList().stream()).collect(toList());
-
-		List<FlightPax> filteredFlightPax = new ArrayList<>();
-		Map<Pair<Passenger, Flight>, Boolean> flightPaxRecorded = new HashMap<>();
-		for (FlightPax fp : flightPaxes) {
-			Pair<Passenger, Flight> flightPaxCombination = new ImmutablePair<>(fp.getPassenger(), fp.getFlight());
-			if (!flightPaxRecorded.containsKey(flightPaxCombination)) {
-				flightPaxRecorded.put(flightPaxCombination, true);
-				filteredFlightPax.add(fp);
-			}
-		}
-		return filteredFlightPax;
 	}
 
 	public static void populateFlightVoWithBookingDetail(BookingDetail source, FlightVo target) {

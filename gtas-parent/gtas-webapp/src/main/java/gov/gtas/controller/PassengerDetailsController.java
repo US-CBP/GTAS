@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import gov.gtas.common.BagStatisticCalculator;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
 import gov.gtas.repository.BookingDetailRepository;
@@ -42,12 +43,9 @@ import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.json.KeyValue;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.BagRepository;
-import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
 import gov.gtas.services.search.FlightPassengerVo;
-import gov.gtas.services.security.UserService;
-import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.util.LobUtils;
 
 import static java.util.stream.Collectors.*;
@@ -101,7 +99,7 @@ public class PassengerDetailsController {
 	public PassengerVo getPassengerByPaxIdAndFlightId(@PathVariable(value = "id") String paxId,
 			@RequestParam(value = "flightId", required = false) String flightId) {
 		PassengerVo vo = new PassengerVo();
-		Passenger t = pService.findByIdWithFlightPaxAndDocuments(Long.valueOf(paxId));
+		Passenger t = pService.findByIdWithFlightAndDocuments(Long.valueOf(paxId));
 		Flight flight = fService.findById(Long.parseLong(flightId));
 		List<Bag> bagList = new ArrayList<>();
 		if (flightId != null && flight.getId().toString().equals(flightId)) {
@@ -172,9 +170,6 @@ public class PassengerDetailsController {
 
 			// Assign seat for every passenger on pnr
 			for (Passenger p : pnrList.get(0).getPassengers()) {
-				FlightPax flightPax = getPnrFlightPax(p, flight);
-				Optional<BagVo> bagVoOptional = getBagOptional(flightPax);
-				bagVoOptional.ifPresent(tempVo::addBag);
 				for (Seat s : p.getSeatAssignments()) {
 					// exclude APIS seat data
 					if (!s.getApis()) {
@@ -188,11 +183,10 @@ public class PassengerDetailsController {
 					}
 				}
 			}
-
-			FlightPax mainPassengerFlightPax = getPnrFlightPax(t, flight);
-			Optional<BagVo> bagOptional = getBagOptional(mainPassengerFlightPax);
-			bagOptional.ifPresent(bagVo -> tempVo.setBagCount(bagVo.getBag_count()));
-
+			BagStatisticCalculator bagStatisticCalculator = new BagStatisticCalculator(new HashSet<>(bagList)).invoke("PNR");
+			tempVo.setBagCount(bagStatisticCalculator.getBagCount());
+			tempVo.setBaggageWeight(bagStatisticCalculator.getBagWeight());
+			tempVo.setTotal_bag_count(bagStatisticCalculator.getBagCount());
 			parseRawMessageToSegmentList(tempVo);
 			vo.setPnrVo(tempVo);
 		}
@@ -206,18 +200,16 @@ public class PassengerDetailsController {
 
 			List<String> refList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId),
 					t.getId());
-			List<FlightPax> apisMessageFlightPaxs = apisMessageRepository
-					.findFlightPaxByFlightIdandPassengerId(Long.parseLong(flightId), t.getId()).stream()
-					.filter(a -> a.getMessageSource().equals("APIS")).collect(Collectors.toList());
-
-			if (!apisMessageFlightPaxs.isEmpty()) {
-				FlightPax apisMessageFlightPax = apisMessageFlightPaxs.get(0);
-				apisVo.setBagCount(apisMessageFlightPax.getBagCount());
-				apisVo.setBagWeight(apisMessageFlightPax.getBagWeight());
-			}
+			Passenger passenger = apisMessageRepository
+					.findPaxByFlightIdandPassengerId(Long.parseLong(flightId), t.getId());
+			BagStatisticCalculator bagStatisticCalculator = new BagStatisticCalculator(passenger).invoke("APIS");
+			int bagCount = bagStatisticCalculator.getBagCount();
+			double bagWeight = bagStatisticCalculator.getBagWeight();
+			apisVo.setBagCount(bagCount);
+			apisVo.setBagWeight(bagWeight);
 
 			if (!refList.isEmpty()) {
-				List<FlightPassengerVo> fpList = apisControllerService.generateFlightPaxVoByApisRef(refList.get(0),
+				List<FlightPassengerVo> fpList = apisControllerService.generateFlightPassengerList(refList.get(0),
 						Long.parseLong(flightId));
 				for (FlightPassengerVo flightPassengerVo : fpList) {
 					apisVo.addFlightpax(flightPassengerVo);
@@ -247,39 +239,6 @@ public class PassengerDetailsController {
 		}
 
 		return vo;
-	}
-
-	private FlightPax getPnrFlightPax(Passenger p, Flight flight) {
-		FlightPax flightPax;
-		if (p.getFlightPaxList() != null && !p.getFlightPaxList().isEmpty()) {
-			flightPax = p.getFlightPaxList().stream().filter(fp -> isPnr(fp, flight)).findFirst().orElse(null);
-		} else {
-			flightPax = null;
-		}
-		return flightPax;
-	}
-
-	private boolean isPnr(FlightPax fp, Flight flight) {
-		return fp.getMessageSource() != null && fp.getMessageSource().equalsIgnoreCase("PNR")
-				&& fp.getFlight().equals(flight);
-	}
-
-	private Optional<BagVo> getBagOptional(FlightPax fp) {
-		Optional<BagVo> bagVoOptional;
-		if (fp != null && fp.getBagCount() > 0) {
-			BagVo bagVo = new BagVo();
-			bagVo.setBag_count(fp.getBagCount());
-			bagVo.setAverage_bag_weight(fp.getAverageBagWeight());
-			bagVo.setBag_weight(fp.getBagWeight());
-			bagVo.setData_source(fp.getMessageSource());
-			bagVo.setPassFirstName(fp.getPassenger().getPassengerDetails().getFirstName());
-			bagVo.setPassLastName(fp.getPassenger().getPassengerDetails().getLastName());
-			bagVo.setData_source(fp.getMessageSource());
-			bagVoOptional = Optional.of(bagVo);
-		} else {
-			bagVoOptional = Optional.empty();
-		}
-		return bagVoOptional;
 	}
 
 	/**
@@ -477,10 +436,6 @@ public class PassengerDetailsController {
 		target.setDateReceived(source.getDateReceived());
 		target.setRaw(LobUtils.convertClobToString(source.getRaw()));
 		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
-		target.setTotal_bag_count(source.getTotal_bag_count());
-		if (source.getBaggageWeight() != null)
-			target.setBaggageWeight(source.getBaggageWeight());
-
 		target.setTripType(source.getTripType());
 
 		if (!source.getAddresses().isEmpty()) {
@@ -809,10 +764,10 @@ public class PassengerDetailsController {
 
 		try {
 
-			List<FlightPax> flightPassengersList = getFlightPaxes(allPassengersRelatingToSingleIdTag);
+			Set<Passenger> flightPassengersList = new HashSet<>(allPassengersRelatingToSingleIdTag);
 
 			Set<Pair<Passenger, Flight>> associatedPaxFlights = flightPassengersList.stream()
-					.map(flightPax -> new ImmutablePair<>(flightPax.getPassenger(), flightPax.getFlight()))
+					.map(p -> new ImmutablePair<>(p, p.getFlight()))
 					.collect(Collectors.toSet());
 
 			List<FlightVoForFlightHistory> flightHistory = associatedPaxFlights.stream().map(passengerFlightPair -> {
@@ -843,23 +798,6 @@ public class PassengerDetailsController {
 		}
 
 		return flightsAndBookingDetailsRelatingToSamePaxIdTag;
-	}
-
-	private List<FlightPax> getFlightPaxes(List<Passenger> allPassengersRelatingToSingleIdTag) {
-
-		List<FlightPax> flightPaxes = allPassengersRelatingToSingleIdTag.stream()
-				.flatMap(p -> p.getFlightPaxList().stream()).collect(toList());
-
-		List<FlightPax> filteredFlightPax = new ArrayList<>();
-		Map<Pair<Passenger, Flight>, Boolean> flightPaxRecorded = new HashMap<>();
-		for (FlightPax fp : flightPaxes) {
-			Pair<Passenger, Flight> flightPaxCombination = new ImmutablePair<>(fp.getPassenger(), fp.getFlight());
-			if (!flightPaxRecorded.containsKey(flightPaxCombination)) {
-				flightPaxRecorded.put(flightPaxCombination, true);
-				filteredFlightPax.add(fp);
-			}
-		}
-		return filteredFlightPax;
 	}
 
 	/**

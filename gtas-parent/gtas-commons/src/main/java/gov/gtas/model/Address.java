@@ -50,17 +50,6 @@ public class Address extends BaseEntityAudit {
 	@ManyToMany(mappedBy = "addresses", targetEntity = Pnr.class)
 	private Set<Pnr> pnrs = new HashSet<>();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "installationAddress", orphanRemoval = true)
-	private Set<FlightPax> flightPaxList = new HashSet<>();
-
-	public Set<FlightPax> getFlightPaxList() {
-		return flightPaxList;
-	}
-
-	public void setFlightPaxList(Set<FlightPax> flightPaxList) {
-		this.flightPaxList = flightPaxList;
-	}
-
 	public String getLine1() {
 		return line1;
 	}

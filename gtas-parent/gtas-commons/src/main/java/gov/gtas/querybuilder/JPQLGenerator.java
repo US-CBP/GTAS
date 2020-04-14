@@ -48,7 +48,8 @@ public class JPQLGenerator {
 
 			if (queryType == EntityEnum.FLIGHT) {
 				queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.FLIGHT.getAlias() + " " + Constants.FROM
-						+ " " + EntityEnum.FLIGHT.getEntityName() + " " + EntityEnum.FLIGHT.getAlias();
+						+ " " + EntityEnum.FLIGHT.getEntityName() + " " + EntityEnum.FLIGHT.getAlias() +
+						Constants.LEFT_JOIN + EntityEnum.FLIGHT.getAlias() + ".passengers " + EntityEnum.PASSENGER.getAlias();
 
 				if (seatCondition.isTrue()) {
 					joinEntities.add(EntityEnum.PASSENGER);

@@ -23,6 +23,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -75,6 +76,13 @@ public class RuleEngineRequestBuilderTest {
 		ruleEngineRequestBuilder.addApisMessage(Collections.singletonList(apisMessage));
 	}
 
+	@Test
+	public void addPnrEarlyRelease() throws SQLException {
+		Pnr pnr = TestData.getPnrMessage();
+		pnr.setId(1L);
+		pnr.setPassengers(new HashSet<>());
+		ruleEngineRequestBuilder.addPnr(Collections.singletonList(pnr));
+	}
 	@Test
 	public void addApisWithBags() {
 		ApisMessage apisMessage = TestData.getApisMessage();

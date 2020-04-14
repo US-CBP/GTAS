@@ -33,14 +33,14 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 
 	@Query("SELECT p FROM Passenger p " + "left join fetch p.passengerTripDetails "
 			+ "left join fetch p.passengerDetails " + "left join fetch p.documents "
-			+ "left join fetch p.flightPaxList pfl " + "left join fetch pfl.flight " + "WHERE p.id = :id")
-	Passenger findByIdWithFlightPaxAndDocuments(@Param("id") Long id);
+			+ "left join fetch p.flight " + "WHERE p.id = :id")
+	Passenger findByIdWithFlightAndDocuments(@Param("id") Long id);
 	
 	@Query("SELECT p FROM Passenger p " + "left join fetch p.passengerTripDetails "
 			+ "left join fetch p.passengerDetails " + "left join fetch p.documents "
-			+ "left join fetch p.flightPaxList pfl " + "left join fetch pfl.flight " 
+			+ "left join fetch p.flight "
 			+ "left join fetch p.hitDetails " +  "WHERE p.id = :id")
-	Passenger findByIdWithFlightPaxAndDocumentsAndHitDetails(@Param("id") Long id);
+	Passenger findByIdWithFlightAndDocumentsAndHitDetails(@Param("id") Long id);
 
 	default Passenger findOne(Long passengerId) {
 		return findById(passengerId).orElse(null);
@@ -93,4 +93,5 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 
 	@Query("SELECT p from Passenger p where p.id in :paxIds")
     Set<Passenger> getPassengersForEmailDto(@Param("paxIds") Set<Long> paxIds);
+
 }

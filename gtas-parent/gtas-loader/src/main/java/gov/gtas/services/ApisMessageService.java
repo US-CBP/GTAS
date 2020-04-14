@@ -10,12 +10,16 @@ import java.util.stream.Collectors;
 
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.Airport;
+import gov.gtas.parsers.tamr.TamrAdapter;
+import gov.gtas.parsers.tamr.TamrAdapterImpl;
+import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.repository.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.error.ErrorUtils;
@@ -45,6 +49,12 @@ public class ApisMessageService extends MessageLoaderService {
 
 	@Autowired
 	private BookingBagRepository bookingBagRepository;
+	
+	@Autowired
+	private TamrAdapter tamrAdapter;
+
+	@Value("${tamr.enabled}")
+	private Boolean tamrEnabled;
 
 	@Autowired
 	private PassengerTripRepository passengerTripRepository;
@@ -100,7 +110,8 @@ public class ApisMessageService extends MessageLoaderService {
 	}
 
 	@Override
-	public MessageStatus load(MessageDto msgDto) {
+	public MessageInformation load(MessageDto msgDto) {
+		MessageInformation messageInformation = new MessageInformation();
 		msgDto.getMessageStatus().setSuccess(true);
 		ApisMessage apis = msgDto.getApis();
 		try {
@@ -128,16 +139,23 @@ public class ApisMessageService extends MessageLoaderService {
 			msgDto.getMessageStatus().setFlightId(primeFlight.getId());
 			msgDto.getMessageStatus().setFlight(primeFlight);
 			apis.setPassengerCount(apis.getPassengers().size());
+			if (tamrEnabled) {
+				List<TamrPassenger> tamrPassengers = tamrAdapter
+						.convertPassengers(apis.getFlights().iterator().next(), apis.getPassengers());
+				messageInformation.setTamrPassengers(tamrPassengers);
+			}
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setSuccess(false);
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			handleException(e, msgDto.getApis());
 			logger.error("ERROR", e);
 		} finally {
-			msgDto.getMessageStatus().setSuccess(createMessage(apis));
+			boolean success = createMessage(apis);
+			msgDto.getMessageStatus().setSuccess(success);
 
 		}
-		return msgDto.getMessageStatus();
+		messageInformation.setMessageStatus(msgDto.getMessageStatus());
+		return messageInformation;
 	}
 
 	private void updateApisCoTravelerCount(ApisMessage apis) {
@@ -255,6 +273,7 @@ public class ApisMessageService extends MessageLoaderService {
 
 		try {
 			m.setFilePath(loaderUtils.getUpdatedPath(m.getFilePath()));
+
 			m = msgDao.save(m);
 		} catch (Exception e) {
 			ret = false;

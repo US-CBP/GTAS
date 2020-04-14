@@ -90,7 +90,7 @@ var app;
              $rootScope.$on('$stateChangeStart',
 
                 function (event, toState) {
-            		Idle.watch();
+            		//Idle.watch();
                     var currentUser = $sessionStorage.get(APP_CONSTANTS.CURRENT_USER);
                     if (currentUser === undefined) {
                         $rootScope.$broadcast('unauthorizedEvent');
@@ -104,6 +104,24 @@ var app;
                 });
 
            $rootScope.currentlyLoggedInUser = $sessionStorage.get(APP_CONSTANTS.CURRENT_USER);
+           
+    	   if ($rootScope.currentlyLoggedInUser === undefined || $rootScope.currentlyLoggedInUser == null)
+       		{
+    		   		console.log('## User is not logged in ##'); 
+       	  			if(Idle.running())
+       	  			{
+       	  					Idle.unwatch();
+       	  				    console.log('## Idle Watch stopped. ##'); 
+       	  			}
+       		}
+          else
+       	   {
+       	   		if(!Idle.running())
+       	   		{
+       		      Idle.watch();
+       		      console.log('## Started Idle Watch ##'); 
+       	   		}
+       	   	}
 
            $rootScope.searchBarContent = {
         		   content : ""
@@ -168,9 +186,9 @@ var app;
 
            $rootScope.triggerIdle = function(){
         	   	//Prevent triggers pre-login
-        	   	if(Idle.running()){
+        	   /*	if(Idle.running()){
         	   		Idle.watch();
-           		}
+           		}*/
            };
 
            $rootScope.setSelectedTab = function(route){
@@ -1109,7 +1127,7 @@ var app;
         .factory('httpSecurityInterceptor', function ($q, $rootScope ) {
             return {
                 request: function(config){
-                	$rootScope.triggerIdle();
+                	//$rootScope.triggerIdle();
                 	return config;
                 },
                 responseError: function (response) {

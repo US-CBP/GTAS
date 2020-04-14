@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import gov.gtas.model.*;
+import gov.gtas.parsers.tamr.TamrAdapter;
+import gov.gtas.parsers.tamr.TamrAdapterImpl;
+import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -22,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.error.ErrorUtils;
@@ -46,17 +50,23 @@ public class PnrMessageService extends MessageLoaderService {
 	private final FlightPaxRepository flightPaxRepository;
 
 	private final BookingBagRepository bookingBagRepository;
+    
+    private final TamrAdapter tamrAdapter;
+
+	@Value("${tamr.enabled}")
+	private Boolean tamrEnabled;
 
 	@Autowired
 	public PnrMessageService(PnrRepository msgDao, LoaderUtils utils, LookUpRepository lookupRepo,
 			FlightPaxRepository flightPaxRepository, BagRepository bagRepository,
-			BookingBagRepository bookingBagRepository) {
+			BookingBagRepository bookingBagRepository, TamrAdapter tamrAdapter) {
 		this.msgDao = msgDao;
 		this.utils = utils;
 		this.lookupRepo = lookupRepo;
 		this.flightPaxRepository = flightPaxRepository;
 		this.bagDao = bagRepository;
 		this.bookingBagRepository = bookingBagRepository;
+		this.tamrAdapter = tamrAdapter;
 	}
 
 	@Override
@@ -108,8 +118,9 @@ public class PnrMessageService extends MessageLoaderService {
 	}
 
 	@Override
-	public MessageStatus load(MessageDto msgDto) {
+	public MessageInformation load(MessageDto msgDto) {
 		msgDto.getMessageStatus().setSuccess(true);
+		MessageInformation messageInformation = new MessageInformation();
 		Pnr pnr = msgDto.getPnr();
 		try {
 			PnrVo vo = (PnrVo) msgDto.getMsgVo();
@@ -143,18 +154,25 @@ public class PnrMessageService extends MessageLoaderService {
 
 			TripTypeEnum tripType = calculateTripType(pnr.getFlightLegs(), pnr.getDwellTimes());
 			pnr.setTripType(tripType.toString());
+			if (tamrEnabled) {
+				List<TamrPassenger> tamrPassengers = tamrAdapter
+						.convertPassengers(pnr.getFlights().iterator().next(), pnr.getPassengers());
+				messageInformation.setTamrPassengers(tamrPassengers);
+			}
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			msgDto.getMessageStatus().setSuccess(false);
 			pnr.setError(e.toString());
 			logger.error("ERROR", e);
 		} finally {
-			if (!createMessage(pnr)) {
+			boolean success = createMessage(pnr);
+			if (!success) {
 				msgDto.getMessageStatus().setSuccess(false);
 				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			}
 		}
-		return msgDto.getMessageStatus();
+		messageInformation.setMessageStatus(msgDto.getMessageStatus());
+		return messageInformation;
 	}
 
 	@Transactional
