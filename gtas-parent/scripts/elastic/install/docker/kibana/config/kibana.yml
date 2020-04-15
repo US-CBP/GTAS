@@ -3,6 +3,7 @@ server.name: kibana
 server.ssl.enabled: true
 server.ssl.certificate: /etc/kibana/config/kibana.crt
 server.ssl.key: /etc/kibana/config/kibana.key
+elasticsearch.hosts: ["https://elasticsearch:9200"]
 elasticsearch.ssl.verificationMode: none
 elasticsearch.ssl.certificateAuthorities: /etc/kibana/config/ca.crt
 xpack.monitoring.elasticsearch.ssl.certificateAuthorities: /etc/kibana/config/ca.crt

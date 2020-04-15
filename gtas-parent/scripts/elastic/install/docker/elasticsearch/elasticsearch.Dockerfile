@@ -1,8 +1,7 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+FROM wcogtas/elasticsearch:ppc64le
 
-RUN yum install -y wget
-RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
-RUN tar -C /usr/local/bin -xvzf dockerize-linux-amd64-v0.6.1.tar.gz
+RUN rm -f /usr/share/elasticsearch/config/elasticsearch.yml
+COPY ./install/docker/elasticsearch/config/elasticsearch.yml /usr/share/elasticsearch/config
 
 ENV node.name=elasticsearch
 ENV discovery.seed_hosts=elasticsearch
@@ -27,6 +26,10 @@ ENV xpack.ml.enabled=false
 ENV xpack.monitoring.enabled=false
 ENV xpack.watcher.enabled=false
 
-# USER elasticsearch
+RUN mkdir -p /usr/share/elasticsearch/data
+RUN chown -R 1000:1000 /usr/share/elasticsearch
 
-ENTRYPOINT ["dockerize", "-wait", "file:///usr/share/elasticsearch/config/elasticsearch.keystore", "-timeout", "1000s", "/usr/local/bin/docker-entrypoint.sh"]
+RUN sed -i '2iwhile [ ! -f /usr/share/elasticsearch/config/elasticsearch.keystore ]; do sleep 5; done' /usr/local/bin/docker-entrypoint.sh
+
+USER 1000
+CMD [ "/usr/local/bin/docker-entrypoint.sh" ]
