@@ -15,7 +15,7 @@ const Header = () => {
     ADMIN: "admin"
   };
 
-  const [activeTab, setActiveTab] = useState(headerTabs.DASHBOARD);
+  const [activeTab, setActiveTab] = useState(headerTabs.FLIGHT);
   const toggleRef = useRef();
 
   const clickTab = tabName => {
