@@ -1,47 +1,19 @@
-
 .on-top {
   z-index: 999;
 }
-nav.navbar {
-  border-top: 4px solid #075484;;
-  margin-bottom: 1rem;
-  background-color:#075484; ;
-}
-.navbar-item.brand-text {
-  font-weight: 300;
-}
-.navbar-item, .navbar-link {
-  font-size: 14px;
-  font-weight: 700;
-}
-.navbar-light .navbar-brand a {
-  color: #fff;
-}
-.navbar-light .navbar-nav .nav-link {
-  color: #fff;
-  
-}
-.nav-tabs {
-  border-bottom: none;
-}
-.navbar-light .navbar-nav .nav-link:hover{
-  background-color: #fff;
-}
-.navbar-toggler-icon {
-  background-color: #fff
-}
+
 .columns {
   width: 100%;
   height: 100%;
   margin-left: 0;
 }
 .menu-label {
-  color: #8F99A3;
+  color: #8f99a3;
   letter-spacing: 1.3;
   font-weight: 700;
 }
 .menu-list a {
-  color: #0F1D38;
+  color: #0f1d38;
   font-size: 14px;
   font-weight: 700;
 }
@@ -59,7 +31,7 @@ nav.navbar {
   margin-bottom: 2rem;
 }
 .card-header-title {
-  color: #8F99A3;
+  color: #8f99a3;
   font-weight: 400;
 }
 .info-tiles {
@@ -67,14 +39,15 @@ nav.navbar {
 }
 .info-tiles .subtitle {
   font-weight: 300;
-  color: #8F99A3;
+  color: #8f99a3;
 }
 .hero.welcome.is-info {
-  background: #36D1DC;
-  background: -webkit-linear-gradient(to right, #5B86E5, #36D1DC);
-  background: linear-gradient(to right, #5B86E5, #36D1DC);
+  background: #36d1dc;
+  background: -webkit-linear-gradient(to right, #5b86e5, #36d1dc);
+  background: linear-gradient(to right, #5b86e5, #36d1dc);
 }
-.hero.welcome .title, .hero.welcome .subtitle {
+.hero.welcome .title,
+.hero.welcome .subtitle {
   color: hsl(192, 17%, 99%);
 }
 .card .content {
@@ -83,7 +56,7 @@ nav.navbar {
 .card-footer-item {
   font-size: 14px;
   font-weight: 700;
-  color: #8F99A3;
+  color: #8f99a3;
 }
 .card-footer-item:hover {
 }
@@ -98,7 +71,8 @@ nav.navbar {
 .box2 {
   background-color: #fff;
   border-radius: 4px;
-  box-shadow: 0 0.5em 0.5em -0.125em rgba(10,10,10,0.5), 0 0 0 1px rgba(10,10,10,.02);
+  box-shadow: 0 0.5em 0.5em -0.125em rgba(10, 10, 10, 0.5),
+    0 0 0 1px rgba(10, 10, 10, 0.02);
   color: #000000;
   display: block;
   padding: 1.25rem;
@@ -107,7 +81,6 @@ nav.navbar {
 .title {
   text-align: center;
 }
-
 
 .pad-top-20 {
   padding-top: 20px;

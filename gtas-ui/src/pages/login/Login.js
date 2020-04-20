@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import Form from "../../components/form/Form";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import { login } from "../../services/serviceWrapper";
-import logo from "../../images/GTAS Logo blue 2.png";
-import { Figure, Card, Alert } from "react-bootstrap";
+import "./Login.css";
+import { Alert, Card } from "react-bootstrap";
 import { navigate } from "@reach/router";
 import { UserContext } from "../../context/user/UserContext";
 import "./Login.css";
@@ -55,12 +55,10 @@ const Login = () => {
 
   return (
     <div className="login-page-container">
-      <Card className="transparent-white text-center mx-auto">
-        <Figure className="avatar">
-          <Figure.Image width={100} height={100} alt="logo" src={logo} />
-        </Figure>
+      <Card className="transparent-white-card text-center mx-auto">
+        <div className="login-logo"></div>
+        <div className="login-brand">GTAS</div>
         <Card.Body>
-          <Card.Title>GTAS</Card.Title>
           <Form
             title=""
             submitText="LOG IN"
@@ -78,6 +76,7 @@ const Login = () => {
               required="required"
               inputVal=""
               autofocus="true"
+              className="login-labeled-input"
             />
             <LabelledInput
               inputType="password"
@@ -88,6 +87,7 @@ const Login = () => {
               datafield="password"
               required="required"
               inputVal=""
+              className="login-labeled-input"
             />
           </Form>
         </Card.Body>

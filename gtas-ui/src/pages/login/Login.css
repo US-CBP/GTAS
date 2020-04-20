@@ -1,58 +1,7 @@
-/* .hero.is-info {
-  background: linear-gradient(
-      rgba(0, 0, 0, 0.5),
-      rgba(0, 0, 0, 0.5)
-    ), url('https://unsplash.it/1200/900?random') no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-} */
-
-
-/* khadija */
-/* .hero.is-info {
-  background: linear-gradient(
-      rgba(255, 255, 255, 0),
-      rgba(0, 0, 0, 0.8)
-    ), url('../../images/khadija-yousaf-PGp2Pacn3_M-unsplash.jpg') no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-
-.transparent-white {
-  background:rgba(250,250,250,0.2) !important;
-} */
-
-
-
-
-/* hameed */
-/* .hero.is-info {
-  background: linear-gradient(
-      rgba(255, 255, 255, .8) 20%,
-      rgba(0, 4, 7, 0.8) 90%
-    ), url('../../images/hameed-ullah-eeI0al-Qx8k-unsplash.jpg') no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-
-.transparent-white {
-  background:#9f9f9f !important;
-  background:rgba(250,250,250,0.3) !important;
-} */
-
-
-/* noorulabdeen */
 .login-page-container {
-  background: linear-gradient(
-      rgba(255, 255, 255, 0),
-      rgba(0, 74, 147, 0.83)
-    ), url('../../images/noorulabdeen-ahmad-lpcaOpVIzx8-unsplash.jpg') no-repeat center center fixed;
+  background: linear-gradient(rgba(255, 255, 255, 0), rgba(0, 74, 147, 0.83)),
+    url("../../images/noorulabdeen-ahmad-lpcaOpVIzx8-unsplash.jpg") no-repeat center
+      center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -66,45 +15,11 @@
   height: 100%;
 }
 
-.transparent-white {
-  background:rgba(200,217,250,0.14) !important;
-}
-
-.card {
-  width: 25rem;
+.transparent-white-card {
+  background: rgba(223, 231, 247, 0.14) !important;
+  width: 22rem;
   height: 27rem;
   text-align: center;
-}
-.card-title {
-  font-size: xx-large;
-}
-
-
-
-/* olah */
- /* .hero.is-info {
-  background: linear-gradient(
-      rgba(255, 255, 255, 0.2),
-      rgba(0, 74, 147, 0.63)
-    ), url('../../images/daniel-olah-srFhtP2Isv4-unsplash.jpg') no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-
-.transparent-white {
-  background:rgba(250,250,250,0.3) !important;
-}
-
- */
-
-
-.failed-login {
-  color: red;
-  border-color: blue;
-  font-size: larger;
-  font-weight: bold;
 }
 
 .gradient-button {
@@ -113,8 +28,30 @@
   color: white;
 }
 
-.title2 {
+.login-labeled-input {
+  width: 60%;
+  margin: auto;
+}
+
+.login-logo {
+  z-index: 2;
+  background: url("../../images/GTAS Logo blue 2.png") no-repeat center center;
+  height: 90px;
+  width: 90px;
+  background-size: cover;
+  margin: auto;
+  margin-bottom: 5px;
+  margin-top: 20px;
+}
+
+.login-brand {
+  color: #1f2957;
+  font-size: xx-large;
+  font-feature-settings: "pcap", "pcap";
+  font-variant: petite-caps;
   font-weight: 500;
-  font-size: large;
-  padding: 10px;
+  margin-bottom: 30px;
+}
+.login-alert {
+  margin: auto;
 }
