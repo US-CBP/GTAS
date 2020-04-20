@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { hasData } from "../../utils/text";
+import { hasData } from "../../utils/utils";
 import RBTable from "react-bootstrap/Table";
 import "./SegmentTable.css";
 

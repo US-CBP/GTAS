@@ -1,125 +1,64 @@
 import GenericService from "./genericService";
-import { hasData, isObject } from "../utils/text";
-import Cookies from "js-cookie";
+import { hasData } from "../utils/utils";
 
 const GET = "get";
 const DELETE = "delete";
 const POST = "post";
 const PUT = "put";
-const APPLICATION_JSON = "application/json";
+const AJSON = "application/json";
 const FORM = "application/x-www-form-urlencoded";
 
+const LOGINHEADER = { "X-Login-Ajax-call": "true", "Content-Type": AJSON };
+const BASEHEADER = { "Content-Type": AJSON, Accept: AJSON };
 const PUTBODY = "The put method requires a valid body parameter.";
 const POSTBODY = "The post method requires a valid body parameter.";
 const PUTID = "The put method requires a valid id parameter.";
 const PUTPARAMS = "The put method requires parameters.";
 const DELETEID = "The delete method requires a valid id parameter.";
 
-// const HEAD = 'head';
-// const COMMONTYPES = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8';
-// const PDF = 'application/pdf';
-// const BMP = 'image/bmp';
-// const JPEG = 'image/jpeg';
-// const PNG = 'image/png';
-// const WORD = 'application/msword';
-
-// SETOPS - builds an collection of crud operations for the entities to expose as object methods. Static entity data
-// (uri) is bound to the op methods here to keep the ops code dry and not force callers to pass it in as a param.
-// There are other ways to do it, but it means the setOps/crud ops code won't change for most new endpoints.
-export function setOps(ctx, ...fxns) {
-  // context - allow just a uri string or an object for more params.
-  const context = isObject(ctx)
-    ? { uri: ctx.uri, contentType: ctx.contentType || APPLICATION_JSON }
-    : { uri: ctx, contentType: APPLICATION_JSON };
-
-  return fxns.reduce(function(obj, fxn) {
-    const name = fxn.name === "del" ? "delete" : fxn.name;
-    obj[name] = fxn.bind(context);
-    return obj;
-  }, {});
-}
-
-//  CRUD OPERATIONS
-export function post(body) {
-  if (!hasData(body)) throw new TypeError(POSTBODY);
-
-  return GenericService({
-    uri: this.uri,
-    method: POST,
-    contentType: this.contentType,
-    body: JSON.stringify(body)
-  });
-}
-
-export function authPost(body) {
-  Cookies.remove("JSESSIONID");
-  if (!hasData(body)) throw new TypeError(POSTBODY);
-  const username = body.username !== undefined ? body.username.toUpperCase() : "";
-  const password = body.password !== undefined ? body.password : "";
-  body = "username=" + username + "&password=" + encodeURIComponent(password);
-
-  return GenericService({
-    uri: this.uri,
-    method: POST,
-    contentType: FORM,
-    body: body,
-    headers: { "X-Login-Ajax-call": "true" },
-    contentTypeServer: "application/x-www-form-urlencoded"
-  });
-}
-
-export function get(id, params) {
+function get(uri, headers, id, params) {
   const query = hasData(id) ? `/${id}` : hasData(params) ? params : "";
-
-  return GenericService({ uri: this.uri + query, method: GET });
+  return GenericService({ uri: uri + query, method: GET, headers: headers });
 }
 
-export function put(id, body) {
+function post(uri, headers, body) {
+  if (!hasData(body) && !(body instanceof FormData)) throw new TypeError(POSTBODY);
+
+  return GenericService({
+    uri: uri,
+    method: POST,
+    body: body,
+    headers: headers
+  });
+}
+
+function put(uri, headers, id, body) {
   if (!hasData(body)) throw new TypeError(PUTBODY);
   if (!hasData(id)) throw new TypeError(PUTID);
 
   const query = `\\${id}`;
+
   return GenericService({
-    uri: this.uri + query,
+    uri: uri + query,
     method: PUT,
-    contentType: this.contentType,
-    body: JSON.stringify(body)
+    body: body,
+    headers: headers
   });
 }
 
-// APB shd params be an object so we can handle parsing it into a queryparam here?
-// PutParams - same as put, but use queryparams rather than a body
-export function putp(params) {
-  if (!hasData(params)) throw new TypeError(PUTPARAMS);
-
-  const query = `${params}`;
-  return GenericService({
-    uri: this.uri + query,
-    method: PUT
-  });
-}
-
-export function del(id) {
+function del(uri, id) {
   if (!hasData(id)) throw new TypeError(DELETEID);
 
-  const query = `\\${id}`;
-  return GenericService({ uri: this.uri + query, method: DELETE });
+  return GenericService({ uri: `${uri}\\${id}`, method: DELETE });
 }
 
 // APB - ENTITY CONSTANTS and ENTITY METHODS is the only code we should need to touch when adding new endpoints
 
 // ENTITY CONSTANTS
-// APB - dummy endpoints. Move these guys to the env file
-// const COMPANY = process.env.REACT_APP_SVC_COMPANY;
-const COMPANY = "http://localhost:3004/company";
-const FOO = "http://localhost:3004/foo";
-const FILES = "http://localhost:3004/files";
-const EMPLOYEES = "http://localhost:3004/employees";
-const HACKS = "http://localhost:3004/hacks";
-const LOGINS = "http://localhost:8080/gtas/authenticate";
+const LOGIN = "http://localhost:8080/gtas/authenticate";
 const USERS = "http://localhost:8080/gtas/users/";
-const WATCHLISTCATS = "http://localhost:8080/gtas/wl/watchlistCategories";
-const WATCHLISTCATSPOST = "http://localhost:8080/gtas/wlput/wlcat/";
+const WLCATS = "http://localhost:8080/gtas/wl/watchlistCategories";
+const WLCATSPOST = "http://localhost:8080/gtas/wlput/wlcat/";
 const FLIGHTS = "http://localhost:8080/gtas/flights";
 const AUDITLOG = "http://localhost:3004/auditlog?startDate=2019-11-04&endDate=2019-12-02";
 const ERRORLOG = "http://localhost:8080/gtas/errorlog";
@@ -133,23 +72,27 @@ const NOTE_TYPES = "http://localhost:8080/gtas/passengers/passenger/notetypes";
 const LOGGEDIN_USER = "http://localhost:8080/gtas/user";
 
 // ENTITY METHODS
-export const company = setOps(COMPANY, get, post);
-export const foo = setOps(FOO, get, post, put, del);
-export const files = setOps(FILES, get, post, put, del);
-export const employees = setOps(EMPLOYEES, get, post);
-export const hacks = setOps(HACKS, get);
-export const watchlistcats = setOps(WATCHLISTCATS, get, post);
-export const watchlistcatspost = setOps(WATCHLISTCATSPOST, post);
-export const logins = setOps(LOGINS, authPost);
-export const userService = setOps(USERS, get, post);
-export const flights = setOps(FLIGHTS, get, post);
-export const auditlog = setOps(AUDITLOG, get);
-export const errorlog = setOps(ERRORLOG, get);
-export const cases = setOps(CASES, get, post);
-export const ruleCats = setOps(RULE_CATS, get);
-export const settingsinfo = setOps(SETTINGSINFO, get, put);
-export const getrulecats = setOps(GETRULECATS, get);
-export const passengers = setOps(PAX, get);
-export const loaderStats = setOps(LOADERSTATISTICS, get);
-export const notetypes = setOps(NOTE_TYPES, get);
-export const loggedinUser = setOps(LOGGEDIN_USER, get);
+export const login = { post: body => post(LOGIN, LOGINHEADER, body) };
+export const users = {
+  get: (id, params) => get(USERS, BASEHEADER, id, params),
+  put: (id, body) => put(USERS, BASEHEADER, id, body),
+  post: body => post(USERS, BASEHEADER, body)
+};
+export const watchlistcats = {
+  get: (id, params) => get(WLCATS, BASEHEADER, id, params),
+  post: body => post(WLCATS, BASEHEADER, body)
+};
+
+export const watchlistcatspost = { post: body => post(WLCATSPOST, BASEHEADER, body) };
+export const userService = { get: (id, params) => get(USERS, BASEHEADER) };
+export const flights = { get: (id, params) => get(FLIGHTS, BASEHEADER) };
+export const auditlog = { get: (id, params) => get(AUDITLOG, BASEHEADER) };
+export const errorlog = { get: (id, params) => get(ERRORLOG, BASEHEADER) };
+export const cases = { get: (id, params) => get(CASES, BASEHEADER) };
+export const ruleCats = { get: (id, params) => get(RULE_CATS, BASEHEADER) };
+export const settingsinfo = { get: (id, params) => get(SETTINGSINFO, BASEHEADER) };
+export const getrulecats = { get: (id, params) => get(GETRULECATS, BASEHEADER) };
+export const passengers = { get: (id, params) => get(PAX, BASEHEADER) };
+export const loaderStats = { get: (id, params) => get(LOADERSTATISTICS, BASEHEADER) };
+export const notetypes = { get: (id, params) => get(NOTE_TYPES, BASEHEADER) };
+export const loggedinUser = { get: (id, params) => get(LOGGEDIN_USER, BASEHEADER) };

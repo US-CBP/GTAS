@@ -1,6 +1,6 @@
 import React from "react";
 import Table from "../../../components/table/Table";
-import { files } from "../../../services/serviceWrapper";
+import { users } from "../../../services/serviceWrapper";
 import Title from "../../../components/title/Title";
 
 const FlightHistory = () => {
@@ -10,7 +10,7 @@ const FlightHistory = () => {
 
       <div className="columns">
         <div className="top">
-          <Table service={files.get} id="foo"></Table>
+          <Table service={users.get} id="foo"></Table>
         </div>
       </div>
     </div>

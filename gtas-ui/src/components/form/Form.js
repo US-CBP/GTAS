@@ -1,10 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
-import { hasData, asArray, isObject } from "../../utils/text";
-import { Button } from "react-bootstrap";
+import { hasData, asArray, isObject } from "../../utils/utils";
 import Title from "../title/Title";
-import { Form as RBForm } from "react-bootstrap";
+import { Button, Form as RBForm, ButtonToolbar } from "react-bootstrap";
+import { navigate } from "@reach/router";
+
+// import './Form.css';
 
 /**
  * **Generic form that can add a new record or fetch and edit an existing one.**
@@ -15,6 +17,7 @@ class Form extends React.Component {
     super(props);
 
     this.onFormSubmit = this.onFormSubmit.bind(this);
+    this.onFormCancel = this.onFormCancel.bind(this);
     this.onChange = this.onChange.bind(this);
 
     let fields = [];
@@ -112,13 +115,18 @@ class Form extends React.Component {
       return this.fetchData();
     }
 
-    let result = this.props.recordId
-      ? operation(this.props.recordId, { ...this.state.fields })
-      : operation({ ...this.state.fields });
+    const params = this.props.recordId
+      ? [this.props.recordId, this.state.fields]
+      : [this.state.fields];
 
-    if (this.props.afterProcessed) {
-      this.props.afterProcessed(result);
-    }
+    operation(...params).then(res => {
+      if (hasData(this.props.callback)) this.props.callback(res);
+    });
+  }
+
+  onFormCancel() {
+    if (this.props.redirectTo !== undefined) navigate(this.props.redirectTo);
+    else window.history.back();
   }
 
   // bind children containing form data to the ev handler and state
@@ -132,7 +140,7 @@ class Form extends React.Component {
       let newchild = React.cloneElement(child, {
         key: idx,
         callback: this.onChange,
-        inputVal: populatedFields[this.state.fieldMap[child.props.name]] || "",
+        inputVal: populatedFields[this.state.fieldMap[child.props.name]],
         ...cleanprops
       });
 
@@ -150,23 +158,36 @@ class Form extends React.Component {
   }
 
   render() {
+    const showSubmit = this.props.action !== "readonly";
     const disabled = this.canSubmit() ? "" : "disabled";
 
     return (
       <div>
-        <Title title={this.props.title}></Title>
+        {this.props.title && <Title title={this.props.title}></Title>}
         <RBForm onSubmit={this.onFormSubmit} key={this.state.formkey}>
           <ErrorBoundary message="Form children could not be rendered">
             {this.state.kids}
           </ErrorBoundary>
-          <div className="text-center pad-top-20" id="button-div">
-            <Button
-              className={`button block info fullwidth gradient-button ${disabled}`}
-              type="submit"
-            >
-              {this.props.submitText || "Submit"}
-            </Button>
-          </div>
+          <ButtonToolbar className="container">
+            {this.props.cancellable && (
+              <Button
+                type="button"
+                className="m-2 text-white outline-dark-outline"
+                variant="outline-dark"
+                onClick={this.onFormCancel}
+              >
+                {this.props.cancelText || "Cancel"}
+              </Button>
+            )}
+            {showSubmit && (
+              <Button
+                className={`button block info fullwidth gradient-button ${disabled}`}
+                type="submit"
+              >
+                {this.props.submitText || "Submit"}
+              </Button>
+            )}
+          </ButtonToolbar>
         </RBForm>
       </div>
     );
@@ -176,11 +197,15 @@ class Form extends React.Component {
 Form.propTypes = {
   title: PropTypes.string,
   submitText: PropTypes.string,
+  cancellable: PropTypes.oneOf(["true", true, ""]),
+  cancelText: PropTypes.string,
+  redirectTo: PropTypes.string,
   getService: PropTypes.func,
   submitService: PropTypes.func,
-  action: PropTypes.oneOf(["add", "edit", "auth", ""]),
+  action: PropTypes.oneOf(["add", "edit", "readonly", ""]),
   recordId: PropTypes.string,
-  afterProcessed: PropTypes.func
+  callback: PropTypes.func.isRequired,
+  paramCallback: PropTypes.func
 };
 
 export default Form;

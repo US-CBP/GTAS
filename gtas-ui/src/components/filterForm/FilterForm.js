@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
-import { asArray, hasData } from "../../utils/text";
+import { asArray, hasData, getParamList } from "../../utils/utils";
+import { Button, ButtonToolbar, Form as RBForm } from "react-bootstrap";
+
 import "./FilterForm.css";
-import { Button, ButtonToolbar, Form } from "react-bootstrap";
 
 /**
  * **Generic filter form used to fetch data for use in another component.**
@@ -194,7 +195,7 @@ class FilterForm extends React.Component {
     return (
       <div>
         <div className="menu-label has-text-centered">{this.props.title}</div>
-        <Form
+        <RBForm
           onSubmit={this.onFormSubmit}
           onReset={this.onReset}
           key={this.state.formkey}
@@ -213,7 +214,7 @@ class FilterForm extends React.Component {
               {this.props.submitText || "Search"}
             </Button>
           </ButtonToolbar>
-        </Form>
+        </RBForm>
       </div>
     );
   }

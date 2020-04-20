@@ -1,6 +1,6 @@
 import React from "react";
-import Title from "../../Components/title/Title";
-import { Link } from "./node_modules/@reach/router";
+import Title from "../../components/title/Title";
+import { Link } from "@reach/router";
 
 const PageUnauthorized = () => {
   return (

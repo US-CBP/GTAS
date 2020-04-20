@@ -1,6 +1,6 @@
 import React from "react";
 import Table from "../../../components/table/Table";
-import { employees } from "../../../services/serviceWrapper";
+import { users } from "../../../services/serviceWrapper";
 import Title from "../../../components/title/Title";
 import { Container } from "react-bootstrap";
 
@@ -11,7 +11,7 @@ const CodeEditor = ({ name }) => {
     <Container fluid>
       <Title title={name}></Title>
 
-      <Table service={employees.get} id="foo" callback={cb}></Table>
+      <Table service={users.get} id="foo" callback={cb}></Table>
     </Container>
   );
 };

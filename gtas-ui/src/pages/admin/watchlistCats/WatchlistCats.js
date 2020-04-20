@@ -6,7 +6,7 @@ import { Container, Button, Row, Col, Modal } from "react-bootstrap";
 import WatchlistModal from "./WatchlistModal";
 
 const WatchlistCats = ({ name }) => {
-  const cb = function(result) {};
+  const cb = function() {};
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState([{}]);
 
@@ -24,7 +24,7 @@ const WatchlistCats = ({ name }) => {
         </Col>
         <Col sm={{ span: 4, offset: 4 }}>
           <Button variant="outline-dark" onClick={() => setShowModal(true)}>
-            Add to Watchlist{" "}
+            Add to Watchlist
           </Button>
           <WatchlistModal
             show={showModal}
@@ -34,7 +34,12 @@ const WatchlistCats = ({ name }) => {
         </Col>
       </Row>
 
-      <Table data={data} key={data} id="Watchlist Catagory" callback={cb}></Table>
+      <Table
+        service={watchlistcats.get}
+        key={data}
+        id="Watchlist Category"
+        callback={cb}
+      ></Table>
     </Container>
   );
 };

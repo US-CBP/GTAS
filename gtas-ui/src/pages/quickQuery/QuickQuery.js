@@ -1,6 +1,6 @@
 import React from "react";
 import Table from "../../../components/table/Table";
-import { hacks } from "../../../services/serviceWrapper";
+import { users } from "../../../services/serviceWrapper";
 import Title from "../../../components/title/Title";
 
 const QuickQuery = () => {
@@ -12,7 +12,7 @@ const QuickQuery = () => {
 
       <div className="columns">
         <div className="top">
-          <Table service={hacks.get} id="foo" callback={cb}></Table>
+          <Table service={users.get} id="foo" callback={cb}></Table>
         </div>
       </div>
     </div>

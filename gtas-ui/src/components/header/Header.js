@@ -1,11 +1,25 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "@reach/router";
 import { Nav, Navbar, NavDropdown, Form, FormControl, Button } from "react-bootstrap";
+import { navigate } from "@reach/router";
+import { UserContext } from "../../context/user/UserContext";
+import RoleAuthenticator from "../../context/roleAuthenticator/RoleAuthenticator";
+import { ROLE } from "../../utils/constants";
 
 const Header = () => {
-    let user = JSON.parse(localStorage.getItem("user"));
-    const loggedinUserName = user ? user.lastName + ", " + user.firstName
-    : "User Name";
+  const { getUserState, userAction } = useContext(UserContext);
+
+  const user = getUserState();
+
+  const logout = () => {
+    userAction({ type: "logoff" });
+
+    navigate("/login");
+  };
+
+  if (user === undefined) logout();
+
+  const userFullName = user?.fullName || "";
 
   return (
     <Navbar sticky="top" expand="md">
@@ -19,7 +33,6 @@ const Header = () => {
             Dashboard
           </Nav.Link>
           <Nav.Link as={Link} to="flights">
-            {" "}
             Flights
           </Nav.Link>
           <Nav.Link as={Link} to="vetting">
@@ -61,14 +74,12 @@ const Header = () => {
         </Form>
 
         <Nav variant="tabs" className="ml-auto">
-          <NavDropdown title={loggedinUserName} id="basic-nav-dropdown">
+          <NavDropdown title={userFullName} id="basic-nav-dropdown">
             <NavDropdown.Item as={Link} to="#">
               Change Password
             </NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item as={Link} to="#">
-              Logout
-            </NavDropdown.Item>
+            <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
           </NavDropdown>
         </Nav>
       </Navbar.Collapse>
