@@ -30,23 +30,15 @@ const Header = () => {
   };
 
   return (
-    <Navbar sticky="top" expand="md" className="header-navbar">
-      <Navbar.Brand>
-        <Link
-          to="/gtas"
-          className="header-navbar-brand"
-          onClick={() => setActiveTab(headerTabs.DASHBOARD)}
-        >
+    <Navbar sticky="top" expand="md" className="header-navbar" variant="light">
+      <Navbar.Brand className="header-navbar-brand">
+        <Link to="/gtas" onClick={() => setActiveTab(headerTabs.DASHBOARD)}>
           GTAS
         </Link>
       </Navbar.Brand>
-      <Navbar.Toggle
-        aria-controls="responsive-navbar-nav"
-        className="navbar-toggler"
-        ref={toggleRef}
-      />
-      <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav variant="tabs" className="mr-auto">
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" ref={toggleRef} />
+      <Navbar.Collapse>
+        <Nav variant="tabs" className="left-nav">
           <Nav.Link
             as={Link}
             to="dashboard"
@@ -103,13 +95,13 @@ const Header = () => {
             Admin{" "}
           </Nav.Link>
         </Nav>
-        <Nav className="mr-auto">
+        <Nav className="navbar-search">
           <Form inline>
             <FormControl type="text" placeholder="Search" className="mr-sm-2" />
             <Button variant="outline-light">Search</Button>
           </Form>
         </Nav>
-        <Nav variant="tabs">
+        <Nav variant="tabs" className="ml-auto">
           <NavDropdown title={loggedinUserName} id="basic-nav-dropdown" className="right">
             <NavDropdown.Item as={Link} to="#" onClick={() => clickTab("")}>
               Change Password
