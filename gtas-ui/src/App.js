@@ -37,9 +37,15 @@ import GModal from "./components/modal/GModal";
 import AddUser from "./pages/admin/manageUsers/addUser/AddUser";
 
 import Page404 from "./pages/page404/Page404";
-import { StateProvider } from "./appContext";
+import PageUnauthorized from "./pages/pageUnauthorized/PageUnauthorized";
 import ErrorBoundary from "./components/errorBoundary/ErrorBoundary";
 import Loading from "./components/loading/Loading";
+
+import Authenticator from "./context/authenticator/Authenticator";
+import RoleAuthenticator from "./context/roleAuthenticator/RoleAuthenticator";
+import UserProvider from "./context/user/UserContext";
+
+import { ROLE } from "./utils/constants";
 
 //Split Link Analysis (Graph component, d3, jquery deps) into a separate bundle
 const LinkAnalysis = React.lazy(() =>
@@ -89,7 +95,7 @@ export default class App extends React.Component {
 
     return (
       <React.StrictMode>
-        <StateProvider>
+        <UserProvider>
           <Router>
             <Login path="/login"></Login>
           </Router>
@@ -114,56 +120,69 @@ export default class App extends React.Component {
               timeout={1000 * 25 * 60}
             />
             <Suspense fallback="loading">
-              <Router>
-                <Home path="gtas">
-                  <Dashboard path="dashboard"></Dashboard>
-                  <Flights path="flights"></Flights>
-                  <FlightPax path="flightpax"></FlightPax>
-                  <PriorityVetting path="vetting"></PriorityVetting>
-                  <Queries path="tools/queries"></Queries>
-                  <Rules path="tools/rules"></Rules>
-                  <Neo4J path="tools/neo4j"></Neo4J>
-                  <Watchlist path="tools/watchlist"></Watchlist>
-                  <About path="tools/about"></About>
-                  <Admin path="admin">
-                    <ManageUser name="Manage Users" path="manageusers">
-                      <AddUser name="Add User" path="/gtas/admin/adduser"></AddUser>
-                    </ManageUser>
-                    <AuditLog name="Audit Log View" path="auditlog"></AuditLog>
-                    <ErrorLog name="Error Log View" path="errorlog"></ErrorLog>
-                    <Settings name="Settings" path="settings"></Settings>
-                    <FileDownload name="File Download" path="filedownload"></FileDownload>
-                    <CodeEditor name="Code Editor" path="codeeditor"></CodeEditor>
-                    <LoaderStats
-                      name="Loader Statistics"
-                      path="loaderstats"
-                    ></LoaderStats>
-                    <WatchlistCats
-                      name="Watchlist Categories"
-                      path="watchlistcats"
-                    ></WatchlistCats>
-                    <NoteTypeCats
-                      name="Note Type Categories"
-                      path="notetypecats"
-                    ></NoteTypeCats>
-                  </Admin>
-                  <PaxDetail path="paxdetail">
-                    <Summary path="summary"></Summary>
-                    <APIS path="apis"></APIS>
-                    <PNR path="pnr"></PNR>
-                    <FlightHistory path="flighthistory"></FlightHistory>
-                    <ErrorBoundary>
-                      <Suspense fallback={<Loading></Loading>}>
-                        <LinkAnalysis path="linkanalysis"></LinkAnalysis>
-                      </Suspense>
-                    </ErrorBoundary>
-                  </PaxDetail>
-                  <Page404 default></Page404>
-                </Home>
-              </Router>
+              <Authenticator>
+                <Router>
+                  <RoleAuthenticator
+                    path="/"
+                    alt={<PageUnauthorized path="pageUnauthorized"></PageUnauthorized>}
+                    roles={[ROLE.ADMIN, ROLE.USER]}
+                  >
+                    <Redirect from="/" to="/gtas" noThrow />
+                    <Home path="/gtas">
+                      <Dashboard path="dashboard"></Dashboard>
+                      <Flights path="flights"></Flights>
+                      <FlightPax path="flightpax"></FlightPax>
+                      <PriorityVetting path="vetting"></PriorityVetting>
+                      <Queries path="tools/queries"></Queries>
+                      <Rules path="tools/rules"></Rules>
+                      <Neo4J path="tools/neo4j"></Neo4J>
+                      <Watchlist path="tools/watchlist"></Watchlist>
+                      <About path="tools/about"></About>
+                      <Admin path="admin">
+                        <ManageUser name="Manage Users" path="manageusers">
+                          <AddUser name="Add User" path="/gtas/admin/adduser"></AddUser>
+                        </ManageUser>
+                        <AuditLog name="Audit Log View" path="auditlog"></AuditLog>
+                        <ErrorLog name="Error Log View" path="errorlog"></ErrorLog>
+                        <Settings name="Settings" path="settings"></Settings>
+                        <FileDownload
+                          name="File Download"
+                          path="filedownload"
+                        ></FileDownload>
+                        <CodeEditor name="Code Editor" path="codeeditor"></CodeEditor>
+                        <LoaderStats
+                          name="Loader Statistics"
+                          path="loaderstats"
+                        ></LoaderStats>
+                        <WatchlistCats
+                          name="Watchlist Categories"
+                          path="watchlistcats"
+                        ></WatchlistCats>
+                        <NoteTypeCats
+                          name="Note Type Categories"
+                          path="notetypecats"
+                        ></NoteTypeCats>
+                      </Admin>
+                      <PaxDetail path="paxdetail">
+                        <Summary path="summary"></Summary>
+                        <APIS path="apis"></APIS>
+                        <PNR path="pnr"></PNR>
+                        <FlightHistory path="flighthistory"></FlightHistory>
+                        <ErrorBoundary>
+                          <Suspense fallback={<Loading></Loading>}>
+                            <LinkAnalysis path="linkanalysis"></LinkAnalysis>
+                          </Suspense>
+                        </ErrorBoundary>
+                      </PaxDetail>
+                      <Page404 default></Page404>
+                      <PageUnauthorized path="pageUnauthorized"></PageUnauthorized>
+                    </Home>
+                  </RoleAuthenticator>
+                </Router>
+              </Authenticator>
             </Suspense>
           </div>
-        </StateProvider>
+        </UserProvider>
       </React.StrictMode>
     );
   }

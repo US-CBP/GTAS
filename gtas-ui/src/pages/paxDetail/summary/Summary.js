@@ -1,6 +1,6 @@
 import React from "react";
 import Table from "../../../components/table/Table";
-import { files } from "../../../services/serviceWrapper";
+import { users } from "../../../services/serviceWrapper";
 import { Row, Container } from "react-bootstrap";
 
 const Summary = props => {
@@ -9,7 +9,7 @@ const Summary = props => {
       <Row flex>
         <div className="columns">
           <div className="top">
-            <Table service={files.get} id="foo"></Table>
+            <Table service={users.get} id="foo"></Table>
           </div>
         </div>
       </Row>

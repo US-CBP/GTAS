@@ -4,7 +4,7 @@ import { cases } from "../../services/serviceWrapper";
 import Title from "../../components/title/Title";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import FilterForm from "../../components/filterForm/FilterForm";
-import { hasData } from "../../utils/text";
+import { hasData } from "../../utils/utils";
 import { Col, Container } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import LabelledDateTimePickerStartEnd from "../../components/inputs/LabelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
@@ -119,7 +119,7 @@ const Vetting = props => {
       }
     ]
   };
-  
+
   const { hitCategories, loading } = useFetchHitCategories();
   const [hitCategoryCheckboxes, setHitCategoryCheckboxes] = useState(
     <div>Loading Checkboxes...</div>
@@ -174,19 +174,19 @@ const Vetting = props => {
               />
               {hitCategoryCheckboxes}
               <CheckboxGroup
-                  datafield={ruleTypes}
-                  inputVal={ruleTypes.value}
-                  labelText="Hit Types"
-                  name="ruleTypes"
+                datafield={ruleTypes}
+                inputVal={ruleTypes.value}
+                labelText="Hit Types"
+                name="ruleTypes"
               />
               <LabelledInput
-                  datafield="myRulesOnly"
-                  name="myRulesOnly"
-                  label="My Rules Only"
-                  inputType="checkbox"
-                  inputVal={false}
-                  callback={cb}
-                  selected={false}
+                datafield="myRulesOnly"
+                name="myRulesOnly"
+                label="My Rules Only"
+                inputType="checkbox"
+                inputVal={false}
+                callback={cb}
+                selected={false}
               />
               <LabelledInput
                 datafield

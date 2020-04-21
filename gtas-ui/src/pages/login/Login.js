@@ -1,51 +1,56 @@
 import React, { useState, useEffect, useContext } from "react";
 import Form from "../../components/form/Form";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
-import { logins, loggedinUser } from "../../services/serviceWrapper";
+import { login } from "../../services/serviceWrapper";
 import "./Login.css";
 import { Alert, Card } from "react-bootstrap";
 import { navigate } from "@reach/router";
-import { store } from "../../appContext";
+import { UserContext } from "../../context/user/UserContext";
+import "./Login.css";
 
 const Login = () => {
-  const [authenticate, setAuthenticate] = useState(false);
-  const [failedLogin, setFailedLogIn] = useState(false);
-
-  const globalState = useContext(store);
-  const { dispatch } = globalState;
+  const ctx = useContext(UserContext);
+  const [alertVis, setAlertVis] = useState(false);
 
   useEffect(() => {
-    if (authenticate) {
-      loggedinUser
-        .get()
-        .then(response => {
-          dispatch({
-            type: "login",
-            user: response
-          });
-          navigate(`/gtas/flights`, true);
-        })
-        .catch(error => {
-          //todo: error handling
-          console.log(error);
-        });
-    }
-  }, [authenticate, failedLogin, dispatch]);
+    ctx.userAction({ type: "logoff" });
+  }, []);
 
-  const loginCallback = input => {
-    return input
-      .then(response => {
-        if (response.authenticated) {
-          setAuthenticate(true);
-        } else {
-          setAuthenticate(false);
-          setFailedLogIn(true);
-        }
-      })
-      .catch(reason => {
-        console.log(reason);
-        //todo: make a toast that sets error to false when done letting the user know why the login failed.
-      });
+  const loginHandler = res => {
+    // if (res?.authenticated && res?.userId) {
+    //TODO - update the response to include user metadata
+
+    // const roles = res.roles;
+
+    // const newuser = {
+    //   authenticated: true,
+    //   fullName: res.fullName,
+    //   userId: res.userId,
+    //   userRoles: roles,
+    //   userToken: res.token,
+    //   queryPageSize: 25,
+    //   userPageSize: 25,
+    //   landingPage: undefined
+    // };
+
+    const roles = ["Admin"];
+
+    const newuser = {
+      authenticated: true,
+      fullName: "Admin",
+      userId: 7,
+      userRoles: roles,
+      userToken: "sdfsfsfd",
+      queryPageSize: 25,
+      userPageSize: 25,
+      landingPage: undefined
+    };
+
+    ctx.userAction({ user: newuser, type: "login" });
+    navigate("/gtas/dashboard");
+    // }
+
+    setAlertVis(true);
   };
 
   return (
@@ -57,9 +62,8 @@ const Login = () => {
           <Form
             title=""
             submitText="LOG IN"
-            submitService={logins.authPost}
-            action="auth"
-            afterProcessed={loginCallback}
+            submitService={login.post}
+            callback={loginHandler}
             id="loginform"
           >
             <LabelledInput
@@ -87,16 +91,14 @@ const Login = () => {
             />
           </Form>
         </Card.Body>
-        <Alert
-          variant="danger"
-          show={failedLogin}
-          onClose={() => setFailedLogIn(false)}
-          dismissible
-          className="login-alert"
-        >
-          Incorrect username or password
-        </Alert>
       </Card>
+      <div className="placeholder">
+        {alertVis && (
+          <Alert className="login-alert" dismissible onClose={() => setAlertVis(false)}>
+            Login failed.
+          </Alert>
+        )}
+      </div>
     </div>
   );
 };

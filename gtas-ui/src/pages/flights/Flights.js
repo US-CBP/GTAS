@@ -7,7 +7,7 @@ import LabelledInput from "../../components/labelledInput/LabelledInput";
 import LabelledSelectInput from "../../components/inputs/LabelledSelectInput/LabelledSelectInput";
 import FilterForm from "../../components/filterForm/FilterForm";
 import { store } from "../../appContext";
-import { hasData } from "../../utils/text";
+import { hasData } from "../../utils/utils";
 import "react-datepicker/dist/react-datepicker.css";
 import "./Flights.css";
 import { Container, Row, Col } from "react-bootstrap";

@@ -1,5 +1,5 @@
 import React from "react";
-import "./Main.scss";
+import "./Main.css";
 
 const Main = props => {
   const style = props.style || "main";

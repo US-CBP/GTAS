@@ -1,11 +1,25 @@
-import React, { useState, useRef } from "react";
+import React, { useContext, useState, useRef } from "react";
 import { Link } from "@reach/router";
 import { Nav, Navbar, NavDropdown, Form, FormControl, Button } from "react-bootstrap";
-import "./Header.scss";
+import { navigate } from "@reach/router";
+import { UserContext } from "../../context/user/UserContext";
+import RoleAuthenticator from "../../context/roleAuthenticator/RoleAuthenticator";
+import { ROLE } from "../../utils/constants";
 
 const Header = () => {
-  let user = JSON.parse(localStorage.getItem("user"));
-  const loggedinUserName = user ? user.lastName + ", " + user.firstName : "User Name";
+  const { getUserState, userAction } = useContext(UserContext);
+
+  const user = getUserState();
+
+  const logout = () => {
+    userAction({ type: "logoff" });
+
+    navigate("/login");
+  };
+
+  if (user === undefined) logout();
+
+  const userFullName = user?.fullName || "";
 
   const headerTabs = {
     DASHBOARD: "dashboard",
@@ -92,7 +106,7 @@ const Header = () => {
             className={`${getActiveClass(headerTabs.ADMIN)}`}
             onClick={() => clickTab(headerTabs.ADMIN)}
           >
-            Admin{" "}
+            Admin
           </Nav.Link>
         </Nav>
         <Nav className="navbar-search">
@@ -102,12 +116,12 @@ const Header = () => {
           </Form>
         </Nav>
         <Nav variant="tabs" className="ml-auto">
-          <NavDropdown title={loggedinUserName} id="basic-nav-dropdown" className="right">
+          <NavDropdown title={userFullName} id="basic-nav-dropdown" className="right">
             <NavDropdown.Item as={Link} to="#" onClick={() => clickTab("")}>
               Change Password
             </NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item as={Link} to="#" onClick={() => clickTab("")}>
+            <NavDropdown.Item as={Link} to="#" onClick={logout}>
               Logout
             </NavDropdown.Item>
           </NavDropdown>

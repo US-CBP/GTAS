@@ -1,4 +1,4 @@
-import { asArray } from "../../utils/text";
+import { asArray } from "../../utils/utils";
 import { useTranslation } from "react-i18next";
 import "./Xl8.css";
 

@@ -5,7 +5,7 @@ import TextInput from "../inputs/text/Text";
 import TextareaInput from "../inputs/textarea/Textarea";
 import FileInput from "../inputs/file/File";
 import SelectInput from "../inputs/select/Select";
-import { hasData } from "../../utils/text";
+import { hasData } from "../../utils/utils";
 import LabelledInputDisplayWrapper from "../inputs/LabelledInputDecorator";
 
 const textTypes = ["text", "number", "password", "email", "search", "tel"];
