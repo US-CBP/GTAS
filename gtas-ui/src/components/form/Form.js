@@ -6,7 +6,7 @@ import Title from "../title/Title";
 import { Button, Form as RBForm, ButtonToolbar } from "react-bootstrap";
 import { navigate } from "@reach/router";
 
-// import './Form.css';
+import "./Form.css";
 
 /**
  * **Generic form that can add a new record or fetch and edit an existing one.**
@@ -181,7 +181,7 @@ class Form extends React.Component {
             )}
             {showSubmit && (
               <Button
-                className={`button block info fullwidth gradient-button ${disabled}`}
+                className={`m-2 button block info fullwidth gradient-button ${disabled}`}
                 type="submit"
               >
                 {this.props.submitText || "Submit"}
