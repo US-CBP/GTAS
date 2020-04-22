@@ -10,7 +10,6 @@ $navbar-text-color: #fff;
   padding: 0.25rem 1rem !important;
   background-color: $gtas-primary-color;
   border-bottom: 3px solid #1972ad;
-  height: 60px;
 }
 .header-navbar-brand {
   min-width: 200px;
@@ -69,6 +68,22 @@ $navbar-text-color: #fff;
   //screen we should display it.
   //Once we decide, we can display it.
   display: none !important;
+}
+@include media-breakpoint-up(md) {
+  .navbar-expand-md .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto;
+    align-self: flex-end;
+  }
+
+  .right {
+    position: absolute;
+    right: 30px;
+  }
+
+  .header-navbar {
+    height: 60px;
+  }
 }
 
 //media query for small devices and down(bootstrap's way)

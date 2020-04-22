@@ -5,6 +5,7 @@ import { navigate } from "@reach/router";
 import { UserContext } from "../../context/user/UserContext";
 import RoleAuthenticator from "../../context/roleAuthenticator/RoleAuthenticator";
 import { ROLE } from "../../utils/constants";
+import "./Header.scss";
 
 const Header = () => {
   const { getUserState, userAction } = useContext(UserContext);

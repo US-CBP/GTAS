@@ -47,7 +47,7 @@ const Login = () => {
     };
 
     ctx.userAction({ user: newuser, type: "login" });
-    navigate("/gtas/dashboard");
+    navigate("/gtas/flights");
     // }
 
     setAlertVis(true);
@@ -56,9 +56,10 @@ const Login = () => {
   return (
     <div className="login-page-container">
       <Card className="transparent-white-card text-center mx-auto">
-        <div className="login-logo"></div>
-        <div className="login-brand">GTAS</div>
-        <Card.Body>
+        <Card.Body className="card-body-login">
+          <div className="login-logo"></div>
+          <div className="login-brand">GTAS</div>
+          <br />
           <Form
             title=""
             submitText="LOG IN"

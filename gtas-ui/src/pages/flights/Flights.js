@@ -12,6 +12,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./Flights.css";
 import { Container, Row, Col } from "react-bootstrap";
 import LabelledDateTimePickerStartEnd from "../../components/inputs/LabelledDateTimePickerStartEnd/LabelledDateTimePickerStartEnd";
+import Main from "../../components/main/Main";
+import SideNav from "../../components/sidenav/SideNav";
+import { components } from "react-select";
 
 const Flights = props => {
   const cb = () => {};
@@ -81,77 +84,72 @@ const Flights = props => {
     { value: "A", label: "All" }
   ];
   return (
-    <Container fluid>
-      <Row flex>
-        <Col lg="3" md="3" xs="12">
-          <div className="filter-side-nav">
-            <FilterForm
-              service={flights.get}
-              title="Filter"
-              callback={setDataWrapper}
-              paramAdapter={parameterAdapter}
-            >
-              <hr />
-              <LabelledSelectInput
-                name="originAirports"
-                labelText="Origin Airports"
-                datafield="originAirports"
-                ReturnStringArray
-                isMulti
-                options={options}
-              />
-              <LabelledSelectInput
-                datafield
-                labelText="Destination Airports"
-                inputType="text"
-                name="destinationAirports"
-                ReturnStringArray
-                isMulti
-                options={options}
-              />
-              <LabelledInput
-                datafield="flightNumber"
-                labelText="Flight Number"
-                inputType="number"
-                name="flightId"
-                callback={cb}
-                alt="nothing"
-              />
-              <LabelledSelectInput
-                datafield
-                defaultValue={{ value: "A", label: "All" }}
-                labelText="Direction"
-                name="direction"
-                ReturnString
-                options={directions}
-              />
-              <LabelledDateTimePickerStartEnd
-                datafield={["etaStart", "etaEnd"]}
-                name={["etaStart", "etaEnd"]}
-                alt="Start/End Datepicker"
-                inputType="dateTime"
-                dateFormat="yyyy-MM-dd h:mm aa"
-                callback={cb}
-                showTimeSelect
-                showYearDropdown
-                inputVal={{ etaStart: startDate, etaEnd: endDate }}
-                startDate={startDate}
-                endDate={endDate}
-                endMut={setEndData}
-                startMut={setStartData}
-              />
-            </FilterForm>
-          </div>
+    <>
+      <SideNav>
+        <Col>
+          <FilterForm
+            service={flights.get}
+            title="Filter"
+            callback={setDataWrapper}
+            paramAdapter={parameterAdapter}
+          >
+            <hr />
+            <LabelledSelectInput
+              name="originAirports"
+              labelText="Origin Airports"
+              datafield="originAirports"
+              ReturnStringArray
+              isMulti
+              options={options}
+            />
+            <LabelledSelectInput
+              datafield
+              labelText="Destination Airports"
+              inputType="text"
+              name="destinationAirports"
+              ReturnStringArray
+              isMulti
+              options={options}
+            />
+            <LabelledInput
+              datafield="flightNumber"
+              labelText="Flight Number"
+              inputType="number"
+              name="flightId"
+              callback={cb}
+              alt="nothing"
+            />
+            <LabelledSelectInput
+              datafield
+              defaultValue={{ value: "A", label: "All" }}
+              labelText="Direction"
+              name="direction"
+              ReturnString
+              options={directions}
+            />
+            <LabelledDateTimePickerStartEnd
+              datafield={["etaStart", "etaEnd"]}
+              name={["etaStart", "etaEnd"]}
+              alt="Start/End Datepicker"
+              inputType="dateTime"
+              dateFormat="yyyy-MM-dd h:mm aa"
+              callback={cb}
+              showTimeSelect
+              showYearDropdown
+              inputVal={{ etaStart: startDate, etaEnd: endDate }}
+              startDate={startDate}
+              endDate={endDate}
+              endMut={setEndData}
+              startMut={setStartData}
+            />
+          </FilterForm>
         </Col>
-
-        <Col lg="9" md="9" xs="12">
-          <div className="flight-body-box">
-            <Title title="Flights" uri={props.uri} />
-            <Table data={data} key={data} id="Flights" header={Headers} callback={cb} />
-          </div>
-        </Col>
-      </Row>
-    </Container>
+      </SideNav>
+      <Main>
+        <Title title="Flights" uri={props.uri} />
+        <Table data={data} key={data} id="Flights" header={Headers} callback={cb} />
+      </Main>
+    </>
   );
 };
 

@@ -27,6 +27,16 @@
   border-width: 0px !important;
   color: white;
 }
+.card-body-login {
+  align-self: auto !important;
+  border-radius: 5px;
+  background-image: linear-gradient(
+    rgba(223, 231, 247, 0.14) 0%,
+    rgba(0, 74, 147, 0.83) 90%
+  );
+  box-shadow: 3px 3px 10px 0px #2e2e2ed4;
+  margin-bottom: 0px !important;
+}
 
 .login-labeled-input {
   width: 60%;
