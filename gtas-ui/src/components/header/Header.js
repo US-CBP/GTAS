@@ -1,7 +1,7 @@
 import React, { useContext, useState, useRef } from "react";
 import { Link } from "@reach/router";
 import { Nav, Navbar, NavDropdown, Form, FormControl, Button } from "react-bootstrap";
-import { navigate } from "@reach/router";
+import { navigate, useLocation } from "@reach/router";
 import { UserContext } from "../../context/user/UserContext";
 import RoleAuthenticator from "../../context/roleAuthenticator/RoleAuthenticator";
 import { ROLE } from "../../utils/constants";
@@ -11,6 +11,7 @@ const Header = () => {
   const { getUserState, userAction } = useContext(UserContext);
 
   const user = getUserState();
+  const currentPath = useLocation();
 
   const logout = () => {
     userAction({ type: "logoff" });
@@ -23,31 +24,29 @@ const Header = () => {
   const userFullName = user?.fullName || "";
 
   const headerTabs = {
-    DASHBOARD: "dashboard",
-    FLIGHT: "flight",
-    VETTING: "vetting",
-    TOOLS: "tools",
-    ADMIN: "admin"
+    DASHBOARD: "/gtas/dashboard",
+    FLIGHT: "/gtas/flights",
+    VETTING: "/gtas/vetting",
+    TOOLS: "/gtas/tools",
+    ADMIN: "/gtas/admin"
   };
 
-  const [activeTab, setActiveTab] = useState(headerTabs.FLIGHT);
   const toggleRef = useRef();
 
   const clickTab = tabName => {
     if (toggleRef.current.clientHeight > 0) {
       toggleRef.current.click();
     }
-    setActiveTab(tabName);
   };
 
   const getActiveClass = tabName => {
-    return activeTab === tabName ? "active-tab" : "";
+    return currentPath.pathname === tabName ? "active-tab" : "";
   };
 
   return (
     <Navbar sticky="top" expand="md" className="header-navbar" variant="light">
       <Navbar.Brand className="header-navbar-brand">
-        <Link to="/gtas" onClick={() => setActiveTab(headerTabs.DASHBOARD)}>
+        <Link to="dashboard" onClick={() => clickTab(headerTabs.DASHBOARD)}>
           GTAS
         </Link>
       </Navbar.Brand>
