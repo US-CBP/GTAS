@@ -11,6 +11,8 @@ import LabelledDateTimePickerStartEnd from "../../components/inputs/LabelledDate
 import CheckboxGroup from "../../components/inputs/checkboxGroup/CheckboxGroup";
 import "./Vetting.css";
 import { useFetchHitCategories } from "../../services/dataInterface/HitCategoryService";
+import SideNav from "../../components/sidenav/SideNav";
+import Main from "../../components/main/Main";
 
 const Vetting = props => {
   const onTableChange = () => {};
@@ -155,10 +157,9 @@ const Vetting = props => {
     renderedFilter = <div>Loading Filter!</div>;
   } else {
     renderedFilter = (
-      <Container fluid>
-        <Title title="Priority Vetting" uri={props.uri} />
-        <Row>
-          <Col lg="2" md="3" sm="3" className="box2">
+      <>
+        <SideNav>
+          <Col>
             <FilterForm
               service={cases.get}
               title="Filter"
@@ -221,7 +222,10 @@ const Vetting = props => {
               />
             </FilterForm>
           </Col>
-          <Col lg="10" md="9" sm="9" className="flight-body">
+        </SideNav>
+        <Main>
+          <Col>
+            <Title title="Priority Vetting" uri={props.uri} />
             <Table
               data={data}
               id="FlightDataTable"
@@ -235,8 +239,8 @@ const Vetting = props => {
               key={data}
             />
           </Col>
-        </Row>
-      </Container>
+        </Main>
+      </>
     );
   }
   return renderedFilter;
