@@ -254,6 +254,13 @@ var app;
                     authenticate: false
 
                 })
+                .state('reset', {
+                    url: '/reset',
+                    controller: 'ResetController',
+                    templateUrl: 'reset.html',
+                    authenticate: false
+
+                })
                 .state('dash', { // temporary mapping to show sample dashboard data
                     url: '/dash',
                     roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
@@ -859,12 +866,15 @@ var app;
         })
         .constant('APP_CONSTANTS', {
             LOGIN_PAGE: 'login.html',
+            RESET_PAGE: 'reset.html',
             HOME_PAGE: 'main.html',
             MAIN_PAGE: 'main.html#/'+ 'flights',
             ONE_DAY_LOOKOUT: 'main.html#/onedaylookout',
             CURRENT_USER: 'CurrentUser',
             LOCALE_COOKIE_KEY: 'myLocaleCookie',  // ngx
-            LOGIN_ERROR_MSG: ' Invalid User Name or Password. Please Try Again '
+            LOGIN_ERROR_MSG: ' Invalid User Name or Password. Please Try Again ',
+            LOGIN_ERROR_MAX_ATTEMPTS: 'Too many failed attempts to log in, please check your email'
+
         })
         .run(initialize)
         .factory('sessionFactory', function () {

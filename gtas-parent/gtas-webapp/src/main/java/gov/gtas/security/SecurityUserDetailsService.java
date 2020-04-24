@@ -44,10 +44,13 @@ public class SecurityUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException(message);
 		}
 
+		Integer loginAttempts = userService.getUserLoginAttempts(user.getUserId());
+		boolean accountNotLocked = loginAttempts == null || loginAttempts <= 5;
+
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		user.getRoles().forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRoleDescription())));
 		logger.info("Found user in database: " + username);
 
-		return new org.springframework.security.core.userdetails.User(username, user.getPassword(), authorities);
+		return new org.springframework.security.core.userdetails.User(username, user.getPassword(), true, true, true, accountNotLocked, authorities);
 	}
 }
