@@ -5,29 +5,21 @@
  */
 package gov.gtas.services.matcher.quickmatch;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import gov.gtas.services.matcher.quickmatch.QuickMatcherConfig.AccuracyMode;
+import gov.gtas.util.DateCalendarUtils;
 import org.apache.commons.codec.language.DoubleMetaphone;
+import org.apache.commons.codec.language.Nysiis;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
-import gov.gtas.services.matcher.quickmatch.QuickMatcherConfig.AccuracyMode;
-import gov.gtas.util.DateCalendarUtils;
+import java.io.IOException;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /*
  *  Do not make this a bean without taking multithreading into account.
@@ -70,6 +62,12 @@ public class MatchingContext {
 	 * queries where Balanced mode may struggle. On other queries, though, it simple
 	 * returns hits that Balanced mode already found.
 	 *
+	 * LowDataOptimized: Higher recall and precision than other modes when both
+	 * (a) the watchlist contains only first name, last name, and DOB, and
+	 * (b) the DOBs contain accurate years but a majority of dummy birtdays, e.g.
+	 * it is known that a traveler or watchlist person was born in 1991, but the
+	 * birthday is arbitrarily chosen to a default value like "January 1."
+	 *
 	 * gtasDefault: The default:
 	 *
 	 */
@@ -111,16 +109,21 @@ public class MatchingContext {
 		return dobYearOffset;
 	}
 
+	// For normal operation: get accuracyMode from config
 	public void initialize(final List<HashMap<String, String>> watchListItems) {
+		this.initializeConfig();
+		this.initialize(watchListItems, this.config.getAccuracyMode());
+	}
 
+	// For testing: force an accuracyMode
+	public void initialize(final List<HashMap<String, String>> watchListItems, final String accuracyMode) {
 		initializeConfig();
 
-		this.accuracyMode = this.config.getAccuracyMode();
+		this.accuracyMode = accuracyMode;
 		this.matchClauses = config.getClausesForAccuracyMode(accuracyMode);
 
 		this.derogList = watchListItems;
-		this.derogList = this.renameAttributes(this.derogList);
-
+		this.derogList = this.prepareAttributes(this.derogList);
 		/**
 		 * Split the list into sets where each matchClause applies; Then, for each
 		 * query, we need only apply a clause to derog records where it is valid.
@@ -210,7 +213,7 @@ public class MatchingContext {
 	public MatchingResult match(List<HashMap<String, String>> travelers, Set<String> foundDerogIds) {
 
 		// Rename attributes
-		this.renameAttributes(travelers);
+		this.prepareAttributes(travelers);
 
 		// Dictionary for match responses, so that each traveler has a single
 		// response object that grows as hits are found from different representations
@@ -405,7 +408,7 @@ public class MatchingContext {
 	/**
 	 * 
 	 * @param travelerDate
-	 * @param deragDate
+	 * @param derogDate
 	 * @return
 	 * @throws ParseException
 	 */
@@ -425,7 +428,7 @@ public class MatchingContext {
 	 * Compares the two Dates for equality
 	 * 
 	 * @param travelerDate
-	 * @param deragDate
+	 * @param derogDate
 	 * @return
 	 */
 	private boolean isSameDOBYearMonthDay(String travelerDate, String derogDate) {
@@ -445,16 +448,16 @@ public class MatchingContext {
 	}
 
 	// Attribute renames and cleansing
-	private List<HashMap<String, String>> renameAttributes(List<HashMap<String, String>> parsedRecords)
+	private List<HashMap<String, String>> prepareAttributes(List<HashMap<String, String>> parsedRecords)
 			throws IllegalArgumentException {
 
 		DoubleMetaphone dmeta = new DoubleMetaphone();
+		Nysiis nysiis = new Nysiis(false);
 
 		// If gtasId and derogId are renamed to same thing, only change the appropriate
 		// one.
 		// but leave the original renames list untouched.
 		HashMap<String, String> batchRenames = new HashMap<>(config.getAttributeRenames());
-
 		// Begin per-record renames and pre-processing
 		// Use iterator so we can remove records with critical errors
 		Iterator<HashMap<String, String>> recordIterator = parsedRecords.iterator();
@@ -467,7 +470,8 @@ public class MatchingContext {
 				if (rec.containsKey(renamed)) {
 					String value = rec.remove(renamed);
 					// Method remove returns previous value
-					rec.put(defaultAttribute, value);
+					// All present, null atributes are set to empty string (for later hashing)
+					rec.put(defaultAttribute, value == null ? "" : value);
 				}
 			}
 
@@ -483,6 +487,15 @@ public class MatchingContext {
 			for (String attr : rec.keySet()) {
 				if (rec.get(attr) != null)
 					rec.put(attr, rec.get(attr).replaceAll(config.getDerogFilterOutRegex(), ""));
+			}
+
+			// Compute dob_year as string for exact matching
+			// By now, no attribue should be null
+			if (rec.containsKey("DOB_Date") && !rec.get("DOB_Date").isEmpty()) {
+				String[] splitDob = rec.get("DOB_Date").split("-");
+				if (splitDob.length == 3) { // Expect YYYY-MM-DD
+					rec.put("dob_year", splitDob[0]);
+				}
 			}
 
 			// // Gender
@@ -527,6 +540,7 @@ public class MatchingContext {
 			rec.put("full_name", full_name);
 			rec.put("metaphones", metaphones);
 			rec.put("partial_metaphones", partial_name_metaphones);
+			rec.put("nysiis", nysiis.encode(rec.get("full_name")));
 		}
 		return parsedRecords;
 	}

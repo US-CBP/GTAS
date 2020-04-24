@@ -114,8 +114,8 @@ public class GTASLoaderImplTest {
 
 		Document doc = new Document();
 		Document doc2 = new Document();
-		doc.setPaxId(1L);
-		doc2.setPaxId(1L);
+		doc.setPassengerId(1L);
+		doc2.setPassengerId(1L);
 		doc.setDocumentNumber("1234");
 		doc2.setDocumentNumber("1234");
 

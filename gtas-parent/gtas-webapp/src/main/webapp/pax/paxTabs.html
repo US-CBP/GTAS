@@ -335,9 +335,9 @@
                                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                                 <thead>
                                                 <tr>
+                                                    <th>{{'pass.lastname' | translate}}</th>
                                                     <th>{{'pass.firstname' | translate}}</th>
                                                     <th>{{'pass.middlename' | translate}}</th>
-                                                    <th>{{'pass.lastname' | translate}}</th>
                                                     <th>{{'pass.type' | translate}}</th>
                                                     <th>{{'pass.residence' | translate}}</th>
                                                     <th>{{'flight.destinationairport' | translate}}</th>
@@ -346,9 +346,9 @@
                                                 </thead>
                                                 <tbody>
                                                 <tr ng-repeat="flightpax in passenger.apisMessageVo.flightpaxs">
+                                                    <td><a class="primary-link" ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="{{'msg.showpassengerdetails' | translate}}">{{flightpax.lastName}}</a></td>
                                                     <td>{{flightpax.firstName}}</td>
                                                     <td>{{flightpax.middleName}}</td>
-                                                    <td><a class="primary-link" ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="{{'msg.showpassengerdetails' | translate}}">{{flightpax.lastName}}</a></td>
                                                     <td>
                                 <span ng-mouseleave="resetTooltip()">{{ flightpax.passengerType }}
                           <md-tooltip class="multi-tooltip" md-direction="left">
@@ -424,7 +424,8 @@
                                                 <tr ng-repeat="leg in passenger.pnrVo.flightLegs" ng-click="highlightClass('TVL'+leg.originAirport)">
                                                     <td style="align-items: center;">{{leg.legNumber }}</td>
                                                     <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;">
-                                                        <a class="primary-link" title="{{'msg.showflightdetails' | translate}}" ng-class="{'disabled': disableLinks}" href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
+                                                        <a class="primary-link" title="{{'msg.showflightdetails' | translate}}" ng-class="{'disabled': disableLinks}"
+                                                           href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta | date:'MM/dd/yyyy HH:mm'}}/{{leg.etd | date:'MM/dd/yyyy HH:mm'}}">{{leg.flightNumber | nospace }}</a></td>
                                                     <td ng-if="leg.bookingDetailId" style="align-items: left; width: 10%;">{{leg.flightNumber | nospace }}</td>
                                                     <td>
                                       <span ng-mouseleave="resetTooltip()">{{leg.originAirport }}
@@ -435,8 +436,8 @@
                                       </span>
                                                     </td>
                                                     <!--<td>{{leg.destinationAirport }}</td>-->
-                                                    <td>{{leg.etd }}</td>
-                                                    <td>{{leg.eta }}</td>
+                                                    <td>{{leg.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                                                    <td>{{leg.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -451,18 +452,18 @@
                                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                                 <thead>
                                                 <tr>
+                                                    <th>{{'pass.lastname' | translate}}</th>
                                                     <th>{{'pass.firstname' | translate}}</th>
                                                     <th>{{'pass.middlename' | translate}}</th>
-                                                    <th>{{'pass.lastname' | translate}}</th>
                                                     <th>{{'pass.gender' | translate}}</th>
                                                     <th>{{'pass.age' | translate}}</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 <tr ng-repeat="pass in passenger.pnrVo.passengers" ng-click="highlightClass('SSR'+pass.firstName)">
+                                                    <td><a title="{{'msg.showpassengerdetails' | translate}}" ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
                                                     <td>{{ pass.firstName }}</td>
                                                     <td>{{ pass.middleName }}</td>
-                                                    <td><a title="{{'msg.showpassengerdetails' | translate}}" ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
                                                     <td>
                                       <span ng-mouseleave="resetTooltip()">{{ pass.gender }}
                                         <md-tooltip class="multi-tooltip" md-direction="left">
@@ -487,8 +488,8 @@
                                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                                 <thead>
                                                 <tr>
-                                                    <th>{{'pass.firstname' | translate}}</th>
                                                     <th>{{'pass.lastname' | translate}}</th>
+                                                    <th>{{'pass.firstname' | translate}}</th>
                                                     <th>{{'doc.type' | translate}}</th>
                                                     <th>{{'doc.iss.country' | translate}}</th>
                                                     <th>{{'doc.number' | translate}}</th>
@@ -497,8 +498,8 @@
                                                 </thead>
                                                 <tbody>
                                                 <tr ng-repeat="doc in passenger.pnrVo.documents" ng-click="highlightClass('DOCS'+doc.documentNumber)">
-                                                    <td>{{doc.firstName}}</td>
                                                     <td>{{doc.lastName}}</td>
+                                                    <td>{{doc.firstName}}</td>
                                                     <td><span ng-mouseleave="resetTooltip()">{{doc.documentType}}
                                         <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(doc.documentType,"dictionary")}}</div></md-tooltip>
                                       </span>
@@ -715,7 +716,7 @@
                                 <div class="cbp-card-container full-width">
                                     <div class="cbp-card cbp-card-shadow">
                                         <h4 class="h-label no-margin-top">
-                                            {{'bag.totalpnrbaggage' | translate}} ({{passenger.pnrVo.totalbagCount || 0}})&nbsp;&nbsp;&nbsp;
+                                            {{'bag.totalpnrbaggage' | translate}} ({{passenger.pnrVo.bagCount || 0}})&nbsp;&nbsp;&nbsp;
                                             <span class="right-header">{{'bag.baggageweight' | translate}} ({{passenger.pnrVo.baggageWeight}} Kg)</span>
                                         </h4>
                                         <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
@@ -743,7 +744,7 @@
                                                 <tr ng-repeat="bag in orderedBags" ng-if="bag.id == leg.id" ng-click="highlightClass('TBD'+bag.passFirstName+bag.passLastName)"
                                                     style="white-space: normal">
                                                     <td></td>
-                                                    <td>{{bag.passFirstName + ' ' + bag.passLastName}}</td>
+                                                    <td>{{bag.passLastName + ', ' + bag.passFirstName}}</td>
                                                     <td>{{bag.bag_count}}</td>
                                                     <td>{{bag.bag_weight}}</td>
                                                     <td>{{bag.destination}}</td>

@@ -34,6 +34,7 @@ import org.kie.api.event.rule.DefaultAgendaEventListener;
 import org.kie.api.event.rule.DefaultRuleRuntimeEventListener;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.internal.conf.SequentialOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,6 +111,7 @@ public class RuleUtils {
 		final GZIPOutputStream gzipOutStream = new GZIPOutputStream(bos);
 		final ObjectOutputStream out = new ObjectOutputStream(gzipOutStream);
 		KieBaseWrapper kieBaseWrapper = new KieBaseWrapper(kieBase);
+
 		out.writeObject(kieBaseWrapper);
 		out.close();
 		return bos.toByteArray();
@@ -209,6 +211,9 @@ public class RuleUtils {
 		// CEP - get the KIE related configuration container and set the
 		// EventProcessing (from default cloud) to Stream
 		KieBaseConfiguration config = ks.newKieBaseConfiguration();
+		// config.setOption(SequentialAgendaOption.DYNAMIC);
+		config.setOption(SequentialOption.YES);
+		config.setProperty("drools.sequential", "true");// Set Stream
 		config.setOption(EventProcessingOption.STREAM);
 		return kieContainer.newKieBase(config);
 	}

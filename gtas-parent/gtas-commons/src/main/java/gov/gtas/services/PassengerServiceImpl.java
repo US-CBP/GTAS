@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,11 +61,13 @@ public class PassengerServiceImpl implements PassengerService {
 	PassengerRepository passengerRepository;
 
 	@Autowired
-	FlightPaxRepository flightPaxRepository;
-
-	@Autowired
 	AppConfigurationService appConfigurationService;
 
+	@Value("${tamr.enabled}")
+	boolean tamrEnabled;
+	@Value("${tamr.resolve_passenger_history}")
+	boolean tamrResolvePassengerHistory;
+	
 	@Override
 	@Transactional
 	public Passenger create(Passenger passenger) {
@@ -114,15 +117,15 @@ public class PassengerServiceImpl implements PassengerService {
 			}
 
 			// grab flight info
-			Flight flightPaxOn = passenger.getFlight();
-			vo.setFlightId(flightPaxOn.getId().toString());
-			vo.setFlightNumber(flightPaxOn.getFlightNumber());
-			vo.setFullFlightNumber(flightPaxOn.getFullFlightNumber());
-			vo.setCarrier(flightPaxOn.getCarrier());
-			vo.setFlightOrigin(flightPaxOn.getOrigin());
-			vo.setFlightDestination(flightPaxOn.getDestination());
-			vo.setEtd(flightPaxOn.getMutableFlightDetails().getEtd());
-			vo.setEta(flightPaxOn.getMutableFlightDetails().getEta());
+			Flight passengerFlight = passenger.getFlight();
+			vo.setFlightId(passengerFlight.getId().toString());
+			vo.setFlightNumber(passengerFlight.getFlightNumber());
+			vo.setFullFlightNumber(passengerFlight.getFullFlightNumber());
+			vo.setCarrier(passengerFlight.getCarrier());
+			vo.setFlightOrigin(passengerFlight.getOrigin());
+			vo.setFlightDestination(passengerFlight.getDestination());
+			vo.setEtd(passengerFlight.getMutableFlightDetails().getEtd());
+			vo.setEta(passengerFlight.getMutableFlightDetails().getEta());
 			rv.add(vo);
 			count++;
 		}
@@ -189,14 +192,14 @@ public class PassengerServiceImpl implements PassengerService {
 
 	@Override
 	@Transactional
-	public Passenger findByIdWithFlightPaxAndDocuments(Long paxId) {
-		return passengerRepository.findByIdWithFlightPaxAndDocuments(paxId);
+	public Passenger findByIdWithFlightAndDocuments(Long paxId) {
+		return passengerRepository.findByIdWithFlightAndDocuments(paxId);
 	}
 	
 	@Override
 	@Transactional
-	public Passenger findByIdWithFlightPaxAndDocumentsAndHitDetails(Long paxId) {
-		return passengerRepository.findByIdWithFlightPaxAndDocumentsAndHitDetails(paxId);
+	public Passenger findByIdWithFlightAndDocumentsAndHitDetails(Long paxId) {
+		return passengerRepository.findByIdWithFlightAndDocumentsAndHitDetails(paxId);
 	}
 
 	@Override
@@ -214,12 +217,28 @@ public class PassengerServiceImpl implements PassengerService {
 	@Override
 	@Transactional
 	public List<Passenger> getBookingDetailHistoryByPaxID(Long pId) {
-		return bookingDetailRepository.getBookingDetailsByPassengerIdTag(pId);
+	    List<Passenger> tamrIdMatches;
+	    if (tamrEnabled && tamrResolvePassengerHistory) {
+        	    tamrIdMatches = 
+        	            bookingDetailRepository.getBookingDetailsByTamrId(pId);
+	    } else {
+	        tamrIdMatches = Collections.emptyList();
+	    }
+
+	    if (tamrIdMatches.size() > 0) {
+	        return tamrIdMatches;
+	    } else {
+	        // If there are no tamrId matches, this means the tamrId must be
+	        // NULL or Tamr history resolving is disabled. In that case, just
+	        // do normal matching.
+	        return bookingDetailRepository
+	                .getBookingDetailsByPassengerIdTag(pId);
+	    }
 	}
 
 	@Override
-	public Set<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList) {
-		return flightPaxRepository.findFlightFromPassIdList(passengerIdList);
+	public Set<Passenger> findPassengerFromPassengerIds(List<Long> passengerIdList) {
+		return new HashSet<>(passengerRepository.getPassengersById(passengerIdList));
 	}
 
 	@Override
@@ -243,7 +262,7 @@ public class PassengerServiceImpl implements PassengerService {
 		Set<Document> docSet = documentRepository.getAllByPaxId(passengerIds);
 		Map<Long, Set<Document>> mappedValues = new HashMap<>();
 		for (Document document : docSet) {
-			Long paxId = document.getPaxId();
+			Long paxId = document.getPassengerId();
 			if (mappedValues.containsKey(paxId)) {
 				mappedValues.get(paxId).add(document);
 			} else {

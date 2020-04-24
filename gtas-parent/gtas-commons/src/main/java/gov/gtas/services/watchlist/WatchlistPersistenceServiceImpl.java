@@ -282,4 +282,10 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 		return this.watchlistItemRepository.getItemsByWatchlistName(watchlistName);
 	}
 
+	@Override
+	public void deleteWatchlistItems(List<Long> watchlistItemIds) {
+		Iterable<WatchlistItem> watchlistItemList = watchlistItemRepository.findAllById(watchlistItemIds);
+		this.watchlistItemRepository.deleteAll(watchlistItemList);
+	}
+
 }

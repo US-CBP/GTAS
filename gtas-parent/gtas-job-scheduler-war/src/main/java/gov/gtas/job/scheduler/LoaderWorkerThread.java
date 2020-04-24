@@ -14,7 +14,9 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
@@ -25,11 +27,14 @@ public class LoaderWorkerThread implements Runnable {
 	@Autowired
 	private LoaderScheduler loader;
 
+	@Value("${loader.worker.thread.timeout}")
+	private Integer timeout;
 	private String text;
 	private String fileName;
 	private String[] primeFlightKeyArray;
 	private String primeFlightKey;
 	private Semaphore semaphore;
+	int lockExceptionCount = 0;
 
 	private BlockingQueue<Message<?>> queue;
 	private ConcurrentMap<String, LoaderWorkerThread> map;
@@ -51,7 +56,7 @@ public class LoaderWorkerThread implements Runnable {
 		while (true) {
 			Message<?> msg = null;
 			try {
-				msg = queue.poll(5000, TimeUnit.MILLISECONDS);
+				msg = queue.poll(timeout, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				logger.error("error polling queue", e);
 				Thread.currentThread().interrupt();
@@ -65,6 +70,26 @@ public class LoaderWorkerThread implements Runnable {
 					logger.debug(Thread.currentThread().getName() + " FileName = " + fileName);
 					try {
 						processCommand();
+						lockExceptionCount = 0; // reset tries on a per file bases.
+					} catch (PessimisticLockingFailureException plfe) {
+						/*
+						 * The loader is in a long transaction. Occasionally there is contention for the
+						 * locks. Breaking apart the transactions is not feasible at this time due to
+						 * performance issues. As this is a rare issue we catch the
+						 * PessimisticLockingFailureException and just retry the message.
+						 */
+						lockExceptionCount++;
+						if (lockExceptionCount > 3) { // Arbitrarily pick 3 attempts (1.5 minutes or so) of no progress
+														// before killing message.
+							logger.error(
+									"Unable to process message after 3 lock exceptions! There is probably an issue with "
+											+ "the data structure!!! Prime flight: " + primeFlightKey,
+									plfe);
+						} else {
+							logger.warn("PESSIMISTIC LOCK FAIL COUNT  " + lockExceptionCount + " FOR PRIME FLIGHT KEY:"
+									+ primeFlightKey + "PUTTING MESSAGE BACK ON QUEUE!");
+							queue.add(msg);
+						}
 					} catch (Exception e) {
 						logger.error("Catastrophic failure, " + "uncaught exception would cause"
 								+ " thread destruction without queue destruction "
@@ -86,7 +111,7 @@ public class LoaderWorkerThread implements Runnable {
 		}
 	}
 
-	private void processCommand() {
+	private void processCommand() throws Exception {
 		loader.receiveMessage(text, fileName, primeFlightKeyArray);
 	}
 

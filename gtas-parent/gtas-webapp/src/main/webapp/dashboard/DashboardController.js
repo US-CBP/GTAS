@@ -11,7 +11,6 @@
             var stubChartData = [[], []];
             $scope.colors = ['#337ab7', '#5cb85c', '#dfdfdf'];
             $scope.data = [[], []];
-            $scope.dashUrl = "http://localhost:5601/app/kibana#/dashboard/7cfbbdc0-2e13-11e9-81a3-0f5bd8b0a7ac?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-3d%2Fd%2Cmode%3Arelative%2Cto%3Anow%2B3d%2Fd))";
             $scope.datasetOverride = [
                 {
                     label: "APIs",
@@ -26,6 +25,10 @@
                     type: 'line'
                 }
             ];
+
+            configService.kibanaProtocol().then(function(value) {
+                $scope.kibanaProtocol = value.data;
+            });
 
             configService.kibanaUrl().then(function(value) {
                 $scope.dashUrl = value.data;

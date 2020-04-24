@@ -9,6 +9,7 @@ import gov.gtas.constants.Constants;
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.querybuilder.exceptions.InvalidQueryException;
 import gov.gtas.querybuilder.exceptions.QueryAlreadyExistsException;
 import gov.gtas.querybuilder.exceptions.QueryBuilderException;
@@ -19,7 +20,9 @@ import gov.gtas.querybuilder.model.IUserQueryResult;
 import gov.gtas.querybuilder.model.QueryRequest;
 import gov.gtas.querybuilder.model.UserQueryRequest;
 import gov.gtas.querybuilder.service.QueryBuilderService;
+import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
+import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.PassengersPageDto;
 
@@ -50,8 +53,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class QueryBuilderController {
 	private static final Logger logger = LoggerFactory.getLogger(QueryBuilderController.class);
 
-	@Autowired
+	final
 	QueryBuilderService queryService;
+
+	final AppConfigurationService appConfigurationService;
+
+	public QueryBuilderController(QueryBuilderService queryService, AppConfigurationService appConfigurationService) {
+		this.queryService = queryService;
+		this.appConfigurationService = appConfigurationService;
+	}
 
 	/**
 	 * This method generates the Entity and Field mappings for the Rule and Query UI
@@ -176,7 +186,9 @@ public class QueryBuilderController {
 	@RequestMapping(value = Constants.APIS_ONLY_FLAG, method = RequestMethod.GET)
 	@ResponseBody
 	public String getApisOnlyFlagAndVersion() {
-		return "FALSE";
+		AppConfiguration appConfigApisFlag = appConfigurationService
+				.findByOption(AppConfigurationRepository.APIS_ONLY_FLAG);
+		return appConfigApisFlag == null ? "FALSE" : appConfigApisFlag.getValue();
 	}
 
 	private Map<String, QueryBuilderMapping> getQueryBuilderMapping() {

@@ -302,9 +302,9 @@
 
         $scope.removeRow = function () {
             var rowIndexToDelete,
-                watchlistItems = [{id: $scope.rowSelected.id, action: 'Delete', terms: null}];
+                watchlistItems = [$scope.rowSelected.id];
             spinnerService.show('html5spinner');
-            watchListService.deleteItems($scope.activeTab, $scope.activeTab, watchlistItems).then(function () {
+            watchListService.deleteItems('watchlistItem', watchlistItems).then(function () {
                 rowIndexToDelete = $scope.watchlistGrid.data.indexOf($scope.rowSelected);
                 $scope.watchlistGrid.data.splice(rowIndexToDelete, 1);
                 $scope.rowSelected = null;
@@ -317,11 +317,11 @@
         $scope.removeRows = function () {
             var selectedRowEntities = $scope.gridApi.selection.getSelectedRows(),
                 constructItem = function (rowEntity) {
-                    return {id: rowEntity.id, action: 'Delete', terms: null};
+                    return rowEntity.id;
                 },
                 watchlistItems = selectedRowEntities.map(constructItem);
             spinnerService.show('html5spinner');
-            watchListService.deleteItems($scope.activeTab, $scope.activeTab, watchlistItems).then(function () {
+            watchListService.deleteItems('watchlistItem', watchlistItems).then(function () {
                 var rowIndexToDelete;
                 selectedRowEntities.reverse();
                 selectedRowEntities.forEach(function (rowEntity) {

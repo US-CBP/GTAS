@@ -13,7 +13,6 @@ sudo mkdir $LOGSTASH_WORKING_DIR
 
 echo $LOGSTASH_WORKING_DIR
 
-chown -R logstash:logstash /config/
 
 ES_INSTALL_LOCATION=/etc/logstash
 
@@ -27,3 +26,9 @@ yes | cp -rf ../../../config/logstash/*.yml $ES_INSTALL_LOCATION/
 yes | cp -rf ../../../config/logstash/linux/*.yml $ES_INSTALL_LOCATION/
 
 wget https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar -P $LOGSTASH_WORKING_DIR
+
+chown -R logstash:logstash /config/
+
+echo 'DATABASE_HOST=localhost' >> /etc/default/logstash
+echo 'LOGSTASH_DIR=' >> /etc/default/logstash
+echo 'ELASTICSEARCH_HOSTS="https://localhost:9200"' >> /etc/default/logstash

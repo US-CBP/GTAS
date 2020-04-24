@@ -5,6 +5,7 @@
  */
 package gov.gtas.rule.builder;
 
+import gov.gtas.bo.FlightPassengerLink;
 import gov.gtas.model.RuleHitDetail;
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.enumtype.EntityEnum;
@@ -20,6 +21,7 @@ import java.text.ParseException;
 import java.util.*;
 
 import static gov.gtas.rule.builder.RuleTemplateConstants.*;
+import static gov.gtas.rule.builder.util.ConditionBuilderUtils.handleMultipleObjectTypeOnSameRule;
 
 /**
  * Generates the "when" part of a DRL rule. procedure: new RuleConditionBuilder(
@@ -32,7 +34,6 @@ public class RuleConditionBuilder {
 	private PnrRuleConditionBuilder pnrRuleConditionBuilder;
 	private SeatConditionBuilder pnrSeatConditionBuilder;
 	private SeatConditionBuilder apisSeatConditionBuilder;
-	private PaymentFormConditionBuilder paymentFormConditionBuilder;
 	private FlightPaxConditionBuilder flightPaxConditionBuilder;
 	private MutableFlightDetailsConditionBuilder mutableFlightDetailsConditionBuilder;
 	private PassengerConditionBuilder passengerConditionBuilder;
@@ -96,8 +97,6 @@ public class RuleConditionBuilder {
 			}
 		}
 		this.pnrRuleConditionBuilder = new PnrRuleConditionBuilder(queryTermList);
-		this.paymentFormConditionBuilder = new PaymentFormConditionBuilder(
-				RuleTemplateConstants.PAYMENT_FORM_VARIABLE_NAME);
 		this.pnrSeatConditionBuilder = new SeatConditionBuilder(RuleTemplateConstants.SEAT_VARIABLE_NAME, false);
 		this.apisSeatConditionBuilder = new SeatConditionBuilder(RuleTemplateConstants.SEAT_VARIABLE_NAME + "2", true);
 		this.flightPaxConditionBuilder = new FlightPaxConditionBuilder(FLIGHT_PAX_VARIABLE_NAME);
@@ -116,10 +115,12 @@ public class RuleConditionBuilder {
 		switch (entityEnum) {
 		case DOCUMENT:
 			ecb = new DocumentConditionBuilder(drlVariableName);
+			ecb.setGroupNumber(groupNumber);
 			documentConditionBuilder.add((DocumentConditionBuilder) ecb);
 			break;
 		case BAG:
 			ecb = new BagConditionBuilder(drlVariableName);
+			ecb.setGroupNumber(groupNumber);
 			bagConditionBuilder.add((BagConditionBuilder) ecb);
 			break;
 		case EMAIL:
@@ -160,27 +161,28 @@ public class RuleConditionBuilder {
 
 		generateLinkConditions();
 
-		// order does matter here. Some variables rely on other variables
-		// being initialized.
-		boolean isPassengerConditionCreated = !passengerConditionBuilder.isEmpty() | !flightConditionBuilder.isEmpty();
+		// Make the case where multiple objects of the same type are reasoned against
+		// e.g. 2 bags, 2 credit cards.
+		handleMultiVariableObjects();
 
-		pnrRuleConditionBuilder.buildConditionsAndApppend(parentStringBuilder);
-		for (BagConditionBuilder bcb : bagConditionBuilder) {
-			parentStringBuilder.append(bcb.build());
-		}
-		parentStringBuilder.append(flightPaxConditionBuilder.build()).append(apisSeatConditionBuilder.build())
-				.append(detailsConditionBuilder.build()).append(tripDetailsConditionBuilder.build());
+		// order MATTERS! Changing order can have a MASSIVE impact on rule performance
+		// as well as cause compile errors.
+		parentStringBuilder.append(flightPaxConditionBuilder.build());
+		parentStringBuilder.append(passengerConditionBuilder.build());
+		parentStringBuilder.append(flightConditionBuilder.build());
+		parentStringBuilder.append(addFlightPassengerLink());
+		parentStringBuilder.append(mutableFlightDetailsConditionBuilder.build());
+		parentStringBuilder.append(detailsConditionBuilder.build());
+		parentStringBuilder.append(tripDetailsConditionBuilder.build());
 		for (DocumentConditionBuilder dcb : documentConditionBuilder) {
 			parentStringBuilder.append(dcb.build());
 		}
-		parentStringBuilder.append(paymentFormConditionBuilder.build());
-		if (isPassengerConditionCreated) {
-			parentStringBuilder.append(passengerConditionBuilder.build()).append(flightConditionBuilder.build())
-					.append(mutableFlightDetailsConditionBuilder.build());
-		}
-		pnrRuleConditionBuilder.addPnrLinkConditions(parentStringBuilder, isPassengerConditionCreated,
-				passengerConditionBuilder);
+		parentStringBuilder.append(apisSeatConditionBuilder.build());
+		pnrRuleConditionBuilder.buildConditionsAndApppend(parentStringBuilder, passengerConditionBuilder);
 
+		for (BagConditionBuilder bcb : bagConditionBuilder) {
+			parentStringBuilder.append(bcb.build());
+		}
 		// order doesn't matter
 		pnrRuleConditionBuilder.reset();
 		tripDetailsConditionBuilder.reset();
@@ -192,9 +194,18 @@ public class RuleConditionBuilder {
 		pnrSeatConditionBuilder.reset();
 		apisSeatConditionBuilder.reset();
 		bagConditionBuilder = new ArrayList<>();
-		paymentFormConditionBuilder.reset();
 		flightConditionBuilder.reset();
 		mutableFlightDetailsConditionBuilder.reset();
+	}
+
+	private void handleMultiVariableObjects() {
+		handleMultipleObjectTypeOnSameRule(documentConditionBuilder);
+		handleMultipleObjectTypeOnSameRule(bagConditionBuilder);
+	}
+
+	protected String addFlightPassengerLink() {
+		return RuleTemplateConstants.FLIGHT_PASSENGER_LINK_VARIABLE_NAME + ":"
+				+ FlightPassengerLink.class.getSimpleName() + "(passengerId == $p.id, flightId == $f.id)\n";
 	}
 
 	/**
@@ -204,34 +215,18 @@ public class RuleConditionBuilder {
 	private void generateLinkConditions() {
 
 		if (pnrRuleConditionBuilder.hasSeats()) {
-			passengerConditionBuilder
-					.addConditionAsString("id == " + pnrRuleConditionBuilder.getSeatVarName() + ".passenger.id");
-			flightConditionBuilder
-					.addConditionAsString("id == " + pnrRuleConditionBuilder.getSeatVarName() + ".flight.id");
 			this.flightCriteriaPresent = true;
 		}
 		if (!apisSeatConditionBuilder.isEmpty()) {
 			apisSeatConditionBuilder.addApisCondition();
-			passengerConditionBuilder
-					.addConditionAsString("id == " + RuleTemplateConstants.SEAT_VARIABLE_NAME + "2.passenger.id");
-			flightConditionBuilder
-					.addConditionAsString("id == " + RuleTemplateConstants.SEAT_VARIABLE_NAME + "2.flight.id");
 			this.flightCriteriaPresent = true;
 		}
 
-		if (!documentConditionBuilder.isEmpty()) {
-			for (DocumentConditionBuilder dcb : documentConditionBuilder) {
-				// add a link condition to the passenger builder.
-				passengerConditionBuilder.addLinkByIdCondition(dcb.getPassengerIdLinkExpression());
-			}
-		}
 		// If there are bag or flightpax conditions add link to passenger builder
 		// Add link to flight condition builder because of flight id existence in each.
 		if (!bagConditionBuilder.isEmpty()) {
 			for (BagConditionBuilder bcb : bagConditionBuilder) {
 				if (!bcb.isEmpty()) {
-					passengerConditionBuilder.addLinkByIdCondition(bcb.getPassengerIdLinkExpression());
-					flightConditionBuilder.addConditionAsString("id == " + bcb.getFlightIdLinkExpression());
 					this.flightCriteriaPresent = true;
 				}
 			}
@@ -243,33 +238,7 @@ public class RuleConditionBuilder {
 					.addConditionAsString("id == " + flightPaxConditionBuilder.getFlightIdLinkExpression());
 			this.flightCriteriaPresent = true;
 		}
-		if (!detailsConditionBuilder.isEmpty()) {
-			passengerConditionBuilder.addLinkByIdCondition(detailsConditionBuilder.getPassengerIdLinkExpression());
-		}
-		if (!tripDetailsConditionBuilder.isEmpty()) {
-			passengerConditionBuilder.addLinkByIdCondition(tripDetailsConditionBuilder.getPassengerIdLinkExpression());
-		}
-		if (!mutableFlightDetailsConditionBuilder.isEmpty()) {
-			flightPaxConditionBuilder.addConditionAsString("id > 0"); // gets all rows
-			passengerConditionBuilder.addLinkByIdCondition(flightPaxConditionBuilder.getPassengerIdLinkExpression());
-			flightConditionBuilder
-					.addConditionAsString("id == " + flightPaxConditionBuilder.getFlightIdLinkExpression());
-			mutableFlightDetailsConditionBuilder.addConditionAsString("flightId == $f.id");
-			this.flightCriteriaPresent = true;
-		}
 
-		// add FlightPax as a join table for flights and passengers where no other
-		// passenger join possibility exists.
-		// This replaces the addition of 'Passenger in f.passengers' clause that now no
-		// longer works due to database changes.
-		if (!flightConditionBuilder.isEmpty() && (bagConditionBuilder.isEmpty()) && (apisSeatConditionBuilder.isEmpty())
-				&& (flightPaxConditionBuilder.isEmpty()) && (!pnrRuleConditionBuilder.hasSeats())) {
-			flightPaxConditionBuilder.addConditionAsString("id > 0"); // gets all rows
-			passengerConditionBuilder.addLinkByIdCondition(flightPaxConditionBuilder.getPassengerIdLinkExpression());
-			flightConditionBuilder
-					.addConditionAsString("id == " + flightPaxConditionBuilder.getFlightIdLinkExpression());
-			this.flightCriteriaPresent = true;
-		}
 	}
 
 	/**
@@ -346,6 +315,7 @@ public class RuleConditionBuilder {
 			case FREQUENT_FLYER:
 			case PHONE:
 			case EMAIL:
+			case FORM_OF_PAYMENT:
 			case TRAVEL_AGENCY:
 			case DWELL_TIME:
 			case ADDRESS:

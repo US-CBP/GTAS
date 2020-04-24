@@ -6,15 +6,9 @@
 package gov.gtas.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -22,7 +16,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Entity
 @Table(name = "payment_form")
 public class PaymentForm implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1166723L;
 
 	public PaymentForm() {
 	}
@@ -36,11 +30,25 @@ public class PaymentForm implements Serializable {
 	@ManyToOne
 	private Pnr pnr;
 
+	public Long getPnrId() {
+		return pnrId;
+	}
+
+	public void setPnrId(Long pnrId) {
+		this.pnrId = pnrId;
+	}
+
+	@Column(name = "pnr_id", columnDefinition = "bigint unsigned", updatable = false, insertable = false)
+	private Long pnrId;
+
 	@Column(name = "payment_type")
 	private String paymentType;
 
 	@Column(name = "payment_amount")
 	private String paymentAmount;
+
+	@Column(name = "payment_whole_dollar", precision = 18, scale = 2)
+	private Integer wholeDollarAmount;
 
 	public Long getId() {
 		return id;
@@ -74,37 +82,40 @@ public class PaymentForm implements Serializable {
 		this.pnr = pnr;
 	}
 
+	public Integer getWholeDollarAmount() {
+		return wholeDollarAmount;
+	}
+
+	public void setWholeDollarAmount(Integer wholeDollarAmount) {
+		this.wholeDollarAmount = wholeDollarAmount;
+	}
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		PaymentForm that = (PaymentForm) o;
+
+		if (pnrId != null ? !pnrId.equals(that.pnrId) : that.pnrId != null)
+			return false;
+		if (paymentType != null ? !paymentType.equals(that.paymentType) : that.paymentType != null)
+			return false;
+		if (paymentAmount != null ? !paymentAmount.equals(that.paymentAmount) : that.paymentAmount != null)
+			return false;
+		return wholeDollarAmount != null ? wholeDollarAmount.equals(that.wholeDollarAmount)
+				: that.wholeDollarAmount == null;
+	}
+
 	@Override
 	public int hashCode() {
-		int hash = 0;
-		hash += (this.getId() != null ? this.getId().hashCode() : 0);
-
-		return hash;
+		int result = pnrId != null ? pnrId.hashCode() : 0;
+		result = 31 * result + (paymentType != null ? paymentType.hashCode() : 0);
+		result = 31 * result + (paymentAmount != null ? paymentAmount.hashCode() : 0);
+		result = 31 * result + (wholeDollarAmount != null ? wholeDollarAmount.hashCode() : 0);
+		return result;
 	}
-
-	@Override
-	public boolean equals(Object object) {
-		if (this == object)
-			return true;
-		if (object == null)
-			return false;
-		if (getClass() != object.getClass())
-			return false;
-
-		PaymentForm other = (PaymentForm) object;
-		// if (this.getId() != other.getId() && (this.getId() == null ||
-		// !this.id.equals(other.id))) {
-		// return false;
-		// }
-		if (this.getPaymentType().equals(other.getPaymentType()) && this.getPnr().equals(other.getPnr())) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-	}
-
 }

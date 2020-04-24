@@ -608,52 +608,6 @@
       }
     ]
   },
-  "HitsSummary": {
-    "label": "HITS",
-    "columns": [
-      {
-        "id": "HitsSummary.isRuleHit",
-        "label": "Has Rule Hit",
-        "type": "boolean",
-        "operators": "EQUALS",
-        "input": "radio",
-        "values": {
-          "1": "Yes",
-          "0": "No"
-        },
-        "colors": {
-          "1": "success",
-          "0": "danger"
-        }
-      },
-      {
-        "id": "HitsSummary.isWatchListHit",
-        "label": "Has Watch List Hit",
-        "type": "boolean",
-        "operators": "EQUALS",
-        "input": "radio",
-        "values": {
-          "1": "Yes",
-          "0": "No"
-        },
-        "colors": {
-          "1": "success",
-          "0": "danger"
-        }
-      },
-      {
-        "id": "HitsSummary.id",
-        "label": "Rules Hit Id",
-        "type": "integer",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN"
-        ]                     
-      }
-    ]
-  },
   "Passenger": {
     "label": "PASSENGER",
     "columns": [
@@ -671,6 +625,36 @@
           "BETWEEN",
           "NOT_BETWEEN"
         ]                   
+      },
+      {
+        "id": "Passenger.passengerTripDetails.coTravelerCount",
+        "label": "APIS Co-Passengers",
+        "type": "integer",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]
+      },
+      {
+        "id": "Passenger.passengerTripDetails.hoursBeforeTakeOff",
+        "label": "Hours Before Take Off",
+        "type": "integer",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]
       },
       {
         "id": "Passenger.passengerDetails.nationality",
@@ -1109,6 +1093,40 @@
 
   	]
   },
+  "PaymentForm": {
+  "label": "FORM OF PAYMENT",
+  "columns": [
+    {
+      "id": "PaymentForm.wholeDollarAmount",
+      "label": "Monetary Amount(No Decimal)",
+      "type": "integer",
+      "operators": [
+        "EQUAL",
+        "NOT_EQUAL",
+        "LESS",
+        "LESS_OR_EQUAL",
+        "GREATER",
+        "GREATER_OR_EQUAL",
+        "BETWEEN",
+        "NOT_BETWEEN"
+      ]
+    },
+    {
+      "id": "PaymentForm.paymentType",
+      "label": "Form of Payment",
+      "type": "string",
+      "operators": [
+        "EQUAL",
+        "NOT_EQUAL",
+        "IN",
+        "NOT_IN"
+      ],
+      "input": "text",
+      "plugin": "selectize",
+      "dataSource": "form_of_payment_types"
+    }
+  ]
+},
   "Pnr": {
     "label": "PNR",
     "columns": [
@@ -1125,7 +1143,7 @@
           "GREATER_OR_EQUAL",
           "BETWEEN",
           "NOT_BETWEEN"
-        ]                       
+        ]
       },
       {
         "id": "Pnr.baggageWeight",
@@ -1221,18 +1239,6 @@
           "NOT_BETWEEN"
         ],
         "plugin": "datepicker"
-      },
-      {
-        "id": "Pnr.paymentForms",
-        "label": "Form of Payment",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL"
-        ],
-        "input": "text",
-        "plugin": "selectize",
-        "dataSource": "form_of_payment_types"
       },
       {
         "id": "Pnr.id",
@@ -1514,200 +1520,6 @@
           "ENDS_WITH",
           "NOT_ENDS_WITH"
         ]                        
-      }
-    ]
-  },
-  "FlightPax": {
-    "label": "FLIGHT-PASSENGER",
-    "columns": [    
-      {
-        "id": "FlightPax.portOfFirstArrival",
-        "label": "First Arrival Port",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "CONTAINS",
-          "NOT_CONTAINS"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "airports"        
-      },
-      {
-        "id": "FlightPax.installationAddress",
-        "label": "Installation Address",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]      
-      },
-      {
-        "id": "FlightPax.embarkation",
-        "label": "Embarkation - Airport",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "airports"       
-      },
-      {
-        "id": "FlightPax.debarkation",
-        "label": "Debarkation - Airport",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "airports"       
-      },
-      {
-        "id": "FlightPax.reservationReferenceNumber",
-        "label": "Reservation Reference Number",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]    
-      },
-      {
-        "id": "FlightPax.embarkationCountry",
-        "label": "Embarkation - Country",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "countries"       
-      },
-      {
-        "id": "FlightPax.debarkationCountry",
-        "label": "Debarkation -  Country",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "countries"       
-      },
-      {
-        "id": "FlightPax.bagWeight",
-        "label": "Bag - Weight (kg)",
-        "type": "double",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "LESS",
-          "LESS_OR_EQUAL",
-          "GREATER",
-          "GREATER_OR_EQUAL",
-          "BETWEEN",
-          "NOT_BETWEEN"
-        ]       
-      },
-      {
-        "id": "FlightPax.bagCount",
-        "label": "Bag - Count",
-        "type": "integer",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "LESS",
-          "LESS_OR_EQUAL",
-          "GREATER",
-          "GREATER_OR_EQUAL",
-          "BETWEEN",
-          "NOT_BETWEEN"
-        ]  
-      },
-      {
-        "id": "FlightPax.averageBagWeight",
-        "label": "Bag - Average Total Weight (kg)",
-        "type": "double",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "LESS",
-          "LESS_OR_EQUAL",
-          "GREATER",
-          "GREATER_OR_EQUAL",
-          "BETWEEN",
-          "NOT_BETWEEN"
-        ]   
-      },
-      {
-        "id": "FlightPax.headOfPool",
-        "label": "Is Head Of Pool",
-        "type": "boolean",
-        "operators": "EQUALS",
-        "input": "radio",
-        "values": {
-          "1": "Yes",
-          "0": "No"
-        }   
       }
     ]
   }

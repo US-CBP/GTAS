@@ -12,7 +12,7 @@ import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
@@ -20,60 +20,94 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gov.gtas.parsers.tamr.model.TamrResponse;
-import gov.gtas.repository.PassengerIDTagRepository;
+import gov.gtas.parsers.tamr.TamrMessageHandlerService;
+import gov.gtas.parsers.tamr.model.TamrMessage;
+import gov.gtas.parsers.tamr.model.TamrMessageType;
 
 @Component
+@ConditionalOnProperty(prefix = "tamr", name = "enabled")
 public class TamrMessageReceiver {
 
 	private final Logger logger = LoggerFactory.getLogger(TamrMessageReceiver.class);
 
-	@Autowired
-	private PassengerIDTagRepository passengerIDTagRepository;
-
-	// Commented out listener, uncomment for tamr integration
-	// @JmsListener(containerFactory = "tamrJmsListenerContainerFactory",
-	// destination = "OutboundQueue")
+    private TamrMessageHandlerService tamrMessageHandler;
+	
+    public TamrMessageReceiver(TamrMessageHandlerService tamrMessageHandler) {
+        this.tamrMessageHandler = tamrMessageHandler;
+    }
+    
+	@JmsListener(containerFactory = "tamrJmsListenerContainerFactory",
+	        destination = "OutboundQueue")
 	public void receive(javax.jms.Message msg) {
-		logger.info("############### TAMR data received .... ################");
+		logger.debug("############### Tamr data received .... ################");
 		TextMessage textMessage = null;
+		String jmsMessageType, messageText;
+		TamrMessageType messageType;
+		
+		if (msg == null) {
+		    logger.warn("Received null JMS message from Tamr");
+		    return;
+		}
+		
+		textMessage = (TextMessage) msg;
+		try {
+		    jmsMessageType = textMessage.getJMSType();
+		    messageText = textMessage.getText();
+		} catch (JMSException e) {
+			logger.error("Error handling Tamr JMS message: {}",
+			        e);
+			return;
+		}
+        logger.debug("Message type: {}", jmsMessageType);
+        if (messageText.length() > 1000)
+            logger.debug("Raw JSON data: {}...", messageText.substring(0, 1000));
+        else
+            logger.debug("Raw JSON data: {}", messageText);
 
-		if (msg != null) {
-			logger.info("javax.jms.Message not null");
-			textMessage = (TextMessage) msg;
-		}
-		if (textMessage != null) {
-			try {
-				TamrResponse res = convert(textMessage.getText());
-				if (res != null && res.getTravelerQuery() != null)
-					res.getTravelerQuery().forEach(p -> {
-						logger.info("Run update -> Tamr: " + p.getTamrId() + ", gtasId: " + p.getGtasId());
-						this.passengerIDTagRepository.updateTamrId(p.getGtasId(), p.getTamrId());
-					});
-			} catch (JMSException e) {
-				logger.error("caught JMSException");
-			}
-		}
+        TamrMessage response = this.parseMessage(messageText);
+        if (response == null) {
+            return;
+        }
+        try {
+            messageType = TamrMessageType.fromString(jmsMessageType);
+            response.setMessageType(messageType);
+        } catch (IllegalArgumentException e) {
+            // If the message type is invalid.
+            logger.warn("Ignoring unknown Tamr JMS message type.", e);
+            return;
+        }
+                
+        if (messageType == TamrMessageType.QUERY) {
+            tamrMessageHandler.handleQueryResponse(response);
+        } else if (messageType == TamrMessageType.DC_REPLACE
+                || messageType == TamrMessageType.TH_UPDATE) {
+            // These responses should be an acknowledgement.
+            tamrMessageHandler.handleAcknowledgeResponse(response);
+        } else if (messageType == TamrMessageType.TH_CLUSTERS
+                || messageType == TamrMessageType.TH_DELTAS) {
+            tamrMessageHandler.handleTamrIdUpdate(response);
+        } else if (messageType == TamrMessageType.ERROR) {
+            tamrMessageHandler.handleErrorResponse(response);
+        }
+            
 	}
 
-	public TamrResponse convert(String response) {
-		ObjectMapper mapper = new ObjectMapper();
+	private TamrMessage parseMessage(String messageJson) {
+        ObjectMapper mapper = new ObjectMapper();
 
-		TamrResponse result = null;
-
-		try {
-			result = mapper.readValue(response, TamrResponse.class);
-		} catch (JsonParseException e) {
-			logger.info(e.getMessage());
-			return null;
-		} catch (JsonMappingException e) {
-			logger.info(e.getMessage());
-			return null;
-		} catch (IOException e) {
-			logger.info(e.getMessage());
-			return null;
-		}
-
-		return result;
+        try {
+            return mapper.readValue(messageJson, TamrMessage.class);
+        } catch (JsonParseException e) {
+            logger.error("Error parsing JSON from Tamr: {}",
+                    e.getMessage());
+            return null;
+        } catch (JsonMappingException e) {
+            logger.error("Error deserializing JSON from Tamr: {}",
+                    e.getMessage());
+            return null;
+        } catch (IOException e) {
+            logger.error(e.toString());
+            return null;
+        }
 	}
 }

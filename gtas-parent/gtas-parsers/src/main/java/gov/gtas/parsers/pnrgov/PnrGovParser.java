@@ -410,7 +410,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 						cc.setAccountHolder(msgs.get(0));
 						if (msgs.size() > 1) {
 							cc.setAccountHolderAddress(msgs.get(1));
-							cc.setAccountHolderPhone(msgs.get(2));
+							if (msgs.size() > 2) {
+								cc.setAccountHolderPhone(msgs.get(2));
+							}
 						}
 
 					}
@@ -652,21 +654,26 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 	private void processGroup7_SeatInfo(TRI tri, TVL tvl, FlightVo flightVo) throws ParseException {
 
 		PassengerVo currentPassenger = null;
-		String refNumber = tri.getTravelerReferenceNumber();
-		if (refNumber != null) {
-			currentPassenger = findPaxByReferenceNumber(refNumber);
-		}
+		String refNumber = null;
 		TIF tif = getConditionalSegment(TIF.class);
-		if (currentPassenger == null && tif != null) {
-			// try finding pax based on tif info
-			String surname = tif.getTravelerSurname();
+		if(tif != null) {
 			List<TravelerDetails> td = tif.getTravelerDetails();
-			if (CollectionUtils.isNotEmpty(td)) {
-				String firstName = td.get(0).getTravelerGivenName();
-				for (PassengerVo pax : parsedMessage.getPassengers()) {
-					if (surname.equals(pax.getLastName()) && firstName.equals(pax.getFirstName())) {
-						currentPassenger = pax;
-						break;
+			if(CollectionUtils.isNotEmpty(td)) {	
+				refNumber = tif.getTravelerDetails().get(0).getTravelerReferenceNumber(); //Grab TIF Ref number, which is number by which passengers are ordered on the PNR
+			}
+			if (refNumber != null) {
+				currentPassenger = findPaxByReferenceNumber(refNumber); // TIF ref to TIF ref comparison
+			}
+			if (currentPassenger == null) { //If ref comparison fails, which it should not in 99% of cases do name comparison
+				// try finding pax based on tif info
+				String surname = PnrUtils.removeSuffixesFromLastName(tif.getTravelerSurname()); //Fix Issue #1535
+				if (CollectionUtils.isNotEmpty(td)) {
+					String firstName = PnrUtils.removePrefixesFromFirstName(td.get(0).getTravelerGivenName()); //Fix Issue #1535
+					for (PassengerVo pax : parsedMessage.getPassengers()) {
+						if (surname.equals(pax.getLastName()) && firstName.equals(pax.getFirstName())) {
+							currentPassenger = pax;
+							break;
+						}
 					}
 				}
 			}

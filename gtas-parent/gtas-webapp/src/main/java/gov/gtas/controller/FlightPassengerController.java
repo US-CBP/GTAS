@@ -7,7 +7,6 @@ package gov.gtas.controller;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +19,10 @@ import org.springframework.web.bind.annotation.*;
 
 import gov.gtas.services.FlightService;
 import gov.gtas.services.PassengerService;
+import gov.gtas.services.dto.FlightsPageDto;
+import gov.gtas.services.dto.FlightsRequestDto;
+import gov.gtas.services.dto.PassengersPageDto;
+import gov.gtas.services.dto.PassengersRequestDto;
 
 @RestController
 public class FlightPassengerController {

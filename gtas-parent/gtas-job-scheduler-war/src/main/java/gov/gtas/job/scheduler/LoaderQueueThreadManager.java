@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import gov.gtas.job.config.JobSchedulerConfig;
 import gov.gtas.parsers.paxlst.segment.unedifact.DTM;
 import gov.gtas.parsers.paxlst.segment.unedifact.LOC;
 import gov.gtas.parsers.paxlst.segment.unedifact.TDT;
 import gov.gtas.parsers.pnrgov.segment.TVL_L0;
 import gov.gtas.parsers.util.DateUtils;
-import gov.gtas.repository.AppConfigurationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +48,9 @@ public class LoaderQueueThreadManager {
 	private final Semaphore semaphore;
 
 	@Autowired
-	public LoaderQueueThreadManager(ApplicationContext ctx, AppConfigurationRepository appConfigurationRepository,
-			@Value("${loader.permits}") Integer loaderPermits) {
+	public LoaderQueueThreadManager(ApplicationContext ctx,
+									@Value("${loader.permits}") Integer loaderPermits, JobSchedulerConfig jobSchedulerConfig) {
+
 		this.ctx = ctx;
 		if (loaderPermits == null || loaderPermits.equals(0)) {
 			logger.warn("no permits set up, using default of " + DEFAULT_PERMITS);
@@ -65,13 +66,12 @@ public class LoaderQueueThreadManager {
 
 		try {
 
-			maxNumOfThreads = Integer.parseInt(
-					appConfigurationRepository.findByOption(AppConfigurationRepository.THREADS_ON_LOADER).getValue());
+			maxNumOfThreads = jobSchedulerConfig.getThreadsOnLoader();
 
 		} catch (Exception e) {
 			logger.error(String.format(
-					"Failed to load application configuration: '%1$s' from the database... Number of threads set to use %2$s",
-					AppConfigurationRepository.THREADS_ON_LOADER, DEFAULT_THREADS_ON_LOADER));
+					"Failed to load application configuration: THREADS_ON_LOADER from application.properties... Number of threads set to use %1$s",
+					DEFAULT_THREADS_ON_LOADER));
 		}
 
 		this.exec = Executors.newFixedThreadPool(maxNumOfThreads);

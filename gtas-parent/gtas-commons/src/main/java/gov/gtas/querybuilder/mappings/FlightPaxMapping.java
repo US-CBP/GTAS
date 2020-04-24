@@ -33,9 +33,9 @@ public enum FlightPaxMapping implements IEntityMapping {
 
 	HEAD_OF_POOL("headOfPool", "Is Head Of Pool", TypeEnum.BOOLEAN.getType()),
 
-	FLIGHT_PAX_PAX_OWNER_ID("passenger.id", "Passenger Owner Id", TypeEnum.STRING.getType(), false),
+	FLIGHT_PAX_PAX_OWNER_ID("passengerId", "Passenger Owner Id", TypeEnum.INTEGER.getType(), false),
 
-	FLIGHT_PAX_FLIGHT_OWNER_ID("flight.id", "", TypeEnum.STRING.getType(), false);
+	FLIGHT_PAX_FLIGHT_OWNER_ID("flightId", "", TypeEnum.INTEGER.getType(), false);
 
 	private String fieldName;
 	private String friendlyName;

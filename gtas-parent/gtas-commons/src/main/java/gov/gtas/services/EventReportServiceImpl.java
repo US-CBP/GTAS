@@ -12,7 +12,6 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.enumtype.HitSeverityEnum;
@@ -23,7 +22,6 @@ import gov.gtas.model.HitMaker;
 import gov.gtas.model.HitViewStatus;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Pnr;
-import gov.gtas.model.UserGroup;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.services.dto.PassengerNoteSetDto;
@@ -31,7 +29,6 @@ import gov.gtas.services.dto.PaxDetailPdfDocRequest;
 import gov.gtas.services.dto.PaxDetailPdfDocResponse;
 import gov.gtas.util.PaxDetailVoUtil;
 import gov.gtas.vo.HitDetailVo;
-import gov.gtas.vo.NoteVo;
 import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.FlightVoForFlightHistory;
 import gov.gtas.vo.passenger.PassengerVo;
@@ -59,7 +56,7 @@ public class EventReportServiceImpl implements EventReportService {
 	public EventReportServiceImpl(FlightService flightService, PnrService pnrService,
 			PassengerService passengerService, HitDetailService hitDetailService,
 			EventReportPdfService<PaxDetailPdfDocRequest, PaxDetailPdfDocResponse> passengerEventReportService,
-			HitDetailService hitsDetailsService, PassengerNoteService passengerNoteService) {
+			PassengerNoteService passengerNoteService) {
 		this.flightService = flightService;
 		this.pnrService = pnrService;
 		this.passengerService = passengerService;
@@ -77,7 +74,7 @@ public class EventReportServiceImpl implements EventReportService {
 		PassengerVo passengerVo = new PassengerVo();
 		Flight flight = flightService.findById(flightId);
 
-		Passenger passenger = passengerService.findByIdWithFlightPaxAndDocuments(paxId);
+		Passenger passenger = passengerService.findByIdWithFlightAndDocuments(paxId);
 
 		if (passenger != null && flight != null) {
 			if (flight.getId().equals(flightId)) {
@@ -134,10 +131,10 @@ public class EventReportServiceImpl implements EventReportService {
 				Pnr latestPnr = PaxDetailVoUtil.getLatestPnrFromList(pnrList);
 				passengerVo.setPnrVo(PaxDetailVoUtil.mapPnrToPnrVo(latestPnr));
 				paxDetailPdfDocRequest.setTripType(latestPnr.getTripType());
-
 			}
 
 			paxDetailPdfDocRequest.setPassengerVo(passengerVo);
+						
 			//HIT INFO
 			setHitInformation(paxDetailPdfDocRequest, paxId);
 			//HIT HISTORY

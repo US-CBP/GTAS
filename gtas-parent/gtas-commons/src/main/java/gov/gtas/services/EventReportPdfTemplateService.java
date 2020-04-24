@@ -24,11 +24,7 @@ public abstract class EventReportPdfTemplateService {
 	protected String reportName;
 	protected Date reportDate;
 	protected PDDocument document;
-	protected final float  HEADER_ROW_HEIGHT = 50;
 	protected final float  COVER_HEADER_ROW_HEIGHT = 17;
-	protected final float  DEFAULT_HEADER_ROW_HEIGHT = 40;
-	protected final float  HEADER_CELL_WIDTH = 100;
-	protected final float  DEFAULT_HEADER_CELL_WIDTH = 100;
 	protected final float DEFAULT_CONTENT_FONT_SIZE = 12;
 	protected final float DEFAULT_HORIZONTAL_SECTION_HEADER_FONT = 14;
 	protected final float DEFAULT_SINGLE_ROW_LABEL_FONT_SIZE = 14;
@@ -70,20 +66,6 @@ public abstract class EventReportPdfTemplateService {
 		  
 		  return pDPageContentStream;
 	}
-	
-	//set the properties of the report header cell
-	protected void setHeaderCellProperties( Cell<PDPage> cell )
-	{
-        cell.setFont(this.BOLD_TIMES_ROMAN);
-        cell.setFontSize(16);
-        cell.setValign(VerticalAlignment.MIDDLE);
-        cell.setAlign(HorizontalAlignment.CENTER);
-        cell.setTopBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR, 10));
-        cell.setLeftBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
-        cell.setRightBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
-        cell.setBottomBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
-	}
-	
 	
     protected  Row<PDPage> getRow( BaseTable table)
     {
@@ -158,25 +140,7 @@ public abstract class EventReportPdfTemplateService {
     	return cell;
     	
     }
-    
-    
-    
-    protected Cell<PDPage> creatPlainFieldLabelCell( Row<PDPage> row,  float cellWidth, String rowValue)
-    {
-    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
-        cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
-        cell.setAlign(HorizontalAlignment.LEFT);
-        cell.setFont(this.BOLD_TIMES_ROMAN);
-        cell.setLeftBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setTopBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setRightBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setBottomBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setTextColor(Color.BLACK);
-        
-        
-    	return cell;
-    	
-    }
+
     
     protected Cell<PDPage> creatVerticalColumnLabelCell( Row<PDPage> row,  float cellWidth, String rowValue)
     {
@@ -454,59 +418,6 @@ public abstract class EventReportPdfTemplateService {
     	
     }
     
-    protected Cell<PDPage> createNoteColumnLabelCell( Row<PDPage> row,  float cellWidth, String rowValue)
-    {
-    			Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
-    		 	cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
-    	        cell.setFont(this.BOLD_TIMES_ROMAN);
-    	        cell.setTopBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR, 1));
-    	        cell.setLeftBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
-    	        cell.setRightBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
-    	        cell.setBottomBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
-    	        cell.setFillColor(DEFAULT_GRAY_ROW_COLOR);
-    	        cell.setAlign(HorizontalAlignment.LEFT);
-    	        cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
- 
-    	
-    	return cell;
-    	
-    }
-    
-    protected Cell<PDPage> createLastNoteColumnLabelCell( Row<PDPage> row,  float cellWidth, String rowValue)
-    {
-    			Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
-    		 	cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
-    	        cell.setFont(this.BOLD_TIMES_ROMAN);
-    	        cell.setTopBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR, 1));
-    	        cell.setLeftBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
-    	        cell.setRightBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
-    	        cell.setBottomBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
-    	        cell.setFillColor(DEFAULT_GRAY_ROW_COLOR);
-    	        cell.setAlign(HorizontalAlignment.LEFT);
-    	        cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
- 
-    	
-    	return cell;
-    	
-    }
-    
-    protected Cell<PDPage> createNoteColumnValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
-    {
-    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);		
-    	cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
-        cell.setFont(PLAIN_TIMES_ROMAN);
-        cell.setTopBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
-        cell.setLeftBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setRightBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setBottomBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
-        cell.setFillColor(Color.WHITE);
-        cell.setAlign(HorizontalAlignment.LEFT);
-        cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
-    	
-    	return cell;
-    	
-    }
-    
     protected Cell<PDPage> createLastNoteColumnValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
     {
     	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);		
@@ -537,59 +448,6 @@ public abstract class EventReportPdfTemplateService {
         cell.setAlign(HorizontalAlignment.LEFT);
         cell.setTextColor(Color.BLUE);
     	
-    	return cell;
-    	
-    }
-    
- 
-	
-    protected Cell<PDPage> createCell(  Row<PDPage> row, float cellWidth, PDFont font,  String rowValue)
-    {
-    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
-        cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
-        cell.setFont(font);
-        cell.setTopBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR, 1));
-        cell.setLeftBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
-        cell.setRightBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
-        cell.setBottomBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
-    	return cell;
-    	
-    }
-    protected Cell<PDPage> createCell(  Row<PDPage> row,  float cellWidth, LineStyle bottomBorderStyle, String rowValue)
-    {
-    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
-        cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
-        cell.setFont(PLAIN_TIMES_ROMAN);
-        cell.setBottomBorderStyle(bottomBorderStyle);
-        cell.setTopBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR, 1));
-        cell.setLeftBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
-        cell.setRightBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
-    	return cell;
-    	
-    }
-	
-    protected Cell<PDPage> createCell(  Row<PDPage> row, float cellWidth, PDFont font, float fontSize, String rowValue)
-    {
-    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
-        cell.setFontSize(fontSize);
-        cell.setFont(font);
-        cell.setBottomBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR, 1));
-        cell.setTopBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR, 1));
-        cell.setLeftBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
-        cell.setRightBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
-    	return cell;
-    	
-    }
-	
-    protected Cell<PDPage> createCell( Row<PDPage> row, float cellWidth, PDFont font, float fontSize,LineStyle bottomBorderStyle, String rowValue)
-    {
-    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
-        cell.setFontSize(fontSize);
-        cell.setFont(font);
-        cell.setBottomBorderStyle(bottomBorderStyle);
-        cell.setTopBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR, 1));
-        cell.setLeftBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
-        cell.setRightBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR,1));
     	return cell;
     	
     }
@@ -632,21 +490,7 @@ public abstract class EventReportPdfTemplateService {
     	return cell;
     	
     }
-    
-    protected Cell<PDPage> createBorderlessCell( Row<PDPage> row,  float cellWidth, String rowValue)
-    {
-    	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
-        cell.setFontSize(this.DEFAULT_CONTENT_FONT_SIZE);
-        cell.setFont(PLAIN_TIMES_ROMAN);
-        cell.setTopBorderStyle(new LineStyle(Color.WHITE, 0));
-        cell.setLeftBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setRightBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setBottomBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setFillColor(Color.WHITE);
-    	return cell;
-    	
-    }
-    
+
     protected Cell<PDPage> createValueCellWithRighBottomtBorder( Row<PDPage> row,  float cellWidth, String rowValue)
     {
     	Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
@@ -661,34 +505,6 @@ public abstract class EventReportPdfTemplateService {
     	return cell;
     	
     }
-    
-    protected Cell<PDPage> createEmptyClosingRightCell( Row<PDPage> row,  float cellWidth)
-    {
-    	Cell<PDPage> cell= row.createCell(cellWidth, "");
-        cell.setFontSize(this.DEFAULT_CONTENT_FONT_SIZE);
-        cell.setFont(PLAIN_TIMES_ROMAN);
-        cell.setTopBorderStyle(new LineStyle(Color.WHITE, 0));
-        cell.setLeftBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setRightBorderStyle(new LineStyle(Color.LIGHT_GRAY,1));
-        cell.setBottomBorderStyle(new LineStyle(Color.LIGHT_GRAY,1));
-        cell.setFillColor(Color.WHITE);
-    	return cell;
-    	
-    }
-    protected Cell<PDPage> createEmptyClosingLeftCell( Row<PDPage> row,  float cellWidth)
-    {
-    	Cell<PDPage> cell= row.createCell(cellWidth, "");
-        cell.setFontSize(this.DEFAULT_CONTENT_FONT_SIZE);
-        cell.setFont(PLAIN_TIMES_ROMAN);
-        cell.setTopBorderStyle(new LineStyle(Color.WHITE, 0));
-        cell.setLeftBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setRightBorderStyle(new LineStyle(Color.WHITE,0));
-        cell.setBottomBorderStyle(new LineStyle(Color.LIGHT_GRAY,1));
-        cell.setFillColor(Color.WHITE);
-    	return cell;
-    	
-    }
-    
     
     protected Cell<PDPage> createSingleRowLabelCell(  Row<PDPage> row,  float cellWidth, String rowValue)
     {
@@ -721,26 +537,6 @@ public abstract class EventReportPdfTemplateService {
     	return cell;
     	
     }
-    
-    
-
-	protected void setBottomFieldLabelProperties(Cell<PDPage> cell) {
-		cell.setAlign(HorizontalAlignment.LEFT);
-		cell.setFont(this.BOLD_TIMES_ROMAN);
-		cell.setLeftBorderStyle(new LineStyle(Color.WHITE, 0));
-		cell.setTopBorderStyle(new LineStyle(Color.WHITE, 0));
-		cell.setRightBorderStyle(new LineStyle(Color.WHITE, 0));
-		cell.setBottomBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR, 1));
-	}
-
-	protected void setBottomFieldValueProperties(Cell<PDPage> cell) {
-		cell.setAlign(HorizontalAlignment.LEFT);
-		cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
-		cell.setLeftBorderStyle(new LineStyle(Color.WHITE, 0));
-		cell.setTopBorderStyle(new LineStyle(Color.WHITE, 0));
-		cell.setRightBorderStyle(new LineStyle(Color.WHITE, 0));
-		cell.setBottomBorderStyle(new LineStyle(DEFAULT_BORDER_COLOR, 1));
-	}
 
 	// set the properties of the report header cell
 	protected void setPassengerDetailHeaderLabelProperties(Cell<PDPage> cell) {
@@ -767,6 +563,24 @@ public abstract class EventReportPdfTemplateService {
 		cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
 		cell.setLeftPadding(5);
 	}
+	
+    protected Cell<PDPage> createRawPnrValueCell( Row<PDPage> row,  float cellWidth, String rowValue)
+    {
+    			Cell<PDPage> cell= row.createCell(cellWidth, rowValue);
+    		 	cell.setFontSize(DEFAULT_CONTENT_FONT_SIZE);
+    		 	 cell.setFont(this.PLAIN_TIMES_ROMAN);
+    	        cell.setTopBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR, 1));
+    	        cell.setLeftBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
+    	        cell.setRightBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,0));
+    	        cell.setBottomBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR,1));
+    	        cell.setFillColor(Color.WHITE);
+    	        cell.setAlign(HorizontalAlignment.LEFT);
+    	        cell.setTextColor(DEFAULT_CONTENT_TEXT_COLOR);
+ 
+    	
+    	return cell;
+    	
+    }
     
 	public String getFileName() {
 		return fileName;

@@ -121,5 +121,13 @@ public interface WatchlistPersistenceService {
 	WatchlistItem findWatchlistItemById(Long watchlistItemId);
 
 	List<WatchlistItem> findItemsByWatchlistName(String watchlistName);
+	
+	/**
+	 * Deletes a given list of individual watchlist item ids
+	 * @param watchlistItemIds
+	 * 				List of at minimum one watchlist item id
+	 */
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
+	public void deleteWatchlistItems(List<Long> watchlistItemIds);
 
 }

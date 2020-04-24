@@ -8,7 +8,6 @@
   app
       .service('notificationService', function($http,$q,$mdToast) {
         var GET_MESSAGE_ERRORS_URL ="/gtas/errorMessage";
-        var GET_NOTIFICATION_HITS ="/gtas/hitCount";
         function handleError(response) {
             if (response.data.message === undefined) {
                 return $q.reject("An unknown error occurred.");
@@ -35,13 +34,6 @@
                 var request = $http({
                     method: "get",
                     url: GET_MESSAGE_ERRORS_URL
-                });
-                return (request.then(handleSuccess, handleError));
-            },
-            getWatchlistCount: function () {
-                var request = $http({
-                    method: "get",
-                    url: GET_NOTIFICATION_HITS
                 });
                 return (request.then(handleSuccess, handleError));
             },
@@ -1194,23 +1186,17 @@
 
                   return (request.then(handleSuccess, handleError));
               },
-              deleteItems: function (listTypeName, entity, watchlistItems) {
+              deleteItems: function (entity, watchlistItems) {
                   var request,
                       url = baseUrl + entity;
 
-                  if (!listTypeName || !watchlistItems || !watchlistItems.length) {
+                  if (!watchlistItems || !watchlistItems.length) {
                       return false;
                   }
 
                   request = $http({
-                      method: 'put',
-                      url: url,
-                      data: {
-                          "@class": "gov.gtas.model.watchlist.json.WatchlistSpec",
-                          "name": listTypeName,
-                          "entity": entity,
-                          "watchlistItems": watchlistItems
-                      }
+                      method: 'delete',
+                      url: url + "/" + watchlistItems,
                   });
 
                   return (request.then(handleSuccess, handleError));
@@ -1650,6 +1636,24 @@
               return dfd.promise;
           }
 
+          function neo4jProtocol() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: CONFIG_URL + "/neo4jProtocol/"
+              }));
+              return dfd.promise;
+          }
+
+          function kibanaProtocol() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: CONFIG_URL + "/kibanaProtocol/"
+              }));
+              return dfd.promise;
+          }
+
           function neo4j() {
               var dfd = $q.defer();
               dfd.resolve($http({
@@ -1713,6 +1717,8 @@
           return ({
               defaultHomePage: defaultHomePage,
               neo4j: neo4j,
+              kibanaProtocol: kibanaProtocol,
+              neo4jProtocol: neo4jProtocol,
               kibanaUrl: kibanaUrl,
               cypherUrl: cypherUrl,
               cypherAuth: cypherAuth,

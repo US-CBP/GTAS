@@ -10,11 +10,9 @@ import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Set;
 
+@Deprecated
 public interface FlightPaxRepository extends CrudRepository<FlightPax, Long> {
 
-	default FlightPax findOne(Long flightPaxId) {
-		return findById(flightPaxId).orElse(null);
-	}
 
 	@Transactional
 	@Query("SELECT fps FROM FlightPax fps WHERE fps.passenger.id IN :pidList")

@@ -26,6 +26,7 @@ public class FlightConditionBuilder extends EntityConditionBuilder {
 		super(drlVariableName, EntityEnum.FLIGHT.getEntityName());
 		this.linkedPassengerList = new LinkedList<String>();
 		this.defaultPassengerVariableName = defaultPassengerVarName;
+		this.generateEmptyClause = true;
 	}
 
 	public void addLinkedPassenger(final String passengerVariable) {

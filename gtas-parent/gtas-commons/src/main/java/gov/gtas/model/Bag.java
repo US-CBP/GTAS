@@ -26,6 +26,9 @@ public class Bag extends BaseEntity {
 	@JoinColumn(name = "flight_id", referencedColumnName = "id", nullable = false)
 	private Flight flight;
 
+	@Column(name = "flight_id", columnDefinition = "bigint unsigned", insertable = false, updatable = false)
+	private Long flightId;
+
 	@Column(name = "data_source")
 	private String data_source;
 
@@ -76,6 +79,14 @@ public class Bag extends BaseEntity {
 
 	public Set<UUID> getFlightVoUUID() {
 		return flightVoUUID;
+	}
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
 	}
 
 	public void setFlightVoUUID(Set<UUID> flightVoUUID) {
@@ -186,6 +197,26 @@ public class Bag extends BaseEntity {
 		this.bagId = bagId;
 	}
 
+	public static Bag fromBag(Bag bag) {
+		Bag newBag = new Bag();
+		newBag.setData_source(bag.getData_source());
+		newBag.setPassenger(bag.getPassenger());
+		newBag.setPassengerId(bag.getPassengerId());
+		newBag.setBagMeasurements(bag.getBagMeasurements());
+		newBag.setPrimeFlight(bag.isPrimeFlight());
+		newBag.setFlightId(bag.getFlightId());
+		newBag.setFlight(bag.getFlight());
+		newBag.setBagId(bag.getBagId());
+		newBag.setDestination(bag.getDestination());
+		newBag.setAirline(bag.getAirline());
+		newBag.setBagSerialCount(bag.getBagSerialCount());
+		newBag.setCountry(bag.getCountry());
+		newBag.setHeadPool(bag.isHeadPool());
+		newBag.setMemberPool(bag.isMemberPool());
+		newBag.setDestinationAirport(bag.getDestinationAirport());
+		return newBag;
+	}
+
 	@Override
 	public String toString() {
 
@@ -225,18 +256,16 @@ public class Bag extends BaseEntity {
 		if (!(o instanceof Bag))
 			return false;
 		Bag bag = (Bag) o;
-		return isHeadPool() == bag.isHeadPool() && isMemberPool() == bag.isMemberPool()
-				&& isPrimeFlight() == bag.isPrimeFlight() && Objects.equals(getBagId(), bag.getBagId())
-				&& Objects.equals(getData_source(), bag.getData_source())
-				&& Objects.equals(getDestination(), bag.getDestination())
-				&& Objects.equals(getPassengerId(), bag.getPassengerId())
-				&& Objects.equals(getDestinationAirport(), bag.getDestinationAirport())
-				&& Objects.equals(getBagSerialCount(), bag.getBagSerialCount())
-				&& Objects.equals(getAirline(), bag.getAirline());
+		return this.headPool == bag.headPool && this.memberPool == bag.memberPool && this.primeFlight == bag.primeFlight
+				&& Objects.equals(this.bagId, bag.bagId) && Objects.equals(bag.data_source, this.data_source)
+				&& Objects.equals(bag.destination, this.destination)
+				&& Objects.equals(bag.passengerId, this.passengerId)
+				&& Objects.equals(bag.destinationAirport, this.destinationAirport)
+				&& Objects.equals(bag.bagSerialCount, this.bagSerialCount) && Objects.equals(bag.airline, this.airline);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getBagId(), getData_source(), getPassengerId(), getBagSerialCount());
+		return Objects.hash(bagId, data_source, passengerId, bagSerialCount);
 	}
 }

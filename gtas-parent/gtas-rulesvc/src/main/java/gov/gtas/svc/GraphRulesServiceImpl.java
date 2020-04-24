@@ -28,14 +28,10 @@ public class GraphRulesServiceImpl implements GraphRulesService {
 	private final Neo4JClient neo4JClient;
 
 	@Autowired
-	public GraphRulesServiceImpl(GraphRuleRepository graphRuleRepository,
-			AppConfigurationRepository appConfigurationRepository, Neo4JConfig neo4JConfig) {
+	public GraphRulesServiceImpl(GraphRuleRepository graphRuleRepository, Neo4JConfig neo4JConfig) {
 		this.graphRuleRepository = graphRuleRepository;
-		String url = appConfigurationRepository.findByOption(AppConfigurationRepository.GRAPH_DB_URL).getValue();
-		Boolean neo4J = Boolean.valueOf(
-				appConfigurationRepository.findByOption(AppConfigurationRepository.GRAPH_DB_TOGGLE).getValue());
-		if (neo4J && neo4JConfig.enabled()) {
-			this.neo4JClient = new Neo4JClient(url, neo4JConfig.neoUserName(), neo4JConfig.neoPassword());
+		if (neo4JConfig.getNeo4JRuleEngineEnabled() && neo4JConfig.enabled()) {
+			this.neo4JClient = new Neo4JClient(neo4JConfig.getNeo4JGraphDbUrl(), neo4JConfig.neoUserName(), neo4JConfig.neoPassword());
 		} else {
 			this.neo4JClient = null;
 		}
@@ -74,27 +70,29 @@ public class GraphRulesServiceImpl implements GraphRulesService {
 		}
 
 		for (GraphRule graphRule : graphRules) {
-			Set<String> passengerHitIds = getPassengerHitIds(graphRule, paxMap.keySet()); // This command runs the
-																							// graph rules!
-			for (String idTag : passengerHitIds) {
-				for (Passenger passenger : paxMap.get(idTag)) {
-					RuleHitDetail rhd = new RuleHitDetail(HitTypeEnum.GRAPH_HIT);
-					rhd.setFlightId(passenger.getFlight().getId());
-					rhd.setPassenger(passenger);
-					rhd.setPassengerName(passenger.getPassengerDetails().getFirstName() + " "
-							+ passenger.getPassengerDetails().getLastName());
-					rhd.setTitle(graphRule.getTitle());
-					rhd.setDescription(graphRule.getDescription());
-					rhd.setHitRule(graphRule.getDescription() + ":" + graphRule.getId());
-					rhd.setHitCount(1);
-					rhd.setRuleId(graphRule.getId());
-					rhd.setPassengerId(passenger.getId());
-					rhd.setPassengerType(PassengerTypeCode.P);
-					rhd.setFlightId(passenger.getFlight().getId());
-					rhd.setHitMakerId(graphRule.getId());
-					rhd.setCipherQuery(graphRule.getCipherQuery());
-					rhd.setGraphHitDisplay(graphRule.getDisplayCondition());
-					ruleHitDetails.add(rhd);
+			if (graphRule.isEnabled()) {
+				Set<String> passengerHitIds = getPassengerHitIds(graphRule, paxMap.keySet()); // This command runs the
+				// graph rules!
+				for (String idTag : passengerHitIds) {
+					for (Passenger passenger : paxMap.get(idTag)) {
+						RuleHitDetail rhd = new RuleHitDetail(HitTypeEnum.GRAPH_HIT);
+						rhd.setFlightId(passenger.getFlight().getId());
+						rhd.setPassenger(passenger);
+						rhd.setPassengerName(passenger.getPassengerDetails().getFirstName() + " "
+								+ passenger.getPassengerDetails().getLastName());
+						rhd.setTitle(graphRule.getTitle());
+						rhd.setDescription(graphRule.getDescription());
+						rhd.setHitRule(graphRule.getDescription() + ":" + graphRule.getId());
+						rhd.setHitCount(1);
+						rhd.setRuleId(graphRule.getId());
+						rhd.setPassengerId(passenger.getId());
+						rhd.setPassengerType(PassengerTypeCode.P);
+						rhd.setFlightId(passenger.getFlight().getId());
+						rhd.setHitMakerId(graphRule.getId());
+						rhd.setCipherQuery(graphRule.getCipherQuery());
+						rhd.setGraphHitDisplay(graphRule.getDisplayCondition());
+						ruleHitDetails.add(rhd);
+					}
 				}
 			}
 		}

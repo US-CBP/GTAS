@@ -9,7 +9,7 @@
         function ($scope, $rootScope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, caseModel,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, configService, paxReportService) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, configService, paxReportService,  codeTooltipService) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList;
@@ -29,6 +29,11 @@
                     .hideDelay(4000)
                     .parent(toastPosition));
             };
+            $scope.getCarrierCodeCodeTooltipData = function(flightNumber) {
+                let code = flightNumber.substring(0,2);
+                let tooltip = codeTooltipService.getCodeTooltipData(code, "carrier");
+                return tooltip + " (" + code + ")";
+              };
 
             var exporter = {
                 'csv': function () {
@@ -161,7 +166,6 @@
             $scope.deleteRow = function(row) {
                 row.entity.status = 'Reviewed';
                 caseDispositionService.updatePassengerHitViews(row.entity, 'REVIEWED').then(function(result) {
-                    $rootScope.$broadcast('hitCountChange');
                 }
             );
                 if (! $scope.model.displayStatusCheckBoxes.REVIEWED) {
@@ -408,22 +412,21 @@
                     width: '20%',
                     minWidth: '210',
                     displayName: $translate.instant('flight.flight'),
-                    cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace">' +
+                    cellTemplate:
+                        '<div style="font-family: \'Roboto Mono\', monospace; font-size: 14px;" >' +
                         '<div class="flex">' +
                         '<span class="sm-pad">' +
-                        '<div><span ng-if="row.entity.flightDirection === \'O\'" class="sm-pad flight-num"><i class="fa fa-plane" aria-hidden="true"></i>  {{row.entity.flightNumber}}</span></div>' +
-                        '<div><span ng-if="row.entity.flightDirection === \'I\'" class="sm-pad flight-num"><i class="fa fa-flip-vertical fa-plane" aria-hidden="true"></i>{{row.entity.flightNumber}}</span></div>' +
-                        '<div><span ng-class="row.entity.closeToCountDown ? \'badge danger-back danger-border-th\': \'badge info-back info-border-th\'"><strong>{{row.entity.countDownTimeDisplay}}</strong></span></div>' +
-                        '</span>' +
-                        '<span class="sm-pad">' +
-                        '<div>' +
-                        '<i class="fa fa-arrow-circle-up" aria-hidden="true"></i>' +
-                        '{{row.entity.flightOrigin}} {{row.entity.flightETDDate | date:\'MM-dd HH:mm\'}}</div>' +
-                        '<div>' +
-                        '<i class="fa fa-arrow-circle-down" aria-hidden="true"></i>' +
-                        '{{row.entity.flightDestination}} {{row.entity.flightETADate | date:\'MM-dd HH:mm\'}}</div>' +
+                        '<div><span ng-if="row.entity.flightDirection === \'O\'" >{{row.entity.flightNumber}}</span></div>' +
+                        '<div><span ng-if="row.entity.flightDirection === \'I\'" >{{row.entity.flightNumber}}</span></div>' +
+                        '<div><span ng-class="row.entity.closeToCountDown ? \'badge danger-back danger-border-th\': \'badge info-back info-border-th\'" ng-if="row.entity.flightDirection === \'O\'" tooltip-placement="right" uib-tooltip={{grid.appScope.getCarrierCodeCodeTooltipData(row.entity.flightNumber)}}><i class="fa fa-plane" aria-hidden="true"></i> {{row.entity.countDownTimeDisplay}}</span></div>' +
+                        '<div><span ng-class="row.entity.closeToCountDown ? \'badge danger-back danger-border-th\': \'badge info-back info-border-th\'" ng-if="row.entity.flightDirection === \'I\'" tooltip-placement="right" uib-tooltip={{grid.appScope.getCarrierCodeCodeTooltipData(row.entity.flightNumber)}}><i class="fa fa-flip-vertical fa-plane" aria-hidden="true"></i> {{row.entity.countDownTimeDisplay}}</span></div>' +
                         '</span>' +
                         '</div>' +
+                        '</div>' +
+                        '<div style="font-family: \'Roboto Mono\', monospace; padding-top: 3%; font-size: 14px;" ><span>' +
+                        '<div><span><i class="fa fa-arrow-circle-up" aria-hidden="true"></i> {{row.entity.flightOrigin}} {{row.entity.flightETDDate | date:\'MM-dd HH:mm\'}}</div></span>' +
+                        '<div><span><i class="fa fa-arrow-circle-down" aria-hidden="true"></i> {{row.entity.flightDestination}} {{row.entity.flightETADate | date:\'MM-dd HH:mm\'}}</div></span>' +
+                  '</span>' +
                         '</div>'
                 },
                 {
@@ -432,7 +435,7 @@
                     width: '20%',
                     minWidth: '210',
                     displayName: $translate.instant('case.toprulecategory'),
-                    cellTemplate: '<div class="case-grid" ng-class="{\'caseHits\': row.entity.hitNames.length > 1}"><ul>' +
+                    cellTemplate: '<div style="font-size: 12px;"><ul>' +
                         '' +
                         '<li ng-repeat="hit in row.entity.hitNames track by $index">{{hit}}</li>' +
                         '</ul>' +
@@ -445,7 +448,7 @@
                     minWidth: '156',
                     displayName: $translate.instant('pass.lastNameFirstName'),
                     cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace"><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
-                        'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none; font-size: 12px; padding-inline-start: 0px">' +
+                        'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none; font-size: 14px; padding-inline-start: 0px">' +
                         '<li>' +
                         '{{COL_FIELD}}, {{row.entity.firstName}}' +
                         '</li>' +
@@ -460,16 +463,17 @@
                     width: '7%',
                     minWidth: '0',
                     displayName: $translate.instant('case.status'),
+                    cellTemplate: '<div style="font-size: 14px;">{{COL_FIELD}}</div>'
                 },
                 {
                     field: 'status',
                     name: 'action',
                     displayName: $translate.instant('case.action'),
                     cellTemplate:
-                        '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px; font-size: 12px">Re-Open</button>' +
-                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.review(row)" style="margin:5px; font-size: 12px">Review</button>' +
-                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row.entity.paxId)" style="margin:5px; font-size: 12px"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>' +
-                        '<button  type="submit" class="btn btn-info" ng-click="grid.appScope.getPaxDetailReport(row)" style="margin:5px; font-size: 12px">' +
+                        '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px; font-size: 14px">Re-Open</button>' +
+                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-primary" ng-click="grid.appScope.review(row)" style="margin:5px; font-size: 14px">{{"btn.review" | translate}}</button>' +
+                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row.entity.paxId)" style="margin:5px; font-size: 14px"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> {{"btn.notify" | translate}}</button>' +
+                        '<button  type="submit" class="btn btn-info" ng-click="grid.appScope.getPaxDetailReport(row)" style="margin:5px; font-size: 14px">' +
                         '{{\'btn.downloadreportshort\' | translate}}' +
                         '</button>'
 
@@ -546,7 +550,6 @@
                         $scope.casesDispGrid.data = data.data.cases;
                         $scope.casesList = data.data.cases;
                         $scope.casesDispGrid.totalItems = data.data.totalCases;
-                        $rootScope.$broadcast('hitCountChange');
                             }
                             else{
                             $scope.errorToast($translate.instant('msg.noresultsfound'), toastPosition)

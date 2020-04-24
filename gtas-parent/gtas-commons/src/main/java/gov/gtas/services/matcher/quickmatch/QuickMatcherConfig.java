@@ -9,14 +9,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 public class QuickMatcherConfig {
 
 	enum AccuracyMode {
 
 		HIGH_RECALL("highRecall"), BALANCED("balanced"), BALANCED_WITH_TEXT_DISTANCE(
-				"balancedWithTextDistance"), HIGH_PRECISION("highPrecision"), GTAS_DEFAULT("gtasDefault");
+				"balancedWithTextDistance"), HIGH_PRECISION("highPrecision"), GTAS_DEFAULT("gtasDefault"),
+		LOW_DATA_OPTIMIZED("lowDataOptimized");
 
 		private String mode;
 
@@ -53,6 +52,12 @@ public class QuickMatcherConfig {
 	 * extra algorithm finds more true hits than Balanced mode alone, for some
 	 * queries where Balanced mode may struggle. On other queries, though, it simple
 	 * returns hits that Balanced mode already found.
+     *
+     * LowDataOptimized: Higher recall and precision than other modes when both
+     * (a) the watchlist contains only first name, last name, and DOB, and
+     * (b) the DOBs contain accurate years but a majority of dummy birtdays, e.g.
+     * it is known that a traveler or watchlist person was born in 1991, but the
+     * birthday is arbitrarily chosen to a default value like "January 1."
 	 * 
 	 * gtasDefault: The default:
 	 * 
@@ -71,6 +76,8 @@ public class QuickMatcherConfig {
 	private List<List<String>> balanced;
 	private List<List<String>> highPrecision;
 	private List<List<String>> gtasDefault;
+	private List<List<String>> lowDataOptimized;
+
 
 	public List<List<String>> getGtasDefault() {
 		return gtasDefault;
@@ -107,6 +114,10 @@ public class QuickMatcherConfig {
 		return highPrecision;
 	}
 
+	public List<List<String>> getLowDataOptimized() {
+		return lowDataOptimized;
+	}
+
 	public List<List<String>> getClausesForAccuracyMode(String mode) {
 		HashMap<String, List<List<String>>> modes = new HashMap<>();
 		// We allow the clauses in the modes to be edited,
@@ -116,6 +127,7 @@ public class QuickMatcherConfig {
 		modes.put(AccuracyMode.BALANCED_WITH_TEXT_DISTANCE.toString(), balanced);
 		modes.put(AccuracyMode.HIGH_PRECISION.toString(), highPrecision);
 		modes.put(AccuracyMode.GTAS_DEFAULT.toString(), gtasDefault);
+		modes.put(AccuracyMode.LOW_DATA_OPTIMIZED.toString(), lowDataOptimized);
 		return modes.get(mode);
 	}
 

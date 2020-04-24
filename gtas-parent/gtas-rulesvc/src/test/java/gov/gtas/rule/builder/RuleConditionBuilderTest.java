@@ -64,9 +64,11 @@ public class RuleConditionBuilderTest {
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
 		logger.info(result.toString().trim());
+		String rule = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$seat2:Seat(passengerId == $p.id, flightId == $f.id, number in (\"A7865\", \"H76\"), apis == true)";
 		assertEquals(
-				"$seat2:Seat(" + RuleTemplateConstants.SEAT_ATTRIBUTE_NAME + " in (\"A7865\", \"H76\"), apis == true)\n"
-						+ "$p:Passenger(id == $seat2.passenger.id)\n" + "$f:Flight(id == $seat2.flight.id)",
+				rule,
 				result.toString().trim());
 	}
 
@@ -92,8 +94,9 @@ public class RuleConditionBuilderTest {
 		StringBuilder result = new StringBuilder();
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
-		String expectedDrools = "$pnr_seat0:Seat(number in (\"A7865\", \"H76\"), apis == false)\n"
-				+ "$p:Passenger(id == $pnr_seat0.passenger.id)\n" + "$f:Flight(id == $pnr_seat0.flight.id)";
+		String expectedDrools = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$pnr_seat0:Seat(passengerId == $p.id, flightId == $f.id, number in (\"A7865\", \"H76\"), apis == false)";
 		assertEquals(expectedDrools, result.toString().trim());
 	}
 
@@ -132,11 +135,9 @@ public class RuleConditionBuilderTest {
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
 
-		assertEquals(FLIGHT_PAX_VARIABLE_NAME + ":" + EntityEnum.FLIGHT_PAX.getEntityName() + "(id > 0)\n"
-				+ PASSENGER_VARIABLE_NAME + ":" + EntityEnum.PASSENGER.getEntityName() + "(id == "
-				+ FLIGHT_PAX_VARIABLE_NAME + ".passenger.id)\n" + "$f:Flight("
-				+ FlightMapping.AIRPORT_DESTINATION.getFieldName() + " in (\"DBY\", \"XYZ\", \"PQR\"), id == "
-				+ FLIGHT_PAX_VARIABLE_NAME + ".flight.id)", result.toString().trim());
+		String rule = "$p:Passenger()\n" + "$f:Flight(destination in (\"DBY\", \"XYZ\", \"PQR\"))\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)";
+		assertEquals(rule, result.toString().trim());
 	}
 
 	@Test
@@ -159,11 +160,10 @@ public class RuleConditionBuilderTest {
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
 		logger.info(result.toString().trim());
-		assertEquals("$seat2:Seat(" + RuleTemplateConstants.SEAT_ATTRIBUTE_NAME + " != null, "
-				+ RuleTemplateConstants.SEAT_ATTRIBUTE_NAME + " str[endsWith] \"31\", apis == true)\n"
-				+ "$p:Passenger(id == $seat2.passenger.id)\n" + "$f:Flight("
-				+ FlightMapping.AIRPORT_DESTINATION.getFieldName()
-				+ " in (\"DBY\", \"XYZ\", \"PQR\"), id == $seat2.flight.id)", result.toString().trim());
+		String rule = "$p:Passenger()\n" + "$f:Flight(destination in (\"DBY\", \"XYZ\", \"PQR\"))\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$seat2:Seat(passengerId == $p.id, flightId == $f.id, number != null, number str[endsWith] \"31\", apis == true)";
+		assertEquals(rule, result.toString().trim());
 	}
 
 	@Test
@@ -186,10 +186,10 @@ public class RuleConditionBuilderTest {
 		StringBuilder result = new StringBuilder();
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
-		String expectedDrools = "$pnr_seat0:Seat(number != null, number str[startsWith] \"29D\", apis == false)\n"
-				+ "$d1:Document(issuanceCountry != \"US\")\n"
-				+ "$p:Passenger(id == $pnr_seat0.passenger.id, id == $d1.passenger.id)\n"
-				+ "$f:Flight(id == $pnr_seat0.flight.id)";
+		String expectedDrools = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$d1:Document(passengerId == $p.id, issuanceCountry != \"US\")\n"
+				+ "$pnr_seat0:Seat(passengerId == $p.id, flightId == $f.id, number != null, number str[startsWith] \"29D\", apis == false)";
 		assertEquals(expectedDrools, result.toString().trim());
 	}
 
@@ -207,7 +207,9 @@ public class RuleConditionBuilderTest {
 
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
-		String expectedDrools = "$d1:Document(issuanceCountry != \"US\")\n" + "$p:Passenger(id == $d1.passenger.id)";
+		String expectedDrools = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$d1:Document(passengerId == $p.id, issuanceCountry != \"US\")";
 		assertEquals(expectedDrools, result.toString().trim());
 	}
 
@@ -371,8 +373,9 @@ public class RuleConditionBuilderTest {
 		StringBuilder result = new StringBuilder();
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
-		String expectedDrools = "$d1:Document(issuanceCountry != \"US\", issuanceDate >= \"01-Jan-2010\")\n"
-				+ "$p:Passenger(id == $d1.passenger.id)";
+		String expectedDrools = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$d1:Document(passengerId == $p.id, issuanceCountry != \"US\", issuanceDate >= \"01-Jan-2010\")";
 		assertEquals(expectedDrools, result.toString().trim());
 	}
 
@@ -396,8 +399,9 @@ public class RuleConditionBuilderTest {
 		StringBuilder result = new StringBuilder();
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
-		String expectedDrools = "$d1:Document(issuanceCountry != \"US\", documentType == \"P\")\n"
-				+ "$p:Passenger(id == $d1.passenger.id)";
+		String expectedDrools = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$d1:Document(passengerId == $p.id, issuanceCountry != \"US\", documentType == \"P\")";
 		assertEquals(expectedDrools, result.toString().trim());
 	}
 
@@ -414,7 +418,9 @@ public class RuleConditionBuilderTest {
 		StringBuilder result = new StringBuilder();
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
-		String expectedDrools = "$d1:Document(documentType == \"P\")\n" + "$p:Passenger(id == $d1.passenger.id)";
+		String expectedDrools = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$d1:Document(passengerId == $p.id, documentType == \"P\")";
 		assertEquals(expectedDrools, result.toString().trim());
 	}
 
@@ -441,8 +447,9 @@ public class RuleConditionBuilderTest {
 		testTarget.buildConditionsAndApppend(result);
 		logger.info(result.toString());
 		assertTrue(result.length() > 0);
-		String expectedDrools = "$d1:Document(issuanceCountry != \"US\", documentType != \"P\")\n"
-				+ "$p:Passenger(id == $d1.passenger.id)";
+		String expectedDrools = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$d1:Document(passengerId == $p.id, issuanceCountry != \"US\", documentType != \"P\")";
 		assertEquals(expectedDrools, result.toString().trim());
 	}
 
@@ -459,7 +466,9 @@ public class RuleConditionBuilderTest {
 		StringBuilder result = new StringBuilder();
 		testTarget.buildConditionsAndApppend(result);
 		assertTrue(result.length() > 0);
-		String expectedDrools = "$d1:Document(documentType != \"P\")\n" + "$p:Passenger(id == $d1.passenger.id)";
+		String expectedDrools = "$p:Passenger()\n" + "$f:Flight()\n"
+				+ "$flpaxlk:FlightPassengerLink(passengerId == $p.id, flightId == $f.id)\n"
+				+ "$d1:Document(passengerId == $p.id, documentType != \"P\")";
 		assertEquals(expectedDrools, result.toString().trim());
 	}
 
@@ -510,11 +519,11 @@ public class RuleConditionBuilderTest {
 				+ DocumentMapping.ISSUANCE_DATE.getFieldName() + " >= \"01-Jan-2010\")\n" + "$p:Passenger("
 				+ PassengerMapping.DOB.getFieldName() + " >= \"01-Jan-1990\", " + PassengerMapping.DOB.getFieldName()
 				+ " <= \"31-Dec-1998\", " + PassengerMapping.LAST_NAME.getFieldName() + " == \"JONES\", "
-				+ "id == $seat.passenger.id, id == $d.passenger.id)\n"
+				+ "id == $seat.passengerId, id == $d.passengerId)\n"
 
 				+ "$f:Flight(" + FlightMapping.AIRPORT_DESTINATION.getFieldName() + " == \"DBY\", "
 				+ FlightMapping.ETA.getFieldName() + " == \"01-Jan-2015\", " + FlightMapping.ETD.getFieldName()
 				+ " == \"01-Jan-2015\", " + FlightMapping.FLIGHT_NUMBER.getFieldName() + " == 2231, "
-				+ "id == $seat.flight.id)", result.toString().trim());
+				+ "id == $seat.flightId)", result.toString().trim());
 	}
 }

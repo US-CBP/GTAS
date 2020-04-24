@@ -108,5 +108,13 @@ public interface WatchlistService {
 	public HitCategory fetchWatchlistCategoryById(Long categoryID);
 
 	List<WatchlistItem> fetchItemsByWatchlistName(String watchlistName);
+	
+	/**
+	 * Deletes a given list of individual watchlist item ids
+	 * @param watchlistItemIds
+	 * 				List of at minimum one watchlist item id
+	 */
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
+	void deleteWatchlistItems(List<Long> watchlistItemIds);
 
 }

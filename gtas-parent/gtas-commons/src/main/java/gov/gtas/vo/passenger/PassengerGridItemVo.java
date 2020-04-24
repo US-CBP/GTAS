@@ -29,6 +29,7 @@ public class PassengerGridItemVo extends BaseVo {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SHORT_DATE_FORMAT)
 	private Date dob;
 	private String paxId;
+	private String seat;
 
 	// flight info
 	private String flightId;
@@ -55,6 +56,14 @@ public class PassengerGridItemVo extends BaseVo {
 
 	public List<DocumentVo> getDocuments() {
 		return documents;
+	}
+
+	public String getSeat() {
+		return seat;
+	}
+
+	public void setSeat(String seat) {
+		this.seat = seat;
 	}
 
 	public String getMiddleName() {

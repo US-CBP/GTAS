@@ -36,12 +36,12 @@ public class TargetingResultUtils {
 
 		// TODO: check for no rule hits, empty ruleHitDetailPassengerIdList
 		if (!ruleHitDetailPassengerIdList.isEmpty()) {
-			Set<FlightPax> allFlightPaxByPassengerId = passengerService
-					.findFlightPaxFromPassengerIds(ruleHitDetailPassengerIdList);
+			Set<Passenger> passengerFromPassengerIds = passengerService
+					.findPassengerFromPassengerIds(ruleHitDetailPassengerIdList);
 
-			for (FlightPax flightPax : allFlightPaxByPassengerId) {
-				Long passengerId = flightPax.getPassengerId();
-				Long flightId = flightPax.getFlightId();
+			for (Passenger p : passengerFromPassengerIds) {
+				Long passengerId = p.getId();
+				Long flightId = p.getFlight().getId();
 				if (passengerFlightMap.containsKey(passengerId)) {
 					passengerFlightMap.get(passengerId).add(flightId);
 				} else {

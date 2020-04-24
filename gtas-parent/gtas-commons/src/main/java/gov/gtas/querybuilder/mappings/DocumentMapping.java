@@ -21,7 +21,7 @@ public enum DocumentMapping implements IEntityMapping {
 
 	DOCUMENT_WATCHLIST_CATEGORY("categoryId", "Category", TypeEnum.INTEGER.getType()),
 
-	DOCUMENT_OWNER_ID("passenger.id", "Owner Id", TypeEnum.STRING.getType(), false);
+	DOCUMENT_OWNER_ID("passengerId", "Owner Id", TypeEnum.INTEGER.getType(), false);
 
 	private String fieldName;
 	private String friendlyName;
