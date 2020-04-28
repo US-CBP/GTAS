@@ -63,6 +63,12 @@ public class User implements Serializable {
 	@Column(name = "active")
 	private int active;
 
+	@Column(name = "consecutive_failed_login_attempts")
+	private Integer consecutiveFailedLoginAttempts;
+
+	@Column(name = "reset_token")
+	private String resetToken;
+
 	@Column(name = "email")
 	private String email;
 
@@ -89,6 +95,22 @@ public class User implements Serializable {
 
 	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
 	private Set<HitMaker> hitMakers = new HashSet<>();
+
+	public Integer getConsecutiveFailedLoginAttempts() {
+		return consecutiveFailedLoginAttempts;
+	}
+
+	public void setConsecutiveFailedLoginAttempts(Integer consecutiveFailedLoginAttempts) {
+		this.consecutiveFailedLoginAttempts = consecutiveFailedLoginAttempts;
+	}
+
+	public String getResetToken() {
+		return resetToken;
+	}
+
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
+	}
 
 	public Boolean getHighPriorityHitsEmailNotification() {
 		return highPriorityHitsEmailNotification;

@@ -29,7 +29,7 @@ public interface UserService {
 	 * @return the user data
 	 */
 	@PreAuthorize(PRIVILEGE_ADMIN)
-	public UserData create(UserData user);
+	UserData create(UserData user);
 
 	/**
 	 * Delete.
@@ -38,7 +38,7 @@ public interface UserService {
 	 *            the user id
 	 */
 	@PreAuthorize(PRIVILEGE_ADMIN)
-	public void delete(String id);
+	void delete(String id);
 
 	/**
 	 * Find all.
@@ -46,7 +46,7 @@ public interface UserService {
 	 * @return the list
 	 */
 	@PreAuthorize(GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	public List<UserData> findAll();
+	List<UserData> findAll();
 
 	/**
 	 * Update the user.
@@ -56,7 +56,7 @@ public interface UserService {
 	 * @return the updated user data
 	 */
 
-	public UserData update(UserData user);
+	UserData update(UserData user);
 
 	/**
 	 * Update the user.
@@ -66,7 +66,7 @@ public interface UserService {
 	 * @return the updated user data
 	 */
 	@PreAuthorize(PRIVILEGE_ADMIN)
-	public UserData updateByAdmin(UserData user);
+	UserData updateByAdmin(UserData user);
 
 	/**
 	 * Find by id.
@@ -75,7 +75,7 @@ public interface UserService {
 	 *            the id
 	 * @return the user data
 	 */
-	public UserData findById(String id);
+	UserData findById(String id);
 
 	/**
 	 * Fetch user.
@@ -84,11 +84,12 @@ public interface UserService {
 	 *            the user id
 	 * @return the user
 	 */
-	public User fetchUser(final String userId);
+	User fetchUser(final String userId);
 
-	public Set<UserGroup> fetchUserGroups(final String userId);
+	Set<UserGroup> fetchUserGroups(final String userId);
 
-	public boolean isAdminUser(String userId);
+	boolean isAdminUser(String userId);
 
-	public boolean treatAsOneDay(String userId);
+	boolean treatAsOneDay(String userId);
+
 }

@@ -45,7 +45,6 @@ import static java.util.stream.Collectors.toSet;
 @Service
 public class HitEmailNotificationService {
 
-    private static final String HIGH_PROFILE_NOTIFICATION_FTL = "highProfileHitNotification.ftl";
     private static final String AUTOMATED_EMAIL_SUBJECT = "GTAS Automated Email Notification";
     private static final String MANUAL_EMAIL_SUBJECT = "GTAS Passenger Notification: %s, %s";
 
@@ -76,7 +75,7 @@ public class HitEmailNotificationService {
             emailDTO.setTo(new String[] { emailToDto.getKey() });
             emailDTO.setSubject(AUTOMATED_EMAIL_SUBJECT);
 
-            String htmlContent = emailTemplateLoader.generateHtmlString(HIGH_PROFILE_NOTIFICATION_FTL, emailToDto.getValue());
+            String htmlContent = emailTemplateLoader.generateHitEmailHtmlContent(emailToDto.getValue());
             emailDTO.setBody(htmlContent);
 
             emailDTOs.add(emailDTO);
@@ -124,7 +123,7 @@ public class HitEmailNotificationService {
 
         PassengerDetails passengerDetails = passenger.getPassengerDetails();
         emailDTO.setSubject(format(MANUAL_EMAIL_SUBJECT, passengerDetails.getLastName().toUpperCase(), passengerDetails.getFirstName().toUpperCase()));
-        String htmlContent = emailTemplateLoader.generateHtmlString(HIGH_PROFILE_NOTIFICATION_FTL, Collections.singleton(hitEmailDTO));
+        String htmlContent = emailTemplateLoader.generateHitEmailHtmlContent(Collections.singleton(hitEmailDTO));
         emailDTO.setBody(htmlContent);
 
         return emailDTO;
