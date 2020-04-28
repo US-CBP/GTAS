@@ -92,10 +92,4 @@ public interface UserService {
 
 	boolean treatAsOneDay(String userId);
 
-	void resetFailedLoginAttemptCount(String userId);
-
-	void addToFailAttempts(String userId);
-
-	Integer getUserLoginAttempts(String userId);
-
 }

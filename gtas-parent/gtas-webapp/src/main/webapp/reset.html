@@ -7,26 +7,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>GTAS</title>
-    <link rel="stylesheet" href="resources/node_modules/npm-font-open-sans/open-sans.css" />
-    <link rel="stylesheet" href="resources/css/style-icomoon.css" />
-    <link rel="stylesheet" href="resources/node_modules/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
-    <link rel="stylesheet" href="resources/node_modules/bootstrap-select/dist/css/bootstrap-select.min.css" />
-    <link rel="stylesheet" href="resources/node_modules/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
-    <link rel="stylesheet" href="resources/node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css" />
-    <link rel="stylesheet" href="resources/node_modules/selectize/dist/css/selectize.bootstrap3.css" />
-    <link rel="stylesheet" href="resources/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" />
-    <link rel="stylesheet" href="resources/node_modules/angular-ui-grid/ui-grid.min.css" />
     <link rel="stylesheet" href="resources/css/query-builder.default.css" />
     <link rel="stylesheet" href="resources/node_modules/angular-material/angular-material.min.css" />
     <link rel="stylesheet" href="resources/css/gtas.css" />
     <link rel="stylesheet" href="resources/css/login.css" />
-    <link rel="stylesheet" href="resources/node_modules/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="resources/node_modules/font-awesome-animation/dist/font-awesome-animation.min.css">
-    <link rel="stylesheet" href="resources/node_modules/summernote/dist/summernote.css" type="text/css">
-    <link rel="stylesheet" type="text/css" href="resources/node_modules/trix/dist/trix.css">
-    <link rel="stylesheet" href="resources/node_modules/angularjs-bootstrap-datetimepicker/src/css/datetimepicker.css"/>
-    <link rel="stylesheet" type="text/css" href="resources/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css">
     <style type="text/css">
         .mdl-textfield__label {
             top:0px;
@@ -44,19 +29,19 @@
                   ng-controller="ResetController" ng-submit="reset(credentials)">
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width">
                     <input class="mdl-textfield__input" type="text"
-                           id="user_login" ng-model="credentials.j_username"
+                           id="user_login" ng-model="credentials.username"
                            name="username" autocomplete="off" required disabled>
                     <label class="mdl-textfield__label" for="user_login">User Name</label>
                 </div>
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width">
                     <input class="mdl-textfield__input" type="password"
-                           id="user_pass" ng-model="credentials.j_password"
+                           id="user_pass" ng-model="credentials.password"
                            name="password" required disabled>
                     <label class="mdl-textfield__label" for="user_pass">New Password</label>
                 </div>
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width">
                     <input class="mdl-textfield__input" type="password"
-                           id="pass_confirm" ng-model="credentials.j_password_confirm"
+                           id="pass_confirm" ng-model="credentials.passwordConfirm"
                            name="pass_confirm" required disabled>
                     <label class="mdl-textfield__label" for="pass_confirm">Confirm Password</label>
                 </div>
@@ -115,26 +100,8 @@
 <script src='common/directives.js'></script>
 <script src='common/filters.js'></script>
 <script src='common/services.js'></script>
-<script src='factory/ModalGridFactory.js'></script>
-<script src='factory/JqueryQueryBuilderWidget.js'></script>
-<script src='dashboard/DashboardController.js'></script>
-<script src='flights/FlightsModel.js'></script>
-<script src='cases/CaseModel.js'></script>
-<script src='flights/FlightsController.js'></script>
-<script src='flights/FlightsService.js'></script>
-<script src='pax/PaxModel.js'></script>
-<script src='pax/PaxController.js'></script>
-<script src='pax/PaxService.js'></script>
-<script src='pax/PaxFactory.js'></script>
-<script src='build/BuildController.js'></script>
-<script src='watchlists/WatchListController.js'></script>
-<script src='admin/AdminController.js'></script>
 <script src='admin/UserController.js'></script>
-<script src='admin/UploadController.js'></script>
 <script src='login/AuthService.js'></script>
 <script src='login/ResetController.js'></script>
-<script src='userSettings/UserSettingsController.js'></script>
-<script src='userSettings/FilterCtrl.js'></script>
-<script src='common/languagecontroller.js'></script>
 
 </html>

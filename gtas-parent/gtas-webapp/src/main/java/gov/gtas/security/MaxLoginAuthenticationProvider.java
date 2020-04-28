@@ -1,9 +1,11 @@
 package gov.gtas.security;
 
+import gov.gtas.services.security.LoginService;
 import gov.gtas.services.security.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -14,9 +16,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class MaxLoginAuthenticationProvider extends DaoAuthenticationProvider {
 
-
     @Autowired
-    private UserService userService;
+    private LoginService loginService;
 
     public MaxLoginAuthenticationProvider() {
         super();
@@ -29,8 +30,6 @@ public class MaxLoginAuthenticationProvider extends DaoAuthenticationProvider {
         super.setUserDetailsService(userDetailsService);
     }
 
-
-
     @Override
     public Authentication authenticate(Authentication authentication)
             throws AuthenticationException {
@@ -38,11 +37,11 @@ public class MaxLoginAuthenticationProvider extends DaoAuthenticationProvider {
         String username = (String)authentication.getPrincipal();
         try {
             Authentication auth = super.authenticate(authentication);
-            userService.resetFailedLoginAttemptCount(username);
+            loginService.resetFailedLoginAttemptCount(username);
 
             return auth;
         } catch (BadCredentialsException badCredentialsException) {
-            userService.addToFailAttempts(username);
+            loginService.addToFailAttempts(username);
 
             throw badCredentialsException;
         }

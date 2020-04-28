@@ -2,9 +2,10 @@
     'use strict';
     app.controller('ResetController', function($scope, AuthService) {
         $scope.credentials = {
-            j_username: '',
-            j_password: '',
-            j_password_confirm: ''
+            username: '',
+            password: '',
+            passwordConfirm: '',
+            resetToken: ''
         };
 
         $('#user_login').prop('disabled',false);

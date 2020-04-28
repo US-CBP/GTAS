@@ -22,30 +22,28 @@
         var preparePostData = function (credentials) {
             var username = credentials.j_username !== undefined ? credentials.j_username.toUpperCase() : '';
             var password = credentials.j_password !== undefined ? credentials.j_password : '';
-            var passwordConfirm = credentials.j_password_confirm !== undefined ? credentials.j_password_confirm : '';
-
-            var urlParams = new URLSearchParams(window.location.search);
-            var resetToken = urlParams.get('resetParams') !== undefined ? urlParams.get('token') : '';
 
             return 'username=' + username
-                + '&password=' + encodeURIComponent(password)
-                + '&confirmPassword=' + encodeURIComponent(passwordConfirm)
-                +  '&resetToken=' + encodeURIComponent(resetToken);
+                + '&password=' + encodeURIComponent(password);
         };
 
-        authService.reset = function (credentials) {
-            var postData = preparePostData(credentials);
+        var getResetToken = function () {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('resetParams') !== undefined ? urlParams.get('token') : '';
+        }
+
+        authService.reset = function (payload) {
             sessionId = $cookies.get("JSESSIONID");
+            payload['resetToken'] = getResetToken();
 
             var request =  $http({
                 method: 'POST',
                 url: '/gtas/password-reset',
-                data: postData
-                ,
+                data: payload,
                 headers: {
                     "JSESSIONID":""+sessionId,
                     "X-CSRF-TOKEN" : ""+csrfToken,
-                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Type": "application/json",
                     "X-Login-Ajax-call": 'true'
                 }
             });

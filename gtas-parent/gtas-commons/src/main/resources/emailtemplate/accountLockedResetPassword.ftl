@@ -2,7 +2,7 @@
     <title>Account Locked</title>
 </head>
 <body>
-<div style="margin-left: 30px;">
+<div>
     <p>Hello ${userEmail}!</p>
     <p></p>
     <p>Your account has been locked due to an excessive number of unsuccessful sign in attempts.</p>

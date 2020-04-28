@@ -5,25 +5,19 @@
  */
 package gov.gtas.services.security;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
-import freemarker.template.TemplateException;
-import gov.gtas.email.ResetPasswordEmailService;
 import gov.gtas.model.UserGroup;
 import gov.gtas.repository.UserGroupRepository;
-import gov.gtas.services.NotificatonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +54,6 @@ public class UserServiceImpl implements UserService {
 
 	@Value("${user.group.default}")
 	private Long defaultUserGroupId;
-
-	@Autowired
-	private ResetPasswordEmailService resetPasswordEmailService;
 
 	private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
 
@@ -166,49 +157,6 @@ public class UserServiceImpl implements UserService {
 	public Set<UserGroup> fetchUserGroups(final String userId) {
 		User user = userRepository.findOne(userId);
 		return userGroupRepository.findDistinctByGroupMembersIn(Collections.singleton(user));
-	}
-
-	@Override
-	@Transactional
-	public 	void resetFailedLoginAttemptCount(final String userId) {
-		fetchUser(userId);
-		User user = userRepository.findOne(userId);
-		user.setConsecutiveFailedLoginAttempts(0);
-
-	}
-
-	@Override
-	@Transactional
-	public void addToFailAttempts(final String userId) {
-		fetchUser(userId);
-		User user = userRepository.findOne(userId);
-		if(user.getConsecutiveFailedLoginAttempts() == null) {
-			user.setConsecutiveFailedLoginAttempts(1);
-		} else if(user.getConsecutiveFailedLoginAttempts() == 4) {
-			sendPasswordResetEmail(user);
-			user.setConsecutiveFailedLoginAttempts(user.getConsecutiveFailedLoginAttempts() + 1);
-		} else {
-			user.setConsecutiveFailedLoginAttempts(user.getConsecutiveFailedLoginAttempts() + 1);
-		}
-
-	}
-
-	@Override
-	@Transactional
-	public Integer getUserLoginAttempts(final String userId) {
-		fetchUser(userId);
-		User user = userRepository.findOne(userId);
-		return user.getConsecutiveFailedLoginAttempts();
-	}
-
-	private void sendPasswordResetEmail(User user) {
-		String resetToken = UUID.randomUUID().toString();
-		user.setResetToken(resetToken);
-		try {
-			resetPasswordEmailService.sendAccountLockedResetEmail(user.getEmail(), resetToken);
-		} catch(Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	/**
