@@ -11,7 +11,7 @@ const SideNav = props => {
   };
 
   return (
-    <div className="filter-container">
+    <div className={`"filter-container" ${props.className}`}>
       <div
         className={`${open ? "main-overlay-open" : "main-overlay"}`}
         onClick={() => toggleOpen(false)}

@@ -17,18 +17,16 @@ const Admin = props => {
   };
 
   return (
-    <Container fluid>
-      <Title title="Admin" uri={props.uri}></Title>
+    <>
       <Banner
         id="banner"
         styleName="warning"
         text="Something has happened."
         defaultState={showBanner}
       />
-      <div className="box2">
-        <Tabs tabs={tablist} />
-      </div>
-    </Container>
+
+      <Tabs tabs={tablist} />
+    </>
   );
 };
 
