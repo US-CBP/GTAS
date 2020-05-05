@@ -3,8 +3,10 @@ import Title from "../../components/title/Title";
 import { Link } from "@reach/router";
 import Tabs from "../../components/tabs/Tabs";
 import { Row, Container, Col, Form } from "react-bootstrap";
-import "./PaxDetail.css";
+import "./PaxDetail.scss";
 import PaxInfo from "../../components/paxInfo/PaxInfo";
+import SideNav from "../../components/sidenav/SideNav";
+import Main from "../../components/main/Main";
 
 const PaxDetail = props => {
   const tabcontent = props.children.props.children;
@@ -16,20 +18,17 @@ const PaxDetail = props => {
     { title: "Link Analysis", link: tabcontent[4] }
   ];
   return (
-    <Container fluid>
-      <Title title="Passenger Detail" uri={props.uri} />
-      <Row flex>
-        <Col lg="3" md="3" sm="3" className="box2">
-          <PaxInfo></PaxInfo>
-        </Col>
+    <>
+      <SideNav className="paxdetails-side-nav">
+        <br />
+        <PaxInfo></PaxInfo>
+      </SideNav>
+      <Main>
+        <Title title="Passenger Detail" uri={props.uri} />
 
-        <Col lg="9" md="9" sm="9" className="box2">
-          <div>
-            <Tabs tabs={tabs} />
-          </div>
-        </Col>
-      </Row>
-    </Container>
+        <Tabs tabs={tabs} />
+      </Main>
+    </>
   );
 };
 

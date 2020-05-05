@@ -1,0 +1,10 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+//TODO:  decide on what should be displayed on small devices
+@include media-breakpoint-down(sm) {
+  .paxdetails-side-nav {
+    display: none;
+  }
+}
