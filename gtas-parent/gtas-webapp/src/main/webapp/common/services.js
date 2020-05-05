@@ -1819,5 +1819,23 @@
           getHistoricalNotes:getHistoricalNotes,
           getNoteTypes:getNoteTypes
         });
+      })
+      .service("pendingHitDetailsService", function($http, $q){
+
+          function createManualPvl(paxId, flightId){
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'post',
+                  params: {
+                      paxId : paxId,
+                      flightId : flightId
+                  },
+                  url: "/gtas/createmanualpvl"
+              }));
+              return dfd.promise
+          }
+          return({
+              createManualPvl:createManualPvl
+          });
       });
   }());

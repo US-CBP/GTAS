@@ -32,7 +32,8 @@
     eventNotes,
     noteTypesList,
     $uibModal,
-    paxReportService
+    paxReportService,
+    pendingHitDetailsService
   ) {
 	$scope.noteTypesList = noteTypesList.data;
 	$scope.eventNotes = eventNotes.data.paxNotes;
@@ -1297,6 +1298,11 @@
     	  return true;
     };
 
+  $scope.createManualPvl = function(){
+    pendingHitDetailsService.createManualPvl($scope.passenger.paxId, $scope.passenger.flightId).then(function(response){
+      console.log(response);
+    });
+  }
 
 
 
