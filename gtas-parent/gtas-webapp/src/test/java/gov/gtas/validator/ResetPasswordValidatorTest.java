@@ -12,7 +12,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 
 import static gov.gtas.validator.ResetPasswordValidator.INVALID_CREDENTIALS_REQUEST_ERROR;
-import static gov.gtas.validator.ResetPasswordValidator.MATCHING_PASSWORDS_ERROR;
+import static gov.gtas.validator.ResetPasswordValidator.MATCHING_PWORDS_ERROR;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -119,7 +119,7 @@ public class ResetPasswordValidatorTest {
         BindingResult bindingResult = new BeanPropertyBindingResult(dto, "dto");
         when(userRepository.findOne(anyString())).thenReturn(user);
         resetPasswordValidator.validate(dto, bindingResult);
-        assertEquals(MATCHING_PASSWORDS_ERROR, bindingResult.getAllErrors().get(0).getDefaultMessage());
+        assertEquals(MATCHING_PWORDS_ERROR, bindingResult.getAllErrors().get(0).getDefaultMessage());
         assertEquals(1, bindingResult.getAllErrors().size());
     }
 
