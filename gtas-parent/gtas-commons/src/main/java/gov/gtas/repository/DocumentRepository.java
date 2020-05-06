@@ -27,4 +27,6 @@ public interface DocumentRepository extends CrudRepository<Document, Long> {
 	@Query("Select d from Document d where d.passengerId in :paxIds")
 	Set<Document> getAllByPaxId(@Param("paxIds") Set<Long> paxIds);
 
+	@Query("Select d from Document d left join fetch d.messages where d.passengerId in :passengerIds")
+    Set<Document> getDocumentsByPaxIdFlightId(@Param("passengerIds") Set<Long> passengerIds);
 }
