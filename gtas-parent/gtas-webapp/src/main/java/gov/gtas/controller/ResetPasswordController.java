@@ -41,8 +41,7 @@ public class ResetPasswordController {
         User user = userRepository.findOne(dto.getUsername());
         user.setResetToken(null);
         user.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()));
-
-        loginService.resetFailedLoginAttemptCount(user.getUserId());
+        user.setConsecutiveFailedLoginAttempts(0);
         userRepository.save(user);
 
         return new JsonServiceResponse(Status.SUCCESS, SUCCESS_NOTIFICATION);
