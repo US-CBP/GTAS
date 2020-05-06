@@ -13,7 +13,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "address")
-public class Address extends BaseEntityAudit {
+public class Address extends BaseEntityAudit implements PIIObject {
 	private static final long serialVersionUID = 1L;
 
 	public Address() {
@@ -146,5 +146,15 @@ public class Address extends BaseEntityAudit {
 				&& Objects.equals(this.line3, other.line3) && Objects.equals(this.city, other.city)
 				&& Objects.equals(this.state, other.state) && Objects.equals(this.country, other.country)
 				&& Objects.equals(this.postalCode, other.postalCode);
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.line1 = "DELETED";
+		this.line2 = "DELETED";
+		this.line3 = "DELETED";
+		this.state = "DELETED";
+		this.postalCode = "DELETED";
+		return this;
 	}
 }

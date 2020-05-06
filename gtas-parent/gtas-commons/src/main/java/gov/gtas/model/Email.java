@@ -9,15 +9,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "email")
-public class Email extends BaseEntityAudit {
+public class Email extends BaseEntityAudit implements PIIObject{
 	private static final long serialVersionUID = 1L;
 
 	public Email() {
@@ -30,6 +26,13 @@ public class Email extends BaseEntityAudit {
 
 	@ManyToMany(mappedBy = "emails", targetEntity = Pnr.class)
 	private Set<Pnr> pnrs = new HashSet<>();
+
+	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
+	private Long flightId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+	private Flight flight;
 
 	public String getAddress() {
 		return address;
@@ -55,6 +58,15 @@ public class Email extends BaseEntityAudit {
 		this.pnrs = pnrs;
 	}
 
+
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.address);
@@ -70,5 +82,19 @@ public class Email extends BaseEntityAudit {
 			return false;
 		final Email other = (Email) obj;
 		return Objects.equals(this.address, other.address);
+	}
+
+	public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.address = "DELETED";
+		return this;
 	}
 }

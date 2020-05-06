@@ -6,7 +6,9 @@
 package gov.gtas.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -43,6 +45,17 @@ public class Document extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Passenger passenger;
 
+	@ManyToMany(mappedBy = "documents")
+	private Set<Message> messages = new HashSet<>();
+
+
+	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
+	private Long flightId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+	private Flight flight;
+
 	@Column(name = "passenger_id", columnDefinition = "bigint unsigned", insertable = false, updatable = false)
 	private Long passengerId;
 
@@ -50,6 +63,14 @@ public class Document extends BaseEntity {
 	@Column(name = "days_valid")
 	private Integer numberOfDaysValid;
 
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
 	public Integer getNumberOfDaysValid() {
 		return numberOfDaysValid;
 	}
@@ -128,5 +149,21 @@ public class Document extends BaseEntity {
 		final Document other = (Document) obj;
 		return Objects.equals(this.documentNumber, other.documentNumber)
 				&& Objects.equals(this.passengerId, other.passengerId);
+	}
+
+	public Set<Message> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(Set<Message> messages) {
+		this.messages = messages;
+	}
+
+	public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
 	}
 }

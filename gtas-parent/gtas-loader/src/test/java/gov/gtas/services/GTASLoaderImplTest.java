@@ -134,7 +134,7 @@ public class GTASLoaderImplTest {
 		Mockito.when(docDao.findByDocumentNumberAndPassenger("1234", p)).thenReturn(new ArrayList<>(p.getDocuments()));
 		Mockito.when(docDao.findByDocumentNumberAndPassenger("5678", p)).thenReturn(new ArrayList<>());
 		Mockito.when(utils.createNewDocument(docVo2)).thenReturn(new Document());
-		gtasLoader.updatePassenger(p, pvo);
+		gtasLoader.updatePassenger(p, pvo, new Message());
 		assertEquals(2, p.getDocuments().size());
 	}
 
