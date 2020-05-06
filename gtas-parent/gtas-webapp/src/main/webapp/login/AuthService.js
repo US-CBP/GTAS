@@ -5,7 +5,7 @@
  */
 (function () {
     'use strict';
-    app.factory('AuthService', function ($http, Session, $rootScope, $mdToast, APP_CONSTANTS, $location, $cookies) {
+    app.factory('AuthService', function ($http, Session, $rootScope, $mdToast, APP_CONSTANTS, $location, $cookies, $window) {
         var authService = {};
 
         $http.defaults.xsrfHeaderName = 'X-CSRF-TOKEN';
@@ -20,10 +20,48 @@
         };
 
         var preparePostData = function (credentials) {
-            var username = credentials.j_username != undefined ? credentials.j_username.toUpperCase() : '';
-            var password = credentials.j_password != undefined ? credentials.j_password : '';
-            return 'username=' + username + '&password=' + encodeURIComponent(password);
+            var username = credentials.j_username !== undefined ? credentials.j_username.toUpperCase() : '';
+            var password = credentials.j_password !== undefined ? credentials.j_password : '';
+
+            return 'username=' + username
+                + '&password=' + encodeURIComponent(password);
+        };
+
+        var getResetToken = function () {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('resetParams') !== undefined ? urlParams.get('token') : '';
         }
+
+        authService.reset = function (payload) {
+            sessionId = $cookies.get("JSESSIONID");
+            payload['resetToken'] = getResetToken();
+
+            var request =  $http({
+                method: 'POST',
+                url: '/gtas/password-reset',
+                data: payload,
+                headers: {
+                    "JSESSIONID":""+sessionId,
+                    "X-CSRF-TOKEN" : ""+csrfToken,
+                    "Content-Type": "application/json",
+                    "X-Login-Ajax-call": 'true'
+                }
+            });
+
+            request.then(function (response) {
+                var toastPosition = angular.element(document.getElementById('resetForm'));
+                $mdToast.show(
+                    $mdToast.simple()
+                        .content(response.data.message)
+                        .position('top right')
+                        .hideDelay(4000)
+                        .parent(toastPosition));
+
+                if (response.data.status === 'SUCCESS') {
+                    $window.location.href = '/gtas/login.html';
+                }
+            });
+        };
 
         authService.login = function (credentials) {
             var postData = preparePostData(credentials);
@@ -48,16 +86,18 @@
                         }
                         else {
                             if (status != 405){
-                            var toastPosition = angular.element(document.getElementById('loginForm'));
-                            $mdToast.show(
-                                $mdToast.simple()
-                                    .content(APP_CONSTANTS.LOGIN_ERROR_MSG)
-                                    .position('top right')
-                                    .hideDelay(4000)
-                                    .parent(toastPosition)
-                            );
-                            $location.path('/error');
-                        }
+                                var toastPosition = angular.element(document.getElementById('loginForm'));
+                                var errorMessage = APP_CONSTANTS.LOGIN_ERROR_MSG;
+                                if(status === 406) {
+                                    errorMessage = APP_CONSTANTS.LOGIN_ERROR_MAX_ATTEMPTS;
+                                }
+                                $mdToast.show(
+                                    $mdToast.simple()
+                                        .content(errorMessage)
+                                        .position('top right')
+                                        .hideDelay(4000)
+                                        .parent(toastPosition));
+                            }
                         }
 
                 }).error(function (data, status) {

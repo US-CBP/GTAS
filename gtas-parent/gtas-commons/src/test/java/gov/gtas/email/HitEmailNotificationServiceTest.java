@@ -62,7 +62,7 @@ public class HitEmailNotificationServiceTest {
 
     @Test
     public void testWLPassenger() throws IOException, TemplateException {
-        Mockito.when(emailTemplateLoader.generateHtmlString(Mockito.any(), Mockito.any())).thenReturn("Super Awesome HTML representation of a passenger");
+        Mockito.when(emailTemplateLoader.generateHitEmailHtmlContent(Mockito.any())).thenReturn("Super Awesome HTML representation of a passenger");
         ReflectionTestUtils.setField(hitEmailNotificationService, "priorityHitCategory", testHitPriorityCategory);
         Passenger p = generateSamplePassenger();
         for (HitDetail hd : p.getHitDetails()) {

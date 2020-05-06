@@ -44,6 +44,9 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private SecurityUserDetailsService userDetailsService;
 
+	@Autowired
+	private MaxLoginAuthenticationProvider daoAuthenticationProvider;
+
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
 				"/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
@@ -54,7 +57,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+		auth.authenticationProvider(daoAuthenticationProvider).userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
 	}
 
 	@Override
@@ -68,12 +71,12 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 
 		http.authorizeRequests()
-				.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**",
+				.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**", "/reset.html", "/password-reset",
 						"/authenticate")
 				.permitAll().anyRequest().authenticated().and().formLogin().loginProcessingUrl("/authenticate")
 				.usernameParameter("username").passwordParameter("password")
 				.successHandler(new AjaxAuthenticationSuccessHandler(savedReqHandler))
-				.failureHandler(new SimpleUrlAuthenticationFailureHandler()).loginPage("/login.html").and().logout()
+				.failureHandler(new UrlAuthenticationFailureHandler()).loginPage("/login.html").and().logout()
 				.logoutUrl("/logout").logoutSuccessUrl("/login.html").invalidateHttpSession(true).permitAll();
 
 		http.sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
