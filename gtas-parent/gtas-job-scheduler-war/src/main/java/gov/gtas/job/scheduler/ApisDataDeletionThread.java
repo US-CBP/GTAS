@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Component
 public class ApisDataDeletionThread  extends DataSchedulerThread implements Callable<Boolean> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApisDataMaskThread.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApisDataDeletionThread.class);
 
     private final PassengerService passengerService;
 

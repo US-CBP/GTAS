@@ -28,33 +28,35 @@ public class ApisDataMaskThread extends DataSchedulerThread implements Callable<
 
 
     @Override
-    public Boolean call() throws Exception {
-        long start = System.nanoTime();
-        logger.debug("Starting rule running scheduled task");
+    public Boolean call()  {
         boolean success = true;
-        if (getMessageStatuses().isEmpty()) {
-            logger.debug("No messages to process, ending masking process");
-            return success;
-        }
-
-        List<Message> messages = getMessageStatuses().stream().map(MessageStatus::getMessage).collect(Collectors.toList());
-        MessageAndFlightIds messageAndFlightIds = getApisMessageIdsAndFlightIds();
-        Set<Passenger> passengers = passengerService.getPassengersFromMessageIds(messageAndFlightIds.getMessageIds(), messageAndFlightIds.getFlightIds());
-
-        Set<DataRetentionStatus> dataRetentionStatuses = new HashSet<>();
-        for (Passenger p : passengers) {
-            DataRetentionStatus drs = p.getDataRetentionStatus();
-            drs.setUpdatedAt(new Date());
-            drs.setUpdatedBy("APIS_MASK");
-            if (p.getHitDetails().isEmpty()) {
-                drs.setMaskedAPIS(true);
+        try {
+            long start = System.nanoTime();
+            logger.debug("Starting rule running scheduled task");
+            if (getMessageStatuses().isEmpty()) {
+                logger.debug("No messages to process, ending masking process");
+                return success;
             }
-            dataRetentionStatuses.add(drs);
+            MessageAndFlightIds messageAndFlightIds = getApisMessageIdsAndFlightIds();
+            Set<Passenger> passengers = passengerService.getPassengersFromMessageIds(messageAndFlightIds.getMessageIds(), messageAndFlightIds.getFlightIds());
+            Set<DataRetentionStatus> dataRetentionStatuses = new HashSet<>();
+            for (Passenger p : passengers) {
+                DataRetentionStatus drs = p.getDataRetentionStatus();
+                drs.setUpdatedAt(new Date());
+                drs.setUpdatedBy("APIS_MASK");
+                if (p.getHitDetails().isEmpty()) {
+                    drs.setMaskedAPIS(true);
+                }
+                dataRetentionStatuses.add(drs);
+            }
+            dataRetentionService.saveDataRetentionStatus(dataRetentionStatuses);
+            getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.APIS_DATA_MASKED));
+            dataRetentionService.saveMessageStatus(getMessageStatuses());
+            logger.debug("Total time running apis data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+        } catch (Exception e) {
+            logger.error("", e);
+            success = false;
         }
-        dataRetentionService.saveDataRetentionStatus(dataRetentionStatuses);
-        getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.APIS_DATA_MASKED));
-        dataRetentionService.saveMessageStatus(getMessageStatuses());
-        logger.debug("Total rule running data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
         return success;
     }
 
