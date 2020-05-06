@@ -78,7 +78,7 @@ public class RuleRunnerScheduler {
 	 * rule engine
 	 **/
 	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
-	public void jobScheduling() throws InterruptedException {
+	public void ruleEngine() throws InterruptedException {
 
 
 		int flightLimit = this.jobSchedulerConfig.getMaxFlightsPerRuleRun();
@@ -114,7 +114,7 @@ public class RuleRunnerScheduler {
 				messageLimit);
 		int maxPassengers = this.jobSchedulerConfig.getMaxPassengersPerRuleRun();
 		if (!source.isEmpty()) {
-			Map<Long, List<MessageStatus>> messageFlightMap = geFlightMessageMap(source);
+			Map<Long, List<MessageStatus>> messageFlightMap = SchedulerUtils.geFlightMessageMap(source);
 			int runningTotal = 0;
 			List<MessageStatus> ruleThread = new ArrayList<>();
 			List<RuleRunnerThread> list = new ArrayList<>();
@@ -151,7 +151,7 @@ public class RuleRunnerScheduler {
 			source = messageStatusRepository.getMessagesFromStatus(MessageStatusEnum.NEO_LOADED.getName(),
 					messageLimit);
 			if (!source.isEmpty()) {
-				Map<Long, List<MessageStatus>> messageFlightMap = geFlightMessageMap(source);
+				Map<Long, List<MessageStatus>> messageFlightMap = SchedulerUtils.geFlightMessageMap(source);
 				int runningTotal = 0;
 				List<MessageStatus> ruleThread = new ArrayList<>();
 				List<GraphRulesThread> list = new ArrayList<>();
@@ -184,20 +184,4 @@ public class RuleRunnerScheduler {
 			}
 		}
 	}
-
-	private Map<Long, List<MessageStatus>> geFlightMessageMap(List<MessageStatus> source) {
-		Map<Long, List<MessageStatus>> messageFlightMap = new HashMap<>();
-		for (MessageStatus messageStatus : source) {
-			Long flightId = messageStatus.getFlightId();
-			if (messageFlightMap.containsKey(flightId)) {
-				messageFlightMap.get(flightId).add(messageStatus);
-			} else {
-				List<MessageStatus> messageStatuses = new ArrayList<>();
-				messageStatuses.add(messageStatus);
-				messageFlightMap.put(flightId, messageStatuses);
-			}
-		}
-		return messageFlightMap;
-	}
-
 }

@@ -285,4 +285,31 @@ public class PassengerServiceImpl implements PassengerService {
 		return passengerRepository.getPassengersForEmailDto(paxIds);
 	}
 
+	@Override
+	public Set<Passenger> getPassengersFromMessageIds(Set<Long> messageIds, Set<Long> flightIds) {
+		if (messageIds.isEmpty()) {
+			return new HashSet<>();
+		} else {
+			return passengerRepository.getPassengerIncludingHitsByMessageId(messageIds, flightIds);
+		}
+	}
+
+	@Override
+	public Set<Passenger> getFullPassengersFromMessageIds(Set<Long> messageIds, Set<Long> flightIds) {
+		if (messageIds.isEmpty()) {
+			return new HashSet<>();
+		} else {
+			return passengerRepository.getFullPassengerIncludingHitsByMessageId(messageIds, flightIds);
+		}
+	}
+
+	@Override
+	public 	Set<Document> getPassengerDocuments(Set<Long> passengerIds, Set<Long> flightIds) {
+		if (passengerIds.isEmpty()) {
+			return new HashSet<>();
+		} else {
+			return documentRepository.getDocumentsByPaxIdFlightId(passengerIds);
+		}
+	}
+
 }
