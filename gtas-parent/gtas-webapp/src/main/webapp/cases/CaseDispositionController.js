@@ -515,6 +515,7 @@
                         WATCHLIST: true,
                         USER_RULE: true,
                         GRAPH_RULE: true,
+                        MANUAL: true,
                         PARTIAL_WATCHLIST: false
                     };
                  let   ruleCatFilter;

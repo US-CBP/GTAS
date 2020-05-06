@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_HITS;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES;
 
 @Service
 public interface PendingHitDetailsService {
 
-    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_HITS)
-    void createPendingHitDetail(Long paxId, Long flightId, String userId);
+    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
+    void createManualPendingHitDetail(Long paxId, Long flightId, String userId, Long hitCategoryId, String desc);
 
-    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_HITS)
+    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
     void saveAllPendingHitDetails(Set<PendingHitDetails> phdSet);
 }
