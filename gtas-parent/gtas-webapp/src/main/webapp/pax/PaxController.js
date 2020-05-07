@@ -1336,6 +1336,7 @@
       $mdSidenav("createManualHit").close();
     });
     spinnerService.hide("html5spinner");
+    $scope.errorToast('Processing Manual Hit: Please Refresh Existing Hits Table Or Page');
   }
 
 

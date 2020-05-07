@@ -8,6 +8,7 @@ import gov.gtas.model.User;
 import gov.gtas.repository.HitMakerRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.services.security.UserService;
+import org.elasticsearch.common.util.concurrent.PrioritizedEsThreadPoolExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,39 +35,61 @@ public class PendingHitDetailsServiceImpl implements PendingHitDetailsService {
     @Override
     @Transactional
     public void createManualPendingHitDetail(Long paxId, Long flightId, String userId, Long hitCategoryId, String desc){
-        PendingHitDetails phd = new PendingHitDetails();
         User user = userService.fetchUser(userId);
+        String title = "Manually Generated PVL";
+        String ruleConditions = "N/A";
+        Float percentageMatch = 1F;
 
-        //Manual hit hit maker must be present
-        ManualHit mh = new ManualHit();
-        mh.setDescription("Manual Hit Generated On Passenger Detail Page");
-        mh.setAuthor(user);
-        mh.setHitCategory(hitCategoryService.findById(hitCategoryId));
+        ManualHit mh = createManualHitMaker(null, user, hitCategoryId);
         hmr.save(mh);
 
-        phd.setTitle("Manual PVL Generation");
-        phd.setDescription(desc);
-
-        phd.setHitEnum(HitTypeEnum.MANUAL_HIT);
-        phd.setHitType(HitTypeEnum.MANUAL_HIT.toString());
-        phd.setPercentage(1);
-        //Manual hit generation, no rule conditions.
-        phd.setRuleConditions("N/A");
-        phd.setPassengerId(paxId);
-        phd.setFlightId(flightId);
-
-        phd.setCreatedDate(new Date());
-        phd.setCreatedBy(userId);
-
-        phd.setHitMaker(mh);
-        phd.setHitMakerId(mh.getId());
-
+        PendingHitDetails phd = createPendingHitDetails(paxId, flightId, userId, title, desc, ruleConditions, percentageMatch, mh);
         phr.save(phd);
     };
+
+    @Override
+    public PendingHitDetails createPendingHitDetails(Long paxId, Long flightId, String userId, String title,String desc,
+                                                    String ruleConditions, Float percentageMatch, HitMaker hm){
+        PendingHitDetails phd = new PendingHitDetails();
+        phd.setTitle(title);
+        phd.setDescription(desc);
+
+        //HitMaker must exist for pending hit detail to function, the phd HitTypeEnum should match its Maker.
+        phd.setHitEnum(hm.getHitTypeEnum());
+        phd.setHitType(hm.getHitTypeEnum().toString());
+
+        if(percentageMatch == null || percentageMatch.isNaN()){
+            phd.setPercentage(1);
+        } else {
+            phd.setPercentage(percentageMatch);
+        }
+        phd.setRuleConditions(ruleConditions);
+        phd.setPassengerId(paxId);
+        phd.setFlightId(flightId);
+        phd.setCreatedDate(new Date());
+        phd.setCreatedBy(userId);
+        phd.setHitMaker(hm);
+        phd.setHitMakerId(hm.getId());
+
+        return phd;
+    }
 
     @Override
     public void saveAllPendingHitDetails(Set<PendingHitDetails> phdSet){
         phr.saveAll(phdSet);
     };
 
+    private ManualHit createManualHitMaker(String desc, User user, Long hitCategoryId){
+        //Manual hit hit maker must be present
+        ManualHit mh = new ManualHit();
+        if( desc == null || desc.isEmpty()){
+            mh.setDescription("Generated Manual HitMaker");
+        } else {
+            mh.setDescription(desc);
+        }
+        mh.setAuthor(user);
+        mh.setHitCategory(hitCategoryService.findById(hitCategoryId));
+
+        return mh;
+    }
 }

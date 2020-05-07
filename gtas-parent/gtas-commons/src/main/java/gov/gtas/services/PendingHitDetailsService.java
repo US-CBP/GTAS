@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.model.HitMaker;
 import gov.gtas.model.PendingHitDetails;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -21,4 +22,9 @@ public interface PendingHitDetailsService {
 
     @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
     void saveAllPendingHitDetails(Set<PendingHitDetails> phdSet);
+
+    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
+    PendingHitDetails createPendingHitDetails(Long paxId, Long flightId, String userId, String title,String desc,
+                                              String ruleConditions, Float percentageMatch, HitMaker hm);
+
 }
