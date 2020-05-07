@@ -16,6 +16,8 @@ public abstract class DataSchedulerThread implements Callable<Boolean> {
 
     private Date apisCutOffDate;
     private Date pnrCutOffDate;
+    private GTASShareConstraint defaultShareConstraint;
+
 
     public void setMessageStatuses(List<MessageStatus> messageStatuses) {
         this.messageStatuses = messageStatuses;
@@ -64,4 +66,14 @@ public abstract class DataSchedulerThread implements Callable<Boolean> {
     public void setPnrCutOffDate(Date pnrCutOffDate) {
         this.pnrCutOffDate = pnrCutOffDate;
     }
+
+
+    public GTASShareConstraint getDefaultShareConstraint() {
+        return defaultShareConstraint;
+    }
+
+    public void setDefaultShareConstraint(GTASShareConstraint defaultShareConstraint) {
+        this.defaultShareConstraint = defaultShareConstraint;
+    }
+
 }

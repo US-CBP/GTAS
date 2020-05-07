@@ -67,9 +67,10 @@ public class Email extends BaseEntityAudit implements PIIObject{
 	public void setFlightId(Long flightId) {
 		this.flightId = flightId;
 	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.address);
+		return Objects.hash(this.address, this.flightId);
 	}
 
 	@Override
@@ -81,7 +82,7 @@ public class Email extends BaseEntityAudit implements PIIObject{
 		if (getClass() != obj.getClass())
 			return false;
 		final Email other = (Email) obj;
-		return Objects.equals(this.address, other.address);
+		return Objects.equals(this.address, other.address) && Objects.equals(this.flightId, other.flightId);
 	}
 
 	public Flight getFlight() {

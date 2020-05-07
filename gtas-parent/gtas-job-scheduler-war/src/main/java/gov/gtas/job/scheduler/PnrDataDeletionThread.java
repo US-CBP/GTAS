@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -39,17 +38,19 @@ public class PnrDataDeletionThread extends DataSchedulerThread implements Callab
                 return success;
             }
             MessageAndFlightIds messageAndFlightIds = getPnrMessageIdsAndFlightIds();
-            PnrFieldsToScrub pnrFieldsToScrub = dataRetentionService.scrubPnrs(messageAndFlightIds.getFlightIds(), messageAndFlightIds.getMessageIds(), getPnrCutOffDate());
-            logger.info("Scrubbed pnrs in....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
-            Set<Passenger> passengers = passengerService.getFullPassengersFromMessageIds(messageAndFlightIds.getMessageIds(), messageAndFlightIds.getFlightIds());
+            Set<Passenger> passengers = passengerService.getFullPassengersFromMessageIds(
+                    messageAndFlightIds.getMessageIds(),
+                    messageAndFlightIds.getFlightIds());
+            getDefaultShareConstraint().createFilter(passengers);
             logger.info("Fetched passengers in.........  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             Set<Long> passengerIds = passengers.stream().map(Passenger::getId).collect(Collectors.toSet());
             Set<Document> documents = passengerService.getPassengerDocuments(passengerIds, messageAndFlightIds.getFlightIds());
-            DocumentDeletionResult documentDeletionResult = DocumentDeletionResult.processPnrPassengers(documents, getApisCutOffDate(), getPnrCutOffDate());
+            DocumentDeletionResult documentDeletionResult = DocumentDeletionResult.processPnrPassengers(documents, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
             logger.info("document deletion in......");
-            PassengerDeletionResult passengerDeletionResult = PassengerDeletionResult.processPnrPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate());
+            PassengerDeletionResult passengerDeletionResult = PassengerDeletionResult.processPnrPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
             logger.info("Processed passengers in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
-
+            PnrFieldsToScrub pnrFieldsToScrub = dataRetentionService.scrubPnrs(messageAndFlightIds.getFlightIds(), messageAndFlightIds.getMessageIds(), getPnrCutOffDate(), getDefaultShareConstraint());
+            logger.info("Scrubbed pnrs in....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             dataRetentionService.deletePnrMessage(pnrFieldsToScrub, documentDeletionResult, passengerDeletionResult, getMessageStatuses());
             logger.info("Total rule running data deleting task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
         } catch (Exception e) {

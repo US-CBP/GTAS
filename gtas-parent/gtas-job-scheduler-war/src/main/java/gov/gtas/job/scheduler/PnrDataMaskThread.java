@@ -49,13 +49,14 @@ public class PnrDataMaskThread extends DataSchedulerThread implements Callable<B
             Set<Long> pnrMessageIds = apisMessageList.stream().map(Pnr::getId).collect(Collectors.toSet());
 
             Set<Passenger> passengers = passengerService.getPassengersFromMessageIds(pnrMessageIds, flightIds);
+            getDefaultShareConstraint().createFilter(passengers);
 
             Set<DataRetentionStatus> dataRetentionStatuses = new HashSet<>();
             for (Passenger p : passengers) {
                 DataRetentionStatus drs = p.getDataRetentionStatus();
                 drs.setUpdatedAt(new Date());
                 drs.setUpdatedBy("PNR_MASK");
-                if (p.getHitDetails().isEmpty()) {
+                if (!getDefaultShareConstraint().getWhiteListedPassenerIds().contains(p.getId())) {
                     drs.setMaskedPNR(true);
                 }
                 dataRetentionStatuses.add(drs);

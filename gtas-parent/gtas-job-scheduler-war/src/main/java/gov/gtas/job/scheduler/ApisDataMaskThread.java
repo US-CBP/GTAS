@@ -39,12 +39,13 @@ public class ApisDataMaskThread extends DataSchedulerThread implements Callable<
             }
             MessageAndFlightIds messageAndFlightIds = getApisMessageIdsAndFlightIds();
             Set<Passenger> passengers = passengerService.getPassengersFromMessageIds(messageAndFlightIds.getMessageIds(), messageAndFlightIds.getFlightIds());
+           getDefaultShareConstraint().createFilter(passengers);
             Set<DataRetentionStatus> dataRetentionStatuses = new HashSet<>();
             for (Passenger p : passengers) {
                 DataRetentionStatus drs = p.getDataRetentionStatus();
                 drs.setUpdatedAt(new Date());
                 drs.setUpdatedBy("APIS_MASK");
-                if (p.getHitDetails().isEmpty()) {
+                if (!getDefaultShareConstraint().getWhiteListedPassenerIds().contains(p.getId())) {
                     drs.setMaskedAPIS(true);
                 }
                 dataRetentionStatuses.add(drs);

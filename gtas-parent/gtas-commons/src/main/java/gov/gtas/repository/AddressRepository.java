@@ -24,6 +24,7 @@ public interface AddressRepository extends CrudRepository<Address, Long> {
 	@Query("SELECT add " +
 			"from Address add " +
 			"left join fetch add.pnrs addPnr " +
+			"left join fetch addPnr.passengers " +
 			"where add.id in :addressIds " +
 			"and add.flightId in :flightIds " +
 			"and addPnr.id in :pnrIds")

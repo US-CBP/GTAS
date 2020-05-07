@@ -24,14 +24,11 @@ public class ApisDataDeletionThread  extends DataSchedulerThread implements Call
 
     private final DataRetentionService dataRetentionService;
 
-
-
     public ApisDataDeletionThread(PassengerService passengerService, DataRetentionService dataRetentionService, DocumentRepository documentRepository, DocumentRetentionPolicyAuditRepository documentRetentionPolicyAuditRepository, PassengerDetailRepository passengerDetailRepository, PassengerDetailRetentionPolicyAuditRepository passengerDetailRetentionPolicyAuditRepository) {
         this.passengerService = passengerService;
         this.dataRetentionService = dataRetentionService;
 
     }
-
 
     @Override
     public Boolean call() {
@@ -45,11 +42,14 @@ public class ApisDataDeletionThread  extends DataSchedulerThread implements Call
             }
             MessageAndFlightIds messageAndFlightIds = getApisMessageIdsAndFlightIds();
             Set<Passenger> passengers = passengerService.getFullPassengersFromMessageIds(messageAndFlightIds.getMessageIds(), messageAndFlightIds.getFlightIds());
+
+            getDefaultShareConstraint().createFilter(passengers);
+
             logger.info("Processed passengers in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
-            PassengerDeletionResult passengerDeletionResult = PassengerDeletionResult.processApisPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate());
+            PassengerDeletionResult passengerDeletionResult = PassengerDeletionResult.processApisPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
             Set<Long> passengerIds = passengers.stream().map(Passenger::getId).collect(Collectors.toSet());
             Set<Document> documents = passengerService.getPassengerDocuments(passengerIds, messageAndFlightIds.getFlightIds());
-            DocumentDeletionResult documentDeletionResult = DocumentDeletionResult.processApisPassengers(documents, getApisCutOffDate(), getPnrCutOffDate());
+            DocumentDeletionResult documentDeletionResult = DocumentDeletionResult.processApisPassengers(documents, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
             logger.info("Processed documents in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             dataRetentionService.deleteApisMessage(documentDeletionResult, passengerDeletionResult, getMessageStatuses());
             logger.info("Total rule running data deleting task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");

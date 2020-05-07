@@ -125,6 +125,7 @@ public class DataRetentionScheduler {
                 worker.setApisCutOffDate(apisCutOffDate);
                 worker.setPnrCutOffDate(pnrCutOffDate);
                 worker.setMessageStatuses(ruleThread);
+                worker.setDefaultShareConstraint(new DefaultShareConstraint());
                 list.add(worker);
                 ruleThread = new ArrayList<>();
                 runningTotal = 0;
@@ -139,6 +140,7 @@ public class DataRetentionScheduler {
             worker.setMessageStatuses(ruleThread);
             worker.setApisCutOffDate(apisCutOffDate);
             worker.setPnrCutOffDate(pnrCutOffDate);
+            worker.setDefaultShareConstraint(new DefaultShareConstraint());
             list.add(worker);
         }
         return list;

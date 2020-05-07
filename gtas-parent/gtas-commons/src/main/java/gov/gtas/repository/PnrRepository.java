@@ -87,7 +87,7 @@ public interface PnrRepository extends MessageRepository<Pnr> {
 			"left join fetch pnr.frequentFlyers " +
 			"left join fetch pnr.emails " +
 			"left join pnr.flights flights " +
-			"left join pnr.passengers pnrPassengers " +
+			"left join fetch pnr.passengers pnrPassengers " +
 			"where flights.id in :flightIds " +
 			"and pnr.id in :messageIds ")
     Set<Pnr> getPnrsToScrub(@Param("flightIds") Set<Long> flightIds, @Param("messageIds") Set<Long> messageIds);

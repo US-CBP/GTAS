@@ -17,27 +17,30 @@ public class PassengerDeletionResult {
     private Set<PassengerDetailRetentionPolicyAudit> passengerDetailRetentionPolicyAudits = new HashSet<>();
     private Set<PassengerDetailFromMessage> passengerDetailFromMessageSet = new HashSet<>();
 
-    public static PassengerDeletionResult processApisPassengers(Set<Passenger> passengers, Date apisCutOffDate, Date pnrCutOffDate) {
+    public static PassengerDeletionResult processApisPassengers(Set<Passenger> passengers, Date apisCutOffDate, Date pnrCutOffDate, GTASShareConstraint gtasShareConstraint) {
         PassengerDeletionResult passengerDeletionResult = new PassengerDeletionResult();
+        Set<Long> ignoredPassengers = gtasShareConstraint.getWhiteListedPassenerIds();
         for (Passenger p : passengers) {
             RelevantMessageChecker relevantMessageChecker = new RelevantMessageChecker(apisCutOffDate, pnrCutOffDate, p).invoke();
             boolean relevantAPIS = relevantMessageChecker.isRelevantAPIS();
             boolean relevantPnr = relevantMessageChecker.isRelevantPnr();
-            if (relevantAPIS) {
+            PassengerDetailRetentionPolicyAudit pdrpa = new PassengerDetailRetentionPolicyAudit();
+            pdrpa.setPassenger(p);
+            pdrpa.setCreatedAt(new Date());
+            pdrpa.setCreatedBy("APIS_DELETE");
+            if (ignoredPassengers.contains(p.getId())) {
+                logger.debug("Passenger marked for retention");
+                pdrpa.setRetentionPolicyAction(RetentionPolicyAction.NO_ACTION_MARKED_FOR_RETENTION);
+                pdrpa.setDescription("Passenger marked for retention. No action taken!");
+            } else if (relevantAPIS) {
                 logger.debug("Not performing passenger data deletion, another APIS message under the cut off date references this passenger.");
-                PassengerDetailRetentionPolicyAudit pdrpa = new PassengerDetailRetentionPolicyAudit();
-                pdrpa.setPassenger(p);
                 pdrpa.setRetentionPolicyAction(RetentionPolicyAction.NO_ACTION_RELEVANT_APIS);
                 pdrpa.setDescription("Another APIS message under the cut off date references this passenger. No Deletion.");
-                pdrpa.setCreatedAt(new Date());
-                pdrpa.setCreatedBy("APIS_DELETE");
-                passengerDeletionResult.getPassengerDetailRetentionPolicyAudits().add(pdrpa);
+                passengerDeletionResult.getPassengerDetailFromMessageSet().addAll(getInvalidApisMessageDetails(p, apisCutOffDate));
             } else {
                 p.getDataRetentionStatus().setDeletedAPIS(true);
                 scrubApisPassengerDetail(p, pnrCutOffDate);
                 passengerDeletionResult.getPassengerDetails().add(p.getPassengerDetails());
-                PassengerDetailRetentionPolicyAudit pdrpa = new PassengerDetailRetentionPolicyAudit();
-                pdrpa.setPassenger(p);
                 pdrpa.setRetentionPolicyAction(RetentionPolicyAction.APIS_DATA_MARKED_TO_DELETE);
                 if (relevantPnr) {
                     logger.debug("Orphan Passenger Detail - performing data deletion or swapping to pnr only details!");
@@ -46,17 +49,16 @@ public class PassengerDeletionResult {
                     logger.debug("Orphan Passenger Detail - performing data deletion!");
                     pdrpa.setDescription("Passenger Details Relating to APIS deleted.");
                 }
-                pdrpa.setCreatedAt(new Date());
-                pdrpa.setCreatedBy("APIS_DELETE");
-                passengerDeletionResult.getPassengerDetailRetentionPolicyAudits().add(pdrpa);
+                passengerDeletionResult.getPassengerDetailFromMessageSet().addAll(getInvalidApisMessageDetails(p, apisCutOffDate));
             }
-            passengerDeletionResult.getPassengerDetailFromMessageSet().addAll(getInvalidApisMessageDetails(p, apisCutOffDate));
+            passengerDeletionResult.getPassengerDetailRetentionPolicyAudits().add(pdrpa);
         }
         return passengerDeletionResult;
     }
 
-    public static PassengerDeletionResult processPnrPassengers(Set<Passenger> passengers, Date apisCutOffDate, Date pnrCutOffDate) {
+    public static PassengerDeletionResult processPnrPassengers(Set<Passenger> passengers, Date apisCutOffDate, Date pnrCutOffDate, GTASShareConstraint gtasShareConstraint) {
         PassengerDeletionResult passengerDeletionResult = new PassengerDeletionResult();
+        Set<Long> ignoredPassengers = gtasShareConstraint.getWhiteListedPassenerIds();
         for (Passenger p : passengers) {
             RelevantMessageChecker relevantMessageChecker = new RelevantMessageChecker(apisCutOffDate, pnrCutOffDate, p).invoke();
             boolean relevantAPIS = relevantMessageChecker.isRelevantAPIS();
@@ -65,10 +67,15 @@ public class PassengerDeletionResult {
             pdrpa.setPassenger(p);
             pdrpa.setCreatedAt(new Date());
             pdrpa.setCreatedBy("PNR_DELETE");
-            if (relevantPnr) {
+            if (ignoredPassengers.contains(p.getId())) {
+                logger.debug("Passenger marked for retention");
+                pdrpa.setRetentionPolicyAction(RetentionPolicyAction.NO_ACTION_MARKED_FOR_RETENTION);
+                pdrpa.setDescription("Passenger marked for retention. No action taken!");
+            } else if (relevantPnr) {
                 logger.debug("Not performing passenger data deletion, another PNR message under the cut off date references this passenger.");
                 pdrpa.setRetentionPolicyAction(RetentionPolicyAction.NO_ACTION_RELEVANT_PNR);
                 pdrpa.setDescription("Another APIS message under the cut off date references this passenger. No Deletion.");
+                passengerDeletionResult.getPassengerDetailFromMessageSet().addAll(getInvalidPnrMessageDetails(p, pnrCutOffDate));
             } else {
                 p.getDataRetentionStatus().setDeletedPNR(true);
                 scrubPnrPassengerDetail(p, apisCutOffDate);
@@ -80,8 +87,8 @@ public class PassengerDeletionResult {
                     logger.debug("Orphan Passenger Detail - performing data deletion!");
                     pdrpa.setDescription("Passenger Details Relating to PNR deleted.");
                 }
+                passengerDeletionResult.getPassengerDetailFromMessageSet().addAll(getInvalidPnrMessageDetails(p, pnrCutOffDate));
             }
-            passengerDeletionResult.getPassengerDetailFromMessageSet().addAll(getInvalidPnrMessageDetails(p, pnrCutOffDate));
             passengerDeletionResult.getPassengerDetailRetentionPolicyAudits().add(pdrpa);
         }
         return passengerDeletionResult;
@@ -184,6 +191,7 @@ public class PassengerDeletionResult {
     public Set<PassengerDetailFromMessage> getPassengerDetailFromMessageSet() {
         return passengerDetailFromMessageSet;
     }
+
     public Set<PassengerDetailRetentionPolicyAudit> getPassengerDetailRetentionPolicyAudits() {
         return passengerDetailRetentionPolicyAudits;
     }

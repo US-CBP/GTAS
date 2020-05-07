@@ -2,6 +2,7 @@ package gov.gtas.job.scheduler;
 
 import gov.gtas.enumtype.RetentionPolicyAction;
 import gov.gtas.model.*;
+import gov.gtas.rule.listener.GtasAgendaEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,17 +18,22 @@ public class DocumentDeletionResult {
     private Set<DocumentRetentionPolicyAudit> documentRetentionPolicyAudits = new HashSet<>();
 
 
-    public static DocumentDeletionResult processApisPassengers(Set<Document> documents, Date apisCutOffDate, Date pnrCutOffDate) {
+    public static DocumentDeletionResult processApisPassengers(Set<Document> documents, Date apisCutOffDate, Date pnrCutOffDate, GTASShareConstraint gtasShareConstraint) {
         DocumentDeletionResult documentDeletionResult = new DocumentDeletionResult();
         for (Document pd : documents) {
             RelevantDocumentChecker relevantDocumentChecker = new RelevantDocumentChecker(apisCutOffDate, pnrCutOffDate, pd).invoke();
             boolean apisCutOffDateReached = relevantDocumentChecker.isApisCutOffDateReached();
             boolean relevantMessage = relevantDocumentChecker.isRelevantMessage();
+            Set<Long> ignoredPassengers = gtasShareConstraint.getWhiteListedPassenerIds();
             DocumentRetentionPolicyAudit drpa = new DocumentRetentionPolicyAudit();
             drpa.setCreatedAt(new Date());
             drpa.setCreatedBy("APIS_DELETE");
             drpa.setDocument(pd);
-            if (relevantMessage) {
+            if (ignoredPassengers.contains(pd.getPassengerId())) {
+                logger.debug("Passenger marked for retention");
+                drpa.setRetentionPolicyAction(RetentionPolicyAction.NO_ACTION_MARKED_FOR_RETENTION);
+                drpa.setDescription("Passenger marked for retention");
+            } else if (relevantMessage) {
                 logger.debug("Not performing data deletion, another message under the cut off date references this document.");
                 drpa.setRetentionPolicyAction(RetentionPolicyAction.NO_ACTION_RELEVANT_MESSAGE);
                 drpa.setDescription("Another message under the cut off date references this document. No Deletion.");
@@ -47,8 +53,9 @@ public class DocumentDeletionResult {
         return documentDeletionResult;
     }
 
-    public static DocumentDeletionResult processPnrPassengers(Set<Document> documents, Date apisCutOffDate, Date pnrCutOffDate) {
+    public static DocumentDeletionResult processPnrPassengers(Set<Document> documents, Date apisCutOffDate, Date pnrCutOffDate, GTASShareConstraint gtasShareConstraint) {
         DocumentDeletionResult documentDeletionResult = new DocumentDeletionResult();
+        Set<Long> ignoredPassengers = gtasShareConstraint.getWhiteListedPassenerIds();
         for (Document pd : documents) {
             RelevantDocumentChecker relevantDocumentChecker = new RelevantDocumentChecker(apisCutOffDate, pnrCutOffDate, pd).invoke();
             boolean pnrCutOffDateReached = relevantDocumentChecker.isPnrCutOffDateReached();
@@ -57,7 +64,11 @@ public class DocumentDeletionResult {
             drpa.setCreatedAt(new Date());
             drpa.setCreatedBy("PNR_DELETE");
             drpa.setDocument(pd);
-            if (relevantMessage) {
+            if (ignoredPassengers.contains(pd.getPassengerId())) {
+                logger.debug("Passenger marked for retention");
+                drpa.setRetentionPolicyAction(RetentionPolicyAction.NO_ACTION_MARKED_FOR_RETENTION);
+                drpa.setDescription("Passenger marked for retention");
+            } else if (relevantMessage) {
                 logger.debug("Not performing data deletion, another message under the cut off date references this document.");
                 drpa.setRetentionPolicyAction(RetentionPolicyAction.NO_ACTION_RELEVANT_MESSAGE);
                 drpa.setDescription("Another message under the cut off date references this document. No Deletion.");

@@ -24,6 +24,7 @@ public interface CreditCardRepository extends CrudRepository<CreditCard, Long> {
 	@Query("SELECT cc " +
 			"from CreditCard cc " +
 			"left join fetch cc.pnrs ccPnrs " +
+			"left join fetch ccPnrs.passengers " +
 			"where cc.id in :creditCardIds " +
 			"and cc.flightId in :flightIds " +
 			"and ccPnrs.id in :pnrIds")
