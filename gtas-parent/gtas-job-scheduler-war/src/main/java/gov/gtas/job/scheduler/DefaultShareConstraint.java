@@ -13,7 +13,7 @@ public class DefaultShareConstraint implements GTASShareConstraint{
     private Set<Long> whiteListPassengersId = new HashSet<>();
 
 
-    public DefaultShareConstraint() {};
+    public DefaultShareConstraint() {}
 
     @Override
     public void createFilter(List<Passenger> passengerList) {
@@ -28,7 +28,7 @@ public class DefaultShareConstraint implements GTASShareConstraint{
     @Override
     public void createFilter(Set<Passenger> passengerList) {
         for (Passenger p : passengerList) {
-            if (p.getHitDetails().isEmpty()) {
+            if (!p.getHitDetails().isEmpty()) {
                 whiteListPassengers.add(p);
             }
         }
