@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -40,8 +41,9 @@ public class PendingHitDetailsServiceImpl implements PendingHitDetailsService {
         String ruleConditions = "N/A";
         Float percentageMatch = 1F;
 
-        ManualHit mh = createManualHitMaker(null, user, hitCategoryId);
-        hmr.save(mh);
+        //This list should only return 1 given the current construction of our Manual generated HitMaker
+        List<ManualHit> mhList = hmr.findOneByHitCategoryIdAndHitType(hitCategoryId);
+        ManualHit mh = mhList.get(0);
 
         PendingHitDetails phd = createPendingHitDetails(paxId, flightId, userId, title, desc, ruleConditions, percentageMatch, mh);
         phr.save(phd);
