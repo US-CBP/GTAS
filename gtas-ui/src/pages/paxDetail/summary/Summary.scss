@@ -13,3 +13,8 @@ $header-text-color: #e0e0e0;
   color: $header-text-color;
   background-color: $gtas-primary-color !important;
 }
+@include media-breakpoint-up(xl) {
+  .summary-card-deck .card {
+    max-width: 50%;
+  }
+}
