@@ -156,4 +156,12 @@ public class CreditCard extends BaseEntityAudit implements PIIObject{
 		this.accountHolderPhone = "DELETED";
 		return this;
 	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.number = "XXXX";
+		this.accountHolder = "XXXX";
+		this.accountHolderAddress = "XXXX";
+		this.accountHolderPhone = "XXXX";
+		return this;	}
 }

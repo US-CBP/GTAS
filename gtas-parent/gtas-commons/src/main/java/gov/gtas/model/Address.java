@@ -157,4 +157,14 @@ public class Address extends BaseEntityAudit implements PIIObject {
 		this.postalCode = "DELETED";
 		return this;
 	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.line1 = "MASKED";
+		this.line2 = "MASKED";
+		this.line3 = "MASkED";
+		this.state = "MASKED";
+		this.postalCode = "MASKED";
+		return this;
+	}
 }

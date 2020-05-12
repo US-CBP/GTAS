@@ -106,4 +106,10 @@ public class Phone extends BaseEntityAudit implements PIIObject {
 		this.number = "DELETED";
 		return this;
 	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.number = "MASKED";
+		return this;
+	}
 }

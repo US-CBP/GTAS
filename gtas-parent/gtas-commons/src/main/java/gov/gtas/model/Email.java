@@ -98,4 +98,10 @@ public class Email extends BaseEntityAudit implements PIIObject{
 		this.address = "DELETED";
 		return this;
 	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.address = "MASKED";
+		return this;
+	}
 }
