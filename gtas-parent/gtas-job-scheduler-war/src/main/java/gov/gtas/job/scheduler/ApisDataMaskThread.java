@@ -6,6 +6,7 @@ import gov.gtas.model.*;
 import gov.gtas.services.PassengerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -13,6 +14,7 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 @Component
+@Scope("prototype")
 public class ApisDataMaskThread extends DataSchedulerThread implements Callable<Boolean> {
 
     private static final Logger logger = LoggerFactory.getLogger(ApisDataMaskThread.class);

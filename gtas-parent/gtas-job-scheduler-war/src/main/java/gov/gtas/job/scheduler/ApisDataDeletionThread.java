@@ -9,6 +9,7 @@ import gov.gtas.repository.PassengerDetailRetentionPolicyAuditRepository;
 import gov.gtas.services.PassengerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -16,6 +17,7 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 @Component
+@Scope("prototype")
 public class ApisDataDeletionThread  extends DataSchedulerThread implements Callable<Boolean> {
 
     private static final Logger logger = LoggerFactory.getLogger(ApisDataDeletionThread.class);

@@ -63,6 +63,9 @@ public class Document extends BaseEntity {
 	@Column(name = "days_valid")
 	private Integer numberOfDaysValid;
 
+	@OneToMany(mappedBy = "document", fetch = FetchType.LAZY)
+	private Set<DocumentRetentionPolicyAudit> documentRetentionPolicyAudits = new HashSet<>();
+
 
 	public Long getFlightId() {
 		return flightId;
@@ -165,5 +168,13 @@ public class Document extends BaseEntity {
 
 	public void setFlight(Flight flight) {
 		this.flight = flight;
+	}
+
+	public Set<DocumentRetentionPolicyAudit> getDocumentRetentionPolicyAudits() {
+		return documentRetentionPolicyAudits;
+	}
+
+	public void setDocumentRetentionPolicyAudits(Set<DocumentRetentionPolicyAudit> documentRetentionPolicyAudits) {
+		this.documentRetentionPolicyAudits = documentRetentionPolicyAudits;
 	}
 }

@@ -2,6 +2,7 @@ package gov.gtas.job.scheduler;
 
 import gov.gtas.model.Passenger;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,16 +18,18 @@ public class DefaultShareConstraint implements GTASShareConstraint{
 
     @Override
     public void createFilter(List<Passenger> passengerList) {
-        for (Passenger p : passengerList) {
-            if (!p.getHitDetails().isEmpty()) {
-                whiteListPassengers.add(p);
-            }
-        }
-        whiteListPassengersId = whiteListPassengers.stream().map(Passenger::getId).collect(Collectors.toSet());
+        makeWhiteLists(passengerList);
     }
 
     @Override
     public void createFilter(Set<Passenger> passengerList) {
+        makeWhiteLists(passengerList);
+    }
+
+    private void makeWhiteLists(Collection<Passenger> passengerList) {
+        if (passengerList.isEmpty()) {
+            return;
+        }
         for (Passenger p : passengerList) {
             if (!p.getHitDetails().isEmpty()) {
                 whiteListPassengers.add(p);

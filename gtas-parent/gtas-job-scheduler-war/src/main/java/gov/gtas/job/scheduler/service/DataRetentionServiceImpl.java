@@ -1,6 +1,7 @@
 package gov.gtas.job.scheduler.service;
 
 import com.google.common.collect.Sets;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import gov.gtas.enumtype.RetentionPolicyAction;
 import gov.gtas.job.scheduler.DocumentDeletionResult;
 import gov.gtas.job.scheduler.GTASShareConstraint;
@@ -8,7 +9,11 @@ import gov.gtas.job.scheduler.PassengerDeletionResult;
 import gov.gtas.job.scheduler.PnrFieldsToScrub;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
+import org.apache.commons.collections4.IteratorUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -19,6 +24,7 @@ import static java.util.stream.Collectors.toSet;
 @Component
 public class DataRetentionServiceImpl implements DataRetentionService {
 
+    private static Logger logger = LoggerFactory.getLogger(DataRetentionServiceImpl.class);
 
     private final DataRetentionStatusRepository dataRetentionStatusRepository;
 
@@ -120,141 +126,144 @@ public class DataRetentionServiceImpl implements DataRetentionService {
             return pnrFieldsToScrub;
         }
         Set<Pnr> pnrs = pnrRepository.getPnrsToScrub(flightIds, messageIds);
-
         Set<Long> pnrIds = pnrs.stream().map(Pnr::getId).collect(toSet());
+        Set<Passenger> retainedPassengers = gtasShareConstraint.getWhitelistedPassengers();
 
         //Address
         Set<Long> addressIds = pnrs.stream().flatMap(pnr -> pnr.getAddresses().stream()).map(Address::getId).collect(toSet());
-        Set<Address> addressesWithPnr = addressRepository.findAddressesToDelete(addressIds, flightIds, pnrIds);
-        Set<Address> addressToSave = new HashSet<>();
-        Set<AddressDataRetentionPolicyAudit> addressDataRetentionPolicyAudits = new HashSet<>();
-        Set<Passenger> retainedPassengers = gtasShareConstraint.getWhitelistedPassengers();
-        for (Address address : addressesWithPnr) {
-            boolean referenceBeforeCutOffDate = address.getPnrs().stream().anyMatch(p -> p.getCreateDate().after(pnrCutOffDate));
-            Set<Passenger> retainedPassengerLinked = Sets.intersection(retainedPassengers, address.getPnrs().stream().flatMap(p -> p.getPassengers().stream()).collect(toSet()));
-            boolean noActionMarkedForRetention = !retainedPassengerLinked.isEmpty();
-
-            AddressDataRetentionPolicyAudit addressDataRetentionPolicyAudit = new AddressDataRetentionPolicyAudit();
+        if (!addressIds.isEmpty()) {
+            Set<Address> addressesWithPnr = addressRepository.findAddressesToDelete(addressIds, flightIds, pnrIds);
+            Set<Address> addressToSave = new HashSet<>();
+            Set<AddressDataRetentionPolicyAudit> addressDataRetentionPolicyAudits = new HashSet<>();
+            for (Address address : addressesWithPnr) {
+                boolean referenceBeforeCutOffDate = address.getPnrs().stream().anyMatch(p -> p.getCreateDate().after(pnrCutOffDate));
+                Set<Passenger> retainedPassengerLinked = Sets.intersection(retainedPassengers, address.getPnrs().stream().flatMap(p -> p.getPassengers().stream()).collect(toSet()));
+                boolean noActionMarkedForRetention = !retainedPassengerLinked.isEmpty();
+                AddressDataRetentionPolicyAudit addressDataRetentionPolicyAudit = new AddressDataRetentionPolicyAudit();
             addressDataRetentionPolicyAudit.setAddress(address);
-            if (noActionMarkedForRetention) {
-                populateNoActionRetainedRecord(addressDataRetentionPolicyAudit);
-            } else if (referenceBeforeCutOffDate) {
-                populateNoActionRecord(addressDataRetentionPolicyAudit);
-            } else {
-                address.deletePII();
-                addressToSave.add(address);
-                populateActionTaken(addressDataRetentionPolicyAudit);
+                if (noActionMarkedForRetention) {
+                    populateNoActionRetainedRecord(addressDataRetentionPolicyAudit);
+                } else if (referenceBeforeCutOffDate) {
+                    populateNoActionRecord(addressDataRetentionPolicyAudit);
+                } else {
+                    address.deletePII();
+                    addressToSave.add(address);
+                    populateActionTaken(addressDataRetentionPolicyAudit);
+                }
+                addressDataRetentionPolicyAudits.add(addressDataRetentionPolicyAudit);
             }
-            addressDataRetentionPolicyAudits.add(addressDataRetentionPolicyAudit);
+            pnrFieldsToScrub.setAddresses(addressToSave);
+            pnrFieldsToScrub.setAddressAudits(addressDataRetentionPolicyAudits);
         }
-        pnrFieldsToScrub.setAddresses(addressToSave);
-        pnrFieldsToScrub.setAddressAudits(addressDataRetentionPolicyAudits);
-
 
         //Credit Cards
         Set<Long> creditCardIds = pnrs.stream().flatMap(pnr -> pnr.getCreditCards().stream()).map(CreditCard::getId).collect(toSet());
-        Set<CreditCard> creditCardsFromPnr = creditCardRepository.findCreditCardToDelete(creditCardIds, flightIds, pnrIds);
-        Set<CreditCard> creditCardsToSave = new HashSet<>();
-        Set<CreditCardDataRetentionPolicyAudit> cardDataRetentionPolicyAudits = new HashSet<>();
+        if (!creditCardIds.isEmpty()) {
+            Set<CreditCard> creditCardsFromPnr = creditCardRepository.findCreditCardToDelete(creditCardIds, flightIds, pnrIds);
+            Set<CreditCard> creditCardsToSave = new HashSet<>();
+            Set<CreditCardDataRetentionPolicyAudit> cardDataRetentionPolicyAudits = new HashSet<>();
 
-        for (CreditCard cc : creditCardsFromPnr) {
-            Set<Passenger> retainedPassengerLinked = Sets.intersection(retainedPassengers, cc.getPnrs().stream().flatMap(p -> p.getPassengers().stream()).collect(toSet()));
-            boolean noActionMarkedForRetention = !retainedPassengerLinked.isEmpty();
-            boolean referenceBeforeCutOffDate = cc.getPnrs().stream().anyMatch(p -> p.getCreateDate().after(pnrCutOffDate));
-            CreditCardDataRetentionPolicyAudit creditCardDataRetentionPolicyAudit = new CreditCardDataRetentionPolicyAudit();
+            for (CreditCard cc : creditCardsFromPnr) {
+                Set<Passenger> retainedPassengerLinked = Sets.intersection(retainedPassengers, cc.getPnrs().stream().flatMap(p -> p.getPassengers().stream()).collect(toSet()));
+                boolean noActionMarkedForRetention = !retainedPassengerLinked.isEmpty();
+                boolean referenceBeforeCutOffDate = cc.getPnrs().stream().anyMatch(p -> p.getCreateDate().after(pnrCutOffDate));
+                CreditCardDataRetentionPolicyAudit creditCardDataRetentionPolicyAudit = new CreditCardDataRetentionPolicyAudit();
             creditCardDataRetentionPolicyAudit.setCreditCard(cc);
-            if (noActionMarkedForRetention) {
-                populateNoActionRetainedRecord(creditCardDataRetentionPolicyAudit);
-            } else if (referenceBeforeCutOffDate) {
-                populateNoActionRecord(creditCardDataRetentionPolicyAudit);
-            } else {
-                cc.deletePII();
-                creditCardsToSave.add(cc);
-                populateActionTaken(creditCardDataRetentionPolicyAudit);
+                if (noActionMarkedForRetention) {
+                    populateNoActionRetainedRecord(creditCardDataRetentionPolicyAudit);
+                } else if (referenceBeforeCutOffDate) {
+                    populateNoActionRecord(creditCardDataRetentionPolicyAudit);
+                } else {
+                    cc.deletePII();
+                    creditCardsToSave.add(cc);
+                    populateActionTaken(creditCardDataRetentionPolicyAudit);
+                }
+                cardDataRetentionPolicyAudits.add(creditCardDataRetentionPolicyAudit);
             }
-            cardDataRetentionPolicyAudits.add(creditCardDataRetentionPolicyAudit);
+            pnrFieldsToScrub.setCreditCard(creditCardsToSave);
+            pnrFieldsToScrub.setCreditCardAudits(cardDataRetentionPolicyAudits);
         }
-        pnrFieldsToScrub.setCreditCard(creditCardsToSave);
-        pnrFieldsToScrub.setCreditCardAudits(cardDataRetentionPolicyAudits);
-
 
         //Phones
         Set<Long> phoneIds = pnrs.stream().flatMap(pnr -> pnr.getPhones().stream()).map(Phone::getId).collect(toSet());
-        Set<Phone> phonesFromPnr = phoneRepository.findPhonesFromPnr(phoneIds, flightIds, pnrIds);
-        Set<Phone> phoneToSave = new HashSet<>();
-        Set<PhoneDataRetentionPolicyAudit> phoneRetentionPolicyAudits = new HashSet<>();
-        for (Phone phone : phonesFromPnr) {
-            Set<Passenger> retainedPassengerLinked = Sets.intersection(retainedPassengers, phone.getPnrs().stream().flatMap(p -> p.getPassengers().stream()).collect(toSet()));
-            boolean noActionMarkedForRetention = !retainedPassengerLinked.isEmpty();
-            boolean referenceBeforeCutOffDate = phone.getPnrs().stream().anyMatch(p -> p.getCreateDate().after(pnrCutOffDate));
-            PhoneDataRetentionPolicyAudit phoneDataRetentionPolicyAudit = new PhoneDataRetentionPolicyAudit();
-            phoneDataRetentionPolicyAudit.setPhone(phone);
-            if (noActionMarkedForRetention) {
-                populateNoActionRetainedRecord(phoneDataRetentionPolicyAudit);
-            } else if (referenceBeforeCutOffDate) {
-                populateNoActionRecord(phoneDataRetentionPolicyAudit);
-            } else {
-                phone.deletePII();
-                phoneToSave.add(phone);
-                populateActionTaken(phoneDataRetentionPolicyAudit);
+        if (!phoneIds.isEmpty()) {
+            Set<Phone> phonesFromPnr = phoneRepository.findPhonesFromPnr(phoneIds, flightIds, pnrIds);
+            Set<Phone> phoneToSave = new HashSet<>();
+            Set<PhoneDataRetentionPolicyAudit> phoneRetentionPolicyAudits = new HashSet<>();
+            for (Phone phone : phonesFromPnr) {
+                Set<Passenger> retainedPassengerLinked = Sets.intersection(retainedPassengers, phone.getPnrs().stream().flatMap(p -> p.getPassengers().stream()).collect(toSet()));
+                boolean noActionMarkedForRetention = !retainedPassengerLinked.isEmpty();
+                boolean referenceBeforeCutOffDate = phone.getPnrs().stream().anyMatch(p -> p.getCreateDate().after(pnrCutOffDate));
+                PhoneDataRetentionPolicyAudit phoneDataRetentionPolicyAudit = new PhoneDataRetentionPolicyAudit();
+                phoneDataRetentionPolicyAudit.setPhone(phone);
+                if (noActionMarkedForRetention) {
+                    populateNoActionRetainedRecord(phoneDataRetentionPolicyAudit);
+                } else if (referenceBeforeCutOffDate) {
+                    populateNoActionRecord(phoneDataRetentionPolicyAudit);
+                } else {
+                    phone.deletePII();
+                    phoneToSave.add(phone);
+                    populateActionTaken(phoneDataRetentionPolicyAudit);
+                }
+                phoneRetentionPolicyAudits.add(phoneDataRetentionPolicyAudit);
             }
-            phoneRetentionPolicyAudits.add(phoneDataRetentionPolicyAudit);
+            pnrFieldsToScrub.setPhones(phoneToSave);
+            pnrFieldsToScrub.setPhoneDataRetentionPolicy(phoneRetentionPolicyAudits);
         }
-        pnrFieldsToScrub.setPhones(phoneToSave);
-        pnrFieldsToScrub.setPhoneDataRetentionPolicy(phoneRetentionPolicyAudits);
-
 
         //Emails
         Set<Long> emailIds = pnrs.stream().flatMap(pnr -> pnr.getEmails().stream()).map(Email::getId).collect(toSet());
-        Set<Email> emailsFromPnr = emailRepository.findEmails(emailIds, flightIds, pnrIds);
-        Set<Email> emailsToSave = new HashSet<>();
-        Set<EmailDataRetentionPolicyAudit> emailRetentionPolciyAudit = new HashSet<>();
-        for (Email email : emailsFromPnr) {
-            Set<Passenger> retainedPassengerLinked = Sets.intersection(new HashSet<>(retainedPassengers), email.getPnrs().stream().flatMap(p -> p.getPassengers().stream()).collect(toSet()));
-            boolean noActionMarkedForRetention = !retainedPassengerLinked.isEmpty();
-            boolean referenceBeforeCutOffDate = email.getPnrs().stream().anyMatch(p -> p.getCreateDate().after(pnrCutOffDate));
-            EmailDataRetentionPolicyAudit emailDataRetentionPolicyAudit = new EmailDataRetentionPolicyAudit();
+        if (!emailIds.isEmpty()) {
+            Set<Email> emailsFromPnr = emailRepository.findEmails(emailIds, flightIds, pnrIds);
+            Set<Email> emailsToSave = new HashSet<>();
+            Set<EmailDataRetentionPolicyAudit> emailRetentionPolciyAudit = new HashSet<>();
+            for (Email email : emailsFromPnr) {
+                Set<Passenger> retainedPassengerLinked = Sets.intersection(new HashSet<>(retainedPassengers), email.getPnrs().stream().flatMap(p -> p.getPassengers().stream()).collect(toSet()));
+                boolean noActionMarkedForRetention = !retainedPassengerLinked.isEmpty();
+                boolean referenceBeforeCutOffDate = email.getPnrs().stream().anyMatch(p -> p.getCreateDate().after(pnrCutOffDate));
+                EmailDataRetentionPolicyAudit emailDataRetentionPolicyAudit = new EmailDataRetentionPolicyAudit();
             emailDataRetentionPolicyAudit.setEmail(email);
-            if (noActionMarkedForRetention) {
-                populateNoActionRetainedRecord(emailDataRetentionPolicyAudit);
-            } else if (referenceBeforeCutOffDate) {
-                populateNoActionRecord(emailDataRetentionPolicyAudit);
-            } else {
-                email.deletePII();
-                emailsToSave.add(email);
-                populateActionTaken(emailDataRetentionPolicyAudit);
+                if (noActionMarkedForRetention) {
+                    populateNoActionRetainedRecord(emailDataRetentionPolicyAudit);
+                } else if (referenceBeforeCutOffDate) {
+                    populateNoActionRecord(emailDataRetentionPolicyAudit);
+                } else {
+                    email.deletePII();
+                    emailsToSave.add(email);
+                    populateActionTaken(emailDataRetentionPolicyAudit);
+                }
+                emailRetentionPolciyAudit.add(emailDataRetentionPolicyAudit);
             }
-            emailRetentionPolciyAudit.add(emailDataRetentionPolicyAudit);
+            pnrFieldsToScrub.setEmails(emailsToSave);
+            pnrFieldsToScrub.setEmailsDataRetentionPolicy(emailRetentionPolciyAudit);
         }
-        pnrFieldsToScrub.setEmails(emailsToSave);
-        pnrFieldsToScrub.setEmailsDataRetentionPolicy(emailRetentionPolciyAudit);
-
 
         //Frequent Flyers
         Set<Long> ffIds = pnrs.stream().flatMap(pnr -> pnr.getFrequentFlyers().stream()).map(FrequentFlyer::getId).collect(toSet());
-        Set<FrequentFlyer> ffFromPnr = frequentFlyerRepository.findFrequentFlyers(ffIds, flightIds, pnrIds);
-        Set<FrequentFlyer> frequentFlyers = new HashSet<>();
-        Set<FrequentFlyerDataRetentionPolicyAudit> frequentFlyerDataRetentionPolicyAudits = new HashSet<>();
-        for (FrequentFlyer ff : ffFromPnr) {
-            Set<Passenger> retainedPassengerLinked = Sets.intersection(retainedPassengers, ff.getPnrs().stream().flatMap(p -> p.getPassengers().stream()).collect(toSet()));
-            boolean noActionMarkedForRetention = !retainedPassengerLinked.isEmpty();
-            boolean referenceBeforeCutOffDate = ff.getPnrs().stream().anyMatch(p -> p.getCreateDate().after(pnrCutOffDate));
-            FrequentFlyerDataRetentionPolicyAudit frequentFlyerDataRetentionPolicyAudit = new FrequentFlyerDataRetentionPolicyAudit();
+        if (!ffIds.isEmpty()) {
+            Set<FrequentFlyer> ffFromPnr = frequentFlyerRepository.findFrequentFlyers(ffIds, flightIds, pnrIds);
+            Set<FrequentFlyer> frequentFlyers = new HashSet<>();
+            Set<FrequentFlyerDataRetentionPolicyAudit> frequentFlyerDataRetentionPolicyAudits = new HashSet<>();
+            for (FrequentFlyer ff : ffFromPnr) {
+                Set<Passenger> retainedPassengerLinked = Sets.intersection(retainedPassengers, ff.getPnrs().stream().flatMap(p -> p.getPassengers().stream()).collect(toSet()));
+                boolean noActionMarkedForRetention = !retainedPassengerLinked.isEmpty();
+                boolean referenceBeforeCutOffDate = ff.getPnrs().stream().anyMatch(p -> p.getCreateDate().after(pnrCutOffDate));
+                FrequentFlyerDataRetentionPolicyAudit frequentFlyerDataRetentionPolicyAudit = new FrequentFlyerDataRetentionPolicyAudit();
             frequentFlyerDataRetentionPolicyAudit.setFrequentFlyer(ff);
-            if (noActionMarkedForRetention) {
-                populateNoActionRetainedRecord(frequentFlyerDataRetentionPolicyAudit);
-            } else if (referenceBeforeCutOffDate) {
-                populateNoActionRecord(frequentFlyerDataRetentionPolicyAudit);
-            } else {
-                ff.deletePII();
-                frequentFlyers.add(ff);
-                populateActionTaken(frequentFlyerDataRetentionPolicyAudit);
+                if (noActionMarkedForRetention) {
+                    populateNoActionRetainedRecord(frequentFlyerDataRetentionPolicyAudit);
+                } else if (referenceBeforeCutOffDate) {
+                    populateNoActionRecord(frequentFlyerDataRetentionPolicyAudit);
+                } else {
+                    ff.deletePII();
+                    frequentFlyers.add(ff);
+                    populateActionTaken(frequentFlyerDataRetentionPolicyAudit);
+                }
+                frequentFlyerDataRetentionPolicyAudits.add(frequentFlyerDataRetentionPolicyAudit);
             }
-            frequentFlyerDataRetentionPolicyAudits.add(frequentFlyerDataRetentionPolicyAudit);
-        }
-
         pnrFieldsToScrub.setFrequentFlyers(frequentFlyers);
         pnrFieldsToScrub.setFrequentFlyersDataRetentionPolicy(frequentFlyerDataRetentionPolicyAudits);
+        }
 
         return pnrFieldsToScrub;
 
@@ -279,10 +288,9 @@ public class DataRetentionServiceImpl implements DataRetentionService {
     }
 
     public void saveApisFields(DocumentDeletionResult documentDeletionResult, PassengerDeletionResult passengerDeletionResult) {
-
         if (!passengerDeletionResult.getPassengerDetailFromMessageSet().isEmpty()) {
             passengerDetailFromMessageRepository.saveAll(passengerDeletionResult.getPassengerDetailFromMessageSet());
-        }
+    }
 
         if (!passengerDeletionResult.getPassengerDetails().isEmpty()) {
             passengerDetailRepository.saveAll(passengerDeletionResult.getPassengerDetails());
@@ -295,12 +303,14 @@ public class DataRetentionServiceImpl implements DataRetentionService {
         if (!documentDeletionResult.getDocuments().isEmpty()) {
             documentRepository.saveAll(documentDeletionResult.getDocuments());
         }
+
         if (!documentDeletionResult.getDataRetentionStatuses().isEmpty()) {
             saveDataRetentionStatus(documentDeletionResult.getDataRetentionStatuses());
         }
         if (!documentDeletionResult.getDocumentRetentionPolicyAudits().isEmpty()) {
             documentRetentionPolicyAuditRepository.saveAll(documentDeletionResult.getDocumentRetentionPolicyAudits());
         }
+
     }
 
     @Override

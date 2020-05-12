@@ -3,9 +3,9 @@ package gov.gtas.job.scheduler;
 import gov.gtas.job.scheduler.service.DataRetentionService;
 import gov.gtas.model.*;
 import gov.gtas.services.PassengerService;
-import gov.gtas.services.PnrMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -16,6 +16,7 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 @Component
+@Scope("prototype")
 public class PnrDataMaskThread extends DataSchedulerThread implements Callable<Boolean> {
 
     private static final Logger logger = LoggerFactory.getLogger(PnrDataMaskThread.class);
