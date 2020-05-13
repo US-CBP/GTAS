@@ -45,6 +45,7 @@ public class LoginServiceImpl implements LoginService {
         } else {
             user.setConsecutiveFailedLoginAttempts(user.getConsecutiveFailedLoginAttempts() + 1);
         }
+        userRepository.save(user);
 
     }
 
