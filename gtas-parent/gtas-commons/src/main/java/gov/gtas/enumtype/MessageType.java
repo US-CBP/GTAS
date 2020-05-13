@@ -10,7 +10,9 @@ public enum MessageType {
 
     APIS("APIS"),
 
-    PNR("PNR");
+    PNR("PNR"),
+
+    NO_TYPE("NO_TYPE");
 
     private String messageType;
 

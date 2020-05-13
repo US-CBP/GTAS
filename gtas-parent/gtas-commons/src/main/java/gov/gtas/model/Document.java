@@ -5,6 +5,8 @@
  */
 package gov.gtas.model;
 
+import gov.gtas.enumtype.MessageType;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
@@ -41,6 +43,10 @@ public class Document extends BaseEntity {
 	@Column(name = "issuance_country")
 	private String issuanceCountry;
 
+	@Column(name = "message_type")
+	@Enumerated(EnumType.STRING)
+	private MessageType messageType;
+
 	@JoinColumn(name = "passenger_id", columnDefinition = "bigint unsigned")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Passenger passenger;
@@ -66,7 +72,13 @@ public class Document extends BaseEntity {
 	@OneToMany(mappedBy = "document", fetch = FetchType.LAZY)
 	private Set<DocumentRetentionPolicyAudit> documentRetentionPolicyAudits = new HashSet<>();
 
+	public MessageType getMessageType() {
+		return messageType;
+	}
 
+	public void setMessageType(MessageType messageType) {
+		this.messageType = messageType;
+	}
 	public Long getFlightId() {
 		return flightId;
 	}
@@ -140,7 +152,7 @@ public class Document extends BaseEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.documentNumber, this.issuanceCountry, this.documentType, this.passengerId);
+		return Objects.hash(this.documentNumber, this.messageType, this.documentType, this.passengerId);
 	}
 
 	@Override
@@ -151,7 +163,8 @@ public class Document extends BaseEntity {
 			return false;
 		final Document other = (Document) obj;
 		return Objects.equals(this.documentNumber, other.documentNumber)
-				&& Objects.equals(this.passengerId, other.passengerId);
+				&& Objects.equals(this.passengerId, other.passengerId)
+				&& Objects.equals(this.messageType, other.messageType);
 	}
 
 	public Set<Message> getMessages() {

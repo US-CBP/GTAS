@@ -299,6 +299,7 @@ public class FlightServiceImpl implements FlightService {
 			}
 		});
 
+
 		return seatVos;
 	}
 

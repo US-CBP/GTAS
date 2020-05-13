@@ -8,11 +8,12 @@ package gov.gtas.vo;
 import gov.gtas.model.Document;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsSummary;
+import gov.gtas.model.PIIObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
-public class HitDetailVo {
+public class HitDetailVo implements PIIObject {
 
 	private HitsSummary parent;
 
@@ -217,5 +218,27 @@ public class HitDetailVo {
 
 	public void setPassengerDocNumber(String passengerDocNumber) {
 		this.passengerDocNumber = passengerDocNumber;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.setRuleDesc("DELETED");
+		this.setRuleTitle("DELETED");
+		this.setRuleConditions("DELETED");
+		this.setPassengerDocNumber("DELETED");
+		this.setHitsRulesAndDetails(new HashMap<>());
+		this.setParent(null);
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.setRuleDesc("MASKED");
+		this.setRuleTitle("MASKED");
+		this.setRuleConditions("MASKED");
+		this.setPassengerDocNumber("MASKED");
+		this.setHitsRulesAndDetails(new HashMap<>());
+		this.setParent(null);
+		return this;
 	}
 }

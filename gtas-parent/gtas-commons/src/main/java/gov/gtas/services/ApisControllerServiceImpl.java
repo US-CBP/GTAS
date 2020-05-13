@@ -36,6 +36,7 @@ public class ApisControllerServiceImpl implements ApisControllerService {
 			fpVo.setFlightId(p.getFlight().getId());
 			fpVo.setPassengerId(p.getId());
 			flightPassengerVos.add(fpVo);
+
 		}
 		return flightPassengerVos;
 	}

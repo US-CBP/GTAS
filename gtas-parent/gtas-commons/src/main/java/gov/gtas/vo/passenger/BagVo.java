@@ -6,8 +6,9 @@
 package gov.gtas.vo.passenger;
 
 import gov.gtas.model.Bag;
+import gov.gtas.model.PIIObject;
 
-public class BagVo {
+public class BagVo implements PIIObject {
 	private String bagId;
 	private Long flightId;
 	private Long bookingDetailId;
@@ -151,5 +152,19 @@ public class BagVo {
 
 	public void setPrime(boolean prime) {
 		isPrime = prime;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.passFirstName = "DELETED";
+		this.passLastName = "DELETED";
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.passFirstName = "MASKED";
+		this.passLastName = "MASKED";
+		return this;
 	}
 }

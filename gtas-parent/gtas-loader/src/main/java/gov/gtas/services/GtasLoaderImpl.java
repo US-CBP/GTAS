@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.enumtype.MessageType;
 import gov.gtas.model.*;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.util.DateUtils;
@@ -410,7 +411,7 @@ public class GtasLoaderImpl implements GtasLoader {
 					newPassenger.getPassengerTripDetails().setHoursBeforeTakeOff(hoursBeforeTakeOff);
 				}
 				for (DocumentVo dvo : pvo.getDocuments()) {
-					Document d = utils.createNewDocument(dvo);
+					Document d = utils.createNewDocument(dvo, message);
 					newPassenger.addDocument(d);
 					documents.add(d);
 				}
@@ -568,13 +569,14 @@ public class GtasLoaderImpl implements GtasLoader {
 
 		PassengerDetailFromMessage passengerDetailFromMessage = fromVoAndMessage(pvo, message, existingPassenger);
 		existingPassenger.getPassengerDetailFromMessages().add(passengerDetailFromMessage);
+		MessageType messageType = utils.getMessageType(message);
 		utils.updatePassenger(pvo, existingPassenger);
 		for (DocumentVo dvo : pvo.getDocuments()) {
 			List<Document> existingDocs;
 			if (dvo.getDocumentNumber() != null) {
-				existingDocs = docDao.findByDocumentNumberAndPassenger(dvo.getDocumentNumber(), existingPassenger);
+				existingDocs = docDao.findByDocumentNumberAndPassengerAndMessageType(dvo.getDocumentNumber(), existingPassenger, messageType);
 				if (existingDocs.isEmpty()) {
-					Document d = utils.createNewDocument(dvo);
+					Document d = utils.createNewDocument(dvo, message);
 					message.getDocuments().add(d);
 					d.getMessages().add(message);
 					existingPassenger.addDocument(d);
