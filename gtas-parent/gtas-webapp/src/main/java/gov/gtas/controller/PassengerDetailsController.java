@@ -81,13 +81,13 @@ public class PassengerDetailsController {
 
 	@Autowired
 	private HitDetailService hitDetailService;
-	
+
 	@Autowired
 	private PassengerNoteService paxNoteService;
-	
+
 	@Autowired
 	private NoteTypeService noteTypeService;
-	
+
 	@Autowired
 	private SeatService seatService;
 
@@ -113,10 +113,10 @@ public class PassengerDetailsController {
 			vo.setFlightDestination(flight.getDestination());
 			vo.setFlightId(flight.getId().toString());
 			vo.setFlightIdTag(flight.getIdTag());
-			
+
 			String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), t.getId());
 			vo.setSeat(seatNumber);
-			
+
 			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
@@ -362,7 +362,7 @@ public class PassengerDetailsController {
 
 		return paxWatchlistLinkVos;
 	}
-	
+
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping(value = "/passengers/passenger/notes")
@@ -373,14 +373,14 @@ public class PassengerDetailsController {
 			return paxNoteService.getAllEventNotes(paxId);
 		}
 	}
-	
+
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping(value = "/passengers/passenger/notetypes")
 	public List<NoteTypeVo> getAllNoteTypes() {
 		return noteTypeService.getAllNoteTypes();
 	}
-	
+
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@PostMapping(value = "/passengers/passenger/note", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -411,7 +411,7 @@ public class PassengerDetailsController {
 
 	/**
 	 * Util method to map PNR model object to VO
-	 * 
+	 *
 	 * @param source
 	 * @return
 	 */
@@ -734,7 +734,7 @@ public class PassengerDetailsController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param source
 	 * @param target
 	 */
