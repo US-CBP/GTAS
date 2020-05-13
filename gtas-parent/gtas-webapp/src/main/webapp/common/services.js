@@ -1058,7 +1058,13 @@
                     name: "description",
                     displayName: "Description",
                     type: "string"
-                  }
+                  },
+                    {
+                        field: "severity",
+                        name: "severity",
+                        displayName: "Severity",
+                        type: "string"
+                    }
                 ],
                   NOTE_TYPE: [
                       {
