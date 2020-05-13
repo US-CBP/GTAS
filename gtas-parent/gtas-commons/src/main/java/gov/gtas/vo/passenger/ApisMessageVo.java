@@ -91,4 +91,12 @@ public class ApisMessageVo extends MessageVo {
 		this.bagWeight = bagWeight;
 	}
 
+	public Set<FlightPassengerVo> getFlightpaxs() {
+		return flightpaxs;
+	}
+
+	public void setFlightpaxs(Set<FlightPassengerVo> flightpaxs) {
+		this.flightpaxs = flightpaxs;
+	}
+
 }

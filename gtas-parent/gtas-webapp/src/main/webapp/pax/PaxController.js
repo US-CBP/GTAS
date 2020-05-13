@@ -1178,6 +1178,13 @@
         $mdSidenav("addWatchlist").open();
       });
     };
+
+    $scope.createManualHit = function(){
+      $timeout(function(){
+        $mdSidenav("createManualHit").open();
+      })
+    }
+
     //dialog function for watchlist addition dialog
     $scope.showConfirm = function() {
       if ($uibModalInstance != undefined) {
@@ -1202,6 +1209,30 @@
         }
       );
     };
+
+    $scope.showConfirmManualHit = function(){
+      if ($uibModalInstance != undefined) {
+        $uibModalInstance.close();
+      }
+      var confirm = $mdDialog
+          .confirm()
+          .title("WARNING: Please Confirm Manual Hit Generation")
+          .textContent(
+              "This will generate a manual hit event for the currently viewed passenger."
+          )
+          .ariaLabel("Generate Manual Hit Event Warning")
+          .ok("Confirm Manual Hit")
+          .cancel("Cancel");
+
+      $mdDialog.show(confirm).then(
+          function() {
+            $scope.createManualPvl();
+          },
+          function() {
+            return false;
+          }
+      );
+    }
    
     $scope.userHasRole = function(roleId){
     	var hasRole = false;
@@ -1299,9 +1330,13 @@
     };
 
   $scope.createManualPvl = function(){
-    pendingHitDetailsService.createManualPvl($scope.passenger.paxId, $scope.passenger.flightId).then(function(response){
-      console.log(response);
+    spinnerService.show("html5spinner");
+
+    pendingHitDetailsService.createManualPvl($scope.passenger.paxId, $scope.passenger.flightId, $scope.watchlistCategoryId).then(function(response){
+      $mdSidenav("createManualHit").close();
     });
+    spinnerService.hide("html5spinner");
+    $scope.errorToast('Processing Manual Hit: Please Refresh Existing Hits Table Or Page');
   }
 
 

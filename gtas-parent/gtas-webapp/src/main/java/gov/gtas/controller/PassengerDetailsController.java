@@ -198,18 +198,17 @@ public class PassengerDetailsController {
 			apisVo.setApisRecordExists(true);
 			apisVo.setTransmissionDate(apis.getEdifactMessage().getTransmissionDate());
 
-			List<String> refList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId),
-					t.getId());
 			Passenger passenger = apisMessageRepository
 					.findPaxByFlightIdandPassengerId(Long.parseLong(flightId), t.getId());
+			String refNumber = passenger.getPassengerTripDetails().getReservationReferenceNumber();
 			BagStatisticCalculator bagStatisticCalculator = new BagStatisticCalculator(passenger).invoke("APIS");
 			int bagCount = bagStatisticCalculator.getBagCount();
 			double bagWeight = bagStatisticCalculator.getBagWeight();
 			apisVo.setBagCount(bagCount);
 			apisVo.setBagWeight(bagWeight);
 
-			if (!refList.isEmpty()) {
-				List<FlightPassengerVo> fpList = apisControllerService.generateFlightPassengerList(refList.get(0),
+			if (refNumber != null) {
+				List<FlightPassengerVo> fpList = apisControllerService.generateFlightPassengerList(refNumber,
 						Long.parseLong(flightId));
 				for (FlightPassengerVo flightPassengerVo : fpList) {
 					apisVo.addFlightpax(flightPassengerVo);
@@ -237,6 +236,7 @@ public class PassengerDetailsController {
 			}
 			vo.setApisMessageVo(apisVo);
 		}
+
 
 		return vo;
 	}
