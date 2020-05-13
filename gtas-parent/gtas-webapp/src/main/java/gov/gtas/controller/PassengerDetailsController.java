@@ -91,6 +91,9 @@ public class PassengerDetailsController {
 	@Autowired
 	private SeatService seatService;
 
+	@Autowired
+	private PendingHitDetailsService pendingHitDetailsService;
+
 	static final String EMPTY_STRING = "";
 
 	@ResponseBody
@@ -407,6 +410,15 @@ public class PassengerDetailsController {
 	@RequestMapping(value = "/deletedispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody JsonServiceResponse deleteDispositionStatus() {
 		return new JsonServiceResponse(Status.SUCCESS, "Deletion of disposition status successful");
+	}
+
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@PostMapping(value = "/createmanualpvl")
+	public void createManualPVL(@RequestParam Long paxId, @RequestParam Long flightId, @RequestParam Long hitCategoryId, @RequestParam(required = false) String desc) {
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		logger.info("Creating Manual PVL");
+		pendingHitDetailsService.createManualPendingHitDetail(paxId, flightId, userId, hitCategoryId, desc);
 	}
 
 	/**
