@@ -46,6 +46,8 @@ public class HitDetailVo implements PIIObject {
 
 	private String passengerDocNumber;
 
+	private boolean isMasked = false;
+
 	public static HitDetailVo from(HitDetail hitDetail) {
 		HitDetailVo hitDetailVo = new HitDetailVo();
 		hitDetailVo.setRuleId(hitDetail.getRuleId());
@@ -226,8 +228,13 @@ public class HitDetailVo implements PIIObject {
 		this.setRuleTitle("DELETED");
 		this.setRuleConditions("DELETED");
 		this.setPassengerDocNumber("DELETED");
+		this.setRuleType("DELETED");
+		this.setPaxId(null);
+		this.setFlightId(null);
+		this.setCategory("DELETED");
 		this.setHitsRulesAndDetails(new HashMap<>());
 		this.setParent(null);
+		this.isMasked = true;
 		return this;
 	}
 
@@ -237,8 +244,22 @@ public class HitDetailVo implements PIIObject {
 		this.setRuleTitle("MASKED");
 		this.setRuleConditions("MASKED");
 		this.setPassengerDocNumber("MASKED");
+		this.setPassengerDocNumber("MASKED");
+		this.isMasked = true;
+		this.setRuleType("MASKED");
+		this.setCategory("MASKED");
+		this.setPaxId(null);
+		this.setFlightId(null);
 		this.setHitsRulesAndDetails(new HashMap<>());
 		this.setParent(null);
 		return this;
+	}
+
+	public boolean isMasked() {
+		return isMasked;
+	}
+
+	public void setMasked(boolean masked) {
+		isMasked = masked;
 	}
 }

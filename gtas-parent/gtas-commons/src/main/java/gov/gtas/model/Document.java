@@ -16,7 +16,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "document")
-public class Document extends BaseEntity {
+public class Document extends BaseEntity implements PIIObject {
 	private static final long serialVersionUID = 1L;
 
 	public Document() {
@@ -189,5 +189,17 @@ public class Document extends BaseEntity {
 
 	public void setDocumentRetentionPolicyAudits(Set<DocumentRetentionPolicyAudit> documentRetentionPolicyAudits) {
 		this.documentRetentionPolicyAudits = documentRetentionPolicyAudits;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.documentNumber  = "DELETED";
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.documentNumber = "MASKED";
+		return this;
 	}
 }

@@ -58,6 +58,7 @@ public class HitsSummaryController {
 
 		LinkedHashSet<HitDetailVo> hitDetailVoList = new LinkedHashSet<>();
 		for (HitDetail htd : passengerHitDetails) {
+			Passenger p = htd.getPassenger();
 			HitDetailVo hitDetailVo = new HitDetailVo();
 			hitDetailVo.setRuleId(htd.getRuleId());
 			hitDetailVo.setRuleTitle(htd.getTitle());
@@ -78,6 +79,15 @@ public class HitsSummaryController {
 			}
 			hitDetailVo.setFlightDate(htd.getFlight().getMutableFlightDetails().getEtd());
 			hitDetailVo.setStatus(stringJoiner.toString());
+			if (!(!p.getDataRetentionStatus().isDeletedAPIS()
+					&& p.getDataRetentionStatus().isHasApisMessage()
+					|| (!p.getDataRetentionStatus().isDeletedPNR() && p.getDataRetentionStatus().isHasPnrMessage()))) {
+				hitDetailVo.deletePII();
+			} else if (!(!p.getDataRetentionStatus().isMaskedAPIS()
+					&& p.getDataRetentionStatus().isHasApisMessage()
+					|| (!p.getDataRetentionStatus().isMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage()))) {
+					hitDetailVo.maskPII();
+					}
 			hitDetailVoList.add(hitDetailVo);
 		}
 		return hitDetailVoList;

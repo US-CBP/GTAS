@@ -33,8 +33,8 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 
 	@Query("SELECT p FROM Passenger p " + "left join fetch p.passengerTripDetails "
 			+ "left join fetch p.passengerDetails " + "left join fetch p.documents "
-			+ "left join fetch p.flight " + "WHERE p.id = :id")
-	Passenger findByIdWithFlightAndDocuments(@Param("id") Long id);
+			+ "left join fetch p.flight left join fetch p.passengerDetailFromMessages " + "WHERE p.id = :id")
+	Passenger findByIdWithFlightAndDocumentsAndMessageDetails(@Param("id") Long id);
 	
 	@Query("SELECT p FROM Passenger p " + "left join fetch p.passengerTripDetails "
 			+ "left join fetch p.passengerDetails " + "left join fetch p.documents "
@@ -108,4 +108,7 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 			+ " WHERE (p.flight.id in :flightIds" + " AND (am.id IN :messageIds "
 			+ "       OR pnr.id IN :messageIds)) ")
 	Set<Passenger> getFullPassengerIncludingHitsByMessageId(@Param("messageIds") Set<Long> messageIds, @Param("flightIds") Set<Long> flightIds);
+
+	@Query("Select p from Passenger p left join fetch p.bags where p.id in :passengerIds and p.flight.id = :flightId")
+    Set<Passenger> getDocumentsByPaxIdFlightId(@Param("passengerIds")Set<Long> passengerIds, @Param("flightId")Long flightId);
 }

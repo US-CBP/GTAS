@@ -1,27 +1,18 @@
 package gov.gtas.services;
 
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import gov.gtas.enumtype.MessageType;
+import gov.gtas.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.enumtype.HitSeverityEnum;
-import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
-import gov.gtas.model.HitDetail;
-import gov.gtas.model.HitMaker;
-import gov.gtas.model.HitViewStatus;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Pnr;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.services.dto.PassengerNoteSetDto;
@@ -66,6 +57,28 @@ public class EventReportServiceImpl implements EventReportService {
 
 	}
 
+	private PassengerDetails filterOutMaskedAPISOrPnr(Passenger t) {
+		PassengerDetails passengerDetails = t.getPassengerDetails();
+		if (t.getDataRetentionStatus().isMaskedAPIS() || t.getDataRetentionStatus().isMaskedPNR()) {
+			if (!t.getDataRetentionStatus().isMaskedPNR()) {
+				passengerDetails = getPassengerDetails(t, MessageType.PNR);
+			} else if (!t.getDataRetentionStatus().isMaskedAPIS()) {
+				passengerDetails = getPassengerDetails(t, MessageType.APIS);
+			} else {
+				passengerDetails.maskPII();
+			}
+		} return passengerDetails;
+	}
+	private PassengerDetails getPassengerDetails(Passenger t, MessageType messageType) {
+		return t
+				.getPassengerDetailFromMessages()
+				.stream()
+				.filter(fs -> fs.getMessageType() == messageType)
+				.sorted(Comparator.comparing(PassengerDetailFromMessage::getCreatedAt).reversed())
+				.map(PassengerDetails::from)
+				.findFirst()
+				.orElse(new PassengerDetails());
+	}
 	public PaxDetailPdfDocResponse createPassengerEventReport(Long paxId, Long flightId) {
 
 		PaxDetailPdfDocRequest paxDetailPdfDocRequest = new PaxDetailPdfDocRequest();
@@ -74,7 +87,8 @@ public class EventReportServiceImpl implements EventReportService {
 		PassengerVo passengerVo = new PassengerVo();
 		Flight flight = flightService.findById(flightId);
 
-		Passenger passenger = passengerService.findByIdWithFlightAndDocuments(paxId);
+		Passenger passenger = passengerService.findByIdWithFlightAndDocumentsAndMessageDetails(paxId);
+		PassengerDetails passengerDetails = filterOutMaskedAPISOrPnr(passenger);
 
 		if (passenger != null && flight != null) {
 			if (flight.getId().equals(flightId)) {
@@ -94,33 +108,40 @@ public class EventReportServiceImpl implements EventReportService {
 			if (passenger.getPassengerIDTag() != null) {
 				passengerVo.setPaxIdTag(passenger.getPassengerIDTag().getIdTag());
 			}
-			passengerVo.setPassengerType(passenger.getPassengerDetails().getPassengerType());
-			passengerVo.setLastName(passenger.getPassengerDetails().getLastName());
-			passengerVo.setFirstName(passenger.getPassengerDetails().getFirstName());
-			passengerVo.setMiddleName(passenger.getPassengerDetails().getMiddleName());
-			passengerVo.setNationality(passenger.getPassengerDetails().getNationality());
+			passengerVo.setPassengerType(passengerDetails.getPassengerType());
+			passengerVo.setLastName(passengerDetails.getLastName());
+			passengerVo.setFirstName(passengerDetails.getFirstName());
+			passengerVo.setMiddleName(passengerDetails.getMiddleName());
+			passengerVo.setNationality(passengerDetails.getNationality());
 			passengerVo.setDebarkation(passenger.getPassengerTripDetails().getDebarkation());
 			passengerVo.setDebarkCountry(passenger.getPassengerTripDetails().getDebarkCountry());
-			passengerVo.setDob(passenger.getPassengerDetails().getDob());
-			passengerVo.setAge(passenger.getPassengerDetails().getAge());
+			passengerVo.setDob(passengerDetails.getDob());
+			passengerVo.setAge(passengerDetails.getAge());
 			passengerVo.setEmbarkation(passenger.getPassengerTripDetails().getEmbarkation());
 			passengerVo.setEmbarkCountry(passenger.getPassengerTripDetails().getEmbarkCountry());
 			passengerVo.setGender(
-					passenger.getPassengerDetails().getGender() != null ? passenger.getPassengerDetails().getGender()
+					passengerDetails.getGender() != null ? passengerDetails.getGender()
 							: "");
-			passengerVo.setResidencyCountry(passenger.getPassengerDetails().getResidencyCountry());
-			passengerVo.setSuffix(passenger.getPassengerDetails().getSuffix());
-			passengerVo.setTitle(passenger.getPassengerDetails().getTitle());
+			passengerVo.setResidencyCountry(passengerDetails.getResidencyCountry());
+			passengerVo.setSuffix(passengerDetails.getSuffix());
+			passengerVo.setTitle(passengerDetails.getTitle());
 
-			Iterator<Document> documentIterator = passenger.getDocuments().iterator();
-			while (documentIterator.hasNext()) {
-				Document document = documentIterator.next();
+			for (Document document : passenger.getDocuments()) {
 				DocumentVo documentVo = new DocumentVo();
 				documentVo.setDocumentNumber(document.getDocumentNumber());
 				documentVo.setDocumentType(document.getDocumentType());
 				documentVo.setIssuanceCountry(document.getIssuanceCountry());
 				documentVo.setExpirationDate(document.getExpirationDate());
 				documentVo.setIssuanceDate(document.getIssuanceDate());
+				if (passenger.getDataRetentionStatus().isDeletedAPIS() && document.getMessageType() == MessageType.APIS) {
+					documentVo.deletePII();
+				} else if (passenger.getDataRetentionStatus().isMaskedAPIS() && document.getMessageType() == MessageType.APIS) {
+					documentVo.maskPII();
+				} else if (passenger.getDataRetentionStatus().isDeletedPNR() && document.getMessageType() == MessageType.PNR) {
+					documentVo.deletePII();
+				} else if (passenger.getDataRetentionStatus().isMaskedPNR() && document.getMessageType() == MessageType.PNR) {
+					documentVo.maskPII();
+				}
 				passengerVo.addDocument(documentVo);
 			}
 
@@ -184,6 +205,14 @@ public class EventReportServiceImpl implements EventReportService {
 				}
 				hitDetailVo.setFlightDate(htd.getFlight().getMutableFlightDetails().getEtd());
 				hitDetailVo.setStatus(stringJoiner.toString());
+				if (!(!htd.getPassenger().getDataRetentionStatus().isDeletedPNR() && htd.getPassenger().getDataRetentionStatus().isHasPnrMessage())
+						|| (!htd.getPassenger().getDataRetentionStatus().isDeletedAPIS() && htd.getPassenger().getDataRetentionStatus().isHasApisMessage())) {
+					hitDetailVo.deletePII();
+				}
+				else if (!(!htd.getPassenger().getDataRetentionStatus().isMaskedPNR() && htd.getPassenger().getDataRetentionStatus().isHasPnrMessage())
+					|| (!htd.getPassenger().getDataRetentionStatus().isMaskedAPIS() && htd.getPassenger().getDataRetentionStatus().isHasApisMessage())) {
+					hitDetailVo.maskPII();
+				}
 				hitDetailVoList.add(hitDetailVo);
 			}
 
@@ -200,13 +229,24 @@ public class EventReportServiceImpl implements EventReportService {
 		List<Passenger> passengersWithSamePassengerIdTag = passengerService
 				.getBookingDetailHistoryByPaxID(paxId);
 		Set<Passenger> passengerSet = new HashSet<>(passengersWithSamePassengerIdTag);
+		Set<Passenger> unmaskedPassengers = passengerSet.stream().filter(p ->
+				(!p.getDataRetentionStatus().isMaskedAPIS() && p.getDataRetentionStatus().isHasApisMessage())
+						|| (!p.getDataRetentionStatus().isMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage()))
+				.collect(Collectors.toSet());
+
 		Passenger p = passengerService.findById(paxId);
-		passengerSet.remove(p);
-		List<HitDetailVo> hitDetailHistoryVoList = hitDetailService.getLast10RecentHits(passengerSet);
-		paxDetailPdfDocRequest.setHitDetailHistoryVoList(hitDetailHistoryVoList);
-		
-		
-		
+		if (!((p.getDataRetentionStatus().isDeletedPNR() && p.getDataRetentionStatus().isHasPnrMessage())
+				|| (p.getDataRetentionStatus().isDeletedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
+			paxDetailPdfDocRequest.setHitDetailHistoryVoList(new ArrayList<>());
+		}
+		else if (!((p.getDataRetentionStatus().isMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage())
+				|| (p.getDataRetentionStatus().isMaskedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
+			paxDetailPdfDocRequest.setHitDetailHistoryVoList(new ArrayList<>());
+		} else {
+			passengerSet.remove(p);
+			List<HitDetailVo> hitDetailHistoryVoList = hitDetailService.getLast10RecentHits(unmaskedPassengers, p);
+			paxDetailPdfDocRequest.setHitDetailHistoryVoList(hitDetailHistoryVoList);
+		}
 	}
 	
 	public void setFlightHistory(PaxDetailPdfDocRequest paxDetailPdfDocRequest, Long paxId)

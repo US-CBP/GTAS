@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 
 import gov.gtas.common.BagStatisticCalculator;
 import gov.gtas.enumtype.HitTypeEnum;
+import gov.gtas.enumtype.MessageType;
 import gov.gtas.model.*;
 import gov.gtas.repository.BookingDetailRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
@@ -99,10 +100,10 @@ public class PassengerDetailsController {
 	public PassengerVo getPassengerByPaxIdAndFlightId(@PathVariable(value = "id") String paxId,
 			@RequestParam(value = "flightId", required = false) String flightId) {
 		PassengerVo vo = new PassengerVo();
-		Passenger t = pService.findByIdWithFlightAndDocuments(Long.valueOf(paxId));
+		Passenger t = pService.findByIdWithFlightAndDocumentsAndMessageDetails(Long.valueOf(paxId));
 		Flight flight = fService.findById(Long.parseLong(flightId));
-		List<Bag> bagList = new ArrayList<>();
-		if (flightId != null && flight.getId().toString().equals(flightId)) {
+
+		if (flightId.equals(flight.getId().toString())) {
 			vo.setFlightNumber(flight.getFlightNumber());
 			vo.setCarrier(flight.getCarrier());
 			vo.setFlightOrigin(flight.getOrigin());
@@ -113,63 +114,64 @@ public class PassengerDetailsController {
 			vo.setFlightDestination(flight.getDestination());
 			vo.setFlightId(flight.getId().toString());
 			vo.setFlightIdTag(flight.getIdTag());
-			
 			String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), t.getId());
 			vo.setSeat(seatNumber);
-			
-			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
 		if (t.getPassengerIDTag() != null) {
 			vo.setPaxIdTag(t.getPassengerIDTag().getIdTag());
 		}
-		vo.setPassengerType(t.getPassengerDetails().getPassengerType());
-		vo.setLastName(t.getPassengerDetails().getLastName());
-		vo.setFirstName(t.getPassengerDetails().getFirstName());
-		vo.setMiddleName(t.getPassengerDetails().getMiddleName());
-		vo.setNationality(t.getPassengerDetails().getNationality());
+		PassengerDetails passengerDetails = filterOutMaskedAPISOrPnr(t);
+		vo.setPassengerType(passengerDetails.getPassengerType());
+		vo.setLastName(passengerDetails.getLastName());
+		vo.setFirstName(passengerDetails.getFirstName());
+		vo.setMiddleName(passengerDetails.getMiddleName());
+		vo.setNationality(passengerDetails.getNationality());
 		vo.setDebarkation(t.getPassengerTripDetails().getDebarkation());
 		vo.setDebarkCountry(t.getPassengerTripDetails().getDebarkCountry());
-		vo.setDob(t.getPassengerDetails().getDob());
-		vo.setAge(t.getPassengerDetails().getAge());
+		vo.setDob(passengerDetails.getDob());
+		vo.setAge(passengerDetails.getAge());
 		vo.setEmbarkation(t.getPassengerTripDetails().getEmbarkation());
 		vo.setEmbarkCountry(t.getPassengerTripDetails().getEmbarkCountry());
-		vo.setGender(t.getPassengerDetails().getGender() != null ? t.getPassengerDetails().getGender() : "");
-		vo.setResidencyCountry(t.getPassengerDetails().getResidencyCountry());
-		vo.setSuffix(t.getPassengerDetails().getSuffix());
-		vo.setTitle(t.getPassengerDetails().getTitle());
+		vo.setGender(passengerDetails.getGender() != null ? passengerDetails.getGender() : "");
+		vo.setResidencyCountry(passengerDetails.getResidencyCountry());
+		vo.setSuffix(passengerDetails.getSuffix());
+		vo.setTitle(passengerDetails.getTitle());
 
-		Iterator<Document> docIter = t.getDocuments().iterator();
-		while (docIter.hasNext()) {
-			Document d = docIter.next();
+		for (Document d : t.getDocuments()) {
 			DocumentVo docVo = new DocumentVo();
 			docVo.setDocumentNumber(d.getDocumentNumber());
 			docVo.setDocumentType(d.getDocumentType());
 			docVo.setIssuanceCountry(d.getIssuanceCountry());
 			docVo.setExpirationDate(d.getExpirationDate());
 			docVo.setIssuanceDate(d.getIssuanceDate());
+			if (t.getDataRetentionStatus().isDeletedAPIS() && d.getMessageType() == MessageType.APIS) {
+				docVo.deletePII();
+			} else if (t.getDataRetentionStatus().isDeletedPNR() && d.getMessageType() == MessageType.APIS) {
+				docVo.deletePII();
+			} else if (t.getDataRetentionStatus().isMaskedAPIS() && d.getMessageType() == MessageType.APIS) {
+				docVo.maskPII();
+			} else if (t.getDataRetentionStatus().isMaskedPNR() && d.getMessageType() == MessageType.PNR) {
+				docVo.maskPII();
+			}
 			vo.addDocument(docVo);
 		}
 
 		// Gather PNR Details
 		List<Pnr> pnrList = pnrService.findPnrByPassengerIdAndFlightId(t.getId(), new Long(flightId));
+		List<Bag> bagList = bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId());
 
 		if (!pnrList.isEmpty()) {
-			// APB - why are we not getting the passengerIds from the latest PNR??
-			List<Long> passengerIds = pnrList.get(0).getPassengers().stream().map(Passenger::getId).collect(toList());
-			Set<Bag> pnrBag = bagRepository.getBagsByPassengerIds(passengerIds);
-
-			// APB - Here we are using "getLatestPnrFromList" to choose which element from
-			// pnrList to use,
-			// so why use pnrList.get(0) for the pax data ???
 			Pnr source = getLatestPnrFromList(pnrList);
 			vo.setPnrVo(mapPnrToPnrVo(source));
+			List<Long> passengerIds = source.getPassengers().stream().map(Passenger::getId).collect(toList());
+			Set<Bag> pnrBag = bagRepository.getBagsByPassengerIds(passengerIds);
+			Set<BagVo> bagVos = BagVo.fromBags(pnrBag);
+			BagSummaryVo bagSummaryVo = BagSummaryVo.createFromBagVos(bagVos);
 			PnrVo tempVo = vo.getPnrVo();
-			BagSummaryVo bagSummaryVo = BagSummaryVo.createFromFlightAndBookingDetails(pnrBag);
 			tempVo.setBagSummaryVo(bagSummaryVo);
-
 			// Assign seat for every passenger on pnr
-			for (Passenger p : pnrList.get(0).getPassengers()) {
+			for (Passenger p : source.getPassengers()) {
 				for (Seat s : p.getSeatAssignments()) {
 					// exclude APIS seat data
 					if (!s.getApis()) {
@@ -179,6 +181,11 @@ public class PassengerDetailsController {
 						seatVo.setNumber(s.getNumber());
 						seatVo.setApis(s.getApis());
 						seatVo.setFlightNumber(flight.getFullFlightNumber());
+						if (p.getDataRetentionStatus().isMaskedPNR()) {
+							seatVo.deletePII();
+						} else if (p.getDataRetentionStatus().isMaskedPNR()) {
+							seatVo.maskPII();
+						}
 						tempVo.addSeat(seatVo);
 					}
 				}
@@ -190,6 +197,7 @@ public class PassengerDetailsController {
 			parseRawMessageToSegmentList(tempVo);
 			vo.setPnrVo(tempVo);
 		}
+
 		List<ApisMessage> apisList = apisMessageRepository.findByFlightIdAndPassengerId(Long.parseLong(flightId),
 				t.getId());
 		if (!apisList.isEmpty()) {
@@ -210,11 +218,7 @@ public class PassengerDetailsController {
 			if (refNumber != null) {
 				List<FlightPassengerVo> fpList = apisControllerService.generateFlightPassengerList(refNumber,
 						Long.parseLong(flightId));
-				for (FlightPassengerVo flightPassengerVo : fpList) {
-					apisVo.addFlightpax(flightPassengerVo);
-				}
-			} else {
-				logger.warn("There is no APIS Ref number here!");
+				apisVo.getFlightpaxs().addAll(fpList);
 			}
 
 			for (Bag b : bagList) {
@@ -226,19 +230,57 @@ public class PassengerDetailsController {
 					apisVo.addBag(bagVo);
 				}
 			}
-
-			Iterator<Phone> phoneIter = apis.getPhones().iterator();
-			while (phoneIter.hasNext()) {
-				Phone p = phoneIter.next();
-				PhoneVo pVo = new PhoneVo();
-				pVo.setNumber(p.getNumber());
-				apisVo.addPhoneNumber(pVo);
-			}
+//			ToDo: Add APIS phones to rule engine and loader.
+//			Iterator<Phone> phoneIter = apis.getPhones().iterator();
+//			while (phoneIter.hasNext()) {
+//				Phone p = phoneIter.next();
+//				PhoneVo pVo = new PhoneVo();
+//				pVo.setNumber(p.getNumber());
+//				apisVo.addPhoneNumber(pVo);
+//			}
 			vo.setApisMessageVo(apisVo);
+		}
+
+		if (isMasked(t) || isDeleted(t)) {
+			vo.setDisableLinks(true);
 		}
 
 
 		return vo;
+	}
+
+	private boolean isMasked(Passenger t) {
+		return !((t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().isMaskedPNR()) ||
+				(t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().isMaskedAPIS()));
+	}
+
+	private boolean isDeleted(Passenger t) {
+		return !((t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().isDeletedPNR()) ||
+				(t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().isDeletedAPIS()));
+	}
+
+	private PassengerDetails filterOutMaskedAPISOrPnr(Passenger t) {
+		PassengerDetails passengerDetails = t.getPassengerDetails();
+		if (t.getDataRetentionStatus().isMaskedAPIS() || t.getDataRetentionStatus().isMaskedPNR()) {
+			if (!t.getDataRetentionStatus().isMaskedPNR()) {
+				passengerDetails = getPassengerDetails(t, MessageType.PNR);
+			} else if (!t.getDataRetentionStatus().isMaskedAPIS()) {
+				passengerDetails = getPassengerDetails(t, MessageType.APIS);
+			} else {
+				passengerDetails.maskPII();
+			}
+		} return passengerDetails;
+	}
+
+	private PassengerDetails getPassengerDetails(Passenger t, MessageType messageType) {
+		return t
+				.getPassengerDetailFromMessages()
+				.stream()
+				.filter(fs -> fs.getMessageType() == messageType)
+				.sorted(Comparator.comparing(PassengerDetailFromMessage::getCreatedAt).reversed())
+				.map(PassengerDetails::from)
+				.findFirst()
+				.orElse(new PassengerDetails());
 	}
 
 	/**
@@ -318,9 +360,20 @@ public class PassengerDetailsController {
 	@RequestMapping(value = "/passengers/passenger/bookingdetailhistory", method = RequestMethod.GET)
 	public List<FlightVoForFlightHistory> getBookingDetailHistoryByPassenger(@RequestParam String paxId,
 			@RequestParam String flightId) {
-
+		Passenger p = pService.findById(Long.valueOf(paxId));
+		boolean linkFlightHistory = true;
+		if (!((!p.getDataRetentionStatus().isMaskedPNR()
+				&& p.getDataRetentionStatus().isHasPnrMessage())
+				|| (!p.getDataRetentionStatus().isMaskedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
+			linkFlightHistory = false;
+		}
+		if (!((!p.getDataRetentionStatus().isDeletedPNR()
+				&& p.getDataRetentionStatus().isHasPnrMessage())
+				|| (!p.getDataRetentionStatus().isDeletedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
+			linkFlightHistory = false;
+		}
 		List<Passenger> passengersWithSamePassengerIdTag = pService.getBookingDetailHistoryByPaxID(Long.valueOf(paxId));
-		return copyBookingDetailFlightModelToVo(passengersWithSamePassengerIdTag);
+		return copyBookingDetailFlightModelToVo(passengersWithSamePassengerIdTag, linkFlightHistory);
 
 	}
 
@@ -333,7 +386,27 @@ public class PassengerDetailsController {
 		Set<Passenger> passengerSet = new HashSet<>(passengersWithSamePassengerIdTag);
 		Passenger p = pService.findById(paxId);
 		passengerSet.remove(p);
-		return hitDetailService.getLast10RecentHits(passengerSet);
+		List<HitDetailVo> hitDetailVos = hitDetailService.getLast10RecentHits(passengerSet, p);
+		if ((!(!p.getDataRetentionStatus().isDeletedAPIS()
+				&& p.getDataRetentionStatus().isHasApisMessage()
+				|| (!p.getDataRetentionStatus().isDeletedPNR() && p.getDataRetentionStatus().isHasPnrMessage())))) {
+			hitDetailVos.forEach( hdv ->
+			{
+				hdv.setPaxId(null);
+				hdv.setFlightId(null);
+				hdv.deletePII();
+			});
+		}else if ((!(!p.getDataRetentionStatus().isMaskedAPIS()
+				&& p.getDataRetentionStatus().isHasApisMessage()
+				|| (!p.getDataRetentionStatus().isMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage())))) {
+			hitDetailVos.forEach( hdv ->
+			{
+				hdv.setPaxId(null);
+				hdv.setFlightId(null);
+				hdv.maskPII();
+			});
+		}
+		return hitDetailVos;
 	}
 
 	@ResponseBody
@@ -422,6 +495,36 @@ public class PassengerDetailsController {
 			target.setPnrRecordExists(false);
 			return target;
 		}
+		if (!source.getPassengers().isEmpty()) {
+			for (Passenger p : source.getPassengers()) {
+				PassengerVo pVo = new PassengerVo();
+				pVo.setLastName(p.getPassengerDetails().getLastName());
+				pVo.setFirstName(p.getPassengerDetails().getFirstName());
+				pVo.setMiddleName(p.getPassengerDetails().getMiddleName());
+				pVo.setAge(p.getPassengerDetails().getAge());
+				pVo.setGender(p.getPassengerDetails().getGender());
+				pVo.setPaxId(Long.toString(p.getId()));
+				target.getPassengers().add(pVo);
+				Set<Document> documents = p.getDocuments();
+				for (Document d : documents) {
+					if (d.getMessageType() == MessageType.PNR) {
+						DocumentVo documentVo = new DocumentVo();
+						documentVo.setFirstName(d.getPassenger().getPassengerDetails().getFirstName());
+						documentVo.setLastName(d.getPassenger().getPassengerDetails().getLastName());
+						documentVo.setDocumentType(d.getDocumentType());
+						documentVo.setIssuanceCountry(d.getIssuanceCountry());
+						documentVo.setDocumentNumber(d.getDocumentNumber());
+						documentVo.setIssuanceDate(d.getIssuanceDate());
+						documentVo.setExpirationDate(d.getExpirationDate());
+						target.getDocuments().add(documentVo);
+					}
+				}
+				if (p.getDataRetentionStatus().isMaskedPNR()) {
+					pVo.maskPII();
+				}
+			}
+		}
+
 		target.setPnrRecordExists(true);
 		target.setRecordLocator(source.getRecordLocator());
 		target.setBagCount(source.getBagCount());
@@ -529,33 +632,12 @@ public class PassengerDetailsController {
 				target.getFlightLegs().add(flVo);
 			}
 		}
-
-		if (!source.getPassengers().isEmpty()) {
-			Iterator it4 = source.getPassengers().iterator();
-			while (it4.hasNext()) {
-				Passenger p = (Passenger) it4.next();
-				PassengerVo pVo = new PassengerVo();
-				pVo.setLastName(p.getPassengerDetails().getLastName());
-				pVo.setFirstName(p.getPassengerDetails().getFirstName());
-				pVo.setMiddleName(p.getPassengerDetails().getMiddleName());
-				pVo.setAge(p.getPassengerDetails().getAge());
-				pVo.setGender(p.getPassengerDetails().getGender());
-				pVo.setPaxId(Long.toString(p.getId()));
-				target.getPassengers().add(pVo);
-
-				Set<Document> documents = p.getDocuments();
-				for (Document d : documents) {
-					DocumentVo documentVo = new DocumentVo();
-					documentVo.setFirstName(d.getPassenger().getPassengerDetails().getFirstName());
-					documentVo.setLastName(d.getPassenger().getPassengerDetails().getLastName());
-					documentVo.setDocumentType(d.getDocumentType());
-					documentVo.setIssuanceCountry(d.getIssuanceCountry());
-					documentVo.setDocumentNumber(d.getDocumentNumber());
-					documentVo.setIssuanceDate(d.getIssuanceDate());
-					documentVo.setExpirationDate(d.getExpirationDate());
-					target.getDocuments().add(documentVo);
-				}
-			}
+		boolean pnrHasUnmaskedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().isMaskedPNR());
+		boolean pnrHasUndeletedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().isDeletedPNR());
+		if (!pnrHasUndeletedPassenger) {
+			target.deletePII();
+		} else if (!pnrHasUnmaskedPassenger) {
+			target.maskPII();
 		}
 		return target;
 	}
@@ -656,17 +738,17 @@ public class PassengerDetailsController {
 					tifSegment = currString;
 				}
 
-				// Bag
-				if (currString.contains(BAG)) {
-					for (BagVo b : targetVo.getBags()) {
-						if (isRelatedToTifPassenger(tifSegment, b)) {
-							segment.append(BAG);
-							segment.append(b.getPassFirstName());
-							segment.append(b.getPassLastName());
-							segment.append(" ");
-						}
-					}
-				}
+//				// Bag
+//				if (currString.contains(BAG)) {
+//					for (BagVo b : targetVo.getBags()) {
+//						if (isRelatedToTifPassenger(tifSegment, b)) {
+//							segment.append(BAG);
+//							segment.append(b.getPassFirstName());
+//							segment.append(b.getPassLastName());
+//							segment.append(" ");
+//						}
+//					}
+//				}
 				// Phone
 				for (PhoneVo p : targetVo.getPhoneNumbers()) {
 					if (currString.contains(p.getNumber().substring(p.getNumber().length() - 4))) {
@@ -727,11 +809,11 @@ public class PassengerDetailsController {
 		}
 	}
 
-	private boolean isRelatedToTifPassenger(String tifSegment, BagVo b) {
-		return b.getData_source().equalsIgnoreCase("PNR") && b.getPassFirstName() != null
-				&& tifSegment.contains(b.getPassFirstName()) && b.getPassLastName() != null
-				&& tifSegment.contains(b.getPassLastName());
-	}
+//	private boolean isRelatedToTifPassenger(String tifSegment, BagVo b) {
+//		return b.getData_source().equalsIgnoreCase("PNR") && b.getPassFirstName() != null
+//				&& tifSegment.contains(b.getPassFirstName()) && b.getPassLastName() != null
+//				&& tifSegment.contains(b.getPassLastName());
+//	}
 
 	/**
 	 * 
@@ -758,7 +840,7 @@ public class PassengerDetailsController {
 	 *            passenger ids.
 	 */
 	private List<FlightVoForFlightHistory> copyBookingDetailFlightModelToVo(
-			List<Passenger> allPassengersRelatingToSingleIdTag) {
+			List<Passenger> allPassengersRelatingToSingleIdTag, boolean linkFlightHistory) {
 
 		List<FlightVoForFlightHistory> flightsAndBookingDetailsRelatingToSamePaxIdTag = new ArrayList<>();
 
@@ -774,8 +856,14 @@ public class PassengerDetailsController {
 				FlightVoForFlightHistory flightVo = new FlightVoForFlightHistory();
 				populateFlightVoWithFlightDetail(passengerFlightPair.getRight(), flightVo);
 				Long pId = passengerFlightPair.getLeft().getId();
-				flightVo.setPassId(pId.toString());
 				flightVo.setBookingDetail(false);
+				if (!linkFlightHistory) {
+					flightVo.setDisabledLink(true);
+					flightVo.setPassId(null);
+					flightVo.setFlightId(null);
+				} else {
+					flightVo.setPassId(pId.toString());
+				}
 				return flightVo;
 			}).collect(toList());
 

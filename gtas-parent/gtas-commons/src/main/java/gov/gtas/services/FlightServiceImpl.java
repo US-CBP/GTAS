@@ -286,6 +286,16 @@ public class FlightServiceImpl implements FlightService {
 				vo.setFlightNumber(flight.getFlightNumber());
 				vo.setRefNumber(passenger.getPassengerTripDetails().getReservationReferenceNumber());
 				vo.setHasHits(passenger.getHits() != null && passenger.getHits().hasHits());
+
+				if (passenger.getDataRetentionStatus().isDeletedAPIS() && seat.getApis()) {
+					vo.deletePII();
+				} else if (passenger.getDataRetentionStatus().isMaskedAPIS() && seat.getApis()) {
+					vo.maskPII();
+				} else if (passenger.getDataRetentionStatus().isDeletedPNR() && !seat.getApis()) {
+					vo.deletePII();
+				} else if (passenger.getDataRetentionStatus().isMaskedPNR() && !seat.getApis()) {
+					vo.maskPII();
+				}
 				seatVos.add(vo);
 			}
 		}

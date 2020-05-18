@@ -218,7 +218,16 @@ public class QueryBuilderService {
 					
 					String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), passenger.getId());
 					vo.setSeat(seatNumber);
-					
+					if (!(!passenger.getDataRetentionStatus().isMaskedAPIS()
+							&& passenger.getDataRetentionStatus().isHasApisMessage()
+							|| (!passenger.getDataRetentionStatus().isMaskedPNR() && passenger.getDataRetentionStatus().isHasPnrMessage()))) {
+						vo.maskPII();
+					}
+					if (!(!passenger.getDataRetentionStatus().isDeletedAPIS()
+							&& passenger.getDataRetentionStatus().isHasApisMessage()
+							|| (!passenger.getDataRetentionStatus().isDeletedPNR() && passenger.getDataRetentionStatus().isHasPnrMessage()))) {
+						vo.deletePII();
+					}
 					passengerList.add(vo);
 				}
 			}

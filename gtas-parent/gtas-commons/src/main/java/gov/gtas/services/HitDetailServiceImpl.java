@@ -32,12 +32,23 @@ public class HitDetailServiceImpl implements HitDetailService {
 	}
 
 	@Transactional
-	public List<HitDetailVo> getLast10RecentHits(Set<Passenger> passengerSet) {
+	public List<HitDetailVo> getLast10RecentHits(Set<Passenger> passengerSet, Passenger p) {
 		Set<HitDetail> hitDetailSet = hitDetailRepository.findFirst10ByPassengerInOrderByCreatedDateDesc(passengerSet);
 		Set<HitDetailVo> hitDetailVoSet = new LinkedHashSet<>();
+
 		for (HitDetail hitDetail : hitDetailSet) {
 			HitDetailVo hitDetailVo = HitDetailVo.from(hitDetail);
 			hitDetailVoSet.add(hitDetailVo);
+			Passenger hdPassenger = hitDetail.getPassenger();
+			if (!(!hdPassenger.getDataRetentionStatus().isDeletedAPIS()
+					&& hdPassenger.getDataRetentionStatus().isHasApisMessage()
+			|| (!hdPassenger.getDataRetentionStatus().isDeletedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
+				hitDetailVo.deletePII();
+			} else if (!(!hdPassenger.getDataRetentionStatus().isMaskedAPIS()
+					&& hdPassenger.getDataRetentionStatus().isHasApisMessage()
+			|| (!hdPassenger.getDataRetentionStatus().isMaskedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
+				hitDetailVo.maskPII();
+			}
 		}
 		List<HitDetailVo> hitDetails = new ArrayList<>(hitDetailVoSet);
 		if (!hitDetails.isEmpty()) {

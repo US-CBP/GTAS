@@ -28,7 +28,7 @@ public interface PassengerService {
 	Passenger findById(Long id);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	Passenger findByIdWithFlightAndDocuments(Long paxId);
+	Passenger findByIdWithFlightAndDocumentsAndMessageDetails(Long paxId);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	Passenger findByIdWithFlightAndDocumentsAndHitDetails(Long paxId);
@@ -71,4 +71,6 @@ public interface PassengerService {
 	Set<Passenger> getFullPassengersFromMessageIds(Set<Long> messageIds, Set<Long> flightIds);
 
 	Set<Document> getPassengerDocuments(Set<Long> passengerIds, Set<Long> flightIds);
+
+    Set<Passenger> getPassengersWithBags(Set<Long> passengerIds, Long flightId);
 }

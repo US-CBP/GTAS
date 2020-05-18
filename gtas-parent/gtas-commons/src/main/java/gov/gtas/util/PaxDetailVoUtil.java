@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import gov.gtas.enumtype.MessageType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -135,6 +136,37 @@ public class PaxDetailVoUtil {
 			target.setPnrRecordExists(false);
 			return target;
 		}
+
+		if (!source.getPassengers().isEmpty()) {
+			for (Passenger p : source.getPassengers()) {
+				PassengerVo pVo = new PassengerVo();
+				pVo.setLastName(p.getPassengerDetails().getLastName());
+				pVo.setFirstName(p.getPassengerDetails().getFirstName());
+				pVo.setMiddleName(p.getPassengerDetails().getMiddleName());
+				pVo.setAge(p.getPassengerDetails().getAge());
+				pVo.setGender(p.getPassengerDetails().getGender());
+				pVo.setPaxId(Long.toString(p.getId()));
+				target.getPassengers().add(pVo);
+				Set<Document> documents = p.getDocuments();
+				for (Document d : documents) {
+					if (d.getMessageType() == MessageType.PNR) {
+						DocumentVo documentVo = new DocumentVo();
+						documentVo.setFirstName(d.getPassenger().getPassengerDetails().getFirstName());
+						documentVo.setLastName(d.getPassenger().getPassengerDetails().getLastName());
+						documentVo.setDocumentType(d.getDocumentType());
+						documentVo.setIssuanceCountry(d.getIssuanceCountry());
+						documentVo.setDocumentNumber(d.getDocumentNumber());
+						documentVo.setIssuanceDate(d.getIssuanceDate());
+						documentVo.setExpirationDate(d.getExpirationDate());
+						target.getDocuments().add(documentVo);
+					}
+				}
+				if (p.getDataRetentionStatus().isMaskedPNR()) {
+					pVo.maskPII();
+				}
+			}
+		}
+
 		target.setPnrRecordExists(true);
 		target.setRecordLocator(source.getRecordLocator());
 		target.setBagCount(source.getBagCount());
@@ -248,33 +280,9 @@ public class PaxDetailVoUtil {
 				target.getFlightLegs().add(flVo);
 			}
 		}
-
-		if (!source.getPassengers().isEmpty()) {
-			Iterator it4 = source.getPassengers().iterator();
-			while (it4.hasNext()) {
-				Passenger p = (Passenger) it4.next();
-				PassengerVo pVo = new PassengerVo();
-				pVo.setLastName(p.getPassengerDetails().getLastName());
-				pVo.setFirstName(p.getPassengerDetails().getFirstName());
-				pVo.setMiddleName(p.getPassengerDetails().getMiddleName());
-				pVo.setAge(p.getPassengerDetails().getAge());
-				pVo.setGender(p.getPassengerDetails().getGender());
-				pVo.setPaxId(Long.toString(p.getId()));
-				target.getPassengers().add(pVo);
-
-				Set<Document> documents = p.getDocuments();
-				for (Document d : documents) {
-					DocumentVo documentVo = new DocumentVo();
-					documentVo.setFirstName(d.getPassenger().getPassengerDetails().getFirstName());
-					documentVo.setLastName(d.getPassenger().getPassengerDetails().getLastName());
-					documentVo.setDocumentType(d.getDocumentType());
-					documentVo.setIssuanceCountry(d.getIssuanceCountry());
-					documentVo.setDocumentNumber(d.getDocumentNumber());
-					documentVo.setIssuanceDate(d.getIssuanceDate());
-					documentVo.setExpirationDate(d.getExpirationDate());
-					target.getDocuments().add(documentVo);
-				}
-			}
+		boolean pnrHasUnmaskedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().isMaskedPNR());
+		if (!pnrHasUnmaskedPassenger) {
+			target.maskPII();
 		}
 		return target;
 	}

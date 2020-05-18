@@ -39,8 +39,8 @@
 	$scope.historicalNotes = "";
 	$scope.currentNoteText = "";
 	$scope.currentNoteTypes = "";
-    $scope.disableLinks = disableLinks;
     $scope.passenger = passenger.data;
+    $scope.disableLinks = disableLinks ? true : $scope.passenger.disableLinks;
     $scope.watchlistLinks = watchlistLinks.data;
     $scope.isLoadingFlightHistory = true;
     $scope.isClosedCase = false;

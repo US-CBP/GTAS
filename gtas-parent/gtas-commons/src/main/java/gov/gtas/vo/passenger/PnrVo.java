@@ -360,6 +360,9 @@ public class PnrVo extends MessageVo implements PIIObject {
         for (DocumentVo dVo : documents) {
             dVo.deletePII();
         }
+        for (PhoneVo phones : phoneNumbers) {
+            phones.deletePII();
+        }
         for (AddressVo addressVo : addresses) {
             addressVo.deletePII();
         }
@@ -381,6 +384,9 @@ public class PnrVo extends MessageVo implements PIIObject {
     public PIIObject maskPII() {
         for (PassengerVo pVo : passengers) {
             pVo.maskPII();
+        }
+        for (PhoneVo phones : phoneNumbers) {
+            phones.maskPII();
         }
         for (DocumentVo dVo : documents) {
             dVo.maskPII();

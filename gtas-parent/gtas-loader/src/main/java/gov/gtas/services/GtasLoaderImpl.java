@@ -370,17 +370,23 @@ public class GtasLoaderImpl implements GtasLoader {
 		Set<Passenger> oldPassengers = new HashSet<>();
 		Set<Long> oldPassengersId = new HashSet<>();
 		Map<Long, Set<BookingDetail>> bookingDetailsAPassengerOwns = new HashMap<>();
-
+		boolean isPnrMessage = false;
+		boolean isApisMessage = false;
+		if (message instanceof Pnr) {
+			isPnrMessage = true;
+		} else {
+			isApisMessage = true;
+		}
 		// Both PNR and APIS have a transmission date.
 		// To be backwards compatible we will check each value instead of
 		// changing the data model to bring up the edifact message to the message
 		// instead of the sub classes.
 		Integer hoursBeforeTakeOff = null;
-		Date transmissionDate;
-		if (message instanceof Pnr) {
+		Date transmissionDate = null;
+		if (isPnrMessage) {
 			Pnr thisMessage = (Pnr) message;
 			transmissionDate = thisMessage.getEdifactMessage().getTransmissionDate();
-		} else {
+		} else if (isApisMessage){
 			ApisMessage thisMessage = (ApisMessage) message;
 			transmissionDate = thisMessage.getEdifactMessage().getTransmissionDate();
 		}
@@ -415,10 +421,12 @@ public class GtasLoaderImpl implements GtasLoader {
 					newPassenger.addDocument(d);
 					documents.add(d);
 				}
+				setHasMessage(isPnrMessage, newPassenger);
 				createSeatAssignment(pvo.getSeatAssignments(), newPassenger, primeFlight);
 				utils.calculateValidVisaDays(primeFlight, newPassenger);
 				newPassengers.add(newPassenger);
 			} else if (!oldPassengersId.contains(existingPassenger.getId())) {
+				setHasMessage(isPnrMessage, existingPassenger);
 				existingPassenger.setParserUUID(pvo.getPassengerVoUUID());
 				existingPassenger.getBookingDetails().addAll(bookingDetails);
 				oldPassengersId.add(existingPassenger.getId());
@@ -443,6 +451,14 @@ public class GtasLoaderImpl implements GtasLoader {
 		passengerInformationDTO.setBdSet(bookingDetailsAPassengerOwns);
 		passengerInformationDTO.setNewPax(newPassengers);
 		return passengerInformationDTO;
+	}
+
+	private void setHasMessage(boolean isPnrMessage, Passenger existingPassenger) {
+		if (isPnrMessage) {
+			existingPassenger.getDataRetentionStatus().setHasPnrMessage(true);
+		} else {
+			existingPassenger.getDataRetentionStatus().setHasApisMessage(true);
+		}
 	}
 
 	@Override

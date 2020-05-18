@@ -36,6 +36,28 @@ public class DataRetentionStatus extends BaseEntityAudit {
     @Column(name = "drs_deleted_PNR")
     boolean deletedPNR = false;
 
+    @Column(name = "drs_has_apis_message")
+    private boolean hasApisMessage = false;
+
+    @Column(name = "drs_has_pnr_message")
+    private boolean hasPnrMessage = false;
+
+
+    public boolean isHasApisMessage() {
+        return hasApisMessage;
+    }
+
+    public void setHasApisMessage(boolean hasApisMessage) {
+        this.hasApisMessage = hasApisMessage;
+    }
+
+    public boolean isHasPnrMessage() {
+        return hasPnrMessage;
+    }
+
+    public void setHasPnrMessage(boolean hasPnrMessage) {
+        this.hasPnrMessage = hasPnrMessage;
+    }
 
     public Passenger getPassenger() {
         return passenger;

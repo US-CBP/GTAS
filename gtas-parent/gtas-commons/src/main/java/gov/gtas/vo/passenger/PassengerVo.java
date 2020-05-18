@@ -70,6 +70,7 @@ public class PassengerVo extends BaseVo implements PIIObject {
 	private FlightHistoryVo flightHistoryVo;
 	private PnrVo pnrVo;
 	private ApisMessageVo apisMessageVo;
+	private boolean disableLinks = false;
 
 	private List<DispositionVo> dispositionHistory;
 
@@ -503,6 +504,7 @@ public class PassengerVo extends BaseVo implements PIIObject {
 		this.deleted = true;
 		this.title = "D";
 		this.suffix = "D";
+		this.disableLinks = true;
 
 		if (this.passengers != null) {
 			for (PassengerVo passengerVo : passengers) {
@@ -536,8 +538,9 @@ public class PassengerVo extends BaseVo implements PIIObject {
 		this.lastName = "Masked";
 		this.middleName = "Masked";
 		this.deleted = false;
-		this.title = "M";
-		this.suffix = "M";
+		this.title = null;
+		this.suffix = null;
+		this.disableLinks = true;
 		if (this.passengers != null) {
 			for (PassengerVo passengerVo : passengers) {
 				if (!this.equals(passengerVo)) {
@@ -558,5 +561,13 @@ public class PassengerVo extends BaseVo implements PIIObject {
 			this.pnrVo.maskPII();
 		}
 		return this;
+	}
+
+	public boolean isDisableLinks() {
+		return disableLinks;
+	}
+
+	public void setDisableLinks(boolean disableLinks) {
+		this.disableLinks = disableLinks;
 	}
 }
