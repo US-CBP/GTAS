@@ -59,16 +59,20 @@ public class EventReportServiceImpl implements EventReportService {
 
 	private PassengerDetails filterOutMaskedAPISOrPnr(Passenger t) {
 		PassengerDetails passengerDetails = t.getPassengerDetails();
-		if (t.getDataRetentionStatus().isMaskedAPIS() || t.getDataRetentionStatus().isMaskedPNR()) {
-			if (!t.getDataRetentionStatus().isMaskedPNR()) {
+		if (t.getDataRetentionStatus().isMaskedAPIS() || t.getDataRetentionStatus().isMaskedPNR() || t.getDataRetentionStatus().isDeletedAPIS() || t.getDataRetentionStatus().isDeletedPNR()) {
+			if (!t.getDataRetentionStatus().isMaskedPNR() && !t.getDataRetentionStatus().isDeletedPNR() && t.getDataRetentionStatus().isHasPnrMessage()) {
 				passengerDetails = getPassengerDetails(t, MessageType.PNR);
-			} else if (!t.getDataRetentionStatus().isMaskedAPIS()) {
+			} else if (!t.getDataRetentionStatus().isMaskedAPIS() && !t.getDataRetentionStatus().isDeletedAPIS() && t.getDataRetentionStatus().isHasApisMessage()) {
 				passengerDetails = getPassengerDetails(t, MessageType.APIS);
-			} else {
+			} else if ((t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().isDeletedAPIS())
+					|| (t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().isDeletedPNR())){
 				passengerDetails.maskPII();
+			} else {
+				passengerDetails.deletePII();
 			}
 		} return passengerDetails;
 	}
+
 	private PassengerDetails getPassengerDetails(Passenger t, MessageType messageType) {
 		return t
 				.getPassengerDetailFromMessages()
