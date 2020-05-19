@@ -525,6 +525,9 @@ public class PassengerDetailsController {
 				if (p.getDataRetentionStatus().isMaskedPNR()) {
 					pVo.maskPII();
 				}
+				if (p.getDataRetentionStatus().isDeletedPNR()) {
+					pVo.deletePII();
+				}
 			}
 		}
 
