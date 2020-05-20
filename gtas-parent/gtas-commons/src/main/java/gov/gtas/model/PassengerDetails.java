@@ -12,6 +12,9 @@ import javax.persistence.*;
 @Table(name = "passenger_details")
 public class PassengerDetails extends BaseEntityAudit implements PIIObject {
 
+	private static final String DELETED = "DELETED";
+	private static final String MASKED = "MASKED";
+
 	@SuppressWarnings("unused")
 	public PassengerDetails() {
 	}
@@ -263,14 +266,14 @@ public class PassengerDetails extends BaseEntityAudit implements PIIObject {
 		this.setAge(null);
 		this.setDob(null);
 		this.setDeleted(null);
-		this.setFirstName("DELETED");
-		this.setLastName("DELETED");
-		this.setGender("DELETED");
-		this.setMiddleName("DELETED");
-		this.setResidencyCountry("DELETED");
-		this.setNationality("DELETED");
-		this.setSuffix("DELETED");
-		this.setTitle("DELETED");
+		this.setFirstName(DELETED);
+		this.setLastName(DELETED);
+		this.setGender(DELETED);
+		this.setMiddleName(DELETED);
+		this.setResidencyCountry(DELETED);
+		this.setNationality(DELETED);
+		this.setSuffix(DELETED);
+		this.setTitle(DELETED);
 		return this;
 	}
 
@@ -279,14 +282,14 @@ public class PassengerDetails extends BaseEntityAudit implements PIIObject {
 		this.setAge(null);
 		this.setDob(null);
 		this.setDeleted(null);
-		this.setFirstName("MASKED");
-		this.setLastName("MASKED");
-		this.setGender("MASKED");
-		this.setMiddleName("MASKED");
-		this.setResidencyCountry("MASKED");
-		this.setNationality("MASKED");
-		this.setSuffix("MASKED");
-		this.setTitle("MASKED");
+		this.setFirstName(MASKED);
+		this.setLastName(MASKED);
+		this.setGender(MASKED);
+		this.setMiddleName(MASKED);
+		this.setResidencyCountry(MASKED);
+		this.setNationality(MASKED);
+		this.setSuffix(MASKED);
+		this.setTitle(MASKED);
 		return this;
 	}
 }

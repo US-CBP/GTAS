@@ -108,23 +108,7 @@ public class EventReportServiceImpl implements EventReportService {
 			if (passenger.getPassengerIDTag() != null) {
 				passengerVo.setPaxIdTag(passenger.getPassengerIDTag().getIdTag());
 			}
-			passengerVo.setPassengerType(passengerDetails.getPassengerType());
-			passengerVo.setLastName(passengerDetails.getLastName());
-			passengerVo.setFirstName(passengerDetails.getFirstName());
-			passengerVo.setMiddleName(passengerDetails.getMiddleName());
-			passengerVo.setNationality(passengerDetails.getNationality());
-			passengerVo.setDebarkation(passenger.getPassengerTripDetails().getDebarkation());
-			passengerVo.setDebarkCountry(passenger.getPassengerTripDetails().getDebarkCountry());
-			passengerVo.setDob(passengerDetails.getDob());
-			passengerVo.setAge(passengerDetails.getAge());
-			passengerVo.setEmbarkation(passenger.getPassengerTripDetails().getEmbarkation());
-			passengerVo.setEmbarkCountry(passenger.getPassengerTripDetails().getEmbarkCountry());
-			passengerVo.setGender(
-					passengerDetails.getGender() != null ? passengerDetails.getGender()
-							: "");
-			passengerVo.setResidencyCountry(passengerDetails.getResidencyCountry());
-			passengerVo.setSuffix(passengerDetails.getSuffix());
-			passengerVo.setTitle(passengerDetails.getTitle());
+			PaxDetailVoUtil.populatePassengerVoWithPassengerDetails(passengerVo, passengerDetails, passenger);
 
 			for (Document document : passenger.getDocuments()) {
 				DocumentVo documentVo = new DocumentVo();

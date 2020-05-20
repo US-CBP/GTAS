@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import gov.gtas.enumtype.MessageType;
+import gov.gtas.model.PassengerDetails;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -99,6 +100,34 @@ public class PaxDetailVoUtil {
 
 		} catch (Exception e) {
 			logger.error("error populating flight with booking details", e);
+		}
+	}
+
+	public static void populatePassengerVoWithPassengerDetails(PassengerVo vo, PassengerDetails passengerDetails, Passenger passenger) {
+		if(vo == null) {
+			logger.error("error populating passengerVo with passenger details");
+			return;
+		}
+
+		if(passengerDetails != null) {
+			vo.setPassengerType(passengerDetails.getPassengerType());
+			vo.setLastName(passengerDetails.getLastName());
+			vo.setFirstName(passengerDetails.getFirstName());
+			vo.setMiddleName(passengerDetails.getMiddleName());
+			vo.setNationality(passengerDetails.getNationality());
+			vo.setDob(passengerDetails.getDob());
+			vo.setAge(passengerDetails.getAge());
+			vo.setEmbarkation(passenger.getPassengerTripDetails().getEmbarkation());
+			vo.setEmbarkCountry(passenger.getPassengerTripDetails().getEmbarkCountry());
+			vo.setGender(passengerDetails.getGender() != null ? passengerDetails.getGender() : "");
+			vo.setResidencyCountry(passengerDetails.getResidencyCountry());
+			vo.setSuffix(passengerDetails.getSuffix());
+			vo.setTitle(passengerDetails.getTitle());
+		}
+
+		if(passenger != null && passenger.getPassengerTripDetails() != null) {
+			vo.setDebarkation(passenger.getPassengerTripDetails().getDebarkation());
+			vo.setDebarkCountry(passenger.getPassengerTripDetails().getDebarkCountry());
 		}
 	}
 
@@ -280,10 +309,15 @@ public class PaxDetailVoUtil {
 				target.getFlightLegs().add(flVo);
 			}
 		}
+
 		boolean pnrHasUnmaskedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().isMaskedPNR());
-		if (!pnrHasUnmaskedPassenger) {
+		boolean pnrHasUndeletedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().isDeletedPNR());
+		if (!pnrHasUndeletedPassenger) {
+			target.deletePII();
+		} else if (!pnrHasUnmaskedPassenger) {
 			target.maskPII();
 		}
+
 		return target;
 	}
 
