@@ -4,11 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-@Entity(name = "email_data_retention_polciy_audit")
+@Entity(name = "email_data_retention_policy_audit")
 public class EmailDataRetentionPolicyAudit extends  BaseEntityRetention {
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "email_card_id", referencedColumnName = "id")
+    @JoinColumn(name = "email_id", referencedColumnName = "id")
     private Email email;
 
     public Email getEmail() {
