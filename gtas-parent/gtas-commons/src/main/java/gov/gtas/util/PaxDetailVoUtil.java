@@ -145,8 +145,6 @@ public class PaxDetailVoUtil {
 			vo.setNationality(passengerDetails.getNationality());
 			vo.setDob(passengerDetails.getDob());
 			vo.setAge(passengerDetails.getAge());
-			vo.setEmbarkation(passenger.getPassengerTripDetails().getEmbarkation());
-			vo.setEmbarkCountry(passenger.getPassengerTripDetails().getEmbarkCountry());
 			vo.setGender(passengerDetails.getGender() != null ? passengerDetails.getGender() : "");
 			vo.setResidencyCountry(passengerDetails.getResidencyCountry());
 			vo.setSuffix(passengerDetails.getSuffix());
@@ -154,6 +152,8 @@ public class PaxDetailVoUtil {
 		}
 
 		if(passenger != null && passenger.getPassengerTripDetails() != null) {
+			vo.setEmbarkation(passenger.getPassengerTripDetails().getEmbarkation());
+			vo.setEmbarkCountry(passenger.getPassengerTripDetails().getEmbarkCountry());
 			vo.setDebarkation(passenger.getPassengerTripDetails().getDebarkation());
 			vo.setDebarkCountry(passenger.getPassengerTripDetails().getDebarkCountry());
 		}
