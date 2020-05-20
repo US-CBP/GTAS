@@ -81,7 +81,8 @@ public class PendingHitDetailsServiceImpl implements PendingHitDetailsService {
         phr.saveAll(phdSet);
     };
 
-    private ManualHit createManualHitMaker(String desc, User user, Long hitCategoryId){
+    @Override
+    public void createManualHitMaker(String desc, User user, Long hitCategoryId){
         //Manual hit hit maker must be present
         ManualHit mh = new ManualHit();
         if( desc == null || desc.isEmpty()){
@@ -91,7 +92,6 @@ public class PendingHitDetailsServiceImpl implements PendingHitDetailsService {
         }
         mh.setAuthor(user);
         mh.setHitCategory(hitCategoryService.findById(hitCategoryId));
-
-        return mh;
+        hmr.save(mh);
     }
 }
