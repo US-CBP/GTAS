@@ -161,14 +161,7 @@ public class EventReportServiceImpl implements EventReportService {
 				}
 				hitDetailVo.setFlightDate(htd.getFlight().getMutableFlightDetails().getEtd());
 				hitDetailVo.setStatus(stringJoiner.toString());
-				if (!(!htd.getPassenger().getDataRetentionStatus().isDeletedPNR() && htd.getPassenger().getDataRetentionStatus().isHasPnrMessage())
-						|| (!htd.getPassenger().getDataRetentionStatus().isDeletedAPIS() && htd.getPassenger().getDataRetentionStatus().isHasApisMessage())) {
-					hitDetailVo.deletePII();
-				}
-				else if (!(!htd.getPassenger().getDataRetentionStatus().isMaskedPNR() && htd.getPassenger().getDataRetentionStatus().isHasPnrMessage())
-					|| (!htd.getPassenger().getDataRetentionStatus().isMaskedAPIS() && htd.getPassenger().getDataRetentionStatus().isHasApisMessage())) {
-					hitDetailVo.maskPII();
-				}
+				PaxDetailVoUtil.deleteAndMaskPIIFromHitDetailVo(hitDetailVo, htd.getPassenger());
 				hitDetailVoList.add(hitDetailVo);
 			}
 

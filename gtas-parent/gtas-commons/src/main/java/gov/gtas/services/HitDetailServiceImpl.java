@@ -11,6 +11,7 @@ package gov.gtas.services;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.HitDetailRepository;
+import gov.gtas.util.PaxDetailVoUtil;
 import gov.gtas.vo.HitDetailVo;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,17 +40,9 @@ public class HitDetailServiceImpl implements HitDetailService {
 		for (HitDetail hitDetail : hitDetailSet) {
 			HitDetailVo hitDetailVo = HitDetailVo.from(hitDetail);
 			hitDetailVoSet.add(hitDetailVo);
-			Passenger hdPassenger = hitDetail.getPassenger();
-			if (!(!hdPassenger.getDataRetentionStatus().isDeletedAPIS()
-					&& hdPassenger.getDataRetentionStatus().isHasApisMessage()
-			|| (!hdPassenger.getDataRetentionStatus().isDeletedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
-				hitDetailVo.deletePII();
-			} else if (!(!hdPassenger.getDataRetentionStatus().isMaskedAPIS()
-					&& hdPassenger.getDataRetentionStatus().isHasApisMessage()
-			|| (!hdPassenger.getDataRetentionStatus().isMaskedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
-				hitDetailVo.maskPII();
-			}
+			PaxDetailVoUtil.deleteAndMaskPIIFromHitDetailVo(hitDetailVo, hitDetail.getPassenger());
 		}
+
 		List<HitDetailVo> hitDetails = new ArrayList<>(hitDetailVoSet);
 		if (!hitDetails.isEmpty()) {
 			hitDetails.sort((hd1, hd2) -> {

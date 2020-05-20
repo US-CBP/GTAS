@@ -10,6 +10,7 @@ import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.UserRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.HitDetailService;
+import gov.gtas.util.PaxDetailVoUtil;
 import gov.gtas.vo.HitDetailVo;
 
 import java.util.*;
@@ -79,15 +80,7 @@ public class HitsSummaryController {
 			}
 			hitDetailVo.setFlightDate(htd.getFlight().getMutableFlightDetails().getEtd());
 			hitDetailVo.setStatus(stringJoiner.toString());
-			if (!(!p.getDataRetentionStatus().isDeletedAPIS()
-					&& p.getDataRetentionStatus().isHasApisMessage()
-					|| (!p.getDataRetentionStatus().isDeletedPNR() && p.getDataRetentionStatus().isHasPnrMessage()))) {
-				hitDetailVo.deletePII();
-			} else if (!(!p.getDataRetentionStatus().isMaskedAPIS()
-					&& p.getDataRetentionStatus().isHasApisMessage()
-					|| (!p.getDataRetentionStatus().isMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage()))) {
-					hitDetailVo.maskPII();
-					}
+			PaxDetailVoUtil.deleteAndMaskPIIFromHitDetailVo(hitDetailVo, htd.getPassenger());
 			hitDetailVoList.add(hitDetailVo);
 		}
 		return hitDetailVoList;
