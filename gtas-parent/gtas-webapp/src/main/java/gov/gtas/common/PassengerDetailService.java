@@ -133,7 +133,7 @@ public class PassengerDetailService {
                         seatVo.setNumber(s.getNumber());
                         seatVo.setApis(s.getApis());
                         seatVo.setFlightNumber(flight.getFullFlightNumber());
-                        if (p.getDataRetentionStatus().isMaskedPNR()) {
+                        if (p.getDataRetentionStatus().isDeletedPNR()) {
                             seatVo.deletePII();
                         } else if (p.getDataRetentionStatus().isMaskedPNR()) {
                             seatVo.maskPII();
