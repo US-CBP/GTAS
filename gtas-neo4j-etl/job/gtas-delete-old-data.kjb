@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <job>
-  <name>gtas-pii-mod-job</name>
+  <name>gtas-delete-old-data</name>
   <description/>
   <extended_description/>
   <job_version/>
@@ -295,18 +295,18 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1312</xloc>
-      <yloc>448</yloc>
+      <xloc>304</xloc>
+      <yloc>640</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Simple evaluation - Mask PII</name>
+      <name>Simple evaluation - delete data</name>
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
       <valuetype>variable</valuetype>
       <fieldname/>
-      <variablename>${EXT_VAR_MASK_PII_FIELDS}</variablename>
+      <variablename>${EXT_VAR_DELETE_OLD_DATA}</variablename>
       <fieldtype>boolean</fieldtype>
       <mask/>
       <comparevalue>Y</comparevalue>
@@ -320,69 +320,17 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>304</xloc>
-      <yloc>240</yloc>
+      <yloc>224</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Write to log - Mask PII Off</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>### THE JOB THAT MASKS PII IS DISABLED ON CONFIG FILE! ###  EXT_VAR_MASK_PII_FIELDS = ${EXT_VAR_MASK_PII_FIELDS}</logmessage>
-      <loglevel>Minimal</loglevel>
-      <logsubject>MASK PII - DISABLED</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>544</xloc>
-      <yloc>240</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Dummy - end mask pii</name>
-      <description/>
-      <type>SPECIAL</type>
-      <attributes/>
-      <start>N</start>
-      <dummy>Y</dummy>
-      <repeat>N</repeat>
-      <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
-      <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>912</xloc>
-      <yloc>448</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log - Delete Job 2</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>### THE JOB THAT MASKS PII IS ENABLED ON CONFIG FILE! EXT_VAR_MASK_PII_FIELDS= ${EXT_VAR_MASK_PII_FIELDS} ###</logmessage>
-      <loglevel>Minimal</loglevel>
-      <logsubject>MASK PII - ON</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>304</xloc>
-      <yloc>352</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Transformation-read mask exec rec</name>
+      <name>Transformation-read exec record</name>
       <description/>
       <type>TRANS</type>
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>${Internal.Entry.Current.Directory}/gtas-read-masck-execution-record.ktr</filename>
+      <filename>${Internal.Entry.Current.Directory}/gtas-read-execution-record.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -409,18 +357,33 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>304</xloc>
-      <yloc>448</yloc>
+      <xloc>800</xloc>
+      <yloc>224</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Simple evaluation - run mask PII</name>
+      <name>Write to log - Delete Job</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>### DELETE JOB IS ENABLED ON CONFIG FILE! ###</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>DELETE JOB</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>560</xloc>
+      <yloc>224</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Simple evaluation - run delete job</name>
       <description/>
       <type>SIMPLE_EVAL</type>
       <attributes/>
       <valuetype>variable</valuetype>
       <fieldname/>
-      <variablename>${VAR_RUN_MASK_JOB}</variablename>
+      <variablename>${VAR_RUN_DELETE_JOB}</variablename>
       <fieldtype>boolean</fieldtype>
       <mask/>
       <comparevalue>Y</comparevalue>
@@ -433,63 +396,78 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>304</xloc>
-      <yloc>560</yloc>
+      <xloc>1072</xloc>
+      <yloc>224</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Write to log - RUN MASK JOB-TRUE</name>
+      <name>Write to log - Delete Job - 2</name>
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>### RUN MASK JOB IS ON AFTER PROCESSING THE LAST MASK JOB RUN DATE ###</logmessage>
+      <logmessage>### DELETE JOB IS DISABLED ON CONFIG FILE! ###  EXT_VAR_DELETE_OLD_DATA = ${EXT_VAR_DELETE_OLD_DATA}</logmessage>
       <loglevel>Minimal</loglevel>
-      <logsubject>RUN MASK JOB - TRUE</logsubject>
+      <logsubject>DELETE JOB - DISABLED</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>304</xloc>
-      <yloc>704</yloc>
+      <yloc>464</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Write to log - RUN DELETE JOB-FALSE</name>
+      <name>Write to log - RUN DELETE JOB-ON</name>
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>### RUN MASK JOB IS FALSE AFTER PROCESSING THE LAST MASK JOB RUN DATE ###</logmessage>
+      <logmessage>### RUN DELETE JOB IS ON AFTER PROCESSING THE LAST RUN DATE ###</logmessage>
       <loglevel>Minimal</loglevel>
-      <logsubject>MASK JOB - FALSE</logsubject>
+      <logsubject>RUN DELETE JOB - ON</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>576</xloc>
-      <yloc>560</yloc>
+      <xloc>1344</xloc>
+      <yloc>224</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Write to log-mask-exec-erro</name>
+      <name>Write to log - RUN DELETE JOB-OFF</name>
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>### ERROR! An error has occurred when reading and processing the mask execution record #####</logmessage>
+      <logmessage>### RUN DELETE JOB IS OFF AFTER PROCESSING THE LAST RUN DATE ###</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>DELETE JOB - OFF</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>864</xloc>
+      <yloc>368</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log-error</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>### ERROR! An error has occurred when reading and processing the execution record #####</logmessage>
       <loglevel>Error</loglevel>
-      <logsubject>ERROR-Read Mask Execution Record</logsubject>
+      <logsubject>ERROR-Read Execution Record</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>576</xloc>
-      <yloc>448</yloc>
+      <xloc>592</xloc>
+      <yloc>368</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Transformation - mask PII</name>
+      <name>Transformation - delete old data</name>
       <description/>
       <type>TRANS</type>
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>${Internal.Entry.Current.Directory}/gtas-mask-pii.ktr</filename>
+      <filename>${Internal.Entry.Current.Directory}/gtas-delete-nodes.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -516,33 +494,18 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>560</xloc>
-      <yloc>704</yloc>
+      <xloc>1344</xloc>
+      <yloc>320</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Write to log 3 2</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>### ERROR! AN ERROR HAS OCCURRED WHEN MASKING PII FIELDS ####</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>MASK PII</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>768</xloc>
-      <yloc>704</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Transformation-write mask exec rec</name>
+      <name>Transformation-write execution record</name>
       <description/>
       <type>TRANS</type>
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>${Internal.Entry.Current.Directory}/gtas-write-mask-execution-record.ktr</filename>
+      <filename>${Internal.Entry.Current.Directory}/gtas-write-execution-record.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -569,38 +532,53 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>784</xloc>
-      <yloc>848</yloc>
+      <xloc>1344</xloc>
+      <yloc>528</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Write to log 2 3</name>
+      <name>Write to log 2</name>
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>### DONE MASKING PII FIELDS ####</logmessage>
+      <logmessage>### DONE DELETING OLD DATA ####</logmessage>
       <loglevel>Minimal</loglevel>
-      <logsubject>MASKING PII  -SUCCESS</logsubject>
+      <logsubject>DELETE OLD DATA -SUCCESS</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>560</xloc>
-      <yloc>848</yloc>
+      <xloc>1344</xloc>
+      <yloc>416</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Write to log 2 2 2</name>
+      <name>Write to log 2 2</name>
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>### DONE WRITING MASK EXECUTION RECORD ####</logmessage>
+      <logmessage>### DONE WRITING EXECUTION RECORD ####</logmessage>
       <loglevel>Minimal</loglevel>
-      <logsubject>MASK EXECUTION REC WRITTEN</logsubject>
+      <logsubject>EXECUTION REC WRITTEN</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>992</xloc>
-      <yloc>848</yloc>
+      <xloc>1344</xloc>
+      <yloc>640</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log 3</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>### ERROR! AN ERROR HAS OCCURRED WHEN DELETING OLD NODES ####</logmessage>
+      <loglevel>Error</loglevel>
+      <logsubject>DELETE OLD DATA</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>1104</xloc>
+      <yloc>384</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -621,8 +599,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>32</xloc>
-      <yloc>416</yloc>
+      <xloc>80</xloc>
+      <yloc>464</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -630,54 +608,58 @@
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>########### ENTERING PII MODIFICATION JOB. ###############</logmessage>
+      <logmessage>########### ENTERING OLD DATA JOB. ###############</logmessage>
       <loglevel>Minimal</loglevel>
       <logsubject>PII Modification Job</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>240</yloc>
+      <xloc>80</xloc>
+      <yloc>224</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Write to log - mask PII</name>
+      <name>Dummy - end delete data</name>
       <description/>
-      <type>WRITE_TO_LOG</type>
+      <type>SPECIAL</type>
       <attributes/>
-      <logmessage>################## Exiting Masking PII JOB #########################</logmessage>
-      <loglevel>Minimal</loglevel>
-      <logsubject>Mask PII - Exiting</logsubject>
+      <start>N</start>
+      <dummy>Y</dummy>
+      <repeat>N</repeat>
+      <schedulerType>0</schedulerType>
+      <intervalSeconds>0</intervalSeconds>
+      <intervalMinutes>60</intervalMinutes>
+      <hour>12</hour>
+      <minutes>0</minutes>
+      <weekDay>1</weekDay>
+      <DayOfMonth>1</DayOfMonth>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1120</xloc>
-      <yloc>448</yloc>
+      <xloc>848</xloc>
+      <yloc>640</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log - Delete Complete</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>#############  EXITING OLD DATA JOB ###############</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>Delete Old Data - Exit</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>544</xloc>
+      <yloc>640</yloc>
       <attributes_kjc/>
     </entry>
   </entries>
   <hops>
     <hop>
-      <from>Simple evaluation - Mask PII</from>
-      <to>Write to log - Mask PII Off</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log - Mask PII Off</from>
-      <to>Dummy - end mask pii</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Simple evaluation - Mask PII</from>
-      <to>Write to log - Delete Job 2</to>
+      <from>Simple evaluation - delete data</from>
+      <to>Write to log - Delete Job</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -685,8 +667,8 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Write to log - Delete Job 2</from>
-      <to>Transformation-read mask exec rec</to>
+      <from>Write to log - Delete Job</from>
+      <to>Transformation-read exec record</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -694,8 +676,8 @@
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Transformation-read mask exec rec</from>
-      <to>Simple evaluation - run mask PII</to>
+      <from>Transformation-read exec record</from>
+      <to>Simple evaluation - run delete job</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -703,8 +685,17 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Simple evaluation - run mask PII</from>
-      <to>Write to log - RUN MASK JOB-TRUE</to>
+      <from>Simple evaluation - delete data</from>
+      <to>Write to log - Delete Job - 2</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Simple evaluation - run delete job</from>
+      <to>Write to log - RUN DELETE JOB-ON</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -712,8 +703,8 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Simple evaluation - run mask PII</from>
-      <to>Write to log - RUN DELETE JOB-FALSE</to>
+      <from>Transformation-read exec record</from>
+      <to>Write to log-error</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -721,17 +712,8 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Write to log - RUN DELETE JOB-FALSE</from>
-      <to>Dummy - end mask pii</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation-read mask exec rec</from>
-      <to>Write to log-mask-exec-erro</to>
+      <from>Simple evaluation - run delete job</from>
+      <to>Write to log - RUN DELETE JOB-OFF</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -739,8 +721,8 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Write to log-mask-exec-erro</from>
-      <to>Dummy - end mask pii</to>
+      <from>Write to log - RUN DELETE JOB-ON</from>
+      <to>Transformation - delete old data</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -748,35 +730,8 @@
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Write to log - RUN MASK JOB-TRUE</from>
-      <to>Transformation - mask PII</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation - mask PII</from>
-      <to>Write to log 3 2</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log 3 2</from>
-      <to>Dummy - end mask pii</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation - mask PII</from>
-      <to>Write to log 2 3</to>
+      <from>Transformation - delete old data</from>
+      <to>Write to log 2</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -784,8 +739,8 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Write to log 2 3</from>
-      <to>Transformation-write mask exec rec</to>
+      <from>Write to log 2</from>
+      <to>Transformation-write execution record</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -793,8 +748,8 @@
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Transformation-write mask exec rec</from>
-      <to>Write to log 2 2 2</to>
+      <from>Transformation-write execution record</from>
+      <to>Write to log 2 2</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -802,13 +757,13 @@
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Write to log 2 2 2</from>
-      <to>Dummy - end mask pii</to>
+      <from>Transformation - delete old data</from>
+      <to>Write to log 3</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
+      <unconditional>N</unconditional>
     </hop>
     <hop>
       <from>Start</from>
@@ -821,16 +776,61 @@
     </hop>
     <hop>
       <from>Write to log</from>
-      <to>Simple evaluation - Mask PII</to>
+      <to>Simple evaluation - delete data</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Dummy - end mask pii</from>
-      <to>Write to log - mask PII</to>
+      <from>Write to log-error</from>
+      <to>Dummy - end delete data</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log - RUN DELETE JOB-OFF</from>
+      <to>Dummy - end delete data</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log 3</from>
+      <to>Dummy - end delete data</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log 2 2</from>
+      <to>Dummy - end delete data</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log - Delete Job - 2</from>
+      <to>Success</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy - end delete data</from>
+      <to>Write to log - Delete Complete</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -838,7 +838,7 @@
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Write to log - mask PII</from>
+      <from>Write to log - Delete Complete</from>
       <to>Success</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
