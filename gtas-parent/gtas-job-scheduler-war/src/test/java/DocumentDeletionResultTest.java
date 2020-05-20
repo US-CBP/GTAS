@@ -1,5 +1,6 @@
-package gov.gtas.job.scheduler;
-
+import gov.gtas.job.scheduler.DefaultShareConstraint;
+import gov.gtas.job.scheduler.DocumentDeletionResult;
+import gov.gtas.job.scheduler.GTASShareConstraint;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Document;
 import gov.gtas.model.Passenger;
