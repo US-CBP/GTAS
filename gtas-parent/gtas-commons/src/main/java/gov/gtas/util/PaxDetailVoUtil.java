@@ -273,18 +273,14 @@ public class PaxDetailVoUtil {
 		}
 
 		if (!source.getCreditCards().isEmpty()) {
-			Iterator<CreditCard> it1 = source.getCreditCards().iterator();
-			while (it1.hasNext()) {
-				CreditCard cc = it1.next();
+			for (CreditCard cc : source.getCreditCards()) {
 				CreditCardVo cVo = new CreditCardVo();
 				copyModelToVo(cc, cVo);
 				target.getCreditCards().add(cVo);
 			}
 		}
 		if (!source.getFrequentFlyers().isEmpty()) {
-			Iterator<FrequentFlyer> it2 = source.getFrequentFlyers().iterator();
-			while (it2.hasNext()) {
-				FrequentFlyer ff = it2.next();
+			for (FrequentFlyer ff : source.getFrequentFlyers()) {
 				FrequentFlyerVo fVo = new FrequentFlyerVo();
 				copyModelToVo(ff, fVo);
 				target.getFrequentFlyerDetails().add(fVo);
@@ -292,9 +288,7 @@ public class PaxDetailVoUtil {
 		}
 
 		if (!source.getEmails().isEmpty()) {
-			Iterator<Email> it3 = source.getEmails().iterator();
-			while (it3.hasNext()) {
-				Email e = it3.next();
+			for (Email e : source.getEmails()) {
 				EmailVo eVo = new EmailVo();
 				copyModelToVo(e, eVo);
 				target.getEmails().add(eVo);
@@ -302,9 +296,7 @@ public class PaxDetailVoUtil {
 		}
 
 		if (!source.getPhones().isEmpty()) {
-			Iterator<Phone> it4 = source.getPhones().iterator();
-			while (it4.hasNext()) {
-				Phone p = it4.next();
+			for (Phone p : source.getPhones()) {
 				PhoneVo pVo = new PhoneVo();
 				copyModelToVo(p, pVo);
 				target.getPhoneNumbers().add(pVo);
