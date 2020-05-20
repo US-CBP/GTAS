@@ -459,43 +459,58 @@
   </notepads>
   <order>
     <hop>
-      <from>Get variables</from>
-      <to>User defined Java class</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>User defined Java class</from>
       <to>Select values</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Select values</from>
+      <to>Write to log - mask boundary</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Write to log - mask boundary</from>
+      <to>Dummy (do nothing)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get variables</from>
+      <to>Write to log</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Write to log</from>
+      <to>User defined Java class</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing)</from>
       <to>Neo4j Cypher - mask-pii-passenger</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values</from>
+      <from>Neo4j Cypher - mask-pii-passenger</from>
       <to>Neo4j Cyphe-mask-pii-document</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values</from>
+      <from>Neo4j Cyphe-mask-pii-document</from>
       <to>Neo4j Cypher -mask-pii-credit_card</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values</from>
+      <from>Neo4j Cypher -mask-pii-credit_card</from>
       <to>Neo4j Cypher -mask-pii-address</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values</from>
-      <to>Neo4j Cypher-mask-pii-email</to>
+      <from>Neo4j Cypher -mask-pii-address</from>
+      <to>Neo4j Cypher - mask-pii-phone</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values</from>
-      <to>Neo4j Cypher - mask-pii-phone</to>
+      <from>Neo4j Cypher - mask-pii-phone</from>
+      <to>Neo4j Cypher-mask-pii-email</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -512,8 +527,8 @@
     </partitioning>
     <fields>
       <field>
-        <name>deleteDateVar</name>
-        <variable>${EXT_VAR_DELETE_BEFORE_DAYS}</variable>
+        <name>maskDateVar</name>
+        <variable>${EXT_VAR_MASK_BEFORE_DAYS}</variable>
         <type>String</type>
         <format/>
         <currency/>
@@ -533,8 +548,297 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>192</xloc>
-      <yloc>272</yloc>
+      <xloc>112</xloc>
+      <yloc>560</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Neo4j Cyphe-mask-pii-document</name>
+    <type>Neo4jCypherOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>neo4j-db</connection>
+    <cypher>MATCH(n:Document) 
+WHERE date(n.node_updated_on)  &lt;  date({retention_date}) AND NOT EXISTS (n.masked)
+WITH n 
+SET n.number = randomUUID(),
+n.exp_date = date(),
+n.masked = 'Y',
+n.maksed_on = datetime()</cypher>
+    <batch_size/>
+    <cypher_from_field>N</cypher_from_field>
+    <cypher_field/>
+    <unwind>N</unwind>
+    <unwind_map/>
+    <returning_graph>N</returning_graph>
+    <return_graph_field/>
+    <mappings>
+      <mapping>
+        <parameter>retention_date</parameter>
+        <field>dataRetentionDateStr</field>
+        <type>Date</type>
+      </mapping>
+    </mappings>
+    <returns/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1328</xloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Neo4j Cypher - mask-pii-passenger</name>
+    <type>Neo4jCypherOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>neo4j-db</connection>
+    <cypher>MATCH(n:Passenger) 
+WHERE date(n.node_updated_on)  &lt;  date({retention_date}) AND NOT EXISTS (n.masked)
+WITH n 
+SET n.first_name = 'XXXXX', 
+	n.middle_name = 'XXXXX', 
+	n.last_name = 'XXXXX', 
+	n.dob = 'XXXX-XX-XX',
+	n.masked = 'Y',
+	n.maksed_on = datetime()</cypher>
+    <batch_size/>
+    <cypher_from_field>N</cypher_from_field>
+    <cypher_field/>
+    <unwind>N</unwind>
+    <unwind_map/>
+    <returning_graph>N</returning_graph>
+    <return_graph_field/>
+    <mappings>
+      <mapping>
+        <parameter>retention_date</parameter>
+        <field>dataRetentionDateStr</field>
+        <type>Date</type>
+      </mapping>
+    </mappings>
+    <returns/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1040</xloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Neo4j Cypher - mask-pii-phone</name>
+    <type>Neo4jCypherOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>neo4j-db</connection>
+    <cypher>MATCH(n:Phone) 
+WHERE date(n.node_updated_on)  &lt;  date({retention_date}) AND NOT EXISTS (n.masked)
+WITH n 
+SET n.number = randomUUID()+"-"+timestamp() ,
+n.masked = 'Y',
+n.maksed_on = datetime()</cypher>
+    <batch_size/>
+    <cypher_from_field>N</cypher_from_field>
+    <cypher_field/>
+    <unwind>N</unwind>
+    <unwind_map/>
+    <returning_graph>N</returning_graph>
+    <return_graph_field/>
+    <mappings>
+      <mapping>
+        <parameter>retention_date</parameter>
+        <field>dataRetentionDateStr</field>
+        <type>Date</type>
+      </mapping>
+    </mappings>
+    <returns/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1328</xloc>
+      <yloc>624</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Neo4j Cypher -mask-pii-address</name>
+    <type>Neo4jCypherOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>neo4j-db</connection>
+    <cypher>MATCH(n:Address) 
+WHERE date(n.node_updated_on)  &lt;  date({retention_date}) AND NOT EXISTS (n.masked)
+WITH n 
+SET n.address_line_1=timestamp() + " " +randomUUID(),
+n.masked = 'Y',
+n.maksed_on = datetime()
+
+</cypher>
+    <batch_size/>
+    <cypher_from_field>N</cypher_from_field>
+    <cypher_field/>
+    <unwind>N</unwind>
+    <unwind_map/>
+    <returning_graph>N</returning_graph>
+    <return_graph_field/>
+    <mappings>
+      <mapping>
+        <parameter>retention_date</parameter>
+        <field>dataRetentionDateStr</field>
+        <type>Date</type>
+      </mapping>
+    </mappings>
+    <returns/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1328</xloc>
+      <yloc>512</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Neo4j Cypher -mask-pii-credit_card</name>
+    <type>Neo4jCypherOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>neo4j-db</connection>
+    <cypher>MATCH(n:CreditCard) 
+WHERE date(n.node_updated_on)  &lt;  date({retention_date}) AND NOT EXISTS (n.masked)
+WITH n 
+SET n.account_holder = 'XXXXX XXXXX',
+n.number = randomUUID(),
+n.masked = 'Y',
+n.maksed_on = datetime()</cypher>
+    <batch_size/>
+    <cypher_from_field>N</cypher_from_field>
+    <cypher_field/>
+    <unwind>N</unwind>
+    <unwind_map/>
+    <returning_graph>N</returning_graph>
+    <return_graph_field/>
+    <mappings>
+      <mapping>
+        <parameter>retention_date</parameter>
+        <field>dataRetentionDateStr</field>
+        <type>Date</type>
+      </mapping>
+    </mappings>
+    <returns/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1328</xloc>
+      <yloc>400</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Neo4j Cypher-mask-pii-email</name>
+    <type>Neo4jCypherOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>neo4j-db</connection>
+    <cypher>MATCH(n:Email) 
+WHERE date(n.node_updated_on)  &lt;  date({retention_date}) AND NOT EXISTS (n.masked)
+WITH n 
+SET n.address = timestamp() + "@" +randomUUID() + ".com",
+n.masked = 'Y',
+n.maksed_on = datetime()</cypher>
+    <batch_size/>
+    <cypher_from_field>N</cypher_from_field>
+    <cypher_field/>
+    <unwind>N</unwind>
+    <unwind_map/>
+    <returning_graph>N</returning_graph>
+    <return_graph_field/>
+    <mappings>
+      <mapping>
+        <parameter>retention_date</parameter>
+        <field>dataRetentionDateStr</field>
+        <type>Date</type>
+      </mapping>
+    </mappings>
+    <returns/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1328</xloc>
+      <yloc>720</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -542,7 +846,7 @@
     <name>Select values</name>
     <type>SelectValues</type>
     <description/>
-    <distribute>N</distribute>
+    <distribute>Y</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -552,7 +856,7 @@
     <fields>
       <select_unspecified>N</select_unspecified>
       <meta>
-        <name>deleteDtm</name>
+        <name>maskDtm</name>
         <rename>dataRetentionDateStr</rename>
         <type>String</type>
         <length>-2</length>
@@ -578,8 +882,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>608</xloc>
-      <yloc>272</yloc>
+      <xloc>304</xloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -626,28 +930,28 @@ public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws K
 	//
     Object[] outputRow = createOutputRow(r, data.outputRowMeta.size());
 
-	String deleteDateStr = get(Fields.In, "deleteDateVar").getString(r);
+	String maskDateStr = get(Fields.In, "maskDateVar").getString(r);
 
 
 
 	calendar = Calendar.getInstance();
-	Date deleteDtm = null;
+	Date maskDtm = null;
 	Date fileModifiedDate = null;
 
-	if(deleteDateStr!=null &amp;&amp; !deleteDateStr.trim().isEmpty())
+	if(maskDateStr!=null &amp;&amp; !maskDateStr.trim().isEmpty())
 	{
 
-			int deleteDateInt = Integer.parseInt(deleteDateStr);
-			deleteDateInt = deleteDateInt * -1;
+			int maskDateInt = Integer.parseInt(maskDateStr);
+			maskDateInt = maskDateInt * -1;
 		
-			calendar.add(Calendar.DATE, deleteDateInt);
+			calendar.add(Calendar.DATE, maskDateInt);
 			calendar.set(Calendar.HOUR_OF_DAY, 0);  
         	calendar.set(Calendar.MINUTE, 0);  
         	calendar.set(Calendar.SECOND, 0);  
        		calendar.set(Calendar.MILLISECOND, 0);  
 				 
 				
-			deleteDtm = calendar.getTime();
+			maskDtm = calendar.getTime();
 			
 
 			logDebug("### BOUNDARY YEAR = " + calendar.get(Calendar.YEAR));
@@ -672,7 +976,7 @@ public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws K
 	//
 	calendar.clear();
 
-	get(Fields.Out, "deleteDtm").setValue(outputRow, deleteDtm);
+	get(Fields.Out, "maskDtm").setValue(outputRow, maskDtm);
 
 
 
@@ -686,7 +990,7 @@ public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws K
     </definitions>
     <fields>
       <field>
-        <field_name>deleteDtm</field_name>
+        <field_name>maskDtm</field_name>
         <field_type>Date</field_type>
         <field_length>-1</field_length>
         <field_precision>-1</field_precision>
@@ -705,14 +1009,14 @@ public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws K
       </output>
     </remotesteps>
     <GUI>
-      <xloc>400</xloc>
-      <yloc>272</yloc>
+      <xloc>112</xloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Neo4j Cypher - mask-pii-passenger</name>
-    <type>Neo4jCypherOutput</type>
+    <name>Write to log - mask boundary</name>
+    <type>WriteToLog</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -721,31 +1025,16 @@ public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws K
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>neo4j-db</connection>
-    <cypher>MATCH(n:Passenger) 
-WHERE date(n.node_updated_on)  &lt;  date({retention_date}) 
-WITH n 
-SET n.first_name = 'XXXXX', 
-	n.middle_name = 'XXXXX', 
-	n.last_name = 'XXXXX', 
-	n.dob = 'XXXX-XX-XX',
-	n.masked = 'Y',
-	n.maksed_on = datetime()</cypher>
-    <batch_size/>
-    <cypher_from_field>N</cypher_from_field>
-    <cypher_field/>
-    <unwind>N</unwind>
-    <unwind_map/>
-    <returning_graph>N</returning_graph>
-    <return_graph_field/>
-    <mappings>
-      <mapping>
-        <parameter>retention_date</parameter>
-        <field>dataRetentionDateStr</field>
-        <type>Date</type>
-      </mapping>
-    </mappings>
-    <returns/>
+    <loglevel>log_level_minimal</loglevel>
+    <displayHeader>Y</displayHeader>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <logmessage>########## DATA OLDER THAN THE FOLLOWING DATE WILL BE MASKED ##########</logmessage>
+    <fields>
+      <field>
+        <name>dataRetentionDateStr</name>
+      </field>
+    </fields>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -755,14 +1044,14 @@ SET n.first_name = 'XXXXX',
       </output>
     </remotesteps>
     <GUI>
-      <xloc>992</xloc>
-      <yloc>272</yloc>
+      <xloc>512</xloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Neo4j Cyphe-mask-pii-document</name>
-    <type>Neo4jCypherOutput</type>
+    <name>Dummy (do nothing)</name>
+    <type>Dummy</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -771,29 +1060,6 @@ SET n.first_name = 'XXXXX',
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>neo4j-db</connection>
-    <cypher>MATCH(n:Document) 
-WHERE date(n.node_updated_on)  &lt;  date({retention_date}) 
-WITH n 
-SET n.number = randomUUID(),
-n.exp_date = date(),
-n.masked = 'Y',
-n.maksed_on = datetime()</cypher>
-    <batch_size/>
-    <cypher_from_field>N</cypher_from_field>
-    <cypher_field/>
-    <unwind>N</unwind>
-    <unwind_map/>
-    <returning_graph>N</returning_graph>
-    <return_graph_field/>
-    <mappings>
-      <mapping>
-        <parameter>retention_date</parameter>
-        <field>dataRetentionDateStr</field>
-        <type>Date</type>
-      </mapping>
-    </mappings>
-    <returns/>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -803,14 +1069,14 @@ n.maksed_on = datetime()</cypher>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>992</xloc>
-      <yloc>336</yloc>
+      <xloc>736</xloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Neo4j Cypher -mask-pii-credit_card</name>
-    <type>Neo4jCypherOutput</type>
+    <name>Write to log</name>
+    <type>WriteToLog</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -819,29 +1085,16 @@ n.maksed_on = datetime()</cypher>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>neo4j-db</connection>
-    <cypher>MATCH(n:CreditCard) 
-WHERE date(n.node_updated_on)  &lt;  date({retention_date}) 
-WITH n 
-SET n.account_holder = 'XXXXX XXXXX',
-n.number = randomUUID(),
-n.masked = 'Y',
-n.maksed_on = datetime()</cypher>
-    <batch_size/>
-    <cypher_from_field>N</cypher_from_field>
-    <cypher_field/>
-    <unwind>N</unwind>
-    <unwind_map/>
-    <returning_graph>N</returning_graph>
-    <return_graph_field/>
-    <mappings>
-      <mapping>
-        <parameter>retention_date</parameter>
-        <field>dataRetentionDateStr</field>
-        <type>Date</type>
-      </mapping>
-    </mappings>
-    <returns/>
+    <loglevel>log_level_minimal</loglevel>
+    <displayHeader>Y</displayHeader>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <logmessage>########## ENTERED IN THE DATA MASKING TRANSFORMATION #######</logmessage>
+    <fields>
+      <field>
+        <name>maskDateVar</name>
+      </field>
+    </fields>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -851,151 +1104,8 @@ n.maksed_on = datetime()</cypher>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>976</xloc>
+      <xloc>112</xloc>
       <yloc>432</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Neo4j Cypher -mask-pii-address</name>
-    <type>Neo4jCypherOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>neo4j-db</connection>
-    <cypher>MATCH(n:Address) 
-WHERE date(n.node_updated_on)  &lt;  date({retention_date}) 
-WITH n 
-SET n.address_line_1=timestamp() + " " +randomUUID(),
-n.masked = 'Y',
-n.maksed_on = datetime()
-
-</cypher>
-    <batch_size/>
-    <cypher_from_field>N</cypher_from_field>
-    <cypher_field/>
-    <unwind>N</unwind>
-    <unwind_map/>
-    <returning_graph>N</returning_graph>
-    <return_graph_field/>
-    <mappings>
-      <mapping>
-        <parameter>retention_date</parameter>
-        <field>dataRetentionDateStr</field>
-        <type>Date</type>
-      </mapping>
-    </mappings>
-    <returns/>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>896</xloc>
-      <yloc>512</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Neo4j Cypher-mask-pii-email</name>
-    <type>Neo4jCypherOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>neo4j-db</connection>
-    <cypher>MATCH(n:Email) 
-WHERE date(n.node_updated_on)  &lt;  date({retention_date}) 
-WITH n 
-SET n.address = timestamp() + "@" +randomUUID() + ".com",
-n.masked = 'Y',
-n.maksed_on = datetime()</cypher>
-    <batch_size/>
-    <cypher_from_field>N</cypher_from_field>
-    <cypher_field/>
-    <unwind>N</unwind>
-    <unwind_map/>
-    <returning_graph>N</returning_graph>
-    <return_graph_field/>
-    <mappings>
-      <mapping>
-        <parameter>retention_date</parameter>
-        <field>dataRetentionDateStr</field>
-        <type>Date</type>
-      </mapping>
-    </mappings>
-    <returns/>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>560</xloc>
-      <yloc>592</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Neo4j Cypher - mask-pii-phone</name>
-    <type>Neo4jCypherOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>neo4j-db</connection>
-    <cypher>MATCH(n:Phone) 
-WHERE date(n.node_updated_on)  &lt;  date({retention_date}) 
-WITH n 
-SET n.number = randomUUID()+"-"+timestamp() ,
-n.masked = 'Y',
-n.maksed_on = datetime()</cypher>
-    <batch_size/>
-    <cypher_from_field>N</cypher_from_field>
-    <cypher_field/>
-    <unwind>N</unwind>
-    <unwind_map/>
-    <returning_graph>N</returning_graph>
-    <return_graph_field/>
-    <mappings>
-      <mapping>
-        <parameter>retention_date</parameter>
-        <field>dataRetentionDateStr</field>
-        <type>Date</type>
-      </mapping>
-    </mappings>
-    <returns/>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>800</xloc>
-      <yloc>592</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
