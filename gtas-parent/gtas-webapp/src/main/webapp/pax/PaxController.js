@@ -1829,8 +1829,8 @@
           name: "lastName",
           displayName: $translate.instant('pass.lastname'),
           cellTemplate:
-            '<md-button ng-if="grid.appScope.userHasRole(3) || grid.appScope.userHasRole(1)" aria-label="Last Name" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'+
-            '<md-button ng-if="!grid.appScope.userHasRole(3) && !grid.appScope.userHasRole(1)" aria-label="Last Name" href="" title="Launch Flight Passengers in new window" target="" class="disabled">{{COL_FIELD}}</md-button>'
+            '<md-button ng-if="grid.appScope.userHasRole(3) || grid.appScope.userHasRole(1)" aria-label="Last Name" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'+
+            '<md-button ng-if="!grid.appScope.userHasRole(3) && !grid.appScope.userHasRole(1)" aria-label="Last Name" href="" title="Launch Flight Passengers in new window" class="disabled">{{COL_FIELD}}</md-button>'
         },
         {
           name: "firstName",
