@@ -331,28 +331,4 @@ public class QueryBuilderService {
 		return resultList;
 	}
 
-	private boolean hasFlightLeg(QueryObject queryObject) {
-		boolean result = false;
-		QueryEntity queryEntity = null;
-
-		List<QueryEntity> rules = queryObject.getRules();
-		if (rules != null) {
-			for (QueryEntity rule : rules) {
-
-				queryEntity = rule;
-				if (queryEntity instanceof QueryTerm) {
-					QueryTerm queryTerm = (QueryTerm) queryEntity;
-					String entity = queryTerm.getEntity();
-					if (entity != null && entity.equalsIgnoreCase(EntityEnum.BOOKING_DETAIL.getEntityName()))
-						result = true;
-
-				}
-
-			}
-
-		}
-
-		return result;
-	}
-
 }
