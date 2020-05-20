@@ -74,7 +74,7 @@ public class PassengerDeletionResult {
             } else if (relevantPnr) {
                 logger.debug("Not performing passenger data deletion, another PNR message under the cut off date references this passenger.");
                 pdrpa.setRetentionPolicyAction(RetentionPolicyAction.NO_ACTION_RELEVANT_PNR);
-                pdrpa.setDescription("Another APIS message under the cut off date references this passenger. No Deletion.");
+                pdrpa.setDescription("Another PNR message under the cut off date references this passenger. No Deletion.");
                 passengerDeletionResult.getPassengerDetailFromMessageSet().addAll(getInvalidPnrMessageDetails(p, pnrCutOffDate));
             } else {
                 p.getDataRetentionStatus().setDeletedPNR(true);

@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import gov.gtas.enumtype.MessageType;
+import gov.gtas.model.PassengerDetailFromMessage;
+import gov.gtas.model.PassengerDetails;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -99,6 +101,61 @@ public class PaxDetailVoUtil {
 
 		} catch (Exception e) {
 			logger.error("error populating flight with booking details", e);
+		}
+	}
+
+	public static PassengerDetails filterOutMaskedAPISOrPnr(Passenger t) {
+		PassengerDetails passengerDetails = t.getPassengerDetails();
+		if (t.getDataRetentionStatus().isMaskedAPIS() || t.getDataRetentionStatus().isMaskedPNR() || t.getDataRetentionStatus().isDeletedAPIS() || t.getDataRetentionStatus().isDeletedPNR()) {
+			if (!t.getDataRetentionStatus().isMaskedPNR() && !t.getDataRetentionStatus().isDeletedPNR() && t.getDataRetentionStatus().isHasPnrMessage()) {
+				passengerDetails = getPassengerDetails(t, MessageType.PNR);
+			} else if (!t.getDataRetentionStatus().isMaskedAPIS() && !t.getDataRetentionStatus().isDeletedAPIS() && t.getDataRetentionStatus().isHasApisMessage()) {
+				passengerDetails = getPassengerDetails(t, MessageType.APIS);
+			} else if ((t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().isDeletedAPIS())
+					|| (t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().isDeletedPNR())){
+				passengerDetails.maskPII();
+			} else {
+				passengerDetails.deletePII();
+			}
+		} return passengerDetails;
+	}
+
+	private static PassengerDetails getPassengerDetails(Passenger t, MessageType messageType) {
+		return t
+				.getPassengerDetailFromMessages()
+				.stream()
+				.filter(fs -> fs.getMessageType() == messageType)
+				.sorted(Comparator.comparing(PassengerDetailFromMessage::getCreatedAt).reversed())
+				.map(PassengerDetails::from)
+				.findFirst()
+				.orElse(new PassengerDetails());
+	}
+
+	public static void populatePassengerVoWithPassengerDetails(PassengerVo vo, PassengerDetails passengerDetails, Passenger passenger) {
+		if(vo == null) {
+			logger.error("error populating passengerVo with passenger details");
+			return;
+		}
+
+		if(passengerDetails != null) {
+			vo.setPassengerType(passengerDetails.getPassengerType());
+			vo.setLastName(passengerDetails.getLastName());
+			vo.setFirstName(passengerDetails.getFirstName());
+			vo.setMiddleName(passengerDetails.getMiddleName());
+			vo.setNationality(passengerDetails.getNationality());
+			vo.setDob(passengerDetails.getDob());
+			vo.setAge(passengerDetails.getAge());
+			vo.setEmbarkation(passenger.getPassengerTripDetails().getEmbarkation());
+			vo.setEmbarkCountry(passenger.getPassengerTripDetails().getEmbarkCountry());
+			vo.setGender(passengerDetails.getGender() != null ? passengerDetails.getGender() : "");
+			vo.setResidencyCountry(passengerDetails.getResidencyCountry());
+			vo.setSuffix(passengerDetails.getSuffix());
+			vo.setTitle(passengerDetails.getTitle());
+		}
+
+		if(passenger != null && passenger.getPassengerTripDetails() != null) {
+			vo.setDebarkation(passenger.getPassengerTripDetails().getDebarkation());
+			vo.setDebarkCountry(passenger.getPassengerTripDetails().getDebarkCountry());
 		}
 	}
 
@@ -280,10 +337,15 @@ public class PaxDetailVoUtil {
 				target.getFlightLegs().add(flVo);
 			}
 		}
+
 		boolean pnrHasUnmaskedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().isMaskedPNR());
-		if (!pnrHasUnmaskedPassenger) {
+		boolean pnrHasUndeletedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().isDeletedPNR());
+		if (!pnrHasUndeletedPassenger) {
+			target.deletePII();
+		} else if (!pnrHasUnmaskedPassenger) {
 			target.maskPII();
 		}
+
 		return target;
 	}
 
