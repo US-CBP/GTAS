@@ -6,7 +6,6 @@ import gov.gtas.model.Bag;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
-import gov.gtas.model.PassengerDetailFromMessage;
 import gov.gtas.model.PassengerDetails;
 import gov.gtas.model.Pnr;
 import gov.gtas.model.Seat;
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -89,7 +87,7 @@ public class PassengerDetailService {
             vo.setPaxIdTag(passenger.getPassengerIDTag().getIdTag());
         }
 
-        PassengerDetails passengerDetails = filterOutMaskedAPISOrPnr(passenger);
+        PassengerDetails passengerDetails = PaxDetailVoUtil.filterOutMaskedAPISOrPnr(passenger);
         PaxDetailVoUtil.populatePassengerVoWithPassengerDetails(vo, passengerDetails, passenger);
 
         for (Document d : passenger.getDocuments()) {
@@ -205,30 +203,6 @@ public class PassengerDetailService {
     private boolean isDeleted(Passenger t) {
         return !((t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().isDeletedPNR()) ||
                 (t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().isDeletedAPIS()));
-    }
-
-    private PassengerDetails filterOutMaskedAPISOrPnr(Passenger t) {
-        PassengerDetails passengerDetails = t.getPassengerDetails();
-        if (t.getDataRetentionStatus().isMaskedAPIS() || t.getDataRetentionStatus().isMaskedPNR()) {
-            if (!t.getDataRetentionStatus().isMaskedPNR()) {
-                passengerDetails = getPassengerDetails(t, MessageType.PNR);
-            } else if (!t.getDataRetentionStatus().isMaskedAPIS()) {
-                passengerDetails = getPassengerDetails(t, MessageType.APIS);
-            } else {
-                passengerDetails.maskPII();
-            }
-        } return passengerDetails;
-    }
-
-    private PassengerDetails getPassengerDetails(Passenger t, MessageType messageType) {
-        return t
-                .getPassengerDetailFromMessages()
-                .stream()
-                .filter(fs -> fs.getMessageType() == messageType)
-                .sorted(Comparator.comparing(PassengerDetailFromMessage::getCreatedAt).reversed())
-                .map(PassengerDetails::from)
-                .findFirst()
-                .orElse(new PassengerDetails());
     }
 
     private Pnr getLatestPnrFromList(List<Pnr> pnrList) {

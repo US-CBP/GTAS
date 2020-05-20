@@ -4,8 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import gov.gtas.enumtype.MessageType;
 import gov.gtas.model.*;
 import org.slf4j.Logger;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.model.lookup.HitCategory;
-import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.services.dto.PassengerNoteSetDto;
 import gov.gtas.services.dto.PaxDetailPdfDocRequest;
 import gov.gtas.services.dto.PaxDetailPdfDocResponse;
@@ -41,9 +38,6 @@ public class EventReportServiceImpl implements EventReportService {
 
 	private EventReportPdfService<PaxDetailPdfDocRequest, PaxDetailPdfDocResponse> passengerEventReportService;
 
-	@Resource
-	private ApisMessageRepository apisMessageRepository;
-
 	public EventReportServiceImpl(FlightService flightService, PnrService pnrService,
 			PassengerService passengerService, HitDetailService hitDetailService,
 			EventReportPdfService<PaxDetailPdfDocRequest, PaxDetailPdfDocResponse> passengerEventReportService,
@@ -57,32 +51,6 @@ public class EventReportServiceImpl implements EventReportService {
 
 	}
 
-	private PassengerDetails filterOutMaskedAPISOrPnr(Passenger t) {
-		PassengerDetails passengerDetails = t.getPassengerDetails();
-		if (t.getDataRetentionStatus().isMaskedAPIS() || t.getDataRetentionStatus().isMaskedPNR() || t.getDataRetentionStatus().isDeletedAPIS() || t.getDataRetentionStatus().isDeletedPNR()) {
-			if (!t.getDataRetentionStatus().isMaskedPNR() && !t.getDataRetentionStatus().isDeletedPNR() && t.getDataRetentionStatus().isHasPnrMessage()) {
-				passengerDetails = getPassengerDetails(t, MessageType.PNR);
-			} else if (!t.getDataRetentionStatus().isMaskedAPIS() && !t.getDataRetentionStatus().isDeletedAPIS() && t.getDataRetentionStatus().isHasApisMessage()) {
-				passengerDetails = getPassengerDetails(t, MessageType.APIS);
-			} else if ((t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().isDeletedAPIS())
-					|| (t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().isDeletedPNR())){
-				passengerDetails.maskPII();
-			} else {
-				passengerDetails.deletePII();
-			}
-		} return passengerDetails;
-	}
-
-	private PassengerDetails getPassengerDetails(Passenger t, MessageType messageType) {
-		return t
-				.getPassengerDetailFromMessages()
-				.stream()
-				.filter(fs -> fs.getMessageType() == messageType)
-				.sorted(Comparator.comparing(PassengerDetailFromMessage::getCreatedAt).reversed())
-				.map(PassengerDetails::from)
-				.findFirst()
-				.orElse(new PassengerDetails());
-	}
 	public PaxDetailPdfDocResponse createPassengerEventReport(Long paxId, Long flightId) {
 
 		PaxDetailPdfDocRequest paxDetailPdfDocRequest = new PaxDetailPdfDocRequest();
@@ -92,7 +60,7 @@ public class EventReportServiceImpl implements EventReportService {
 		Flight flight = flightService.findById(flightId);
 
 		Passenger passenger = passengerService.findByIdWithFlightAndDocumentsAndMessageDetails(paxId);
-		PassengerDetails passengerDetails = filterOutMaskedAPISOrPnr(passenger);
+		PassengerDetails passengerDetails = PaxDetailVoUtil.filterOutMaskedAPISOrPnr(passenger);
 
 		if (passenger != null && flight != null) {
 			if (flight.getId().equals(flightId)) {
