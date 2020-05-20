@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.model.BaseEntityAudit;
 import gov.gtas.model.HitMaker;
-import gov.gtas.model.PIIObject;
 import gov.gtas.model.UserGroup;
 
 import javax.persistence.*;
@@ -92,5 +91,4 @@ public class HitCategory extends BaseEntityAudit {
 	public void setSeverity(HitSeverityEnum severity) {
 		this.severity = severity;
 	}
-
 }
