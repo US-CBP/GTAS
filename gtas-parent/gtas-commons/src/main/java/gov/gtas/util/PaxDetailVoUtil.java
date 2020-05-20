@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import gov.gtas.enumtype.MessageType;
 import gov.gtas.model.PassengerDetailFromMessage;
 import gov.gtas.model.PassengerDetails;
+import gov.gtas.vo.HitDetailVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -105,6 +106,7 @@ public class PaxDetailVoUtil {
 	}
 
 	public static PassengerDetails filterOutMaskedAPISOrPnr(Passenger t) {
+
 		PassengerDetails passengerDetails = t.getPassengerDetails();
 		if (t.getDataRetentionStatus().isMaskedAPIS() || t.getDataRetentionStatus().isMaskedPNR() || t.getDataRetentionStatus().isDeletedAPIS() || t.getDataRetentionStatus().isDeletedPNR()) {
 			if (!t.getDataRetentionStatus().isMaskedPNR() && !t.getDataRetentionStatus().isDeletedPNR() && t.getDataRetentionStatus().isHasPnrMessage()) {
@@ -156,6 +158,18 @@ public class PaxDetailVoUtil {
 			vo.setEmbarkCountry(passenger.getPassengerTripDetails().getEmbarkCountry());
 			vo.setDebarkation(passenger.getPassengerTripDetails().getDebarkation());
 			vo.setDebarkCountry(passenger.getPassengerTripDetails().getDebarkCountry());
+		}
+	}
+
+	public static void deleteAndMaskPIIFromHitDetailVo(HitDetailVo hitDetailVo, Passenger hdPassenger) {
+		if (!(!hdPassenger.getDataRetentionStatus().isDeletedAPIS()
+				&& hdPassenger.getDataRetentionStatus().isHasApisMessage()
+				|| (!hdPassenger.getDataRetentionStatus().isDeletedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
+			hitDetailVo.deletePII();
+		} else if (!(!hdPassenger.getDataRetentionStatus().isMaskedAPIS()
+				&& hdPassenger.getDataRetentionStatus().isHasApisMessage()
+				|| (!hdPassenger.getDataRetentionStatus().isMaskedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
+			hitDetailVo.maskPII();
 		}
 	}
 
