@@ -66,6 +66,7 @@ INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Noti
 INSERT INTO app_configuration (description, opt, val) VALUES ('Toggle Interpol Red Notices Watch List Hit Notification', 'ENABLE_INTERPOL_HIT_NOTIFICATION', 'false');
 INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Notices ID', 'INTERPOL_WATCHLIST_ID', '');
 INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Notices Notification Subject', 'INTERPOL_SNS_NOTIFICATION_SUBJECT', 'GTAS priority Hit Notification');
+INSERT INTO app_configuration (description, opt, val) VALUES ('Recompile Rules', 'RECOMPILE_RULES', 'false');
 
 
 insert into hit_category(id, category, description, severity) values(1, 'General', 'General category', 2);

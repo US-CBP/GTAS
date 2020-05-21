@@ -1,0 +1,1 @@
+INSERT INTO app_configuration (description, opt, val) VALUES ('Recompile Rules', 'RECOMPILE_RULES', 'false');
