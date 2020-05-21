@@ -89,13 +89,13 @@ public class EventReportServiceImpl implements EventReportService {
 				documentVo.setIssuanceCountry(document.getIssuanceCountry());
 				documentVo.setExpirationDate(document.getExpirationDate());
 				documentVo.setIssuanceDate(document.getIssuanceDate());
-				if (passenger.getDataRetentionStatus().isDeletedAPIS() && document.getMessageType() == MessageType.APIS) {
+				if (passenger.getDataRetentionStatus().requiresDeletedAPIS() && document.getMessageType() == MessageType.APIS) {
 					documentVo.deletePII();
-				} else if (passenger.getDataRetentionStatus().isMaskedAPIS() && document.getMessageType() == MessageType.APIS) {
+				} else if (passenger.getDataRetentionStatus().requiresMaskedAPIS() && document.getMessageType() == MessageType.APIS) {
 					documentVo.maskPII();
-				} else if (passenger.getDataRetentionStatus().isDeletedPNR() && document.getMessageType() == MessageType.PNR) {
+				} else if (passenger.getDataRetentionStatus().requiresDeletedPNR() && document.getMessageType() == MessageType.PNR) {
 					documentVo.deletePII();
-				} else if (passenger.getDataRetentionStatus().isMaskedPNR() && document.getMessageType() == MessageType.PNR) {
+				} else if (passenger.getDataRetentionStatus().requiresMaskedPNR() && document.getMessageType() == MessageType.PNR) {
 					documentVo.maskPII();
 				}
 				passengerVo.addDocument(documentVo);
@@ -179,17 +179,17 @@ public class EventReportServiceImpl implements EventReportService {
 				.getBookingDetailHistoryByPaxID(paxId);
 		Set<Passenger> passengerSet = new HashSet<>(passengersWithSamePassengerIdTag);
 		Set<Passenger> unmaskedPassengers = passengerSet.stream().filter(p ->
-				(!p.getDataRetentionStatus().isMaskedAPIS() && p.getDataRetentionStatus().isHasApisMessage())
-						|| (!p.getDataRetentionStatus().isMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage()))
+				(!p.getDataRetentionStatus().requiresMaskedAPIS() && p.getDataRetentionStatus().isHasApisMessage())
+						|| (!p.getDataRetentionStatus().requiresMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage()))
 				.collect(Collectors.toSet());
 
 		Passenger p = passengerService.findById(paxId);
-		if (!((p.getDataRetentionStatus().isDeletedPNR() && p.getDataRetentionStatus().isHasPnrMessage())
-				|| (p.getDataRetentionStatus().isDeletedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
+		if (!((p.getDataRetentionStatus().requiresDeletedPNR() && p.getDataRetentionStatus().isHasPnrMessage())
+				|| (p.getDataRetentionStatus().requiresDeletedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
 			paxDetailPdfDocRequest.setHitDetailHistoryVoList(new ArrayList<>());
 		}
-		else if (!((p.getDataRetentionStatus().isMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage())
-				|| (p.getDataRetentionStatus().isMaskedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
+		else if (!((p.getDataRetentionStatus().requiresMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage())
+				|| (p.getDataRetentionStatus().requiresMaskedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
 			paxDetailPdfDocRequest.setHitDetailHistoryVoList(new ArrayList<>());
 		} else {
 			passengerSet.remove(p);

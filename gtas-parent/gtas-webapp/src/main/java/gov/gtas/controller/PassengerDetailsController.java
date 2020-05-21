@@ -165,21 +165,11 @@ public class PassengerDetailsController {
 	@RequestMapping(value = "/passengers/passenger/bookingdetailhistory", method = RequestMethod.GET)
 	public List<FlightVoForFlightHistory> getBookingDetailHistoryByPassenger(@RequestParam String paxId,
 			@RequestParam String flightId) {
-		Passenger p = pService.findById(Long.valueOf(paxId));
-		boolean linkFlightHistory = true;
-		if (!((!p.getDataRetentionStatus().isMaskedPNR()
-				&& p.getDataRetentionStatus().isHasPnrMessage())
-				|| (!p.getDataRetentionStatus().isMaskedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
-			linkFlightHistory = false;
-		}
-		if (!((!p.getDataRetentionStatus().isDeletedPNR()
-				&& p.getDataRetentionStatus().isHasPnrMessage())
-				|| (!p.getDataRetentionStatus().isDeletedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
-			linkFlightHistory = false;
-		}
+		DataRetentionStatus status = pService.findById(Long.valueOf(paxId)).getDataRetentionStatus();
+		boolean linkFlightHistory = !status.requiresMaskedPnrAndApisMessage() && !status.requiresDeletedPnrAndApisMessage();
+
 		List<Passenger> passengersWithSamePassengerIdTag = pService.getBookingDetailHistoryByPaxID(Long.valueOf(paxId));
 		return copyBookingDetailFlightModelToVo(passengersWithSamePassengerIdTag, linkFlightHistory);
-
 	}
 
 	@ResponseBody
@@ -192,18 +182,16 @@ public class PassengerDetailsController {
 		Passenger p = pService.findById(paxId);
 		passengerSet.remove(p);
 		List<HitDetailVo> hitDetailVos = hitDetailService.getLast10RecentHits(passengerSet, p);
-		if ((!(!p.getDataRetentionStatus().isDeletedAPIS()
-				&& p.getDataRetentionStatus().isHasApisMessage()
-				|| (!p.getDataRetentionStatus().isDeletedPNR() && p.getDataRetentionStatus().isHasPnrMessage())))) {
+
+		DataRetentionStatus status = p.getDataRetentionStatus();
+		if (status.requiresDeletedPnrAndApisMessage()) {
 			hitDetailVos.forEach( hdv ->
 			{
 				hdv.setPaxId(null);
 				hdv.setFlightId(null);
 				hdv.deletePII();
 			});
-		}else if ((!(!p.getDataRetentionStatus().isMaskedAPIS()
-				&& p.getDataRetentionStatus().isHasApisMessage()
-				|| (!p.getDataRetentionStatus().isMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage())))) {
+		} else if (status.requiresMaskedPnrAndApisMessage()) {
 			hitDetailVos.forEach( hdv ->
 			{
 				hdv.setPaxId(null);

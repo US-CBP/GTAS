@@ -97,13 +97,13 @@ public class PassengerDetailService {
             docVo.setIssuanceCountry(d.getIssuanceCountry());
             docVo.setExpirationDate(d.getExpirationDate());
             docVo.setIssuanceDate(d.getIssuanceDate());
-            if (passenger.getDataRetentionStatus().isDeletedAPIS() && d.getMessageType() == MessageType.APIS) {
+            if (passenger.getDataRetentionStatus().requiresDeletedAPIS() && d.getMessageType() == MessageType.APIS) {
                 docVo.deletePII();
-            } else if (passenger.getDataRetentionStatus().isDeletedPNR() && d.getMessageType() == MessageType.APIS) {
+            } else if (passenger.getDataRetentionStatus().requiresDeletedPNR() && d.getMessageType() == MessageType.APIS) {
                 docVo.deletePII();
-            } else if (passenger.getDataRetentionStatus().isMaskedAPIS() && d.getMessageType() == MessageType.APIS) {
+            } else if (passenger.getDataRetentionStatus().requiresMaskedAPIS() && d.getMessageType() == MessageType.APIS) {
                 docVo.maskPII();
-            } else if (passenger.getDataRetentionStatus().isMaskedPNR() && d.getMessageType() == MessageType.PNR) {
+            } else if (passenger.getDataRetentionStatus().requiresMaskedPNR() && d.getMessageType() == MessageType.PNR) {
                 docVo.maskPII();
             }
             vo.addDocument(docVo);
@@ -133,9 +133,9 @@ public class PassengerDetailService {
                         seatVo.setNumber(s.getNumber());
                         seatVo.setApis(s.getApis());
                         seatVo.setFlightNumber(flight.getFullFlightNumber());
-                        if (p.getDataRetentionStatus().isDeletedPNR()) {
+                        if (p.getDataRetentionStatus().requiresDeletedPNR()) {
                             seatVo.deletePII();
-                        } else if (p.getDataRetentionStatus().isMaskedPNR()) {
+                        } else if (p.getDataRetentionStatus().requiresMaskedPNR()) {
                             seatVo.maskPII();
                         }
                         tempVo.addSeat(seatVo);
@@ -196,13 +196,13 @@ public class PassengerDetailService {
     }
 
     private boolean isMasked(Passenger t) {
-        return !((t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().isMaskedPNR()) ||
-                (t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().isMaskedAPIS()));
+        return !((t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().requiresMaskedPNR()) ||
+                (t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().requiresMaskedAPIS()));
     }
 
     private boolean isDeleted(Passenger t) {
-        return !((t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().isDeletedPNR()) ||
-                (t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().isDeletedAPIS()));
+        return !((t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().requiresDeletedPNR()) ||
+                (t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().requiresDeletedAPIS()));
     }
 
     private Pnr getLatestPnrFromList(List<Pnr> pnrList) {

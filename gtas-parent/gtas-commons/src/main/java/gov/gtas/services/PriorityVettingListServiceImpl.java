@@ -58,9 +58,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		for (Passenger passenger : immutablePair.getRight()) {
 
 			//todo: implement smarter logic that goes beyond default behavior for data masking.
-			if (!(!passenger.getDataRetentionStatus().isMaskedAPIS()
-					&& passenger.getDataRetentionStatus().isHasApisMessage()
-					|| (!passenger.getDataRetentionStatus().isMaskedPNR() && passenger.getDataRetentionStatus().isHasPnrMessage()))){
+			if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()){
 				continue;
 			}
 			CaseVo caseVo = new CaseVo();
@@ -87,9 +85,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 						title = hd.getTitle();
 					}
 
-					if (!(!passenger.getDataRetentionStatus().isMaskedAPIS()
-							&& passenger.getDataRetentionStatus().isHasApisMessage()
-							|| (!passenger.getDataRetentionStatus().isMaskedPNR() && passenger.getDataRetentionStatus().isHasPnrMessage())))  {
+					if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage())  {
 						title = "MASKED";
 					}
 					hitDetailsTitles.add(severity + " | " + hd.getHitMaker().getHitCategory().getName() + " | " + title
@@ -136,9 +132,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			caseVo.setFlightETDDate(passenger.getFlight().getMutableFlightDetails().getEtd());
 			caseVo.setFlightOrigin(passenger.getFlight().getOrigin());
 			caseVo.setFlightDestination(passenger.getFlight().getDestination());
-			if (!(!passenger.getDataRetentionStatus().isMaskedAPIS()
-					&& passenger.getDataRetentionStatus().isHasApisMessage()
-					|| (!passenger.getDataRetentionStatus().isMaskedPNR() && passenger.getDataRetentionStatus().isHasPnrMessage()))) {
+			if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
 				caseVo.maskPII();
 			}
 			caseVOS.add(caseVo);

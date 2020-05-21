@@ -37,10 +37,10 @@ public class ApisControllerServiceImpl implements ApisControllerService {
 			fpVo.setFlightId(p.getFlight().getId());
 			fpVo.setPassengerId(p.getId());
 			flightPassengerVos.add(fpVo);
-			if (p.getDataRetentionStatus().isMaskedAPIS()) {
+			if (p.getDataRetentionStatus().requiresMaskedAPIS()) {
 				fpVo.maskPII();
 			}
-			if (p.getDataRetentionStatus().isDeletedAPIS()) {
+			if (p.getDataRetentionStatus().requiresDeletedAPIS()) {
 				fpVo.deletePII();
 			}
 		}

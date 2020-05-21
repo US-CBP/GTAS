@@ -7,7 +7,7 @@ public class CreditCardDataRetentionPolicyAudit extends BaseEntityRetention {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "credit_card_id", referencedColumnName = "id")
-    CreditCard creditCard;
+    private CreditCard creditCard;
 
     public CreditCard getCreditCard() {
         return creditCard;

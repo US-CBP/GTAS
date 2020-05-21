@@ -6,8 +6,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import gov.gtas.enumtype.MessageType;
+import gov.gtas.model.HitDetail;
+import gov.gtas.model.HitMaker;
+import gov.gtas.model.HitViewStatus;
 import gov.gtas.model.PassengerDetailFromMessage;
 import gov.gtas.model.PassengerDetails;
+import gov.gtas.model.User;
+import gov.gtas.model.UserGroup;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.vo.HitDetailVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -108,13 +114,13 @@ public class PaxDetailVoUtil {
 	public static PassengerDetails filterOutMaskedAPISOrPnr(Passenger t) {
 
 		PassengerDetails passengerDetails = t.getPassengerDetails();
-		if (t.getDataRetentionStatus().isMaskedAPIS() || t.getDataRetentionStatus().isMaskedPNR() || t.getDataRetentionStatus().isDeletedAPIS() || t.getDataRetentionStatus().isDeletedPNR()) {
-			if (!t.getDataRetentionStatus().isMaskedPNR() && !t.getDataRetentionStatus().isDeletedPNR() && t.getDataRetentionStatus().isHasPnrMessage()) {
+		if (t.getDataRetentionStatus().requiresMaskedAPIS() || t.getDataRetentionStatus().requiresMaskedPNR() || t.getDataRetentionStatus().requiresDeletedAPIS() || t.getDataRetentionStatus().requiresDeletedPNR()) {
+			if (!t.getDataRetentionStatus().requiresMaskedPNR() && !t.getDataRetentionStatus().requiresDeletedPNR() && t.getDataRetentionStatus().isHasPnrMessage()) {
 				passengerDetails = getPassengerDetails(t, MessageType.PNR);
-			} else if (!t.getDataRetentionStatus().isMaskedAPIS() && !t.getDataRetentionStatus().isDeletedAPIS() && t.getDataRetentionStatus().isHasApisMessage()) {
+			} else if (!t.getDataRetentionStatus().requiresMaskedAPIS() && !t.getDataRetentionStatus().requiresDeletedAPIS() && t.getDataRetentionStatus().isHasApisMessage()) {
 				passengerDetails = getPassengerDetails(t, MessageType.APIS);
-			} else if ((t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().isDeletedAPIS())
-					|| (t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().isDeletedPNR())){
+			} else if ((t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().requiresDeletedAPIS())
+					|| (t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().requiresDeletedPNR())){
 				passengerDetails.maskPII();
 			} else {
 				passengerDetails.deletePII();
@@ -161,14 +167,43 @@ public class PaxDetailVoUtil {
 		}
 	}
 
+	public static HitDetailVo populateHitDetailVo(HitDetailVo hitDetailVo, HitDetail htd, User user) {
+		hitDetailVo.setRuleId(htd.getRuleId());
+		hitDetailVo.setRuleTitle(htd.getTitle());
+		hitDetailVo.setRuleDesc(htd.getDescription());
+		hitDetailVo.setSeverity(htd.getHitMaker().getHitCategory().getSeverity().toString());
+		HitMaker lookout = htd.getHitMaker();
+		HitCategory hitCategory = lookout.getHitCategory();
+		hitDetailVo.setCategory(hitCategory.getName() + "(" + htd.getHitEnum().getDisplayName() + ")");
+		hitDetailVo.setRuleAuthor(htd.getHitMaker().getAuthor().getUserId());
+		hitDetailVo.setRuleConditions(htd.getRuleConditions());
+		hitDetailVo.setRuleTitle(htd.getTitle());
+		StringJoiner stringJoiner = new StringJoiner(", ");
+
+		if(user == null) {
+
+		}
+		Set<UserGroup> userGroups = user.getUserGroups();
+		for (HitViewStatus hitViewStatus : htd.getHitViewStatus()) {
+			if (userGroups.contains(hitViewStatus.getUserGroup())) {
+				stringJoiner.add(hitViewStatus.getHitViewStatusEnum().toString());
+			}
+		}
+		hitDetailVo.setFlightDate(htd.getFlight().getMutableFlightDetails().getEtd());
+		hitDetailVo.setStatus(stringJoiner.toString());
+		PaxDetailVoUtil.deleteAndMaskPIIFromHitDetailVo(hitDetailVo, htd.getPassenger());
+
+		return hitDetailVo;
+	}
+
 	public static void deleteAndMaskPIIFromHitDetailVo(HitDetailVo hitDetailVo, Passenger hdPassenger) {
-		if (!(!hdPassenger.getDataRetentionStatus().isDeletedAPIS()
+		if (!(!hdPassenger.getDataRetentionStatus().requiresDeletedAPIS()
 				&& hdPassenger.getDataRetentionStatus().isHasApisMessage()
-				|| (!hdPassenger.getDataRetentionStatus().isDeletedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
+				|| (!hdPassenger.getDataRetentionStatus().requiresDeletedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
 			hitDetailVo.deletePII();
-		} else if (!(!hdPassenger.getDataRetentionStatus().isMaskedAPIS()
+		} else if (!(!hdPassenger.getDataRetentionStatus().requiresMaskedAPIS()
 				&& hdPassenger.getDataRetentionStatus().isHasApisMessage()
-				|| (!hdPassenger.getDataRetentionStatus().isMaskedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
+				|| (!hdPassenger.getDataRetentionStatus().requiresMaskedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
 			hitDetailVo.maskPII();
 		}
 	}
@@ -232,7 +267,7 @@ public class PaxDetailVoUtil {
 						target.getDocuments().add(documentVo);
 					}
 				}
-				if (p.getDataRetentionStatus().isMaskedPNR()) {
+				if (p.getDataRetentionStatus().requiresMaskedPNR()) {
 					pVo.maskPII();
 				}
 			}
@@ -344,8 +379,8 @@ public class PaxDetailVoUtil {
 			}
 		}
 
-		boolean pnrHasUnmaskedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().isMaskedPNR());
-		boolean pnrHasUndeletedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().isDeletedPNR());
+		boolean pnrHasUnmaskedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().requiresMaskedPNR());
+		boolean pnrHasUndeletedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().requiresDeletedPNR());
 		if (!pnrHasUndeletedPassenger) {
 			target.deletePII();
 		} else if (!pnrHasUnmaskedPassenger) {

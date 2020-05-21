@@ -55,6 +55,14 @@ public class DataRetentionStatus extends BaseEntityAudit {
         return hasPnrMessage;
     }
 
+    public boolean requiresMaskedPnrAndApisMessage() {
+        return !((!requiresMaskedPNR() && isHasPnrMessage()) || (!requiresMaskedAPIS() && isHasApisMessage()));
+    }
+
+    public boolean requiresDeletedPnrAndApisMessage() {
+        return !((!requiresDeletedPNR() && isHasPnrMessage()) || (!requiresDeletedAPIS() && isHasApisMessage()));
+    }
+
     public void setHasPnrMessage(boolean hasPnrMessage) {
         this.hasPnrMessage = hasPnrMessage;
     }
@@ -76,7 +84,7 @@ public class DataRetentionStatus extends BaseEntityAudit {
         this.passengerId = passengerId;
     }
 
-    public boolean isMaskedAPIS() {
+    public boolean requiresMaskedAPIS() {
         return maskedAPIS;
     }
 
@@ -84,7 +92,7 @@ public class DataRetentionStatus extends BaseEntityAudit {
         this.maskedAPIS = maskedAPIS;
     }
 
-    public boolean isDeletedAPIS() {
+    public boolean requiresDeletedAPIS() {
         return deletedAPIS;
     }
 
@@ -93,7 +101,7 @@ public class DataRetentionStatus extends BaseEntityAudit {
     }
 
 
-    public boolean isMaskedPNR() {
+    public boolean requiresMaskedPNR() {
         return maskedPNR;
     }
 
@@ -101,7 +109,7 @@ public class DataRetentionStatus extends BaseEntityAudit {
         this.maskedPNR = maskedPNR;
     }
 
-    public boolean isDeletedPNR() {
+    public boolean requiresDeletedPNR() {
         return deletedPNR;
     }
 
