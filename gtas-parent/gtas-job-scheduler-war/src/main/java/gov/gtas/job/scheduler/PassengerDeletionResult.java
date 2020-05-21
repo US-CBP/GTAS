@@ -79,6 +79,7 @@ public class PassengerDeletionResult {
             } else {
                 p.getDataRetentionStatus().setDeletedPNR(true);
                 scrubPnrPassengerDetail(p, apisCutOffDate);
+                passengerDeletionResult.getPassengerDetails().add(p.getPassengerDetails());
                 pdrpa.setRetentionPolicyAction(RetentionPolicyAction.PNR_DATA_MARKED_TO_DELETE);
                 if (relevantAPIS) {
                     logger.debug("Orphan Passenger Detail - performing data deletion or swapping to pnr only details!");
