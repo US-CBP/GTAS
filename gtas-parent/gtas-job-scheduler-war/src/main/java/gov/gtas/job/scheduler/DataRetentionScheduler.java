@@ -63,26 +63,23 @@ public class DataRetentionScheduler {
         boolean apisJob = this.jobSchedulerConfig.isAPISRetentionDataJob();
         int maxPassengers = this.jobSchedulerConfig.messagePassengerOutProcessThreadLimit();
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime pnrLdtCutOff = now.minusHours(pnrHourLimit);
-        Date convertedPnrDate = new Date(pnrLdtCutOff.toInstant(ZoneOffset.UTC).toEpochMilli());
-        LocalDateTime apisLdtCutOff = now.minusHours(apisHourLimit);
-        Date convertedAPISDate = new Date(apisLdtCutOff.toInstant(ZoneOffset.UTC).toEpochMilli());
+        Date convertedPnrDateMask = getDate(pnrHourLimit);
+        Date convertedAPISDateMask = getDate(apisHourLimit);
 
-        LocalDateTime apisLdtCutOffDelete = now.minusHours(apisHourLimit);
-        Date convertedAPISDateDelete = new Date(apisLdtCutOffDelete.toInstant(ZoneOffset.UTC).toEpochMilli());
+        Date convertedAPISDateDelete = getDate(apisHourLimitDelete);
+        Date convertedPnrDateDelete = getDate(pnrHourLimitDelete);
 
 
         if (pnrJob) {
-            List<MessageStatus> messagesForPnrOutProcess = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedPnrDate, pnrMessageStatusForMask);
+            List<MessageStatus> messagesForPnrOutProcess = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedPnrDateMask, pnrMessageStatusForMask);
             if (!messagesForPnrOutProcess.isEmpty()) {
-                List<PnrDataMaskThread> list = getRetentionThreads(messagesForPnrOutProcess, convertedPnrDate, convertedAPISDate,  maxPassengers, PnrDataMaskThread.class);
+                List<PnrDataMaskThread> list = getRetentionThreads(messagesForPnrOutProcess, convertedAPISDateMask, convertedPnrDateMask,  maxPassengers, PnrDataMaskThread.class);
                 messagesForPnrOutProcess = null; // Alert to be GC'd.
                 exec.invokeAll(list);
             }
-            List<MessageStatus> messagesToRunDeleteOn = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedPnrDate, pnrMessageStatusForDelete);
+            List<MessageStatus> messagesToRunDeleteOn = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedPnrDateMask, pnrMessageStatusForDelete);
             if (!messagesToRunDeleteOn.isEmpty()) {
-                List<PnrDataDeletionThread> list = getRetentionThreads(messagesToRunDeleteOn, convertedPnrDate, convertedAPISDate,  maxPassengers, PnrDataDeletionThread.class);
+                List<PnrDataDeletionThread> list = getRetentionThreads(messagesToRunDeleteOn, convertedAPISDateDelete, convertedPnrDateDelete,  maxPassengers, PnrDataDeletionThread.class);
                 //noinspection UnusedAssignment
                 messagesToRunDeleteOn = null; // Alert to be GC'd.
                 exec.invokeAll(list);
@@ -90,21 +87,27 @@ public class DataRetentionScheduler {
         }
 
         if (apisJob) {
-            List<MessageStatus> messagesForAPISMask = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedAPISDate, apisMessageStatusForMask);
+            List<MessageStatus> messagesForAPISMask = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedAPISDateMask, apisMessageStatusForMask);
             if (!messagesForAPISMask.isEmpty()) {
-                List<ApisDataMaskThread> list = getRetentionThreads(messagesForAPISMask, convertedAPISDate, convertedPnrDate, maxPassengers, ApisDataMaskThread.class);
+                List<ApisDataMaskThread> list = getRetentionThreads(messagesForAPISMask, convertedAPISDateMask, convertedPnrDateMask, maxPassengers, ApisDataMaskThread.class);
                 //noinspection UnusedAssignment
                 messagesForAPISMask = null; // Alert to be GC'd.
                 exec.invokeAll(list);
             }
             List<MessageStatus> messagesForAPISDelete = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedAPISDateDelete, apisMessageStatusForDelete);
             if (!messagesForAPISDelete.isEmpty()) {
-                List<ApisDataDeletionThread> list = getRetentionThreads(messagesForAPISDelete, convertedAPISDateDelete, convertedPnrDate, maxPassengers, ApisDataDeletionThread.class);
+                List<ApisDataDeletionThread> list = getRetentionThreads(messagesForAPISDelete, convertedAPISDateDelete, convertedPnrDateDelete, maxPassengers, ApisDataDeletionThread.class);
                 //noinspection UnusedAssignment
                 messagesForAPISDelete = null; // Alert to be GC'd.
                 exec.invokeAll(list);
             }
         }
+    }
+
+    private Date getDate(int hourLimit) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime pnrLdtCutOff = now.minusHours(hourLimit);
+        return new Date(pnrLdtCutOff.toInstant(ZoneOffset.UTC).toEpochMilli());
     }
 
     private <T extends DataSchedulerThread> List<T> getRetentionThreads(List<MessageStatus> messagesToOutProcess, Date apisCutOffDate, Date pnrCutOffDate, int maxPassengers, Class<T> threadType) {
