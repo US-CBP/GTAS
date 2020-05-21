@@ -6,6 +6,7 @@ import gov.gtas.model.MessageStatus;
 import gov.gtas.repository.MessageStatusRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@ConditionalOnProperty(prefix = "retention", name = "enabled")
 @Component
 public class DataRetentionScheduler {
 
