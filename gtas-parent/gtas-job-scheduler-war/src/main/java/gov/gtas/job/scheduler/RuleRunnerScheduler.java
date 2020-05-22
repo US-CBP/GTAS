@@ -19,8 +19,8 @@ import gov.gtas.svc.WatchlistService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -35,8 +35,7 @@ import static org.apache.http.util.TextUtils.isBlank;
  * Rule Runner Scheduler class. Using Spring's Scheduled annotation for
  * scheduling tasks. The class reads configuration values from an external file.
  */
-@Component
-@Conditional(RuleRunnerCondition.class)
+@Component@ConditionalOnProperty(prefix = "rules", name = "enabled")
 public class RuleRunnerScheduler {
 
 	/**
