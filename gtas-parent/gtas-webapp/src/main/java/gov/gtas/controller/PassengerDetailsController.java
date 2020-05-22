@@ -80,6 +80,9 @@ public class PassengerDetailsController {
 	@Autowired
 	private PassengerDetailService passengerDetailService;
 
+	@Autowired
+	private PendingHitDetailsService pendingHitDetailsService;
+
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/{id}/details", method = RequestMethod.GET)
@@ -139,6 +142,15 @@ public class PassengerDetailsController {
 	 * @return the travel history by passenger and document
 	 * @throws ParseException
 	 */
+
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@PostMapping(value = "/createmanualpvl")
+	public void createManualPVL(@RequestParam Long paxId, @RequestParam Long flightId, @RequestParam Long hitCategoryId, @RequestParam(required = false) String desc) {
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		logger.info("Creating Manual PVL");
+		pendingHitDetailsService.createManualPendingHitDetail(paxId, flightId, userId, hitCategoryId, desc);
+	}
 
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
