@@ -213,14 +213,11 @@ public class QueryBuilderService {
 					
 					String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), passenger.getId());
 					vo.setSeat(seatNumber);
-					if (!(!passenger.getDataRetentionStatus().requiresMaskedAPIS()
-							&& passenger.getDataRetentionStatus().isHasApisMessage()
-							|| (!passenger.getDataRetentionStatus().requiresMaskedPNR() && passenger.getDataRetentionStatus().isHasPnrMessage()))) {
+
+					if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
 						vo.maskPII();
 					}
-					if (!(!passenger.getDataRetentionStatus().requiresDeletedAPIS()
-							&& passenger.getDataRetentionStatus().isHasApisMessage()
-							|| (!passenger.getDataRetentionStatus().requiresDeletedPNR() && passenger.getDataRetentionStatus().isHasPnrMessage()))) {
+					if (passenger.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
 						vo.deletePII();
 					}
 					passengerList.add(vo);

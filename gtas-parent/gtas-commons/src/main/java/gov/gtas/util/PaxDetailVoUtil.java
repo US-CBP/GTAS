@@ -170,9 +170,6 @@ public class PaxDetailVoUtil {
 		hitDetailVo.setRuleTitle(htd.getTitle());
 		StringJoiner stringJoiner = new StringJoiner(", ");
 
-		if(user == null) {
-
-		}
 		Set<UserGroup> userGroups = user.getUserGroups();
 		for (HitViewStatus hitViewStatus : htd.getHitViewStatus()) {
 			if (userGroups.contains(hitViewStatus.getUserGroup())) {
@@ -187,13 +184,9 @@ public class PaxDetailVoUtil {
 	}
 
 	public static void deleteAndMaskPIIFromHitDetailVo(HitDetailVo hitDetailVo, Passenger hdPassenger) {
-		if (!(!hdPassenger.getDataRetentionStatus().requiresDeletedAPIS()
-				&& hdPassenger.getDataRetentionStatus().isHasApisMessage()
-				|| (!hdPassenger.getDataRetentionStatus().requiresDeletedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
+		if (hdPassenger.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
 			hitDetailVo.deletePII();
-		} else if (!(!hdPassenger.getDataRetentionStatus().requiresMaskedAPIS()
-				&& hdPassenger.getDataRetentionStatus().isHasApisMessage()
-				|| (!hdPassenger.getDataRetentionStatus().requiresMaskedPNR() && hdPassenger.getDataRetentionStatus().isHasPnrMessage()))) {
+		} else if (hdPassenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
 			hitDetailVo.maskPII();
 		}
 	}
