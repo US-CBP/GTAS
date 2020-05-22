@@ -1,0 +1,2 @@
+DELETE ml from manual_lookout ml;
+DELETE hm FROM hit_maker hm where hm.hm_hit_type = 'MANUAL_HIT';
