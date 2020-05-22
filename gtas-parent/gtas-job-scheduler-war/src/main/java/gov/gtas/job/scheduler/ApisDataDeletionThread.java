@@ -6,6 +6,7 @@ import gov.gtas.repository.DocumentRepository;
 import gov.gtas.repository.DocumentRetentionPolicyAuditRepository;
 import gov.gtas.repository.PassengerDetailRepository;
 import gov.gtas.repository.PassengerDetailRetentionPolicyAuditRepository;
+import gov.gtas.services.NoteTypeService;
 import gov.gtas.services.PassengerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +27,12 @@ public class ApisDataDeletionThread  extends DataSchedulerThread implements Call
 
     private final DataRetentionService dataRetentionService;
 
-    public ApisDataDeletionThread(PassengerService passengerService, DataRetentionService dataRetentionService, DocumentRepository documentRepository, DocumentRetentionPolicyAuditRepository documentRetentionPolicyAuditRepository, PassengerDetailRepository passengerDetailRepository, PassengerDetailRetentionPolicyAuditRepository passengerDetailRetentionPolicyAuditRepository) {
+    private final NoteTypeService noteTypeService;
+
+    public ApisDataDeletionThread(PassengerService passengerService, DataRetentionService dataRetentionService, DocumentRepository documentRepository, DocumentRetentionPolicyAuditRepository documentRetentionPolicyAuditRepository, PassengerDetailRepository passengerDetailRepository, PassengerDetailRetentionPolicyAuditRepository passengerDetailRetentionPolicyAuditRepository, NoteTypeService noteTypeService) {
         this.passengerService = passengerService;
         this.dataRetentionService = dataRetentionService;
-
+        this.noteTypeService = noteTypeService;
     }
 
     @Override
@@ -49,11 +52,13 @@ public class ApisDataDeletionThread  extends DataSchedulerThread implements Call
 
             logger.info("Processed passengers in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             PassengerDeletionResult passengerDeletionResult = PassengerDeletionResult.processApisPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
+            NoteType noteType = noteTypeService.getDeletedNoteType();
+            NoteDeletionResult noteDeletionResult = NoteDeletionResult.processPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint(), noteType);
             Set<Long> passengerIds = passengers.stream().map(Passenger::getId).collect(Collectors.toSet());
             Set<Document> documents = passengerService.getPassengerDocuments(passengerIds, messageAndFlightIds.getFlightIds());
             DocumentDeletionResult documentDeletionResult = DocumentDeletionResult.processApisPassengers(documents, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
             logger.info("Processed documents in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
-            dataRetentionService.deleteApisMessage(documentDeletionResult, passengerDeletionResult, getMessageStatuses());
+            dataRetentionService.deleteApisMessage(noteDeletionResult, documentDeletionResult, passengerDeletionResult, getMessageStatuses());
             logger.info("Total rule running data deleting task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
         } catch (Exception e) {
             getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.APIS_DELETE_ERROR));

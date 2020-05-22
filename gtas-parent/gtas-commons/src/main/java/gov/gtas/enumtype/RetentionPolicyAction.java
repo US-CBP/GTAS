@@ -24,7 +24,11 @@ public enum  RetentionPolicyAction {
 
     NO_ACTION_NO_PNR("NO_ACTION_NO_PNR"),
 
-    PERFORMED_UNMASKING("PERFORMED_UNMASKING");
+    PERFORMED_UNMASKING("PERFORMED_UNMASKING"),
+
+    NO_ACTION("NO_ACTION"),
+
+    DELETED("DELETE");
 
     private final String actionType;
 
