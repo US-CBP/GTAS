@@ -44,19 +44,23 @@ public class ApisDataMaskThread extends DataSchedulerThread implements Callable<
            getDefaultShareConstraint().createFilter(passengers);
             Set<DataRetentionStatus> dataRetentionStatuses = new HashSet<>();
             for (Passenger p : passengers) {
+                RelevantMessageChecker relevantMessageChecker = new RelevantMessageChecker(getApisCutOffDate(), getPnrCutOffDate(), p).invoke();
                 DataRetentionStatus drs = p.getDataRetentionStatus();
                 drs.setUpdatedAt(new Date());
                 drs.setUpdatedBy("APIS_MASK");
-                if (!getDefaultShareConstraint().getWhiteListedPassenerIds().contains(p.getId())) {
+                if (!getDefaultShareConstraint().getWhiteListedPassenerIds().contains(p.getId()) || !relevantMessageChecker.isRelevantAPIS()) {
                     drs.setMaskedAPIS(true);
+                    logger.debug("masked pax id : " + drs.getPassengerId());
+                    dataRetentionStatuses.add(drs);
                 }
-                dataRetentionStatuses.add(drs);
             }
             dataRetentionService.saveDataRetentionStatus(dataRetentionStatuses);
             getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.APIS_DATA_MASKED));
             dataRetentionService.saveMessageStatus(getMessageStatuses());
             logger.debug("Total time running apis data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
         } catch (Exception e) {
+            getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.APIS_MASK_ERROR));
+            dataRetentionService.saveMessageStatus(getMessageStatuses());
             logger.error("", e);
             success = false;
         }

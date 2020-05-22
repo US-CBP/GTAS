@@ -54,18 +54,22 @@ public class PnrDataMaskThread extends DataSchedulerThread implements Callable<B
 
             Set<DataRetentionStatus> dataRetentionStatuses = new HashSet<>();
             for (Passenger p : passengers) {
+                RelevantMessageChecker relevantMessageChecker = new RelevantMessageChecker(getApisCutOffDate(), getPnrCutOffDate(), p).invoke();
                 DataRetentionStatus drs = p.getDataRetentionStatus();
                 drs.setUpdatedAt(new Date());
                 drs.setUpdatedBy("PNR_MASK");
-                if (!getDefaultShareConstraint().getWhiteListedPassenerIds().contains(p.getId())) {
+                if (!getDefaultShareConstraint().getWhiteListedPassenerIds().contains(p.getId()) || !relevantMessageChecker.isRelevantPnr()) {
                     drs.setMaskedPNR(true);
                 }
                 dataRetentionStatuses.add(drs);
             }
-            dataRetentionService.saveDataRetentionStatus(dataRetentionStatuses);
             getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.PNR_DATA_MASKED));
+            dataRetentionService.saveDataRetentionStatus(dataRetentionStatuses);
+            dataRetentionService.saveMessageStatus(getMessageStatuses());
             logger.debug("Total rule running pnr data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
         } catch(Exception e) {
+            getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.PNR_MASK_ERROR));
+            dataRetentionService.saveMessageStatus(getMessageStatuses());
             logger.error("", e);
             success = false;
         }

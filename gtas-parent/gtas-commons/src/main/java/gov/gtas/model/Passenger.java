@@ -90,6 +90,9 @@ public class Passenger extends BaseEntityAudit {
 	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
 	private Set<Notification> notifications = new HashSet<>();
 
+	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<PassengerNote> notes = new HashSet<>();
+
 	@Type(type = "uuid-char")
 	@Column(name = "uuid", updatable = false)
 	private UUID uuid = UUID.randomUUID();
@@ -104,6 +107,13 @@ public class Passenger extends BaseEntityAudit {
 	@Transient
 	private UUID parserUUID;
 
+	public Set<PassengerNote> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(Set<PassengerNote> notes) {
+		this.notes = notes;
+	}
 	public UUID getParserUUID() {
 		return parserUUID;
 	}

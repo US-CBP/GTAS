@@ -128,7 +128,7 @@ public class JobSchedulerConfig implements SchedulingConfigurer {
 	}
 
 	public List<String> getMessageStatusDeletionRetentionAPIS() {
-		String props = env.getRequiredProperty(MESSAGE_STATUS_FOR_APIS_MASK_RETENTION);
+		String props = env.getRequiredProperty(MESSAGE_STATUS_FOR_APIS_DELETION_RETENTION);
 		String[] status = props.split(",");
 		return   Arrays.asList(status);
 	}
@@ -140,7 +140,7 @@ public class JobSchedulerConfig implements SchedulingConfigurer {
 	}
 
 	public List<String> getMessageStatusMaskRetentionAPIS() {
-		String props = env.getRequiredProperty(MESSAGE_STATUS_FOR_APIS_DELETION_RETENTION);
+		String props = env.getRequiredProperty(MESSAGE_STATUS_FOR_APIS_MASK_RETENTION);
 		String[] status = props.split(",");
 		return   Arrays.asList(status);
 	}

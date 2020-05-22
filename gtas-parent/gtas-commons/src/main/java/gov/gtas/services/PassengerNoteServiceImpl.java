@@ -36,7 +36,14 @@ public class PassengerNoteServiceImpl implements PassengerNoteService {
 	@Transactional
 	public PassengerNoteSetDto getAllEventNotes(Long paxId) {
 		List<PassengerNote> notes = passengerNoteRepository.findAllByPassengerIdOrderByCreatedAtDesc(paxId);
-		return PassengerNoteSetDto.fromNotes(notes);
+		Passenger p = passengerService.findById(paxId);
+		PassengerNoteSetDto passengerNoteSetDto = PassengerNoteSetDto.fromNotes(notes);
+		if (p.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
+			passengerNoteSetDto.getPaxNotes().forEach(NoteVo::deletePII);
+		} else if (p.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
+			passengerNoteSetDto.getPaxNotes().forEach(NoteVo::maskPII);
+		}
+		return passengerNoteSetDto;
 	}
 
 	@Override
@@ -47,7 +54,15 @@ public class PassengerNoteServiceImpl implements PassengerNoteService {
 		Passenger p = passengerService.findById(paxId);
 		passengerSet.remove(p);
 		List<PassengerNote> historicalNotes = passengerNoteRepository.findFirst10ByPassengerInOrderByCreatedAtDesc(passengerSet);
-		return PassengerNoteSetDto.fromNotes(historicalNotes);
+		PassengerNoteSetDto passengerNoteSetDto = PassengerNoteSetDto.fromNotes(historicalNotes);
+
+		//First mask the note IF the passenger is requires it.
+		if (p.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
+			passengerNoteSetDto.getPaxNotes().forEach(NoteVo::deletePII);
+		} else if (p.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
+			passengerNoteSetDto.getPaxNotes().forEach(NoteVo::maskPII);
+		}
+		return passengerNoteSetDto;
 	}
 
 	@Override

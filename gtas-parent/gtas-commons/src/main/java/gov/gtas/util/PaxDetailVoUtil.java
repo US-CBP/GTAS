@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import gov.gtas.enumtype.MessageType;
+import gov.gtas.json.KeyValue;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitMaker;
 import gov.gtas.model.HitViewStatus;
@@ -15,6 +16,7 @@ import gov.gtas.model.User;
 import gov.gtas.model.UserGroup;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.vo.HitDetailVo;
+import gov.gtas.vo.passenger.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,18 +36,6 @@ import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
-import gov.gtas.vo.passenger.AddressVo;
-import gov.gtas.vo.passenger.AgencyVo;
-import gov.gtas.vo.passenger.CreditCardVo;
-import gov.gtas.vo.passenger.DocumentVo;
-import gov.gtas.vo.passenger.EmailVo;
-import gov.gtas.vo.passenger.FlightLegVo;
-import gov.gtas.vo.passenger.FlightVo;
-import gov.gtas.vo.passenger.FlightVoForFlightHistory;
-import gov.gtas.vo.passenger.FrequentFlyerVo;
-import gov.gtas.vo.passenger.PassengerVo;
-import gov.gtas.vo.passenger.PhoneVo;
-import gov.gtas.vo.passenger.PnrVo;
 
 public class PaxDetailVoUtil {
 
@@ -407,4 +397,171 @@ public class PaxDetailVoUtil {
 		return latest;
 	}
 
+
+	/**
+	 * Segments PnrRaw String Required for Frontend to highlight segment
+	 * corresponding to pnr section
+	 *
+	 * @param targetVo
+	 */
+	public static void parseRawMessageToSegmentList(PnrVo targetVo) {
+		if (targetVo != null && targetVo.getRaw() != null) {
+
+			StringTokenizer _tempStr = new StringTokenizer(targetVo.getRaw(), "\n");
+			List<KeyValue> segmentList = new ArrayList<>();
+
+			final String ITIN = "TVL";
+			final String NAME = "SSR";
+			final String DOC = "DOCS";
+			final String ADD = "ADD";
+			final String CC = "FOP";
+			final String FF = "FTI";
+			final String BAG = "TBD";
+			final String TIF = "TIF";
+
+			String tifSegment = "";
+			Integer indexInteger = 0;
+
+			while (_tempStr.hasMoreTokens()) {
+				String currString = _tempStr.nextToken();
+				StringBuilder segment = new StringBuilder();
+
+				// Itinerary
+				if (currString.contains(ITIN)) {
+					for (FlightLegVo f : targetVo.getFlightLegs()) {
+						if (currString.contains(f.getOriginAirport())) {
+							segment.append(ITIN);
+							segment.append(f.getOriginAirport());
+							segment.append(" ");
+						}
+					}
+				}
+				// PNR names
+				if (currString.contains(NAME)) {
+					for (PassengerVo p : targetVo.getPassengers()) {
+						if (currString.contains(p.getFirstName())) {
+							segment.append(NAME);
+							segment.append(p.getFirstName());
+							segment.append(" ");
+						}
+					}
+				}
+				// Doc Numbers
+				if (currString.contains(DOC)) {
+					for (DocumentVo d : targetVo.getDocuments()) {
+						if (d.getDocumentNumber() != null && currString.contains(d.getDocumentNumber())) {
+							segment.append(DOC);
+							segment.append(d.getDocumentNumber());
+							segment.append(" ");
+						}
+					}
+				}
+				// Addresses
+				if (currString.contains(ADD)) {
+					for (AddressVo a : targetVo.getAddresses()) {
+						if (a.getCity() != null && currString.contains(a.getCity())) {
+							segment.append(ADD);
+							segment.append(a.getCity());
+							segment.append(" ");
+						}
+					}
+				}
+				// FOP
+				if (currString.contains(CC)) {
+					for (CreditCardVo c : targetVo.getCreditCards()) {
+						if (currString.contains(c.getNumber().substring(c.getNumber().length() - 4))) {
+							segment.append(CC);
+							segment.append(c.getNumber());
+							segment.append(" ");
+						}
+					}
+				}
+				// Frequent Flyer
+				if (currString.contains(FF)) {
+					for (FrequentFlyerVo f : targetVo.getFrequentFlyerDetails()) {
+						if (currString.contains(f.getNumber())) {
+							segment.append(FF);
+							segment.append(f.getNumber());
+							segment.append(" ");
+						}
+					}
+				}
+
+				/*
+				 * GR.7 TIF - the checked-in name. Used to link bags to passengers.
+				 */
+				if (currString.contains(TIF)) {
+					tifSegment = currString;
+				}
+
+//				// Bag
+//				if (currString.contains(BAG)) {
+//					for (BagVo b : targetVo.getBags()) {
+//						if (isRelatedToTifPassenger(tifSegment, b)) {
+//							segment.append(BAG);
+//							segment.append(b.getPassFirstName());
+//							segment.append(b.getPassLastName());
+//							segment.append(" ");
+//						}
+//					}
+//				}
+				// Phone
+				for (PhoneVo p : targetVo.getPhoneNumbers()) {
+					if (currString.contains(p.getNumber().substring(p.getNumber().length() - 4))) {
+						segment.append("PHONE");
+						segment.append(p.getNumber());
+						segment.append(" ");
+					}
+				}
+
+				// Email
+				for (EmailVo e : targetVo.getEmails()) {
+					boolean isMatch = true;
+					String[] words = e.getAddress().split("[^a-zA-Z0-9']+");
+
+					for (String word : words) {
+						if (!currString.contains(word)) {
+							isMatch = false;
+							break;
+						}
+					}
+					if (words.length > 0 && isMatch) {
+						segment.append("EMAIL");
+						segment.append(e.getAddress());
+						segment.append(" ");
+					}
+				}
+
+				// Seat
+				for (SeatVo s : targetVo.getSeatAssignments()) {
+					if (currString.contains(s.getNumber())) {
+						segment.append("SEAT");
+						segment.append(s.getNumber());
+						segment.append(" ");
+					}
+				}
+
+				// Agency
+				for (AgencyVo a : targetVo.getAgencies()) {
+					if (a.getIdentifier() != null && currString.contains(a.getIdentifier())) {
+						segment.append("AGEN");
+						segment.append(a.getIdentifier());
+						segment.append(" ");
+					}
+				}
+
+				if (segment.toString().isEmpty()) {
+					KeyValue kv = new KeyValue(indexInteger.toString(), currString);
+					segmentList.add(kv);
+				} else {
+					KeyValue kv2 = new KeyValue(segment.toString(), currString);
+					segmentList.add(kv2);
+					;
+				}
+
+				indexInteger++;
+			}
+			targetVo.setSegmentList(segmentList);
+		}
+	}
 }

@@ -2,6 +2,7 @@ package gov.gtas.job.scheduler;
 
 import gov.gtas.enumtype.MessageType;
 import gov.gtas.enumtype.RetentionPolicyAction;
+import gov.gtas.job.scheduler.service.DataRetentionService;
 import gov.gtas.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class PassengerDeletionResult {
                 passengerDeletionResult.getPassengerDetailFromMessageSet().addAll(getInvalidApisMessageDetails(p, apisCutOffDate));
             } else {
                 p.getDataRetentionStatus().setDeletedAPIS(true);
+                passengerDeletionResult.getDataRetentionStatuses().add(p.getDataRetentionStatus());
                 scrubApisPassengerDetail(p, pnrCutOffDate);
                 passengerDeletionResult.getPassengerDetails().add(p.getPassengerDetails());
                 pdrpa.setRetentionPolicyAction(RetentionPolicyAction.APIS_DATA_MARKED_TO_DELETE);
@@ -78,7 +80,9 @@ public class PassengerDeletionResult {
                 passengerDeletionResult.getPassengerDetailFromMessageSet().addAll(getInvalidPnrMessageDetails(p, pnrCutOffDate));
             } else {
                 p.getDataRetentionStatus().setDeletedPNR(true);
+                passengerDeletionResult.getDataRetentionStatuses().add(p.getDataRetentionStatus());
                 scrubPnrPassengerDetail(p, apisCutOffDate);
+                passengerDeletionResult.getPassengerDetails().add(p.getPassengerDetails());
                 pdrpa.setRetentionPolicyAction(RetentionPolicyAction.PNR_DATA_MARKED_TO_DELETE);
                 if (relevantAPIS) {
                     logger.debug("Orphan Passenger Detail - performing data deletion or swapping to pnr only details!");
@@ -201,43 +205,5 @@ public class PassengerDeletionResult {
     }
 
 
-    private static class RelevantMessageChecker {
-        private Date apisCutOffDate;
-        private Date pnrCutOffDate;
-        private Passenger p;
-        private boolean relevantAPIS;
-        private boolean relevantPnr;
 
-        public RelevantMessageChecker(Date apisCutOffDate, Date pnrCutOffDate, Passenger p) {
-            this.apisCutOffDate = apisCutOffDate;
-            this.pnrCutOffDate = pnrCutOffDate;
-            this.p = p;
-        }
-
-        public boolean isRelevantAPIS() {
-            return relevantAPIS;
-        }
-
-        public boolean isRelevantPnr() {
-            return relevantPnr;
-        }
-
-        public RelevantMessageChecker invoke() {
-            relevantAPIS = false;
-            relevantPnr = false;
-            for (ApisMessage apis : p.getApisMessage()) {
-                if (apis.getCreateDate().after(apisCutOffDate)) {
-                    relevantAPIS = true;
-                    break;
-                }
-            }
-            for (Pnr pnr : p.getPnrs()) {
-                if (pnr.getCreateDate().after(pnrCutOffDate)) {
-                    relevantPnr = true;
-                    break;
-                }
-            }
-            return this;
-        }
-    }
 }

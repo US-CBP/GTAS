@@ -7,6 +7,7 @@ import gov.gtas.repository.BagRepository;
 import gov.gtas.repository.BookingDetailRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
+import gov.gtas.util.PaxDetailVoUtil;
 import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.PassengerVo;
 import gov.gtas.vo.passenger.PnrVo;
@@ -96,7 +97,7 @@ public class PassengerDetailsControllerTest {
 
 		try {
 			assertNull(addressVo.getCity());
-			passengerDetailsController.parseRawMessageToSegmentList(pnrVo);
+			PaxDetailVoUtil.parseRawMessageToSegmentList(pnrVo);
 		} catch (Exception e) {
 			fail("This method should not throw an exception when City is null!!!");
 		}

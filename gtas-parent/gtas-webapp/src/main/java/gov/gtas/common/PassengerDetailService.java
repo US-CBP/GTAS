@@ -1,6 +1,7 @@
 package gov.gtas.common;
 
 import gov.gtas.enumtype.MessageType;
+import gov.gtas.json.KeyValue;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Bag;
 import gov.gtas.model.Document;
@@ -18,19 +19,12 @@ import gov.gtas.services.PnrService;
 import gov.gtas.services.SeatService;
 import gov.gtas.services.search.FlightPassengerVo;
 import gov.gtas.util.PaxDetailVoUtil;
-import gov.gtas.vo.passenger.ApisMessageVo;
-import gov.gtas.vo.passenger.BagSummaryVo;
-import gov.gtas.vo.passenger.BagVo;
-import gov.gtas.vo.passenger.DocumentVo;
-import gov.gtas.vo.passenger.PassengerVo;
-import gov.gtas.vo.passenger.PnrVo;
-import gov.gtas.vo.passenger.SeatVo;
+import gov.gtas.vo.passenger.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -142,6 +136,12 @@ public class PassengerDetailService {
                     }
                 }
             }
+            BagStatisticCalculator bagStatisticCalculator = new BagStatisticCalculator(new HashSet<>(bagList)).invoke("PNR");
+            tempVo.setBagCount(bagStatisticCalculator.getBagCount());
+            tempVo.setBaggageWeight(bagStatisticCalculator.getBagWeight());
+            tempVo.setTotal_bag_count(bagStatisticCalculator.getBagCount());
+            PaxDetailVoUtil.parseRawMessageToSegmentList(tempVo);
+            vo.setPnrVo(tempVo);
         }
 
         List<ApisMessage> apisList = apisMessageRepository.findByFlightIdAndPassengerId(flight.getId(),
@@ -155,7 +155,7 @@ public class PassengerDetailService {
             Passenger loadedPassenger = apisMessageRepository
                     .findPaxByFlightIdandPassengerId(flight.getId(), passenger.getId());
             String refNumber = loadedPassenger.getPassengerTripDetails().getReservationReferenceNumber();
-            BagStatisticCalculator bagStatisticCalculator = new BagStatisticCalculator(passenger).invoke("APIS");
+            BagStatisticCalculator bagStatisticCalculator = new BagStatisticCalculator(loadedPassenger).invoke("APIS");
             int bagCount = bagStatisticCalculator.getBagCount();
             double bagWeight = bagStatisticCalculator.getBagWeight();
             apisVo.setBagCount(bagCount);
@@ -214,4 +214,11 @@ public class PassengerDetailService {
         }
         return latest;
     }
+
+
+//	private boolean isRelatedToTifPassenger(String tifSegment, BagVo b) {
+//		return b.getData_source().equalsIgnoreCase("PNR") && b.getPassFirstName() != null
+//				&& tifSegment.contains(b.getPassFirstName()) && b.getPassLastName() != null
+//				&& tifSegment.contains(b.getPassLastName());
+//	}
 }

@@ -96,7 +96,7 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 
 
 	@Query("SELECT p FROM Passenger p " + " LEFT JOIN FETCH p.dataRetentionStatus "
-			+ " LEFT JOIN FETCH p.flight " + " LEFT JOIN p.apisMessage am " + " LEFT JOIN p.pnrs pnr "
+			+ " LEFT JOIN FETCH p.flight " + " LEFT JOIN fetch p.apisMessage am " + " LEFT JOIN fetch p.pnrs pnr "
 			+ "LEFT JOIN FETCH p.hitDetails "
 			+ " WHERE (p.flight.id in :flightIds" + " AND (am.id IN :messageIds "
 			+ "       OR pnr.id IN :messageIds)) ")
@@ -104,7 +104,7 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 
 	@Query("SELECT p FROM Passenger p " + " LEFT JOIN FETCH p.dataRetentionStatus left join fetch p.passengerDetailFromMessages"
 			+ " LEFT JOIN FETCH p.flight " + " LEFT JOIN fetch p.apisMessage am " + " LEFT JOIN fetch p.pnrs pnr "
-			+ "LEFT JOIN FETCH p.hitDetails "
+			+ "LEFT JOIN FETCH p.hitDetails LEFT JOIN FETCH p.notes pnotes left join fetch pnotes.noteType "
 			+ " WHERE (p.flight.id in :flightIds" + " AND (am.id IN :messageIds "
 			+ "       OR pnr.id IN :messageIds)) ")
 	Set<Passenger> getFullPassengerIncludingHitsByMessageId(@Param("messageIds") Set<Long> messageIds, @Param("flightIds") Set<Long> flightIds);

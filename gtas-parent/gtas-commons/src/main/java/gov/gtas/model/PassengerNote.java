@@ -17,7 +17,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "passenger_notes")
-public class PassengerNote extends Note {
+public class PassengerNote extends Note implements PIIObject{
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -57,4 +57,16 @@ public class PassengerNote extends Note {
 		this.passengerId = passengerId;
 	}
 
+	@Override
+	public PIIObject deletePII() {
+		setPlainTextComment("DELETED");
+		setRtfComment("DELETED");
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		setPlainTextComment("MASKED");
+		setRtfComment("MASKED");
+		return this;	}
 }

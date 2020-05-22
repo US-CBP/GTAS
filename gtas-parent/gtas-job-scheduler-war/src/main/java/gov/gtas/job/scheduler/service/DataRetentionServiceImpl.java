@@ -1,19 +1,13 @@
 package gov.gtas.job.scheduler.service;
 
 import com.google.common.collect.Sets;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import gov.gtas.enumtype.RetentionPolicyAction;
-import gov.gtas.job.scheduler.DocumentDeletionResult;
-import gov.gtas.job.scheduler.GTASShareConstraint;
-import gov.gtas.job.scheduler.PassengerDeletionResult;
-import gov.gtas.job.scheduler.PnrFieldsToScrub;
+import gov.gtas.job.scheduler.*;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
-import org.apache.commons.collections4.IteratorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -62,6 +56,10 @@ public class DataRetentionServiceImpl implements DataRetentionService {
 
     private final PnrRepository pnrRepository;
 
+    private final PassengerNoteRepository passengerNoteRepository;
+
+    private final NoteDataRetentionPolicyRepository noteDataRetentionPolicyRepository;
+
 
     public DataRetentionServiceImpl(DataRetentionStatusRepository dataRetentionStatusRepository, DocumentRepository documentRepository,
                                     DocumentRetentionPolicyAuditRepository documentRetentionPolicyAuditRepository,
@@ -71,7 +69,7 @@ public class DataRetentionServiceImpl implements DataRetentionService {
                                     AddressDataRetentionPolicyAuditRepository addressDataRetentionPolicyAuditRepository1,
                                     CreditCardRepository creditCardRepository,
                                     CreditCardDataRetentionPolicyAuditRepository creditCardDataRetentionPolicyAuditRepository,
-                                    FrequentFlyerRepository frequentFlyerRepository, FrequentFlyerDataRetentionPolicyAuditRepository frequentFlyerDataRetentionPolicyAuditRepository, PhoneRepository phoneRepository, EmailRepository emailRepository, AddressDataRetentionPolicyAuditRepository addressDataRetentionPolicyAuditRepository, PhoneDataRetentionPolicyAuditRepository phoneDataRetentionPolicyAuditRepository, EmailDataRetentionPolicyAuditRepository emailDataRetentionPolicyAuditRepository, PnrRepository pnrRepository) {
+                                    FrequentFlyerRepository frequentFlyerRepository, FrequentFlyerDataRetentionPolicyAuditRepository frequentFlyerDataRetentionPolicyAuditRepository, PhoneRepository phoneRepository, EmailRepository emailRepository, AddressDataRetentionPolicyAuditRepository addressDataRetentionPolicyAuditRepository, PhoneDataRetentionPolicyAuditRepository phoneDataRetentionPolicyAuditRepository, EmailDataRetentionPolicyAuditRepository emailDataRetentionPolicyAuditRepository, PnrRepository pnrRepository, PassengerNoteRepository passengerNoteRepository, NoteDataRetentionPolicyRepository noteDataRetentionPolicyRepository) {
         this.dataRetentionStatusRepository = dataRetentionStatusRepository;
         this.documentRepository = documentRepository;
         this.documentRetentionPolicyAuditRepository = documentRetentionPolicyAuditRepository;
@@ -90,14 +88,18 @@ public class DataRetentionServiceImpl implements DataRetentionService {
         this.phoneDataRetentionPolicyAuditRepository = phoneDataRetentionPolicyAuditRepository;
         this.emailDataRetentionPolicyAuditRepository = emailDataRetentionPolicyAuditRepository;
         this.pnrRepository = pnrRepository;
+        this.passengerNoteRepository = passengerNoteRepository;
+        this.noteDataRetentionPolicyRepository = noteDataRetentionPolicyRepository;
     }
 
+    @Transactional
     public void saveDataRetentionStatus(Set<DataRetentionStatus> drsSet) {
         if (!drsSet.isEmpty()) {
-            dataRetentionStatusRepository.saveAll(drsSet);
+           dataRetentionStatusRepository.saveAll(drsSet);
         }
     }
 
+    @Transactional
     public void saveMessageStatus(List<MessageStatus> messageStatuses) {
         if (!messageStatuses.isEmpty()) {
             messageStatusRepository.saveAll(messageStatuses);
@@ -105,15 +107,28 @@ public class DataRetentionServiceImpl implements DataRetentionService {
     }
 
     @Transactional
-    public void deletePnrMessage(PnrFieldsToScrub pnrFieldsToScrub, DocumentDeletionResult documentDeletionResult, PassengerDeletionResult passengerDeletionResult, List<MessageStatus> messageStatusList) {
+    public void deletePnrMessage(NoteDeletionResult noteDeletionResult, PnrFieldsToScrub pnrFieldsToScrub, DocumentDeletionResult documentDeletionResult, PassengerDeletionResult passengerDeletionResult, List<MessageStatus> messageStatusList) {
+        saveNoteUpdates(noteDeletionResult);
+        saveApisFields(noteDeletionResult, documentDeletionResult, passengerDeletionResult);
         savePnrFields(documentDeletionResult, passengerDeletionResult, pnrFieldsToScrub);
         messageStatusList.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.PNR_DATA_DELETED));
         saveMessageStatus(messageStatusList);
     }
 
     @Transactional
-    public void deleteApisMessage(DocumentDeletionResult documentDeletionResult, PassengerDeletionResult passengerDeletionResult, List<MessageStatus> messageStatusList) {
-        saveApisFields(documentDeletionResult, passengerDeletionResult);
+    public void saveNoteUpdates(NoteDeletionResult noteDeletionResult) {
+        if (!noteDeletionResult.getPassengerNotes().isEmpty()) {
+            passengerNoteRepository.saveAll(noteDeletionResult.getPassengerNotes());
+        }
+        if (!noteDeletionResult.getAudits().isEmpty()) {
+            noteDataRetentionPolicyRepository.saveAll(noteDeletionResult.getAudits());
+        }
+    }
+
+    @Transactional
+    public void deleteApisMessage(NoteDeletionResult noteDeletionResult, DocumentDeletionResult documentDeletionResult, PassengerDeletionResult passengerDeletionResult, List<MessageStatus> messageStatusList) {
+        saveNoteUpdates(noteDeletionResult);
+        saveApisFields(noteDeletionResult, documentDeletionResult, passengerDeletionResult);
         messageStatusList.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.APIS_DATA_DELETED));
         saveMessageStatus(messageStatusList);
     }
@@ -287,7 +302,9 @@ public class DataRetentionServiceImpl implements DataRetentionService {
         ber.setCreatedBy("PNR_DELETE");
     }
 
-    public void saveApisFields(DocumentDeletionResult documentDeletionResult, PassengerDeletionResult passengerDeletionResult) {
+    @Transactional
+    public void saveApisFields(NoteDeletionResult noteDeletionResult, DocumentDeletionResult documentDeletionResult, PassengerDeletionResult passengerDeletionResult) {
+
         if (!passengerDeletionResult.getPassengerDetailFromMessageSet().isEmpty()) {
             passengerDetailFromMessageRepository.saveAll(passengerDeletionResult.getPassengerDetailFromMessageSet());
     }
@@ -300,13 +317,14 @@ public class DataRetentionServiceImpl implements DataRetentionService {
             passengerDetailRetentionPolicyAuditRepository.saveAll(passengerDeletionResult.getPassengerDetailRetentionPolicyAudits());
         }
 
+        if (!passengerDeletionResult.getDataRetentionStatuses().isEmpty()) {
+            dataRetentionStatusRepository.saveAll(passengerDeletionResult.getDataRetentionStatuses());
+        }
+
         if (!documentDeletionResult.getDocuments().isEmpty()) {
             documentRepository.saveAll(documentDeletionResult.getDocuments());
         }
 
-        if (!documentDeletionResult.getDataRetentionStatuses().isEmpty()) {
-            saveDataRetentionStatus(documentDeletionResult.getDataRetentionStatuses());
-        }
         if (!documentDeletionResult.getDocumentRetentionPolicyAudits().isEmpty()) {
             documentRetentionPolicyAuditRepository.saveAll(documentDeletionResult.getDocumentRetentionPolicyAudits());
         }
@@ -316,7 +334,6 @@ public class DataRetentionServiceImpl implements DataRetentionService {
     @Override
     @Transactional
     public void savePnrFields(DocumentDeletionResult documentDeletionResult, PassengerDeletionResult passengerDeletionResult, PnrFieldsToScrub pnrFieldsToScrub) {
-        saveApisFields(documentDeletionResult, passengerDeletionResult);
 
         if (!pnrFieldsToScrub.getAddresses().isEmpty()) {
             addressRepository.saveAll(pnrFieldsToScrub.getAddresses());

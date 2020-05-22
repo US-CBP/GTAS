@@ -3,6 +3,7 @@ package gov.gtas.job.scheduler;
 import gov.gtas.job.scheduler.service.DataRetentionService;
 import gov.gtas.model.*;
 import gov.gtas.repository.PnrRepository;
+import gov.gtas.services.NoteTypeService;
 import gov.gtas.services.PassengerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +24,13 @@ public class PnrDataDeletionThread extends DataSchedulerThread implements Callab
 
     private final DataRetentionService dataRetentionService;
 
+    private final NoteTypeService noteTypeService;
 
-    public PnrDataDeletionThread(PassengerService passengerService, DataRetentionService dataRetentionService, PnrRepository pnrRepository) {
+
+    public PnrDataDeletionThread(PassengerService passengerService, DataRetentionService dataRetentionService, PnrRepository pnrRepository, NoteTypeService noteTypeService) {
         this.passengerService = passengerService;
         this.dataRetentionService = dataRetentionService;
+        this.noteTypeService = noteTypeService;
     }
 
     @Override
@@ -50,19 +54,20 @@ public class PnrDataDeletionThread extends DataSchedulerThread implements Callab
             DocumentDeletionResult documentDeletionResult = DocumentDeletionResult.processPnrPassengers(documents, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
             logger.info("document deletion in......");
             PassengerDeletionResult passengerDeletionResult = PassengerDeletionResult.processPnrPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
+            NoteType noteType = noteTypeService.getDeletedNoteType();
+            NoteDeletionResult noteDeletionResult = NoteDeletionResult.processPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint(), noteType);
             logger.info("Processed passengers in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             PnrFieldsToScrub pnrFieldsToScrub = dataRetentionService.scrubPnrs(messageAndFlightIds.getFlightIds(), messageAndFlightIds.getMessageIds(), getPnrCutOffDate(), getDefaultShareConstraint());
             logger.info("Scrubbed pnrs in....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
-            dataRetentionService.deletePnrMessage(pnrFieldsToScrub, documentDeletionResult, passengerDeletionResult, getMessageStatuses());
+            dataRetentionService.deletePnrMessage(noteDeletionResult, pnrFieldsToScrub, documentDeletionResult, passengerDeletionResult, getMessageStatuses());
             logger.info("Total rule running data deleting task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+
         } catch (Exception e) {
-            logger.error("", e);
-            getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.PNR_DATA_DELETED));
+            getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.PNR_DELETE_ERROR));
             dataRetentionService.saveMessageStatus(getMessageStatuses());
+            logger.error("", e);
             success = false;
         }
         return success;
     }
-
-
 }
