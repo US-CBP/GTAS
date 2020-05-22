@@ -79,4 +79,16 @@ public interface PnrRepository extends MessageRepository<Pnr> {
 	@Transactional
 	@Query(" SELECT pnr.id, email from Pnr pnr join pnr.emails email where pnr.id in :pnrIds ")
 	List<Object[]> getEmailByPnrIds(@Param("pnrIds") Set<Long> pnrIds);
+
+	@Query ("SELECT pnr from Pnr pnr " +
+			"left join fetch pnr.addresses " +
+			"left join fetch pnr.phones " +
+			"left join fetch pnr.creditCards " +
+			"left join fetch pnr.frequentFlyers " +
+			"left join fetch pnr.emails " +
+			"left join pnr.flights flights " +
+			"left join fetch pnr.passengers pnrPassengers " +
+			"where flights.id in :flightIds " +
+			"and pnr.id in :messageIds ")
+    Set<Pnr> getPnrsToScrub(@Param("flightIds") Set<Long> flightIds, @Param("messageIds") Set<Long> messageIds);
 }

@@ -27,7 +27,7 @@ public interface GtasLoader {
 
 	void createFormPfPayments(PnrVo vo, Pnr pnr);
 
-	void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException;
+	void updatePassenger(Passenger existingPassenger, PassengerVo pvo, Message message) throws ParseException;
 
 	int createPassengers(Set<Passenger> newPassengers, Set<Passenger> oldPassengers, Set<Passenger> messagePassengers,
 			Flight primeFlight, Set<BookingDetail> bookingDetails);

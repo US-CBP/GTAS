@@ -12,11 +12,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import gov.gtas.model.Address;
 import gov.gtas.model.Document;
+import gov.gtas.model.PIIObject;
 import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.FlightVo;
 
-public class FlightPassengerVo {
+public class FlightPassengerVo implements PIIObject {
 	// flight
 	private Long flightId;
 	private String carrier;
@@ -279,4 +280,38 @@ public class FlightPassengerVo {
 		this.resRefNumber = resRefNumber;
 	}
 
+	@Override
+	public PIIObject deletePII() {
+
+		this.addresses = null;
+		if (documents != null) {
+			for (DocumentVo documentVo : documents) {
+				documentVo.deletePII();
+			}
+		}
+		this.dob = null;
+		this.firstName = "DELETED";
+		this.lastName = "DELETED";
+		this.nationality = "DELETED";
+		this.middleName = "DELETED";
+
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.addresses = null;
+		if (documents != null) {
+			for (DocumentVo documentVo : documents) {
+				documentVo.deletePII();
+			}
+		}
+		this.dob = null;
+		this.firstName = "MASKED";
+		this.lastName = "MASKED";
+		this.nationality = "MASKED";
+		this.middleName = "MASKED";
+
+		return this;
+	}
 }

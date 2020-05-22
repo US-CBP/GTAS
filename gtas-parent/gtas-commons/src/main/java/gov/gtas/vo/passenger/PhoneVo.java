@@ -5,7 +5,9 @@
  */
 package gov.gtas.vo.passenger;
 
-public class PhoneVo {
+import gov.gtas.model.PIIObject;
+
+public class PhoneVo implements PIIObject {
 	private String number;
 	private String city;
 
@@ -23,5 +25,17 @@ public class PhoneVo {
 
 	public void setCity(String city) {
 		this.city = city;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.number = "DELETED";
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.number = "MASKED";
+		return this;
 	}
 }

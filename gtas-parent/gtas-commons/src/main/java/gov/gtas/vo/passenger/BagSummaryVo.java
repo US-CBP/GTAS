@@ -25,6 +25,12 @@ public class BagSummaryVo {
 		return bagSummaryVo;
 	}
 
+	public static BagSummaryVo createFromBagVos(Set<BagVo> bagVos) {
+		BagSummaryVo bagSummaryVo = new BagSummaryVo();
+		bagSummaryVo.getBagsByFlightLeg().addAll(bagVos);
+		return bagSummaryVo;
+	}
+
 	public List<BagVo> getBagsByFlightLeg() {
 		return bagsByFlightLeg;
 	}

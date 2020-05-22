@@ -286,7 +286,7 @@
                                                     <td>{{j.passengerDocNumber}}</td>
                                                     <td>{{j.ruleConditions}}</td>
                                                     <td>{{j.flightDate |date:'yyyy-MM-dd'}}</td>
-                                                    <td> <a ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{j.paxId}}/{{j.flightId}}">Details</a></td>
+                                                    <td> <a ng-class="{'disabled': (disableLinks || j.masked)}" href="#/paxdetail/{{j.paxId}}/{{j.flightId}}">Details</a></td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -865,9 +865,9 @@
                                                 <tbody>
                                                 <tr ng-repeat="k in flight | orderBy:'-etd'">
                                                     <td ng-if="!k.bookingDetail">
-                                                        <a class="primary-link" ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
+                                                        <a class="primary-link" ng-class="{'disabled': (disableLinks || k.disabledLinks)}" href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
                                                            target="pax.detail" title="{{'msg.showflightdetails' | translate}}"
-                                                           ng-class="{'disabled': disableLinks}"
+                                                           ng-class="{'disabled': (disableLinks || k.disabledLinks)}"
                                                         >
                                                             {{k.fullFlightNumber}}
                                                         </a>
