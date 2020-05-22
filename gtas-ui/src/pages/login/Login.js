@@ -93,9 +93,9 @@ const Login = () => {
           </Form>
         </Card.Body>
       </Card>
-      <div className="placeholder">
+      <div>
         {alertVis && (
-          <Alert className="login-alert" dismissible onClose={() => setAlertVis(false)}>
+          <Alert variant="danger" dismissible onClose={() => setAlertVis(false)}>
             Login failed.
           </Alert>
         )}
