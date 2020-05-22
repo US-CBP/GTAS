@@ -124,16 +124,19 @@ public class GTASLoaderImplTest {
 		docVo.setDocumentNumber("1234");
 		docVo2.setDocumentNumber("5678");
 
+		doc.setMessageType(MessageType.PNR);
+		doc.setMessageType(MessageType.PNR);
+
 		p.addDocument(doc);
 		p.addDocument(doc2);
 
 		pvo.addDocument(docVo);
 		pvo.addDocument(docVo2);
+		Pnr pnr = new Pnr();
 
-		Mockito.when(docDao.findByDocumentNumberAndPassengerAndMessageType("1234", p, MessageType.APIS)).thenReturn(new ArrayList<>(p.getDocuments()));
-		Mockito.when(docDao.findByDocumentNumberAndPassengerAndMessageType("5678", p, MessageType.PNR)).thenReturn(new ArrayList<>());
-		Mockito.when(utils.createNewDocument(docVo2, new Pnr())).thenReturn(new Document());
-		gtasLoader.updatePassenger(p, pvo, new Message());
+		Mockito.when(utils.createNewDocument(docVo2, pnr)).thenReturn(doc2);
+		Mockito.when(utils.createNewDocument(docVo, pnr)).thenReturn(doc);
+		gtasLoader.updatePassenger(p, pvo, pnr);
 		assertEquals(2, p.getDocuments().size());
 	}
 
