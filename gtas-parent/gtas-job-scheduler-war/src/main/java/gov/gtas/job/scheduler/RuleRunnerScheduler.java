@@ -98,6 +98,7 @@ public class RuleRunnerScheduler {
 
 		AppConfiguration recompileRulesAndWatchlist = appConfigurationRepository.findByOption(RECOMPILE_RULES);
 		if (!isBlank(recompileRulesAndWatchlist.getOption()) && Boolean.parseBoolean(recompileRulesAndWatchlist.getValue())) {
+			logger.info("RECOMPILING KBS!");
 			watchlistService.activateAllWatchlists();
 			udrService.recompileRules(RuleConstants.UDR_KNOWLEDGE_BASE_NAME, "RULE_SCHEDULER");
 			recompileRulesAndWatchlist.setValue("false");
