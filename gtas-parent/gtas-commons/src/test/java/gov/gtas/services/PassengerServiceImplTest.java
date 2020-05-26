@@ -89,7 +89,6 @@ public class PassengerServiceImplTest {
 		p.setFlight(f);
 		queryResultList.add(p);
 		p.getDataRetentionStatus().setHasApisMessage(true);
-
 		Pair<Long, List<Passenger>> findByCriteriaResult = new ImmutablePair<>(1L, queryResultList);
 
 		PassengersRequestDto prdto = new PassengersRequestDto();
