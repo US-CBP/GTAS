@@ -250,7 +250,9 @@ public class PaxDetailVoUtil {
 						target.getDocuments().add(documentVo);
 					}
 				}
-				if (p.getDataRetentionStatus().requiresMaskedPNR()) {
+				if (p.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
+					pVo.deletePII();
+				} else if (p.getDataRetentionStatus().requiresMaskedPNR()) {
 					pVo.maskPII();
 				}
 			}

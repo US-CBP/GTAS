@@ -40,7 +40,7 @@ public class ApisControllerServiceImpl implements ApisControllerService {
 			if (p.getDataRetentionStatus().requiresMaskedAPIS()) {
 				fpVo.maskPII();
 			}
-			if (p.getDataRetentionStatus().requiresDeletedAPIS()) {
+			if (p.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
 				fpVo.deletePII();
 			}
 		}
