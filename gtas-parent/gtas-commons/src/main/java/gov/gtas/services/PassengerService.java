@@ -46,9 +46,6 @@ public interface PassengerService {
 	PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);
-
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	List<Flight> getTravelHistoryNotByItinerary(Long pId, Long pnrId, String pnrRef);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
