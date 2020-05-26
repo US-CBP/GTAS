@@ -6,13 +6,14 @@
 package gov.gtas.vo.passenger;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import gov.gtas.model.PIIObject;
 
 import java.util.ArrayList;
 import java.util.Set;
 
 import java.util.Date;
 
-public class CaseVo {
+public class CaseVo implements PIIObject {
 	private Long id;
 	private Long passengerId;
 	private String paxName;
@@ -328,5 +329,24 @@ public class CaseVo {
 
 	public void setCloseToCountDown(Boolean closeToCountDown) {
 		this.closeToCountDown = closeToCountDown;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.dob = null;
+		this.document = null;
+		this.firstName = "DELETED";
+		this.lastName = "DELETED";
+		this.middleName = "DELETED";
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.document = "MASKED";
+		this.firstName = "MASKED";
+		this.lastName = "MASKED";
+		this.middleName = "MASKED";
+		return this;
 	}
 }

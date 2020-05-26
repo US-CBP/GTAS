@@ -66,6 +66,7 @@ INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Noti
 INSERT INTO app_configuration (description, opt, val) VALUES ('Toggle Interpol Red Notices Watch List Hit Notification', 'ENABLE_INTERPOL_HIT_NOTIFICATION', 'false');
 INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Notices ID', 'INTERPOL_WATCHLIST_ID', '');
 INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Notices Notification Subject', 'INTERPOL_SNS_NOTIFICATION_SUBJECT', 'GTAS priority Hit Notification');
+INSERT INTO app_configuration (description, opt, val) VALUES ('Recompile Rules', 'RECOMPILE_RULES', 'false');
 
 
 insert into hit_category(id, category, description, severity) values(1, 'General', 'General category', 2);
@@ -84,3 +85,13 @@ INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 4);
 INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 5);
 
 INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (1, null, null, null, null, 'GENERAL_PASSENGER');
+INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (2, null, null, null, null, 'DELETED');
+
+-- ----------------------------
+-- Manual Hit HitMaker Population
+-- ----------------------------
+CREATE OR REPLACE PROCEDURE manualHitMakerPopulate() BEGIN SET @cnt = (Select IFNULL(MAX(id), 1) FROM hit_category); START TRANSACTION; WHILE @cnt > 0 DO INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', @cnt); SET @DataID = LAST_INSERT_ID(); INSERT INTO manual_lookout (description, id) VALUES ('Manually Generated Hit', @DataId); SET @cnt = @cnt - 1; END WHILE; COMMIT; END;
+
+CALL manualHitMakerPopulate();
+
+DROP PROCEDURE IF EXISTS manualHitMakerPopulate;

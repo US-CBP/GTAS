@@ -38,6 +38,7 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
 	String MAX_FLIGHTS_SAVED_PER_BATCH = "MAX_FLIGHTS_PER_BATCH";
 	String FUZZY_MATCHING = "FUZZY_MATCHING";
 	String QUICKMATCH_DOB_YEAR_OFFSET = "QUICKMATCH_DOB_YEAR_OFFSET";
+	String RECOMPILE_RULES = "RECOMPILE_RULES";
 
 	AppConfiguration findByOption(String option);
 
