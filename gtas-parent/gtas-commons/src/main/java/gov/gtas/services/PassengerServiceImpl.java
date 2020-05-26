@@ -127,9 +127,9 @@ public class PassengerServiceImpl implements PassengerService {
 			vo.setEtd(passengerFlight.getMutableFlightDetails().getEtd());
 			vo.setEta(passengerFlight.getMutableFlightDetails().getEta());
 			if (passenger.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
-				vo.maskPII();
-			} else if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
 				vo.deletePII();
+			} else if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
+				vo.maskPII();
 			}
 			rv.add(vo);
 
