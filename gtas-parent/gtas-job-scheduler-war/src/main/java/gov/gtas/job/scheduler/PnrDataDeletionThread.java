@@ -38,7 +38,6 @@ public class PnrDataDeletionThread extends DataSchedulerThread implements Callab
         boolean success = true;
         try {
             long start = System.nanoTime();
-            logger.info("Starting rule running scheduled task");
             if (getMessageStatuses().isEmpty()) {
                 logger.debug("No messages to process, ending deletion process");
                 return success;
@@ -48,19 +47,19 @@ public class PnrDataDeletionThread extends DataSchedulerThread implements Callab
                     messageAndFlightIds.getMessageIds(),
                     messageAndFlightIds.getFlightIds());
             getDefaultShareConstraint().createFilter(passengers);
-            logger.info("Fetched passengers in.........  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+            logger.debug("Fetched passengers in.........  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             Set<Long> passengerIds = passengers.stream().map(Passenger::getId).collect(Collectors.toSet());
             Set<Document> documents = passengerService.getPassengerDocuments(passengerIds, messageAndFlightIds.getFlightIds());
             DocumentDeletionResult documentDeletionResult = DocumentDeletionResult.processPnrPassengers(documents, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
-            logger.info("document deletion in......");
+            logger.debug("document deletion in......");
             PassengerDeletionResult passengerDeletionResult = PassengerDeletionResult.processPnrPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
             NoteType noteType = noteTypeService.getDeletedNoteType();
             NoteDeletionResult noteDeletionResult = NoteDeletionResult.processPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint(), noteType);
-            logger.info("Processed passengers in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+            logger.debug("Processed passengers in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             PnrFieldsToScrub pnrFieldsToScrub = dataRetentionService.scrubPnrs(messageAndFlightIds.getFlightIds(), messageAndFlightIds.getMessageIds(), getPnrCutOffDate(), getDefaultShareConstraint());
-            logger.info("Scrubbed pnrs in....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+            logger.debug("Scrubbed pnrs in....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             dataRetentionService.deletePnrMessage(noteDeletionResult, pnrFieldsToScrub, documentDeletionResult, passengerDeletionResult, getMessageStatuses());
-            logger.info("Total rule running data deleting task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+            logger.debug("Total rule running data deleting task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
 
         } catch (Exception e) {
             getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.PNR_DELETE_ERROR));

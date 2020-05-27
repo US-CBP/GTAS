@@ -5,6 +5,7 @@ import gov.gtas.enumtype.RetentionPolicyAction;
 import gov.gtas.job.scheduler.*;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
+import gov.gtas.util.LobUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,8 @@ public class DataRetentionServiceImpl implements DataRetentionService {
     private final PassengerDetailRetentionPolicyAuditRepository passengerDetailRetentionPolicyAuditRepository;
 
     private final MessageStatusRepository messageStatusRepository;
+
+    private final MessageRepository<Message> messageRepository;
 
     private final AddressRepository addressRepository;
 
@@ -65,7 +68,7 @@ public class DataRetentionServiceImpl implements DataRetentionService {
                                     DocumentRetentionPolicyAuditRepository documentRetentionPolicyAuditRepository,
                                     PassengerDetailRepository passengerDetailRepository,
                                     PassengerDetailFromMessageRepository passengerDetailFromMessageRepository, PassengerDetailRetentionPolicyAuditRepository passengerDetailRetentionPolicyAuditRepository,
-                                    MessageStatusRepository messageStatusRepository, AddressRepository addressRepository,
+                                    MessageStatusRepository messageStatusRepository, MessageRepository<Message> messageRepository, AddressRepository addressRepository,
                                     AddressDataRetentionPolicyAuditRepository addressDataRetentionPolicyAuditRepository1,
                                     CreditCardRepository creditCardRepository,
                                     CreditCardDataRetentionPolicyAuditRepository creditCardDataRetentionPolicyAuditRepository,
@@ -77,6 +80,7 @@ public class DataRetentionServiceImpl implements DataRetentionService {
         this.passengerDetailFromMessageRepository = passengerDetailFromMessageRepository;
         this.passengerDetailRetentionPolicyAuditRepository = passengerDetailRetentionPolicyAuditRepository;
         this.messageStatusRepository = messageStatusRepository;
+        this.messageRepository = messageRepository;
         this.addressRepository = addressRepository;
         this.addressDataRetentionPolicyAuditRepository = addressDataRetentionPolicyAuditRepository1;
         this.creditCardRepository = creditCardRepository;
@@ -111,6 +115,7 @@ public class DataRetentionServiceImpl implements DataRetentionService {
         saveNoteUpdates(noteDeletionResult);
         saveApisFields(noteDeletionResult, documentDeletionResult, passengerDeletionResult);
         savePnrFields(documentDeletionResult, passengerDeletionResult, pnrFieldsToScrub);
+        processRawPnrMessage(messageStatusList);
         messageStatusList.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.PNR_DATA_DELETED));
         saveMessageStatus(messageStatusList);
     }
@@ -130,8 +135,31 @@ public class DataRetentionServiceImpl implements DataRetentionService {
         saveNoteUpdates(noteDeletionResult);
         saveApisFields(noteDeletionResult, documentDeletionResult, passengerDeletionResult);
         messageStatusList.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.APIS_DATA_DELETED));
+        processRawApisMessage(messageStatusList);
         saveMessageStatus(messageStatusList);
     }
+
+    @Transactional
+    public void processRawPnrMessage(List<MessageStatus> messageStatuses) {
+        Set<Long> mIds = messageStatuses.stream().map(MessageStatus::getMessageId).collect(toSet());
+        Set<Message> messages = messageRepository.messagesWithNoPnrHits(mIds);
+        for (Message m : messages) {
+            m.setRaw(LobUtils.createClob("DELETED"));
+        }
+        messageRepository.saveAll(messages);
+    }
+
+    @Transactional
+    public void processRawApisMessage(List<MessageStatus> messageStatuses) {
+        Set<Long> mIds = messageStatuses.stream().map(MessageStatus::getMessageId).collect(toSet());
+        Set<Message> messages = messageRepository.messagesWithNoApisHits(mIds);
+        for (Message m : messages) {
+            m.setRaw(LobUtils.createClob("DELETED"));
+        }
+        messageRepository.saveAll(messages);
+    }
+
+
 
     @Transactional(readOnly = true)
     public PnrFieldsToScrub scrubPnrs(Set<Long> flightIds, Set<Long> messageIds, Date pnrCutOffDate, GTASShareConstraint gtasShareConstraint) {

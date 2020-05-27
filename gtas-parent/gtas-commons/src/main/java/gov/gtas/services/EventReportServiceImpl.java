@@ -200,13 +200,13 @@ public class EventReportServiceImpl implements EventReportService {
 	
 	public void setFlightHistory(PaxDetailPdfDocRequest paxDetailPdfDocRequest, Long paxId)
 	{
-		List<Passenger> passengerRecList = passengerService.getBookingDetailHistoryByPaxID(paxId);
-		if (passengerRecList != null) {
-			List<FlightVoForFlightHistory> flightVoFHList = PaxDetailVoUtil
-					.copyBookingDetailFlightModelToVo(passengerRecList);
-			paxDetailPdfDocRequest.setFlightHistoryVoList(flightVoFHList);
-		}
-	
+		List<Passenger> passengerRecList = passengerService.getBookingDetailHistoryByPaxID(paxId).stream()
+				.filter(p -> p.getDataRetentionStatus().requiresMaskedPnrAndApisMessage() || p.getDataRetentionStatus().requiresDeletedPnrAndApisMessage())
+				.collect(Collectors.toList());
+
+		List<FlightVoForFlightHistory> flightVoFHList = PaxDetailVoUtil
+				.copyBookingDetailFlightModelToVo(passengerRecList);
+		paxDetailPdfDocRequest.setFlightHistoryVoList(flightVoFHList);
 	}
 	
 	public void setNotes(PaxDetailPdfDocRequest paxDetailPdfDocRequest, Long paxId)

@@ -126,7 +126,9 @@ public class PassengerServiceImpl implements PassengerService {
 			vo.setFlightDestination(passengerFlight.getDestination());
 			vo.setEtd(passengerFlight.getMutableFlightDetails().getEtd());
 			vo.setEta(passengerFlight.getMutableFlightDetails().getEta());
-			if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
+			if (passenger.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
+				vo.deletePII();
+			} else if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
 				vo.maskPII();
 			}
 			rv.add(vo);
@@ -207,15 +209,9 @@ public class PassengerServiceImpl implements PassengerService {
 	}
 
 	@Override
-	@Transactional
-	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef) {
-		return flightRespository.getTravelHistoryByItinerary(pnrId, pnrRef);
-	}
-
-	@Override
-	@Transactional
 	public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef) {
-		return flightRespository.getTravelHistoryNotByItinerary(paxId, pnrId, pnrRef);
+		Optional<Passenger> p = passengerRepository.findById(paxId);
+		return p.map(passenger -> Collections.singletonList(passenger.getFlight())).orElseGet(ArrayList::new);
 	}
 
 	@Override

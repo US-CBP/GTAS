@@ -71,37 +71,54 @@ public class DataRetentionScheduler {
         Date convertedAPISDateDelete = getDate(apisHourLimitDelete);
         Date convertedPnrDateDelete = getDate(pnrHourLimitDelete);
 
+        long pnrJobStart = System.nanoTime();
 
         if (pnrJob) {
             List<MessageStatus> messagesForPnrOutProcess = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedPnrDateMask, pnrMessageStatusForMask);
             if (!messagesForPnrOutProcess.isEmpty()) {
+                long start = System.nanoTime();
                 List<PnrDataMaskThread> list = getRetentionThreads(messagesForPnrOutProcess, convertedAPISDateMask, convertedPnrDateMask,  maxPassengers, PnrDataMaskThread.class);
+                //noinspection UnusedAssignment
                 messagesForPnrOutProcess = null; // Alert to be GC'd.
                 exec.invokeAll(list);
+                logger.info("Pnr data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             }
             List<MessageStatus> messagesToRunDeleteOn = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedPnrDateMask, pnrMessageStatusForDelete);
             if (!messagesToRunDeleteOn.isEmpty()) {
+                long start = System.nanoTime();
                 List<PnrDataDeletionThread> list = getRetentionThreads(messagesToRunDeleteOn, convertedAPISDateDelete, convertedPnrDateDelete,  maxPassengers, PnrDataDeletionThread.class);
                 //noinspection UnusedAssignment
                 messagesToRunDeleteOn = null; // Alert to be GC'd.
                 exec.invokeAll(list);
+                logger.info("Pnr data delete task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+                logger.info("Total Pnr data tasks took  " + (System.nanoTime() - pnrJobStart) / 1000000 + "m/s.");
+
             }
         }
+
+        long apisJobStart = System.nanoTime();
 
         if (apisJob) {
             List<MessageStatus> messagesForAPISMask = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedAPISDateMask, apisMessageStatusForMask);
             if (!messagesForAPISMask.isEmpty()) {
+                long start = System.nanoTime();
                 List<ApisDataMaskThread> list = getRetentionThreads(messagesForAPISMask, convertedAPISDateMask, convertedPnrDateMask, maxPassengers, ApisDataMaskThread.class);
                 //noinspection UnusedAssignment
                 messagesForAPISMask = null; // Alert to be GC'd.
                 exec.invokeAll(list);
+                logger.info("Total Apis data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+
             }
             List<MessageStatus> messagesForAPISDelete = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedAPISDateDelete, apisMessageStatusForDelete);
             if (!messagesForAPISDelete.isEmpty()) {
+                long start = System.nanoTime();
                 List<ApisDataDeletionThread> list = getRetentionThreads(messagesForAPISDelete, convertedAPISDateDelete, convertedPnrDateDelete, maxPassengers, ApisDataDeletionThread.class);
                 //noinspection UnusedAssignment
                 messagesForAPISDelete = null; // Alert to be GC'd.
                 exec.invokeAll(list);
+                logger.info("Total Apis data delete task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+                logger.info("Total running all apis data tasks took  " + (System.nanoTime() - apisJobStart) / 1000000 + "m/s.");
+
             }
         }
     }
@@ -130,7 +147,11 @@ public class DataRetentionScheduler {
                 worker.setApisCutOffDate(apisCutOffDate);
                 worker.setPnrCutOffDate(pnrCutOffDate);
                 worker.setMessageStatuses(ruleThread);
-                worker.setDefaultShareConstraint(new DefaultShareConstraint());
+                if (this.jobSchedulerConfig.getRetainHits()) {
+                    worker.setDefaultShareConstraint(new DefaultShareConstraint());
+                } else {
+                    worker.setDefaultShareConstraint(new RetainNothingShareConstraint());
+                }
                 list.add(worker);
                 ruleThread = new ArrayList<>();
                 runningTotal = 0;
@@ -145,7 +166,11 @@ public class DataRetentionScheduler {
             worker.setMessageStatuses(ruleThread);
             worker.setApisCutOffDate(apisCutOffDate);
             worker.setPnrCutOffDate(pnrCutOffDate);
-            worker.setDefaultShareConstraint(new DefaultShareConstraint());
+            if (this.jobSchedulerConfig.getRetainHits()) {
+                worker.setDefaultShareConstraint(new DefaultShareConstraint());
+            } else {
+                worker.setDefaultShareConstraint(new RetainNothingShareConstraint());
+            }
             list.add(worker);
         }
         return list;

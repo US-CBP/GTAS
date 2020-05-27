@@ -48,7 +48,7 @@ public class ApisDataMaskThread extends DataSchedulerThread implements Callable<
                 DataRetentionStatus drs = p.getDataRetentionStatus();
                 drs.setUpdatedAt(new Date());
                 drs.setUpdatedBy("APIS_MASK");
-                if (!getDefaultShareConstraint().getWhiteListedPassenerIds().contains(p.getId()) || !relevantMessageChecker.isRelevantAPIS()) {
+                if (!getDefaultShareConstraint().getWhiteListedPassenerIds().contains(p.getId()) && !relevantMessageChecker.isRelevantAPIS()) {
                     drs.setMaskedAPIS(true);
                     logger.debug("masked pax id : " + drs.getPassengerId());
                     dataRetentionStatuses.add(drs);

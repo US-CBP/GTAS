@@ -31,7 +31,7 @@ public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
 			@Param("passengerId") Long passengerId);
 
 	@Transactional
-	@Query("SELECT p FROM Passenger p left join fetch p.passengerDetailFromMessages join p.passengerTripDetails ptd where p.flight.id = :flightId  and ptd.reservationReferenceNumber = :refNumber")
+	@Query("SELECT p FROM Passenger p left join fetch p.flight pflight left join fetch p.passengerDetailFromMessages join p.passengerTripDetails ptd where pflight.id = :flightId  and ptd.reservationReferenceNumber = :refNumber")
 	Set<Passenger> findPassengerByApisRef(@Param("refNumber") String refNumber, @Param("flightId") long flightId);
 
 	@Query("SELECT p FROM Passenger p left join fetch p.bags pbags left join fetch pbags.bagMeasurements where p.id = :passengerId and p.flight.id = :flightId")

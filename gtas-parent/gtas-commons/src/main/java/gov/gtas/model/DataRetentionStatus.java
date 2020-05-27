@@ -56,7 +56,15 @@ public class DataRetentionStatus extends BaseEntityAudit {
     }
 
     public boolean requiresMaskedPnrAndApisMessage() {
-        return !((!requiresMaskedPNR() && isHasPnrMessage()) || (!requiresMaskedAPIS() && isHasApisMessage()));
+        return !(hasUnmaskedPnr() || hasUnmaskedAPIS());
+    }
+
+    private boolean hasUnmaskedAPIS() {
+        return !requiresMaskedAPIS() && isHasApisMessage();
+    }
+
+    private boolean hasUnmaskedPnr() {
+        return !requiresMaskedPNR() && isHasPnrMessage();
     }
 
     public boolean requiresDeletedPnrAndApisMessage() {

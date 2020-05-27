@@ -51,6 +51,7 @@ public class JobSchedulerConfig implements SchedulingConfigurer {
 	private static final String RUN_DATA_RETENTION_APIS_JOB = "runDataRetentionApisJob";
 	private static final String RUN_DATA_RETENTION_PNR_JOB = "runDataRetentionPNRJob";
 	private static final String MESSAGE_PASSENGER_OUT_PROCESS_THREAD_LIMIT = "messagePassengerOutProcessThreadLimit";
+	private static final String RETAIN_HITS = "retainHits";
 
 	@Resource
 	private Environment env;
@@ -161,5 +162,10 @@ public class JobSchedulerConfig implements SchedulingConfigurer {
 
 	public int messagePassengerOutProcessThreadLimit() {
 		return Integer.parseInt(env.getRequiredProperty(MESSAGE_PASSENGER_OUT_PROCESS_THREAD_LIMIT));
+	}
+
+    public boolean getRetainHits() {
+		return Boolean.parseBoolean(env.getRequiredProperty(RETAIN_HITS));
+
 	}
 }

@@ -58,7 +58,7 @@ public class PnrDataMaskThread extends DataSchedulerThread implements Callable<B
                 DataRetentionStatus drs = p.getDataRetentionStatus();
                 drs.setUpdatedAt(new Date());
                 drs.setUpdatedBy("PNR_MASK");
-                if (!getDefaultShareConstraint().getWhiteListedPassenerIds().contains(p.getId()) || !relevantMessageChecker.isRelevantPnr()) {
+                if (!getDefaultShareConstraint().getWhiteListedPassenerIds().contains(p.getId()) && !relevantMessageChecker.isRelevantPnr()) {
                     drs.setMaskedPNR(true);
                 }
                 dataRetentionStatuses.add(drs);

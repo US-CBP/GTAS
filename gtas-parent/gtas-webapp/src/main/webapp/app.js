@@ -130,20 +130,23 @@ var app;
 
            //  //For tooltips
            $rootScope.refreshCountryTooltips = function() {
+               localStorage.removeItem("countriesList");
               codeService.getCountryTooltips().then(function(result) {
                 $rootScope.countriesList = result;
               });
-            }
+            };
             $rootScope.refreshAirportTooltips = function() {
-              codeService.getAirportTooltips().then(function(result) {
+                localStorage.removeItem("airportCache");
+                codeService.getAirportTooltips().then(function(result) {
               $rootScope.airportsList = result;
              });
-            }
+            };
           $rootScope.refreshCarrierTooltips = function() {
-            codeService.getCarrierTooltips().then(function(result) {
+              localStorage.removeItem("carriersList");
+              codeService.getCarrierTooltips().then(function(result) {
               $rootScope.carriersList = result;
             });
-          }
+          };
 
           $rootScope.refreshAirportTooltips();
           $rootScope.refreshCarrierTooltips();

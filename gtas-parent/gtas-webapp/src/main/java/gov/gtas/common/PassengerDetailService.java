@@ -93,7 +93,7 @@ public class PassengerDetailService {
             docVo.setIssuanceDate(d.getIssuanceDate());
             if (passenger.getDataRetentionStatus().requiresDeletedAPIS() && d.getMessageType() == MessageType.APIS) {
                 docVo.deletePII();
-            } else if (passenger.getDataRetentionStatus().requiresDeletedPNR() && d.getMessageType() == MessageType.APIS) {
+            } else if (passenger.getDataRetentionStatus().requiresDeletedPNR() && d.getMessageType() == MessageType.PNR) {
                 docVo.deletePII();
             } else if (passenger.getDataRetentionStatus().requiresMaskedAPIS() && d.getMessageType() == MessageType.APIS) {
                 docVo.maskPII();
