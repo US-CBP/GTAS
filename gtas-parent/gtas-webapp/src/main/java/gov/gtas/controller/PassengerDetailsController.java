@@ -323,7 +323,7 @@ public class PassengerDetailsController {
 			Set<Passenger> flightPassengersList = new HashSet<>(allPassengersRelatingToSingleIdTag);
 
 			Set<Pair<Passenger, Flight>> associatedPaxFlights = flightPassengersList.stream()
-					.filter(p -> p.getDataRetentionStatus().requiresMaskedPnrAndApisMessage() || p.getDataRetentionStatus().requiresDeletedPnrAndApisMessage())
+					.filter(p -> !p.getDataRetentionStatus().requiresMaskedPnrAndApisMessage() && !p.getDataRetentionStatus().requiresDeletedPnrAndApisMessage())
 					.map(p -> new ImmutablePair<>(p, p.getFlight()))
 					.collect(Collectors.toSet());
 
