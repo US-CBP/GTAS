@@ -92,6 +92,6 @@ services:
           - node.hostname == gtas-neo4j-node
 
 networks:
-  GTAS_webapp-network:
+  GTAS-webapp-network:
     driver: "overlay"
     attachable: true
