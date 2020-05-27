@@ -92,6 +92,7 @@ public class JPQLGenerator {
 
 				query = queryPrefix + join + " " + Constants.WHERE + " " + where;
 			} else if (queryType == EntityEnum.PASSENGER) {
+				where.append(" and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))");
 
 				queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.PASSENGER.getAlias() + Constants.ID + ", "
 						+ EntityEnum.PASSENGER.getAlias() + ", p.flight " + Constants.FROM + " "

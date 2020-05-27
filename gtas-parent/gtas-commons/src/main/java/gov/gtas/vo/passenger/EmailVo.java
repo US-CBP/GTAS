@@ -5,7 +5,9 @@
  */
 package gov.gtas.vo.passenger;
 
-public class EmailVo {
+import gov.gtas.model.PIIObject;
+
+public class EmailVo implements PIIObject {
 	private String address;
 	private String domain;
 
@@ -23,5 +25,17 @@ public class EmailVo {
 
 	public void setDomain(String domain) {
 		this.domain = domain;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.address = "DELETED";
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.address = "MASKED";
+		return this;
 	}
 }

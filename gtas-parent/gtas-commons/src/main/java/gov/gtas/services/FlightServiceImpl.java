@@ -286,6 +286,16 @@ public class FlightServiceImpl implements FlightService {
 				vo.setFlightNumber(flight.getFlightNumber());
 				vo.setRefNumber(passenger.getPassengerTripDetails().getReservationReferenceNumber());
 				vo.setHasHits(passenger.getHits() != null && passenger.getHits().hasHits());
+
+				if (passenger.getDataRetentionStatus().requiresDeletedAPIS() && seat.getApis()) {
+					vo.deletePII();
+				} else if (passenger.getDataRetentionStatus().requiresMaskedAPIS() && seat.getApis()) {
+					vo.maskPII();
+				} else if (passenger.getDataRetentionStatus().requiresDeletedPNR() && !seat.getApis()) {
+					vo.deletePII();
+				} else if (passenger.getDataRetentionStatus().requiresMaskedPNR() && !seat.getApis()) {
+					vo.maskPII();
+				}
 				seatVos.add(vo);
 			}
 		}
@@ -298,6 +308,7 @@ public class FlightServiceImpl implements FlightService {
 						.collect(Collectors.toList()).stream().map(SeatVo::getNumber).toArray(String[]::new));
 			}
 		});
+
 
 		return seatVos;
 	}

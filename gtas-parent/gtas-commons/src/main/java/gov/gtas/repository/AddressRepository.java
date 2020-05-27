@@ -5,12 +5,14 @@
  */
 package gov.gtas.repository;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import gov.gtas.model.Address;
-import gov.gtas.model.Flight;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public interface AddressRepository extends CrudRepository<Address, Long> {
 	List<Address> findByLine1AndCityAndStateAndPostalCodeAndCountry(String line1, String city, String state,
@@ -18,4 +20,13 @@ public interface AddressRepository extends CrudRepository<Address, Long> {
 
 	List<Address> findByLine1AndCityAndStateAndPostalCodeAndCountryAndFlightId(String line1, String city, String state,
 			String postalCode, String country, Long flightId);
+
+	@Query("SELECT add " +
+			"from Address add " +
+			"left join fetch add.pnrs addPnr " +
+			"left join fetch addPnr.passengers " +
+			"where add.id in :addressIds " +
+			"and add.flightId in :flightIds " +
+			"and addPnr.id in :pnrIds")
+    Set<Address> findAddressesToDelete(@Param("addressIds") Set<Long> addressIds, @Param("flightIds")Set<Long> flightIds, @Param("pnrIds") Set<Long> pnrIds);
 }

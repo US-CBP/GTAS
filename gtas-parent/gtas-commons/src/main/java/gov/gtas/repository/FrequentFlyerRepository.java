@@ -5,12 +5,19 @@
  */
 package gov.gtas.repository;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import gov.gtas.model.FrequentFlyer;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public interface FrequentFlyerRepository extends CrudRepository<FrequentFlyer, Long> {
-	List<FrequentFlyer> findByCarrierAndNumber(String carrier, String number);
+
+	List<FrequentFlyer> findByCarrierAndNumberAndFlightId(String carrier, String number, Long flightId);
+
+	@Query("Select ff from FrequentFlyer ff left join fetch ff.pnrs ffPnrs left join fetch ffPnrs.passengers where ff.id in :ffIds and ffPnrs.id in :pnrIds and ff.flightId in :flightIds")
+    Set<FrequentFlyer> findFrequentFlyers(@Param("ffIds") Set<Long> ffIds, @Param("flightIds")Set<Long> flightIds, @Param("pnrIds") Set<Long> pnrIds);
 }

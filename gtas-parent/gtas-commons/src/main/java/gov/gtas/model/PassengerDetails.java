@@ -10,7 +10,10 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "passenger_details")
-public class PassengerDetails extends BaseEntityAudit {
+public class PassengerDetails extends BaseEntityAudit implements PIIObject {
+
+	private static final String DELETED = "DELETED";
+	private static final String MASKED = "MASKED";
 
 	@SuppressWarnings("unused")
 	public PassengerDetails() {
@@ -240,6 +243,53 @@ public class PassengerDetails extends BaseEntityAudit {
 			return other.middleName == null;
 		} else
 			return middleName.equals(other.middleName);
+	}
 
+	public static PassengerDetails from(PassengerDetailFromMessage pdfm) {
+		PassengerDetails pd = new PassengerDetails();
+		pd.setAge(pdfm.getAge());
+		pd.setDob(pdfm.getDob());
+		pd.setDeleted(pd.getDeleted());
+		pd.setFirstName(pdfm.getFirstName());
+		pd.setLastName(pdfm.getLastName());
+		pd.setGender(pdfm.getGender());
+		pd.setMiddleName(pdfm.getMiddleName());
+		pd.setResidencyCountry(pdfm.getResidencyCountry());
+		pd.setNationality(pdfm.getNationality());
+		pd.setSuffix(pdfm.getSuffix());
+		pd.setTitle(pdfm.getTitle());
+		return pd;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.setAge(null);
+		this.setDob(null);
+		this.setDeleted(null);
+		this.setFirstName(DELETED);
+		this.setLastName(DELETED);
+		this.setGender(DELETED);
+		this.setMiddleName(DELETED);
+		this.setResidencyCountry(DELETED);
+		this.setNationality(DELETED);
+		this.setSuffix(DELETED);
+		this.setTitle(DELETED);
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.setAge(null);
+		this.setDob(null);
+		this.setDeleted(null);
+		this.setFirstName(MASKED);
+		this.setLastName(MASKED);
+		this.setGender(MASKED);
+		this.setMiddleName(MASKED);
+		this.setResidencyCountry(MASKED);
+		this.setNationality(MASKED);
+		this.setSuffix(MASKED);
+		this.setTitle(MASKED);
+		return this;
 	}
 }

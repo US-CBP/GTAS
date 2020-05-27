@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import gov.gtas.model.PIIObject;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -17,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import gov.gtas.vo.BaseVo;
 
-public class PassengerVo extends BaseVo {
+public class PassengerVo extends BaseVo implements PIIObject {
 	private SimpleDateFormat dtFormat = new SimpleDateFormat(FlightVo.DATE_FORMAT);
 
 	private String title;
@@ -69,6 +70,7 @@ public class PassengerVo extends BaseVo {
 	private FlightHistoryVo flightHistoryVo;
 	private PnrVo pnrVo;
 	private ApisMessageVo apisMessageVo;
+	private boolean disableLinks = false;
 
 	private List<DispositionVo> dispositionHistory;
 
@@ -488,5 +490,84 @@ public class PassengerVo extends BaseVo {
 
 	public void setOnGraphHitList(Boolean onGraphHitList) {
 		this.onGraphHitList = onGraphHitList;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.age = null;
+		this.nationality = null;
+		this.dob = null;
+		this.gender = null;
+		this.firstName = "Deleted";
+		this.lastName = "Deleted";
+		this.middleName = "Deleted";
+		this.deleted = true;
+		this.title = "D";
+		this.suffix = "D";
+		this.disableLinks = true;
+
+		if (this.passengers != null) {
+			for (PassengerVo passengerVo : passengers) {
+				if (!this.equals(passengerVo)) {
+					passengerVo.deletePII();
+				}
+			}
+		}
+
+		if (documents != null) {
+			for (DocumentVo documentVo : documents) {
+				documentVo.deletePII();
+			}
+		}
+		if (this.apisMessageVo != null) {
+			this.apisMessageVo.deletePII();
+		}
+		if (this.pnrVo != null) {
+			this.pnrVo.deletePII();
+		}
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.age = null;
+		this.nationality = null;
+		this.dob = null;
+		this.gender = null;
+		this.firstName = "Masked";
+		this.lastName = "Masked";
+		this.middleName = "Masked";
+		this.deleted = false;
+		this.title = null;
+		this.suffix = null;
+		this.disableLinks = true;
+		if (this.passengers != null) {
+			for (PassengerVo passengerVo : passengers) {
+				if (!this.equals(passengerVo)) {
+					passengerVo.maskPII();
+				}
+			}
+		}
+
+		if (documents != null) {
+			for (DocumentVo documentVo : documents) {
+				documentVo.maskPII();
+			}
+		}
+		if (this.apisMessageVo != null) {
+			this.apisMessageVo.maskPII();
+		}
+		if (this.pnrVo != null) {
+			this.pnrVo.maskPII();
+		}
+		return this;
+	}
+
+	public boolean isDisableLinks() {
+		return disableLinks;
+	}
+
+	public void setDisableLinks(boolean disableLinks) {
+		this.disableLinks = disableLinks;
 	}
 }

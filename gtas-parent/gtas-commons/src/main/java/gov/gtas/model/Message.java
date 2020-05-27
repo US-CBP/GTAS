@@ -18,6 +18,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "message")
 @Inheritance(strategy = InheritanceType.JOINED)
+//@NamedEntityGraph(name = "messageRetention", attributeNodes = { @NamedAttributeNode("id"),
+//		@NamedAttributeNode(("createDate")) })
 public class Message extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
@@ -50,6 +52,13 @@ public class Message extends BaseEntity {
 
 	@Column(length = 4000)
 	private String error;
+
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "message")
+	private Set<PassengerDetailFromMessage> passengerDetailFromMessages = new HashSet<>();
+
+	@ManyToMany
+	@JoinTable(name = "message_document", joinColumns = @JoinColumn(name = "document_id"), inverseJoinColumns = @JoinColumn(name = "message_id"))
+	private Set<Document> documents = new HashSet<>();
 
 	@Column(name = "passenger_count")
 	protected Integer passengerCount;
@@ -165,5 +174,21 @@ public class Message extends BaseEntity {
 			return false;
 		final Message other = (Message) obj;
 		return Objects.equals(this.hashCode, other.hashCode);
+	}
+
+	public Set<PassengerDetailFromMessage> getPassengerDetailFromMessages() {
+		return passengerDetailFromMessages;
+	}
+
+	public void setPassengerDetailFromMessages(Set<PassengerDetailFromMessage> passengerDetailFromMessages) {
+		this.passengerDetailFromMessages = passengerDetailFromMessages;
+	}
+
+	public Set<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(Set<Document> documents) {
+		this.documents = documents;
 	}
 }

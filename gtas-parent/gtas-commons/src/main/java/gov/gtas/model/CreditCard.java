@@ -23,7 +23,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "credit_card")
-public class CreditCard extends BaseEntityAudit {
+public class CreditCard extends BaseEntityAudit implements PIIObject{
 	private static final long serialVersionUID = 1L;
 
 	public CreditCard() {
@@ -144,6 +144,24 @@ public class CreditCard extends BaseEntityAudit {
 			return false;
 		final CreditCard other = (CreditCard) obj;
 		return Objects.equals(this.cardType, other.cardType) && Objects.equals(this.number, other.number)
-				&& Objects.equals(this.expiration, other.expiration);
+				&& Objects.equals(this.expiration, other.expiration) && Objects.equals(this.accountHolder, other.accountHolder)
+				&& (Objects.equals(this.accountHolderAddress, other.accountHolderAddress)) && Objects.equals(this.accountHolderPhone, other.accountHolderPhone);
 	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.number = "DELETED";
+		this.accountHolder = "DELETED";
+		this.accountHolderAddress = "DELETED";
+		this.accountHolderPhone = "DELETED";
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.number = "XXXX";
+		this.accountHolder = "XXXX";
+		this.accountHolderAddress = "XXXX";
+		this.accountHolderPhone = "XXXX";
+		return this;	}
 }

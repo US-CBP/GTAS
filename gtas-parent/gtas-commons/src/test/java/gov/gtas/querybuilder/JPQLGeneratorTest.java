@@ -102,9 +102,14 @@ public class JPQLGeneratorTest {
 
 	@Test
 	public void testNotInWhereClauseForEmail() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join" +
-				" p.flight f  left join p.pnrs pnr left join pnr.emails e where (e.domain not in (?1) and " +
-				"pnr.id not in (select pnr.id from Pnr pnr left join pnr.emails e where e.domain in (?1)))";
+		String expectedQuery = "select distinct p.id, p, p.flight " +
+				"from Passenger p left join p.flight f  left join p.pnrs pnr " +
+				"left join pnr.emails e where (e.domain not in (?1) and pnr.id " +
+				"not in (select pnr.id from Pnr pnr left join pnr.emails e where e.domain" +
+				" in (?1))) and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true))" +
+				" and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true)" +
+				" or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -128,8 +133,14 @@ public class JPQLGeneratorTest {
 
 	@Test
 	public void testInWhereClauseForEmail() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f  " +
-				"left join p.pnrs pnr left join pnr.emails e where (e.domain in ?1)";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p " +
+				"left join p.flight f  left join p.pnrs pnr left join pnr.emails e " +
+				"where (e.domain in ?1) and (((p.dataRetentionStatus.maskedAPIS = false " +
+				"and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) " +
+				"and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.deletedPNR = false " +
+				"and p.dataRetentionStatus.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -153,9 +164,16 @@ public class JPQLGeneratorTest {
 
 	@Test
 	public void testNotEqualsWhereClauseForEmail() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join" +
-				" p.flight f  left join p.pnrs pnr left join pnr.emails e where (e.domain not in (?1) and " +
-				"pnr.id not in (select pnr.id from Pnr pnr left join pnr.emails e where e.domain in (?1)))";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p " +
+				"left join p.flight f  left join p.pnrs pnr " +
+				"left join pnr.emails e " +
+				"where (e.domain not in (?1) and pnr.id not in " +
+				"(select pnr.id from Pnr pnr left join pnr.emails e where e.domain in " +
+				"(?1))) and " +
+				"(((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) " +
+				"and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -179,8 +197,14 @@ public class JPQLGeneratorTest {
 
 	@Test
 	public void testEqualsWhereClauseForEmail() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f" +
-				"  left join p.pnrs pnr left join pnr.emails e where (e.domain = ?1)";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p " +
+				"left join p.flight f  " +
+				"left join p.pnrs pnr " +
+				"left join pnr.emails e where (e.domain = ?1) and " +
+				"(((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true))" +
+				" and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true)" +
+				" or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -204,8 +228,15 @@ public class JPQLGeneratorTest {
 
 	@Test
 	public void testNotInWhereClauseForDocument() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f" +
-				"  join p.documents d where (d.type not in (?1) and p.id not in (select p.id from Passenger p left join p.documents d where d.type in (?1)))";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p " +
+				"left join p.flight f  " +
+				"join p.documents d " +
+				"where (d.type not in (?1) " +
+				"and p.id not in (select p.id from Passenger p left join p.documents d where d.type in (?1))) " +
+				"and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) " +
+				"and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -229,7 +260,12 @@ public class JPQLGeneratorTest {
 
 	@Test
 	public void testInWhereClauseForDocument() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f  join p.documents d where (d.type in ?1)";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p " +
+				"left join p.flight f  join p.documents d where (d.type in ?1) " +
+				"and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true)" +
+				" or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true))" +
+				" and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -253,8 +289,15 @@ public class JPQLGeneratorTest {
 
 	@Test
 	public void testNotEqualsWhereClauseForDocument() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f  " +
-				"join p.documents d where (d.type not in (?1) and p.id not in (select p.id from Passenger p left join p.documents d where d.type in (?1)))";
+		String expectedQuery = "select distinct p.id, p, " +
+				"p.flight from Passenger p " +
+				"left join p.flight f  join p.documents d " +
+				"where (d.type not in (?1) " +
+				"and p.id not in (select p.id from Passenger p left join p.documents d where d.type in (?1))) " +
+				"and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) " +
+				"and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -278,7 +321,14 @@ public class JPQLGeneratorTest {
 
 	@Test
 	public void testEqualsWhereClauseForDocument() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p left join p.flight f  join p.documents d where (d.type = ?1)";
+		String expectedQuery = "select distinct p.id, p, " +
+				"p.flight from Passenger p " +
+				"left join p.flight f  join p.documents d " +
+				"where (d.type = ?1) " +
+				"and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) " +
+				"and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
+				"or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();

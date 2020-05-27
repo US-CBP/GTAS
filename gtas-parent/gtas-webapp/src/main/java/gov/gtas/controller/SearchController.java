@@ -50,7 +50,7 @@ public class SearchController {
 			@RequestParam(value = "column") String column, @RequestParam(value = "dir") String dir)
 			throws InvalidQueryException {
 
-		Passenger pax = paxService.findByIdWithFlightAndDocuments(paxId);
+		Passenger pax = paxService.findByIdWithFlightAndDocumentsAndMessageDetails(paxId);
 		LinkAnalysisDto queryResults = searchService.findPaxLinks(pax, pageNumber, pageSize, column, dir);
 		return new JsonServiceResponse(Status.SUCCESS, "success", queryResults);
 	}
