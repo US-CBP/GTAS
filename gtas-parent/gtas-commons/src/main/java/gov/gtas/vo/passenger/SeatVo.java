@@ -5,7 +5,9 @@
  */
 package gov.gtas.vo.passenger;
 
-public class SeatVo {
+import gov.gtas.model.PIIObject;
+
+public class SeatVo implements PIIObject {
 	private String number;
 	private Boolean apis = Boolean.valueOf(false);
 	private String flightNumber;
@@ -138,6 +140,24 @@ public class SeatVo {
 
 	public void setRefNumber(String refNumber) {
 		this.refNumber = refNumber;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.firstName = "DELETED";
+		this.lastName = "DELETED";
+		this.coTravellers = new String [0];
+		this.middleInitial = null;
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.firstName = "MASKED";
+		this.lastName = "MASKED";
+		this.coTravellers = new String [0];
+		this.middleInitial = null;
+		return this;
 	}
 
 }

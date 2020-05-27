@@ -33,8 +33,8 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 
 	@Query("SELECT p FROM Passenger p " + "left join fetch p.passengerTripDetails "
 			+ "left join fetch p.passengerDetails " + "left join fetch p.documents "
-			+ "left join fetch p.flight " + "WHERE p.id = :id")
-	Passenger findByIdWithFlightAndDocuments(@Param("id") Long id);
+			+ "left join fetch p.flight left join fetch p.passengerDetailFromMessages " + "WHERE p.id = :id")
+	Passenger findByIdWithFlightAndDocumentsAndMessageDetails(@Param("id") Long id);
 	
 	@Query("SELECT p FROM Passenger p " + "left join fetch p.passengerTripDetails "
 			+ "left join fetch p.passengerDetails " + "left join fetch p.documents "
@@ -94,4 +94,21 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 	@Query("SELECT p from Passenger p where p.id in :paxIds")
     Set<Passenger> getPassengersForEmailDto(@Param("paxIds") Set<Long> paxIds);
 
+
+	@Query("SELECT p FROM Passenger p " + " LEFT JOIN FETCH p.dataRetentionStatus "
+			+ " LEFT JOIN FETCH p.flight " + " LEFT JOIN fetch p.apisMessage am " + " LEFT JOIN fetch p.pnrs pnr "
+			+ "LEFT JOIN FETCH p.hitDetails "
+			+ " WHERE (p.flight.id in :flightIds" + " AND (am.id IN :messageIds "
+			+ "       OR pnr.id IN :messageIds)) ")
+	Set<Passenger> getPassengerIncludingHitsByMessageId(@Param("messageIds") Set<Long> messageIds, @Param("flightIds") Set<Long> flightIds);
+
+	@Query("SELECT p FROM Passenger p " + " LEFT JOIN FETCH p.dataRetentionStatus left join fetch p.passengerDetailFromMessages"
+			+ " LEFT JOIN FETCH p.flight " + " LEFT JOIN fetch p.apisMessage am " + " LEFT JOIN fetch p.pnrs pnr "
+			+ "LEFT JOIN FETCH p.hitDetails LEFT JOIN FETCH p.notes pnotes left join fetch pnotes.noteType "
+			+ " WHERE (p.flight.id in :flightIds" + " AND (am.id IN :messageIds "
+			+ "       OR pnr.id IN :messageIds)) ")
+	Set<Passenger> getFullPassengerIncludingHitsByMessageId(@Param("messageIds") Set<Long> messageIds, @Param("flightIds") Set<Long> flightIds);
+
+	@Query("Select p from Passenger p left join fetch p.bags where p.id in :passengerIds and p.flight.id = :flightId")
+    Set<Passenger> getDocumentsByPaxIdFlightId(@Param("passengerIds")Set<Long> passengerIds, @Param("flightId")Long flightId);
 }

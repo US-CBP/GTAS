@@ -35,6 +35,15 @@ public class Passenger extends BaseEntityAudit {
 			CascadeType.PERSIST }, targetEntity = PassengerTripDetails.class, fetch = FetchType.LAZY, mappedBy = "passenger", optional = false)
 	private PassengerTripDetails passengerTripDetails;
 
+	@OneToOne(cascade = {
+			CascadeType.PERSIST }, targetEntity = DataRetentionStatus.class, mappedBy = "passenger", optional = false)
+	private DataRetentionStatus dataRetentionStatus = new DataRetentionStatus(this);
+
+	@OneToMany(cascade = {
+			CascadeType.PERSIST }, mappedBy = "passenger", targetEntity = PassengerDetailFromMessage.class, fetch = FetchType.LAZY)
+	private Set<PassengerDetailFromMessage> passengerDetailFromMessages = new HashSet<>();
+
+
 	@OneToOne(mappedBy = "passenger", targetEntity = PassengerWLTimestamp.class, fetch = FetchType.LAZY)
 	private PassengerWLTimestamp passengerWLTimestamp;
 
@@ -81,6 +90,9 @@ public class Passenger extends BaseEntityAudit {
 	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
 	private Set<Notification> notifications = new HashSet<>();
 
+	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<PassengerNote> notes = new HashSet<>();
+
 	@Type(type = "uuid-char")
 	@Column(name = "uuid", updatable = false)
 	private UUID uuid = UUID.randomUUID();
@@ -95,6 +107,13 @@ public class Passenger extends BaseEntityAudit {
 	@Transient
 	private UUID parserUUID;
 
+	public Set<PassengerNote> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(Set<PassengerNote> notes) {
+		this.notes = notes;
+	}
 	public UUID getParserUUID() {
 		return parserUUID;
 	}
@@ -281,5 +300,21 @@ public class Passenger extends BaseEntityAudit {
 
 	public void setHitViewStatuses(Set<HitViewStatus> hitViewStatuses) {
 		this.hitViewStatuses = hitViewStatuses;
+	}
+
+	public DataRetentionStatus getDataRetentionStatus() {
+		return dataRetentionStatus;
+	}
+
+	public void setDataRetentionStatus(DataRetentionStatus dataRetentionStatus) {
+		this.dataRetentionStatus = dataRetentionStatus;
+	}
+
+	public Set<PassengerDetailFromMessage> getPassengerDetailFromMessages() {
+		return passengerDetailFromMessages;
+	}
+
+	public void setPassengerDetailFromMessages(Set<PassengerDetailFromMessage> passengerDetailFromMessages) {
+		this.passengerDetailFromMessages = passengerDetailFromMessages;
 	}
 }

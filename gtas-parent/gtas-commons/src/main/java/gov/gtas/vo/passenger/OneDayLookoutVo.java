@@ -1,8 +1,9 @@
 package gov.gtas.vo.passenger;
 
+import gov.gtas.model.PIIObject;
 import gov.gtas.vo.BaseVo;
 
-public class OneDayLookoutVo extends BaseVo {
+public class OneDayLookoutVo extends BaseVo implements PIIObject {
 
 	private Long paxId;
 	private Long caseId;
@@ -140,4 +141,21 @@ public class OneDayLookoutVo extends BaseVo {
 		this.caseId = caseId;
 	}
 
+	@Override
+	public PIIObject deletePII() {
+		this.firstName = "DELETED";
+		this.lastName = "DELETED";
+		this.document = "DELETED";
+		this.name = "DELETED";
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.firstName = "MASKED";
+		this.lastName = "MASKED";
+		this.document = "MASKED";
+		this.name = "MASKED";
+		return this;
+	}
 }

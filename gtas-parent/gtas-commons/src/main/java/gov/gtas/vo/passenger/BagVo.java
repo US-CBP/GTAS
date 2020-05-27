@@ -6,8 +6,13 @@
 package gov.gtas.vo.passenger;
 
 import gov.gtas.model.Bag;
+import gov.gtas.model.BookingDetail;
+import gov.gtas.model.PIIObject;
 
-public class BagVo {
+import java.util.HashSet;
+import java.util.Set;
+
+public class BagVo  {
 	private String bagId;
 	private Long flightId;
 	private Long bookingDetailId;
@@ -17,8 +22,6 @@ public class BagVo {
 	private double bag_weight;
 	private int bag_count = 0;
 	private Long passengerId;
-	private String passFirstName;
-	private String passLastName;
 	private boolean headPool;
 	private boolean isPrime;
 
@@ -47,6 +50,22 @@ public class BagVo {
 		bagVo.setHeadPool(bag.isHeadPool());
 		bagVo.setFlightId(bag.getFlight().getId());
 		return bagVo;
+	}
+
+	public static Set<BagVo> fromBags(Set<Bag> bags) {
+		Set<BagVo> bagVos = new HashSet<>();
+		for (Bag bag : bags) {
+			if (bag.isPrimeFlight()) {
+				BagVo bagVo = BagVo.fromBag(bag);
+				bagVos.add(bagVo);
+			}
+			for (BookingDetail detail : bag.getBookingDetail()) {
+				BagVo bagVo = BagVo.fromBag(bag);
+				bagVo.setBookingDetailId(detail.getId());
+				bagVos.add(bagVo);
+			}
+		}
+		return bagVos;
 	}
 
 	public String getDestination() {
@@ -101,24 +120,8 @@ public class BagVo {
 		this.bag_count = bag_count;
 	}
 
-	public void setPassFirstName(String passFirstName) {
-		this.passFirstName = passFirstName;
-	}
-
 	public int getBag_count() {
 		return bag_count;
-	}
-
-	public String getPassFirstName() {
-		return passFirstName;
-	}
-
-	public String getPassLastName() {
-		return passLastName;
-	}
-
-	public void setPassLastName(String passLastName) {
-		this.passLastName = passLastName;
 	}
 
 	public double getBag_weight() {

@@ -269,49 +269,65 @@
       },
 
 
-      getCountryTooltips: function() {
-        return this.getAllCodes('country').then(function(response){
-
+        getCountryTooltips: function () {
+            if (localStorage.getItem("countriesList") !== null) {
+                const response = JSON.parse(localStorage.getItem("countriesList"));
+                return Promise.resolve(response.map(x => ({id: x.iso3, name: getTidyName(x.name)})));
+            } else {
+                return this.getAllCodes('country').then(function (response) {
           if (Array.isArray(response)) {
+                        localStorage.setItem("countriesList", JSON.stringify(response));
             return response.map(x => ({id: x.iso3, name: getTidyName(x.name)}));
           }
-          else {
-            return;
-          }
         }, handleError);
-      },
-
-      getCarrierTooltips: function() {
-          return this.getAllCodes('carrier').then(function(response){
-            if (Array.isArray(response)) {
-              return response.map(x => ({id: x.iata, name: getTidyName(x.name)}));
             }
-            else return;
-
-        }, handleError);
       },
 
-      getAirportTooltips: function() {
-        return this.getAllCodes('airport').then(function(response) {
+        getCarrierTooltips: function () {
+            if (localStorage.getItem("carriersList") !== null) {
+                return Promise.resolve(JSON.parse(localStorage.getItem("carriersList")));
+            } else {
+                return this.getAllCodes('carrier').then(function (response) {
+            if (Array.isArray(response)) {
+                        const list = response.map(x => ({id: x.iata, name: getTidyName(x.name)}));
+                        localStorage.setItem("carrier", JSON.stringify(response));
+                        return list;
+                    } else return;
 
+        }, handleError);
+            }
+      },
+
+        getAirportTooltips: function () {
+            if (localStorage.getItem("airportCache") !== null) {
+                console.log(JSON.parse(localStorage.getItem("airportCache")));
+                let list = JSON.parse(localStorage.getItem("airportCache"));
+                return Promise.resolve(list.map(x => ({id: x.iata, name: x.name + ', ' + x.city + ', ' + x.country})));
+            } else {
+                return this.getAllCodes('airport').then(function (response) {
+                    console.log(response);
+                    localStorage.setItem("airportCache", JSON.stringify(response));
           if (Array.isArray(response)) {
             return response.map(x => ({id: x.iata, name: x.name + ', ' + x.city + ', ' + x.country}));
           }
-          else {
-            return;
-          }
         }, handleError);
+            }
       },
 
-      getAirportsWithCode: function() {
-        return this.getAllCodes('airport').then(function(response) {
+        getAirportsWithCode: function () {
+            if (localStorage.getItem("airportCache") !== null) {
+                const list = JSON.parse(localStorage.getItem("airportCache"));
+                return Promise.resolve(list.map(x => ({id: x.iata, name: x.name + '  (' + x.iata + ')'})));
+            } else {
+                return this.getAllCodes('airport').then(function (response) {
+                    localStorage.setItem("airportCache", JSON.stringify(response));
           if (Array.isArray(response)) {
             return response.map(x => ({id: x.iata, name: x.name + '  (' + x.iata + ')'}));
-          }
-          else return;
+                    } else return;
 
         }, handleError);
       }
+        }
 
 
       };    // return codeService
@@ -1058,7 +1074,13 @@
                     name: "description",
                     displayName: "Description",
                     type: "string"
-                  }
+                  },
+                    {
+                        field: "severity",
+                        name: "severity",
+                        displayName: "Severity",
+                        type: "string"
+                    }
                 ],
                   NOTE_TYPE: [
                       {
@@ -1819,5 +1841,25 @@
           getHistoricalNotes:getHistoricalNotes,
           getNoteTypes:getNoteTypes
         });
+      })
+      .service("pendingHitDetailsService", function($http, $q){
+
+          function createManualPvl(paxId, flightId, hitCategoryId, desc){
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'post',
+                  params: {
+                      paxId : paxId,
+                      flightId : flightId,
+                      hitCategoryId : hitCategoryId,
+                      desc : desc
+                  },
+                  url: "/gtas/createmanualpvl"
+              }));
+              return dfd.promise
+          }
+          return({
+              createManualPvl:createManualPvl
+          });
       });
   }());

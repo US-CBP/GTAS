@@ -5,14 +5,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "code_share_flight")
@@ -39,6 +32,13 @@ public class CodeShareFlight implements Serializable {
 	@Column(name = "operating_flight_number")
 	private String operatingFlightNumber;
 
+	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
+	private Long flightId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+	private Flight flight;
+
 	public Long getId() {
 		return id;
 	}
@@ -49,6 +49,24 @@ public class CodeShareFlight implements Serializable {
 
 	@ManyToMany(mappedBy = "codeshares", targetEntity = Pnr.class)
 	private Set<Pnr> pnrs = new HashSet<>();
+
+
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
+
+	public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
 
 	public String getOperatingFlightNumber() {
 		return operatingFlightNumber;
