@@ -385,10 +385,11 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 	public void createDocumentsSection(PDDocument document, PDPage passengerDetailPage,
 			PaxDetailPdfDocRequest paxDetailPdfDocRequest) throws Exception {
 
-		final float DOCUMENT_COLUMN_1 = 25;
-		final float DOCUMENT_COLUMN_2 = 25;
-		final float DOCUMENT_COLUMN_3 = 25;
-		final float DOCUMENT_COLUMN_4 = 25;
+		final float DOCUMENT_COLUMN_1 = 20;
+		final float DOCUMENT_COLUMN_2 = 20;
+		final float DOCUMENT_COLUMN_3 = 20;
+		final float DOCUMENT_COLUMN_4 = 20;
+		final float DOCUMENT_COLUMN_5 = 20;
 
 		List<DocumentVo> documentList = paxDetailPdfDocRequest.getPassengerVo().getDocuments();
 
@@ -400,6 +401,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_2, DOC_TABLE_COLUMN_LABEL_TYPE);
 		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_3, DOC_TABLE_COLUMN_LABEL_ISS_CTRY);
 		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_4, DOC_TABLE_COLUMN_LABEL_EXP_DATE);
+		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_5, DOC_TABLE_COLUMN_LABEL_SOURCE);
 
 		// Document data
 		Row<PDPage> documentDataRow;
@@ -412,9 +414,9 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 				this.createFirstColoredCell(documentDataRow, DOCUMENT_COLUMN_1, documentVo.getDocumentNumber(), i);
 				this.createColoredCell(documentDataRow, DOCUMENT_COLUMN_2, documentVo.getDocumentType(), i);
 				this.createColoredCell(documentDataRow, DOCUMENT_COLUMN_3, documentVo.getIssuanceCountry(), i);
-				this.createLastColoredCell(documentDataRow, DOCUMENT_COLUMN_4,
-						reportDateFormatter(documentVo.getExpirationDate()), i);
-
+				this.createColoredCell(documentDataRow, DOCUMENT_COLUMN_4, reportDateFormatter(documentVo.getExpirationDate()), i);
+				this.createLastColoredCell(documentDataRow, DOCUMENT_COLUMN_5,
+						documentVo.getMessageType(), i);
 			}
 		}
 

@@ -33,7 +33,8 @@ public class EventReportConstants {
 	final public static String DOC_TABLE_COLUMN_LABEL_TYPE = "Type";
 	final public static String DOC_TABLE_COLUMN_LABEL_ISS_CTRY= "Issue Country";
 	final public static String DOC_TABLE_COLUMN_LABEL_EXP_DATE= "Exp. Date";
-			
+	final public static String DOC_TABLE_COLUMN_LABEL_SOURCE= "Source";
+
 	
 	/*EVENT HIT INFORMATION COLUMN HEADER TEXT */
 	
