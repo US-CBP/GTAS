@@ -246,6 +246,7 @@ public class PaxDetailVoUtil {
 						documentVo.setIssuanceCountry(d.getIssuanceCountry());
 						documentVo.setDocumentNumber(d.getDocumentNumber());
 						documentVo.setIssuanceDate(d.getIssuanceDate());
+						documentVo.setMessageType(d.getMessageType() == null ? "" : d.getMessageType().toString());
 						documentVo.setExpirationDate(d.getExpirationDate());
 						target.getDocuments().add(documentVo);
 					}

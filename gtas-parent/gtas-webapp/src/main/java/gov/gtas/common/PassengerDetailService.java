@@ -91,6 +91,7 @@ public class PassengerDetailService {
             docVo.setIssuanceCountry(d.getIssuanceCountry());
             docVo.setExpirationDate(d.getExpirationDate());
             docVo.setIssuanceDate(d.getIssuanceDate());
+            docVo.setMessageType(d.getMessageType() == null ? "" : d.getMessageType().toString());
             if (passenger.getDataRetentionStatus().requiresDeletedAPIS() && d.getMessageType() == MessageType.APIS) {
                 docVo.deletePII();
             } else if (passenger.getDataRetentionStatus().requiresDeletedPNR() && d.getMessageType() == MessageType.PNR) {

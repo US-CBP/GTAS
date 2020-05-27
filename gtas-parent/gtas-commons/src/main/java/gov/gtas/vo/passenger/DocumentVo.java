@@ -21,6 +21,7 @@ public class DocumentVo implements PIIObject {
 	private String issuanceCountry;
 	private String firstName;
 	private String lastName;
+	private String messageType;
 
 	public String getDocumentType() {
 		return documentType;
@@ -85,6 +86,7 @@ public class DocumentVo implements PIIObject {
 		docVo.setIssuanceCountry(document.getIssuanceCountry());
 		docVo.setExpirationDate(document.getExpirationDate());
 		docVo.setIssuanceDate(document.getIssuanceDate());
+		docVo.setMessageType(document.getMessageType() == null ? "" : document.getMessageType().toString());
 		return docVo;
 	}
 
@@ -102,5 +104,13 @@ public class DocumentVo implements PIIObject {
 		this.setFirstName("MASKED");
 		this.setLastName("MASKED");
 		return this;
+	}
+
+	public String getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(String messageType) {
+		this.messageType = messageType;
 	}
 }

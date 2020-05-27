@@ -89,6 +89,7 @@ public class EventReportServiceImpl implements EventReportService {
 				documentVo.setIssuanceCountry(document.getIssuanceCountry());
 				documentVo.setExpirationDate(document.getExpirationDate());
 				documentVo.setIssuanceDate(document.getIssuanceDate());
+				documentVo.setMessageType(document.getMessageType() == null ? "" : document.getMessageType().toString());
 				if (passenger.getDataRetentionStatus().requiresDeletedAPIS() && document.getMessageType() == MessageType.APIS) {
 					documentVo.deletePII();
 				} else if (passenger.getDataRetentionStatus().requiresMaskedAPIS() && document.getMessageType() == MessageType.APIS) {
