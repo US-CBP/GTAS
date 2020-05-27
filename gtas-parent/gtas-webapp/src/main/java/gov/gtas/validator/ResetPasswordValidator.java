@@ -14,6 +14,7 @@ public class ResetPasswordValidator implements Validator {
 
     public static final String INVALID_CREDENTIALS_REQUEST_ERROR = "Invalid request. Please try again.";
     public static final String MATCHING_PWORDS_ERROR = "The confirmation password does not match the new password entered.";
+    public static final String USER_NAME = "username";
 
     @Autowired
     private UserRepository userRepository;
@@ -30,22 +31,22 @@ public class ResetPasswordValidator implements Validator {
         User user = userRepository.findOne(dto.getUsername());
 
         if(user == null) {
-            e.reject("username", INVALID_CREDENTIALS_REQUEST_ERROR);
+            e.reject(USER_NAME, INVALID_CREDENTIALS_REQUEST_ERROR);
             return;
         }
 
         if(!StringUtils.equals(user.getResetToken(), dto.getResetToken())
                 || StringUtils.equals(dto.getPassword(), user.getPassword())) {
-            e.reject("pass" + "word", INVALID_CREDENTIALS_REQUEST_ERROR);
+            e.reject(USER_NAME, INVALID_CREDENTIALS_REQUEST_ERROR);
         }
 
         String[] errors = PasswordValidator.validate(dto.getPassword());
         if(errors.length > 0) {
-            e.reject("password", errors[0]);
+            e.reject(USER_NAME, errors[0]);
         }
 
         if(!StringUtils.equals(dto.getPassword(), dto.getPasswordConfirm())) {
-            e.reject("password", MATCHING_PWORDS_ERROR);
+            e.reject(USER_NAME, MATCHING_PWORDS_ERROR);
         }
 
     }
