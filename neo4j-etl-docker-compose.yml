@@ -13,12 +13,12 @@ services:
       DB_HOSTNAME: mariadb
     restart: always
     secrets:
-      - mysql_etl_user
-      - mysql_etl_password
-      - etl_neo4j_user
-      - etl_neo4j_password
+      - mysql-etl-user
+      - mysql-etl-password
+      - etl-neo4j-user
+      - etl-neo4j-password
     networks: 
-      - GTAS_webapp-network
+      - GTAS-webapp-network
     deploy:
       placement:
         constraints:
@@ -39,21 +39,21 @@ services:
       - 7474:7474   
       - 7687:7687
     networks: 
-      - GTAS_webapp-network
+      - GTAS-webapp-network
 
 volumes:
    neo4j-data:
 
 networks:
-  GTAS_webapp-network:
+  GTAS-webapp-network:
     attachable: true
 
 secrets:
-  mysql_etl_user:
+  mysql-etl-user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_etl_user.txt
-  mysql_etl_password:
+  mysql-etl-password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_etl_password.txt
-  etl_neo4j_user:
+  etl-neo4j-user:
     file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_user.txt
-  etl_neo4j_password:
+  etl-neo4j-password:
     file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_password.txt

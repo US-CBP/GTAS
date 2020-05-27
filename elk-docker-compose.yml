@@ -14,15 +14,15 @@ services:
       - 5601:5601
     restart: always
     volumes:
-      - kibana_conf:/usr/share/kibana/data
+      - kibana-conf:/usr/share/kibana/data
     networks:
-      - GTAS_webapp-network
+      - GTAS-webapp-network
     secrets:
-      - source: elasticsearch_ca
+      - source: elasticsearch-ca
         target: /etc/kibana/config/ca.crt
-      - source: kibana_crt
+      - source: kibana-crt
         target: /etc/kibana/config/kibana.crt
-      - source: kibana_key
+      - source: kibana-key
         target: /etc/kibana/config/kibana.key
     depends_on:
       - elasticsearch
@@ -39,15 +39,15 @@ services:
     restart: always
     volumes: 
       - es-data:/usr/share/elasticsearch/data
-      - elasticsearch_conf:/usr/share/elasticsearch/config/
+      - elasticsearch-conf:/usr/share/elasticsearch/config/
     networks: 
-      - GTAS_webapp-network
+      - GTAS-webapp-network
     secrets:
-      - source: elasticsearch_ca
+      - source: elasticsearch-ca
         target: /usr/share/elasticsearch/config/certs/elasticsearch/elastic-ca.crt
-      - source: elasticsearch_instance_crt
+      - source: elasticsearch-instance-crt
         target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.crt
-      - source: elasticsearch_instance_key
+      - source: elasticsearch-instance-key
         target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.key
 
   logstash:
@@ -63,11 +63,11 @@ services:
       LOGSTASH_KEYSTORE_PASS: admin123
     restart: always
     secrets:
-      - elasticsearch_ca
+      - elasticsearch-ca
     networks:
-      - GTAS_webapp-network
+      - GTAS-webapp-network
     volumes:
-      - logstash_conf:/usr/share/logstash/config/
+      - logstash-conf:/usr/share/logstash/config/
     depends_on:
       - elasticsearch
 
@@ -81,53 +81,53 @@ services:
       KIBANA_HOST: 'kibana'
       ELASTICSEARCH_HOST: 'elasticsearch'
     volumes:
-      - logstash_conf:/logstash-conf
-      - kibana_conf:/kibana-conf
-      - elasticsearch_conf:/elasticsearch-conf
+      - logstash-conf:/logstash-conf
+      - kibana-conf:/kibana-conf
+      - elasticsearch-conf:/elasticsearch-conf
     secrets:
-      - logstash_keystore_password
-      - mysql_logstash_user
-      - mysql_logstash_password
-      - elastic_password
-      - elasticsearch_kibana_user
-      - elasticsearch_kibana_password
-      - elastic_bootstrap_password
+      - logstash-keystore-password
+      - mysql-logstash-user
+      - mysql-logstash-password
+      - elastic-password
+      - elasticsearch-kibana-user
+      - elasticsearch-kibana-password
+      - elastic-bootstrap-password
     networks:
-      - GTAS_webapp-network
+      - GTAS-webapp-network
 
 
 secrets:
-  logstash_keystore_password:
+  logstash-keystore-password:
     file: ./gtas-parent/gtas-commons/secrets/logstash_keystore_password.txt
-  mysql_logstash_user:
+  mysql-logstash-user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_user.txt
-  mysql_logstash_password:
+  mysql-logstash-password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_password.txt
-  elastic_password:
+  elastic-password:
     file: ./gtas-parent/gtas-commons/secrets/elastic_password.txt
-  elasticsearch_kibana_user:
+  elasticsearch-kibana-user:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch_kibana_user.txt
-  elasticsearch_kibana_password:
+  elasticsearch-kibana-password:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch_kibana_password.txt
-  elastic_bootstrap_password:
+  elastic-bootstrap-password:
     file: ./gtas-parent/gtas-commons/secrets/elastic_bootstrap_password.txt
-  elasticsearch_ca:
+  elasticsearch-ca:
     file: ./gtas-parent/gtas-commons/secrets/elastic-ca.crt
-  elasticsearch_instance_crt:
+  elasticsearch-instance-crt:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.crt
-  elasticsearch_instance_key:
+  elasticsearch-instance-key:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.key
-  kibana_crt:
+  kibana-crt:
     file: ./gtas-parent/gtas-commons/secrets/kibana.crt
-  kibana_key:
+  kibana-key:
     file: ./gtas-parent/gtas-commons/secrets/kibana.key
 
 volumes:
-  logstash_conf:
-  kibana_conf:
-  elasticsearch_conf:
+  logstash-conf:
+  kibana-conf:
+  elasticsearch-conf:
   es-data:
 
 networks:
-  GTAS_webapp-network:
+  GTAS-webapp-network:
     attachable: true
