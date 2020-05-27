@@ -147,7 +147,11 @@ public class DataRetentionScheduler {
                 worker.setApisCutOffDate(apisCutOffDate);
                 worker.setPnrCutOffDate(pnrCutOffDate);
                 worker.setMessageStatuses(ruleThread);
-                worker.setDefaultShareConstraint(new DefaultShareConstraint());
+                if (this.jobSchedulerConfig.getRetainHits()) {
+                    worker.setDefaultShareConstraint(new DefaultShareConstraint());
+                } else {
+                    worker.setDefaultShareConstraint(new RetainNothingShareConstraint());
+                }
                 list.add(worker);
                 ruleThread = new ArrayList<>();
                 runningTotal = 0;
@@ -162,7 +166,11 @@ public class DataRetentionScheduler {
             worker.setMessageStatuses(ruleThread);
             worker.setApisCutOffDate(apisCutOffDate);
             worker.setPnrCutOffDate(pnrCutOffDate);
-            worker.setDefaultShareConstraint(new DefaultShareConstraint());
+            if (this.jobSchedulerConfig.getRetainHits()) {
+                worker.setDefaultShareConstraint(new DefaultShareConstraint());
+            } else {
+                worker.setDefaultShareConstraint(new RetainNothingShareConstraint());
+            }
             list.add(worker);
         }
         return list;
