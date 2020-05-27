@@ -24,7 +24,7 @@ public class DataRetentionScheduler {
     /**
      * The Constant logger.
      */
-    private static final Logger logger = LoggerFactory.getLogger(RuleRunnerScheduler.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataRetentionScheduler.class);
     private final ApplicationContext ctx;
     private ExecutorService exec;
     private static final int DEFAULT_THREADS_ON_DATA_RETENTION = 5;
