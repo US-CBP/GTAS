@@ -5,10 +5,7 @@
  */
 package gov.gtas.model;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -150,10 +147,10 @@ public class CreditCard extends BaseEntityAudit implements PIIObject{
 
 	@Override
 	public PIIObject deletePII() {
-		this.number = "DELETED";
-		this.accountHolder = "DELETED";
-		this.accountHolderAddress = "DELETED";
-		this.accountHolderPhone = "DELETED";
+		this.number = "DELETED " + UUID.randomUUID().toString();
+		this.accountHolder = "DELETED " + UUID.randomUUID().toString();
+		this.accountHolderAddress = "DELETED " + UUID.randomUUID().toString();
+		this.accountHolderPhone = "DELETED " + UUID.randomUUID().toString();
 		return this;
 	}
 

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class DocumentDeletionResult {
 
@@ -39,7 +40,7 @@ public class DocumentDeletionResult {
                 drpa.setDescription("Another message under the cut off date references this document. No Deletion.");
             } else if (apisCutOffDateReached) {
                 logger.debug("Orphan document - performing data deletion!");
-                pd.setDocumentNumber("DELETED_" + pd.getDocumentType());
+                pd.setDocumentNumber("DELETED_" + pd.getDocumentType() + UUID.randomUUID().toString());
                 documentDeletionResult.getDocuments().add(pd);
                 drpa.setRetentionPolicyAction(RetentionPolicyAction.APIS_DATA_MARKED_TO_DELETE);
                 drpa.setDescription("Document number has been removed.");
@@ -73,7 +74,7 @@ public class DocumentDeletionResult {
                 drpa.setRetentionPolicyAction(RetentionPolicyAction.NO_ACTION_RELEVANT_MESSAGE);
                 drpa.setDescription("Another message under the cut off date references this document. No Deletion.");
             } else if (pnrCutOffDateReached) {
-                pd.setDocumentNumber("DELETED_" + pd.getDocumentType());
+                pd.setDocumentNumber("DELETED_" + pd.getDocumentType()+ UUID.randomUUID().toString());
                 documentDeletionResult.getDocuments().add(pd);
                 logger.debug("Orphan document - performing data deletion!");
                 drpa.setRetentionPolicyAction(RetentionPolicyAction.PNR_DATA_MARKED_TO_DELETE);

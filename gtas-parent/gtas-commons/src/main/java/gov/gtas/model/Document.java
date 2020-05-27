@@ -7,10 +7,7 @@ package gov.gtas.model;
 
 import gov.gtas.enumtype.MessageType;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -193,7 +190,7 @@ public class Document extends BaseEntity implements PIIObject {
 
 	@Override
 	public PIIObject deletePII() {
-		this.documentNumber  = "DELETED";
+		this.documentNumber  = "DELETED " + UUID.randomUUID().toString();
 		return this;
 	}
 

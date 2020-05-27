@@ -11,11 +11,12 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.model.HitDetail;
+import gov.gtas.model.PIIObject;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
 import gov.gtas.model.watchlist.json.WatchlistTerm;
 
-public class PaxWatchlistLinkVo {
+public class PaxWatchlistLinkVo implements PIIObject {
 
 	private float percentMatch;
 	private Date lastRunTimestamp;
@@ -166,4 +167,20 @@ public class PaxWatchlistLinkVo {
 		return Objects.hash(getWatchlistItemId(), getPassengerId());
 	}
 
+	@Override
+	public PIIObject deletePII() {
+		this.watchlistCategory = "DELETED";
+		this.watchListDOB = null;
+		this.watchListFirstName = "DELETED";
+		this.watchListLastName = "DELETED";
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.watchlistCategory = "MASKED";
+		this.watchListDOB = null;
+		this.watchListFirstName = "MASKED";
+		this.watchListLastName = "MASKED";
+		return this;	}
 }

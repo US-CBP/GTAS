@@ -8,6 +8,7 @@ package gov.gtas.model;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.*;
 
@@ -150,11 +151,11 @@ public class Address extends BaseEntityAudit implements PIIObject {
 
 	@Override
 	public PIIObject deletePII() {
-		this.line1 = "DELETED";
-		this.line2 = "DELETED";
-		this.line3 = "DELETED";
-		this.state = "DELETED";
-		this.postalCode = "DELETED";
+		this.line1 = "DELETED " + UUID.randomUUID().toString() ;
+		this.line2 = "DELETED " + UUID.randomUUID().toString();
+		this.line3 = "DELETED " + UUID.randomUUID().toString();
+		this.state = "DELETED " + UUID.randomUUID().toString();
+		this.postalCode = "DELETED " + UUID.randomUUID().toString();
 		return this;
 	}
 

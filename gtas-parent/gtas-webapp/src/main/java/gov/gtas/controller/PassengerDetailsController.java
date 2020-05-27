@@ -236,6 +236,12 @@ public class PassengerDetailsController {
 				PaxWatchlistLinkVo paxWatchlistLinkVo = PaxWatchlistLinkVo.fromHitDetail(hitDetail);
 				paxWatchlistLinkVos.add(paxWatchlistLinkVo);
 			}
+			Passenger p = pService.findById(Long.parseLong(paxId));
+			if (p.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
+				paxWatchlistLinkVos.forEach(PaxWatchlistLinkVo::deletePII);
+			} else if (p.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
+				paxWatchlistLinkVos.forEach(PaxWatchlistLinkVo::maskPII);
+			}
 		}
 
 		return paxWatchlistLinkVos;
