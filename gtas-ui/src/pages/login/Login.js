@@ -2,11 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import Form from "../../components/form/Form";
 import LabelledInput from "../../components/labelledInput/LabelledInput";
 import { login } from "../../services/serviceWrapper";
-import "./Login.css";
 import { Alert, Card } from "react-bootstrap";
 import { navigate } from "@reach/router";
 import { UserContext } from "../../context/user/UserContext";
-import "./Login.css";
+import "./Login.scss";
+import Logo from "../../images/WCO_GTAS_logo.svg";
 
 const Login = () => {
   const ctx = useContext(UserContext);
@@ -17,6 +17,7 @@ const Login = () => {
   }, []);
 
   const loginHandler = res => {
+    console.log(res);
     // if (res?.authenticated && res?.userId) {
     //TODO - update the response to include user metadata
 
@@ -55,10 +56,10 @@ const Login = () => {
 
   return (
     <div className="login-page-container">
-      <Card className="transparent-white-card text-center mx-auto">
-        <Card.Body className="card-body-login">
-          <div className="login-logo"></div>
-          <div className="login-brand">GTAS</div>
+      <Card className="transparent-white-card">
+        <Card.Img variant="top" src={Logo} className="logo" />
+        <div className="placeholder"></div>
+        <Card.Body className="login-card-body">
           <br />
           <Form
             title=""

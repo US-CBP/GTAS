@@ -1,0 +1,62 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+.login-page-container {
+  background: linear-gradient(
+      rgba(0, 126, 252, 0.83),
+      rgba(255, 255, 255, 0),
+      rgba(0, 127, 253, 0.83)
+    ),
+    url("../../images/WCO_flag.svg") no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+  margin-bottom: 0em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex-direction: column;
+  background-blend-mode: overlay;
+}
+
+.transparent-white-card {
+  background: rgba(223, 231, 247, 0.14) !important;
+  width: 22rem;
+  height: 27rem;
+  text-align: center;
+  border-radius: 20px 0 20px 0 !important;
+}
+
+.gradient-button {
+  background-image: linear-gradient(to right, #1f2957 0%, #4a92d6 90%);
+  border-width: 0px !important;
+  color: rgb(253, 232, 232);
+}
+.login-labeled-input {
+  width: 80%;
+  margin: auto;
+}
+
+.logo {
+  height: 40%;
+  background: rgb(252, 249, 249);
+  border-radius: 20px 0 0 0 !important;
+}
+.login-card-body {
+  background: rgba(0, 127, 253, 0.83);
+  border-radius: 0 0 20px 0 !important;
+}
+
+.placeholder {
+  height: 15px;
+}
+
+@include media-breakpoint-up(sm) {
+  .login-page-container {
+    align-items: flex-start;
+  }
+  .transparent-white-card {
+    margin-left: 25vw;
+  }
+}
