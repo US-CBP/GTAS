@@ -2,6 +2,11 @@
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
 
+@font-face {
+  font-family: "Lato";
+  src: local("Lato"), url("../../fonts/Lato/Lato-Regular.ttf");
+}
+
 $wco-blue-light: rgba(0, 126, 252, 0.83);
 $wco-blue-dark: rgba(2, 91, 180, 0.83);
 $wco-gray-light: #9b9ea1;

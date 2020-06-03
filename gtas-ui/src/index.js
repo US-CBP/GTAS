@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import "./i18n";
 import * as serviceWorker from "./serviceWorker";
+import "./fonts/Lato/Lato-Bold.ttf";
+import "./fonts/Lato/Lato-Regular.ttf";
 
 ReactDOM.render(<App />, document.getElementById("root"));
 
