@@ -63,7 +63,7 @@ const Login = () => {
           <br />
           <Form
             title=""
-            submitText="LOG IN"
+            submitText="LOGIN"
             submitService={login.post}
             callback={loginHandler}
             id="loginform"
