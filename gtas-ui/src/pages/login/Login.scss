@@ -2,12 +2,15 @@
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
 
+$wco-blue-light: rgba(0, 126, 252, 0.83);
+$wco-blue-dark: rgba(2, 91, 180, 0.83);
+$wco-gray-light: #9b9ea1;
+$wco-gray-dark: #6d7881;
+$wco-white: rgb(252, 249, 249);
+$transparent: rgba(223, 231, 247, 0.14);
+
 .login-page-container {
-  background: linear-gradient(
-      rgba(0, 126, 252, 0.83),
-      rgba(255, 255, 255, 0),
-      rgba(0, 127, 253, 0.83)
-    ),
+  background: linear-gradient($wco-blue-light, $transparent, $wco-blue-light),
     url("../../images/WCO_flag.svg") no-repeat center center fixed;
   background-size: cover;
   min-height: 100vh;
@@ -21,18 +24,28 @@
 }
 
 .transparent-white-card {
-  background: rgba(223, 231, 247, 0.14) !important;
-  width: 22rem;
+  background: $transparent !important;
+  width: 18rem;
   height: 27rem;
   text-align: center;
   border-radius: 20px 0 20px 0 !important;
 }
 
 .gradient-button {
-  background-image: linear-gradient(to right, #1f2957 0%, #4a92d6 90%);
+  background-image: linear-gradient(
+    to right,
+    $wco-gray-dark,
+    $wco-gray-light,
+    $wco-gray-dark,
+    $wco-gray-light
+  );
+
   border-width: 0px !important;
-  color: rgb(253, 232, 232);
+  color: $wco-white;
+  font-family: "Lato";
+  width: 50%;
 }
+
 .login-labeled-input {
   width: 80%;
   margin: auto;
@@ -40,11 +53,11 @@
 
 .logo {
   height: 40%;
-  background: rgb(252, 249, 249);
+  background: $wco-white;
   border-radius: 20px 0 0 0 !important;
 }
 .login-card-body {
-  background: rgba(0, 127, 253, 0.83);
+  background-image: linear-gradient($wco-blue-light, $wco-blue-dark);
   border-radius: 0 0 20px 0 !important;
 }
 
@@ -56,7 +69,9 @@
   .login-page-container {
     align-items: flex-start;
   }
+
   .transparent-white-card {
+    width: 22rem;
     margin-left: 25vw;
   }
 }
