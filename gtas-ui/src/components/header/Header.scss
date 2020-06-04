@@ -2,31 +2,31 @@
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
 
+// Primary colors
 $hover-color: rgb(177, 172, 172);
-$gtas-primary-color: #075484;
-$navbar-text-color: #fff;
+$gtas-white: rgba(255, 255, 255, 0.9);
+$wco-blue: rgb(0, 119, 200);
+$wco-gray: rgb(141, 144, 147);
 
 .header-navbar {
   padding: 0.25rem 1rem !important;
-  background-color: $gtas-primary-color;
+  background-color: $wco-blue;
   border-bottom: 3px solid #1972ad;
 }
 .header-navbar-brand {
+  background-color: white;
   min-width: 200px;
   align-self: baseline;
   text-align: center;
+  border-radius: 10px 0 10px 0 !important;
+  a {
+    img {
+      height: 40px;
+    }
+  }
 }
-
-.header-navbar-brand a {
-  color: $navbar-text-color;
-  font-size: xx-large;
-  font-feature-settings: "pcap", "pcap";
-  font-variant: petite-caps;
-  font-weight: 500;
-}
-
-.header-navbar-brand a:hover {
-  color: $hover-color;
+.header-navbar-brand:hover {
+  background-color: darken($gtas-white, 10%);
 }
 
 .header-navbar .nav-tabs {
@@ -34,24 +34,23 @@ $navbar-text-color: #fff;
 }
 
 .header-navbar .nav-tabs .active-tab {
-  background-color: rgb(23, 99, 161);
   border-color: transparent;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid $gtas-white;
 }
 
 .header-navbar .navbar-nav a.nav-link {
-  color: $navbar-text-color;
+  color: $gtas-white;
 }
 
 .header-navbar .navbar-nav a.nav-link:hover {
   color: $hover-color;
   border-color: transparent;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid $gtas-white;
 }
 
 .header-navbar .navbar-toggler {
-  color: rgba(255, 255, 255, 0.9) !important;
-  border-color: rgba(255, 255, 255, 0.9) !important;
+  color: $gtas-white !important;
+  border-color: $gtas-white !important;
   position: absolute;
   right: 20px;
   top: 8px;
@@ -59,7 +58,7 @@ $navbar-text-color: #fff;
 }
 
 .header-navbar .navbar-toggler-icon {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: $gtas-white !important;
 }
 
 .navbar-search {
@@ -93,7 +92,7 @@ $navbar-text-color: #fff;
   }
   .navbar-collapse {
     position: absolute;
-    background-color: $gtas-primary-color;
+    background-color: $wco-blue;
     right: 20px;
     top: 50px;
     width: 180px !important;

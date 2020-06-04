@@ -6,6 +6,7 @@ import { UserContext } from "../../context/user/UserContext";
 import RoleAuthenticator from "../../context/roleAuthenticator/RoleAuthenticator";
 import { ROLE } from "../../utils/constants";
 import "./Header.scss";
+import wcoLogo from "../../images/WCO_GTAS_header_brand.svg";
 
 const Header = () => {
   const { getUserState, userAction } = useContext(UserContext);
@@ -47,7 +48,7 @@ const Header = () => {
     <Navbar sticky="top" expand="md" className="header-navbar" variant="light">
       <Navbar.Brand className="header-navbar-brand">
         <Link to="dashboard" onClick={() => clickTab(headerTabs.DASHBOARD)}>
-          GTAS
+          <img src={wcoLogo} />
         </Link>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" ref={toggleRef} />
@@ -77,29 +78,6 @@ const Header = () => {
           >
             Vetting
           </Nav.Link>
-
-          <NavDropdown title="Tools" id="nav-dropdown">
-            <NavDropdown.Item as={Link} to="tools/queries" onClick={() => clickTab("")}>
-              Queries
-            </NavDropdown.Item>
-            <NavDropdown.Divider />
-            <NavDropdown.Item as={Link} to="tools/rules" onClick={() => clickTab("")}>
-              Rules
-            </NavDropdown.Item>
-            <NavDropdown.Divider />
-            <NavDropdown.Item as={Link} to="tools/watchlist" onClick={() => clickTab("")}>
-              Watchlist
-            </NavDropdown.Item>
-            <NavDropdown.Divider />
-            <NavDropdown.Item as={Link} to="tools/neo4j" onClick={() => clickTab("")}>
-              Neo4J Browser
-            </NavDropdown.Item>
-            <NavDropdown.Divider />
-            <NavDropdown.Item as={Link} to="tools/about" onClick={() => clickTab("")}>
-              About
-            </NavDropdown.Item>
-          </NavDropdown>
-
           <Nav.Link
             as={Link}
             to="admin"
@@ -108,6 +86,53 @@ const Header = () => {
           >
             Admin
           </Nav.Link>
+
+          <NavDropdown title="Tools" id="nav-dropdown">
+            <NavDropdown.Item
+              as={Link}
+              to="tools/queries"
+              className="fa fa-filter"
+              onClick={() => clickTab("")}
+            >
+              Queries
+            </NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item
+              as={Link}
+              to="tools/rules"
+              className="fa fa-flag"
+              onClick={() => clickTab("")}
+            >
+              Rules
+            </NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item
+              as={Link}
+              to="tools/watchlist"
+              className="fa fa-eye"
+              onClick={() => clickTab("")}
+            >
+              Watchlist
+            </NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item
+              as={Link}
+              to="tools/neo4j"
+              className="fa fa-filter"
+              onClick={() => clickTab("")}
+            >
+              Neo4J Browser
+            </NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item
+              as={Link}
+              to="tools/about"
+              className="fa fa-info-circle"
+              onClick={() => clickTab("")}
+            >
+              About
+            </NavDropdown.Item>
+          </NavDropdown>
         </Nav>
         <Nav className="navbar-search">
           <Form inline>
