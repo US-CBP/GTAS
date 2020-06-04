@@ -7,15 +7,15 @@
   src: local("Lato"), url("../../fonts/Lato/Lato-Regular.ttf");
 }
 
-$wco-blue-light: rgba(0, 126, 252, 0.83);
-$wco-blue-dark: rgba(2, 91, 180, 0.83);
-$wco-gray-light: #9b9ea1;
-$wco-gray-dark: #6d7881;
-$wco-white: rgb(252, 249, 249);
+$wco-blue: rgb(0, 119, 200);
+$wco-blue-dark: darken($wco-blue, 20%);
+$wco-gray: rgb(141, 144, 147);
+$wco-gray-dark: darken($wco-gray, 20%);
+$gtas-white: rgba(255, 255, 255, 0.9);
 $transparent: rgba(223, 231, 247, 0.14);
 
 .login-page-container {
-  background: linear-gradient($wco-blue-light, $transparent, $wco-blue-light),
+  background: linear-gradient($wco-blue, $transparent, $wco-blue),
     url("../../images/WCO_flag.svg") no-repeat center center fixed;
   background-size: cover;
   min-height: 100vh;
@@ -40,13 +40,13 @@ $transparent: rgba(223, 231, 247, 0.14);
   background-image: linear-gradient(
     to right,
     $wco-gray-dark,
-    $wco-gray-light,
+    $wco-gray,
     $wco-gray-dark,
-    $wco-gray-light
+    $wco-gray
   );
 
   border-width: 0px !important;
-  color: $wco-white;
+  color: $gtas-white;
   font-family: "Lato";
   width: 50%;
 }
@@ -58,11 +58,11 @@ $transparent: rgba(223, 231, 247, 0.14);
 
 .logo {
   height: 40%;
-  background: $wco-white;
+  background: $gtas-white;
   border-radius: 20px 0 0 0 !important;
 }
 .login-card-body {
-  background-image: linear-gradient($wco-blue-light, $wco-blue-dark);
+  background-image: linear-gradient($wco-blue, $wco-blue-dark);
   border-radius: 0 0 20px 0 !important;
 }
 
