@@ -18,11 +18,7 @@ services:
       - etl-neo4j-user
       - etl-neo4j-password
     networks: 
-      - GTAS-webapp-network
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == gtas-app-node
+      - gtas-webapp-network
     depends_on: 
       - neo4j
 
@@ -39,13 +35,13 @@ services:
       - 7474:7474   
       - 7687:7687
     networks: 
-      - GTAS-webapp-network
+      - gtas-webapp-network
 
 volumes:
    neo4j-data:
 
 networks:
-  GTAS-webapp-network:
+  gtas-webapp-network:
     attachable: true
 
 secrets:

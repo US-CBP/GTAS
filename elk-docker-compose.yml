@@ -4,7 +4,7 @@ services:
 
   kibana:
     container_name: kibana
-    image: wcogtas/kibana:1.0.0
+    image: simbam1/kibana:1.0.1
     build:
       context: ./gtas-parent/scripts/elastic
       dockerfile: install/docker/kibana/kibana.Dockerfile
@@ -16,19 +16,12 @@ services:
     volumes:
       - kibana-conf:/usr/share/kibana/data
     networks:
-      - GTAS-webapp-network
-    secrets:
-      - source: elasticsearch-ca
-        target: /etc/kibana/config/ca.crt
-      - source: kibana-crt
-        target: /etc/kibana/config/kibana.crt
-      - source: kibana-key
-        target: /etc/kibana/config/kibana.key
+      - gtas-webapp-network
     depends_on:
       - elasticsearch
 
   elasticsearch:
-    image: wcogtas/elasticsearch:1.0.0
+    image: simbam1/elasticsearch:1.0.1
     container_name: elasticsearch
     build:
       context: ./gtas-parent/scripts/elastic
@@ -41,17 +34,10 @@ services:
       - es-data:/usr/share/elasticsearch/data
       - elasticsearch-conf:/usr/share/elasticsearch/config/
     networks: 
-      - GTAS-webapp-network
-    secrets:
-      - source: elasticsearch-ca
-        target: /usr/share/elasticsearch/config/certs/elasticsearch/elastic-ca.crt
-      - source: elasticsearch-instance-crt
-        target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.crt
-      - source: elasticsearch-instance-key
-        target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.key
+      - gtas-webapp-network
 
   logstash:
-    image: wcogtas/logstash:1.0.0
+    image: simbam1/logstash:1.0.1
     container_name: logstash
     build:
       context: ./gtas-parent/scripts/elastic
@@ -63,16 +49,16 @@ services:
       LOGSTASH_KEYSTORE_PASS: admin123
     restart: always
     secrets:
-      - elasticsearch-ca
+      - elastic-ca
     networks:
-      - GTAS-webapp-network
+      - gtas-webapp-network
     volumes:
       - logstash-conf:/usr/share/logstash/config/
     depends_on:
       - elasticsearch
 
   elk-setup:
-    image: wcogtas/elk-setup:1.0.0
+    image: simbam1/elk-setup:1.1.1
     container_name: elk-setup
     build:
       context: ./gtas-parent/scripts/elastic
@@ -93,34 +79,24 @@ services:
       - elasticsearch-kibana-password
       - elastic-bootstrap-password
     networks:
-      - GTAS-webapp-network
+      - gtas-webapp-network
 
 
 secrets:
   logstash-keystore-password:
-    file: ./gtas-parent/gtas-commons/secrets/logstash_keystore_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/logstash-keystore-password
   mysql-logstash-user:
-    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql-logstash-user
   mysql-logstash-password:
-    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql-logstash-password
   elastic-password:
-    file: ./gtas-parent/gtas-commons/secrets/elastic_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/elastic-password
   elasticsearch-kibana-user:
-    file: ./gtas-parent/gtas-commons/secrets/elasticsearch_kibana_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-kibana-user
   elasticsearch-kibana-password:
-    file: ./gtas-parent/gtas-commons/secrets/elasticsearch_kibana_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-kibana-password
   elastic-bootstrap-password:
-    file: ./gtas-parent/gtas-commons/secrets/elastic_bootstrap_password.txt
-  elasticsearch-ca:
-    file: ./gtas-parent/gtas-commons/secrets/elastic-ca.crt
-  elasticsearch-instance-crt:
-    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.crt
-  elasticsearch-instance-key:
-    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.key
-  kibana-crt:
-    file: ./gtas-parent/gtas-commons/secrets/kibana.crt
-  kibana-key:
-    file: ./gtas-parent/gtas-commons/secrets/kibana.key
+    file: ./gtas-parent/gtas-commons/secrets/elastic-bootstrap-password
 
 volumes:
   logstash-conf:
@@ -129,5 +105,5 @@ volumes:
   es-data:
 
 networks:
-  GTAS-webapp-network:
+  gtas-webapp-network:
     attachable: true

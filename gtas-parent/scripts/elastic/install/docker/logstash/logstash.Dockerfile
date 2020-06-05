@@ -10,7 +10,7 @@ ENV JAVA_OPTS="-Xms1g -Xmx1g"
 ENV LOGSTASH_DIR=/usr/share/logstash
 ENV LOGSTASH_LIB=/usr/share/logstash/logstash-core/lib/jars
 
-ENV XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY=/run/secrets/elasticsearch-ca
+ENV XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY=/run/secrets/elastic-ca
 
 
 

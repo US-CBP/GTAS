@@ -85,6 +85,13 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-elk-node
+    environment:
+      LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password' 
+      MYSQL_USER_PATH: '/run/secrets/mysql-logstash-user'
+      MYSQL_PASSWORD_PATH: '/run/secrets/mysql-logstash-password'
+      KIBANA_PASSWORD_PATH: '/run/secrets/elasticsearch-kibana-password'
+      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
+      ELASTIC_PATH: '/run/secrets/elastic-password'
   neo4j:
     deploy:
       placement:

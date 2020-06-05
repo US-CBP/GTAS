@@ -12,13 +12,9 @@ services:
       - 443:443
       - 80:80
     networks:
-      - GTAS-webapp-network
+      - gtas-webapp-network
     secrets:
       - elastic-bootstrap-password
-      - source: webapp-cert
-        target: /wcogtas.org.crt
-      - source: webapp-key
-        target: /wcogtas.org.key
 
   web-app:
     image: wcogtas/web-app:1.0.0
@@ -37,7 +33,7 @@ services:
       - PROXY_HOST=httpproxy
       - ELASTICSEARCH=elasticsearch
     networks:
-      - GTAS-webapp-network
+      - gtas-webapp-network
     restart: always
     secrets:
      - mysql-webapp-user
@@ -45,16 +41,6 @@ services:
      - webapp-neo4j-user
      - webapp-neo4j-password
      - elastic-bootstrap-password
-     - source: webapp-cert
-       target: /usr/local/tomcat/conf/wcogtas.org.crt
-     - source: webapp-key
-       target: /usr/local/tomcat/conf/wcogtas.org.key
-     - source: elastic-cert
-       target: /usr/local/tomcat/conf/elasticsearch-node1.crt
-     - source: elastic-key
-       target: /usr/local/tomcat/conf/elasticsearch-node1.key
-     - source: elastic-ca
-       target: /usr/local/tomcat/conf/elastic-ca.crt
     volumes:
       - m2:/root/.m2
       - scheduler-logs:/scheduler-logs
@@ -79,7 +65,7 @@ services:
       - webapp-neo4j-user
       - webapp-neo4j-password
     networks:
-      - GTAS-webapp-network
+      - gtas-webapp-network
     depends_on: 
       - activemq
 
@@ -88,7 +74,7 @@ services:
     container_name: activemq
     restart: always
     networks: 
-      - GTAS-webapp-network
+      - gtas-webapp-network
 
   mariadb:
     image: wcogtas/mariadb:1.0.0
@@ -113,7 +99,7 @@ services:
     ports:
       - 3306:3306
     networks:
-      - GTAS-webapp-network
+      - gtas-webapp-network
     restart: always
     volumes:
       - db-data:/var/lib/mysql
@@ -129,11 +115,11 @@ secrets:
   mysql-healthcheck-password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_healthcheck_password.txt
   mysql-logstash-user:
-    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql-logstash-user
   mysql-logstash-password:
-    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/mysql-logstash-password
   elastic-bootstrap-password:
-    file: ./gtas-parent/gtas-commons/secrets/elastic_bootstrap_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/elastic-bootstrap-password
   mysql-processor-user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_processor_user.txt
   mysql-processor-password:
@@ -148,16 +134,6 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_user.txt
   webapp-neo4j-password:
     file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_password.txt
-  elastic-key:
-    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.key
-  elastic-ca:
-    file: ./gtas-parent/gtas-commons/secrets/elastic-ca.crt
-  elastic-cert:
-    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.crt
-  webapp-cert:
-    file: ./gtas-parent/gtas-commons/secrets/wcogtas.org.crt
-  webapp-key:
-    file: ./gtas-parent/gtas-commons/secrets/wcogtas.org.key
 
 volumes:
   db-data:
@@ -165,5 +141,5 @@ volumes:
   scheduler-logs:
 
 networks:
-  GTAS-webapp-network:
+  gtas-webapp-network:
     attachable: true
