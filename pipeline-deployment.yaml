@@ -1,0 +1,112 @@
+version: '3.7'
+services:
+  http-proxy:
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-a
+    volumes:
+      - ./gtas-parent/gtas-commons/certs:/
+  web-app:
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
+      JAVA_OPTS: "-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=UTC"
+      EMAIL_SENDER_USERNAME: ""
+      EMAIL_SENDER_PASSWORD: ""
+      EMAIL_SENDER_HOST: ""
+      SSL_TRUST_HOST: ""
+      AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
+      MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
+      PROXY_IP: ""
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-a
+    volumes:
+      - ./gtas-parent/gtas-commons/certs:/usr/local/tomcat/conf
+  gtas-scheduler:
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
+      JAVA_OPTS: "-Xms8000m -Xmx16000m -Duser.timezone=UTC -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
+      EMAIL_SENDER_USERNAME: ""
+      EMAIL_SENDER_PASSWORD: ""
+      EMAIL_SENDER_HOST: ""
+      SSL_TRUST_HOST: ""
+      AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
+      MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
+      PROXY_IP: ""
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-a
+  activemq:
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-b
+  mariadb:
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-b
+  kibana:
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-a
+    volumes:
+      - ./gtas-parent/gtas-commons/certs/:/etc/kibana/config/
+  elasticsearch:
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-b
+    volumes:
+      - ./gtas-parent/gtas-commons/certs/:/usr/share/elasticsearch/config/certs/elasticsearch/
+  logstash:
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-b
+  elk-setup:
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-b
+  neo4j:
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-a
+  etl-job:
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-b
+
+networks:
+  gtas_webapp-network:
+    driver: "overlay"
+    attachable: true

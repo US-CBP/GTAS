@@ -29,24 +29,24 @@ RUN cp -r /usr/share/logstash/config/* /logstash-conf/
 
 COPY ./install/docker/elk-setup/kibana.default-dashboard.json .
 
-ENTRYPOINT echo y | ./elasticsearch/bin/elasticsearch-keystore create \
-	&& ./elasticsearch/bin/elasticsearch-keystore add bootstrap.password </run/secrets/elastic-bootstrap-password \
+ENTRYPOINT echo y | ./elasticsearch/bin/elasticsearch-keystore create && ls -R /run/secrets \
+	&& ./elasticsearch/bin/elasticsearch-keystore add bootstrap.password <${BOOTSTRAP_PATH} \
 	&& cp ./elasticsearch/config/elasticsearch.keystore /elasticsearch-conf/elasticsearch.keystore \
-	&& export LOGSTASH_KEYSTORE_PASS=$(cat /run/secrets/logstash-keystore-password) \
+	&& export LOGSTASH_KEYSTORE_PASS=$(cat ${LOGSTASH_PASSWORD_PATH}) \
 	&& echo y | ./bin/logstash-keystore create \
-	&& ./bin/logstash-keystore add MARIADB_USER </run/secrets/mysql-logstash-user \
-	&& ./bin/logstash-keystore add MARIADB_PASSWORD </run/secrets/mysql-logstash-password \
-	&& ./bin/logstash-keystore add ES_PASSWORD </run/secrets/elastic-password \
+	&& ./bin/logstash-keystore add MARIADB_USER <${MYSQL_USER_PATH} \
+	&& ./bin/logstash-keystore add MARIADB_PASSWORD <${MYSQL_PASSWORD_PATH} \
+	&& ./bin/logstash-keystore add ES_PASSWORD <${ELASTIC_PATH} \
 	&& cp ./config/logstash.keystore /logstash-conf/logstash.keystore \
 	&& echo y | ./kibana/bin/kibana-keystore --allow-root create \
 	&& echo kibana | ./kibana/bin/kibana-keystore --allow-root add elasticsearch.username --stdin \
-	&& ./kibana/bin/kibana-keystore --allow-root add elasticsearch.password --stdin </run/secrets/elasticsearch-kibana-password \
+	&& ./kibana/bin/kibana-keystore --allow-root add elasticsearch.password --stdin <${KIBANA_PASSWORD_PATH} \
 	&& cp -r ./kibana/data/* /kibana-conf/ && chown -R 1000:1000 /kibana-conf \
 	&& until [ $(curl -k -s -o /dev/null -w "%{http_code}"  https://${ELASTICSEARCH_HOST}:9200/) == 401 ]; do sleep 10 && echo "Waiting for elasticsearch..."; done \
-	&& curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$(cat /run/secrets/elastic-bootstrap-password)@${ELASTICSEARCH_HOST}:9200/_security/user/kibana/_password" -d "{\"password\": \"$(cat /run/secrets/elasticsearch-kibana-password)\"}" \
-	&& curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$(cat /run/secrets/elastic-bootstrap-password)@${ELASTICSEARCH_HOST}:9200/_security/user/logstash_system/_password" -d "{\"password\": \"$(cat /run/secrets/elastic-password)\"}" \
-	&& curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$(cat /run/secrets/elastic-bootstrap-password)@${ELASTICSEARCH_HOST}:9200/case" -d '{ "settings" : { "index" : { } }}' \
-	&& until [ $(curl -k -s -o /dev/null -w "%{http_code}" -u kibana:$(cat /run/secrets/elasticsearch_kibana_password)  https://${KIBANA_HOST}:5601/login) == 200 ]; do sleep 10 && echo "Waiting for kibana..."; done \
-	&& curl -k -u elastic:$(cat /run/secrets/elastic-bootstrap-password) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/telemetry/v2/optIn" -d '{"enabled":false}' \
-	&& curl -k -u elastic:$(cat /run/secrets/elastic-bootstrap-password) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/kibana/dashboards/import?force=true" -d @kibana.default-dashboard.json \
-	&& curl -k -u elastic:$(cat /run/secrets/elastic-bootstrap-password) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/kibana/settings/defaultIndex" -d '{"value": "96df0890-2ba8-11e9-a5e4-2bbcf61c6cb1"}' 
+	&& curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$(cat ${BOOTSTRAP_PATH})@${ELASTICSEARCH_HOST}:9200/_security/user/kibana/_password" -d "{\"password\": \"$(cat ${KIBANA_PASSWORD_PATH})\"}" \
+	&& curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$(cat ${BOOTSTRAP_PATH})@${ELASTICSEARCH_HOST}:9200/_security/user/logstash_system/_password" -d "{\"password\": \"$(cat ${ELASTIC_PATH})\"}" \
+	&& curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$(cat ${BOOTSTRAP_PATH})@${ELASTICSEARCH_HOST}:9200/case" -d '{ "settings" : { "index" : { } }}' \
+	&& until [ $(curl -k -s -o /dev/null -w "%{http_code}" -u kibana:$(cat ${KIBANA_PASSWORD_PATH})  https://${KIBANA_HOST}:5601/login) == 200 ]; do sleep 10 && echo "Waiting for kibana..."; done \
+	&& curl -k -u elastic:$(cat ${BOOTSTRAP_PATH}) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/telemetry/v2/optIn" -d '{"enabled":false}' \
+	&& curl -k -u elastic:$(cat ${BOOTSTRAP_PATH}) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/kibana/dashboards/import?force=true" -d @kibana.default-dashboard.json \
+	&& curl -k -u elastic:$(cat ${BOOTSTRAP_PATH}) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/kibana/settings/defaultIndex" -d '{"value": "96df0890-2ba8-11e9-a5e4-2bbcf61c6cb1"}'

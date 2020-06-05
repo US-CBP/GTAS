@@ -1,0 +1,109 @@
+name: Pipeline workflow
+on: push
+jobs:
+  build:
+    name: webapp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/webapp 
+          path: ./gtas-parent
+          dockerfile: ./gtas-parent/web-app.Dockerfile
+          tags: 1.0.1
+      - uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/mariadb
+          path: ./gtas-parent
+          dockerfile: ./gtas-parent/mariadb.Dockerfile
+          tags: 1.0.1 
+      - uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/http-proxy
+          path: ./gtas-parent
+          dockerfile: ./gtas-parent/docker-resources/proxy.Dockerfile
+          tags: 1.0.1 
+      - uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/gtas-scheduler
+          path: .
+          dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
+          tags: 1.0.1
+      - uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/kibana
+          path: ./gtas-parent/scripts/elastic
+          dockerfile: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
+          tags: 1.0.1
+      - uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/elasticsearch
+          path: ./gtas-parent/scripts/elastic    
+          dockerfile: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
+          tags: 1.0.1
+      - uses: docker/build-push-action@v1
+        with:  
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}   
+          repository: simbam1/logstash
+          path: ./gtas-parent/scripts/elastic
+          dockerfile: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
+          tags: 1.0.1 
+      - uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/elk-setup
+          path: ./gtas-parent/scripts/elastic
+          dockerfile: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
+          tags: 1.1.1
+      - uses: docker/build-push-action@v1      
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }} 
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/neo4j-etl-job
+          path: .
+          dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
+          tags: 1.0.1
+      - uses: docker/build-push-action@v1 
+        with: 
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}  
+          repository: simbam1/neo4j 
+          path: .
+          dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
+          tags: 1.0.1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - run: |
+          sudo apt-get -y update
+          sudo apt-get install -y curl
+          curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
+          chmod +x kompose
+          sudo mv ./kompose /usr/local/bin/kompose
+          kompose -f elk-docker-compose.yml -f docker-compose.yml -f neo4j-etl-docker-compose.yml -f pipeline-deployment.yaml convert --out deploy.yaml
+          ls ./gtas-parent/gtas-commons/secrets
+          aws sts get-caller-identity
+      - name: Trigger deploy
+        uses: Consensys/kubernetes-action@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          args: apply --v=10 -f deploy.yaml
