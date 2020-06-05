@@ -75,6 +75,7 @@ public class PnrMessageService extends MessageLoaderService {
 	}
 
 	@Override
+	@Transactional
 	public MessageDto parse(MessageDto msgDto) {
 		logger.debug("@ parse");
 		long startTime = System.nanoTime();
@@ -118,6 +119,7 @@ public class PnrMessageService extends MessageLoaderService {
 	}
 
 	@Override
+	@Transactional
 	public MessageInformation load(MessageDto msgDto) {
 		msgDto.getMessageStatus().setSuccess(true);
 		MessageInformation messageInformation = new MessageInformation();

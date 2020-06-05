@@ -31,6 +31,8 @@ import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.util.LobUtils;
 import gov.gtas.services.LoaderUtils;
 
+import javax.transaction.Transactional;
+
 @Service
 public class ApisMessageService extends MessageLoaderService {
 	private static final Logger logger = LoggerFactory.getLogger(ApisMessageService.class);
@@ -65,6 +67,7 @@ public class ApisMessageService extends MessageLoaderService {
 	}
 
 	@Override
+	@Transactional
 	public MessageDto parse(MessageDto msgDto) {
 		ApisMessage apis = new ApisMessage();
 		apis.setCreateDate(new Date());
@@ -110,6 +113,7 @@ public class ApisMessageService extends MessageLoaderService {
 	}
 
 	@Override
+	@Transactional
 	public MessageInformation load(MessageDto msgDto) {
 		MessageInformation messageInformation = new MessageInformation();
 		msgDto.getMessageStatus().setSuccess(true);

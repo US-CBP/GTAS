@@ -20,6 +20,7 @@ import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.UnexpectedRollbackException;
 
 @Component
 @Scope("prototype")
@@ -71,7 +72,7 @@ public class LoaderWorkerThread implements Runnable {
 					try {
 						processCommand();
 						lockExceptionCount = 0; // reset tries on a per file bases.
-					} catch (PessimisticLockingFailureException plfe) {
+					} catch (UnexpectedRollbackException | PessimisticLockingFailureException plfe) {
 						/*
 						 * The loader is in a long transaction. Occasionally there is contention for the
 						 * locks. Breaking apart the transactions is not feasible at this time due to
@@ -86,7 +87,7 @@ public class LoaderWorkerThread implements Runnable {
 											+ "the data structure!!! Prime flight: " + primeFlightKey,
 									plfe);
 						} else {
-							logger.warn("PESSIMISTIC LOCK FAIL COUNT  " + lockExceptionCount + " FOR PRIME FLIGHT KEY:"
+							logger.warn("LOCK FAIL COUNT  " + lockExceptionCount + " FOR PRIME FLIGHT KEY:"
 									+ primeFlightKey + "PUTTING MESSAGE BACK ON QUEUE!");
 							queue.add(msg);
 						}
