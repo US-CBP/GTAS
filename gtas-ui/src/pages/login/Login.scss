@@ -62,7 +62,7 @@ $transparent: rgba(223, 231, 247, 0.14);
   border-radius: 20px 0 0 0 !important;
 }
 .login-card-body {
-  background-image: linear-gradient($wco-blue, $wco-blue-dark);
+  background-image: linear-gradient(45deg, $wco-blue-dark, $wco-blue);
   border-radius: 0 0 20px 0 !important;
 }
 
