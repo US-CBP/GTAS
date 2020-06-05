@@ -1,5 +1,0 @@
-(!(isNotDeletedAPIS() || isNotDeletedPNR()))
-
-
-!(!isDeletedAPIS() && hasApisMessage())
-isDeletedAPIS() || doesNotHaveApisMessage()
