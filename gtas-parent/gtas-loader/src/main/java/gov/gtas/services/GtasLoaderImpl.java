@@ -281,6 +281,7 @@ public class GtasLoaderImpl implements GtasLoader {
 				Flight currentFlight = flightDao.getFlightByCriteria(primeFlightCarrier, primeFlightNumber,
 						primeFlightOrigin, primeFlightDest, primeFlightDate);
 				if (currentFlight == null) {
+					//TODO: Combine with loader message reciever unique key logic
 					currentFlight = utils.createNewFlight(fvo, primeFlightDest, primeFlightOrigin, primeFlightDate,
 							primeFlightCarrier, primeFlightNumber);
 					currentFlight = flightDao.save(currentFlight);

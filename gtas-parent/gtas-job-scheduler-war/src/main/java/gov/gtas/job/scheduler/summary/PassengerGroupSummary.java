@@ -1,4 +1,4 @@
-package gov.gtas.summary;
+package gov.gtas.job.scheduler.summary;
 
 import java.util.ArrayList;
 import java.util.List;

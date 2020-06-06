@@ -1,4 +1,4 @@
-package gov.gtas.summary;
+package gov.gtas.job.scheduler.summary;
 
 import gov.gtas.model.HitDetail;
 import org.springframework.beans.BeanUtils;

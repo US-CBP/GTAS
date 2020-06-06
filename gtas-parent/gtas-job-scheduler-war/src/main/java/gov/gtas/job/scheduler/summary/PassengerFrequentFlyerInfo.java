@@ -1,10 +1,12 @@
-package gov.gtas.summary;
+package gov.gtas.job.scheduler.summary;
 
-
-import gov.gtas.model.Phone;
+import gov.gtas.model.FrequentFlyer;
 import org.springframework.beans.BeanUtils;
 
-public class PassengerPhone {
+
+public class PassengerFrequentFlyerInfo {
+
+    private String carrier;
 
     private String number;
 
@@ -12,12 +14,19 @@ public class PassengerPhone {
 
     private Long passengerId;
 
+    public static PassengerFrequentFlyerInfo from(Long passengerId, FrequentFlyer ff) {
+        PassengerFrequentFlyerInfo pff = new PassengerFrequentFlyerInfo();
+        BeanUtils.copyProperties(ff, pff);
+        pff.setPassengerId(passengerId);
+        return pff;
+    }
 
-    public static PassengerPhone from(Long passengerId, Phone phone){
-        PassengerPhone passengerPhone = new PassengerPhone();
-        BeanUtils.copyProperties(phone, passengerPhone);
-        passengerPhone.setPassengerId(passengerId);
-        return passengerPhone;
+    public String getCarrier() {
+        return carrier;
+    }
+
+    public void setCarrier(String carrier) {
+        this.carrier = carrier;
     }
 
     public String getNumber() {
