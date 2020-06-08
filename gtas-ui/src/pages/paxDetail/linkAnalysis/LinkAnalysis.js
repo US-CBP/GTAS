@@ -10,7 +10,7 @@ const LinkAnalysis = () => {
       <div className="columns">
         <div className="top">
           <ErrorBoundary message="something went wrong here ...">
-            <Graph></Graph>
+            {/* <Graph></Graph> */}
           </ErrorBoundary>
         </div>
       </div>

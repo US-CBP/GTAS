@@ -7,6 +7,7 @@ import WatchlistModal from "./WatchlistModal";
 
 const WatchlistCats = ({ name }) => {
   const cb = function() {};
+
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState([{}]);
 
@@ -14,7 +15,7 @@ const WatchlistCats = ({ name }) => {
     watchlistcats.get().then(response => {
       setData(response);
     });
-  }, [cb]);
+  }, []);
 
   return (
     <Container fluid>
@@ -35,8 +36,9 @@ const WatchlistCats = ({ name }) => {
       </Row>
 
       <Table
-        service={watchlistcats.get}
+        // service={watchlistcats.get}
         key={data}
+        data={data}
         id="Watchlist Category"
         callback={cb}
       ></Table>

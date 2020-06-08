@@ -68,7 +68,7 @@
   width: 60px !important;
 }
 
-@media (max-width: 825px) {
+@media (max-width: 885px) {
   .pag-select {
     display: none !important;
   }
@@ -78,4 +78,39 @@
 }
 .pag-num {
   margin-left: 0.25rem;
+}
+
+@media (max-width: 500px) {
+  .pag {
+    display: none !important;
+  }
+}
+
+@media (max-width: 410px) {
+  .tagrightpag {
+    display: none !important;
+  }
+}
+
+.tagrightpag {
+  position: fixed;
+  bottom: 0px;
+  z-index: 2000;
+  right: 20px;
+  font-size: 28px;
+  line-height: 1.7;
+  color: #003f4cb3;
+  margin-left: 8px;
+  background-color: white;
+}
+
+.table-hover tbody tr.linked:hover {
+  color: rgba(0, 123, 255, 1);
+  background-color: rgba(255, 225, 12, 0.24);
+  border-left: 5px solid rgb(0, 123, 255);
+  text-decoration: underline;
+}
+
+.wide-col {
+  min-width: 170px;
 }

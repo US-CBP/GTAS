@@ -3,15 +3,8 @@ import RQueryBuilder from "react-querybuilder";
 import "./QueryBuilder.scss";
 
 const QueryBuilder = props => {
-  console.log(props);
-
-  const toggleRef = useRef();
-  const rowRef = useRef(null);
-
   function logQuery(query) {
     console.log(query);
-
-    // rowRef.current.classList.add("rule");
 
     console.log(document.getElementsByClassName("rule"));
   }

@@ -33,12 +33,6 @@ const Flights = props => {
   const [startDate, setStartData] = useState(sDate);
   const [endDate, setEndData] = useState(eDate);
 
-  useEffect(() => {
-    console.log(globalState); // debug statement to prove user loaded.
-    let user = JSON.parse(localStorage.getItem("user"));
-    console.log(user); // debug statement to prove user was loaded in local storage.
-  }, [globalState, endDate, startDate]);
-
   const parameterAdapter = fields => {
     let paramObject = { pageSize: 20, pageNumber: 1 };
     const fieldNames = Object.keys(fields);
@@ -88,7 +82,7 @@ const Flights = props => {
       <SideNav>
         <Col>
           <FilterForm
-            service={flights.get}
+            service={flights.post}
             title="Filter"
             callback={setDataWrapper}
             paramAdapter={parameterAdapter}

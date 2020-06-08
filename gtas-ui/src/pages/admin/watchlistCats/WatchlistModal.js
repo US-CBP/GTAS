@@ -12,6 +12,7 @@ const WatchlistModal = props => {
     { value: "High", label: "High" },
     { value: "Normal", label: "Normal" }
   ];
+
   return (
     <Modal
       show={props.show}

@@ -98,7 +98,15 @@ export const watchlistcats = {
 
 export const watchlistcatspost = { post: body => post(WLCATSPOST, BASEHEADER, body) };
 export const userService = { get: (id, params) => get(USERS, BASEHEADER) };
-export const flights = { get: (id, params) => get(FLIGHTS, BASEHEADER) };
+export const flights = {
+  get: (id, params) => get(FLIGHTS, BASEHEADER),
+  post: body => {
+    // where body is in the form of testFilter below
+    const testFilter = `{"pageNumber":1,"pageSize":25,"flightNumber":"","origin":[],"dest":[],"direction":"A","etaStart":"2018-06-08T15:43:56.715Z","etaEnd":"2020-06-09T16:43:56.715Z","sort":[{"column":"countDownTimer","dir":"asc"},{"column":"listHitCount","dir":"desc"},{"column":"ruleHitCount","dir":"desc"},{"column":"graphHitCount","dir":"desc"},{"column":"fuzzyHitCount","dir":"desc"}]}`;
+
+    return post(FLIGHTS, BASEHEADER, testFilter);
+  }
+};
 export const auditlog = { get: (id, params) => get(AUDITLOG, BASEHEADER) };
 export const errorlog = { get: (id, params) => get(ERRORLOG, BASEHEADER) };
 export const cases = { get: (id, params) => get(CASES, BASEHEADER) };

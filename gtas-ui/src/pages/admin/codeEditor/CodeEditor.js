@@ -11,7 +11,7 @@ const CodeEditor = ({ name }) => {
     <Container fluid>
       <Title title={name}></Title>
 
-      <Table service={users.get} id="foo" callback={cb}></Table>
+      <Table id="foo" callback={cb}></Table>
     </Container>
   );
 };
