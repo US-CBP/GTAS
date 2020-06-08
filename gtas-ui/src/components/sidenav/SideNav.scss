@@ -2,7 +2,13 @@
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
 
-$background-image-url: "../../images/noorulabdeen-ahmad-lpcaOpVIzx8-unsplash.jpg";
+$background-image-url: "../../images/WCO_flag.svg";
+$wco-blue: rgb(0, 119, 200);
+$wco-blue-dark: darken($wco-blue, 20%);
+$wco-gray: rgb(141, 144, 147);
+$wco-gray-dark: darken($wco-gray, 20%);
+$gtas-white: rgba(255, 255, 255, 0.9);
+$transparent: rgba(223, 231, 247, 0);
 
 .profile {
   font-size: 200px;
@@ -45,7 +51,7 @@ $background-image-url: "../../images/noorulabdeen-ahmad-lpcaOpVIzx8-unsplash.jpg
     cursor: pointer;
   }
   .filter-toggle:hover {
-    background-color: rgba(51, 133, 201, 0.582);
+    background-color: $transparent;
   }
 }
 
@@ -65,7 +71,7 @@ $background-image-url: "../../images/noorulabdeen-ahmad-lpcaOpVIzx8-unsplash.jpg
 }
 
 .arrow {
-  color: #fff;
+  color: $gtas-white;
   font-weight: 400;
 }
 
@@ -111,8 +117,8 @@ $background-image-url: "../../images/noorulabdeen-ahmad-lpcaOpVIzx8-unsplash.jpg
 
 .filter-bg {
   z-index: 5;
-  background: linear-gradient(#075484 10%, rgba(0, 74, 147, 0.83), rgba(255, 255, 255, 0)),
-    url($background-image-url) no-repeat;
+  background: linear-gradient($wco-blue, $transparent),
+    url($background-image-url) no-repeat no-repeat;
   background-position: center center;
   background-size: cover;
 }
