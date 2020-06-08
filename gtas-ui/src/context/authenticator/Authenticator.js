@@ -5,10 +5,9 @@ import { hasData } from "../../utils/utils";
 
 const Authenticator = props => {
   const { getUserState } = useContext(UserContext);
+  const user = getUserState() || {};
 
-  const user = getUserState();
-
-  if (!hasData((user || {}).userToken)) {
+  if (!user.authenticated) {
     navigate("/login");
     return null;
   }

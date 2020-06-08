@@ -7,16 +7,14 @@ const GenericService = async props => {
     method: props.method,
     headers: {
       ...props.headers,
-      Cookie: `NG_TRANSLATE_LANG_KEY=en; JSESSIONID= ${Cookies.get(
-        "JSESSIONID"
-      )}; myLocaleCookie=en`
+      Cookie: `JSESSIONID: ${Cookies.get("JSESSIONID")}`
     },
     credentials: "include"
   };
 
-  if (hasData(props.body) && !(props.body instanceof FormData)) {
-    param.body = JSON.stringify({ ...props.body });
-  }
+  // if (hasData(props.body) && !(props.body instanceof FormData)) {
+  param.body = props.body;
+  // }
 
   return fetch(props.uri, param)
     .then(response => {
@@ -24,22 +22,14 @@ const GenericService = async props => {
         return [];
       }
       if (response.ok) {
-        return response.json().then(res => res.data || res || []);
+        if (response.url.endsWith("/authenticate")) return response;
+        return response.json().then(res => res.data || res || response);
       } else {
-        const newErr = new Error();
-
-        newErr.name = "Http status code mismatch";
-        newErr.message = "The transaction failed, error code was not found";
-        newErr.spec_href = "";
-        // console.log(newErr);
+        return response;
       }
     })
     .catch(error => {
-      const newErr = new Error();
-      newErr.name = "Connection Error";
-      newErr.message = "Connection Error";
-      newErr.spec_href = "";
-      // console.log(error);
+      return error;
     });
 };
 

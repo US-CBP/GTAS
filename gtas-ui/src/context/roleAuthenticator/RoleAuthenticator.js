@@ -18,7 +18,6 @@ const RoleAuthenticator = props => {
   });
 
   return hasRole ? <>{props.children}</> : alt;
-  // return <>{props.children}</>;
 };
 
 export default RoleAuthenticator;

@@ -129,6 +129,7 @@ export default class App extends React.Component {
                   >
                     <Redirect from="/" to="/gtas" noThrow />
                     <Home path="/gtas">
+                      <Redirect from="/gtas" to="/gtas/flights" noThrow />
                       <Dashboard path="dashboard"></Dashboard>
                       <Flights path="flights"></Flights>
                       <FlightPax path="flightpax"></FlightPax>

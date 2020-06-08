@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
-import { hasData, asArray, isObject } from "../../utils/utils";
+import { hasData, asArray, isObject, alt } from "../../utils/utils";
 import Title from "../title/Title";
 import { Button, Form as RBForm, ButtonToolbar } from "react-bootstrap";
 import { navigate } from "@reach/router";
@@ -120,7 +120,7 @@ class Form extends React.Component {
       : [this.state.fields];
 
     operation(...params).then(res => {
-      if (hasData(this.props.callback)) this.props.callback(res);
+      if (hasData(this.props.callback)) this.props.callback(alt(res));
     });
   }
 

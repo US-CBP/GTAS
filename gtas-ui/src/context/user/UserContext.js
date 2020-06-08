@@ -10,7 +10,9 @@ const initialState = {
   userToken: undefined,
   queryPageSize: 25,
   userPageSize: 25,
-  landingPage: undefined
+  landingPage: undefined,
+  emailEnabled: undefined,
+  highPriorityEmail: undefined
 };
 
 export const UserContext = createContext();
@@ -47,12 +49,13 @@ const UserProvider = ({ children }) => {
   );
 
   const getUserState = () => {
-    
-    if (hasData(userState.userToken)) return userState;
+    // if (hasData(userState.userToken)) return userState;
+    if (userState.authenticated) return userState;
 
     const storedUser = JSON.parse(sessionStorage.getItem("user"));
 
-    if (hasData((storedUser || {}).userToken)) {
+    // if (hasData((storedUser || {}).userToken)) {
+    if (storedUser.authenticated) {
       return storedUser;
     }
     return userAction({ type: "default" });

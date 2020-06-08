@@ -17,39 +17,23 @@ const Login = () => {
   }, []);
 
   const loginHandler = res => {
-    console.log(res);
-    // if (res?.authenticated && res?.userId) {
-    //TODO - update the response to include user metadata
+    if (res?.userId) {
+      const newuser = {
+        authenticated: true,
+        fullName: `${res.lastName}, ${res.firstName}`,
+        userId: res.userId,
+        userRoles: res.roles.map(item => item.roleDescription),
+        // userToken: Cookies.get("JSESSIONID"),
+        queryPageSize: 25,
+        userPageSize: 25,
+        landingPage: undefined,
+        emailEnabled: res.emailEnabled,
+        highPriorityEmail: res.highPriorityEmail
+      };
 
-    // const roles = res.roles;
-
-    // const newuser = {
-    //   authenticated: true,
-    //   fullName: res.fullName,
-    //   userId: res.userId,
-    //   userRoles: roles,
-    //   userToken: res.token,
-    //   queryPageSize: 25,
-    //   userPageSize: 25,
-    //   landingPage: undefined
-    // };
-
-    const roles = ["Admin"];
-
-    const newuser = {
-      authenticated: true,
-      fullName: "Admin",
-      userId: 7,
-      userRoles: roles,
-      userToken: "sdfsfsfd",
-      queryPageSize: 25,
-      userPageSize: 25,
-      landingPage: undefined
-    };
-
-    ctx.userAction({ user: newuser, type: "login" });
-    navigate("/gtas/flights");
-    // }
+      ctx.userAction({ user: newuser, type: "login" });
+      navigate("/gtas/flights");
+    }
 
     setAlertVis(true);
   };
