@@ -6,6 +6,8 @@ services:
         target: /wcogtas.org.crt
       - source: webapp-key
         target: /wcogtas.org.key
+    environment:
+      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
   web-app:
     environment:
       EMAIL_SENDER_USERNAME: ""
@@ -15,6 +17,11 @@ services:
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       PROXY_IP: localhost
+      BOOTSTRAP_PATH: "/run/secrets/elastic-bootstrap-password"
+      MYSQL_USER_PATH: "/run/secrets/mysql_webapp_user"
+      MYSQL_PASSWORD_PATH: "/run/secrets/mysql_webapp_password"
+      NEO4J_USER_PATH: "/run/secrets/webapp_neo4j_user"
+      NEO4J_PASSWORD_PATH: "/run/secrets/webapp_neo4j_password"
     secrets:
       - source: webapp-cert
         target: /usr/local/tomcat/conf/wcogtas.org.crt
@@ -26,6 +33,9 @@ services:
         target: /usr/local/tomcat/conf/elasticsearch-node1.key
       - source: elastic-ca
         target: /usr/local/tomcat/conf/elastic-ca.crt
+  logstash:
+    environment:
+      XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca
   elasticsearch:
     secrets:
       - source: elastic-ca
@@ -51,6 +61,10 @@ services:
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       PROXY_IP: localhost
+      MYSQL_USER_PATH: "/run/secrets/mysql_processor_user"
+      MYSQL_PASSWORD_PATH: "/run/secrets/mysql_processor_password"
+      NEO4J_USER_PATH: "/run/secrets/webapp_neo4j_user"
+      NEO4J_PASSWORD_PATH: "/run/secrets/webapp_neo4j_password"
     volumes:
       - type: bind
         source: ./gtas-data
@@ -64,6 +78,13 @@ services:
       KIBANA_PASSWORD_PATH: '/run/secrets/elasticsearch-kibana-password'
       BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
       ELASTIC_PATH: '/run/secrets/elastic-password'
+  etl-job:
+    environment:
+      DB_HOSTNAME: mariadb
+      NEO4J_USER_PATH: '/run/secrets/etl_neo4j_user'
+      NEO4J_PASSWORD_PATH: '/run/secrets/etl_neo4j_password'
+      MYSQL_USER_PATH: '/run/secrets/mysql_etl_user'
+      MYSQL_PASSWORD_PATH: '/run/secrets/mysql_etl_password'
 secrets:
   elastic-key:
     file: ./gtas-parent/gtas-commons/certs/elasticsearch-node1.key

@@ -10,7 +10,6 @@ services:
       dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
     environment:
       NEO4J_HOSTNAME: neo4j
-      DB_HOSTNAME: mariadb
     restart: always
     secrets:
       - mysql-etl-user

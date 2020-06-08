@@ -5,6 +5,8 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-webapp-node
+    environment:
+      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
   web-app:
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
@@ -17,6 +19,11 @@ services:
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       PROXY_IP: ""
+      BOOTSTRAP_PATH: "/run/secrets/elastic-bootstrap-password"
+      MYSQL_USER_PATH: "/run/secrets/mysql_webapp_user"
+      MYSQL_PASSWORD_PATH: "/run/secrets/mysql_webapp_password"
+      NEO4J_USER_PATH: "/run/secrets/webapp_neo4j_user"
+      NEO4J_PASSWORD_PATH: "/run/secrets/webapp_neo4j_password"
     volumes:
       - type: bind
         source: /mnt/gtas-java-jre
@@ -40,6 +47,10 @@ services:
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       PROXY_IP: ""
+      MYSQL_USER_PATH: "/run/secrets/mysql_processor_user"
+      MYSQL_PASSWORD_PATH: "/run/secrets/mysql_processor_password"
+      NEO4J_USER_PATH: "/run/secrets/webapp_neo4j_user"
+      NEO4J_PASSWORD_PATH: "/run/secrets/webapp_neo4j_password"
     volumes:
       - type: bind
         source: /mnt/gtas-java-jre
@@ -80,6 +91,8 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-elk-node
+    environment:
+      XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca
   elk-setup:
     deploy:
       placement:
@@ -97,6 +110,17 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-neo4j-node
+  etl-job:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-neo4j-node
+    environment:
+      DB_HOSTNAME: mariadb
+      NEO4J_USER_PATH: '/run/secrets/etl_neo4j_user'
+      NEO4J_PASSWORD_PATH: '/run/secrets/etl_neo4j_password'
+      MYSQL_USER_PATH: '/run/secrets/mysql_etl_user'
+      MYSQL_PASSWORD_PATH: '/run/secrets/mysql_etl_password'
 
 networks:
   GTAS-webapp-network:
