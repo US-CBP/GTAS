@@ -1,4 +1,4 @@
-package gov.gtas.job.scheduler.summary;
+package gov.gtas.summary;
 
 import gov.gtas.model.Email;
 import org.springframework.beans.BeanUtils;

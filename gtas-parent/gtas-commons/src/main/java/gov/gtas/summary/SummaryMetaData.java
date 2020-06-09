@@ -1,4 +1,4 @@
-package gov.gtas.job.scheduler.summary;
+package gov.gtas.summary;
 
 public class SummaryMetaData {
     public String summary;

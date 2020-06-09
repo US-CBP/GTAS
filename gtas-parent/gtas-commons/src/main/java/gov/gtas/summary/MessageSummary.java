@@ -1,6 +1,5 @@
-package gov.gtas.job.scheduler.summary;
+package gov.gtas.summary;
 
-import gov.gtas.job.scheduler.EventIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;

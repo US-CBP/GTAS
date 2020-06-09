@@ -1,10 +1,10 @@
-package gov.gtas.job.scheduler.summary.jms;
+package gov.gtas.summary.jms;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.gtas.job.scheduler.EventIdentifier;
-import gov.gtas.job.scheduler.summary.MessageAction;
-import gov.gtas.job.scheduler.summary.MessageSummary;
+import gov.gtas.summary.EventIdentifier;
+import gov.gtas.summary.MessageAction;
+import gov.gtas.summary.MessageSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

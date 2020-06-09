@@ -10,6 +10,7 @@ import gov.gtas.parsers.paxlst.segment.unedifact.TDT;
 import gov.gtas.parsers.pnrgov.segment.TVL_L0;
 import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.services.LoaderUtils;
+import gov.gtas.summary.EventIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.Message;

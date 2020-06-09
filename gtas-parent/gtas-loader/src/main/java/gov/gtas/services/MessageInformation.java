@@ -10,6 +10,7 @@ package gov.gtas.services;
 
 import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.summary.MessageSummary;
 
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class MessageInformation {
 	MessageStatus messageStatus;
 
 	private List<TamrPassenger> tamrPassengers;
+
+	private MessageSummary messageSummary = new MessageSummary();
 
 	public MessageStatus getMessageStatus() {
 		return messageStatus;
@@ -33,5 +36,13 @@ public class MessageInformation {
 
 	public List<TamrPassenger> getTamrPassengers() {
 		return tamrPassengers;
+	}
+
+	public MessageSummary getMessageSummary() {
+		return messageSummary;
+	}
+
+	public void setMessageSummary(MessageSummary messageSummary) {
+		this.messageSummary = messageSummary;
 	}
 }

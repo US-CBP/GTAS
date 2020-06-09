@@ -1,4 +1,4 @@
-package gov.gtas.job.scheduler.summary;
+package gov.gtas.summary;
 
 
 import java.util.Map;
@@ -11,7 +11,7 @@ public enum MessageAction {
 
 
     RAW_PNR("RAW_PNR"),
-    RAW_APIS("RAW_PNR"),
+    RAW_APIS("RAW_APIS"),
     RAW("RAW"),
     PROCESSED_RAW("PROCESSED_RAW"),
     PROCESSED_PNR("PROCESSED_PNR"),

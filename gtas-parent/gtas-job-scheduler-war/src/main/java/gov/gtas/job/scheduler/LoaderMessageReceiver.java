@@ -7,8 +7,9 @@ package gov.gtas.job.scheduler;
 
 import javax.jms.Session;
 
-import gov.gtas.job.scheduler.summary.MessageAction;
-import gov.gtas.job.scheduler.summary.jms.AdditionalProcessingMessageSender;
+import gov.gtas.summary.EventIdentifier;
+import gov.gtas.summary.MessageAction;
+import gov.gtas.summary.jms.AdditionalProcessingMessageSender;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.model.Pnr;
