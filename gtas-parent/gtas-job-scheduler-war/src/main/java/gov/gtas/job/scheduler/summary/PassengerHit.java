@@ -5,7 +5,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
 
-public class PassengerDerog {
+public class PassengerHit {
 
     private String Title;
 
@@ -27,8 +27,8 @@ public class PassengerDerog {
 
     private float percentage = 1;
 
-    public static PassengerDerog from(HitDetail hd) {
-        PassengerDerog pd = new PassengerDerog();
+    public static PassengerHit from(HitDetail hd) {
+        PassengerHit pd = new PassengerHit();
         BeanUtils.copyProperties(hd, pd);
         return pd;
     }

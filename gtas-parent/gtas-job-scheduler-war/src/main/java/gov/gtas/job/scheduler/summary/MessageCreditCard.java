@@ -1,12 +1,11 @@
 package gov.gtas.job.scheduler.summary;
 
-
 import gov.gtas.model.CreditCard;
 import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
 
-public class PassengerCreditCard {
+public class MessageCreditCard {
 
     private String cardType;
 
@@ -20,14 +19,15 @@ public class PassengerCreditCard {
 
     private String accountHolderPhone;
 
-    private Long flightId;
+    private String flightIdTag;
 
-    private Long passengerId;
+    private String messageIdTag;
 
-    public static PassengerCreditCard from(Long passengerId, CreditCard cc) {
-        PassengerCreditCard pcc = new PassengerCreditCard();
+    public static MessageCreditCard from(String messageIdTag, String flightIdTag, CreditCard cc) {
+        MessageCreditCard pcc = new MessageCreditCard();
         BeanUtils.copyProperties(cc, pcc);
-        pcc.setPassengerId(passengerId);
+        pcc.setFlightIdTag(flightIdTag);
+        pcc.setMessageIdTag(messageIdTag);
         return pcc;
     }
 
@@ -78,20 +78,19 @@ public class PassengerCreditCard {
     public void setAccountHolderPhone(String accountHolderPhone) {
         this.accountHolderPhone = accountHolderPhone;
     }
-
-    public Long getFlightId() {
-        return flightId;
+    public String getMessageIdTag() {
+        return messageIdTag;
     }
 
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
+    public void setMessageIdTag(String messageIdTag) {
+        this.messageIdTag = messageIdTag;
     }
 
-    public Long getPassengerId() {
-        return passengerId;
+    public String getFlightIdTag() {
+        return flightIdTag;
     }
 
-    public void setPassengerId(Long passengerId) {
-        this.passengerId = passengerId;
+    public void setFlightIdTag(String flightIdTag) {
+        this.flightIdTag = flightIdTag;
     }
 }

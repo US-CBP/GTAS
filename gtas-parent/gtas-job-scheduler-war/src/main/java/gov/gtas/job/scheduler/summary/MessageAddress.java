@@ -1,11 +1,9 @@
 package gov.gtas.job.scheduler.summary;
 
-
 import gov.gtas.model.Address;
 import org.springframework.beans.BeanUtils;
 
-public class PassengerAddress {
-
+public class MessageAddress {
     private String line1;
 
     private String line2;
@@ -20,14 +18,15 @@ public class PassengerAddress {
 
     private String postalCode;
 
-    private Long flightId;
+    private String flightIdTag;
 
-    private Long passengerId;
+    private String messageHash;
 
-    public static PassengerAddress from(Long passengerId, Address address) {
-        PassengerAddress pa = new PassengerAddress();
+    public static MessageAddress from(String flightIdTag, String messageHash, Address address) {
+        MessageAddress pa = new MessageAddress();
         BeanUtils.copyProperties(address, pa);
-        pa.setPassengerId(passengerId);
+        pa.setFlightIdTag(flightIdTag);
+        pa.setMessageHash(messageHash);
         return pa;
     }
 
@@ -87,19 +86,19 @@ public class PassengerAddress {
         this.postalCode = postalCode;
     }
 
-    public Long getFlightId() {
-        return flightId;
+    public String getFlightIdTag() {
+        return flightIdTag;
     }
 
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
+    public void setFlightIdTag(String flightIdTag) {
+        this.flightIdTag = flightIdTag;
     }
 
-    public Long getPassengerId() {
-        return passengerId;
+    public String getMessageHash() {
+        return messageHash;
     }
 
-    public void setPassengerId(Long passengerId) {
-        this.passengerId = passengerId;
+    public void setMessageHash(String messageHash) {
+        this.messageHash = messageHash;
     }
 }

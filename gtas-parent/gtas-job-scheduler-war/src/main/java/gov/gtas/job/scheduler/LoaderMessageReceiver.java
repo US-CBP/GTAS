@@ -7,6 +7,7 @@ package gov.gtas.job.scheduler;
 
 import javax.jms.Session;
 
+import gov.gtas.job.scheduler.summary.MessageAction;
 import gov.gtas.job.scheduler.summary.jms.AdditionalProcessingMessageSender;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
@@ -91,7 +92,8 @@ public class LoaderMessageReceiver {
 			if (additionalProcessingOn && (eventIdentifier.getEventType().equals("PNR") && proccessPnr
 					|| eventIdentifier.getEventType().equals("APIS") && proccessApis ||
 			addProcessString != null && addProcessString.contains(eventIdentifier.getEventType()))) {
-				apms.sendFileContent(addProcessString, message, eventIdentifier);
+				MessageAction messageAction = eventIdentifier.getEventType().equals("APIS") ? MessageAction.RAW_APIS : MessageAction.RAW_PNR;
+				apms.sendFileContent(addProcessString, message, eventIdentifier, messageAction);
 			}
 		} catch (Exception e) {
 			logger.warn("Failed to parsed message. Is border crossing information corrupt? Error is: " + e);

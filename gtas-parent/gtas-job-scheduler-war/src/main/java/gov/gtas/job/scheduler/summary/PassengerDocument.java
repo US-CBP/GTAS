@@ -29,10 +29,14 @@ public class PassengerDocument {
 
     private Integer numberOfDaysValid;
 
+    private String flightTagId;
 
-    public static PassengerDocument from(Document d) {
+
+    public static PassengerDocument from(Document d, String flightTagId) {
         PassengerDocument pd =  new PassengerDocument();
         BeanUtils.copyProperties(d, pd);
+        pd.setFlightTagId(flightTagId);
+
         return pd;
     }
 
@@ -114,5 +118,13 @@ public class PassengerDocument {
 
     public void setNumberOfDaysValid(Integer numberOfDaysValid) {
         this.numberOfDaysValid = numberOfDaysValid;
+    }
+
+    public String getFlightTagId() {
+        return flightTagId;
+    }
+
+    public void setFlightTagId(String flightTagId) {
+        this.flightTagId = flightTagId;
     }
 }

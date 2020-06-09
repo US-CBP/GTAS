@@ -1,11 +1,14 @@
 package gov.gtas.job.scheduler.summary;
 
+import gov.gtas.model.BookingDetail;
 import gov.gtas.model.Flight;
 import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class PassengerFlightInfo {
+public class MessageTravelInformation {
 
     private String carrier;
 
@@ -29,6 +32,8 @@ public class PassengerFlightInfo {
 
     private Long flightId;
 
+    private String flightIdTag;
+
     private Date localEtdDate;
 
     private Date localEtaDate;
@@ -41,11 +46,24 @@ public class PassengerFlightInfo {
 
     private Integer passengerCount;
 
-    public static PassengerFlightInfo from(Flight flight) {
-        PassengerFlightInfo pfi = new PassengerFlightInfo();
+    private boolean borderCrossingEvent;
+
+    private Map<String, String> travelDescriptors = new HashMap<>();
+
+    public static MessageTravelInformation from(Flight flight, String flightIdTag) {
+        MessageTravelInformation pfi = new MessageTravelInformation();
         BeanUtils.copyProperties(flight, pfi);
         BeanUtils.copyProperties(flight.getMutableFlightDetails(), pfi);
         BeanUtils.copyProperties(flight.getFlightPassengerCount(), pfi);
+        pfi.setBorderCrossingEvent(true);
+        pfi.setFlightIdTag(flightIdTag);
+        return pfi;
+    }
+
+    public static MessageTravelInformation from(BookingDetail bookingDetail) {
+        MessageTravelInformation pfi = new MessageTravelInformation();
+        BeanUtils.copyProperties(bookingDetail, pfi);
+        pfi.setBorderCrossingEvent(false);
         return pfi;
     }
 
@@ -183,5 +201,29 @@ public class PassengerFlightInfo {
 
     public void setPassengerCount(Integer passengerCount) {
         this.passengerCount = passengerCount;
+    }
+
+    public String getFlightIdTag() {
+        return flightIdTag;
+    }
+
+    public void setFlightIdTag(String flightIdTag) {
+        this.flightIdTag = flightIdTag;
+    }
+
+    public boolean isBorderCrossingEvent() {
+        return borderCrossingEvent;
+    }
+
+    public void setBorderCrossingEvent(boolean borderCrossingEvent) {
+        this.borderCrossingEvent = borderCrossingEvent;
+    }
+
+    public Map<String, String> getTravelDescriptors() {
+        return travelDescriptors;
+    }
+
+    public void setTravelDescriptors(Map<String, String> travelDescriptors) {
+        this.travelDescriptors = travelDescriptors;
     }
 }
