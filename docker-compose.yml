@@ -3,7 +3,7 @@ services:
 
 
   http-proxy:
-    image: wcogtas/http-proxy:1.0.0
+    image: simbam1/http-proxy:1.0.0
     container_name: http-proxy
     build: 
       context: ./gtas-parent
@@ -18,7 +18,7 @@ services:
       - elastic-bootstrap-password
 
   web-app:
-    image: wcogtas/web-app:1.0.0
+    image: simbam1/web-app:1.0.0
     container_name: web-app
     build: 
       context: ./gtas-parent
@@ -47,7 +47,7 @@ services:
       - scheduler-logs:/scheduler-logs
 
   gtas-scheduler:
-    image: wcogtas/gtas-scheduler:1.0.0
+    image: simbam1/gtas-scheduler:1.0.0
     container_name: gtas-scheduler
     build: 
       context: .
@@ -78,7 +78,7 @@ services:
       - gtas-webapp-network
 
   mariadb:
-    image: wcogtas/mariadb:1.0.0
+    image: simbam1/mariadb:1.0.0
     build:
       context: ./gtas-parent
       dockerfile: mariadb.Dockerfile
