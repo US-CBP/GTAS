@@ -8,6 +8,7 @@ public class MessageSummary {
 
     private SummaryMetaData summaryMetaData = new SummaryMetaData();
     private String rawMessage;
+    private String hashCode;
     private EventIdentifier eventIdentifier;
     private Boolean relatedToDerog;
     private MessageAction action;
@@ -113,5 +114,13 @@ public class MessageSummary {
 
     public void setAction(MessageAction action) {
         this.action = action;
+    }
+
+    public String getHashCode() {
+        return hashCode;
+    }
+
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
     }
 }
