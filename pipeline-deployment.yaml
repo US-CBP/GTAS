@@ -3,7 +3,7 @@ services:
   http-proxy:
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-a
@@ -29,7 +29,7 @@ services:
       NEO4J_PASSWORD_PATH: "/run/secrets/webapp_neo4j_password/webapp_neo4j_password"
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-a
@@ -52,28 +52,28 @@ services:
       NEO4J_PASSWORD_PATH: "/run/secrets/webapp_neo4j_password/webapp_neo4j_password"
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-a
   activemq:
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-b
   mariadb:
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-b
   kibana:
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-a
@@ -82,7 +82,7 @@ services:
   elasticsearch:
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-b
@@ -91,7 +91,7 @@ services:
   logstash:
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-b
@@ -100,7 +100,7 @@ services:
   elk-setup:
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-b
@@ -114,14 +114,14 @@ services:
   neo4j:
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-a
   etl-job:
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-b
