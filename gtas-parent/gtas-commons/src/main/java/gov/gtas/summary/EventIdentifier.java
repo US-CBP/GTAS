@@ -5,7 +5,6 @@ import java.util.List;
 public class  EventIdentifier {
 
     private String identifier;
-    private String[] identifierArray;
     private List<String> identifierArrayList;
     private String eventType;
     private String countryOrigin;
@@ -17,14 +16,6 @@ public class  EventIdentifier {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
-    }
-
-    public String[] getIdentifierArray() {
-        return identifierArray;
-    }
-
-    public void setIdentifierArray(String[] identifierArray) {
-        this.identifierArray = identifierArray;
     }
 
     public String getEventType() {

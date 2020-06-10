@@ -41,14 +41,13 @@ public class EventIdentifierFactory {
         EventIdentifier eventIdentifier = new EventIdentifier();
         if (message.getHeaders().get("eventType") != null) {
             MessageHeaders messageHeaders = message.getHeaders();
-            if (messageHeaders.get("eventArray") != null && messageHeaders.get("eventType") != null) {
+            if (messageHeaders.get("identifierList") != null) {
                 @SuppressWarnings("unchecked")
-                List<String>  eventArray = (List<String>) messageHeaders.get("eventArray");
+                List<String>  eventArray = (List<String>) messageHeaders.get("identifierList");
                 String eventKeyString = Objects.requireNonNull(eventArray).get(PRIME_FLIGHT_ORIGIN) + eventArray.get(PRIME_FLIGHT_DESTINATION)
                         + eventArray.get(PRIME_FLIGHT_CARRIER) + eventArray.get(PRIME_FLIGHT_NUMBER_STRING)
                         + eventArray.get(ETD_DATE_NO_TIMESTAMP_AS_LONG);
                 String eventType = (String) messageHeaders.get("eventType");
-                String[] eventKeyStringList =  eventArray.toArray(new String[0]);
                 if (messageHeaders.get("originCountry") != null)  {
                     setOriginCountry(eventIdentifier, eventArray.get(PRIME_FLIGHT_ORIGIN));
                 }
@@ -57,10 +56,9 @@ public class EventIdentifierFactory {
                 }
                 eventIdentifier.setIdentifier(eventKeyString);
                 eventIdentifier.setIdentifierArrayList(eventArray);
-                eventIdentifier.setIdentifierArray(eventKeyStringList);
                 eventIdentifier.setEventType(eventType);
             } else {
-                logger.error("File type specified but message does not contain eventArray!");
+                logger.error("File type specified but message does not contain identifierList header!");
                 throw new ParseException("No event array found.");
             }
         } else {
@@ -158,11 +156,10 @@ public class EventIdentifierFactory {
                     + primeFlightKeyArray[ETD_DATE_NO_TIMESTAMP_AS_LONG];
             String eventType = apisMessage ? "APIS":"PNR";
             List<String> eventKeyStringList = Arrays.asList(primeFlightKeyArray);
-            setDestinationCountry(eventIdentifier, eventKeyStringList.get(PRIME_FLIGHT_ORIGIN));
+            setOriginCountry(eventIdentifier, eventKeyStringList.get(PRIME_FLIGHT_ORIGIN));
             setDestinationCountry(eventIdentifier, eventKeyStringList.get(PRIME_FLIGHT_DESTINATION));
             eventIdentifier.setIdentifierArrayList(eventKeyStringList);
             eventIdentifier.setIdentifier(eventKeyString);
-            eventIdentifier.setIdentifierArray(primeFlightKeyArray);
             eventIdentifier.setEventType(eventType);
         }
         return eventIdentifier;

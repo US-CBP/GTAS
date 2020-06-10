@@ -73,7 +73,7 @@ public class LoaderQueueThreadManager {
     EventIdentifier receiveMessages(Message<?> message) throws ParseException, InterruptedException {
 
         EventIdentifier eventIdentifier = eventIdentifierFactory.createEventIdentifier(message);
-        String[] primeFlightKeyArray = eventIdentifier.getIdentifierArray();
+        String[] primeFlightKeyArray = eventIdentifier.getIdentifierArrayList().toArray(new String[0]);
         // Construct label for individual buckets out of concatenated array values from
         // prime flight key generation
         String primeFlightKey = eventIdentifier.getIdentifier();
