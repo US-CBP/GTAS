@@ -58,7 +58,7 @@ services:
       - elasticsearch
 
   elk-setup:
-    image: simbam1/elk-setup:1.1.1
+    image: simbam1/elk-setup:1.0.1
     container_name: elk-setup
     build:
       context: ./gtas-parent/scripts/elastic
