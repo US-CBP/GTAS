@@ -97,6 +97,8 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch-kibana-password
   elastic-bootstrap-password:
     file: ./gtas-parent/gtas-commons/secrets/elastic-bootstrap-password
+  elastic-ca:
+    file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
 
 volumes:
   logstash-conf:

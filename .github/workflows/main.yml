@@ -6,7 +6,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+        name: Checkout latest code
       - uses: docker/build-push-action@v1
+        name: Build and push GTAS web application image
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
@@ -23,6 +25,7 @@ jobs:
           dockerfile: ./gtas-parent/mariadb.Dockerfile
           tags: 1.0.1 
       - uses: docker/build-push-action@v1
+        name: Build and push GTAS proxy image
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
@@ -31,6 +34,7 @@ jobs:
           dockerfile: ./gtas-parent/docker-resources/proxy.Dockerfile
           tags: 1.0.1 
       - uses: docker/build-push-action@v1
+        name: Build and push GTAS scheduller image
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
@@ -39,6 +43,7 @@ jobs:
           dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
           tags: 1.0.1
       - uses: docker/build-push-action@v1
+        name: Build and push kibana image
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
@@ -47,6 +52,7 @@ jobs:
           dockerfile: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
           tags: 1.0.1
       - uses: docker/build-push-action@v1
+        name: Build and push elasticsearch image
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
@@ -55,6 +61,7 @@ jobs:
           dockerfile: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
           tags: 1.0.1
       - uses: docker/build-push-action@v1
+        name: Build and push logstash image
         with:  
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}   
@@ -63,6 +70,7 @@ jobs:
           dockerfile: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
           tags: 1.0.1 
       - uses: docker/build-push-action@v1
+        name: Build and push ELK setup image
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
@@ -70,7 +78,8 @@ jobs:
           path: ./gtas-parent/scripts/elastic
           dockerfile: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
           tags: 1.1.1
-      - uses: docker/build-push-action@v1      
+      - uses: docker/build-push-action@v1 
+        name: Build and push Neo4J ETL job image     
         with:
           username: ${{ secrets.DOCKER_USERNAME }} 
           password: ${{ secrets.DOCKER_PASSWORD }} 
@@ -79,6 +88,7 @@ jobs:
           dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
           tags: 1.0.1
       - uses: docker/build-push-action@v1 
+        name: Build and push Neo4J image
         with: 
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}  
@@ -92,16 +102,15 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - run: |
+      - name: Generate Kubernetes deployment configuration file
+        run: |
           sudo apt-get -y update
           sudo apt-get install -y curl
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
           chmod +x kompose
           sudo mv ./kompose /usr/local/bin/kompose
           kompose -f elk-docker-compose.yml -f docker-compose.yml -f neo4j-etl-docker-compose.yml -f pipeline-deployment.yaml convert --out deploy.yaml
-          ls ./gtas-parent/gtas-commons/secrets
-          aws sts get-caller-identity
-      - name: Trigger deploy
+      - name: Deploy to cluster
         uses: Consensys/kubernetes-action@master
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
