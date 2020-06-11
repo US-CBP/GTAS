@@ -85,7 +85,7 @@ services:
         kompose.image-pull-policy: "Always"
       placement:
         constraints:
-          - node.labels.role == node-b
+          - node.labels.role == node-b 
     volumes:
       - ./gtas-parent/gtas-commons/certs/:/usr/share/elasticsearch/config/certs/elasticsearch/
   logstash:
