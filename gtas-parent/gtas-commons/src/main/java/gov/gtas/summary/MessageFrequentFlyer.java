@@ -14,7 +14,8 @@ public class MessageFrequentFlyer {
 
     public static MessageFrequentFlyer from(String messageHash, String flightHash, FrequentFlyer ff) {
         MessageFrequentFlyer mff = new MessageFrequentFlyer();
-        BeanUtils.copyProperties(ff, mff);
+        mff.setCarrier(ff.getCarrier());
+        mff.setNumber(ff.getNumber());
         mff.setFlightIdTag(flightHash);
         mff.setMessageHash(messageHash);
         return mff;

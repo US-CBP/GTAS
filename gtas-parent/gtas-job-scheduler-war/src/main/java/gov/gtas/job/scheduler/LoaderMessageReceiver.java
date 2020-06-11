@@ -49,7 +49,7 @@ public class LoaderMessageReceiver {
 	@Value("${message.dir.error}")
 	private String errorstr;
 
-	@Value("${additional.processing.enabled}")
+	@Value("${additional.processing.enabled.raw}")
 	private Boolean additionalProcessingOn;
 
 	@Value("${additional.processing.pnr}")
@@ -62,7 +62,7 @@ public class LoaderMessageReceiver {
 	private List<String> other;
 
 	@Value("${additional.processing.queue}")
-	private String addProcessString;
+	private String addProcessQueue;
 
 
 	@Autowired
@@ -92,9 +92,9 @@ public class LoaderMessageReceiver {
 			EventIdentifier eventIdentifier = queueManager.receiveMessages(message);
 			if (additionalProcessingOn && (eventIdentifier.getEventType().equals("PNR") && proccessPnr
 					|| eventIdentifier.getEventType().equals("APIS") && proccessApis ||
-			addProcessString != null && addProcessString.contains(eventIdentifier.getEventType()))) {
+			addProcessQueue != null && addProcessQueue.contains(eventIdentifier.getEventType()))) {
 				MessageAction messageAction = eventIdentifier.getEventType().equals("APIS") ? MessageAction.RAW_APIS : MessageAction.RAW_PNR;
-				apms.sendFileContent(addProcessString, message, eventIdentifier, messageAction);
+				apms.sendFileContent(addProcessQueue, message, eventIdentifier, messageAction);
 			}
 		} catch (Exception e) {
 			logger.warn("Failed to parsed message. Is border crossing information corrupt? Error is: " + e);

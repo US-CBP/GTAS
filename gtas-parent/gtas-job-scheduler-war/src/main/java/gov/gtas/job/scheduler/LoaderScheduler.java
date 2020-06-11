@@ -23,6 +23,11 @@ import gov.gtas.parsers.tamr.model.TamrQuery;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
+import gov.gtas.summary.EventIdentifier;
+import gov.gtas.summary.MessageAction;
+import gov.gtas.summary.MessageSummary;
+import gov.gtas.summary.MessageSummaryList;
+import gov.gtas.summary.jms.AdditionalProcessingMessageSender;
 import gov.gtas.svc.TargetingService;
 
 
@@ -102,6 +107,15 @@ public class LoaderScheduler {
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
 
+	@Value("${additional.processing.enabled.passenger}")
+	private Boolean additionalProcessing;
+
+	@Autowired
+	private AdditionalProcessingMessageSender apms;
+
+	@Value("${additional.processing.queue}")
+	private String addProcessQueue;
+
 	void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) throws Exception {
 		logger.debug(String.format("Processing %s", f.getAbsolutePath()));
 		ProcessedMessages processedMessages = loader.processMessage(f, primeFlightKey);
@@ -114,6 +128,11 @@ public class LoaderScheduler {
 			TamrQuery tamrQuery = new TamrQuery(passToSend);
 			tamrMessageSender.sendMessageToTamr(
 			        TamrMessageType.QUERY, tamrQuery);
+		}
+
+		if (additionalProcessing) {
+			MessageSummaryList msl = MessageSummaryList.from(processedMessages.getMessageSummaries());
+			apms.sendFileContent(addProcessQueue, msl);
 		}
 
 		if (result != null) {

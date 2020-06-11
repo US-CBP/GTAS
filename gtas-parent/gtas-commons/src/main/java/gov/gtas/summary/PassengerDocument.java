@@ -23,8 +23,6 @@ public class PassengerDocument {
 
     private Long flightId;
 
-    private Flight flight;
-
     private Long passengerId;
 
     private Integer numberOfDaysValid;
@@ -34,9 +32,13 @@ public class PassengerDocument {
 
     public static PassengerDocument from(Document d, String flightTagId) {
         PassengerDocument pd =  new PassengerDocument();
-        BeanUtils.copyProperties(d, pd);
+        pd.setDocumentNumber(d.getDocumentNumber());
+        pd.setDocumentType(d.getDocumentType());
+        pd.setExpirationDate(d.getExpirationDate());
+        pd.setFlightId(d.getFlightId());
+        pd.setIssuanceCountry(d.getIssuanceCountry());
+        pd.setMessageType(d.getMessageType());
         pd.setFlightTagId(flightTagId);
-
         return pd;
     }
 
@@ -94,14 +96,6 @@ public class PassengerDocument {
 
     public void setFlightId(Long flightId) {
         this.flightId = flightId;
-    }
-
-    public Flight getFlight() {
-        return flight;
-    }
-
-    public void setFlight(Flight flight) {
-        this.flight = flight;
     }
 
     public Long getPassengerId() {

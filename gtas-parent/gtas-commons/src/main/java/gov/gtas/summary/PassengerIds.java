@@ -14,7 +14,12 @@ public class PassengerIds {
 
     public static PassengerIds from(PassengerIDTag passengerIDTag) {
         PassengerIds pids = new PassengerIds();
-        BeanUtils.copyProperties(passengerIDTag, pids);
+        if (passengerIDTag == null) {
+            return pids;
+        }
+        pids.setIdTag(passengerIDTag.getIdTag());
+        pids.setPax_id(passengerIDTag.getPax_id());
+        pids.setTamrId(passengerIDTag.getTamrId());
         return pids;
     }
 

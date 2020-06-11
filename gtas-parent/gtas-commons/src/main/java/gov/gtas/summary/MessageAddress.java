@@ -24,7 +24,13 @@ public class MessageAddress {
 
     public static MessageAddress from(String flightIdTag, String messageHash, Address address) {
         MessageAddress pa = new MessageAddress();
-        BeanUtils.copyProperties(address, pa);
+        pa.setCity(address.getCity());
+        pa.setCountry(address.getCountry());
+        pa.setLine1(address.getLine1());
+        pa.setLine2(address.getLine2());
+        pa.setLine3(address.getLine3());
+        pa.setMessageHash(messageHash);
+        pa.setState(address.getState());
         pa.setFlightIdTag(flightIdTag);
         pa.setMessageHash(messageHash);
         return pa;

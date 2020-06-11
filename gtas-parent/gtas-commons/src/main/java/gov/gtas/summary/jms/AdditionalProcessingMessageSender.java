@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.summary.EventIdentifier;
 import gov.gtas.summary.MessageAction;
 import gov.gtas.summary.MessageSummary;
+import gov.gtas.summary.MessageSummaryList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.jms.JMSException;
 import javax.jms.Message;
 
 @Component
@@ -25,8 +27,28 @@ public class AdditionalProcessingMessageSender {
         this.jmsTemplateFile = jmsTemplateFile;
     }
 
-    public void sendFileContent(String addProcessString, org.springframework.messaging.Message<?> message, EventIdentifier eventIdentifier, MessageAction messageAction) {
-        jmsTemplateFile.setDefaultDestinationName(addProcessString);
+    public void sendFileContent(String queueName, MessageSummaryList messageSummaryList) {
+        jmsTemplateFile.setDefaultDestinationName(queueName);
+        EventIdentifier eventIdentifier = messageSummaryList.getEventIdentifier();
+        jmsTemplateFile.send(session -> {
+            ObjectMapper mapper = new ObjectMapper();
+            String messageJson;
+            try {
+                messageJson = mapper.writer().writeValueAsString(messageSummaryList);
+            } catch (JsonProcessingException e) {
+                messageJson = e.getMessage();
+                logger.error("ERROR WRITING JSON! NO ADDITIONAL PROCESSING!");
+            }
+            Message fwd = session.createObjectMessage(messageJson);
+            setEventIdentifierProps(eventIdentifier, fwd);
+            fwd.setStringProperty("action", messageSummaryList.getMessageAction().toString());
+            return fwd;
+        });
+    }
+
+
+    public void sendFileContent(String queueName, org.springframework.messaging.Message<?> message, EventIdentifier eventIdentifier, MessageAction messageAction) {
+        jmsTemplateFile.setDefaultDestinationName(queueName);
         jmsTemplateFile.send(session -> {
             MessageSummary messageSummary =  new MessageSummary();
             messageSummary.setRawMessage((String)message.getPayload());
@@ -42,13 +64,18 @@ public class AdditionalProcessingMessageSender {
                 logger.error("ERROR WRITING JSON! NO ADDITIONAL PROCESSING!");
             }
             Message fwd = session.createObjectMessage(messageJson);
-            fwd.setStringProperty("eventType", eventIdentifier.getEventType());
-            fwd.setStringProperty("destCountry", eventIdentifier.getCountryDestination());
-            fwd.setStringProperty("originCountry", eventIdentifier.getCountryOrigin());
-            fwd.setStringProperty("identifier", eventIdentifier.getIdentifier());
-            fwd.setObjectProperty("identifierList", eventIdentifier.getIdentifierArrayList());
+            setEventIdentifierProps(eventIdentifier, fwd);
             fwd.setStringProperty("action", messageAction.toString());
             return fwd;
         });
+    }
+
+
+    private void setEventIdentifierProps(EventIdentifier eventIdentifier, Message fwd) throws JMSException {
+        fwd.setStringProperty("eventType", eventIdentifier.getEventType());
+        fwd.setStringProperty("destCountry", eventIdentifier.getCountryDestination());
+        fwd.setStringProperty("originCountry", eventIdentifier.getCountryOrigin());
+        fwd.setStringProperty("identifier", eventIdentifier.getIdentifier());
+        fwd.setObjectProperty("identifierList", eventIdentifier.getIdentifierArrayList());
     }
 }

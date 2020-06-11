@@ -29,7 +29,15 @@ public class PassengerHit {
 
     public static PassengerHit from(HitDetail hd) {
         PassengerHit pd = new PassengerHit();
-        BeanUtils.copyProperties(hd, pd);
+        pd.setCreatedDate(hd.getCreatedDate());
+        pd.setDescription(hd.getDescription());
+        pd.setFlightId(hd.getFlightId());
+        pd.setHitType(hd.getHitType());
+        pd.setHitMakerId(hd.getHitMakerId());
+        pd.setPassengerId(hd.getPassengerId());
+        pd.setTitle(hd.getTitle());
+        pd.setRuleConditions(hd.getRuleConditions());
+        pd.setRuleId(hd.getRuleId());
         return pd;
     }
 

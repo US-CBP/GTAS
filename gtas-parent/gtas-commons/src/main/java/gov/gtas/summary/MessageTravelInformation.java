@@ -52,18 +52,41 @@ public class MessageTravelInformation {
 
     public static MessageTravelInformation from(Flight flight, String flightIdTag) {
         MessageTravelInformation pfi = new MessageTravelInformation();
-        BeanUtils.copyProperties(flight, pfi);
-        BeanUtils.copyProperties(flight.getMutableFlightDetails(), pfi);
-        BeanUtils.copyProperties(flight.getFlightPassengerCount(), pfi);
         pfi.setBorderCrossingEvent(true);
-        pfi.setFlightIdTag(flightIdTag);
+        pfi.setCarrier(flight.getCarrier());
+        pfi.setDestination(flight.getDestination());
+        pfi.setDestinationCountry(flight.getDestinationCountry());
+        pfi.setDirection(flight.getDirection());
+        pfi.setEta(flight.getMutableFlightDetails().getEta());
+        pfi.setEtaDate(flight.getMutableFlightDetails().getEtaDate());
+        pfi.setEtd(flight.getMutableFlightDetails().getEtd());
+        pfi.setEtaDate(flight.getMutableFlightDetails().getEtaDate());
+        pfi.setLocalEtaDate(flight.getMutableFlightDetails().getLocalEtaDate());
+        pfi.setLocalEtdDate(flight.getMutableFlightDetails().getLocalEtdDate());
+        pfi.setFlightIdTag(flight.getIdTag());
+        pfi.setPassengerCount(flight.getFlightPassengerCount().getPassengerCount());
+        pfi.setFlightId(flight.getId());
+        pfi.setFullFlightNumber(flight.getFullFlightNumber());
+        pfi.setFlightNumber(flight.getFlightNumber());
+        pfi.setBorderCrossingEvent(true);
         return pfi;
     }
 
-    public static MessageTravelInformation from(BookingDetail bookingDetail) {
+    public static MessageTravelInformation from(BookingDetail bookingDetail, String flightIdTag) {
         MessageTravelInformation pfi = new MessageTravelInformation();
-        BeanUtils.copyProperties(bookingDetail, pfi);
-        pfi.setBorderCrossingEvent(false);
+        pfi.setBorderCrossingEvent(true);
+        pfi.setFlightNumber(bookingDetail.getFlightNumber());
+        pfi.setFullFlightNumber(bookingDetail.getFullFlightNumber());
+        pfi.setDestination(bookingDetail.getDestination());
+        pfi.setDestinationCountry(bookingDetail.getDestinationCountry());
+        pfi.setEta(bookingDetail.getEta());
+        pfi.setEtaDate(bookingDetail.getEtaDate());
+        pfi.setEtd(bookingDetail.getEtd());
+        pfi.setEtaDate(bookingDetail.getEtaDate());
+        pfi.setLocalEtaDate(bookingDetail.getLocalEtaDate());
+        pfi.setLocalEtdDate(bookingDetail.getLocalEtdDate());
+        pfi.setFlightId(bookingDetail.getId());
+        pfi.setBorderCrossingEvent(true);        pfi.setBorderCrossingEvent(false);
         return pfi;
     }
 

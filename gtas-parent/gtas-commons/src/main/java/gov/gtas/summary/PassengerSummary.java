@@ -11,6 +11,7 @@ public class PassengerSummary {
     List<PassengerDocument> passengerDocumentsList = new ArrayList<>();
     List<PassengerHit> passengerDerogs = new ArrayList<>();
     PassengerIds passengerIds = new PassengerIds();
+    private Long gtasId;
 
     public PassengerIds getPassengerIds() {
         return passengerIds;
@@ -58,5 +59,13 @@ public class PassengerSummary {
 
     public void setPassengerDerogs(List<PassengerHit> passengerDerogs) {
         this.passengerDerogs = passengerDerogs;
+    }
+
+    public Long getGtasId() {
+        return gtasId;
+    }
+
+    public void setGtasId(Long gtasId) {
+        this.gtasId = gtasId;
     }
 }

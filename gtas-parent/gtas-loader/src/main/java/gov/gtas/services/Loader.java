@@ -11,6 +11,7 @@ import java.util.*;
 
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.summary.MessageSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,10 @@ public class Loader {
 
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
+
+	@Value("${additional.processing.enabled.passenger}")
+	private Boolean additionalProcessing;
+
 
 	/**
 	 * Processes all the messages in a single file.
@@ -102,6 +107,7 @@ public class Loader {
 		rawMessages = msgDto.getRawMsgs();
 		List<MessageStatus> messageStatuses = new ArrayList<>();
 		List<TamrPassenger> tamrPassengers = new ArrayList<>();
+		List<MessageSummary> messageSummaries = new ArrayList<>();
 		for (String rawMessage : rawMessages) {
 			msgDto.setRawMsg(rawMessage);
 			MessageDto parsedMessageDto = svc.parse(msgDto);
@@ -110,6 +116,9 @@ public class Loader {
 				MessageStatus messageStatus = messageInformation.getMessageStatus();
 				if (tamrEnabled) {
 					tamrPassengers.addAll(messageInformation.getTamrPassengers());
+				}
+				if (additionalProcessing) {
+					messageSummaries.add(messageInformation.getMessageSummary());
 				}
 				messageStatuses.add(messageStatus);
 				if (messageStatus.isSuccess()) {
@@ -126,6 +135,7 @@ public class Loader {
 		processedMessages.setProcessed(new int[] { successMsgCount, failedMsgCount });
 		processedMessages.setMessageStatusList(messageStatuses);
 		processedMessages.setTamrPassengers(tamrPassengers);
+		processedMessages.setMessageSummaries(messageSummaries);
 		return processedMessages;
 	}
 

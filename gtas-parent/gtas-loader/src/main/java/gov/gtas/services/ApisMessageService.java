@@ -15,6 +15,9 @@ import gov.gtas.parsers.tamr.TamrAdapterImpl;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.repository.*;
+import gov.gtas.summary.EventIdentifier;
+import gov.gtas.summary.MessageAction;
+import gov.gtas.summary.MessageSummary;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +63,9 @@ public class ApisMessageService extends MessageLoaderService {
 
 	@Autowired
 	private PassengerTripRepository passengerTripRepository;
+
+	@Value("${additional.processing.enabled.passenger}")
+	private Boolean additionalProcessing;
 
 	@Override
 	public List<String> preprocess(String message) {
@@ -146,6 +152,23 @@ public class ApisMessageService extends MessageLoaderService {
 				List<TamrPassenger> tamrPassengers = tamrAdapter
 						.convertPassengers(apis.getFlights().iterator().next(), apis.getPassengers());
 				messageInformation.setTamrPassengers(tamrPassengers);
+			}
+			if (additionalProcessing) {
+				String flightHash = primeFlight.getIdTag();
+				String messageHash = apis.getHashCode();
+				MessageSummary ms = new MessageSummary(flightHash, messageHash);
+				ms.setRawMessage(msgDto.getRawMsg());
+				ms.setAction(MessageAction.PROCESSED_APIS);
+				EventIdentifier ei = new EventIdentifier();
+				ei.setCountryDestination(primeFlight.getDestinationCountry());
+				ei.setCountryOrigin(primeFlight.getOriginCountry());
+				ei.setIdentifier(Arrays.toString(msgDto.getPrimeFlightKey()));
+				ei.setIdentifierArrayList(new ArrayList<>(Arrays.asList(msgDto.getPrimeFlightKey())));
+				ei.setEventType("APIS_PASSENGER");
+				ms.setEventIdentifier(ei);
+				ms.setRawMessage(msgDto.getRawMsg());
+				apis.getPassengers().forEach(ms::addPassengerNoHits);
+				messageInformation.setMessageSummary(ms);
 			}
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setSuccess(false);

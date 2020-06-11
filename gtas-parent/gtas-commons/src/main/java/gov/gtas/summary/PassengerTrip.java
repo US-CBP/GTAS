@@ -1,5 +1,8 @@
 package gov.gtas.summary;
 
+import gov.gtas.model.PassengerTripDetails;
+import org.springframework.beans.BeanUtils;
+
 public class PassengerTrip {
 
     private Long passengerId;
@@ -21,6 +24,21 @@ public class PassengerTrip {
     private Integer coTravelerCount;
 
     private Integer hoursBeforeTakeOff;
+
+    public static PassengerTrip from(PassengerTripDetails ptd) {
+        PassengerTrip pt = new PassengerTrip();
+        pt.setCoTravelerCount(ptd.getCoTravelerCount());
+        pt.setDebarkation(ptd.getDebarkation());
+        pt.setDebarkCountry(ptd.getDebarkCountry());
+        pt.setEmbarkation(ptd.getEmbarkation());
+        pt.setEmbarkCountry(ptd.getEmbarkCountry());
+        pt.setHoursBeforeTakeOff(ptd.getHoursBeforeTakeOff());
+        pt.setPassengerId(ptd.getPassengerId());
+        pt.setNumberOfDaysVisaValid(ptd.getNumberOfDaysVisaValid());
+        pt.setPnrReservationReferenceNumber(ptd.getReservationReferenceNumber());
+        pt.setReservationReferenceNumber(ptd.getReservationReferenceNumber());
+        return pt;
+    }
 
     public Long getPassengerId() {
         return passengerId;

@@ -15,7 +15,8 @@ public class MessageEmail {
 
     public static MessageEmail from(String flightIdTag, String messageIdTag, Email email) {
         MessageEmail pe = new MessageEmail();
-        BeanUtils.copyProperties(email, pe);
+        pe.setAddress(email.getAddress());
+        pe.setDomain(email.getDomain());
         pe.setFlightIdTag(flightIdTag);
         pe.setMessageIdTag(messageIdTag);
         return pe;

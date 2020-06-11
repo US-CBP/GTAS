@@ -20,6 +20,7 @@ import gov.gtas.parsers.tamr.TamrAdapterImpl;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
+import gov.gtas.summary.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -55,6 +56,10 @@ public class PnrMessageService extends MessageLoaderService {
 
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
+
+	@Value("${additional.processing.enabled.passenger}")
+	private Boolean additionalProcessing;
+
 
 	@Autowired
 	public PnrMessageService(PnrRepository msgDao, LoaderUtils utils, LookUpRepository lookupRepo,
@@ -160,6 +165,29 @@ public class PnrMessageService extends MessageLoaderService {
 						.convertPassengers(pnr.getFlights().iterator().next(), pnr.getPassengers());
 				messageInformation.setTamrPassengers(tamrPassengers);
 			}
+			if (additionalProcessing) {
+				String flightHash = primeFlight.getIdTag();
+				String messageHash = pnr.getHashCode();
+				MessageSummary ms = new MessageSummary(flightHash, messageHash);
+				ms.setRawMessage(msgDto.getRawMsg());
+				ms.setAction(MessageAction.PROCESSED_PNR);
+				EventIdentifier ei = new EventIdentifier();
+				ei.setCountryDestination(primeFlight.getDestinationCountry());
+				ei.setCountryOrigin(primeFlight.getOriginCountry());
+				ei.setIdentifier(Arrays.toString(msgDto.getPrimeFlightKey()));
+				ei.setIdentifierArrayList(new ArrayList<>(Arrays.asList(msgDto.getPrimeFlightKey())));
+				ei.setEventType("PNR_PASSENGER");
+				ms.setEventIdentifier(ei);
+				ms.setRawMessage(msgDto.getRawMsg());
+				pnr.getPhones().forEach(ms::addPhone);
+				pnr.getAddresses().forEach(ms::addAddress);
+				pnr.getCreditCards().forEach(ms::addCreditCard);
+				pnr.getFrequentFlyers().forEach(ms::addFrequentFlyer);
+				pnr.getEmails().forEach(ms::addEmail);
+				pnr.getPassengers().forEach(ms::addPassengerNoHits);
+				messageInformation.setMessageSummary(ms);
+			}
+
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			msgDto.getMessageStatus().setSuccess(false);

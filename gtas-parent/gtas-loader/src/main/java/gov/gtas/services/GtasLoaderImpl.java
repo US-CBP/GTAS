@@ -465,14 +465,13 @@ public class GtasLoaderImpl implements GtasLoader {
 	@Override
 	public int createPassengers(Set<Passenger> newPassengers, Set<Passenger> oldSet, Set<Passenger> messagePassengers,
 			Flight primeFlight, Set<BookingDetail> bookingDetails) {
-		List<PassengerIDTag> passengerIDTags = new ArrayList<>();
 
 		passengerDao.saveAll(newPassengers);
 		messagePassengers.addAll(newPassengers);
 		for (Passenger p : newPassengers) {
 			try {
 				PassengerIDTag paxIdTag = utils.createPassengerIDTag(p);
-				passengerIDTags.add(paxIdTag);
+				p.setPassengerIDTag(paxIdTag);
 			} catch (Exception ignored) {
 				logger.error("Failed to make a pax hash id from pax with id " + p.getId()
 						+ ". Passenger lacks fname, lname, gender, or dob. ");
@@ -487,7 +486,6 @@ public class GtasLoaderImpl implements GtasLoader {
 			flightPassengers.add(fp);
 		}
 
-		passengerIdTagDao.saveAll(passengerIDTags);
 		flightPassengerRepository.saveAll(flightPassengers);
 		return newPassengers.size();
 	}

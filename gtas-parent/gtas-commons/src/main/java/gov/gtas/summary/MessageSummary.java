@@ -1,6 +1,8 @@
 package gov.gtas.summary;
 
 
+import gov.gtas.model.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +11,7 @@ public class MessageSummary {
     private SummaryMetaData summaryMetaData = new SummaryMetaData();
     private String rawMessage;
     private String hashCode;
+    private String flightIdTag;
     private EventIdentifier eventIdentifier;
     private Boolean relatedToDerog;
     private MessageAction action;
@@ -20,6 +23,48 @@ public class MessageSummary {
     private List<MessageEmail> messageEmails = new ArrayList<>();
     private List<PassengerSummary> passengerSummaries = new ArrayList<>();
 
+    public MessageSummary() {};
+
+    public MessageSummary(String hashCode, String flightIdTag){
+        this.hashCode = hashCode;
+        this.flightIdTag = flightIdTag;
+    }
+
+    public void addAddress(Address address) {
+        MessageAddress ma = MessageAddress.from(this.hashCode, this.flightIdTag, address);
+        this.getMessageAddresses().add(ma);
+    }
+    public void addPhone(Phone phone) {
+        MessagePhone mp = MessagePhone.from(this.hashCode, this.flightIdTag, phone);
+        this.getMessagePhones().add(mp);
+    }
+    public void addFrequentFlyer(FrequentFlyer frequentFlyer) {
+        MessageFrequentFlyer mff = MessageFrequentFlyer.from(this.hashCode, this.flightIdTag, frequentFlyer);
+        this.getMessageFrequentFlyers().add(mff);
+    }
+    public void addCreditCard(CreditCard creditCard) {
+        MessageCreditCard mcc = MessageCreditCard.from(this.hashCode, this.flightIdTag, creditCard);
+        this.getMessageCreditCards().add(mcc);
+    }
+    public void addEmail(Email email) {
+        MessageEmail me = MessageEmail.from(this.hashCode, this.flightIdTag, email);
+        this.getMessageEmails().add(me);
+    }
+    public void addPassengerNoHits(Passenger passenger) {
+        PassengerSummary ps = new PassengerSummary();
+        ps.setGtasId(passenger.getId());
+        PassengerBiographic pb = PassengerBiographic.from(passenger.getPassengerDetails());
+        PassengerTrip pt = PassengerTrip.from(passenger.getPassengerTripDetails());
+        PassengerIds pids = PassengerIds.from(passenger.getPassengerIDTag());
+        for (Document d : passenger.getDocuments()) {
+            PassengerDocument pd = PassengerDocument.from(d, flightIdTag);
+            ps.getPassengerDocumentsList().add(pd);
+        }
+        ps.setPassengerBiographic(pb);
+        ps.setPassengerTrip(pt);
+        ps.setPassengerIds(pids);
+        this.getPassengerSummaries().add(ps);
+    }
     public Boolean getRelatedToDerog() {
         return relatedToDerog;
     }
@@ -122,5 +167,13 @@ public class MessageSummary {
 
     public void setHashCode(String hashCode) {
         this.hashCode = hashCode;
+    }
+
+    public String getFlightIdTag() {
+        return flightIdTag;
+    }
+
+    public void setFlightIdTag(String flightIdTag) {
+        this.flightIdTag = flightIdTag;
     }
 }

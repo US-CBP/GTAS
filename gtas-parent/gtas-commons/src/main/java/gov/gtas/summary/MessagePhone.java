@@ -12,7 +12,7 @@ public class MessagePhone {
 
     public static MessagePhone from(String messageIdTag, String flightIdTag, Phone phone){
         MessagePhone passengerPhone = new MessagePhone();
-        BeanUtils.copyProperties(phone, passengerPhone);
+        passengerPhone.setNumber(phone.getNumber());
         passengerPhone.setMessageIdTag(messageIdTag);
         passengerPhone.setFlightIdTag(flightIdTag);
         return passengerPhone;

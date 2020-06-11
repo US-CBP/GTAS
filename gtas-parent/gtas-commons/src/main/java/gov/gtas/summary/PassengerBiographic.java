@@ -34,7 +34,16 @@ public class PassengerBiographic {
 
     public static PassengerBiographic from(PassengerDetails pd) {
         PassengerBiographic pb = new PassengerBiographic();
-        BeanUtils.copyProperties(pd, pb);
+        pb.setAge(pd.getAge());
+        pb.setDob(pd.getDob());
+        pb.setFirstName(pd.getFirstName());
+        pb.setLastName(pd.getLastName());
+        pb.setGender(pd.getGender());
+        pb.setMiddleName(pd.getMiddleName());
+        pb.setNationality(pd.getNationality());
+        pb.setPassengerType(pd.getPassengerType());
+        pb.setResidencyCountry(pd.getResidencyCountry());
+        pb.setTitle(pd.getTitle());
         return pb;
     }
 

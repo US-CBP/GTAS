@@ -25,7 +25,12 @@ public class MessageCreditCard {
 
     public static MessageCreditCard from(String messageIdTag, String flightIdTag, CreditCard cc) {
         MessageCreditCard pcc = new MessageCreditCard();
-        BeanUtils.copyProperties(cc, pcc);
+        pcc.setAccountHolder(cc.getAccountHolder());
+        pcc.setAccountHolderAddress(cc.getAccountHolderAddress());
+        pcc.setAccountHolderPhone(cc.getAccountHolderPhone());
+        pcc.setCardType(cc.getCardType());
+        pcc.setExpiration(cc.getExpiration());
+        pcc.setNumber(cc.getNumber());
         pcc.setFlightIdTag(flightIdTag);
         pcc.setMessageIdTag(messageIdTag);
         return pcc;
