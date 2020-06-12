@@ -103,7 +103,7 @@ services:
       - gtas-webapp-network
     restart: always
     volumes:
-      - db-data:/var/lib/mysql 
+      - db-data:/var/lib/mysql  
 
 
 secrets:
