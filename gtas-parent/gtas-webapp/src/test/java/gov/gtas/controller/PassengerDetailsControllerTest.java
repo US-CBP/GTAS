@@ -1,8 +1,6 @@
 package gov.gtas.controller;
 
 import gov.gtas.common.PassengerDetailService;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Pnr;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.BagRepository;
 import gov.gtas.repository.BookingDetailRepository;
@@ -25,14 +23,12 @@ import static org.mockito.ArgumentMatchers.any;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PassengerDetailsControllerTest {
 
 	@Mock
-	private ApisControllerService apisControllerService;
+	private ApisService apisService;
 
 	@Mock
 	private PassengerService pService;

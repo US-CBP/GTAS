@@ -1,12 +1,13 @@
 package gov.gtas.summary;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageSummaryList {
 
     private EventIdentifier eventIdentifier;
     private MessageAction messageAction;
-    private List<MessageSummary> messageSummaryList;
+    private List<MessageSummary> messageSummaryList = new ArrayList<>();
 
     public MessageSummaryList() {}
 

@@ -13,7 +13,7 @@ public class MessageSummary {
     private String hashCode;
     private String flightIdTag;
     private EventIdentifier eventIdentifier;
-    private Boolean relatedToDerog;
+    private Boolean relatedToHit;
     private MessageAction action;
     private List<MessageTravelInformation> messageTravelInformation = new ArrayList<>();
     private List<MessagePhone> messagePhones = new ArrayList<>();
@@ -28,6 +28,11 @@ public class MessageSummary {
     public MessageSummary(String hashCode, String flightIdTag){
         this.hashCode = hashCode;
         this.flightIdTag = flightIdTag;
+    }
+
+    public void addBookingDetail(BookingDetail bookingDetail) {
+        MessageTravelInformation mti = MessageTravelInformation.from(bookingDetail, flightIdTag);
+        this.getMessageTravelInformation().add(mti);
     }
 
     public void addAddress(Address address) {
@@ -65,12 +70,12 @@ public class MessageSummary {
         ps.setPassengerIds(pids);
         this.getPassengerSummaries().add(ps);
     }
-    public Boolean getRelatedToDerog() {
-        return relatedToDerog;
+    public Boolean getRelatedToHit() {
+        return relatedToHit;
     }
 
-    public void setRelatedToDerog(Boolean relatedToDerog) {
-        this.relatedToDerog = relatedToDerog;
+    public void setRelatedToHit(Boolean relatedToHit) {
+        this.relatedToHit = relatedToHit;
     }
 
     public String getRawMessage() {

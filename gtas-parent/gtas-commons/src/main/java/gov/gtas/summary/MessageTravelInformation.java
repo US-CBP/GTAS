@@ -56,6 +56,9 @@ public class MessageTravelInformation {
         pfi.setCarrier(flight.getCarrier());
         pfi.setDestination(flight.getDestination());
         pfi.setDestinationCountry(flight.getDestinationCountry());
+        pfi.setOrigin(flight.getOrigin());
+        pfi.setOriginCountry(flight.getOriginCountry());
+        pfi.setIdTag(flight.getIdTag());
         pfi.setDirection(flight.getDirection());
         pfi.setEta(flight.getMutableFlightDetails().getEta());
         pfi.setEtaDate(flight.getMutableFlightDetails().getEtaDate());
@@ -66,6 +69,8 @@ public class MessageTravelInformation {
         pfi.setFlightIdTag(flight.getIdTag());
         pfi.setPassengerCount(flight.getFlightPassengerCount().getPassengerCount());
         pfi.setFlightId(flight.getId());
+        pfi.setFlightIdTag(flight.getIdTag());
+        pfi.setEtdDate(flight.getEtdDate());
         pfi.setFullFlightNumber(flight.getFullFlightNumber());
         pfi.setFlightNumber(flight.getFlightNumber());
         pfi.setBorderCrossingEvent(true);
@@ -86,7 +91,8 @@ public class MessageTravelInformation {
         pfi.setLocalEtaDate(bookingDetail.getLocalEtaDate());
         pfi.setLocalEtdDate(bookingDetail.getLocalEtdDate());
         pfi.setFlightId(bookingDetail.getId());
-        pfi.setBorderCrossingEvent(true);        pfi.setBorderCrossingEvent(false);
+        pfi.setBorderCrossingEvent(true);
+        pfi.setBorderCrossingEvent(false);
         return pfi;
     }
 
