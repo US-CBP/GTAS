@@ -3,7 +3,7 @@ services:
   http-proxy:
     deploy:
       labels:
-        kompose.image-pull-policy: "Always"
+        kompose.image-pull-policy: "Always" 
       placement:
         constraints:
           - node.labels.role == node-a
