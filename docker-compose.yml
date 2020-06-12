@@ -18,7 +18,7 @@ services:
       - elastic-bootstrap-password
 
   web-app:
-    image: simbam1/web-app:1.0.1
+    image: simbam1/webapp:1.0.1
     container_name: web-app
     build: 
       context: ./gtas-parent
@@ -78,7 +78,7 @@ services:
       - gtas-webapp-network
 
   mariadb:
-    image: simbam1/mariadb:1.0.0
+    image: simbam1/mariadb:1.0.1
     build:
       context: ./gtas-parent
       dockerfile: mariadb.Dockerfile
