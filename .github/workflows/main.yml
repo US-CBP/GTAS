@@ -70,15 +70,15 @@ jobs:
       #     path: ./gtas-parent/scripts/elastic
       #     dockerfile: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
       #     tags: 1.0.1 
-      # - uses: docker/build-push-action@v1
-      #   name: Build and push ELK setup image
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }} 
-      #     repository: simbam1/elk-setup
-      #     path: ./gtas-parent/scripts/elastic
-      #     dockerfile: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
-      #     tags: 1.1.1
+      - uses: docker/build-push-action@v1
+        name: Build and push ELK setup image
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/elk-setup
+          path: ./gtas-parent/scripts/elastic
+          dockerfile: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
+          tags: 1.1.1
       # - uses: docker/build-push-action@v1 
       #   name: Build and push Neo4J ETL job image     
       #   with:
