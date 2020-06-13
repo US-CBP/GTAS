@@ -24,7 +24,6 @@ import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.util.FileUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.repository.MessageRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class Loader {

@@ -1,8 +1,5 @@
 package gov.gtas.summary;
 
-import gov.gtas.model.CreditCard;
-import org.springframework.beans.BeanUtils;
-
 import java.util.Date;
 
 public class MessageCreditCard {
@@ -22,19 +19,6 @@ public class MessageCreditCard {
     private String flightIdTag;
 
     private String messageIdTag;
-
-    public static MessageCreditCard from(String messageIdTag, String flightIdTag, CreditCard cc) {
-        MessageCreditCard pcc = new MessageCreditCard();
-        pcc.setAccountHolder(cc.getAccountHolder());
-        pcc.setAccountHolderAddress(cc.getAccountHolderAddress());
-        pcc.setAccountHolderPhone(cc.getAccountHolderPhone());
-        pcc.setCardType(cc.getCardType());
-        pcc.setExpiration(cc.getExpiration());
-        pcc.setNumber(cc.getNumber());
-        pcc.setFlightIdTag(flightIdTag);
-        pcc.setMessageIdTag(messageIdTag);
-        return pcc;
-    }
 
     public String getCardType() {
         return cardType;

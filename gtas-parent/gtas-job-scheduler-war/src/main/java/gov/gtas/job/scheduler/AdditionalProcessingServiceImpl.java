@@ -4,8 +4,9 @@ import gov.gtas.job.scheduler.service.AdditionalProcessingService;
 import gov.gtas.model.*;
 import gov.gtas.services.ApisService;
 import gov.gtas.services.PnrService;
+import gov.gtas.services.SummaryFactory;
 import gov.gtas.summary.*;
-import gov.gtas.summary.jms.AdditionalProcessingMessageSender;
+import gov.gtas.services.jms.AdditionalProcessingMessageSender;
 import gov.gtas.util.LobUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -120,37 +121,37 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
 
             if (ffMap.get(pnrId) != null && !ffMap.get(pnrId).isEmpty()) {
                 for (FrequentFlyer ff : ffMap.get(pnrId)) {
-                    messageSummary.addFrequentFlyer(ff);
+                    SummaryFactory.addFrequentFlyer(ff, messageSummary);
                 }
             }
 
             if (bdMap.get(pnrId) != null && !bdMap.get(pnrId).isEmpty()) {
                 for (BookingDetail bd : bdMap.get(pnrId)) {
-                    messageSummary.addBookingDetail(bd);
+                    SummaryFactory.addBookingDetail(bd, messageSummary);
                 }
             }
 
             if (ccMap.get(pnrId) != null && !ccMap.get(pnrId).isEmpty()) {
                 for (CreditCard cc : ccMap.get(pnrId)) {
-                    messageSummary.addCreditCard(cc);
+                    SummaryFactory.addCreditCard(cc, messageSummary);
                 }
             }
 
             if (emailMap.get(pnrId) != null && !emailMap.get(pnrId).isEmpty()) {
                 for (Email email : emailMap.get(pnrId)) {
-                    messageSummary.addEmail(email);
+                    SummaryFactory.addEmail(email, messageSummary);
                 }
             }
 
             if (phoneMap.get(pnrId) != null && !phoneMap.get(pnrId).isEmpty()) {
                 for (Phone phone : phoneMap.get(pnrId)) {
-                    messageSummary.addPhone(phone);
+                    SummaryFactory.addPhone(phone, messageSummary);
                 }
             }
 
             if (addressMap.get(pnrId) != null && !addressMap.get(pnrId).isEmpty()) {
                 for (Address address : addressMap.get(pnrId)) {
-                    messageSummary.addAddress(address);
+                    SummaryFactory.addAddress(address, messageSummary);
                 }
             }
 
@@ -185,10 +186,10 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
 
     private MessageSummary makeHitMessageSummary(Message message, Flight messageFlight) {
         MessageSummary messageSummary = new MessageSummary(message.getHashCode(), messageFlight.getIdTag());
-        EventIdentifier ei = EventIdentifier.from(messageFlight);
+        EventIdentifier ei = SummaryFactory.from(messageFlight);
         messageSummary.setEventIdentifier(ei);
         messageSummary.setFlightIdTag(messageFlight.getIdTag());
-        MessageTravelInformation mti = MessageTravelInformation.from(messageFlight, messageFlight.getIdTag());
+        MessageTravelInformation mti = SummaryFactory.from(messageFlight, messageFlight.getIdTag());
         messageSummary.getMessageTravelInformation().add(mti);
         messageSummary.setRawMessage(LobUtils.convertClobToString(message.getRaw()));
         messageSummary.setRelatedToHit(true);
@@ -198,17 +199,17 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
 
     private PassengerSummary getPassengerSummary(String flightIdTag, Passenger p) {
         PassengerSummary passengerSummary = new PassengerSummary();
-        PassengerIds idTags = PassengerIds.from(p.getPassengerIDTag());
+        PassengerIds idTags = SummaryFactory.from(p.getPassengerIDTag());
         for (Document d : p.getDocuments()) {
-            PassengerDocument pdoc = PassengerDocument.from(d, flightIdTag);
+            PassengerDocument pdoc = SummaryFactory.from(d, flightIdTag);
             passengerSummary.getPassengerDocumentsList().add(pdoc);
         }
         for (HitDetail hd : p.getHitDetails()) {
-            PassengerHit pHit = PassengerHit.from(hd);
+            PassengerHit pHit = SummaryFactory.from(hd);
             passengerSummary.getPassengerDerogs().add(pHit);
         }
-        PassengerTrip pt = PassengerTrip.from(p.getPassengerTripDetails());
-        PassengerBiographic pb = PassengerBiographic.from(p.getPassengerDetails());
+        PassengerTrip pt = SummaryFactory.from(p.getPassengerTripDetails());
+        PassengerBiographic pb = SummaryFactory.from(p.getPassengerDetails());
         passengerSummary.setGtasId(p.getId());
         passengerSummary.setPassengerTrip(pt);
         passengerSummary.setPassengerBiographic(pb);

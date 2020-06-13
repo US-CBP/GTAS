@@ -23,11 +23,8 @@ import gov.gtas.parsers.tamr.model.TamrQuery;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
-import gov.gtas.summary.EventIdentifier;
-import gov.gtas.summary.MessageAction;
-import gov.gtas.summary.MessageSummary;
 import gov.gtas.summary.MessageSummaryList;
-import gov.gtas.summary.jms.AdditionalProcessingMessageSender;
+import gov.gtas.services.jms.AdditionalProcessingMessageSender;
 import gov.gtas.svc.TargetingService;
 
 

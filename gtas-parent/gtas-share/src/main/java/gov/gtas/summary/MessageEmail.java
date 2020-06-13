@@ -1,8 +1,5 @@
 package gov.gtas.summary;
 
-import gov.gtas.model.Email;
-import org.springframework.beans.BeanUtils;
-
 public class MessageEmail {
 
     private String address;
@@ -12,15 +9,6 @@ public class MessageEmail {
     private String flightIdTag;
 
     private String messageIdTag;
-
-    public static MessageEmail from(String flightIdTag, String messageIdTag, Email email) {
-        MessageEmail pe = new MessageEmail();
-        pe.setAddress(email.getAddress());
-        pe.setDomain(email.getDomain());
-        pe.setFlightIdTag(flightIdTag);
-        pe.setMessageIdTag(messageIdTag);
-        return pe;
-    }
 
     public String getAddress() {
         return address;

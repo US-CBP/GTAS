@@ -1,10 +1,5 @@
 package gov.gtas.summary;
 
-import gov.gtas.enumtype.MessageType;
-import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
-import org.springframework.beans.BeanUtils;
-
 import java.util.Date;
 
 
@@ -19,7 +14,7 @@ public class PassengerDocument {
 
     private String issuanceCountry;
 
-    private MessageType messageType;
+    private String messageType;
 
     private Long flightId;
 
@@ -28,19 +23,6 @@ public class PassengerDocument {
     private Integer numberOfDaysValid;
 
     private String flightTagId;
-
-
-    public static PassengerDocument from(Document d, String flightTagId) {
-        PassengerDocument pd =  new PassengerDocument();
-        pd.setDocumentNumber(d.getDocumentNumber());
-        pd.setDocumentType(d.getDocumentType());
-        pd.setExpirationDate(d.getExpirationDate());
-        pd.setFlightId(d.getFlightId());
-        pd.setIssuanceCountry(d.getIssuanceCountry());
-        pd.setMessageType(d.getMessageType());
-        pd.setFlightTagId(flightTagId);
-        return pd;
-    }
 
     public String getDocumentType() {
         return documentType;
@@ -82,11 +64,11 @@ public class PassengerDocument {
         this.issuanceCountry = issuanceCountry;
     }
 
-    public MessageType getMessageType() {
+    public String getMessageType() {
         return messageType;
     }
 
-    public void setMessageType(MessageType messageType) {
+    public void setMessageType(String messageType) {
         this.messageType = messageType;
     }
 

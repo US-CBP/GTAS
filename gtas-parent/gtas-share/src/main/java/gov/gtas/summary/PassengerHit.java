@@ -1,8 +1,5 @@
 package gov.gtas.summary;
 
-import gov.gtas.model.HitDetail;
-import org.springframework.beans.BeanUtils;
-
 import java.util.Date;
 
 public class PassengerHit {
@@ -26,20 +23,6 @@ public class PassengerHit {
     private Long flightId;
 
     private float percentage = 1;
-
-    public static PassengerHit from(HitDetail hd) {
-        PassengerHit pd = new PassengerHit();
-        pd.setCreatedDate(hd.getCreatedDate());
-        pd.setDescription(hd.getDescription());
-        pd.setFlightId(hd.getFlightId());
-        pd.setHitType(hd.getHitType());
-        pd.setHitMakerId(hd.getHitMakerId());
-        pd.setPassengerId(hd.getPassengerId());
-        pd.setTitle(hd.getTitle());
-        pd.setRuleConditions(hd.getRuleConditions());
-        pd.setRuleId(hd.getRuleId());
-        return pd;
-    }
 
 
     public String getTitle() {

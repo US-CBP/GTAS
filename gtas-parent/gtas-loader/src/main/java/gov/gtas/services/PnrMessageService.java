@@ -10,19 +10,16 @@ import gov.gtas.enumtype.TripTypeEnum;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import gov.gtas.model.*;
 import gov.gtas.parsers.tamr.TamrAdapter;
-import gov.gtas.parsers.tamr.TamrAdapterImpl;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
 import gov.gtas.summary.*;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,7 +167,7 @@ public class PnrMessageService extends MessageLoaderService {
 				String messageHash = pnr.getHashCode();
 				MessageSummary ms = new MessageSummary(flightHash, messageHash);
 				ms.setRawMessage(msgDto.getRawMsg());
-				ms.setAction(MessageAction.PROCESSED_PNR);
+				ms.setAction(MessageAction.PROCESSED_MESSAGE);
 				EventIdentifier ei = new EventIdentifier();
 				ei.setCountryDestination(primeFlight.getDestinationCountry());
 				ei.setCountryOrigin(primeFlight.getOriginCountry());
@@ -179,12 +176,12 @@ public class PnrMessageService extends MessageLoaderService {
 				ei.setEventType("PNR_PASSENGER");
 				ms.setEventIdentifier(ei);
 				ms.setRawMessage(msgDto.getRawMsg());
-				pnr.getPhones().forEach(ms::addPhone);
-				pnr.getAddresses().forEach(ms::addAddress);
-				pnr.getCreditCards().forEach(ms::addCreditCard);
-				pnr.getFrequentFlyers().forEach(ms::addFrequentFlyer);
-				pnr.getEmails().forEach(ms::addEmail);
-				pnr.getPassengers().forEach(ms::addPassengerNoHits);
+				pnr.getPhones().forEach(p -> SummaryFactory.addPhone(p, ms));
+				pnr.getAddresses().forEach(a -> SummaryFactory.addAddress(a, ms));
+				pnr.getCreditCards().forEach(cc -> SummaryFactory.addCreditCard(cc, ms));
+				pnr.getFrequentFlyers().forEach(ff -> SummaryFactory.addFrequentFlyer(ff, ms));
+				pnr.getEmails().forEach(e -> SummaryFactory.addEmail(e, ms));
+				pnr.getPassengers().forEach(p -> SummaryFactory.addPassengerNoHits(p, ms));
 				messageInformation.setMessageSummary(ms);
 			}
 

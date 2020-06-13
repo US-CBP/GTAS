@@ -1,9 +1,5 @@
 package gov.gtas.summary;
 
-import gov.gtas.model.BookingDetail;
-import gov.gtas.model.Flight;
-import org.springframework.beans.BeanUtils;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,51 +46,6 @@ public class MessageTravelInformation {
 
     private Map<String, String> travelDescriptors = new HashMap<>();
 
-    public static MessageTravelInformation from(Flight flight, String flightIdTag) {
-        MessageTravelInformation pfi = new MessageTravelInformation();
-        pfi.setBorderCrossingEvent(true);
-        pfi.setCarrier(flight.getCarrier());
-        pfi.setDestination(flight.getDestination());
-        pfi.setDestinationCountry(flight.getDestinationCountry());
-        pfi.setOrigin(flight.getOrigin());
-        pfi.setOriginCountry(flight.getOriginCountry());
-        pfi.setIdTag(flight.getIdTag());
-        pfi.setDirection(flight.getDirection());
-        pfi.setEta(flight.getMutableFlightDetails().getEta());
-        pfi.setEtaDate(flight.getMutableFlightDetails().getEtaDate());
-        pfi.setEtd(flight.getMutableFlightDetails().getEtd());
-        pfi.setEtaDate(flight.getMutableFlightDetails().getEtaDate());
-        pfi.setLocalEtaDate(flight.getMutableFlightDetails().getLocalEtaDate());
-        pfi.setLocalEtdDate(flight.getMutableFlightDetails().getLocalEtdDate());
-        pfi.setFlightIdTag(flight.getIdTag());
-        pfi.setPassengerCount(flight.getFlightPassengerCount().getPassengerCount());
-        pfi.setFlightId(flight.getId());
-        pfi.setFlightIdTag(flight.getIdTag());
-        pfi.setEtdDate(flight.getEtdDate());
-        pfi.setFullFlightNumber(flight.getFullFlightNumber());
-        pfi.setFlightNumber(flight.getFlightNumber());
-        pfi.setBorderCrossingEvent(true);
-        return pfi;
-    }
-
-    public static MessageTravelInformation from(BookingDetail bookingDetail, String flightIdTag) {
-        MessageTravelInformation pfi = new MessageTravelInformation();
-        pfi.setBorderCrossingEvent(true);
-        pfi.setFlightNumber(bookingDetail.getFlightNumber());
-        pfi.setFullFlightNumber(bookingDetail.getFullFlightNumber());
-        pfi.setDestination(bookingDetail.getDestination());
-        pfi.setDestinationCountry(bookingDetail.getDestinationCountry());
-        pfi.setEta(bookingDetail.getEta());
-        pfi.setEtaDate(bookingDetail.getEtaDate());
-        pfi.setEtd(bookingDetail.getEtd());
-        pfi.setEtaDate(bookingDetail.getEtaDate());
-        pfi.setLocalEtaDate(bookingDetail.getLocalEtaDate());
-        pfi.setLocalEtdDate(bookingDetail.getLocalEtdDate());
-        pfi.setFlightId(bookingDetail.getId());
-        pfi.setBorderCrossingEvent(true);
-        pfi.setBorderCrossingEvent(false);
-        return pfi;
-    }
 
     public String getCarrier() {
         return carrier;

@@ -1,8 +1,5 @@
 package gov.gtas.summary;
 
-
-import gov.gtas.model.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,46 +27,6 @@ public class MessageSummary {
         this.flightIdTag = flightIdTag;
     }
 
-    public void addBookingDetail(BookingDetail bookingDetail) {
-        MessageTravelInformation mti = MessageTravelInformation.from(bookingDetail, flightIdTag);
-        this.getMessageTravelInformation().add(mti);
-    }
-
-    public void addAddress(Address address) {
-        MessageAddress ma = MessageAddress.from(this.hashCode, this.flightIdTag, address);
-        this.getMessageAddresses().add(ma);
-    }
-    public void addPhone(Phone phone) {
-        MessagePhone mp = MessagePhone.from(this.hashCode, this.flightIdTag, phone);
-        this.getMessagePhones().add(mp);
-    }
-    public void addFrequentFlyer(FrequentFlyer frequentFlyer) {
-        MessageFrequentFlyer mff = MessageFrequentFlyer.from(this.hashCode, this.flightIdTag, frequentFlyer);
-        this.getMessageFrequentFlyers().add(mff);
-    }
-    public void addCreditCard(CreditCard creditCard) {
-        MessageCreditCard mcc = MessageCreditCard.from(this.hashCode, this.flightIdTag, creditCard);
-        this.getMessageCreditCards().add(mcc);
-    }
-    public void addEmail(Email email) {
-        MessageEmail me = MessageEmail.from(this.hashCode, this.flightIdTag, email);
-        this.getMessageEmails().add(me);
-    }
-    public void addPassengerNoHits(Passenger passenger) {
-        PassengerSummary ps = new PassengerSummary();
-        ps.setGtasId(passenger.getId());
-        PassengerBiographic pb = PassengerBiographic.from(passenger.getPassengerDetails());
-        PassengerTrip pt = PassengerTrip.from(passenger.getPassengerTripDetails());
-        PassengerIds pids = PassengerIds.from(passenger.getPassengerIDTag());
-        for (Document d : passenger.getDocuments()) {
-            PassengerDocument pd = PassengerDocument.from(d, flightIdTag);
-            ps.getPassengerDocumentsList().add(pd);
-        }
-        ps.setPassengerBiographic(pb);
-        ps.setPassengerTrip(pt);
-        ps.setPassengerIds(pids);
-        this.getPassengerSummaries().add(ps);
-    }
     public Boolean getRelatedToHit() {
         return relatedToHit;
     }

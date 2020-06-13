@@ -6,12 +6,10 @@
 package gov.gtas.services;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.tamr.TamrAdapter;
-import gov.gtas.parsers.tamr.TamrAdapterImpl;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.repository.*;
@@ -32,7 +30,6 @@ import gov.gtas.parsers.paxlst.PaxlstParserUSedifact;
 import gov.gtas.parsers.vo.ApisMessageVo;
 import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.util.LobUtils;
-import gov.gtas.services.LoaderUtils;
 
 import javax.transaction.Transactional;
 
@@ -158,7 +155,7 @@ public class ApisMessageService extends MessageLoaderService {
 				String messageHash = apis.getHashCode();
 				MessageSummary ms = new MessageSummary(flightHash, messageHash);
 				ms.setRawMessage(msgDto.getRawMsg());
-				ms.setAction(MessageAction.PROCESSED_APIS);
+				ms.setAction(MessageAction.PROCESSED_MESSAGE);
 				EventIdentifier ei = new EventIdentifier();
 				ei.setCountryDestination(primeFlight.getDestinationCountry());
 				ei.setCountryOrigin(primeFlight.getOriginCountry());
@@ -167,7 +164,7 @@ public class ApisMessageService extends MessageLoaderService {
 				ei.setEventType("APIS_PASSENGER");
 				ms.setEventIdentifier(ei);
 				ms.setRawMessage(msgDto.getRawMsg());
-				apis.getPassengers().forEach(ms::addPassengerNoHits);
+				apis.getPassengers().forEach(p -> SummaryFactory.addPassengerNoHits(p, ms));
 				messageInformation.setMessageSummary(ms);
 			}
 		} catch (Exception e) {

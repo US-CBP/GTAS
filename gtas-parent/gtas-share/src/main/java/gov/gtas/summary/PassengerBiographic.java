@@ -1,8 +1,5 @@
 package gov.gtas.summary;
 
-import gov.gtas.model.PassengerDetails;
-import org.springframework.beans.BeanUtils;
-
 import java.util.Date;
 
 public class PassengerBiographic {
@@ -30,22 +27,6 @@ public class PassengerBiographic {
     private Date dob;
 
     private Integer age;
-
-
-    public static PassengerBiographic from(PassengerDetails pd) {
-        PassengerBiographic pb = new PassengerBiographic();
-        pb.setAge(pd.getAge());
-        pb.setDob(pd.getDob());
-        pb.setFirstName(pd.getFirstName());
-        pb.setLastName(pd.getLastName());
-        pb.setGender(pd.getGender());
-        pb.setMiddleName(pd.getMiddleName());
-        pb.setNationality(pd.getNationality());
-        pb.setPassengerType(pd.getPassengerType());
-        pb.setResidencyCountry(pd.getResidencyCountry());
-        pb.setTitle(pd.getTitle());
-        return pb;
-    }
 
     public Long getPassengerId() {
         return passengerId;

@@ -1,8 +1,5 @@
 package gov.gtas.summary;
 
-import gov.gtas.model.FrequentFlyer;
-import org.springframework.beans.BeanUtils;
-
 public class MessageFrequentFlyer {
     private String carrier;
 
@@ -11,15 +8,6 @@ public class MessageFrequentFlyer {
     private String flightIdTag;
 
     private String messageHash;
-
-    public static MessageFrequentFlyer from(String messageHash, String flightHash, FrequentFlyer ff) {
-        MessageFrequentFlyer mff = new MessageFrequentFlyer();
-        mff.setCarrier(ff.getCarrier());
-        mff.setNumber(ff.getNumber());
-        mff.setFlightIdTag(flightHash);
-        mff.setMessageHash(messageHash);
-        return mff;
-    }
 
     public String getCarrier() {
         return carrier;
