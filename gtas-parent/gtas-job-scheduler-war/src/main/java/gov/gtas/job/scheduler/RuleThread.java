@@ -75,7 +75,7 @@ public abstract class RuleThread  implements Callable<Boolean> {
             sendNotifications(passengersWithFirstTimeHits);
             if (additionalProcessHit) {
                 Set<Long> mIds = messageStatusList.stream().map(MessageStatus::getMessageId).collect(Collectors.toSet());
-                additionalProcessingService.passengersAdditionalHits(passengersWithFirstTimeHits, mIds);
+                additionalProcessingService.passengersAdditionalHits(firstTimeHits, mIds);
             }
         }
     }

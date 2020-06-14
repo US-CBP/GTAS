@@ -9,6 +9,7 @@
 package gov.gtas.services;
 
 import gov.gtas.model.HitDetail;
+import gov.gtas.model.HitMaker;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.HitDetailRepository;
 import gov.gtas.util.PaxDetailVoUtil;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class HitDetailServiceImpl implements HitDetailService {
@@ -31,6 +33,29 @@ public class HitDetailServiceImpl implements HitDetailService {
 	public Set<HitDetail> getByPassengerId(Long passengerId) {
 		return hitDetailRepository.getSetFromPassengerId(passengerId);
 	}
+
+	public Map<String, Set<HitDetail>> getHitDetailsWithCountryGroups(Set<HitDetail> hitDetailList) {
+		Set<Long> hdIds = hitDetailList.stream().map(HitDetail::getId).collect(Collectors.toSet());
+		Set<Long> flightIds = hitDetailList.stream().map(HitDetail::getFlightId).collect(Collectors.toSet());
+		Set<HitDetail> hitDetails = hitDetailRepository.getHitDetailsWithCountryGroups(hdIds, flightIds);
+		Map<String, Set<HitDetail>> stringHitDetailMap = new HashMap<>();
+		for (HitDetail hd : hitDetails) {
+			HitMaker hm = hd.getHitMaker();
+			//Check sharable hit and sort into map based on labels.
+			if (hm.getCountryGroup() != null) {
+				String label = hm.getCountryGroup().getCountryGroupLabel();
+				if (stringHitDetailMap.containsKey(label)) {
+					stringHitDetailMap.get(label).add(hd);
+				} else {
+					Set<HitDetail> hitDetailSet = new HashSet<>();
+					hitDetailSet.add(hd);
+					stringHitDetailMap.put(label, hitDetailSet);
+				}
+			}
+		}
+		return stringHitDetailMap;
+	}
+
 
 	@Transactional
 	public List<HitDetailVo> getLast10RecentHits(Set<Passenger> passengerSet, Passenger p) {

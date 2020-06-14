@@ -14,6 +14,7 @@ import gov.gtas.vo.HitDetailVo;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Component
@@ -21,4 +22,6 @@ public interface HitDetailService {
 	Set<HitDetail> getByPassengerId(Long passengerId);
 
 	List<HitDetailVo> getLast10RecentHits(Set<Passenger> passengerSet, Passenger p);
+
+    Map<String, Set<HitDetail>> getHitDetailsWithCountryGroups(Set<HitDetail> hitDetailList);
 }

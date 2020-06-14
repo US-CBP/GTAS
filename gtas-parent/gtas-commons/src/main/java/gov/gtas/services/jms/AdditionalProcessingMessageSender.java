@@ -42,6 +42,8 @@ public class AdditionalProcessingMessageSender {
             Message fwd = session.createObjectMessage(messageJson);
             setEventIdentifierProps(eventIdentifier, fwd);
             fwd.setStringProperty("action", messageSummaryList.getMessageAction().toString());
+            fwd.setObjectProperty("countryList", messageSummaryList.getSummaryMetaData().getCountryList());
+            fwd.setStringProperty("countryGroupName", messageSummaryList.getSummaryMetaData().getCountryGroupName());
             return fwd;
         });
     }

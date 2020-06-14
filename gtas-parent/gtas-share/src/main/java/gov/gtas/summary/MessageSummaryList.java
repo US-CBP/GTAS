@@ -8,6 +8,7 @@ public class  MessageSummaryList {
     private EventIdentifier eventIdentifier;
     private MessageAction messageAction;
     private List<MessageSummary> messageSummaryList = new ArrayList<>();
+    private SummaryMetaData summaryMetaData = new SummaryMetaData();
 
     public MessageSummaryList() {}
 
@@ -43,5 +44,13 @@ public class  MessageSummaryList {
 
     public void setMessageAction(MessageAction messageAction) {
         this.messageAction = messageAction;
+    }
+
+    public SummaryMetaData getSummaryMetaData() {
+        return summaryMetaData;
+    }
+
+    public void setSummaryMetaData(SummaryMetaData summaryMetaData) {
+        this.summaryMetaData = summaryMetaData;
     }
 }

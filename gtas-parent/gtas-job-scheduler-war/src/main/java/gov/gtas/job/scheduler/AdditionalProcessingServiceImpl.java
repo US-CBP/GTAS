@@ -2,7 +2,9 @@ package gov.gtas.job.scheduler;
 
 import gov.gtas.job.scheduler.service.AdditionalProcessingService;
 import gov.gtas.model.*;
+import gov.gtas.model.lookup.Country;
 import gov.gtas.services.ApisService;
+import gov.gtas.services.HitDetailService;
 import gov.gtas.services.PnrService;
 import gov.gtas.services.SummaryFactory;
 import gov.gtas.summary.*;
@@ -24,42 +26,60 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
 
     private final PnrService pnrService;
 
+    private final HitDetailService hitDetailService;
+
     final
     AdditionalProcessingMessageSender additionalProcessingMessageSender;
 
     @Value("${additional.processing.queue}")
     private String addProcessQueue;
 
-    public AdditionalProcessingServiceImpl(ApisService apisService, PnrService pnrService, AdditionalProcessingMessageSender additionalProcessingMessageSender) {
+    public AdditionalProcessingServiceImpl(ApisService apisService, PnrService pnrService, HitDetailService hitDetailService, AdditionalProcessingMessageSender additionalProcessingMessageSender) {
         this.apisService = apisService;
         this.pnrService = pnrService;
+        this.hitDetailService = hitDetailService;
         this.additionalProcessingMessageSender = additionalProcessingMessageSender;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public void passengersAdditionalHits(Set<Passenger> passengerList, Set<Long> messageIds) {
-        if (passengerList.isEmpty() || messageIds.isEmpty()) {
+    public void passengersAdditionalHits(Set<HitDetail> hitDetailList, Set<Long> messageIds) {
+        if (hitDetailList.isEmpty() || messageIds.isEmpty()) {
             return;
         }
-        EventIdentifier ident = new EventIdentifier();
-        ident.setIdentifier("1-MANY MESSAGES");
-        ident.setIdentifierArrayList(new ArrayList<>());
-        ident.setCountryDestination("1-MANY");
-        ident.setCountryOrigin("1-MANY");
-        ident.setEventType("RULE_HIT");
-        MessageSummaryList messageSummaryList = new MessageSummaryList();
-        messageSummaryList.setEventIdentifier(ident);
-        messageSummaryList.setMessageAction(MessageAction.HIT);
-        Set<Long> pids = passengerList.stream().map(Passenger::getId).collect(Collectors.toSet());
-        Set<MessageSummary> apisMessageSummarySet = getApisSummaries(messageIds, pids);
-        Set<MessageSummary> pnrMessageSummarySet = getPnrSummaries(messageIds, pids);
-        messageSummaryList.getMessageSummaryList().addAll(apisMessageSummarySet);
-        messageSummaryList.getMessageSummaryList().addAll(pnrMessageSummarySet);
+        Map<String, Set<HitDetail>> hitDetailsWithCountryGroups = hitDetailService.getHitDetailsWithCountryGroups(hitDetailList);
+        //For each label send a separate group of messages.
+        for (String labelKey : hitDetailsWithCountryGroups.keySet()) {
+            HitDetail hd = hitDetailsWithCountryGroups.get(labelKey).iterator().next();
+            CountryGroup sendingTo = hd.getHitMaker().getCountryGroup();
+            List<String> countryNames = new ArrayList<>();
+            for (Country country : sendingTo.getAssociatedCountries()) {
+                countryNames.add(country.getIso3());
+            }
+            SummaryMetaData smd = new SummaryMetaData();
+            smd.setSummary("1-MANY-MESSAGES");
+            smd.setCountryList(countryNames);
+            smd.setCountryGroupName(sendingTo.getCountryGroupLabel());
+            EventIdentifier ident = new EventIdentifier();
+            ident.setIdentifier("1-MANY MESSAGES");
+            ident.setIdentifierArrayList(new ArrayList<>());
+            ident.setCountryDestination("1-MANY");
+            ident.setCountryOrigin("1-MANY");
+            ident.setEventType("RULE_HIT");
+            MessageSummaryList messageSummaryList = new MessageSummaryList();
+            messageSummaryList.setEventIdentifier(ident);
+            messageSummaryList.setMessageAction(MessageAction.HIT);
+            messageSummaryList.setSummaryMetaData(smd);
+            Set<Long> pids = hitDetailList.stream().map(HitDetail::getPassengerId).collect(Collectors.toSet());
+            Set<MessageSummary> apisMessageSummarySet = getApisSummaries(messageIds, pids);
+            Set<MessageSummary> pnrMessageSummarySet = getPnrSummaries(messageIds, pids);
+            messageSummaryList.getMessageSummaryList().addAll(apisMessageSummarySet);
+            messageSummaryList.getMessageSummaryList().addAll(pnrMessageSummarySet);
 
-        List<MessageSummaryList> messageSummaryLists = batchMessageSummary(messageSummaryList);
-        for (MessageSummaryList msl : messageSummaryLists) {
-            additionalProcessingMessageSender.sendFileContent(addProcessQueue, msl);
+            List<MessageSummaryList> messageSummaryLists = batchMessageSummary(messageSummaryList);
+            for (MessageSummaryList msl : messageSummaryLists) {
+                additionalProcessingMessageSender.sendFileContent(addProcessQueue, msl);
+            }
         }
     }
 
@@ -68,6 +88,7 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
         int BATCH_SIZE = 50;
         EventIdentifier ei = messageSummaryList.getEventIdentifier();
         MessageAction ma = messageSummaryList.getMessageAction();
+        SummaryMetaData smd = messageSummaryList.getSummaryMetaData();
         List<MessageSummary> msLists = messageSummaryList.getMessageSummaryList();
         List<MessageSummary> filler = new ArrayList<>();
         for (int i = 0; i < msLists.size(); i++ ) {
@@ -79,6 +100,7 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
                 msl.setEventIdentifier(ei);
                 msl.setMessageAction(ma);
                 msl.setMessageSummaryList(filler);
+                msl.setSummaryMetaData(smd);
                 returnList.add(msl);
                 filler = new ArrayList<>();
             }
@@ -88,6 +110,7 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
             msl.setEventIdentifier(ei);
             msl.setMessageAction(ma);
             msl.setMessageSummaryList(filler);
+            msl.setSummaryMetaData(smd);
             returnList.add(msl);
         }
         return returnList;

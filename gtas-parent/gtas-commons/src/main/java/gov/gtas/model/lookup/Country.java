@@ -8,12 +8,11 @@ package gov.gtas.model.lookup;
 import gov.gtas.model.BaseEntity;
 
 import java.util.Objects;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Index;
+import javax.persistence.*;
 
+import gov.gtas.model.CountryGroup;
 import org.springframework.cache.annotation.Cacheable;
 
 @Cacheable
@@ -32,6 +31,9 @@ public class Country extends BaseEntity {
 	@Column(name = "iso_numeric", length = 3)
 	private String isoNumeric;
 
+	@ManyToMany(mappedBy = "associatedCountries", fetch = FetchType.LAZY)
+	private Set<CountryGroup> countryGroupSet;
+
 	public Country() {
 	}
 
@@ -42,6 +44,14 @@ public class Country extends BaseEntity {
 		this.iso3 = iso3;
 		this.name = name;
 		this.isoNumeric = isoNumeric;
+	}
+
+	public Set<CountryGroup> getCountryGroupSet() {
+		return countryGroupSet;
+	}
+
+	public void setCountryGroupSet(Set<CountryGroup> countryGroupSet) {
+		this.countryGroupSet = countryGroupSet;
 	}
 
 	public Long getOriginId() {
