@@ -60,7 +60,7 @@ jobs:
           repository: simbam1/elasticsearch
           path: ./gtas-parent/scripts/elastic    
           dockerfile: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
-          tags: 1.0.1
+          tags: 1.0.2
       # - uses: docker/build-push-action@v1
       #   name: Build and push logstash image
       #   with:  
@@ -78,7 +78,7 @@ jobs:
           repository: simbam1/elk-setup
           path: ./gtas-parent/scripts/elastic
           dockerfile: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
-          tags: 1.1.1
+          tags: 1.1.2
       # - uses: docker/build-push-action@v1 
       #   name: Build and push Neo4J ETL job image     
       #   with:
