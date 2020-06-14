@@ -12,6 +12,7 @@ import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitMaker;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.HitDetailRepository;
+import gov.gtas.services.dto.MappedGroups;
 import gov.gtas.util.PaxDetailVoUtil;
 import gov.gtas.vo.HitDetailVo;
 import org.springframework.stereotype.Component;
@@ -34,10 +35,11 @@ public class HitDetailServiceImpl implements HitDetailService {
 		return hitDetailRepository.getSetFromPassengerId(passengerId);
 	}
 
-	public Map<String, Set<HitDetail>> getHitDetailsWithCountryGroups(Set<HitDetail> hitDetailList) {
+	public MappedGroups getHitDetailsWithGroups(Set<HitDetail> hitDetailList) {
 		Set<Long> hdIds = hitDetailList.stream().map(HitDetail::getId).collect(Collectors.toSet());
 		Set<Long> flightIds = hitDetailList.stream().map(HitDetail::getFlightId).collect(Collectors.toSet());
 		Set<HitDetail> hitDetails = hitDetailRepository.getHitDetailsWithCountryGroups(hdIds, flightIds);
+		MappedGroups mappedGroups = new MappedGroups();
 		Map<String, Set<HitDetail>> stringHitDetailMap = new HashMap<>();
 		for (HitDetail hd : hitDetails) {
 			HitMaker hm = hd.getHitMaker();
@@ -53,7 +55,27 @@ public class HitDetailServiceImpl implements HitDetailService {
 				}
 			}
 		}
-		return stringHitDetailMap;
+
+		mappedGroups.setCountryMap(stringHitDetailMap);
+
+		Map<String, Set<HitDetail>> intraOrgMap = new HashMap<>();
+		for (HitDetail hd : hitDetails) {
+			HitMaker hm = hd.getHitMaker();
+			//Check sharable hit and sort into map based on labels.
+			if (hm.getIntraOrganizationGroups() != null) {
+				String label = hm.getIntraOrganizationGroups().getIntraOrganizationLabel();
+				if (intraOrgMap.containsKey(label)) {
+					intraOrgMap.get(label).add(hd);
+				} else {
+					Set<HitDetail> hitDetailSet = new HashSet<>();
+					hitDetailSet.add(hd);
+					intraOrgMap.put(label, hitDetailSet);
+				}
+			}
+		}
+		mappedGroups.setIntraOrgMap(intraOrgMap);
+
+		return mappedGroups;
 	}
 
 

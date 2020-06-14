@@ -7,6 +7,7 @@ import gov.gtas.services.ApisService;
 import gov.gtas.services.HitDetailService;
 import gov.gtas.services.PnrService;
 import gov.gtas.services.SummaryFactory;
+import gov.gtas.services.dto.MappedGroups;
 import gov.gtas.summary.*;
 import gov.gtas.services.jms.AdditionalProcessingMessageSender;
 import gov.gtas.util.LobUtils;
@@ -47,8 +48,9 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
         if (hitDetailList.isEmpty() || messageIds.isEmpty()) {
             return;
         }
-        Map<String, Set<HitDetail>> hitDetailsWithCountryGroups = hitDetailService.getHitDetailsWithCountryGroups(hitDetailList);
-        //For each label send a separate group of messages.
+        MappedGroups mappedGroups = hitDetailService.getHitDetailsWithGroups(hitDetailList);
+        //For each label or group type send a separate group of messages.
+        Map<String, Set<HitDetail>> hitDetailsWithCountryGroups = mappedGroups.getCountryMap();
         for (String labelKey : hitDetailsWithCountryGroups.keySet()) {
             HitDetail hd = hitDetailsWithCountryGroups.get(labelKey).iterator().next();
             CountryGroup sendingTo = hd.getHitMaker().getCountryGroup();
@@ -57,29 +59,48 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
                 countryNames.add(country.getIso3());
             }
             SummaryMetaData smd = new SummaryMetaData();
-            smd.setSummary("1-MANY-MESSAGES");
             smd.setCountryList(countryNames);
+            smd.setSummary("1-MANY-MESSAGES");
             smd.setCountryGroupName(sendingTo.getCountryGroupLabel());
-            EventIdentifier ident = new EventIdentifier();
-            ident.setIdentifier("1-MANY MESSAGES");
-            ident.setIdentifierArrayList(new ArrayList<>());
-            ident.setCountryDestination("1-MANY");
-            ident.setCountryOrigin("1-MANY");
-            ident.setEventType("RULE_HIT");
-            MessageSummaryList messageSummaryList = new MessageSummaryList();
-            messageSummaryList.setEventIdentifier(ident);
-            messageSummaryList.setMessageAction(MessageAction.HIT);
-            messageSummaryList.setSummaryMetaData(smd);
-            Set<Long> pids = hitDetailList.stream().map(HitDetail::getPassengerId).collect(Collectors.toSet());
-            Set<MessageSummary> apisMessageSummarySet = getApisSummaries(messageIds, pids);
-            Set<MessageSummary> pnrMessageSummarySet = getPnrSummaries(messageIds, pids);
-            messageSummaryList.getMessageSummaryList().addAll(apisMessageSummarySet);
-            messageSummaryList.getMessageSummaryList().addAll(pnrMessageSummarySet);
+            sendMessages(hitDetailList, messageIds, smd);
+        }
 
-            List<MessageSummaryList> messageSummaryLists = batchMessageSummary(messageSummaryList);
-            for (MessageSummaryList msl : messageSummaryLists) {
-                additionalProcessingMessageSender.sendFileContent(addProcessQueue, msl);
+        Map<String, Set<HitDetail>> hitDetailWithIntraOrgGroups = mappedGroups.getIntraOrgMap();
+        for (String labelKey : hitDetailWithIntraOrgGroups.keySet()) {
+            HitDetail hd = hitDetailWithIntraOrgGroups.get(labelKey).iterator().next();
+            IntraOrganizationGroup sendingTo = hd.getHitMaker().getIntraOrganizationGroups();
+            List<String> orgNames = new ArrayList<>();
+            for (IntraOrganization org : sendingTo.getAssociatedIntraOrganizations()) {
+                orgNames.add(org.getOrganizationName());
             }
+            SummaryMetaData smd = new SummaryMetaData();
+            smd.setOrgList(orgNames);
+            smd.setSummary("1-MANY-MESSAGES");
+            smd.setOrgGroupName(sendingTo.getIntraOrganizationLabel());
+            sendMessages(hitDetailList, messageIds, smd);
+        }
+    }
+
+    private void sendMessages(Set<HitDetail> hitDetailList, Set<Long> messageIds, SummaryMetaData smd) {
+        EventIdentifier ident = new EventIdentifier();
+        ident.setIdentifier("1-MANY MESSAGES");
+        ident.setIdentifierArrayList(new ArrayList<>());
+        ident.setCountryDestination("1-MANY");
+        ident.setCountryOrigin("1-MANY");
+        ident.setEventType("RULE_HIT");
+        MessageSummaryList messageSummaryList = new MessageSummaryList();
+        messageSummaryList.setEventIdentifier(ident);
+        messageSummaryList.setMessageAction(MessageAction.HIT);
+        messageSummaryList.setSummaryMetaData(smd);
+        Set<Long> pids = hitDetailList.stream().map(HitDetail::getPassengerId).collect(Collectors.toSet());
+        Set<MessageSummary> apisMessageSummarySet = getApisSummaries(messageIds, pids);
+        Set<MessageSummary> pnrMessageSummarySet = getPnrSummaries(messageIds, pids);
+        messageSummaryList.getMessageSummaryList().addAll(apisMessageSummarySet);
+        messageSummaryList.getMessageSummaryList().addAll(pnrMessageSummarySet);
+
+        List<MessageSummaryList> messageSummaryLists = batchMessageSummary(messageSummaryList);
+        for (MessageSummaryList msl : messageSummaryLists) {
+            additionalProcessingMessageSender.sendFileContent(addProcessQueue, msl);
         }
     }
 

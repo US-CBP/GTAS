@@ -39,6 +39,10 @@ public abstract class HitMaker extends BaseEntityAudit {
 	@JoinColumn(name = "hm_cg_id", referencedColumnName = "id", columnDefinition = "bigint unsigned")
 	private CountryGroup countryGroup;
 
+	@ManyToOne
+	@JoinColumn(name = "hm_io_id", referencedColumnName = "id", columnDefinition = "bigint unsigned")
+	private IntraOrganizationGroup intraOrganizationGroups;
+
 	public CountryGroup getCountryGroup() {
 		return countryGroup;
 	}
@@ -77,5 +81,13 @@ public abstract class HitMaker extends BaseEntityAudit {
 
 	public void setHitDetailSet(Set<HitDetail> hitDetailSet) {
 		this.hitDetailSet = hitDetailSet;
+	}
+
+	public IntraOrganizationGroup getIntraOrganizationGroups() {
+		return intraOrganizationGroups;
+	}
+
+	public void setIntraOrganizationGroups(IntraOrganizationGroup intraOrganizationGroups) {
+		this.intraOrganizationGroups = intraOrganizationGroups;
 	}
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 @Table(name = "country_group")
 public class CountryGroup extends BaseEntityAudit {
 
-    @OneToMany(mappedBy = "hitCategory")
+    @OneToMany(mappedBy = "countryGroup")
     @JsonIgnore
     private Set<HitMaker> hitMakers = new HashSet<>();
 

@@ -10,11 +10,11 @@ package gov.gtas.services;
 
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.Passenger;
+import gov.gtas.services.dto.MappedGroups;
 import gov.gtas.vo.HitDetailVo;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Component
@@ -23,5 +23,5 @@ public interface HitDetailService {
 
 	List<HitDetailVo> getLast10RecentHits(Set<Passenger> passengerSet, Passenger p);
 
-    Map<String, Set<HitDetail>> getHitDetailsWithCountryGroups(Set<HitDetail> hitDetailList);
+	MappedGroups getHitDetailsWithGroups(Set<HitDetail> hitDetailList);
 }

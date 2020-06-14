@@ -6,9 +6,27 @@ import java.util.List;
 public class SummaryMetaData {
     public String summary;
     public List<String> countryList = new ArrayList<>();
+    public List<String> orgList = new ArrayList<>();
     public String countryGroupName;
+    public String orgGroupName;
 
     public SummaryMetaData(){}
+
+    public String getOrgGroupName() {
+        return orgGroupName;
+    }
+
+    public void setOrgGroupName(String orgGroupName) {
+        this.orgGroupName = orgGroupName;
+    }
+
+    public List<String> getOrgList() {
+        return orgList;
+    }
+
+    public void setOrgList(List<String> orgList) {
+        this.orgList = orgList;
+    }
 
     public List<String> getCountryList() {
         return countryList;
