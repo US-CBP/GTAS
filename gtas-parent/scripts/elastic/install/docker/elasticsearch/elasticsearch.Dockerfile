@@ -28,5 +28,6 @@ ENV xpack.monitoring.enabled=false
 ENV xpack.watcher.enabled=false
 
 # USER elasticsearch
+RUN sed -i '1ichmod -R 777 /usr/share/elasticsearch/config' /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["dockerize", "-wait", "file:///usr/share/elasticsearch/config/elasticsearch.keystore", "-timeout", "1000s", "/usr/local/bin/docker-entrypoint.sh"]
