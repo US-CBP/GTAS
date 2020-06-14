@@ -29,4 +29,4 @@ ENV xpack.watcher.enabled=false
 
 # USER elasticsearch
 
-ENTRYPOINT ["dockerize", "-wait", "file:///usr/share/elasticsearch/config/elasticsearch.keystore", "-timeout", "1000s", "ls /usr/share/elasticsearch/config && /usr/local/bin/docker-entrypoint.sh"]
+ENTRYPOINT ["dockerize", "-wait", "file:///usr/share/elasticsearch/config/elasticsearch.keystore", "-timeout", "1000s", "/usr/local/bin/docker-entrypoint.sh"]
