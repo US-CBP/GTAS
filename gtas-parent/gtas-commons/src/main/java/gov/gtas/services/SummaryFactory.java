@@ -1,15 +1,15 @@
 package gov.gtas.services;
 
+import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
 import gov.gtas.summary.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class SummaryFactory {
-
+private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
     public static EventIdentifier from(Flight flight) {
         EventIdentifier eventIdentifier = new EventIdentifier();
         eventIdentifier.setEventType("BC_EVENT");
@@ -244,5 +244,42 @@ public class SummaryFactory {
         ps.setPassengerIds(pids);
         ms.getPassengerSummaries().add(ps);
     }
+
+    public static PassengerPendingDetail from(PendingHitDetails pendingHitDetails) {
+        PassengerPendingDetail passengerPendingDetail = new PassengerPendingDetail();
+        passengerPendingDetail.setCreatedDate(pendingHitDetails.getCreatedDate());
+        passengerPendingDetail.setDescription(pendingHitDetails.getDescription());
+        passengerPendingDetail.setFlightId(pendingHitDetails.getFlightId());
+        passengerPendingDetail.setHitEnum(pendingHitDetails.getHitEnum().toString());
+        passengerPendingDetail.setHitMakerId(pendingHitDetails.getHitMakerId());
+        passengerPendingDetail.setHitType(pendingHitDetails.getHitType());
+        passengerPendingDetail.setPercentage(pendingHitDetails.getPercentage());
+        passengerPendingDetail.setRuleConditions(passengerPendingDetail.getRuleConditions());
+        passengerPendingDetail.setPassengerId(pendingHitDetails.getPassengerId());
+        return passengerPendingDetail;
+    }
+
+    public static PendingHitDetails from(PassengerPendingDetail passengerPendingDetail) {
+        PendingHitDetails phd = new PendingHitDetails();
+        phd.setCreatedDate(passengerPendingDetail.getCreatedDate());
+        phd.setDescription(passengerPendingDetail.getDescription());
+        phd.setFlightId(passengerPendingDetail.getFlightId());
+        Optional<HitTypeEnum> hteo = HitTypeEnum.fromString(passengerPendingDetail.getHitEnum());
+
+        if (hteo.isPresent()) {
+            phd.setHitEnum(hteo.get());
+        } else {
+            logger.error("Passenger Pending Detail does NOT have relevant Hit Type! Defaulting to UDR");
+            phd.setHitEnum(HitTypeEnum.USER_DEFINED_RULE);
+        }
+
+        phd.setHitMakerId(passengerPendingDetail.getHitMakerId());
+        phd.setHitType(passengerPendingDetail.getHitType());
+        phd.setPercentage(passengerPendingDetail.getPercentage());
+        phd.setRuleConditions(passengerPendingDetail.getRuleConditions());
+        phd.setPassengerId(passengerPendingDetail.getPassengerId());
+        return phd;
+    }
+
 
 }
