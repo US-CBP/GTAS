@@ -29,7 +29,7 @@ ENV xpack.watcher.enabled=false
 
 RUN mkdir /temp-store && cp -R /usr/share/elasticsearch /temp-store
 # USER elasticsearch
-RUN sed -i '2ichmod -R 777 /usr/share/elasticsearch/config' /usr/local/bin/docker-entrypoint.sh
-RUN sed -i '3icp -R -u -p /temp-store /usr/share/elasticsearch' /usr/local/bin/docker-entrypoint.sh
+RUN sed -i '2icp -R -u -p /temp-store /usr/share/elasticsearch' /usr/local/bin/docker-entrypoint.sh
+RUN sed -i '3ichmod -R 777 /usr/share/elasticsearch' /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["dockerize", "-wait", "file:///usr/share/elasticsearch/config/elasticsearch.keystore", "-timeout", "1000s", "/usr/local/bin/docker-entrypoint.sh"]
