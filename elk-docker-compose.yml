@@ -32,7 +32,7 @@ services:
     restart: always
     volumes: 
       - es-data:/usr/share/elasticsearch/data
-      - elasticsearch-conf:/usr/share/elasticsearch/config/
+      - elasticsearch-conf:/usr/share/elasticsearch/config
     networks: 
       - gtas-webapp-network
 
