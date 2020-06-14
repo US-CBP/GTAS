@@ -60,7 +60,7 @@ jobs:
           repository: simbam1/elasticsearch
           path: ./gtas-parent/scripts/elastic    
           dockerfile: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
-          tags: 1.0.4
+          tags: 1.0.5
       # - uses: docker/build-push-action@v1
       #   name: Build and push logstash image
       #   with:  
