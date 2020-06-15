@@ -71,7 +71,7 @@ services:
         constraints:
           - node.labels.role == node-b
   kibana:
-    deploy:
+    deploy: 
       labels:
         kompose.image-pull-policy: "Always"
       placement:
