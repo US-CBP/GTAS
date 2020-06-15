@@ -86,8 +86,10 @@ services:
       placement:
         constraints:
           - node.labels.role == node-b 
-    volumes:
-      - ./gtas-parent/gtas-commons/certs/:/usr/share/elasticsearch/temp-cert
+  volumes:
+    - type: bind
+      source: ./gtas-parent/gtas-commons/certs
+      target: /usr/share/elasticsearch/temp-cert
   logstash:
     deploy:
       labels:
