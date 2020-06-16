@@ -91,7 +91,7 @@ services:
   mariadb:
     deploy:
       labels:
-        kompose.image-pull-policy: true
+        kompose.image-pull-policy: "Always"
       placement:
         constraints:
           - node.labels.role == node-c
