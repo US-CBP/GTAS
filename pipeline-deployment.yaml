@@ -88,6 +88,13 @@ services:
           - node.labels.role == node-b 
     volumes:
       - /gtas-parent/gtas-commons/certs:/usr/share/elasticsearch/temp-cert
+  mariadb:
+    deploy:
+      labels:
+        kompose.image-pull-policy: true
+      placement:
+        constraints:
+          - node.labels.role == node-c
   logstash:
     deploy:
       labels:
