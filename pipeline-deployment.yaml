@@ -55,7 +55,7 @@ services:
         kompose.image-pull-policy: "Always"
       placement:
         constraints:
-          - node.labels.role == node-a
+          - node.labels.role == node-b
   activemq:
     deploy:
       labels:
@@ -103,7 +103,7 @@ services:
         kompose.image-pull-policy: "Always"
       placement:
         constraints:
-          - node.labels.role == node-b
+          - node.labels.role == node-a
     environment:
       LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password/logstash-keystore-password' 
       MYSQL_USER_PATH: '/run/secrets/mysql-logstash-user/mysql-logstash-user'
