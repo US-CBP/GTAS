@@ -69,7 +69,7 @@ services:
         kompose.image-pull-policy: "Always"
       placement:
         constraints:
-          - node.labels.role == node-b
+          - node.labels.role == node-a
     volumes:
       - ./gtas-parent/gtas-commons/certs:/etc/kibana/config/
   elasticsearch:
@@ -78,7 +78,7 @@ services:
         kompose.image-pull-policy: "Always"
       placement:
         constraints:
-          - node.labels.role == node-b 
+          - node.labels.role == node-a
     volumes:
       - ./gtas-parent/gtas-commons/certs:/usr/share/elasticsearch/temp-cert
   mariadb:
@@ -94,7 +94,7 @@ services:
         kompose.image-pull-policy: "Always"
       placement:
         constraints:
-          - node.labels.role == node-b
+          - node.labels.role == node-a
     environment:
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca/elastic-ca
   elk-setup:
