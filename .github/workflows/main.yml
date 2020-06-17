@@ -96,7 +96,7 @@ jobs:
       #     repository: simbam1/neo4j 
       #     path: .
       #     dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
-      #     tags: 1.0.1
+      #     tags: 1.0.1 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
