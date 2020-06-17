@@ -68,8 +68,8 @@ services:
       ELASTICSEARCH_HOST: 'elasticsearch'
     volumes:
       - logstash-conf:/logstash-conf
-      - kibana-conf:/kibana-conf
-    #   - elasticsearch-conf:/elasticsearch-conf
+      # - kibana-conf:/kibana-conf
+      - elasticsearch-conf:/elasticsearch-conf
     secrets:
       - logstash-keystore-password
       - mysql-logstash-user
