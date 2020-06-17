@@ -258,6 +258,36 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		return queryPredicates;
 	}
 
+  @Override
+  public List<Passenger> findByFlightId(Long flightId) {
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<Passenger> q = cb.createQuery(Passenger.class);
+    Root<Passenger> pax = q.from(Passenger.class);
+
+    Join<Passenger, Flight> flight = pax.join("flight");
+    Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.LEFT);
+
+    List<Predicate> predicates = new ArrayList<>();
+
+    if (flightId != null) {
+      hits.on(cb.equal(hits.get("flight").get("id"), cb.parameter(Long.class, "flightId")));
+      predicates.add(cb.equal(flight.<Long>get("id"), flightId));
+    }
+
+    q.select(pax).where(predicates.toArray(new Predicate[] {}));
+    TypedQuery<Passenger> typedQuery = em.createQuery(q);
+
+    if (flightId != null) {
+      typedQuery.setParameter("flightId", flightId);
+    }
+
+    logger.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
+    List<Passenger> results = typedQuery.getResultList();
+
+    return results;
+  } // findByFlightId
+
+
 	@Override
 	public Pair<Long, List<Passenger>> findByCriteria(Long flightId, PassengersRequestDto dto) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -398,5 +428,4 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	private boolean isFlightColumn(String c) {
 		return flightColumns.contains(c);
 	}
-
 }

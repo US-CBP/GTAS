@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import gov.gtas.vo.passenger.FlightVo;
+import gov.gtas.vo.passenger.FlightGridVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface FlightService {
@@ -64,5 +65,9 @@ public interface FlightService {
 	public List<SeatVo> getSeatsByFlightId(Long flightId);
 
 	public List<FlightVo> convertFlightToFlightVo(List<Flight> flights);
+
+  public List<FlightGridVo> findFlights(FlightsRequestDto dto);
+
+  public List<FlightGridVo> convertFlightToFlightGridVo(List<Flight> flights);
 
 }

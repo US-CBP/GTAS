@@ -9,6 +9,7 @@ import gov.gtas.model.*;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
+import gov.gtas.vo.passenger.FlightPaxVo;
 import gov.gtas.vo.passenger.DispositionStatusVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -64,5 +65,9 @@ public interface PassengerService {
 
 	Set<Passenger> getPassengersWithHitDetails(Set<Long> passengerIds);
 
-    Set<Passenger> getPassengersForEmailMatching(Set<Passenger> passengers);
+	Set<Passenger> getPassengersForEmailMatching(Set<Passenger> passengers);
+
+  @PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES)
+  List<FlightPaxVo> getFlightPax(Long flightId);
+  
 }

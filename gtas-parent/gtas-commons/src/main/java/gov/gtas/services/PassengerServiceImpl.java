@@ -15,6 +15,7 @@ import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.PassengerGridItemVo;
+import gov.gtas.vo.passenger.FlightPaxVo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -284,5 +285,43 @@ public class PassengerServiceImpl implements PassengerService {
 		Set<Long> paxIds = passengers.stream().map(Passenger::getId).collect(toSet());
 		return passengerRepository.getPassengersForEmailDto(paxIds);
 	}
+
+  
+@Override
+@Transactional
+public List<FlightPaxVo> getFlightPax(Long flightId) {
+  List<FlightPaxVo> rv = new ArrayList<>();
+  List<Passenger> paxlist = passengerRespository.findByFlightId(flightId);
+
+  for (Passenger passenger : paxlist) {
+    FlightPaxVo vo = new FlightPaxVo();
+    BeanUtils.copyProperties(passenger.getPassengerDetails(), vo);
+    BeanUtils.copyProperties(passenger.getPassengerTripDetails(), vo);
+    BeanUtils.copyProperties(passenger, vo);
+    vo.setId(passenger.getId());
+
+    for (Document d : passenger.getDocuments()) {
+      DocumentVo docVo = DocumentVo.fromDocument(d);
+      vo.addDocument(docVo);
+    }
+
+    for (HitDetail hd : passenger.getHitDetails()) {
+      switch (hd.getHitEnum()) {
+        case MANUAL_HIT:
+          break;
+        case WATCHLIST_PASSENGER:
+        case WATCHLIST_DOCUMENT:
+          vo.setOnWatchList(true);
+          break;
+        case USER_DEFINED_RULE:
+        case GRAPH_HIT:
+          vo.setOnRuleHitList(true);
+          break;
+      }
+    }
+    rv.add(vo);
+  }
+  return rv;
+}
 
 }

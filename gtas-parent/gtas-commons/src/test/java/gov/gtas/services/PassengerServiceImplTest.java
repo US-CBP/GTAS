@@ -13,6 +13,7 @@ import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.PassengerGridItemVo;
+import gov.gtas.vo.passenger.FlightPaxVo;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,6 +61,7 @@ public class PassengerServiceImplTest {
 		p.setSeatAssignments(paxSeats);
 		p.setDocuments(new HashSet<>());
 		p.getSeatAssignments().add(passengerSeat);
+
 		PassengerDetails passengerDetails = new PassengerDetails(p);
 		passengerDetails.setFirstName("foo");
 		passengerDetails.setLastName("bar");
@@ -111,8 +113,30 @@ public class PassengerServiceImplTest {
 		messageStatus.setFlightId(1L);
 		messageStatus.setMessageId(5L);
 		Set<Passenger> passengers = passengerService
-				.getPassengersForFuzzyMatching(Collections.singletonList(messageStatus));
+    .getPassengersForFuzzyMatching(Collections.singletonList(messageStatus));
 		Assert.assertEquals(passengers.size(), 1);
 		Assert.assertEquals(passengers.iterator().next(), p);
 	}
+
+
+
+  @Test
+  public void passengerPopulatesFlightPaxVo() {
+    List<Passenger> queryResultList = new ArrayList<>();
+
+    p.setFlight(f);
+    queryResultList.add(p);
+
+    List<Passenger> findByFlightId = queryResultList;
+
+    Mockito.when(passengerRepository.findByFlightId(1L)).thenReturn(findByFlightId);
+
+    List<FlightPaxVo> passengersByCriteriaTest = passengerService.getFlightPax(1L);
+
+    FlightPaxVo processedPassenger = passengersByCriteriaTest.get(0);
+    Assert.assertEquals(processedPassenger.getFirstName(), "foo");
+    Assert.assertEquals(processedPassenger.getLastName(), "bar");
+    Assert.assertEquals(processedPassenger.getNationality(), "baz");
+  }
+
 }
