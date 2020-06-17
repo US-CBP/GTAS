@@ -111,12 +111,12 @@ jobs:
           chmod +x kompose
           sudo mv ./kompose /usr/local/bin/kompose
           kompose -f elk-docker-compose.yml -f docker-compose.yml -f neo4j-etl-docker-compose.yml -f pipeline-deployment.yaml convert --out deploy.yaml --volumes hostPath
-      - name: Clean resources
-        uses: Consensys/kubernetes-action@master
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        with:
-          args: delete deployments activemq elasticsearch elk-setup etl-job gtas-scheduler http-proxy kibana logstash neo4j web-app mariadb
+      # - name: Clean resources
+      #   uses: Consensys/kubernetes-action@master
+      #   env:
+      #     KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+      #   with:
+      #     args: delete deployments activemq elasticsearch elk-setup etl-job gtas-scheduler http-proxy kibana logstash neo4j web-app mariadb
       - name: Deploy to cluster
         uses: Consensys/kubernetes-action@master
         env:
