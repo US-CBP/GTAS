@@ -70,8 +70,8 @@ services:
       placement:
         constraints:
           - node.labels.role == node-a
-    volumes:
-      - ./gtas-parent/gtas-commons/certs:/etc/kibana/config/
+    # volumes:
+    #   - ./gtas-parent/gtas-commons/certs:/etc/kibana/config/
   elasticsearch:
     deploy:
       labels:
@@ -79,8 +79,8 @@ services:
       placement:
         constraints:
           - node.labels.role == node-b 
-    volumes:
-      - /gtas-parent/gtas-commons/certs:/usr/share/elasticsearch/temp-cert
+    # volumes:
+    #   - /gtas-parent/gtas-commons/certs:/usr/share/elasticsearch/temp-cert
   mariadb:
     deploy:
       labels:
