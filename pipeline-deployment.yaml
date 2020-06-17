@@ -104,6 +104,8 @@ services:
       placement:
         constraints:
           - node.labels.role == node-a
+    volumes:
+      - ./gtas-parent/gtas-commons/certs:/usr/share/elasticsearch/config/certs/elasticsearch/
     environment:
       LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password/logstash-keystore-password' 
       MYSQL_USER_PATH: '/run/secrets/mysql-logstash-user/mysql-logstash-user'

@@ -78,6 +78,7 @@ services:
       KIBANA_PASSWORD_PATH: '/run/secrets/elasticsearch-kibana-password'
       BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
       ELASTIC_PATH: '/run/secrets/elastic-password'
+  
   etl-job:
     environment:
       DB_HOSTNAME: mariadb
