@@ -66,8 +66,8 @@ services:
     environment:
       KIBANA_HOST: 'kibana'
       ELASTICSEARCH_HOST: 'elasticsearch'
-    # volumes:
-    #   - logstash-conf:/logstash-conf
+    volumes:
+      - logstash-conf:/logstash-conf
     #   - kibana-conf:/kibana-conf
     #   - elasticsearch-conf:/elasticsearch-conf
     secrets:
