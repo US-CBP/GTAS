@@ -65,7 +65,12 @@ public class FlightPassengerController {
 		return paxService.getPassengersByCriteria(flightId, request);
 	}
 
-  
+  @RequestMapping(value = "api/flights/flightpax/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<FlightPaxVo> getFlightPax(@PathVariable(value = "id") Long flightId, HttpServletRequest hsr) {
+		SecurityContextHolder.setContext((SecurityContext) hsr.getSession().getAttribute("SPRING_SECURITY_CONTEXT"));
+		return paxService.getFlightPax(flightId);
+	}
+
   @RequestMapping(value = "/api/flights", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   public @ResponseBody List<FlightGridVo> getFlights(
     @RequestParam(value = "request", required = false) String requestDTO) throws IOException {
