@@ -140,6 +140,7 @@ volumes:
   db-data:
   m2:
   scheduler-logs:
+  certs:
 
 networks:
   gtas-webapp-network:
