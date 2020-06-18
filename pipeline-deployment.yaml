@@ -103,7 +103,7 @@ services:
         kompose.image-pull-policy: "Always"
       placement:
         constraints:
-          - node.labels.role == node-a
+          - node.labels.role == node-a 
     volumes:
       - certs:/usr/share/elasticsearch/config/certs/elasticsearch/
     environment:
