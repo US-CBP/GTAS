@@ -37,7 +37,7 @@ services:
       - gtas-webapp-network
 
   logstash:
-    image: simbam1/logstash:1.0.1
+    image: simbam1/logstash:1.0.2
     container_name: logstash
     build:
       context: ./gtas-parent/scripts/elastic
