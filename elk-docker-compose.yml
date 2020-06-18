@@ -4,7 +4,7 @@ services:
 
   kibana:
     container_name: kibana
-    image: simbam1/kibana:1.0.1
+    image: simbam1/kibana:1.0.2
     build:
       context: ./gtas-parent/scripts/elastic
       dockerfile: install/docker/kibana/kibana.Dockerfile

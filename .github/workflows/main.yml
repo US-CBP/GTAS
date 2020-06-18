@@ -43,24 +43,24 @@ jobs:
       #     path: .
       #     dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
       #     tags: 1.0.1
-      # - uses: docker/build-push-action@v1
-      #   name: Build and push kibana image
-      #   with: 
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }} 
-      #     repository: simbam1/kibana
-      #     path: ./gtas-parent/scripts/elastic
-      #     dockerfile: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
-      #     tags: 1.0.1
       - uses: docker/build-push-action@v1
-        name: Build and push elasticsearch image
-        with:
+        name: Build and push kibana image
+        with: 
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
-          repository: simbam1/elasticsearch
-          path: ./gtas-parent/scripts/elastic    
-          dockerfile: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
-          tags: 1.1.5
+          repository: simbam1/kibana
+          path: ./gtas-parent/scripts/elastic
+          dockerfile: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
+          tags: 1.0.2
+      # - uses: docker/build-push-action@v1
+      #   name: Build and push elasticsearch image
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }} 
+      #     repository: simbam1/elasticsearch
+      #     path: ./gtas-parent/scripts/elastic    
+      #     dockerfile: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
+      #     tags: 1.1.5
       # - uses: docker/build-push-action@v1
       #   name: Build and push logstash image
       #   with:  
