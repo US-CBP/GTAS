@@ -21,7 +21,7 @@ services:
       - elasticsearch
 
   elasticsearch:
-    image: simbam1/elasticsearch:1.1.4
+    image: simbam1/elasticsearch:1.1.5
     container_name: elasticsearch
     build:
       context: ./gtas-parent/scripts/elastic
