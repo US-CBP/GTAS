@@ -87,7 +87,7 @@ jobs:
       #     repository: simbam1/neo4j-etl-job
       #     path: .
       #     dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
-      #     tags: 1.0.1
+      #     tags: 1.0.1 
       # - uses: docker/build-push-action@v1 
       #   name: Build and push Neo4J image
       #   with: 
