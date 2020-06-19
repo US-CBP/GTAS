@@ -61,15 +61,15 @@ jobs:
       #     path: ./gtas-parent/scripts/elastic    
       #     dockerfile: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
       #     tags: 1.1.5
-      - uses: docker/build-push-action@v1
-        name: Build and push logstash image
-        with:  
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}   
-          repository: simbam1/logstash
-          path: ./gtas-parent/scripts/elastic
-          dockerfile: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
-          tags: 1.1.0
+      # - uses: docker/build-push-action@v1
+      #   name: Build and push logstash image
+      #   with:  
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}   
+      #     repository: simbam1/logstash
+      #     path: ./gtas-parent/scripts/elastic
+      #     dockerfile: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
+      #     tags: 1.1.0
       # - uses: docker/build-push-action@v1
       #   name: Build and push ELK setup image
       #   with:
@@ -105,7 +105,7 @@ jobs:
           aws-region: us-east-1
       - name: Generate Kubernetes deployment configuration file
         run: |
-          echo $secrets.MARIADB_HOST
+          echo ${secrets.MARIADB_HOST}
           sudo apt-get -y update
           sudo apt-get install -y curl
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
