@@ -105,7 +105,7 @@ jobs:
           aws-region: us-east-1
       - name: Generate Kubernetes deployment configuration file
         run: |
-          awk 'BEGIN {print ENVIRON["secrets.MARIADB_HOST"]}'
+          perl -e 'print $ENV{"secrets.MARIADB_HOST"};print "\n";'
           sudo apt-get -y update
           sudo apt-get install -y curl
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
