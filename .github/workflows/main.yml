@@ -104,11 +104,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Generate Kubernetes deployment configuration file
-        with:
-          MARIADB_HOST: ${{ secrets.MARIADB_HOST }}
         run: |
           echo test
-          echo $MARIADB_HOST
+          echo ${{ secrets.MARIADB_HOST }}
           sudo apt-get -y update
           sudo apt-get install -y curl
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
