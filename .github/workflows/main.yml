@@ -111,7 +111,6 @@ jobs:
           chmod +x kompose
           sudo mv ./kompose /usr/local/bin/kompose
           kompose -f elk-docker-compose.yml -f docker-compose.yml -f neo4j-etl-docker-compose.yml -f pipeline-deployment.yaml convert --out deploy.yaml 
-      --volumes hostPath
       - name: Clean resources
         uses: Consensys/kubernetes-action@master
         env:
