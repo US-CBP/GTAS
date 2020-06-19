@@ -27,6 +27,7 @@ services:
       MYSQL_PASSWORD_PATH: "/run/secrets/mysql_webapp_password/mysql_webapp_password"
       NEO4J_USER_PATH: "/run/secrets/webapp_neo4j_user/webapp_neo4j_user"
       NEO4J_PASSWORD_PATH: "/run/secrets/webapp_neo4j_password/webapp_neo4j_password"
+      DB_HOST: ${MARIADB_HOST}
     deploy:
       labels:
         kompose.image-pull-policy: "Always"
@@ -37,6 +38,7 @@ services:
       - certs:/usr/local/tomcat/conf
   gtas-scheduler:
     environment:
+      DB_HOST: ${MARIADB_HOST}
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
       JAVA_OPTS: "-Xms8000m -Xmx16000m -Duser.timezone=UTC -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
       EMAIL_SENDER_USERNAME: ""
@@ -96,6 +98,7 @@ services:
         constraints:
           - node.labels.role == node-a
     environment:
+      MARIADB_HOST: ${MARIADB_HOST}
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca/elastic-ca
   elk-setup:
     deploy:

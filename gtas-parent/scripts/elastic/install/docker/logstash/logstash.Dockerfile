@@ -16,6 +16,5 @@ RUN curl -o  /usr/share/logstash/logstash-core/lib/jars/mariadb-java-client-2.3.
 
 RUN mkdir /temp-store && cp -R /usr/share/logstash/* /temp-store/
 RUN sed -i '2icp -R -u -p /temp-store/* /usr/share/logstash/' /usr/local/bin/docker-entrypoint
-RUN sed -i '3ils -R /' /usr/local/bin/docker-entrypoint
 
 ENTRYPOINT ["dockerize", "-wait", "file:///usr/share/logstash/config/logstash.keystore", "-timeout", "1000s",  "/usr/local/bin/docker-entrypoint"]

@@ -17,6 +17,7 @@ services:
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       PROXY_IP: localhost
+      DB_HOST: mariadb
       BOOTSTRAP_PATH: "/run/secrets/elastic-bootstrap-password"
       MYSQL_USER_PATH: "/run/secrets/mysql_webapp_user"
       MYSQL_PASSWORD_PATH: "/run/secrets/mysql_webapp_password"
@@ -35,6 +36,7 @@ services:
         target: /usr/local/tomcat/conf/elastic-ca.crt
   logstash:
     environment:
+      MARIADB_HOST: mariadb
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca
   elasticsearch:
     secrets:
@@ -58,6 +60,7 @@ services:
       EMAIL_SENDER_PASSWORD: ""
       EMAIL_SENDER_HOST: ""
       SSL_TRUST_HOST: ""
+      DB_HOST: mariadb
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       PROXY_IP: localhost

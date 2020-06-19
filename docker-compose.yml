@@ -1,7 +1,5 @@
 version: '3.7'
 services:
-
-
   http-proxy:
     image: simbam1/http-proxy:1.0.1
     container_name: http-proxy
@@ -26,8 +24,7 @@ services:
     ports:
       - 8080:8080
       - 8443:8443
-    environment: 
-      - DB_HOST=mariadb
+    environment:
       - KIBANA_HOST=kibana
       - NEO4J_HOST=neo4j
       - ACTIVEMQ_HOST=activemq
@@ -54,7 +51,6 @@ services:
       dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
     restart: always
     environment:
-      DB_HOST: mariadb
       KIBANA_HOST: kibana
       NEO4J_HOST: neo4j
       ACTIVEMQ_HOST: activemq
