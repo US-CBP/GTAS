@@ -104,6 +104,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Generate Kubernetes deployment configuration file
+        with:
+          MARIADB_HOST: ${{ secrets.MARIADB_HOST }}
         run: |
           echo test
           echo $MARIADB_HOST
