@@ -15,7 +15,7 @@ jobs:
           repository: simbam1/webapp 
           path: ./gtas-parent
           dockerfile: ./gtas-parent/web-app.Dockerfile
-          tags: 1.0.2
+          tags: 1.0.3
       # - uses: docker/build-push-action@v1
       #   name: Build and push mariadb image
       #   with:
@@ -113,8 +113,7 @@ jobs:
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
           chmod +x kompose
           sudo mv ./kompose /usr/local/bin/kompose
-          kompose -f elk-docker-compose.yml -f docker-compose.yml -f neo4j-etl-docker-compose.yml -f pipeline-deployment.yaml convert --out deploy.yaml 
-          cat deploy.yaml
+          kompose -f elk-docker-compose.yml -f docker-compose.yml -f neo4j-etl-docker-compose.yml -f pipeline-deployment.yaml convert --out deploy.yaml
       - name: Clean resources
         uses: Consensys/kubernetes-action@master
         env:

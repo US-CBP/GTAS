@@ -16,7 +16,7 @@ services:
       - elastic-bootstrap-password
 
   web-app:
-    image: simbam1/webapp:1.0.2
+    image: simbam1/webapp:1.0.3
     container_name: web-app
     build: 
       context: ./gtas-parent
