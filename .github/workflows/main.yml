@@ -108,7 +108,6 @@ jobs:
         env:
           MARIADB_HOST: ${{ secrets.MARIADB_HOST }}
         run: |
-          perl -e 'print $ENV{"MARIADB_HOST"};print "\n";'
           sudo apt-get -y update
           sudo apt-get install -y curl
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
