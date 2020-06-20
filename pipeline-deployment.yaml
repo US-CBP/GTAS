@@ -35,7 +35,7 @@ services:
         constraints:
           - node.labels.role == node-a
     volumes:
-      - certs:/usr/local/tomcat/conf
+      - certs:/temp
   gtas-scheduler:
     environment:
       DB_HOST: ${MARIADB_HOST}

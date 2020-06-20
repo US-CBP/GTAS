@@ -32,4 +32,4 @@ WORKDIR /usr/local/tomcat/webapps/gtas
 RUN  jar -xvf /usr/local/tomcat/webapps/gtas.war
 
 WORKDIR /usr/local/tomcat/bin
-ENTRYPOINT mkdir -p /scheduler-logs/temp && dockerize -wait tcp://${DB_HOST}:3306 -timeout 1000s logrotate /logrotate.conf && catalina.sh run
+ENTRYPOINT mkdir -p /scheduler-logs/temp && cp /temp/* /usr/local/tomcat/conf/ && dockerize -wait tcp://${DB_HOST}:3306 -timeout 1000s logrotate /logrotate.conf && catalina.sh run
