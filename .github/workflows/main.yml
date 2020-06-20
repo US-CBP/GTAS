@@ -15,7 +15,7 @@ jobs:
           repository: simbam1/webapp 
           path: ./gtas-parent
           dockerfile: ./gtas-parent/web-app.Dockerfile
-          tags: 1.0.3
+          tags: 1.0.4
       # - uses: docker/build-push-action@v1
       #   name: Build and push mariadb image
       #   with:
