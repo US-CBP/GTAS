@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   http-proxy:
-    image: simbam1/http-proxy:1.0.1
+    image: simbam1/http-proxy:1.0.2
     container_name: http-proxy
     build: 
       context: ./gtas-parent
