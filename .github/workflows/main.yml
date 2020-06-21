@@ -107,7 +107,19 @@ jobs:
         shell: bash
         env:
           MARIADB_HOST: ${{ secrets.MARIADB_HOST }}
+          MARIADB_USER: ${{ secrets.MARIADB_USER }}
+          MARIADB_PASS: ${{ secrets.MARIADB_PASS }}
         run: |
+          echo $MARIADB_USER > ./gtas-parent/gtas-commons/secrets/mysql_etl_user.txt
+          echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql_etl_password.txt
+          echo $MARIADB_USER > ./gtas-parent/gtas-commons/secrets/mysql-logstash-user
+          echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql-logstash-password
+          echo $MARIADB_USER > ./gtas-parent/gtas-commons/secrets/mysql_processor_user.txt
+          echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql_processor_password.txt
+          echo $MARIADB_USER > ./gtas-parent/gtas-commons/secrets/mysql_webapp_user.txt
+          echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
+
+          
           sudo apt-get -y update
           sudo apt-get install -y curl
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
