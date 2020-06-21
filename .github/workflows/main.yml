@@ -7,15 +7,15 @@ jobs:
     steps:
       - uses: actions/checkout@master
         name: Checkout latest code
-      - uses: docker/build-push-action@v1
-        name: Build and push GTAS web application image
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }} 
-          repository: simbam1/webapp 
-          path: ./gtas-parent
-          dockerfile: ./gtas-parent/web-app.Dockerfile
-          tags: 1.0.4
+      # - uses: docker/build-push-action@v1
+      #   name: Build and push GTAS web application image
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }} 
+      #     repository: simbam1/webapp 
+      #     path: ./gtas-parent
+      #     dockerfile: ./gtas-parent/web-app.Dockerfile
+      #     tags: 1.0.4
       # - uses: docker/build-push-action@v1
       #   name: Build and push mariadb image
       #   with:
@@ -25,15 +25,15 @@ jobs:
       #     path: ./gtas-parent
       #     dockerfile: ./gtas-parent/mariadb.Dockerfile
       #     tags: 1.0.1 
-      - uses: docker/build-push-action@v1
-        name: Build and push GTAS proxy image
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }} 
-          repository: simbam1/http-proxy
-          path: ./gtas-parent
-          dockerfile: ./gtas-parent/docker-resources/proxy.Dockerfile
-          tags: 1.0.2
+      # - uses: docker/build-push-action@v1
+      #   name: Build and push GTAS proxy image
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }} 
+      #     repository: simbam1/http-proxy
+      #     path: ./gtas-parent
+      #     dockerfile: ./gtas-parent/docker-resources/proxy.Dockerfile
+      #     tags: 1.0.2
       # - uses: docker/build-push-action@v1
       #   name: Build and push GTAS scheduler image
       #   with:
