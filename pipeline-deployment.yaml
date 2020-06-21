@@ -10,7 +10,7 @@ services:
     environment:
       BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
     volumes:
-      - certs:/
+      - certs:/certs
   web-app:
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
@@ -37,6 +37,8 @@ services:
     volumes:
       - certs:/temp-cert
   gtas-scheduler:
+    ports:
+      - 8081:8081
     environment:
       DB_HOST: ${MARIADB_HOST}
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
