@@ -320,7 +320,7 @@ public class AdminController {
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/settingsinfo")
-	public ResponseEntity setSettings(@Valid SettingsVo settings, BindingResult result, Model model) {
+	public ResponseEntity setSettings(@Valid @RequestBody SettingsVo settings, BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			List<String> errors = result.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
 					.collect(Collectors.toList());
