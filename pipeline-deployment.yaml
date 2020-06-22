@@ -62,7 +62,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
   activemq:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -72,7 +72,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
   kibana:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -136,7 +136,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
   etl-job:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -144,7 +144,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
     environment:
       DB_HOSTNAME: ${MARIADB_HOST}
       NEO4J_USER_PATH: '/run/secrets/etl-neo4j-user/etl-neo4j-user'
