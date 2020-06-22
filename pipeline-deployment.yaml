@@ -7,7 +7,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
     environment:
       BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
     volumes:
@@ -35,7 +35,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
     volumes:
       - certs:/temp-cert
   gtas-scheduler:
@@ -62,7 +62,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
   activemq:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -80,7 +80,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
     volumes:
       - certs:/etc/kibana/config/
   elasticsearch:
@@ -90,7 +90,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
     volumes:
       - certs:/usr/share/elasticsearch/temp-cert
   mariadb:
@@ -100,7 +100,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == noRole
+          - node.labels.role == frontend
   logstash:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -108,7 +108,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
     environment:
       MARIADB_HOST: ${MARIADB_HOST}
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca/elastic-ca
@@ -119,7 +119,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
     volumes:
       - certs:/usr/share/elasticsearch/config/certs/elasticsearch/
     environment:  
@@ -136,7 +136,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
   etl-job:
     labels:
       kompose.image-pull-policy: "Always" 
