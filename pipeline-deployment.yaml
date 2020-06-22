@@ -1,10 +1,10 @@
 version: '3.7'
 services:
   http-proxy:
+    labels:
+      kompose.image-pull-policy: "Always" 
+      kompose.service.type: "NodePort"
     deploy:
-      labels:
-        - "kompose.image-pull-policy=Always" 
-        - "kompose.service.type=nodeport"
       placement:
         constraints:
           - node.labels.role == node-a
@@ -13,6 +13,9 @@ services:
     volumes:
       - certs:/certs
   web-app:
+    labels:
+      kompose.image-pull-policy: "Always" 
+      kompose.service.type: "NodePort"
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
       JAVA_OPTS: "-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=UTC"
@@ -30,15 +33,15 @@ services:
       NEO4J_PASSWORD_PATH: "/run/secrets/webapp-neo4j-password/webapp-neo4j-password"
       DB_HOST: ${MARIADB_HOST}
     deploy:
-      labels:
-        - "kompose.image-pull-policy=Always" 
-        - "kompose.service.type=nodeport"
       placement:
         constraints:
           - node.labels.role == node-a
     volumes:
       - certs:/temp-cert
   gtas-scheduler:
+    labels:
+      kompose.image-pull-policy: "Always" 
+      kompose.service.type: "NodePort"
     ports:
       - 8081:8081
     environment:
@@ -57,55 +60,52 @@ services:
       NEO4J_USER_PATH: "/run/secrets/webapp-neo4j-user/webapp-neo4j-user"
       NEO4J_PASSWORD_PATH: "/run/secrets/webapp-neo4j-password/webapp-neo4j-password"
     deploy:
-      labels:
-        - "kompose.image-pull-policy=Always" 
-        - "kompose.service.type=nodeport"
       placement:
         constraints:
           - node.labels.role == node-b
   activemq:
+    labels:
+      kompose.image-pull-policy: "Always" 
+      kompose.service.type: "NodePort"
     ports:
       - 61616:61616
     deploy:
-      labels:
-        - "kompose.image-pull-policy=Always" 
-        - "kompose.service.type=nodeport"
       placement:
         constraints:
           - node.labels.role == node-b
   kibana:
-    deploy: 
-      labels:
-        - "kompose.image-pull-policy=Always" 
-        - "kompose.service.type=nodeport"
+    labels:
+      kompose.image-pull-policy: "Always" 
+      kompose.service.type: "NodePort"
+    deploy:
       placement:
         constraints:
           - node.labels.role == node-a
     volumes:
       - certs:/etc/kibana/config/
   elasticsearch:
+    labels:
+      kompose.image-pull-policy: "Always" 
+      kompose.service.type: "NodePort"
     deploy:
-      labels:
-        - "kompose.image-pull-policy=Always" 
-        - "kompose.service.type=nodeport"
       placement:
         constraints:
           - node.labels.role == node-a
     volumes:
       - certs:/usr/share/elasticsearch/temp-cert
   mariadb:
+    labels:
+      kompose.image-pull-policy: "Always" 
+      kompose.service.type: "NodePort"
     deploy:
-      labels:
-        - "kompose.image-pull-policy=Always" 
-        - "kompose.service.type=nodeport"
       placement:
         constraints:
           - node.labels.role == node-c
   logstash:
+    labels:
+      kompose.image-pull-policy: "Always" 
+      kompose.service.type: "NodePort"
     deploy:
-      labels:
-        - "kompose.image-pull-policy=Always" 
-        - "kompose.service.type=nodeport"
       placement:
         constraints:
           - node.labels.role == node-a
@@ -113,10 +113,10 @@ services:
       MARIADB_HOST: ${MARIADB_HOST}
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca/elastic-ca
   elk-setup:
+    labels:
+      kompose.image-pull-policy: "Always" 
+      kompose.service.type: "NodePort"
     deploy:
-      labels:
-        - "kompose.image-pull-policy=Always" 
-        - "kompose.service.type=nodeport"
       placement:
         constraints:
           - node.labels.role == node-a 
@@ -130,18 +130,18 @@ services:
       BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
       ELASTIC_PATH: '/run/secrets/elastic-password/elastic-password'
   neo4j:
+    labels:
+      kompose.image-pull-policy: "Always" 
+      kompose.service.type: "NodePort"
     deploy:
-      labels:
-        - "kompose.image-pull-policy=Always" 
-        - "kompose.service.type=nodeport"
       placement:
         constraints:
           - node.labels.role == node-a
   etl-job:
+    labels:
+      kompose.image-pull-policy: "Always" 
+      kompose.service.type: "NodePort"
     deploy:
-      labels:
-        - "kompose.image-pull-policy=Always" 
-        - "kompose.service.type=nodeport"
       placement:
         constraints:
           - node.labels.role == node-b
@@ -151,7 +151,6 @@ services:
       NEO4J_PASSWORD_PATH: '/run/secrets/etl-neo4j-password/etl-neo4j-password'
       MYSQL_USER_PATH: '/run/secrets/mysql-etl-user/mysql-etl-user'
       MYSQL_PASSWORD_PATH: '/run/secrets/mysql-etl-password/mysql-etl-password'
-
-# networks:
-#   gtas_webapp-network:
-#     attachable: true
+networks:
+  gtas_webapp-network:
+    attachable: true
