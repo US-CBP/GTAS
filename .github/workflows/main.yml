@@ -120,7 +120,6 @@ jobs:
           echo $MARIADB_USER > ./gtas-parent/gtas-commons/secrets/mysql_webapp_user.txt
           echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
 
-
           sudo apt-get -y update
           sudo apt-get install -y curl
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
@@ -138,4 +137,4 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: apply --v=10 --feature-gates=ExpandPersistentVolumes=true -f deploy.yaml
+          args: apply --v=10 -f deploy.yaml
