@@ -4,7 +4,7 @@ services:
 
   kibana:
     container_name: kibana
-    image: simbam1/kibana:1.0.2
+    image: simbam1/kibana:dev
     build:
       context: ./gtas-parent/scripts/elastic
       dockerfile: install/docker/kibana/kibana.Dockerfile
@@ -21,7 +21,7 @@ services:
       - elasticsearch
 
   elasticsearch:
-    image: simbam1/elasticsearch:1.1.5
+    image: simbam1/elasticsearch:dev
     container_name: elasticsearch
     build:
       context: ./gtas-parent/scripts/elastic
@@ -37,7 +37,7 @@ services:
       - gtas-webapp-network
 
   logstash:
-    image: simbam1/logstash:1.1.0
+    image: simbam1/logstash:dev
     container_name: logstash
     build:
       context: ./gtas-parent/scripts/elastic
@@ -57,7 +57,7 @@ services:
       - elasticsearch
 
   elk-setup:
-    image: simbam1/elk-setup:1.1.2
+    image: simbam1/elk-setup:dev
     container_name: elk-setup
     build:
       context: ./gtas-parent/scripts/elastic
