@@ -2,6 +2,7 @@ version: '3.7'
 services:
   http-proxy:
     labels:
+      kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -13,6 +14,7 @@ services:
       - certs:/certs
   web-app:
     labels:
+      kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
@@ -38,6 +40,7 @@ services:
       - certs:/temp-cert
   gtas-scheduler:
     labels:
+      kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
     ports:
       - 8081:8081
@@ -72,6 +75,7 @@ services:
           - node.labels.role == node-b
   kibana:
     labels:
+      kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -91,6 +95,7 @@ services:
       - certs:/usr/share/elasticsearch/temp-cert
   mariadb:
     labels:
+      kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -98,6 +103,7 @@ services:
           - node.labels.role == node-c
   logstash:
     labels:
+      kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -108,6 +114,7 @@ services:
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca/elastic-ca
   elk-setup:
     labels:
+      kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -124,6 +131,7 @@ services:
       ELASTIC_PATH: '/run/secrets/elastic-password/elastic-password'
   neo4j:
     labels:
+      kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -131,6 +139,7 @@ services:
           - node.labels.role == node-a
   etl-job:
     labels:
+      kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
