@@ -141,6 +141,6 @@ services:
       MYSQL_USER_PATH: '/run/secrets/mysql-etl-user/mysql-etl-user'
       MYSQL_PASSWORD_PATH: '/run/secrets/mysql-etl-password/mysql-etl-password'
 
-networks:
-  gtas_webapp-network:
-    attachable: true
+# networks:
+#   gtas_webapp-network:
+#     attachable: true

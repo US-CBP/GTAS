@@ -16,8 +16,8 @@ services:
       - mysql-etl-password
       - etl-neo4j-user
       - etl-neo4j-password
-    networks: 
-      - gtas-webapp-network
+    # networks: 
+    #   - gtas-webapp-network
     depends_on: 
       - neo4j
 
@@ -33,15 +33,15 @@ services:
     ports:
       - 7474:7474   
       - 7687:7687
-    networks: 
-      - gtas-webapp-network
+    # networks: 
+    #   - gtas-webapp-network
 
 volumes:
    neo4j-data:
 
-networks:
-  gtas-webapp-network:
-    attachable: true
+# networks:
+#   gtas-webapp-network:
+#     attachable: true
 
 secrets:
   mysql-etl-user:

@@ -10,8 +10,8 @@ services:
     ports:
       - 443:443
       - 80:80
-    networks:
-      - gtas-webapp-network
+    # networks:
+    #   - gtas-webapp-network
     secrets:
       - elastic-bootstrap-password
 
@@ -30,8 +30,8 @@ services:
       - ACTIVEMQ_HOST=activemq
       - PROXY_HOST=httpproxy
       - ELASTICSEARCH=elasticsearch
-    networks:
-      - gtas-webapp-network
+    # networks:
+    #   - gtas-webapp-network
     restart: always
     secrets:
      - mysql-webapp-user
@@ -61,8 +61,8 @@ services:
       - mysql-processor-password
       - webapp-neo4j-user
       - webapp-neo4j-password
-    networks:
-      - gtas-webapp-network
+    # networks:
+    #   - gtas-webapp-network
     depends_on: 
       - activemq
 
@@ -70,8 +70,8 @@ services:
     image: rmohr/activemq:5.15.9
     container_name: activemq
     restart: always
-    networks: 
-      - gtas-webapp-network
+    # networks: 
+    #   - gtas-webapp-network
 
   mariadb:
     image: simbam1/mariadb:1.0.1
@@ -95,8 +95,8 @@ services:
      - mysql-root-password
     ports:
       - 3306:3306
-    networks:
-      - gtas-webapp-network
+    # networks:
+    #   - gtas-webapp-network
     restart: always
     volumes:
       - db-data:/var/lib/mysql  
@@ -138,6 +138,6 @@ volumes:
   scheduler-logs:
   certs:
 
-networks:
-  gtas-webapp-network:
-    attachable: true
+# networks:
+#   gtas-webapp-network:
+#     attachable: true
