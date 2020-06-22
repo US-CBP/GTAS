@@ -138,4 +138,4 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: apply --v=10 -f --feature-gates=ExpandPersistentVolumes=true deploy.yaml
+          args: apply --v=10 --feature-gates=ExpandPersistentVolumes=true -f deploy.yaml
