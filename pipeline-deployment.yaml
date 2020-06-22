@@ -133,6 +133,7 @@ services:
     labels:
       kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
+      kompose.volume.size: 30Gi
     deploy:
       placement:
         constraints:
