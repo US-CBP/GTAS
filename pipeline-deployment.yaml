@@ -122,7 +122,7 @@ services:
           - node.labels.role == node-a 
     volumes:
       - certs:/usr/share/elasticsearch/config/certs/elasticsearch/
-    environment:
+    environment: 
       LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password/logstash-keystore-password' 
       MYSQL_USER_PATH: '/run/secrets/mysql-logstash-user/mysql-logstash-user'
       MYSQL_PASSWORD_PATH: '/run/secrets/mysql-logstash-password/mysql-logstash-password'
