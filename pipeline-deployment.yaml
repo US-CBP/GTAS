@@ -7,7 +7,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == node-a
+          - node.labels.nodegroup-name == node-a
     environment:
       BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
     volumes:
@@ -35,7 +35,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == node-a
+          - node.labels.nodegroup-name == node-a
     volumes:
       - certs:/temp-cert
   gtas-scheduler:
@@ -62,7 +62,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == node-b
+          - node.labels.nodegroup-name == node-b
   activemq:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -72,7 +72,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == node-b
+          - node.labels.nodegroup-name == node-b
   kibana:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -80,7 +80,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == node-a
+          - node.labels.nodegroup-name == node-a
     volumes:
       - certs:/etc/kibana/config/
   elasticsearch:
@@ -90,7 +90,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == node-a
+          - node.labels.nodegroup-name == node-a
     volumes:
       - certs:/usr/share/elasticsearch/temp-cert
   mariadb:
@@ -100,7 +100,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == node-c
+          - node.labels.nodegroup-name == node-c
   logstash:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -108,7 +108,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == node-a
+          - node.labels.nodegroup-name == node-a
     environment:
       MARIADB_HOST: ${MARIADB_HOST}
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca/elastic-ca
@@ -119,7 +119,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == node-a 
+          - node.labels.nodegroup-name == node-a 
     volumes:
       - certs:/usr/share/elasticsearch/config/certs/elasticsearch/
     environment:  
@@ -136,7 +136,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == node-a
+          - node.labels.nodegroup-name == node-a
   etl-job:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -144,7 +144,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == node-b
+          - node.labels.nodegroup-name == node-b
     environment:
       DB_HOSTNAME: ${MARIADB_HOST}
       NEO4J_USER_PATH: '/run/secrets/etl-neo4j-user/etl-neo4j-user'
