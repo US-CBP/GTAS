@@ -54,7 +54,7 @@ services:
       SSL_TRUST_HOST: ""
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
-      PROXY_IP: ""
+      PROXY_IP: ${PROXY_HOST}
       MYSQL_USER_PATH: "/run/secrets/mysql-processor-user/mysql-processor-user"
       MYSQL_PASSWORD_PATH: "/run/secrets/mysql-processor-password/mysql-processor-password"
       NEO4J_USER_PATH: "/run/secrets/webapp-neo4j-user/webapp-neo4j-user"
