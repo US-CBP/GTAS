@@ -15,8 +15,8 @@ services:
     restart: always
     volumes:
       - kibana-conf:/usr/share/kibana/data
-    # networks:
-    #   - gtas-webapp-network
+    networks:
+      - gtas-webapp-network
     depends_on:
       - elasticsearch
 
@@ -49,8 +49,8 @@ services:
     restart: always
     secrets:
       - elastic-ca
-    # networks:
-    #   - gtas-webapp-network
+    networks:
+      - gtas-webapp-network
     volumes:
       - logstash-conf:/usr/share/logstash/config/
     depends_on:
@@ -77,8 +77,8 @@ services:
       - elasticsearch-kibana-user
       - elasticsearch-kibana-password
       - elastic-bootstrap-password
-    # networks:
-    #   - gtas-webapp-network
+    networks:
+      - gtas-webapp-network
 
 
 secrets:
@@ -105,6 +105,6 @@ volumes:
   elasticsearch-conf:
   es-data:
 
-# networks:
-#   gtas-webapp-network:
-#     attachable: true
+networks:
+  gtas-webapp-network:
+    attachable: true
