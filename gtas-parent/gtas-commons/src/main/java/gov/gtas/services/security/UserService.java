@@ -46,7 +46,7 @@ public interface UserService {
 	 * @return the list
 	 */
 	@PreAuthorize(GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	public List<UserData> findAll();
+	public List<UserDisplayData> findAll();
 
 	/**
 	 * Update the user.

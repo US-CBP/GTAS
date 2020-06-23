@@ -32,6 +32,7 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.security.UserData;
+import gov.gtas.services.security.UserDisplayData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.validator.UserDataValidator;
 
@@ -52,7 +53,7 @@ public class UserController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/users/")
-	public List<UserData> getAllUsers() {
+	public List<UserDisplayData> getAllUsers() {
 		return userService.findAll();
 	}
 

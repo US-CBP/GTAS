@@ -30,11 +30,11 @@ public class UserServiceUtil {
 	 *            the user entities
 	 * @return the user data list from entity collection
 	 */
-	public List<UserData> getUserDataListFromEntityCollection(Iterable<User> userEntities) {
+	public List<UserDisplayData> getUserDataListFromEntityCollection(Iterable<User> userEntities) {
 
 		Stream<User> aStream = StreamSupport.stream(userEntities.spliterator(), false);
 
-		List<UserData> users = aStream.map(user -> {
+		List<UserDisplayData> users = aStream.map(user -> {
 
 			Set<RoleData> roles = user.getRoles().stream().map(new Function<Role, RoleData>() {
 
@@ -44,7 +44,7 @@ public class UserServiceUtil {
 				}
 
 			}).collect(Collectors.toSet());
-			UserData userData = new UserData(user.getUserId().toUpperCase(), user.getPassword(), user.getFirstName(),
+			UserDisplayData userData = new UserDisplayData(user.getUserId().toUpperCase(), user.getFirstName(),
 					user.getLastName(), user.getActive(), roles, user.getEmail(), user.getEmailEnabled(), user.getHighPriorityHitsEmailNotification());
 			userData.setEmail(user.getEmail());
 			return userData;

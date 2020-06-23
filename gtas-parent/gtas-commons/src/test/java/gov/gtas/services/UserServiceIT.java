@@ -11,6 +11,7 @@ import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.RoleService;
 import gov.gtas.services.security.RoleServiceUtil;
 import gov.gtas.services.security.UserData;
+import gov.gtas.services.security.UserDisplayData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.security.UserServiceUtil;
 
@@ -64,7 +65,7 @@ public class UserServiceIT {
 	@Test
 	@Transactional
 	public void testGetAllUser() {
-		List<UserData> users = userService.findAll();
+		List<UserDisplayData> users = userService.findAll();
 		assertNotNull(users);
 	}
 
