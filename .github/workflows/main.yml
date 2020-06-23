@@ -125,7 +125,7 @@ jobs:
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
           chmod +x kompose
           sudo mv ./kompose /usr/local/bin/kompose
-          kompose -f pipeline-deployment.yaml -f elk-docker-compose.yml -f docker-compose.yml -f neo4j-etl-docker-compose.yml convert --out deploy.yaml
+          kompose -f pipeline-deployment.yaml -f docker-compose.yml convert --out deploy.yaml
       - name: Clean resources
         uses: Consensys/kubernetes-action@master
         env:

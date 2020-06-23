@@ -99,7 +99,119 @@ services:
       - gtas-webapp-network
     restart: always
     volumes:
-      - db-data:/var/lib/mysql  
+      - db-data:/var/lib/mysql
+
+  etl-job:
+    container_name: etl-job
+    image: simbam1/neo4j-etl-job:dev
+    build:
+      context: .
+      dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
+    environment:
+      NEO4J_HOSTNAME: neo4j
+    restart: always
+    secrets:
+      - mysql-etl-user
+      - mysql-etl-password
+      - etl-neo4j-user
+      - etl-neo4j-password
+    networks: 
+      - gtas-webapp-network
+    depends_on: 
+      - neo4j
+
+  neo4j:
+    container_name: neo4j
+    image: simbam1/neo4j:dev
+    build:
+      context: .
+      dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
+    restart: always
+    volumes:
+       - neo4j-data:/data
+    ports:
+      - 7474:7474   
+      - 7687:7687
+    networks: 
+      - gtas-webapp-network
+
+  kibana:
+    container_name: kibana
+    image: simbam1/kibana:dev
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: install/docker/kibana/kibana.Dockerfile
+    environment:
+      ELASTICSEARCH_HOSTS: https://elasticsearch:9200
+    ports:
+      - 5601:5601
+    restart: always
+    volumes:
+      - kibana-conf:/usr/share/kibana/data
+    networks:
+      - gtas-webapp-network
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    image: simbam1/elasticsearch:dev
+    container_name: elasticsearch
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: install/docker/elasticsearch/elasticsearch.Dockerfile
+    ports:
+      - 9300:9300
+      - 9200:9200
+    restart: always
+    volumes: 
+      - es-data:/usr/share/elasticsearch/data
+      - elasticsearch-conf:/usr/share/elasticsearch/config
+    networks: 
+      - gtas-webapp-network
+
+  logstash:
+    image: simbam1/logstash:dev
+    container_name: logstash
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: ./install/docker/logstash/logstash.Dockerfile
+    environment:
+      ELASTIC_HOST: 'https://elasticsearch'
+      XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
+      LOGSTASH_KEYSTORE_PASS: admin123
+    restart: always
+    secrets:
+      - elastic-ca
+    networks:
+      - gtas-webapp-network
+    volumes:
+      - logstash-conf:/usr/share/logstash/config/
+    depends_on:
+      - elasticsearch
+
+  elk-setup:
+    image: simbam1/elk-setup:dev
+    container_name: elk-setup
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: ./install/docker/elk-setup/elk-setup.Dockerfile
+    environment:
+      KIBANA_HOST: 'kibana'
+      ELASTICSEARCH_HOST: 'elasticsearch'
+    volumes:
+      - logstash-conf:/logstash-conf
+      - kibana-conf:/kibana-conf
+      - elasticsearch-conf:/elasticsearch-conf
+    secrets:
+      - logstash-keystore-password
+      - mysql-logstash-user
+      - mysql-logstash-password
+      - elastic-password
+      - elasticsearch-kibana-user
+      - elasticsearch-kibana-password
+      - elastic-bootstrap-password
+    networks:
+      - gtas-webapp-network
 
 
 secrets:
@@ -131,12 +243,29 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_user.txt
   webapp-neo4j-password:
     file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_password.txt
+  logstash-keystore-password:
+    file: ./gtas-parent/gtas-commons/secrets/logstash-keystore-password
+  elastic-password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic-password
+  elasticsearch-kibana-user:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-kibana-user
+  elasticsearch-kibana-password:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-kibana-password
+  elastic-bootstrap-password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic-bootstrap-password
+  elastic-ca:
+    file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
 
 volumes:
   db-data:
   m2:
   scheduler-logs:
   certs:
+  neo4j-data:
+  logstash-conf:
+  kibana-conf:
+  elasticsearch-conf:
+  es-data:
 
 networks:
   gtas-webapp-network:

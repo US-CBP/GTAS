@@ -5,9 +5,11 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-webapp-node
-    environment:
-      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
   web-app:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-webapp-node
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
       JAVA_HOME: "/usr/local/gtas-java-jre"
@@ -19,12 +21,6 @@ services:
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       PROXY_IP: ""
-      DB_HOST: mariadb
-      BOOTSTRAP_PATH: "/run/secrets/elastic-bootstrap-password"
-      MYSQL_USER_PATH: "/run/secrets/mysql-webapp-user"
-      MYSQL_PASSWORD_PATH: "/run/secrets/mysql-webapp-password"
-      NEO4J_USER_PATH: "/run/secrets/webapp-neo4j-user"
-      NEO4J_PASSWORD_PATH: "/run/secrets/webapp-neo4j-password"
     volumes:
       - type: bind
         source: /mnt/gtas-java-jre
@@ -32,27 +28,22 @@ services:
       - type: bind
         source: /var/opt/gtas_web_app_application_properties
         target: /usr/local/tomcat/conf
+  gtas-scheduler:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-webapp-node
-  gtas-scheduler:
+          - node.hostname == gtas-messenger-node
     environment:
+      EMAIL_SENDER_HOST: ""
+      EMAIL_SENDER_USERNAME: ""
+      EMAIL_SENDER_PASSWORD: ""
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
       JAVA_HOME: "/usr/local/gtas-java-jre"
       JAVA_OPTS: "-Xms8000m -Xmx16000m -Duser.timezone=UTC -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
-      EMAIL_SENDER_USERNAME: ""
-      EMAIL_SENDER_PASSWORD: ""
-      EMAIL_SENDER_HOST: ""
       SSL_TRUST_HOST: ""
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       PROXY_IP: ""
-      DB_HOST: mariadb
-      MYSQL_USER_PATH: "/run/secrets/mysql-processor-user"
-      MYSQL_PASSWORD_PATH: "/run/secrets/mysql-processor-password"
-      NEO4J_USER_PATH: "/run/secrets/webapp-neo4j-user"
-      NEO4J_PASSWORD_PATH: "/run/secrets/webapp-neo4j-password"
     volumes:
       - type: bind
         source: /mnt/gtas-java-jre
@@ -64,10 +55,6 @@ services:
         source: /mnt
         target: /usr/local/gtas-data
         consistency: consistent
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == gtas-messenger-node
   activemq:
     deploy:
       placement:
@@ -93,21 +80,11 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-elk-node
-    environment:
-      MARIADB_HOST: mariadb
-      XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca
   elk-setup:
     deploy:
       placement:
         constraints:
           - node.hostname == gtas-elk-node
-    environment:
-      LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password' 
-      MYSQL_USER_PATH: '/run/secrets/mysql-logstash-user'
-      MYSQL_PASSWORD_PATH: '/run/secrets/mysql-logstash-password'
-      KIBANA_PASSWORD_PATH: '/run/secrets/elasticsearch-kibana-password'
-      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
-      ELASTIC_PATH: '/run/secrets/elastic-password'
   neo4j:
     deploy:
       placement:
@@ -118,13 +95,6 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-neo4j-node
-    environment:
-      DB_HOSTNAME: mariadb
-      NEO4J_USER_PATH: '/run/secrets/etl-neo4j-user'
-      NEO4J_PASSWORD_PATH: '/run/secrets/etl-neo4j-password'
-      MYSQL_USER_PATH: '/run/secrets/mysql-etl-user'
-      MYSQL_PASSWORD_PATH: '/run/secrets/mysql-etl-password'
-
 networks:
   GTAS-webapp-network:
     driver: "overlay"
