@@ -1,6 +1,7 @@
 package gov.gtas.summary;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MessageSummary {
@@ -11,6 +12,11 @@ public class MessageSummary {
     private String flightIdTag;
     private EventIdentifier eventIdentifier;
     private Boolean relatedToHit;
+    private String messageType;
+    private Date transmissionDate;
+    private String transmissionSource;
+    private String sourceMessageVersion;
+    private String pnrRefNumber;
     private MessageAction action;
     private List<MessageTravelInformation> messageTravelInformation = new ArrayList<>();
     private List<MessagePhone> messagePhones = new ArrayList<>();
@@ -20,11 +26,43 @@ public class MessageSummary {
     private List<MessageEmail> messageEmails = new ArrayList<>();
     private List<PassengerSummary> passengerSummaries = new ArrayList<>();
 
-    public MessageSummary() {};
+    public MessageSummary() {}
 
     public MessageSummary(String hashCode, String flightIdTag){
         this.hashCode = hashCode;
         this.flightIdTag = flightIdTag;
+    }
+
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
+
+    public Date getTransmissionDate() {
+        return transmissionDate;
+    }
+
+    public void setTransmissionDate(Date transmissionDate) {
+        this.transmissionDate = transmissionDate;
+    }
+
+    public String getTransmissionSource() {
+        return transmissionSource;
+    }
+
+    public void setTransmissionSource(String transmissionSource) {
+        this.transmissionSource = transmissionSource;
+    }
+
+    public String getSourceMessageVersion() {
+        return sourceMessageVersion;
+    }
+
+    public void setSourceMessageVersion(String sourceMessageVersion) {
+        this.sourceMessageVersion = sourceMessageVersion;
     }
 
     public Boolean getRelatedToHit() {
@@ -137,5 +175,13 @@ public class MessageSummary {
 
     public void setFlightIdTag(String flightIdTag) {
         this.flightIdTag = flightIdTag;
+    }
+
+    public String getPnrRefNumber() {
+        return pnrRefNumber;
+    }
+
+    public void setPnrRefNumber(String pnrRefNumber) {
+        this.pnrRefNumber = pnrRefNumber;
     }
 }

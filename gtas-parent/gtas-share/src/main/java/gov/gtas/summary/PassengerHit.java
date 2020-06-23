@@ -4,6 +4,10 @@ import java.util.Date;
 
 public class PassengerHit {
 
+    private String hitTypeEnum;
+
+    private String hitCategory;
+
     private String Title;
 
     private String Description;
@@ -24,6 +28,21 @@ public class PassengerHit {
 
     private float percentage = 1;
 
+    public String getHitTypeEnum() {
+        return hitTypeEnum;
+    }
+
+    public void setHitTypeEnum(String hitTypeEnum) {
+        this.hitTypeEnum = hitTypeEnum;
+    }
+
+    public String getHitCategory() {
+        return hitCategory;
+    }
+
+    public void setHitCategory(String hitCategory) {
+        this.hitCategory = hitCategory;
+    }
 
     public String getTitle() {
         return Title;

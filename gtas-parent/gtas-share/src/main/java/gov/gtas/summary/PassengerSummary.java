@@ -9,7 +9,7 @@ public class PassengerSummary {
     PassengerBiographic passengerBiographic = new PassengerBiographic();
     PassengerTrip passengerTrip = new PassengerTrip();
     List<PassengerDocument> passengerDocumentsList = new ArrayList<>();
-    List<PassengerHit> passengerDerogs = new ArrayList<>();
+    List<PassengerHit> passengerHits = new ArrayList<>();
     PassengerIds passengerIds = new PassengerIds();
     private Long gtasId;
 
@@ -53,12 +53,12 @@ public class PassengerSummary {
         this.passengerDocumentsList = passengerDocumentsList;
     }
 
-    public List<PassengerHit> getPassengerDerogs() {
-        return passengerDerogs;
+    public List<PassengerHit> getPassengerHits() {
+        return passengerHits;
     }
 
-    public void setPassengerDerogs(List<PassengerHit> passengerDerogs) {
-        this.passengerDerogs = passengerDerogs;
+    public void setPassengerHits(List<PassengerHit> passengerDerogs) {
+        this.passengerHits = passengerDerogs;
     }
 
     public Long getGtasId() {
