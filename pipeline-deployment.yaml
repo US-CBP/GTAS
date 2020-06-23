@@ -7,7 +7,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
     environment:
       BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
     volumes:
@@ -35,7 +35,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
     volumes:
       - certs:/temp-cert
   gtas-scheduler:
@@ -72,7 +72,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
   kibana:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -80,18 +80,18 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
     volumes:
       - certs:/etc/kibana/config/
   elasticsearch:
     labels:
       kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
-      kompose.volume.size: 150Gi
+      kompose.volume.size: 200Gi
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
     volumes:
       - certs:/usr/share/elasticsearch/temp-cert
   mariadb:
@@ -101,7 +101,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
   logstash:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -109,7 +109,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
     environment:
       MARIADB_HOST: ${MARIADB_HOST}
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca/elastic-ca
@@ -120,7 +120,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
     volumes:
       - certs:/usr/share/elasticsearch/config/certs/elasticsearch/
     environment:  
@@ -134,7 +134,7 @@ services:
     labels:
       kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
-      kompose.volume.size: 150Gi
+      kompose.volume.size: 200Gi
     deploy:
       placement:
         constraints:
@@ -146,7 +146,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
     environment:
       DB_HOSTNAME: ${MARIADB_HOST}
       NEO4J_USER_PATH: '/run/secrets/etl-neo4j-user/etl-neo4j-user'

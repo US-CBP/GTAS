@@ -5,6 +5,11 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-webapp-node
+    secrets:
+      - source: webapp-cert
+        target: /wcogtas.org.crt
+      - source: webapp-key
+        target: /wcogtas.org.key
   web-app:
     deploy:
       placement:
