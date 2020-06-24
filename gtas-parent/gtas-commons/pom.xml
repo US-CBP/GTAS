@@ -37,8 +37,8 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>gov.gtas</groupId>
-			<artifactId>gtas-share</artifactId>
+			<groupId>wco-gtas</groupId>
+			<artifactId>gtas-information-share</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<!-- commons -->

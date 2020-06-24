@@ -204,7 +204,6 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-                <module>gtas-share</module>
                 <module>gtas-parsers</module>
 		        <module>gtas-loader</module> 
 		        <module>gtas-commons</module>
