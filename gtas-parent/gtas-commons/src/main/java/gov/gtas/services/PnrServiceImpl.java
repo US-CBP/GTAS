@@ -417,8 +417,8 @@ public class PnrServiceImpl implements PnrService {
 		return objectMap;
 	}
 
-	public Set<Pnr> pnrMessageWithFlightInfo(Set<Long> pids,Set<Long> messageIds) {
-		return pnrRepository.pnrMessageWithFlightInfo(pids, messageIds);
+	public Set<Pnr> pnrMessageWithFlightInfo(Set<Long> pids,Set<Long> messageIds, Long flightId) {
+		return pnrRepository.pnrMessageWithFlightInfo(pids, messageIds, flightId);
 	}
 
 }

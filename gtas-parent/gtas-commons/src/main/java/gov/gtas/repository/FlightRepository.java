@@ -7,6 +7,7 @@ package gov.gtas.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,10 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
 	Flight getFlightByCriteria(@Param("carrier") String carrier, @Param("flightNumber") String flightNumber,
 			@Param("origin") String origin, @Param("destination") String destination,
 			@Param("flightDate") Date flightDate);
+
+
+
+	Flight findFlightByIdTag(String idTag);
 
 	/**
 	 * I thought I was having problems comparing dates with hibernate, but it
@@ -108,4 +113,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
 	@Query("SELECT f from Flight f " + "LEFT JOIN FETCH f.passengers pax " + "LEFT JOIN FETCH pax.hits hit "
 			+ "LEFT JOIN FETCH pax.seatAssignments " + "WHERE f.id = :id")
 	Flight getFlightPassengerAndSeatById(@Param("id") Long flightId);
+
+	@Query("SELECT f from Flight f JOIN f.passengers pax WHERE pax.id in :passengerIds ")
+	Set<Flight> getFlightByPassengerIds(@Param("passengerIds") Set<Long> passengerIds);
 }

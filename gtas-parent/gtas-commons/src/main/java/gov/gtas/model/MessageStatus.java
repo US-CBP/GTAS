@@ -34,16 +34,16 @@ public class MessageStatus {
 	@JoinColumn(name = "flight_id", insertable = false, updatable = false)
 	private Flight flight;
 
-	public boolean isSuccess() {
-		return success;
+	public boolean isNoLoadingError() {
+		return noLoadingError;
 	}
 
-	public void setSuccess(boolean success) {
-		this.success = success;
+	public void setNoLoadingError(boolean noLoadingError) {
+		this.noLoadingError = noLoadingError;
 	}
 
 	@Transient
-	private boolean success;
+	private boolean noLoadingError;
 
 	public MessageStatus() {
 	}

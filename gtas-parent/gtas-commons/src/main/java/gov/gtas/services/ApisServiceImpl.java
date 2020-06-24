@@ -47,14 +47,14 @@ public class ApisServiceImpl implements ApisService {
 	}
 
 	@Override
-	public Set<ApisMessage> apisMessageWithFlightInfo(Set<Long>passengerIds, Set<Long> apisIds) {
-		return apisMessageRepository.apisMessageWithFlightInfo(passengerIds, apisIds);
+	public Set<ApisMessage> apisMessageWithFlightInfo(Set<Long>passengerIds, Set<Long> apisIds, Long flightId) {
+		return apisMessageRepository.apisMessageWithFlightInfo(passengerIds, apisIds, flightId);
 	}
 
 	@Override
-	public Map<Long, Set<Passenger>> getPassengersOnApis(Set<Long> pids, Set<Long> hitApisIds) {
+	public Map<Long, Set<Passenger>> getPassengersOnApis(Set<Long> pids, Set<Long> hitApisIds, Long flightId) {
 		Map<Long, Set<Passenger>> objectMap = new HashMap<>();
-		List<Object[]> oList = apisMessageRepository.apisAndObject(pids, hitApisIds);
+		List<Object[]> oList = apisMessageRepository.apisAndObject(pids, hitApisIds, flightId);
 		for (Object[] answerKey : oList) {
 			Long pnrId = (Long) answerKey[0];
 			Passenger object = (Passenger) answerKey[1];

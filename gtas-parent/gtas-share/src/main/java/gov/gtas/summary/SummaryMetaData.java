@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SummaryMetaData {
-    public String summary;
-    public List<String> countryList = new ArrayList<>();
-    public List<String> orgList = new ArrayList<>();
-    public String countryGroupName;
-    public String orgGroupName;
+    private String summary;
+    private List<String> countryList = new ArrayList<>();
+    private List<String> orgList = new ArrayList<>();
+    private String countryGroupName;
+    private String orgGroupName;
 
-    public SummaryMetaData(){}
+    public SummaryMetaData() {
+    }
 
     public String getOrgGroupName() {
         return orgGroupName;

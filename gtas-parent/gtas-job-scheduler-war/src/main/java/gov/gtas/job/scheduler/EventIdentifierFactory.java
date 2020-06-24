@@ -1,5 +1,6 @@
 package gov.gtas.job.scheduler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.edifact.EdifactLexer;
 import gov.gtas.parsers.edifact.Segment;
@@ -11,6 +12,7 @@ import gov.gtas.parsers.pnrgov.segment.TVL_L0;
 import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.services.LoaderUtils;
 import gov.gtas.summary.EventIdentifier;
+import gov.gtas.summary.MessageSummaryList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.Message;
@@ -39,6 +41,23 @@ public class EventIdentifierFactory {
     public EventIdentifier createEventIdentifier(Message<?> message) throws ParseException {
         message.getHeaders();
         EventIdentifier eventIdentifier = new EventIdentifier();
+
+        MessageSummaryList msl = null;
+        String msg =  (String)message.getPayload();
+        if (maybeJSON(msg.trim())) {
+            try {
+                ObjectMapper om = new ObjectMapper();
+                msl = om.readValue(msg.trim(), MessageSummaryList.class);
+            } catch (Exception ignored) {
+                // We don't care if the message doesn't marshall.
+                // It might be JSON so we try to marshal.
+                // It might be a legitimate APIS/PNR EDIFACT message otherwise.
+            }
+            if (msl != null) {
+                return msl.getEventIdentifier();
+            }
+        }
+
         if (message.getHeaders().get("eventType") != null) {
             MessageHeaders messageHeaders = message.getHeaders();
             if (messageHeaders.get("identifierList") != null) {
@@ -59,7 +78,9 @@ public class EventIdentifierFactory {
                 eventIdentifier.setEventType(eventType);
             } else {
                 logger.error("File type specified but message does not contain identifierList header!");
-                throw new ParseException("No event array found.");
+                // If identifier list header is present but incomplete
+                // assume there is an error.
+                throw new ParseException("Event array absent or incomplete");
             }
         } else {
             /*
@@ -177,6 +198,10 @@ public class EventIdentifierFactory {
         if (oAirport != null) {
             eventIdentifier.setCountryOrigin(oAirport.getCountry());
         }
+    }
+    private boolean maybeJSON(String potentialMessageList) {
+        return (potentialMessageList.startsWith("{") || potentialMessageList.startsWith("[")) &&
+                (potentialMessageList.endsWith("}") || potentialMessageList.endsWith("]"));
     }
 
     private static long flightDate(TVL_L0 tvl) {

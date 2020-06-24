@@ -11,6 +11,6 @@ import java.util.Set;
 public interface ApisService {
 
 	List<FlightPassengerVo> generateFlightPassengerList(String ref, long flightId);
-	Set<ApisMessage> apisMessageWithFlightInfo(Set<Long>passengerIds, Set<Long> apisIds);
-	Map<Long, Set<Passenger>> getPassengersOnApis(Set<Long> pids, Set<Long> hitApisIds);
+	Set<ApisMessage> apisMessageWithFlightInfo(Set<Long>passengerIds, Set<Long> apisIds, Long flightId);
+	Map<Long, Set<Passenger>> getPassengersOnApis(Set<Long> pids, Set<Long> hitApisIds, Long flightId);
 }

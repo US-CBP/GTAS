@@ -14,6 +14,7 @@ import gov.gtas.enumtype.HitTypeEnum;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "pending_hit_detail")
@@ -79,6 +80,9 @@ public class PendingHitDetails extends BaseEntityAudit {
     @Column(name = "percentage_match")
     private float percentage = 1; // 1 = 100%
 
+    @Transient
+    private UUID passengerGUID;
+
     public Flight getFlight() {
         return flight;
     }
@@ -137,13 +141,13 @@ public class PendingHitDetails extends BaseEntityAudit {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof PendingHitDetails))
-            return false;
-        PendingHitDetails pendingHitDetail = (PendingHitDetails) o;
-        return getPassengerId().equals(pendingHitDetail.getPassengerId()) && getHitMakerId().equals(pendingHitDetail.getHitMakerId())
-                && getHitEnum().equals(pendingHitDetail.getHitEnum());
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PendingHitDetails that = (PendingHitDetails) o;
+        return Objects.equals(hitType, that.hitType) &&
+                hitEnum == that.hitEnum &&
+                Objects.equals(hitMakerId, that.hitMakerId) &&
+                Objects.equals(passengerId, that.passengerId);
     }
 
     @Override
@@ -199,4 +203,11 @@ public class PendingHitDetails extends BaseEntityAudit {
         this.percentage = percentage;
     }
 
+    public UUID getPassengerGUID() {
+        return passengerGUID;
+    }
+
+    public void setPassengerGUID(UUID passengerGUID) {
+        this.passengerGUID = passengerGUID;
+    }
 }

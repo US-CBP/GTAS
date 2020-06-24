@@ -1,7 +1,10 @@
 package gov.gtas.services;
 
 import gov.gtas.enumtype.HitTypeEnum;
+import gov.gtas.enumtype.MessageType;
 import gov.gtas.model.*;
+import gov.gtas.model.lookup.FlightDirectionCode;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.summary.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +12,11 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public class SummaryFactory {
-private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
-    public static EventIdentifier from(Flight flight) {
+    private final static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
+
+    public static EventIdentifier from(String eventType, Flight flight) {
         EventIdentifier eventIdentifier = new EventIdentifier();
-        eventIdentifier.setEventType("BC_EVENT");
+        eventIdentifier.setEventType(eventType);
         eventIdentifier.setCountryOrigin(flight.getOriginCountry());
         eventIdentifier.setCountryDestination(flight.getDestinationCountry());
         List<String> identList = new ArrayList<>(6);
@@ -20,16 +24,51 @@ private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
         identList.add(flight.getDestination());
         identList.add(flight.getCarrier());
         identList.add(flight.getFlightNumber());
-        identList.add(Long.toString(stripTime(flight.getEtdDate()).getTime()));
+        String strpedTime = getStripedTimeString(flight);
+        identList.add(strpedTime);
         identList.add(Long.toString(flight.getEtdDate().getTime()));
         eventIdentifier.setIdentifierArrayList(identList);
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 5; i++) {
             sb.append(identList.get(i));
         }
         eventIdentifier.setIdentifier(sb.toString());
         return eventIdentifier;
     }
+
+    public static EventIdentifier from(Flight flight, Message message) {
+        EventIdentifier eventIdentifier = new EventIdentifier();
+        String eventType = "NO_TYPE";
+        if (message instanceof ApisMessage) {
+            eventType = "RULE_APIS";
+        } else if (message instanceof Pnr) {
+            eventType = "RULE_PNR";
+        }
+        eventIdentifier.setEventType(eventType);
+        eventIdentifier.setCountryOrigin(flight.getOriginCountry());
+        eventIdentifier.setCountryDestination(flight.getDestinationCountry());
+        List<String> identList = new ArrayList<>(6);
+        identList.add(flight.getOrigin());
+        identList.add(flight.getDestination());
+        identList.add(flight.getCarrier());
+        identList.add(flight.getFlightNumber());
+        String strpedTime = getStripedTimeString(flight);
+        identList.add(strpedTime);
+        identList.add(Long.toString(flight.getEtdDate().getTime()));
+        eventIdentifier.setIdentifierArrayList(identList);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 5; i++) {
+            sb.append(identList.get(i));
+        }
+        eventIdentifier.setIdentifier(sb.toString());
+        return eventIdentifier;
+    }
+
+    private static String getStripedTimeString(Flight flight) {
+        Date strpedTimeDate = stripTime(flight.getEtdDate());
+        return strpedTimeDate == null ? "" : Long.toString(strpedTimeDate.getTime());
+    }
+
     public static Date stripTime(Date d) {
         if (d == null) {
             return null;
@@ -42,6 +81,21 @@ private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
     }
+
+    public static Document from(PassengerDocument passengerDocument, MessageType messageType, Flight bcEvent, Passenger passenger) {
+        Document document = new Document();
+        document.setDocumentNumber(passengerDocument.getDocumentNumber());
+        document.setDocumentType(passengerDocument.getDocumentType());
+        document.setMessageType(messageType);
+        document.setExpirationDate(passengerDocument.getExpirationDate());
+        document.setFlight(bcEvent);
+        document.setFlightId(bcEvent.getId());
+        document.setNumberOfDaysValid(passengerDocument.getNumberOfDaysValid());
+        document.setPassenger(passenger);
+        document.setPassengerId(passenger.getId());
+        return document;
+    }
+
     public static MessageAddress from(String flightIdTag, String messageHash, Address address) {
         MessageAddress pa = new MessageAddress();
         pa.setCity(address.getCity());
@@ -55,6 +109,7 @@ private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
         pa.setMessageHash(messageHash);
         return pa;
     }
+
     public static MessageCreditCard from(String messageIdTag, String flightIdTag, CreditCard cc) {
         MessageCreditCard pcc = new MessageCreditCard();
         pcc.setAccountHolder(cc.getAccountHolder());
@@ -76,6 +131,7 @@ private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
         pe.setMessageIdTag(messageIdTag);
         return pe;
     }
+
     public static MessageFrequentFlyer from(String messageHash, String flightHash, FrequentFlyer ff) {
         MessageFrequentFlyer mff = new MessageFrequentFlyer();
         mff.setCarrier(ff.getCarrier());
@@ -85,7 +141,7 @@ private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
         return mff;
     }
 
-    public static MessagePhone from(String messageIdTag, String flightIdTag, Phone phone){
+    public static MessagePhone from(String messageIdTag, String flightIdTag, Phone phone) {
         MessagePhone passengerPhone = new MessagePhone();
         passengerPhone.setNumber(phone.getNumber());
         passengerPhone.setMessageIdTag(messageIdTag);
@@ -106,7 +162,7 @@ private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
         pfi.setEta(flight.getMutableFlightDetails().getEta());
         pfi.setEtaDate(flight.getMutableFlightDetails().getEtaDate());
         pfi.setEtd(flight.getMutableFlightDetails().getEtd());
-        pfi.setEtaDate(flight.getMutableFlightDetails().getEtaDate());
+        pfi.setEtdDate(flight.getEtdDate());
         pfi.setLocalEtaDate(flight.getMutableFlightDetails().getLocalEtaDate());
         pfi.setLocalEtdDate(flight.getMutableFlightDetails().getLocalEtdDate());
         pfi.setFlightIdTag(flight.getIdTag());
@@ -133,16 +189,21 @@ private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
         pfi.setEtaDate(bookingDetail.getEtaDate());
         pfi.setLocalEtaDate(bookingDetail.getLocalEtaDate());
         pfi.setLocalEtdDate(bookingDetail.getLocalEtdDate());
+        pfi.setEtdDate(bookingDetail.getEtdDate());
+        pfi.setLocalEtdDate(bookingDetail.getLocalEtdDate());
         pfi.setFlightId(bookingDetail.getId());
+        pfi.setOrigin(bookingDetail.getOrigin());
+        pfi.setOriginCountry(bookingDetail.getOriginCountry());
         pfi.setBorderCrossingEvent(true);
         pfi.setBorderCrossingEvent(false);
         return pfi;
     }
+
     public static PassengerBiographic from(PassengerDetails pd) {
         PassengerBiographic pb = new PassengerBiographic();
-        pb.setAge(pd.getAge());
         pb.setDob(pd.getDob());
         pb.setFirstName(pd.getFirstName());
+        pb.setAge(pd.getAge());
         pb.setLastName(pd.getLastName());
         pb.setGender(pd.getGender());
         pb.setMiddleName(pd.getMiddleName());
@@ -152,8 +213,9 @@ private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
         pb.setTitle(pd.getTitle());
         return pb;
     }
+
     public static PassengerDocument from(Document d, String flightTagId) {
-        PassengerDocument pd =  new PassengerDocument();
+        PassengerDocument pd = new PassengerDocument();
         pd.setDocumentNumber(d.getDocumentNumber());
         pd.setDocumentType(d.getDocumentType());
         pd.setExpirationDate(d.getExpirationDate());
@@ -163,8 +225,68 @@ private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
         pd.setFlightTagId(flightTagId);
         return pd;
     }
+
+    public static Flight from(MessageTravelInformation messageTravelInformation, String homeCountry) {
+        Flight flight = new Flight();
+        flight.setIdTag(messageTravelInformation.getIdTag());
+        flight.setFlightNumber(messageTravelInformation.getFlightNumber());
+        flight.setFullFlightNumber(messageTravelInformation.getFullFlightNumber());
+        flight.setOrigin(messageTravelInformation.getOrigin());
+        flight.setOriginCountry(messageTravelInformation.getOriginCountry());
+        flight.setDestination(messageTravelInformation.getDestination());
+        flight.setDestinationCountry(messageTravelInformation.getDestinationCountry());
+        flight.setCarrier(messageTravelInformation.getCarrier());
+        flight.setEtdDate(messageTravelInformation.getEtdDate());
+        String originCountry = flight.getOriginCountry();
+        String destCountry = flight.getDestinationCountry();
+
+        if (homeCountry.equals(originCountry) && homeCountry.equals(destCountry)) {
+            flight.setDirection(FlightDirectionCode.C.name());
+        } else if (homeCountry.equals(originCountry)) {
+            flight.setDirection(FlightDirectionCode.O.name());
+        } else if (homeCountry.equals(destCountry)) {
+            flight.setDirection(FlightDirectionCode.I.name());
+        } else {
+            flight.setDirection(FlightDirectionCode.A.name());
+        }
+        return flight;
+    }
+
+    public static BookingDetail from(MessageTravelInformation mti, Flight bcEvent) {
+        BookingDetail bookingDetail = new BookingDetail();
+        bookingDetail.setOrigin(mti.getOrigin());
+        bookingDetail.setEtdDate(mti.getEtdDate());
+        bookingDetail.setEtaDate(mti.getEtaDate());
+        bookingDetail.setLocalEtaDate(mti.getLocalEtaDate());
+        bookingDetail.setLocalEtdDate(mti.getLocalEtdDate());
+        bookingDetail.setOriginCountry(mti.getOriginCountry());
+        bookingDetail.setDestination(mti.getDestination());
+        bookingDetail.setDestinationCountry(mti.getDestinationCountry());
+        bookingDetail.setEta(mti.getEta());
+        bookingDetail.setEtaDate(mti.getEtaDate());
+        bookingDetail.setLocalEtaDate(mti.getLocalEtaDate());
+        bookingDetail.setEtd(mti.getEtd());
+        bookingDetail.setLocalEtdDate(mti.getLocalEtdDate());
+        bookingDetail.setEtdDate(mti.getEtdDate());
+        bookingDetail.setFlightId(bcEvent.getId());
+        bookingDetail.setFlight(bcEvent);
+        bookingDetail.setFullFlightNumber(mti.getFullFlightNumber());
+        bookingDetail.setFlightNumber(mti.getFlightNumber());
+        bookingDetail.setCreatedAt(new Date());
+        return bookingDetail;
+
+    }
+
+
     public static PassengerHit from(HitDetail hd) {
         PassengerHit pd = new PassengerHit();
+
+        HitMaker hm = hd.getHitMaker();
+        pd.setHitTypeEnum(hm.getHitTypeEnum().toString());
+
+        HitCategory hc = hm.getHitCategory();
+        pd.setHitCategory(hc.getName());
+
         pd.setCreatedDate(hd.getCreatedDate());
         pd.setDescription(hd.getDescription());
         pd.setFlightId(hd.getFlightId());
@@ -176,6 +298,7 @@ private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
         pd.setRuleId(hd.getRuleId());
         return pd;
     }
+
     public static PassengerIds from(PassengerIDTag passengerIDTag) {
         PassengerIds pids = new PassengerIds();
         if (passengerIDTag == null) {
@@ -212,18 +335,22 @@ private static Logger logger = LoggerFactory.getLogger(SummaryFactory.class);
         MessageAddress ma = SummaryFactory.from(ms.getHashCode(), ms.getFlightIdTag(), address);
         ms.getMessageAddresses().add(ma);
     }
+
     public static void addPhone(Phone phone, MessageSummary ms) {
         MessagePhone mp = SummaryFactory.from(ms.getHashCode(), ms.getFlightIdTag(), phone);
         ms.getMessagePhones().add(mp);
     }
+
     public static void addFrequentFlyer(FrequentFlyer frequentFlyer, MessageSummary ms) {
         MessageFrequentFlyer mff = SummaryFactory.from(ms.getHashCode(), ms.getFlightIdTag(), frequentFlyer);
         ms.getMessageFrequentFlyers().add(mff);
     }
+
     public static void addCreditCard(CreditCard creditCard, MessageSummary ms) {
         MessageCreditCard mcc = SummaryFactory.from(ms.getHashCode(), ms.getFlightIdTag(), creditCard);
         ms.getMessageCreditCards().add(mcc);
     }
+
     public static void addEmail(Email email, MessageSummary ms) {
         MessageEmail me = SummaryFactory.from(ms.getHashCode(), ms.getFlightIdTag(), email);
         ms.getMessageEmails().add(me);

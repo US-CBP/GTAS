@@ -3,10 +3,7 @@ package gov.gtas.job.scheduler;
 import gov.gtas.job.scheduler.service.AdditionalProcessingService;
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.Country;
-import gov.gtas.services.ApisService;
-import gov.gtas.services.HitDetailService;
-import gov.gtas.services.PnrService;
-import gov.gtas.services.SummaryFactory;
+import gov.gtas.services.*;
 import gov.gtas.services.dto.MappedGroups;
 import gov.gtas.summary.*;
 import gov.gtas.services.jms.AdditionalProcessingMessageSender;
@@ -32,14 +29,17 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
     final
     AdditionalProcessingMessageSender additionalProcessingMessageSender;
 
+    final FlightService flightService;
+
     @Value("${additional.processing.queue}")
     private String addProcessQueue;
 
-    public AdditionalProcessingServiceImpl(ApisService apisService, PnrService pnrService, HitDetailService hitDetailService, AdditionalProcessingMessageSender additionalProcessingMessageSender) {
+    public AdditionalProcessingServiceImpl(ApisService apisService, PnrService pnrService, HitDetailService hitDetailService, AdditionalProcessingMessageSender additionalProcessingMessageSender, FlightService flightService) {
         this.apisService = apisService;
         this.pnrService = pnrService;
         this.hitDetailService = hitDetailService;
         this.additionalProcessingMessageSender = additionalProcessingMessageSender;
+        this.flightService = flightService;
     }
 
     @Override
@@ -82,25 +82,37 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
     }
 
     private void sendMessages(Set<HitDetail> hitDetailList, Set<Long> messageIds, SummaryMetaData smd) {
-        EventIdentifier ident = new EventIdentifier();
-        ident.setIdentifier("1-MANY MESSAGES");
-        ident.setIdentifierArrayList(new ArrayList<>());
-        ident.setCountryDestination("1-MANY");
-        ident.setCountryOrigin("1-MANY");
-        ident.setEventType("RULE_HIT");
-        MessageSummaryList messageSummaryList = new MessageSummaryList();
-        messageSummaryList.setEventIdentifier(ident);
-        messageSummaryList.setMessageAction(MessageAction.HIT);
-        messageSummaryList.setSummaryMetaData(smd);
-        Set<Long> pids = hitDetailList.stream().map(HitDetail::getPassengerId).collect(Collectors.toSet());
-        Set<MessageSummary> apisMessageSummarySet = getApisSummaries(messageIds, pids);
-        Set<MessageSummary> pnrMessageSummarySet = getPnrSummaries(messageIds, pids);
-        messageSummaryList.getMessageSummaryList().addAll(apisMessageSummarySet);
-        messageSummaryList.getMessageSummaryList().addAll(pnrMessageSummarySet);
 
-        List<MessageSummaryList> messageSummaryLists = batchMessageSummary(messageSummaryList);
-        for (MessageSummaryList msl : messageSummaryLists) {
-            additionalProcessingMessageSender.sendFileContent(addProcessQueue, msl);
+        List<MessageSummaryList> msList = new ArrayList<>();
+        Set<Long> pids = hitDetailList.stream().map(HitDetail::getPassengerId).collect(Collectors.toSet());
+        Set<Flight> bcEvent = flightService.getFlightByPaxIds(pids);
+        for (Flight flight : bcEvent) {
+            Set<MessageSummary> apisMessageSummarySet = getApisSummaries(messageIds, pids, flight);
+            if (!apisMessageSummarySet.isEmpty()) {
+                EventIdentifier ei = SummaryFactory.from("APIS_RULE", flight);
+                MessageSummaryList msl = new MessageSummaryList();
+                msl.setMessageAction(MessageAction.HIT);
+                msl.setSummaryMetaData(smd);
+                msl.setEventIdentifier(ei);
+                msl.getMessageSummaryList().addAll(apisMessageSummarySet);
+                msList.add(msl);
+            }
+            Set<MessageSummary> pnrMessageSummarySet = getPnrSummaries(messageIds, pids, flight);
+            if (!pnrMessageSummarySet.isEmpty()) {
+                EventIdentifier ei = SummaryFactory.from("PNR_RULE", flight);
+                MessageSummaryList msl = new MessageSummaryList();
+                msl.setMessageAction(MessageAction.HIT);
+                msl.setSummaryMetaData(smd);
+                msl.setEventIdentifier(ei);
+                msl.getMessageSummaryList().addAll(pnrMessageSummarySet);
+                msList.add(msl);
+            }
+        }
+        for (MessageSummaryList msl : msList) {
+            List<MessageSummaryList> messageSummaryLists = batchMessageSummary(msl);
+            for (MessageSummaryList list : messageSummaryLists) {
+                additionalProcessingMessageSender.sendFileContent(addProcessQueue, list);
+            }
         }
     }
 
@@ -137,8 +149,8 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
         return returnList;
     }
 
-    private Set<MessageSummary> getPnrSummaries(Set<Long> messageIds, Set<Long> pids) {
-        Set<Pnr> message = pnrService.pnrMessageWithFlightInfo(pids, messageIds);
+    private Set<MessageSummary> getPnrSummaries(Set<Long> messageIds, Set<Long> pids, Flight flight) {
+        Set<Pnr> message = pnrService.pnrMessageWithFlightInfo(pids, messageIds, flight.getId());
         if (message.isEmpty()) {
             return new HashSet<>();
         }
@@ -161,6 +173,9 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
         for (Pnr pnr : message) {
             Flight messageFlight = pnr.getFlights().iterator().next();
             MessageSummary messageSummary = makeHitMessageSummary(pnr, messageFlight);
+            // Set summary to random UUID hash to prevent screening the message out.
+            // These messages will always contain hit information and should always be processed.
+            messageSummary.setHashCode(UUID.randomUUID().toString());
             Long pnrId = pnr.getId();
 
             if (ffMap.get(pnrId) != null && !ffMap.get(pnrId).isEmpty()) {
@@ -208,17 +223,22 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
         return messageSummarySet;
     }
 
-    private Set<MessageSummary> getApisSummaries(Set<Long> messageIds, Set<Long> pids) {
-        Set<ApisMessage> message = apisService.apisMessageWithFlightInfo(pids, messageIds);
+    private Set<MessageSummary> getApisSummaries(Set<Long> messageIds, Set<Long> pids, Flight flight) {
+        Set<ApisMessage> message = apisService.apisMessageWithFlightInfo(pids, messageIds, flight.getId());
         if (message.isEmpty()) {
             return new HashSet<>();
         }
         Set<Long> hitApisIds = message.stream().map(ApisMessage::getId).collect(Collectors.toSet());
-        Map<Long, Set<Passenger>> paxApisMap = apisService.getPassengersOnApis(pids, hitApisIds);
+        Map<Long, Set<Passenger>> paxApisMap = apisService.getPassengersOnApis(pids, hitApisIds, flight.getId());
         Set<MessageSummary> messageSummarySet = new HashSet<>();
         for (ApisMessage am : message) {
             Flight messageFlight = am.getFlights().iterator().next();
             MessageSummary messageSummary = makeHitMessageSummary(am, messageFlight);
+
+            // Set summary to random UUID hash to prevent screening the message out.
+            // These messages will always contain hit information and should always be processed.            messageSummary.setHashCode(UUID.randomUUID().toString());
+            messageSummary.setHashCode(UUID.randomUUID().toString());
+
             for (Passenger p : paxApisMap.get(am.getId())) {
                 PassengerSummary passengerSummary = getPassengerSummary(messageFlight.getIdTag(), p);
                 messageSummary.getPassengerSummaries().add(passengerSummary);
@@ -230,7 +250,25 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
 
     private MessageSummary makeHitMessageSummary(Message message, Flight messageFlight) {
         MessageSummary messageSummary = new MessageSummary(message.getHashCode(), messageFlight.getIdTag());
-        EventIdentifier ei = SummaryFactory.from(messageFlight);
+        EventIdentifier ei = SummaryFactory.from(messageFlight, message);
+        EdifactMessage em = message.getEdifactMessage();
+        if ("PAXLST".equalsIgnoreCase(em.getMessageType()) || "APIS".equalsIgnoreCase(em.getMessageType())) {
+            ApisMessage apis = (ApisMessage) message;
+            messageSummary.setTransmissionDate(apis.getEdifactMessage().getTransmissionDate());
+            messageSummary.setSourceMessageVersion("APIS");
+            messageSummary.setMessageType("APIS");
+            messageSummary.setSourceMessageVersion(apis.getEdifactMessage().getVersion());
+            messageSummary.setTransmissionSource(apis.getEdifactMessage().getTransmissionSource());
+        } else if ("PNRGOV".equalsIgnoreCase(em.getMessageType()) || "PNR".equalsIgnoreCase(em.getMessageType())) {
+            Pnr pnr = (Pnr) message;
+            messageSummary.setTransmissionDate(pnr.getEdifactMessage().getTransmissionDate());
+            messageSummary.setSourceMessageVersion("PNR");
+            messageSummary.setMessageType("PNR");
+            messageSummary.setPnrRefNumber(pnr.getRecordLocator());
+            messageSummary.setSourceMessageVersion(pnr.getEdifactMessage().getVersion());
+            messageSummary.setTransmissionSource(pnr.getEdifactMessage().getTransmissionSource());
+        }
+
         messageSummary.setEventIdentifier(ei);
         messageSummary.setFlightIdTag(messageFlight.getIdTag());
         MessageTravelInformation mti = SummaryFactory.from(messageFlight, messageFlight.getIdTag());
@@ -250,7 +288,7 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
         }
         for (HitDetail hd : p.getHitDetails()) {
             PassengerHit pHit = SummaryFactory.from(hd);
-            passengerSummary.getPassengerDerogs().add(pHit);
+            passengerSummary.getPassengerHits().add(pHit);
         }
         PassengerTrip pt = SummaryFactory.from(p.getPassengerTripDetails());
         PassengerBiographic pb = SummaryFactory.from(p.getPassengerDetails());

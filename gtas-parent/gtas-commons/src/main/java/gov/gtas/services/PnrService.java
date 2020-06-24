@@ -41,7 +41,7 @@ public interface PnrService {
 	Map<Long, Set<DwellTime>> createDwellTime(Set<Long> pnrIds);
 	Map<Long, Set<Agency>> createTravelAgencyMap(Set<Long> pnrIds);
 	Map<Long, Set<Passenger>> getPassengersOnPnr(Set<Long> pids, Set<Long> hitApisIds);
-	Set<Pnr> pnrMessageWithFlightInfo(Set<Long> pids,Set<Long> messageIds);
+	Set<Pnr> pnrMessageWithFlightInfo(Set<Long> pids,Set<Long> messageIds, Long flightId);
 
 
 	}

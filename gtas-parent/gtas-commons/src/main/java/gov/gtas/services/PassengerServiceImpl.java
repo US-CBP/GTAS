@@ -108,6 +108,7 @@ public class PassengerServiceImpl implements PassengerService {
 					vo.setOnWatchListLink(true);
 					break;
 				case USER_DEFINED_RULE:
+				case EXTERNAL_HIT:
 				case GRAPH_HIT:
 					vo.setOnRuleHitList(true);
 					break;

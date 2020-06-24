@@ -44,6 +44,8 @@ public class AdditionalProcessingMessageSender {
             fwd.setStringProperty("action", messageSummaryList.getMessageAction().toString());
             fwd.setObjectProperty("countryList", messageSummaryList.getSummaryMetaData().getCountryList());
             fwd.setStringProperty("countryGroupName", messageSummaryList.getSummaryMetaData().getCountryGroupName());
+            fwd.setObjectProperty("orgList", messageSummaryList.getSummaryMetaData().getOrgList());
+            fwd.setStringProperty("orgListGroupName", messageSummaryList.getSummaryMetaData().getOrgGroupName());
             return fwd;
         });
     }

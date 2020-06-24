@@ -95,3 +95,11 @@ CREATE OR REPLACE PROCEDURE manualHitMakerPopulate() BEGIN SET @cnt = (Select IF
 CALL manualHitMakerPopulate();
 
 DROP PROCEDURE IF EXISTS manualHitMakerPopulate;
+
+
+CREATE OR REPLACE PROCEDURE externalHitMaker() BEGIN SET @cnt = (Select IFNULL(MAX(id), 1) FROM hit_category); START TRANSACTION; WHILE @cnt > 0 DO INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category, hm_cg_id) VALUES ('EXTERNAL_HIT', 'GTAS', @cnt, null); SET @DataID = LAST_INSERT_ID(); INSERT INTO external_hit (description, id) VALUES ('Externally Generated Hit', @DataId); SET @cnt = @cnt - 1; END WHILE; COMMIT; END;
+
+CALL externalHitMaker();
+
+DROP PROCEDURE IF EXISTS externalHitMaker;
+
