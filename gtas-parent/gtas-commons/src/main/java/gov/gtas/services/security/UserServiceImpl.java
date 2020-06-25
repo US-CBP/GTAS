@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public List<UserData> findAll() {
+	public List<UserDisplayData> findAll() {
 		Iterable<User> usersCollection = userRepository.findAll();
 		return userServiceUtil.getUserDataListFromEntityCollection(usersCollection);
 	}
