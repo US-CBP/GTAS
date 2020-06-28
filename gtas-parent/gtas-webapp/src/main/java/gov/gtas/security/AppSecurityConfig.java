@@ -79,7 +79,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.csrf().disable();
 
-		http.authorizeRequests()
+		http.cors().and().authorizeRequests()
 				.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**",
 						"/reset.html", "/password-reset", "/authenticate")
 				.permitAll().anyRequest().authenticated().and().formLogin().loginProcessingUrl("/authenticate")
