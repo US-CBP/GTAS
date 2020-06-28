@@ -1,7 +1,6 @@
 package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import gov.gtas.model.lookup.Country;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -16,20 +15,20 @@ public class CountryGroup extends BaseEntityAudit {
     private Set<HitMaker> hitMakers = new HashSet<>();
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "country_group_join", joinColumns = @JoinColumn(name = "country_group_id"), inverseJoinColumns = @JoinColumn(name = "country_id"))
-    Set<Country> associatedCountries;
+    private Set<CountryAndOrganization> associatedCountries = new HashSet<>();
 
     @Column(name = "cg_label")
-    String countryGroupLabel;
+    private String countryGroupLabel;
 
     public CountryGroup(){}
 
-    public Set<Country> getAssociatedCountries() {
+    public Set<CountryAndOrganization> getAssociatedCountries() {
         return associatedCountries;
     }
 
-    public void setAssociatedCountries(Set<Country> associatedCountries) {
+    public void setAssociatedCountries(Set<CountryAndOrganization> associatedCountries) {
         this.associatedCountries = associatedCountries;
     }
 

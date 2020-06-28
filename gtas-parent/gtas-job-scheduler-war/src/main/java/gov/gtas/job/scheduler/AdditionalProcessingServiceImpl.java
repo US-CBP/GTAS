@@ -2,7 +2,6 @@ package gov.gtas.job.scheduler;
 
 import gov.gtas.job.scheduler.service.AdditionalProcessingService;
 import gov.gtas.model.*;
-import gov.gtas.model.lookup.Country;
 import gov.gtas.services.*;
 import gov.gtas.services.dto.MappedGroups;
 import gov.gtas.summary.*;
@@ -54,12 +53,14 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
         for (String labelKey : hitDetailsWithCountryGroups.keySet()) {
             HitDetail hd = hitDetailsWithCountryGroups.get(labelKey).iterator().next();
             CountryGroup sendingTo = hd.getHitMaker().getCountryGroup();
-            List<String> countryNames = new ArrayList<>();
-            for (Country country : sendingTo.getAssociatedCountries()) {
-                countryNames.add(country.getIso3());
+            List<String> countryOrgNames = new ArrayList<>();
+            for (CountryAndOrganization countryAndOrganization : sendingTo.getAssociatedCountries()) {
+                String iso3 = countryAndOrganization.getCountry().getIso3();
+                String orgCode = countryAndOrganization.getOrganization();
+                countryOrgNames.add(iso3 + "-" + orgCode);
             }
             SummaryMetaData smd = new SummaryMetaData();
-            smd.setCountryList(countryNames);
+            smd.setCountryList(countryOrgNames);
             smd.setSummary("1-MANY-MESSAGES");
             smd.setCountryGroupName(sendingTo.getCountryGroupLabel());
             sendMessages(hitDetailList, messageIds, smd);
@@ -92,7 +93,6 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
                 EventIdentifier ei = SummaryFactory.from("APIS_RULE", flight);
                 MessageSummaryList msl = new MessageSummaryList();
                 msl.setMessageAction(MessageAction.HIT);
-                msl.setSummaryMetaData(smd);
                 msl.setEventIdentifier(ei);
                 msl.getMessageSummaryList().addAll(apisMessageSummarySet);
                 msList.add(msl);
@@ -102,7 +102,6 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
                 EventIdentifier ei = SummaryFactory.from("PNR_RULE", flight);
                 MessageSummaryList msl = new MessageSummaryList();
                 msl.setMessageAction(MessageAction.HIT);
-                msl.setSummaryMetaData(smd);
                 msl.setEventIdentifier(ei);
                 msl.getMessageSummaryList().addAll(pnrMessageSummarySet);
                 msList.add(msl);
@@ -111,7 +110,7 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
         for (MessageSummaryList msl : msList) {
             List<MessageSummaryList> messageSummaryLists = batchMessageSummary(msl);
             for (MessageSummaryList list : messageSummaryLists) {
-                additionalProcessingMessageSender.sendFileContent(addProcessQueue, list);
+                additionalProcessingMessageSender.sendFileContent(addProcessQueue, list, smd);
             }
         }
     }

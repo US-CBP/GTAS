@@ -2,10 +2,7 @@ package gov.gtas.services.jms;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.gtas.summary.EventIdentifier;
-import gov.gtas.summary.MessageAction;
-import gov.gtas.summary.MessageSummary;
-import gov.gtas.summary.MessageSummaryList;
+import gov.gtas.summary.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +24,7 @@ public class AdditionalProcessingMessageSender {
         this.jmsTemplateFile = jmsTemplateFile;
     }
 
-    public void sendFileContent(String queueName, MessageSummaryList messageSummaryList) {
+    public void sendFileContent(String queueName, MessageSummaryList messageSummaryList, SummaryMetaData smd) {
         jmsTemplateFile.setDefaultDestinationName(queueName);
         EventIdentifier eventIdentifier = messageSummaryList.getEventIdentifier();
         jmsTemplateFile.send(session -> {
@@ -42,10 +39,10 @@ public class AdditionalProcessingMessageSender {
             Message fwd = session.createObjectMessage(messageJson);
             setEventIdentifierProps(eventIdentifier, fwd);
             fwd.setStringProperty("action", messageSummaryList.getMessageAction().toString());
-            fwd.setObjectProperty("countryList", messageSummaryList.getSummaryMetaData().getCountryList());
-            fwd.setStringProperty("countryGroupName", messageSummaryList.getSummaryMetaData().getCountryGroupName());
-            fwd.setObjectProperty("orgList", messageSummaryList.getSummaryMetaData().getOrgList());
-            fwd.setStringProperty("orgListGroupName", messageSummaryList.getSummaryMetaData().getOrgGroupName());
+            fwd.setObjectProperty("countryList", smd.getCountryList());
+            fwd.setStringProperty("countryGroupName", smd.getCountryGroupName());
+            fwd.setObjectProperty("orgList", smd.getOrgList());
+            fwd.setStringProperty("orgListGroupName", smd.getOrgGroupName());
             return fwd;
         });
     }

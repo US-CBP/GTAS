@@ -12,6 +12,7 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import gov.gtas.model.CountryAndOrganization;
 import gov.gtas.model.CountryGroup;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -31,8 +32,8 @@ public class Country extends BaseEntity {
 	@Column(name = "iso_numeric", length = 3)
 	private String isoNumeric;
 
-	@ManyToMany(mappedBy = "associatedCountries", fetch = FetchType.LAZY)
-	private Set<CountryGroup> countryGroupSet;
+	@OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
+	private Set<CountryAndOrganization> countryGroupSet;
 
 	public Country() {
 	}
@@ -46,13 +47,6 @@ public class Country extends BaseEntity {
 		this.isoNumeric = isoNumeric;
 	}
 
-	public Set<CountryGroup> getCountryGroupSet() {
-		return countryGroupSet;
-	}
-
-	public void setCountryGroupSet(Set<CountryGroup> countryGroupSet) {
-		this.countryGroupSet = countryGroupSet;
-	}
 
 	public Long getOriginId() {
 		return originId;
@@ -114,5 +108,13 @@ public class Country extends BaseEntity {
 	@Override
 	public String toString() {
 		return this.iso2;
+	}
+
+	public Set<CountryAndOrganization> getCountryGroupSet() {
+		return countryGroupSet;
+	}
+
+	public void setCountryGroupSet(Set<CountryAndOrganization> countryGroupSet) {
+		this.countryGroupSet = countryGroupSet;
 	}
 }

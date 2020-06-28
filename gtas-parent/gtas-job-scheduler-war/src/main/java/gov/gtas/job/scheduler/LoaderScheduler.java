@@ -25,6 +25,7 @@ import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.summary.MessageSummaryList;
 import gov.gtas.services.jms.AdditionalProcessingMessageSender;
+import gov.gtas.summary.SummaryMetaData;
 import gov.gtas.svc.TargetingService;
 
 
@@ -113,7 +114,7 @@ public class LoaderScheduler {
 	@Value("${additional.processing.queue}")
 	private String addProcessQueue;
 
-	void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) throws Exception {
+	void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) {
 		logger.debug(String.format("Processing %s", f.getAbsolutePath()));
 		ProcessedMessages processedMessages = loader.processMessage(f, primeFlightKey);
 		int[] result = processedMessages.getProcessed();
@@ -129,7 +130,7 @@ public class LoaderScheduler {
 
 		if (additionalProcessing) {
 			MessageSummaryList msl = MessageSummaryList.from(processedMessages.getMessageSummaries());
-			apms.sendFileContent(addProcessQueue, msl);
+			apms.sendFileContent(addProcessQueue, msl, new SummaryMetaData());
 		}
 
 		if (result != null) {
