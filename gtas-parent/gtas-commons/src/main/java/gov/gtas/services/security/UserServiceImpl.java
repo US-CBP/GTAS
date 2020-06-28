@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
 
 	/**
 	 * Returns true if the user has an Admin Role
-	 * 
+	 *
 	 * @param userId
 	 *            the ID of the user to fetch.
 	 * @return true if the user has Admin role flase otherwise

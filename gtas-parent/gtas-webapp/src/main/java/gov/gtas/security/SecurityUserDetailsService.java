@@ -8,9 +8,11 @@ package gov.gtas.security;
 import java.util.ArrayList;
 import java.util.List;
 
+import gov.gtas.services.security.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,10 +31,17 @@ import gov.gtas.services.security.UserService;
  */
 @Service("userDetailsService")
 public class SecurityUserDetailsService implements UserDetailsService {
+
 	private static final Logger logger = LoggerFactory.getLogger(SecurityUserDetailsService.class);
 
 	@Autowired
+	private LoginService loginService;
+
+	@Autowired
 	private UserService userService;
+
+	@Value("${login.max_allowed_attempts}")
+	private Integer numberOfPermittedLoginAttempts;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -44,10 +53,13 @@ public class SecurityUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException(message);
 		}
 
+		Integer loginAttempts = loginService.getUserLoginAttempts(user.getUserId());
+		boolean accountNotLocked = loginAttempts == null || loginAttempts <= numberOfPermittedLoginAttempts;
+
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		user.getRoles().forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRoleDescription())));
 		logger.info("Found user in database: " + username);
 
-		return new org.springframework.security.core.userdetails.User(username, user.getPassword(), authorities);
+		return new org.springframework.security.core.userdetails.User(username, user.getPassword(), true, true, true, accountNotLocked, authorities);
 	}
 }

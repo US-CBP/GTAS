@@ -48,10 +48,8 @@
                     $cookies.remove(k);
                 });
             };
-            
-$scope.login = function (credentials) {
 
-
+            $scope.login = function (credentials) {
                 AuthService.login(credentials).then(function (user) {
                         if (user.status == 405) {
                             $scope.clearSessionCookie();
@@ -61,56 +59,37 @@ $scope.login = function (credentials) {
                                         $scope.clearSessionCookie();
                                         AuthService.login(credentials).then(function (user) {
                                             Idle.watch();
-                                            //$scope.currentUser.data = user;
                                             if (user.status == 405) {
                                                 AuthService.login(credentials).then(
                                                     function(user){
                                                         Idle.watch();
                                                         if ($rootScope.authenticated) {
-
                                                             AuthService.getCurrentUser().then(function (user) {
                                                                 $scope.currentUser.data = user;
                                                             });
-                                                        } else {
-
-                                                            if (user.status == 401) {
-                                                            }
                                                         }
                                                     }
                                                 );
                                             }
                                         });
                                     }
-                                    else{
-                                        if ($rootScope.authenticated) {
-
-                                            AuthService.getCurrentUser().then(function (user) {
-                                                $scope.currentUser.data = user;
-                                            });
-                                        } else {
-
-                                            if (user.status == 401) {
-                                            }
-                                        }
+                                    else if ($rootScope.authenticated) {
+                                        AuthService.getCurrentUser().then(function (user) {
+                                            $scope.currentUser.data = user;
+                                        });
                                     }
                                 }
                             );
                         }
-                        else{
-                        if ($rootScope.authenticated) {
-
+                        else if ($rootScope.authenticated) {
                             AuthService.getCurrentUser().then(function (user) {
                                 $scope.currentUser.data = user;
                             });
-                        } else {
-
-                            if (user.status == 401) {
-                            }
                         }
-                    }
-                    }); // END of AuthService Call
+                    })
+                }; // END of AuthService Call
 
-            }; // END of LOGIN Function
+             // END of LOGIN Function
             $scope.$watch('currentUser.data', function (user) {
 
             	if (angular.isDefined(user)) {

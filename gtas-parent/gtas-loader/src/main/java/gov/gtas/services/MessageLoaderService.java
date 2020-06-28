@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.vo.MessageVo;
 
+import javax.transaction.Transactional;
+
 @Service
 public abstract class MessageLoaderService {
 
@@ -49,8 +51,10 @@ public abstract class MessageLoaderService {
 		this.useIndexer = useIndexer;
 	}
 
+	@Transactional
 	public abstract MessageDto parse(MessageDto msgDto);
 
+	@Transactional
 	public abstract MessageInformation load(MessageDto msgDto);
 
 	WeightCountDto getBagStatistics(Set<Bag> bagSet) {

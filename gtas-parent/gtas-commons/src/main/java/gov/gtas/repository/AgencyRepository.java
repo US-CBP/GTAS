@@ -12,5 +12,5 @@ import gov.gtas.model.Agency;
 import java.util.List;
 
 public interface AgencyRepository extends CrudRepository<Agency, Long> {
-	List<Agency> findByNameAndLocation(String name, String location);
+	List<Agency> findByNameAndLocationAndFlightId(String name, String location, Long flightId);
 }

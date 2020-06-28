@@ -9,6 +9,7 @@ import gov.gtas.model.*;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -21,11 +22,16 @@ public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
 	List<ApisMessage> findByFlightIdAndPassengerId(@Param("flightId") Long flightId,
 			@Param("passengerId") Long passengerId);
 
-	@Query("SELECT fp.reservationReferenceNumber FROM ApisMessage apis join apis.flightPaxList fp where fp.passenger.id = :passengerId and fp.flight.id = :flightId")
+	@Query("SELECT p.passengerTripDetails.reservationReferenceNumber " +
+			"FROM ApisMessage apis" +
+			" join apis.passengers p " +
+			"where p.id = :passengerId " +
+			"and p.flight.id = :flightId")
 	List<String> findApisRefByFlightIdandPassengerId(@Param("flightId") Long flightId,
 			@Param("passengerId") Long passengerId);
 
-	@Query("SELECT p FROM Passenger p join p.passengerTripDetails ptd where p.flight.id = :flightId  and ptd.reservationReferenceNumber = :refNumber")
+	@Transactional
+	@Query("SELECT p FROM Passenger p left join fetch p.flight pflight left join fetch p.passengerDetailFromMessages join p.passengerTripDetails ptd where pflight.id = :flightId  and ptd.reservationReferenceNumber = :refNumber")
 	Set<Passenger> findPassengerByApisRef(@Param("refNumber") String refNumber, @Param("flightId") long flightId);
 
 	@Query("SELECT p FROM Passenger p left join fetch p.bags pbags left join fetch pbags.bagMeasurements where p.id = :passengerId and p.flight.id = :flightId")

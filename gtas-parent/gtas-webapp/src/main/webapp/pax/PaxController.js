@@ -32,15 +32,16 @@
     eventNotes,
     noteTypesList,
     $uibModal,
-    paxReportService
+    paxReportService,
+    pendingHitDetailsService
   ) {
 	$scope.noteTypesList = noteTypesList.data;
 	$scope.eventNotes = eventNotes.data.paxNotes;
 	$scope.historicalNotes = "";
 	$scope.currentNoteText = "";
 	$scope.currentNoteTypes = "";
-    $scope.disableLinks = disableLinks;
     $scope.passenger = passenger.data;
+    $scope.disableLinks = disableLinks ? true : $scope.passenger.disableLinks;
     $scope.watchlistLinks = watchlistLinks.data;
     $scope.isLoadingFlightHistory = true;
     $scope.isClosedCase = false;
@@ -1177,6 +1178,13 @@
         $mdSidenav("addWatchlist").open();
       });
     };
+
+    $scope.createManualHit = function(){
+      $timeout(function(){
+        $mdSidenav("createManualHit").open();
+      })
+    }
+
     //dialog function for watchlist addition dialog
     $scope.showConfirm = function() {
       if ($uibModalInstance != undefined) {
@@ -1201,6 +1209,30 @@
         }
       );
     };
+
+    $scope.showConfirmManualHit = function(){
+      if ($uibModalInstance != undefined) {
+        $uibModalInstance.close();
+      }
+      var confirm = $mdDialog
+          .confirm()
+          .title("WARNING: Please Confirm Manual Hit Generation")
+          .textContent(
+              "This will generate a manual hit event for the currently viewed passenger."
+          )
+          .ariaLabel("Generate Manual Hit Event Warning")
+          .ok("Confirm Manual Hit")
+          .cancel("Cancel");
+
+      $mdDialog.show(confirm).then(
+          function() {
+            $scope.createManualPvl();
+          },
+          function() {
+            return false;
+          }
+      );
+    }
    
     $scope.userHasRole = function(roleId){
     	var hasRole = false;
@@ -1297,6 +1329,15 @@
     	  return true;
     };
 
+  $scope.createManualPvl = function(){
+    spinnerService.show("html5spinner");
+
+    pendingHitDetailsService.createManualPvl($scope.passenger.paxId, $scope.passenger.flightId, $scope.watchlistCategoryId).then(function(response){
+      $mdSidenav("createManualHit").close();
+    });
+    spinnerService.hide("html5spinner");
+    $scope.errorToast('Processing Manual Hit: Please Refresh Existing Hits Table Or Page');
+  }
 
 
 
@@ -1788,8 +1829,8 @@
           name: "lastName",
           displayName: $translate.instant('pass.lastname'),
           cellTemplate:
-            '<md-button ng-if="grid.appScope.userHasRole(3) || grid.appScope.userHasRole(1)" aria-label="Last Name" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'+
-            '<md-button ng-if="!grid.appScope.userHasRole(3) && !grid.appScope.userHasRole(1)" aria-label="Last Name" href="" title="Launch Flight Passengers in new window" target="" class="disabled">{{COL_FIELD}}</md-button>'
+            '<md-button ng-if="grid.appScope.userHasRole(3) || grid.appScope.userHasRole(1)" aria-label="Last Name" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'+
+            '<md-button ng-if="!grid.appScope.userHasRole(3) && !grid.appScope.userHasRole(1)" aria-label="Last Name" href="" title="Launch Flight Passengers in new window" class="disabled">{{COL_FIELD}}</md-button>'
         },
         {
           name: "firstName",

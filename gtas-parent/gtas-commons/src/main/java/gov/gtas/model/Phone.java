@@ -8,6 +8,7 @@ package gov.gtas.model;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,7 +22,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "phone")
-public class Phone extends BaseEntityAudit {
+public class Phone extends BaseEntityAudit implements PIIObject {
 	private static final long serialVersionUID = 1L;
 
 	public Phone() {
@@ -40,7 +41,7 @@ public class Phone extends BaseEntityAudit {
 	@ManyToMany(mappedBy = "phones", targetEntity = Pnr.class)
 	private Set<Pnr> pnrs = new HashSet<>();
 
-	@ManyToMany(mappedBy = "phones", targetEntity = Pnr.class)
+	@ManyToMany(mappedBy = "phones", targetEntity = ApisMessage.class)
 	private Set<ApisMessage> apisMessages = new HashSet<>();
 
 	public Set<ApisMessage> getApisMessages() {
@@ -98,5 +99,18 @@ public class Phone extends BaseEntityAudit {
 			return false;
 		final Phone other = (Phone) obj;
 		return Objects.equals(this.number, other.number);
+	}
+
+
+	@Override
+	public PIIObject deletePII() {
+		this.number = "DELETED " + UUID.randomUUID().toString();
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.number = "MASKED";
+		return this;
 	}
 }

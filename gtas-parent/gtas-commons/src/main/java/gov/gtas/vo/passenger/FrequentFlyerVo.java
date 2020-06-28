@@ -5,7 +5,9 @@
  */
 package gov.gtas.vo.passenger;
 
-public class FrequentFlyerVo {
+import gov.gtas.model.PIIObject;
+
+public class FrequentFlyerVo implements PIIObject {
 	private String carrier;
 	private String number;
 
@@ -23,5 +25,17 @@ public class FrequentFlyerVo {
 
 	public void setNumber(String number) {
 		this.number = number;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.number = "DELETED";
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.number = "MASKED";
+		return this;
 	}
 }

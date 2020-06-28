@@ -5,10 +5,7 @@
  */
 package gov.gtas.model;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,7 +20,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "credit_card")
-public class CreditCard extends BaseEntityAudit {
+public class CreditCard extends BaseEntityAudit implements PIIObject{
 	private static final long serialVersionUID = 1L;
 
 	public CreditCard() {
@@ -144,6 +141,24 @@ public class CreditCard extends BaseEntityAudit {
 			return false;
 		final CreditCard other = (CreditCard) obj;
 		return Objects.equals(this.cardType, other.cardType) && Objects.equals(this.number, other.number)
-				&& Objects.equals(this.expiration, other.expiration);
+				&& Objects.equals(this.expiration, other.expiration) && Objects.equals(this.accountHolder, other.accountHolder)
+				&& (Objects.equals(this.accountHolderAddress, other.accountHolderAddress)) && Objects.equals(this.accountHolderPhone, other.accountHolderPhone);
 	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.number = "DELETED " + UUID.randomUUID().toString();
+		this.accountHolder = "DELETED " + UUID.randomUUID().toString();
+		this.accountHolderAddress = "DELETED " + UUID.randomUUID().toString();
+		this.accountHolderPhone = "DELETED " + UUID.randomUUID().toString();
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.number = "XXXX";
+		this.accountHolder = "XXXX";
+		this.accountHolderAddress = "XXXX";
+		this.accountHolderPhone = "XXXX";
+		return this;	}
 }

@@ -185,61 +185,61 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		return new ImmutablePair<>(count, results);
 	}
 
-  
-@Override
-@Transactional
-public List<Flight> findUpcomingFlights(FlightsRequestDto dto) {
-  CriteriaBuilder cb = em.getCriteriaBuilder();
-  CriteriaQuery<Flight> q = cb.createQuery(Flight.class);
-  Root<Flight> root = q.from(Flight.class);
-  List<Predicate> predicates = new ArrayList<>();
+	@Override
+	@Transactional
+	public List<Flight> findUpcomingFlights(FlightsRequestDto dto) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Flight> q = cb.createQuery(Flight.class);
+		Root<Flight> root = q.from(Flight.class);
+		List<Predicate> predicates = new ArrayList<>();
 
-  Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = root.join("mutableFlightDetails", JoinType.LEFT);
-  Join<Flight, FlightCountDownView> countDownViewJoin = root.join("flightCountDownView", JoinType.LEFT);
+		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = root.join("mutableFlightDetails", JoinType.LEFT);
+		Join<Flight, FlightCountDownView> countDownViewJoin = root.join("flightCountDownView", JoinType.LEFT);
 
-  Predicate relevantDateExpression = null;
-  Expression<Date> relevantDate = cb.selectCase(root.get("direction")).when("O", mutableFlightDetailsJoin.get("etd"))
-      .otherwise(mutableFlightDetailsJoin.get("eta")).as(Date.class);
-  Predicate startPredicate = cb.greaterThanOrEqualTo(relevantDate, dto.getEtaStart());
-  Predicate endPredicate = cb.lessThanOrEqualTo(relevantDate, dto.getEtaEnd());
-  relevantDateExpression = cb.and(startPredicate, endPredicate);
-  predicates.add(relevantDateExpression);
+		Predicate relevantDateExpression = null;
+		Expression<Date> relevantDate = cb.selectCase(root.get("direction"))
+				.when("O", mutableFlightDetailsJoin.get("etd")).otherwise(mutableFlightDetailsJoin.get("eta"))
+				.as(Date.class);
+		Predicate startPredicate = cb.greaterThanOrEqualTo(relevantDate, dto.getEtaStart());
+		Predicate endPredicate = cb.lessThanOrEqualTo(relevantDate, dto.getEtaEnd());
+		relevantDateExpression = cb.and(startPredicate, endPredicate);
+		predicates.add(relevantDateExpression);
 
-  if (dto.getFlightNumber() != null) {
-    String likeString = String.format("%%%s%%", dto.getFlightNumber());
-    predicates.add(cb.like(root.<String>get("fullFlightNumber"), likeString));
-  }
-  if (dto.getDirection() != null && !dto.getDirection().equals("A")) {
-    predicates.add(cb.equal(root.<String>get("direction"), dto.getDirection()));
-  }
+		if (dto.getFlightNumber() != null) {
+			String likeString = String.format("%%%s%%", dto.getFlightNumber());
+			predicates.add(cb.like(root.<String>get("fullFlightNumber"), likeString));
+		}
+		if (dto.getDirection() != null && !dto.getDirection().equals("A")) {
+			predicates.add(cb.equal(root.<String>get("direction"), dto.getDirection()));
+		}
 
-  if (!CollectionUtils.isEmpty(dto.getOriginAirports())) {
-    Predicate originPredicate = root.get("origin").in(dto.getOriginAirports());
-    Predicate originAirportsPredicate = cb.and(originPredicate);
-    predicates.add(originAirportsPredicate);
-  }
+		if (!CollectionUtils.isEmpty(dto.getOriginAirports())) {
+			Predicate originPredicate = root.get("origin").in(dto.getOriginAirports());
+			Predicate originAirportsPredicate = cb.and(originPredicate);
+			predicates.add(originAirportsPredicate);
+		}
 
-  if (!CollectionUtils.isEmpty(dto.getDestinationAirports())) {
-    Predicate destPredicate = root.get("destination").in(dto.getDestinationAirports());
-    Predicate destAirportsPredicate = cb.and(destPredicate);
-    predicates.add(destAirportsPredicate);
-  }
+		if (!CollectionUtils.isEmpty(dto.getDestinationAirports())) {
+			Predicate destPredicate = root.get("destination").in(dto.getDestinationAirports());
+			Predicate destAirportsPredicate = cb.and(destPredicate);
+			predicates.add(destAirportsPredicate);
+		}
 
-  List<Order> orderList = new ArrayList<>();
-  orderList.add(cb.asc(countDownViewJoin.get("countDownTimer")));
+		List<Order> orderList = new ArrayList<>();
+		orderList.add(cb.asc(countDownViewJoin.get("countDownTimer")));
 
-  q.orderBy(orderList);
+		q.orderBy(orderList);
 
-  q.select(root).where(predicates.toArray(new Predicate[] {}));
-  TypedQuery<Flight> typedQuery = em.createQuery(q);
+		q.select(root).where(predicates.toArray(new Predicate[] {}));
+		TypedQuery<Flight> typedQuery = em.createQuery(q);
 
-  typedQuery.setFirstResult(0);
-  typedQuery.setMaxResults(500);
+		typedQuery.setFirstResult(0);
+		typedQuery.setMaxResults(500);
 
-  List<Flight> results = typedQuery.getResultList();
+		List<Flight> results = typedQuery.getResultList();
 
-  return results;
-}
+		return results;
+	}
 
 	static void generateFilters(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> predicates,
 			Path<String> origin, Path<String> destination) {

@@ -1,5 +1,6 @@
 package gov.gtas.controller;
 
+import gov.gtas.common.PassengerDetailService;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Pnr;
 import gov.gtas.repository.ApisMessageRepository;
@@ -7,6 +8,7 @@ import gov.gtas.repository.BagRepository;
 import gov.gtas.repository.BookingDetailRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
+import gov.gtas.util.PaxDetailVoUtil;
 import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.PassengerVo;
 import gov.gtas.vo.passenger.PnrVo;
@@ -19,6 +21,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -64,21 +67,25 @@ public class PassengerDetailsControllerTest {
 	@Mock
 	private SeatService seatService;
 
+	@Mock
+	private PassengerDetailService passengerDetailService;
+
 	@InjectMocks
 	PassengerDetailsController passengerDetailsController;
 
 	@Test
 	public void passengerDetailControllerHappyPathTest() throws SQLException {
-		Passenger wally = TestData.getPassenger();
-		Mockito.when(fService.findById(2L)).thenReturn(TestData.getFlight());
-		Mockito.when(pService.findByIdWithFlightAndDocuments(1L)).thenReturn(wally);
-		List<Pnr> pnrs = TestData.getPnrList();
-		Mockito.when(pnrService.findPnrByPassengerIdAndFlightId(1L, 2L)).thenReturn(pnrs);
-		Mockito.when(bagRepository.findFromFlightAndPassenger(2L, 1L)).thenReturn(TestData.getBags());
-		Mockito.when(apisMessageRepository.findByFlightIdAndPassengerId(2L, 1L))
-				.thenReturn(Collections.singletonList(TestData.getApisMessage()));
-		Mockito.when(apisMessageRepository.findPaxByFlightIdandPassengerId(2L, 1L))
-				.thenReturn(TestData.getPassenger());
+//		Passenger wally = TestData.getPassenger();
+//		Mockito.when(fService.findById(2L)).thenReturn(TestData.getFlight());
+//		Mockito.when(pService.findByIdWithFlightAndDocumentsAndMessageDetails(1L)).thenReturn(wally);
+//		List<Pnr> pnrs = TestData.getPnrList();
+//		Mockito.when(pnrService.findPnrByPassengerIdAndFlightId(1L, 2L)).thenReturn(pnrs);
+//		Mockito.when(bagRepository.findFromFlightAndPassenger(2L, 1L)).thenReturn(TestData.getBags());
+//		Mockito.when(apisMessageRepository.findByFlightIdAndPassengerId(2L, 1L))
+//				.thenReturn(Collections.singletonList(TestData.getApisMessage()));
+//		Mockito.when(apisMessageRepository.findPaxByFlightIdandPassengerId(2L, 1L))
+//				.thenReturn(TestData.getPassenger());
+		Mockito.when(passengerDetailService.generatePassengerVO(any(), any())).thenReturn(new PassengerVo());
 		PassengerVo passengerVo = passengerDetailsController.getPassengerByPaxIdAndFlightId("1", "2");
 		Assert.assertNotNull(passengerVo);
 	}
@@ -96,7 +103,7 @@ public class PassengerDetailsControllerTest {
 
 		try {
 			assertNull(addressVo.getCity());
-			passengerDetailsController.parseRawMessageToSegmentList(pnrVo);
+			PaxDetailVoUtil.parseRawMessageToSegmentList(pnrVo);
 		} catch (Exception e) {
 			fail("This method should not throw an exception when City is null!!!");
 		}

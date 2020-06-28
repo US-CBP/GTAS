@@ -39,6 +39,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders/
+*.sts4-cache/
 # Locally stored "Eclipse launch configurations"
 *.launch
 

@@ -23,15 +23,15 @@ public interface FlightRepositoryCustom {
 	/**
 	 * Return all flights by criteria
 	 * 
-	 * @param dto
-	 *            the request parameters, filters, etc.
+	 * @param dto the request parameters, filters, etc.
 	 * @return tuple consisting of total count and list of results.
 	 */
 	public Pair<Long, List<Flight>> findByCriteria(FlightsRequestDto dto);
 
-  public List<Flight> findUpcomingFlights(FlightsRequestDto dto);
+	public List<Flight> findUpcomingFlights(FlightsRequestDto dto);
 
 	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);
 
 	public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef);
+
 }

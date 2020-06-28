@@ -40,4 +40,9 @@ public class NoteTypeServiceImpl implements NoteTypeService {
 	public void deleteNoteTypes(Long id) {
 		noteTypeRepository.deleteById(id);
 	}
+
+	@Override
+	public NoteType getDeletedNoteType() {
+		return noteTypeRepository.findByType("DELETED").orElseThrow(RuntimeException::new);
+	}
 }

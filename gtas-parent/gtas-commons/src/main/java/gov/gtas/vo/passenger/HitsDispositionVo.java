@@ -6,13 +6,15 @@
 
 package gov.gtas.vo.passenger;
 
+import gov.gtas.model.PIIObject;
 import gov.gtas.model.lookup.HitCategory;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.HashSet;
 import java.util.Set;
 
-public class HitsDispositionVo {
+public class HitsDispositionVo implements PIIObject {
 
 	private long hitId;
 	private long caseId;
@@ -118,4 +120,19 @@ public class HitsDispositionVo {
 		this.hit_disp_id = hit_disp_id;
 	}
 
+	@Override
+	public PIIObject deletePII() {
+		this.description = "DELETED";
+		this.dispCommentsVo = new HashSet<>();
+		this.ruleCatSet = new HashSet<>();
+		return this;
+
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.description = "MASKED";
+		this.dispCommentsVo = new HashSet<>();
+		this.ruleCatSet = new HashSet<>();
+		return this;	}
 }

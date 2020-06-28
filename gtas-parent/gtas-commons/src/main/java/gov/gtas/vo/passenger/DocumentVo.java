@@ -9,8 +9,9 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import gov.gtas.model.Document;
+import gov.gtas.model.PIIObject;
 
-public class DocumentVo {
+public class DocumentVo implements PIIObject {
 	private String documentType;
 	private String documentNumber;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.SHORT_DATE_FORMAT)
@@ -20,6 +21,7 @@ public class DocumentVo {
 	private String issuanceCountry;
 	private String firstName;
 	private String lastName;
+	private String messageType;
 
 	public String getDocumentType() {
 		return documentType;
@@ -84,6 +86,31 @@ public class DocumentVo {
 		docVo.setIssuanceCountry(document.getIssuanceCountry());
 		docVo.setExpirationDate(document.getExpirationDate());
 		docVo.setIssuanceDate(document.getIssuanceDate());
+		docVo.setMessageType(document.getMessageType() == null ? "" : document.getMessageType().toString());
 		return docVo;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.setDocumentNumber("DELETED");
+		this.setFirstName("DELETED");
+		this.setLastName("DELETED");
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.setDocumentNumber("MASKED");
+		this.setFirstName("MASKED");
+		this.setLastName("MASKED");
+		return this;
+	}
+
+	public String getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(String messageType) {
+		this.messageType = messageType;
 	}
 }

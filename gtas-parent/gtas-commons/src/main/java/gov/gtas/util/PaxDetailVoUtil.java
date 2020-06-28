@@ -5,6 +5,18 @@ import static java.util.stream.Collectors.toList;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import gov.gtas.enumtype.MessageType;
+import gov.gtas.json.KeyValue;
+import gov.gtas.model.HitDetail;
+import gov.gtas.model.HitMaker;
+import gov.gtas.model.HitViewStatus;
+import gov.gtas.model.PassengerDetailFromMessage;
+import gov.gtas.model.PassengerDetails;
+import gov.gtas.model.User;
+import gov.gtas.model.UserGroup;
+import gov.gtas.model.lookup.HitCategory;
+import gov.gtas.vo.HitDetailVo;
+import gov.gtas.vo.passenger.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -24,18 +36,6 @@ import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
-import gov.gtas.vo.passenger.AddressVo;
-import gov.gtas.vo.passenger.AgencyVo;
-import gov.gtas.vo.passenger.CreditCardVo;
-import gov.gtas.vo.passenger.DocumentVo;
-import gov.gtas.vo.passenger.EmailVo;
-import gov.gtas.vo.passenger.FlightLegVo;
-import gov.gtas.vo.passenger.FlightVo;
-import gov.gtas.vo.passenger.FlightVoForFlightHistory;
-import gov.gtas.vo.passenger.FrequentFlyerVo;
-import gov.gtas.vo.passenger.PassengerVo;
-import gov.gtas.vo.passenger.PhoneVo;
-import gov.gtas.vo.passenger.PnrVo;
 
 public class PaxDetailVoUtil {
 
@@ -101,6 +101,96 @@ public class PaxDetailVoUtil {
 		}
 	}
 
+	public static PassengerDetails filterOutMaskedAPISOrPnr(Passenger t) {
+
+		PassengerDetails passengerDetails = t.getPassengerDetails();
+		if (t.getDataRetentionStatus().requiresMaskedAPIS() || t.getDataRetentionStatus().requiresMaskedPNR() || t.getDataRetentionStatus().requiresDeletedAPIS() || t.getDataRetentionStatus().requiresDeletedPNR()) {
+			if (!t.getDataRetentionStatus().requiresMaskedPNR() && !t.getDataRetentionStatus().requiresDeletedPNR() && t.getDataRetentionStatus().isHasPnrMessage()) {
+				passengerDetails = getPassengerDetails(t, MessageType.PNR);
+			} else if (!t.getDataRetentionStatus().requiresMaskedAPIS() && !t.getDataRetentionStatus().requiresDeletedAPIS() && t.getDataRetentionStatus().isHasApisMessage()) {
+				passengerDetails = getPassengerDetails(t, MessageType.APIS);
+			} else if ((t.getDataRetentionStatus().isHasApisMessage() && !t.getDataRetentionStatus().requiresDeletedAPIS())
+					|| (t.getDataRetentionStatus().isHasPnrMessage() && !t.getDataRetentionStatus().requiresDeletedPNR())){
+				passengerDetails.maskPII();
+			} else {
+				passengerDetails.deletePII();
+			}
+		} return passengerDetails;
+	}
+
+	private static PassengerDetails getPassengerDetails(Passenger t, MessageType messageType) {
+		return t
+				.getPassengerDetailFromMessages()
+				.stream()
+				.filter(fs -> fs.getMessageType() == messageType)
+				.sorted(Comparator.comparing(PassengerDetailFromMessage::getCreatedAt).reversed())
+				.map(PassengerDetails::from)
+				.findFirst()
+				.orElse(new PassengerDetails());
+	}
+
+	public static void populatePassengerVoWithPassengerDetails(PassengerVo vo, PassengerDetails passengerDetails, Passenger passenger) {
+		if(vo == null) {
+			logger.error("error populating passengerVo with passenger details");
+			return;
+		}
+
+		if(passengerDetails != null) {
+			vo.setPassengerType(passengerDetails.getPassengerType());
+			vo.setLastName(passengerDetails.getLastName());
+			vo.setFirstName(passengerDetails.getFirstName());
+			vo.setMiddleName(passengerDetails.getMiddleName());
+			vo.setNationality(passengerDetails.getNationality());
+			vo.setDob(passengerDetails.getDob());
+			vo.setAge(passengerDetails.getAge());
+			vo.setGender(passengerDetails.getGender() != null ? passengerDetails.getGender() : "");
+			vo.setResidencyCountry(passengerDetails.getResidencyCountry());
+			vo.setSuffix(passengerDetails.getSuffix());
+			vo.setTitle(passengerDetails.getTitle());
+		}
+
+		if(passenger != null && passenger.getPassengerTripDetails() != null) {
+			vo.setEmbarkation(passenger.getPassengerTripDetails().getEmbarkation());
+			vo.setEmbarkCountry(passenger.getPassengerTripDetails().getEmbarkCountry());
+			vo.setDebarkation(passenger.getPassengerTripDetails().getDebarkation());
+			vo.setDebarkCountry(passenger.getPassengerTripDetails().getDebarkCountry());
+		}
+	}
+
+	public static HitDetailVo populateHitDetailVo(HitDetailVo hitDetailVo, HitDetail htd, User user) {
+		hitDetailVo.setRuleId(htd.getRuleId());
+		hitDetailVo.setRuleTitle(htd.getTitle());
+		hitDetailVo.setRuleDesc(htd.getDescription());
+		hitDetailVo.setSeverity(htd.getHitMaker().getHitCategory().getSeverity().toString());
+		HitMaker lookout = htd.getHitMaker();
+		HitCategory hitCategory = lookout.getHitCategory();
+		hitDetailVo.setCategory(hitCategory.getName() + "(" + htd.getHitEnum().getDisplayName() + ")");
+		hitDetailVo.setRuleAuthor(htd.getHitMaker().getAuthor().getUserId());
+		hitDetailVo.setRuleConditions(htd.getRuleConditions());
+		hitDetailVo.setRuleTitle(htd.getTitle());
+		StringJoiner stringJoiner = new StringJoiner(", ");
+
+		Set<UserGroup> userGroups = user.getUserGroups();
+		for (HitViewStatus hitViewStatus : htd.getHitViewStatus()) {
+			if (userGroups.contains(hitViewStatus.getUserGroup())) {
+				stringJoiner.add(hitViewStatus.getHitViewStatusEnum().toString());
+			}
+		}
+		hitDetailVo.setFlightDate(htd.getFlight().getMutableFlightDetails().getEtd());
+		hitDetailVo.setStatus(stringJoiner.toString());
+		PaxDetailVoUtil.deleteAndMaskPIIFromHitDetailVo(hitDetailVo, htd.getPassenger());
+
+		return hitDetailVo;
+	}
+
+	public static void deleteAndMaskPIIFromHitDetailVo(HitDetailVo hitDetailVo, Passenger hdPassenger) {
+		if (hdPassenger.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
+			hitDetailVo.deletePII();
+		} else if (hdPassenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
+			hitDetailVo.maskPII();
+		}
+	}
+
 	public static void populateFlightVoWithFlightDetail(Flight source, FlightVo target) {
 		try {
 
@@ -135,6 +225,40 @@ public class PaxDetailVoUtil {
 			target.setPnrRecordExists(false);
 			return target;
 		}
+
+		if (!source.getPassengers().isEmpty()) {
+			for (Passenger p : source.getPassengers()) {
+				PassengerVo pVo = new PassengerVo();
+				pVo.setLastName(p.getPassengerDetails().getLastName());
+				pVo.setFirstName(p.getPassengerDetails().getFirstName());
+				pVo.setMiddleName(p.getPassengerDetails().getMiddleName());
+				pVo.setAge(p.getPassengerDetails().getAge());
+				pVo.setGender(p.getPassengerDetails().getGender());
+				pVo.setPaxId(Long.toString(p.getId()));
+				target.getPassengers().add(pVo);
+				Set<Document> documents = p.getDocuments();
+				for (Document d : documents) {
+					if (d.getMessageType() == MessageType.PNR) {
+						DocumentVo documentVo = new DocumentVo();
+						documentVo.setFirstName(d.getPassenger().getPassengerDetails().getFirstName());
+						documentVo.setLastName(d.getPassenger().getPassengerDetails().getLastName());
+						documentVo.setDocumentType(d.getDocumentType());
+						documentVo.setIssuanceCountry(d.getIssuanceCountry());
+						documentVo.setDocumentNumber(d.getDocumentNumber());
+						documentVo.setIssuanceDate(d.getIssuanceDate());
+						documentVo.setMessageType(d.getMessageType() == null ? "" : d.getMessageType().toString());
+						documentVo.setExpirationDate(d.getExpirationDate());
+						target.getDocuments().add(documentVo);
+					}
+				}
+				if (p.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
+					pVo.deletePII();
+				} else if (p.getDataRetentionStatus().requiresMaskedPNR()) {
+					pVo.maskPII();
+				}
+			}
+		}
+
 		target.setPnrRecordExists(true);
 		target.setRecordLocator(source.getRecordLocator());
 		target.setBagCount(source.getBagCount());
@@ -155,24 +279,12 @@ public class PaxDetailVoUtil {
 
 		target.setTripType(source.getTripType());
 
-		if (!source.getAddresses().isEmpty()) {
-			Iterator it = source.getAddresses().iterator();
-			while (it.hasNext()) {
-				Address a = (Address) it.next();
+		if (CollectionUtils.isNotEmpty(source.getAddresses())) {
+			for (Address a : source.getAddresses()) {
 				AddressVo aVo = new AddressVo();
-
-				try {
-
-					BeanUtils.copyProperties(aVo, a);
-
-				} catch (Exception e) {
-					logger.error("Unable to copy properties, catching and moving to next address", e);
-				}
-
+				copyModelToVo(a, aVo);
 				target.getAddresses().add(aVo);
-
-			} // End of While Loop
-
+			}
 		}
 
 		if (CollectionUtils.isNotEmpty(source.getAgencies())) {
@@ -184,18 +296,14 @@ public class PaxDetailVoUtil {
 		}
 
 		if (!source.getCreditCards().isEmpty()) {
-			Iterator<CreditCard> it1 = source.getCreditCards().iterator();
-			while (it1.hasNext()) {
-				CreditCard cc = it1.next();
+			for (CreditCard cc : source.getCreditCards()) {
 				CreditCardVo cVo = new CreditCardVo();
 				copyModelToVo(cc, cVo);
 				target.getCreditCards().add(cVo);
 			}
 		}
 		if (!source.getFrequentFlyers().isEmpty()) {
-			Iterator<FrequentFlyer> it2 = source.getFrequentFlyers().iterator();
-			while (it2.hasNext()) {
-				FrequentFlyer ff = it2.next();
+			for (FrequentFlyer ff : source.getFrequentFlyers()) {
 				FrequentFlyerVo fVo = new FrequentFlyerVo();
 				copyModelToVo(ff, fVo);
 				target.getFrequentFlyerDetails().add(fVo);
@@ -203,9 +311,7 @@ public class PaxDetailVoUtil {
 		}
 
 		if (!source.getEmails().isEmpty()) {
-			Iterator<Email> it3 = source.getEmails().iterator();
-			while (it3.hasNext()) {
-				Email e = it3.next();
+			for (Email e : source.getEmails()) {
 				EmailVo eVo = new EmailVo();
 				copyModelToVo(e, eVo);
 				target.getEmails().add(eVo);
@@ -213,9 +319,7 @@ public class PaxDetailVoUtil {
 		}
 
 		if (!source.getPhones().isEmpty()) {
-			Iterator<Phone> it4 = source.getPhones().iterator();
-			while (it4.hasNext()) {
-				Phone p = it4.next();
+			for (Phone p : source.getPhones()) {
 				PhoneVo pVo = new PhoneVo();
 				copyModelToVo(p, pVo);
 				target.getPhoneNumbers().add(pVo);
@@ -249,33 +353,14 @@ public class PaxDetailVoUtil {
 			}
 		}
 
-		if (!source.getPassengers().isEmpty()) {
-			Iterator it4 = source.getPassengers().iterator();
-			while (it4.hasNext()) {
-				Passenger p = (Passenger) it4.next();
-				PassengerVo pVo = new PassengerVo();
-				pVo.setLastName(p.getPassengerDetails().getLastName());
-				pVo.setFirstName(p.getPassengerDetails().getFirstName());
-				pVo.setMiddleName(p.getPassengerDetails().getMiddleName());
-				pVo.setAge(p.getPassengerDetails().getAge());
-				pVo.setGender(p.getPassengerDetails().getGender());
-				pVo.setPaxId(Long.toString(p.getId()));
-				target.getPassengers().add(pVo);
-
-				Set<Document> documents = p.getDocuments();
-				for (Document d : documents) {
-					DocumentVo documentVo = new DocumentVo();
-					documentVo.setFirstName(d.getPassenger().getPassengerDetails().getFirstName());
-					documentVo.setLastName(d.getPassenger().getPassengerDetails().getLastName());
-					documentVo.setDocumentType(d.getDocumentType());
-					documentVo.setIssuanceCountry(d.getIssuanceCountry());
-					documentVo.setDocumentNumber(d.getDocumentNumber());
-					documentVo.setIssuanceDate(d.getIssuanceDate());
-					documentVo.setExpirationDate(d.getExpirationDate());
-					target.getDocuments().add(documentVo);
-				}
-			}
+		boolean pnrHasUnmaskedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().requiresMaskedPNR());
+		boolean pnrHasUndeletedPassenger = source.getPassengers().stream().anyMatch(p -> !p.getDataRetentionStatus().requiresDeletedPNR());
+		if (!pnrHasUndeletedPassenger) {
+			target.deletePII();
+		} else if (!pnrHasUnmaskedPassenger) {
+			target.maskPII();
 		}
+
 		return target;
 	}
 
@@ -303,4 +388,171 @@ public class PaxDetailVoUtil {
 		return latest;
 	}
 
+
+	/**
+	 * Segments PnrRaw String Required for Frontend to highlight segment
+	 * corresponding to pnr section
+	 *
+	 * @param targetVo
+	 */
+	public static void parseRawMessageToSegmentList(PnrVo targetVo) {
+		if (targetVo != null && targetVo.getRaw() != null) {
+
+			StringTokenizer _tempStr = new StringTokenizer(targetVo.getRaw(), "\n");
+			List<KeyValue> segmentList = new ArrayList<>();
+
+			final String ITIN = "TVL";
+			final String NAME = "SSR";
+			final String DOC = "DOCS";
+			final String ADD = "ADD";
+			final String CC = "FOP";
+			final String FF = "FTI";
+			final String BAG = "TBD";
+			final String TIF = "TIF";
+
+			String tifSegment = "";
+			Integer indexInteger = 0;
+
+			while (_tempStr.hasMoreTokens()) {
+				String currString = _tempStr.nextToken();
+				StringBuilder segment = new StringBuilder();
+
+				// Itinerary
+				if (currString.contains(ITIN)) {
+					for (FlightLegVo f : targetVo.getFlightLegs()) {
+						if (currString.contains(f.getOriginAirport())) {
+							segment.append(ITIN);
+							segment.append(f.getOriginAirport());
+							segment.append(" ");
+						}
+					}
+				}
+				// PNR names
+				if (currString.contains(NAME)) {
+					for (PassengerVo p : targetVo.getPassengers()) {
+						if (currString.contains(p.getFirstName())) {
+							segment.append(NAME);
+							segment.append(p.getFirstName());
+							segment.append(" ");
+						}
+					}
+				}
+				// Doc Numbers
+				if (currString.contains(DOC)) {
+					for (DocumentVo d : targetVo.getDocuments()) {
+						if (d.getDocumentNumber() != null && currString.contains(d.getDocumentNumber())) {
+							segment.append(DOC);
+							segment.append(d.getDocumentNumber());
+							segment.append(" ");
+						}
+					}
+				}
+				// Addresses
+				if (currString.contains(ADD)) {
+					for (AddressVo a : targetVo.getAddresses()) {
+						if (a.getCity() != null && currString.contains(a.getCity())) {
+							segment.append(ADD);
+							segment.append(a.getCity());
+							segment.append(" ");
+						}
+					}
+				}
+				// FOP
+				if (currString.contains(CC)) {
+					for (CreditCardVo c : targetVo.getCreditCards()) {
+						if (currString.contains(c.getNumber().substring(c.getNumber().length() - 4))) {
+							segment.append(CC);
+							segment.append(c.getNumber());
+							segment.append(" ");
+						}
+					}
+				}
+				// Frequent Flyer
+				if (currString.contains(FF)) {
+					for (FrequentFlyerVo f : targetVo.getFrequentFlyerDetails()) {
+						if (currString.contains(f.getNumber())) {
+							segment.append(FF);
+							segment.append(f.getNumber());
+							segment.append(" ");
+						}
+					}
+				}
+
+				/*
+				 * GR.7 TIF - the checked-in name. Used to link bags to passengers.
+				 */
+				if (currString.contains(TIF)) {
+					tifSegment = currString;
+				}
+
+//				// Bag
+//				if (currString.contains(BAG)) {
+//					for (BagVo b : targetVo.getBags()) {
+//						if (isRelatedToTifPassenger(tifSegment, b)) {
+//							segment.append(BAG);
+//							segment.append(b.getPassFirstName());
+//							segment.append(b.getPassLastName());
+//							segment.append(" ");
+//						}
+//					}
+//				}
+				// Phone
+				for (PhoneVo p : targetVo.getPhoneNumbers()) {
+					if (currString.contains(p.getNumber().substring(p.getNumber().length() - 4))) {
+						segment.append("PHONE");
+						segment.append(p.getNumber());
+						segment.append(" ");
+					}
+				}
+
+				// Email
+				for (EmailVo e : targetVo.getEmails()) {
+					boolean isMatch = true;
+					String[] words = e.getAddress().split("[^a-zA-Z0-9']+");
+
+					for (String word : words) {
+						if (!currString.contains(word)) {
+							isMatch = false;
+							break;
+						}
+					}
+					if (words.length > 0 && isMatch) {
+						segment.append("EMAIL");
+						segment.append(e.getAddress());
+						segment.append(" ");
+					}
+				}
+
+				// Seat
+				for (SeatVo s : targetVo.getSeatAssignments()) {
+					if (currString.contains(s.getNumber())) {
+						segment.append("SEAT");
+						segment.append(s.getNumber());
+						segment.append(" ");
+					}
+				}
+
+				// Agency
+				for (AgencyVo a : targetVo.getAgencies()) {
+					if (a.getIdentifier() != null && currString.contains(a.getIdentifier())) {
+						segment.append("AGEN");
+						segment.append(a.getIdentifier());
+						segment.append(" ");
+					}
+				}
+
+				if (segment.toString().isEmpty()) {
+					KeyValue kv = new KeyValue(indexInteger.toString(), currString);
+					segmentList.add(kv);
+				} else {
+					KeyValue kv2 = new KeyValue(segment.toString(), currString);
+					segmentList.add(kv2);
+					;
+				}
+
+				indexInteger++;
+			}
+			targetVo.setSegmentList(segmentList);
+		}
+	}
 }
