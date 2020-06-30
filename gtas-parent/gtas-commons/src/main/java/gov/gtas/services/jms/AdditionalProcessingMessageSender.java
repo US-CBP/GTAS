@@ -51,14 +51,18 @@ public class AdditionalProcessingMessageSender {
     public void sendFileContent(String queueName, org.springframework.messaging.Message<?> message, EventIdentifier eventIdentifier, MessageAction messageAction) {
         jmsTemplateFile.setDefaultDestinationName(queueName);
         jmsTemplateFile.send(session -> {
+            MessageSummaryList msRawList = new MessageSummaryList();
             MessageSummary messageSummary =  new MessageSummary();
             messageSummary.setRawMessage((String)message.getPayload());
             messageSummary.setEventIdentifier(eventIdentifier);
             messageSummary.setAction(messageAction);
+            msRawList.setEventIdentifier(eventIdentifier);
+            msRawList.getMessageSummaryList().add(messageSummary);
+            msRawList.setMessageAction(messageAction);
             ObjectMapper mapper = new ObjectMapper();
             String messageJson;
             try {
-                messageJson = mapper.writer().writeValueAsString(messageSummary);
+                messageJson = mapper.writer().writeValueAsString(msRawList);
             } catch (JsonProcessingException e) {
                 messageJson = e.getMessage();
                 messageSummary.setAction(MessageAction.ERROR);

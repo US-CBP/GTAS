@@ -13,9 +13,9 @@ import java.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.MessageStatusEnum;
-import gov.gtas.model.PendingHitDetails;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.repository.PendingHitDetailRepository;
+import gov.gtas.summary.MessageAction;
 import gov.gtas.summary.MessageSummary;
 import gov.gtas.summary.MessageSummaryList;
 import org.slf4j.Logger;
@@ -88,7 +88,15 @@ public class Loader {
 				try {
 					ObjectMapper om = new ObjectMapper();
 					msl = om.readValue(potentialMessageList, MessageSummaryList.class);
-					genericLoad = true;
+					if ((msl.getMessageAction() == MessageAction.RAW || msl.getMessageAction() == MessageAction.RAW_APIS
+					|| msl.getMessageAction() == MessageAction.RAW_PNR)) {
+						// Raw messages are ALWAYS contained as the first message summary and are ALWAYS
+						// pertaining to a file instead of a specific summary.
+						// Raw messages will always have 1 and only 1 message.
+						text = msl.getMessageSummaryList().get(0).getRawMessage();
+					} else {
+						genericLoad = true;
+					}
 				} catch (Exception ignored) {
 					//We don't care if the message doesn't marshall. It might be a legitimate APIS/PNR edifact
 				}

@@ -93,7 +93,8 @@ public class EventIdentifierFactory {
              * primeFlightKeyArray[5] = PRIME FLIGHT ETD TIMESTAMP AS A STRING LONG VALUE
              */
             String[] primeFlightKeyArray = new String[6];
-            List<Segment> messageSegments = getMessageSegments(message);
+            String payload = (String) message.getPayload();
+            List<Segment> messageSegments = getMessageSegments(payload);
             boolean apisMessage = true;
             // Arbitrarily attempt to read prime flight from PNR first.
             for (Segment segment : messageSegments) {
@@ -208,9 +209,9 @@ public class EventIdentifierFactory {
         return DateUtils.stripTime(tvl.getEtd()).getTime();
     }
 
-    private static List<Segment> getMessageSegments(Message<?> message) {
+    private static List<Segment> getMessageSegments(String payload) {
         List<Segment> segments = new ArrayList<>();
-        EdifactLexer lexer = new EdifactLexer((String) message.getPayload());
+        EdifactLexer lexer = new EdifactLexer(payload);
         try {
             segments = lexer.tokenize();
         } catch (ParseException e) {

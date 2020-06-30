@@ -100,6 +100,7 @@ public class PnrMessageService extends MessageLoaderService {
 			messageStatus = new MessageStatus(pnr.getId(), MessageStatusEnum.FAILED_PARSING);
 			msgDto.setMessageStatus(messageStatus);
 			msgDto.getMessageStatus().setNoLoadingError(false);
+			pnr.setStatus(messageStatus);
 			GtasLoaderImpl.handleException(e, pnr);
 		} finally {
 			msgDto.setPnr(pnr);
