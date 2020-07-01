@@ -89,8 +89,7 @@ public final class EdifactLexer {
 		if (end == -1) {
 			return null;
 		}
-		String messageWithoutUna =  this.message.substring(start, end);
-		return this.una.getSegmentText() + messageWithoutUna;
+		return this.message.substring(start, end);
 	}
 
 	/**
