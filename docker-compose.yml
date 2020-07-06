@@ -70,6 +70,9 @@ services:
     image: rmohr/activemq:5.15.9
     container_name: activemq
     restart: always
+    ports:
+      - 8161:8161
+      - 61616:61616
     networks: 
       - gtas-webapp-network
 
@@ -255,7 +258,10 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/elastic-bootstrap-password
   elastic-ca:
     file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
-
+  etl-neo4j-user:
+    file: ./gtas-parent/gtas-commons/certs/etl_neo4j_user.txt
+  etl-neo4j-password:
+    file: ./gtas-parent/gtas-commons/certs/etl_neo4j_password.txt
 volumes:
   db-data:
   m2:
