@@ -8,7 +8,6 @@ import java.util.Set;
 
 public class MappedGroups {
     Map<String, Set<HitDetail>> countryMap = new HashMap<>();
-    Map<String, Set<HitDetail>> intraOrgMap = new HashMap<>();
 
     public Map<String, Set<HitDetail>> getCountryMap() {
         return countryMap;
@@ -18,11 +17,4 @@ public class MappedGroups {
         this.countryMap = countryMap;
     }
 
-    public Map<String, Set<HitDetail>> getIntraOrgMap() {
-        return intraOrgMap;
-    }
-
-    public void setIntraOrgMap(Map<String, Set<HitDetail>> intraOrgMap) {
-        this.intraOrgMap = intraOrgMap;
-    }
 }

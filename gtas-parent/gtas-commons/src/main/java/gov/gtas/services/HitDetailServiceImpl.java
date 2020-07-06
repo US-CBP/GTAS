@@ -58,23 +58,6 @@ public class HitDetailServiceImpl implements HitDetailService {
 
 		mappedGroups.setCountryMap(stringHitDetailMap);
 
-		Map<String, Set<HitDetail>> intraOrgMap = new HashMap<>();
-		for (HitDetail hd : hitDetails) {
-			HitMaker hm = hd.getHitMaker();
-			//Check sharable hit and sort into map based on labels.
-			if (hm.getIntraOrganizationGroups() != null) {
-				String label = hm.getIntraOrganizationGroups().getIntraOrganizationLabel();
-				if (intraOrgMap.containsKey(label)) {
-					intraOrgMap.get(label).add(hd);
-				} else {
-					Set<HitDetail> hitDetailSet = new HashSet<>();
-					hitDetailSet.add(hd);
-					intraOrgMap.put(label, hitDetailSet);
-				}
-			}
-		}
-		mappedGroups.setIntraOrgMap(intraOrgMap);
-
 		return mappedGroups;
 	}
 

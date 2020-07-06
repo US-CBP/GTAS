@@ -24,7 +24,7 @@ public class AdditionalProcessingMessageSender {
         this.jmsTemplateFile = jmsTemplateFile;
     }
 
-    public void sendFileContent(String queueName, MessageSummaryList messageSummaryList, SummaryMetaData smd) {
+    public void sendProcessedMessage(String queueName, MessageSummaryList messageSummaryList, SummaryMetaData smd) {
         jmsTemplateFile.setDefaultDestinationName(queueName);
         EventIdentifier eventIdentifier = messageSummaryList.getEventIdentifier();
         jmsTemplateFile.send(session -> {
@@ -41,14 +41,12 @@ public class AdditionalProcessingMessageSender {
             fwd.setStringProperty("action", messageSummaryList.getMessageAction().toString());
             fwd.setObjectProperty("countryList", smd.getCountryList());
             fwd.setStringProperty("countryGroupName", smd.getCountryGroupName());
-            fwd.setObjectProperty("orgList", smd.getOrgList());
-            fwd.setStringProperty("orgListGroupName", smd.getOrgGroupName());
             return fwd;
         });
     }
 
 
-    public void sendFileContent(String queueName, org.springframework.messaging.Message<?> message, EventIdentifier eventIdentifier, MessageAction messageAction) {
+    public void sendRawMessage(String queueName, org.springframework.messaging.Message<?> message, EventIdentifier eventIdentifier, MessageAction messageAction) {
         jmsTemplateFile.setDefaultDestinationName(queueName);
         jmsTemplateFile.send(session -> {
             MessageSummaryList msRawList = new MessageSummaryList();

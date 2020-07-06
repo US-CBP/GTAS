@@ -130,7 +130,7 @@ public class LoaderScheduler {
 
 		if (additionalProcessing) {
 			MessageSummaryList msl = MessageSummaryList.from(processedMessages.getMessageSummaries());
-			apms.sendFileContent(addProcessQueue, msl, new SummaryMetaData());
+			apms.sendProcessedMessage(addProcessQueue, msl, new SummaryMetaData());
 		}
 
 		if (result != null) {

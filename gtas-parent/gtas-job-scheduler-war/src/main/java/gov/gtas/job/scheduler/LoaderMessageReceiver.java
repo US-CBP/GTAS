@@ -94,7 +94,7 @@ public class LoaderMessageReceiver {
 					|| eventIdentifier.getEventType().equals("APIS") && proccessApis ||
 			addProcessQueue != null && addProcessQueue.contains(eventIdentifier.getEventType()))) {
 				MessageAction messageAction = eventIdentifier.getEventType().equals("APIS") ? MessageAction.RAW_APIS : MessageAction.RAW_PNR;
-				apms.sendFileContent(addProcessQueue, message, eventIdentifier, messageAction);
+				apms.sendRawMessage(addProcessQueue, message, eventIdentifier, messageAction);
 			}
 		} catch (Exception e) {
 			logger.warn("Failed to parsed message. Is border crossing information corrupt? Error is: " + e);

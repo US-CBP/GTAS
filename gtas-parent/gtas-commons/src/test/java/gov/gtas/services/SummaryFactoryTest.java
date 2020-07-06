@@ -1,5 +1,6 @@
 package gov.gtas.services;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -20,6 +21,6 @@ public class SummaryFactoryTest {
         for (int i = 0; i < 5; i++) {
             sb.append(identifierList.get(i));
         }
-        System.out.println(sb.toString());
+        Assert.assertEquals("PNHMNLKME07411591228800000", sb.toString());
     }
 }

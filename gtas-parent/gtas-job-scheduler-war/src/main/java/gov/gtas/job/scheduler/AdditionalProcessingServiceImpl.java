@@ -65,21 +65,6 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
             smd.setCountryGroupName(sendingTo.getCountryGroupLabel());
             sendMessages(hitDetailList, messageIds, smd);
         }
-
-        Map<String, Set<HitDetail>> hitDetailWithIntraOrgGroups = mappedGroups.getIntraOrgMap();
-        for (String labelKey : hitDetailWithIntraOrgGroups.keySet()) {
-            HitDetail hd = hitDetailWithIntraOrgGroups.get(labelKey).iterator().next();
-            IntraOrganizationGroup sendingTo = hd.getHitMaker().getIntraOrganizationGroups();
-            List<String> orgNames = new ArrayList<>();
-            for (IntraOrganization org : sendingTo.getAssociatedIntraOrganizations()) {
-                orgNames.add(org.getOrganizationName());
-            }
-            SummaryMetaData smd = new SummaryMetaData();
-            smd.setOrgList(orgNames);
-            smd.setSummary("1-MANY-MESSAGES");
-            smd.setOrgGroupName(sendingTo.getIntraOrganizationLabel());
-            sendMessages(hitDetailList, messageIds, smd);
-        }
     }
 
     private void sendMessages(Set<HitDetail> hitDetailList, Set<Long> messageIds, SummaryMetaData smd) {
@@ -110,7 +95,7 @@ public class AdditionalProcessingServiceImpl implements AdditionalProcessingServ
         for (MessageSummaryList msl : msList) {
             List<MessageSummaryList> messageSummaryLists = batchMessageSummary(msl);
             for (MessageSummaryList list : messageSummaryLists) {
-                additionalProcessingMessageSender.sendFileContent(addProcessQueue, list, smd);
+                additionalProcessingMessageSender.sendProcessedMessage(addProcessQueue, list, smd);
             }
         }
     }

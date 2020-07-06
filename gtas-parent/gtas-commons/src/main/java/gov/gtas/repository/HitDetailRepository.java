@@ -24,6 +24,6 @@ public interface HitDetailRepository extends CrudRepository<HitDetail, Long> {
 	Set<HitDetail> findFirst10ByPassengerInOrderByCreatedDateDesc(Set<Passenger> passenger);
 
 	@Query("SELECT hd from HitDetail hd left join fetch hd.hitMaker l left join fetch l.countryGroup cg left join fetch cg.associatedCountries" +
-			" left join fetch l.intraOrganizationGroups io left join fetch io.associatedIntraOrganizations where hd.id in :hdIds and hd.flightId in :fIds")
+			" where hd.id in :hdIds and hd.flightId in :fIds")
 	Set<HitDetail> getHitDetailsWithCountryGroups(@Param("hdIds")Set<Long> hdIds, @Param("fIds") Set<Long> fIds);
 }
