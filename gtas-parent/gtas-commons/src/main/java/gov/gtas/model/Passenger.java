@@ -47,7 +47,8 @@ public class Passenger extends BaseEntityAudit {
 	@OneToOne(mappedBy = "passenger", targetEntity = PassengerWLTimestamp.class, fetch = FetchType.LAZY)
 	private PassengerWLTimestamp passengerWLTimestamp;
 
-	@OneToOne(mappedBy = "passenger", targetEntity = PassengerIDTag.class, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {
+			CascadeType.PERSIST }, mappedBy = "passenger", targetEntity = PassengerIDTag.class, fetch = FetchType.LAZY)
 	private PassengerIDTag passengerIDTag;
 
 	@ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
@@ -106,6 +107,9 @@ public class Passenger extends BaseEntityAudit {
 	 */
 	@Transient
 	private UUID parserUUID;
+
+	@Transient
+	private Set<PendingHitDetails> pendingHitDetails = new HashSet<>();
 
 	public Set<PassengerNote> getNotes() {
 		return notes;
@@ -316,5 +320,13 @@ public class Passenger extends BaseEntityAudit {
 
 	public void setPassengerDetailFromMessages(Set<PassengerDetailFromMessage> passengerDetailFromMessages) {
 		this.passengerDetailFromMessages = passengerDetailFromMessages;
+	}
+
+	public Set<PendingHitDetails> getPendingHitDetails() {
+		return pendingHitDetails;
+	}
+
+	public void setPendingHitDetails(Set<PendingHitDetails> pendingHitDetails) {
+		this.pendingHitDetails = pendingHitDetails;
 	}
 }

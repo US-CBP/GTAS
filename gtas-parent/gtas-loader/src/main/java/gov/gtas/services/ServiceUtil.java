@@ -12,8 +12,11 @@ import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.PassengerVo;
 import gov.gtas.repository.FlightPassengerRepository;
 import gov.gtas.repository.PassengerRepository;
+import gov.gtas.summary.PassengerDocument;
+import gov.gtas.summary.PassengerSummary;
 import gov.gtas.util.EntityResolverUtils;
 import gov.gtas.vo.lookup.AirportVo;
+import gov.gtas.vo.passenger.CountDownVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +27,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class ServiceUtil implements LoaderServices {
@@ -54,6 +57,25 @@ public class ServiceUtil implements LoaderServices {
 
 	}
 
+	public Integer getHoursBeforeTakeOff(Flight primeFlight, Date transmissionDate) {
+		Integer hoursBeforeTakeOff = null;
+		if (transmissionDate != null && primeFlight.getMutableFlightDetails().getEtd() != null) {
+			Date flightDate = primeFlight.getMutableFlightDetails().getEtd();
+			CountDownCalculator countDownCalculator = new CountDownCalculator(transmissionDate);
+			CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(flightDate);
+			if (countDownVo.getMillisecondsFromDate() > 0
+					&& countDownVo.getMillisecondsFromDate() <= Integer.MAX_VALUE) {
+				hoursBeforeTakeOff = (int) TimeUnit.MILLISECONDS.toHours(countDownVo.getMillisecondsFromDate());
+			} else if (countDownVo.getMillisecondsFromDate() >= Integer.MAX_VALUE) {
+				logger.error("Hours before take off was difference of *2,147,483,647+* hours! "
+						+ "This indicates a likely data issue!");
+				hoursBeforeTakeOff = Integer.MAX_VALUE;
+			} else {
+				hoursBeforeTakeOff = 0;
+			}
+		}
+		return hoursBeforeTakeOff;
+	}
 	public AirportService getAirportService() {
 		return airportService;
 	}
@@ -69,9 +91,7 @@ public class ServiceUtil implements LoaderServices {
 		try {
 			passengerIdTag = EntityResolverUtils.makeHashForPassenger(pvo.getFirstName(), pvo.getLastName(),
 					pvo.getGender(), pvo.getDob());
-		} catch (NoSuchAlgorithmException e) {
-			logger.error("ERROR! An error occured when trying to create passengerIdTag", e);
-		} catch (UnsupportedEncodingException e) {
+		} catch (Exception e) {
 			logger.error("ERROR! An error occured when trying to create passengerIdTag", e);
 		}
 
@@ -84,9 +104,8 @@ public class ServiceUtil implements LoaderServices {
 	}
 
 	// checks if the two passenger shares at least one document.
-	private boolean haveSameDocument(Passenger pax, PassengerVo pvo) {
+	private boolean haveSameDocument(Passenger pax, List<DocumentVo> pvoDocuments) {
 		Set<Document> paxDocuments = pax.getDocuments();
-		List<DocumentVo> pvoDocuments = pvo.getDocuments();
 		boolean foundSharedDocument = false;
 
 		if (!isNull(paxDocuments) && !isNull(pvoDocuments)) {
@@ -106,9 +125,8 @@ public class ServiceUtil implements LoaderServices {
 		return foundSharedDocument;
 	}
 
-	private boolean haveSameDateOfBirth(Passenger pax, PassengerVo pvo) {
+	private boolean haveSameDateOfBirth(Passenger pax, Date pvoDob) {
 		Date paxDob = pax.getPassengerDetails().getDob();
-		Date pvoDob = pvo.getDob();
 
 		if (isNull(paxDob) || isNull(pvoDob)) {
 			return false;
@@ -117,9 +135,8 @@ public class ServiceUtil implements LoaderServices {
 		return paxDob.equals(pvoDob);
 	}
 
-	private boolean haveSameGender(Passenger pax, PassengerVo pvo) {
+	private boolean haveSameGender(Passenger pax, String pvoGender) {
 		String paxGender = pax.getPassengerDetails().getGender();
-		String pvoGender = pvo.getGender();
 
 		if (isNull(paxGender) || isNull(pvoGender)) {
 			return false;
@@ -172,10 +189,6 @@ public class ServiceUtil implements LoaderServices {
 		if (isNull(f.getId())) {
 			return null;
 		}
-
-		Set<Passenger> passengerSet;
-		Passenger existingPassenger = null;
-
 		Long flightId = f.getId();
 		String firstName = pvo.getFirstName();
 		String lastName = pvo.getLastName();
@@ -184,7 +197,44 @@ public class ServiceUtil implements LoaderServices {
 		String recordLocator = pvo.getPnrRecordLocator();
 		String ref = pvo.getPnrReservationReferenceNumber();
 		List<DocumentVo> documentVo = pvo.getDocuments();
+		String passengerIdTag = createPassengerIdTag(pvo);
+		return getPassenger(flightId, firstName, lastName, dob, gender, recordLocator, ref, documentVo, passengerIdTag);
+	}
 
+
+	@Override
+	@Transactional()
+	public Optional<Passenger> findPassengerOnFlight(Flight f, PassengerSummary passengerSummary, String recordLocatorNumber) {
+		if (isNull(f.getId())) {
+			return Optional.empty();
+		}
+		Long flightId = f.getId();
+		String firstName = passengerSummary.getPassengerBiographic().getFirstName();
+		String lastName = passengerSummary.getPassengerBiographic().getLastName();
+		Date dob = passengerSummary.getPassengerBiographic().getDob();
+		String gender = passengerSummary.getPassengerBiographic().getGender();
+		String recordLocator = passengerSummary.getPassengerTrip().getPnrReservationReferenceNumber();
+		String passengerIdTag = passengerSummary.getPassengerIds().getIdTag();
+		String ref = passengerSummary.getPassengerTrip().getPnrReservationReferenceNumber();
+		List<DocumentVo> documentVo = convertDocs(passengerSummary.getPassengerDocumentsList());
+		return Optional.ofNullable(getPassenger(flightId, firstName, lastName, dob, gender, recordLocator, ref, documentVo, passengerIdTag)) ;
+
+	}
+
+
+	private List<DocumentVo> convertDocs(List<PassengerDocument> docs) {
+		return docs.stream()
+				.map(d -> {
+					DocumentVo documentVo = new DocumentVo();
+					documentVo.setDocumentNumber(d.getDocumentNumber());
+					documentVo.setDocumentType(d.getDocumentType());
+					return documentVo;
+				}).collect(Collectors.toList());
+	}
+
+	private Passenger getPassenger(Long flightId, String firstName, String lastName, Date dob, String gender, String recordLocator, String ref, List<DocumentVo> documentVo, String passengerIdTag) {
+		Passenger existingPassenger = null;
+		Set<Passenger> passengerSet;
 		boolean newPaxHasRecordLocator = !isNull(recordLocator);
 		boolean newPaxHasRef = !isNull(ref);
 		boolean newPaxHasGender = !isNull(gender);
@@ -205,7 +255,6 @@ public class ServiceUtil implements LoaderServices {
 
 			// Resolve passenger by passengerIdTag
 			if (newPaxHasGender && newPaxHasDob) {
-				String passengerIdTag = createPassengerIdTag(pvo);
 				for (Passenger pax : passengerSet) {
 					if (pax.getPassengerIDTag() != null) {
 						String paxIdTag = pax.getPassengerIDTag().getIdTag();
@@ -222,7 +271,7 @@ public class ServiceUtil implements LoaderServices {
 				// Find passenger by First Name, Last Name, document# and dob
 				if (newPaxHasDocument && newPaxHasDob) {
 					for (Passenger pax : passengerSet) {
-						if (haveSameDocument(pax, pvo) && haveSameDateOfBirth(pax, pvo)) {
+						if (haveSameDocument(pax, documentVo) && haveSameDateOfBirth(pax, dob)) {
 							existingPassenger = pax;
 							foundPassenger = true;
 							break;
@@ -233,7 +282,7 @@ public class ServiceUtil implements LoaderServices {
 				// Find passenger by First Name, Last Name, document# and gender
 				if (!foundPassenger && newPaxHasDocument && newPaxHasGender) {
 					for (Passenger pax : passengerSet) {
-						if (haveSameDocument(pax, pvo) && haveSameGender(pax, pvo)) {
+						if (haveSameDocument(pax, documentVo) && haveSameGender(pax,gender)) {
 							existingPassenger = pax;
 							foundPassenger = true;
 							break;
@@ -244,7 +293,7 @@ public class ServiceUtil implements LoaderServices {
 				// Find passenger by First Name, Last Name, and document#
 				if (!foundPassenger && newPaxHasDocument) {
 					for (Passenger pax : passengerSet) {
-						if (haveSameDocument(pax, pvo)) {
+						if (haveSameDocument(pax, documentVo)) {
 							existingPassenger = pax;
 							foundPassenger = true;
 							break;
@@ -255,7 +304,7 @@ public class ServiceUtil implements LoaderServices {
 				// Find passenger by First Name, Last Name, and dob
 				if (!foundPassenger && newPaxHasDob) {
 					for (Passenger pax : passengerSet) {
-						if (haveSameDateOfBirth(pax, pvo)) {
+						if (haveSameDateOfBirth(pax, dob)) {
 							existingPassenger = pax;
 							break;
 						}
@@ -265,7 +314,7 @@ public class ServiceUtil implements LoaderServices {
 				// Find passenger by First Name, Last Name, and gender
 				if (!foundPassenger && newPaxHasGender) {
 					for (Passenger pax : passengerSet) {
-						if (haveSameGender(pax, pvo) && isNull(pax.getPassengerDetails().getDob())
+						if (haveSameGender(pax, gender) && isNull(pax.getPassengerDetails().getDob())
 								&& isNull(pax.getDocuments())) {
 							existingPassenger = pax;
 							break;
@@ -286,7 +335,7 @@ public class ServiceUtil implements LoaderServices {
 			}
 
 		}
-
 		return existingPassenger;
 	}
+
 }

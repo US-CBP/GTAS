@@ -1,7 +1,6 @@
 package gov.gtas.common;
 
 import gov.gtas.enumtype.MessageType;
-import gov.gtas.json.KeyValue;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Bag;
 import gov.gtas.model.Document;
@@ -12,7 +11,7 @@ import gov.gtas.model.Pnr;
 import gov.gtas.model.Seat;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.BagRepository;
-import gov.gtas.services.ApisControllerService;
+import gov.gtas.services.ApisService;
 import gov.gtas.services.FlightService;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.PnrService;
@@ -32,7 +31,7 @@ import static java.util.stream.Collectors.toList;
 public class PassengerDetailService {
 
     @Autowired
-    private ApisControllerService apisControllerService;
+    private ApisService apisService;
 
     @Autowired
     private PassengerService pService;
@@ -163,7 +162,7 @@ public class PassengerDetailService {
             apisVo.setBagWeight(bagWeight);
 
             if (refNumber != null) {
-                List<FlightPassengerVo> fpList = apisControllerService.generateFlightPassengerList(refNumber,
+                List<FlightPassengerVo> fpList = apisService.generateFlightPassengerList(refNumber,
                         flight.getId());
                 apisVo.getFlightpaxs().addAll(fpList);
             }

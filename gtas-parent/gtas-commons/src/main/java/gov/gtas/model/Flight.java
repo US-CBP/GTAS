@@ -15,7 +15,9 @@ import javax.validation.constraints.Size;
 @Cacheable
 @Entity
 @Table(name = "flight", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "carrier", "flight_number", "etd_date", "origin", "destination" }) })
+		@UniqueConstraint(columnNames = { "carrier", "flight_number", "etd_date", "origin", "destination" }),
+		@UniqueConstraint(columnNames = {"id_tag"})}
+		)
 public class Flight extends BaseEntityAudit {
 	private static final long serialVersionUID = 1L;
 
@@ -107,6 +109,11 @@ public class Flight extends BaseEntityAudit {
 	@JoinColumn(name = "id", unique = true, referencedColumnName = "fhw_flight_id", updatable = false, insertable = false)
 	@JsonIgnore
 	private FlightHitsWatchlist flightHitsWatchlist;
+
+	@OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+	@JoinColumn(name = "id", unique = true, referencedColumnName = "fhe_flight_id", updatable = false, insertable = false)
+	@JsonIgnore
+	private FlightHitsExternal flightHitsExternal;
 
 	@OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
 	@JoinColumn(name = "id", unique = true, referencedColumnName = "fp_flight_id", updatable = false, insertable = false)
@@ -421,5 +428,13 @@ public class Flight extends BaseEntityAudit {
 
 	public void setAgencies(Set<Agency> agencies) {
 		this.agencies = agencies;
+	}
+
+	public FlightHitsExternal getFlightHitsExternal() {
+		return flightHitsExternal;
+	}
+
+	public void setFlightHitsExternal(FlightHitsExternal flightHitsExternal) {
+		this.flightHitsExternal = flightHitsExternal;
 	}
 }
