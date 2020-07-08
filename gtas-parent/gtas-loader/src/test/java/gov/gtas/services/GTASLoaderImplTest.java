@@ -8,9 +8,8 @@
 
 package gov.gtas.services;
 
-import gov.gtas.model.Document;
-import gov.gtas.model.Message;
-import gov.gtas.model.Passenger;
+import gov.gtas.enumtype.MessageType;
+import gov.gtas.model.*;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.PassengerVo;
@@ -125,16 +124,19 @@ public class GTASLoaderImplTest {
 		docVo.setDocumentNumber("1234");
 		docVo2.setDocumentNumber("5678");
 
+		doc.setMessageType(MessageType.PNR);
+		doc.setMessageType(MessageType.PNR);
+
 		p.addDocument(doc);
 		p.addDocument(doc2);
 
 		pvo.addDocument(docVo);
 		pvo.addDocument(docVo2);
+		Pnr pnr = new Pnr();
 
-		Mockito.when(docDao.findByDocumentNumberAndPassenger("1234", p)).thenReturn(new ArrayList<>(p.getDocuments()));
-		Mockito.when(docDao.findByDocumentNumberAndPassenger("5678", p)).thenReturn(new ArrayList<>());
-		Mockito.when(utils.createNewDocument(docVo2)).thenReturn(new Document());
-		gtasLoader.updatePassenger(p, pvo);
+		Mockito.when(utils.createNewDocument(docVo2, pnr)).thenReturn(doc2);
+		Mockito.when(utils.createNewDocument(docVo, pnr)).thenReturn(doc);
+		gtasLoader.updatePassenger(p, pvo, pnr);
 		assertEquals(2, p.getDocuments().size());
 	}
 

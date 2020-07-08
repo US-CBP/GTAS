@@ -65,6 +65,12 @@ public class Flight extends BaseEntityAudit {
 	private Set<Phone> phone;
 
 	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+	private Set<Email> emails;
+
+	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+	private Set<FrequentFlyer> frequentFlyers;
+
+	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
 	private Set<Address> address;
 
 	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
@@ -72,6 +78,12 @@ public class Flight extends BaseEntityAudit {
 
 	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
 	private Set<HitsSummary> hits = new HashSet<>();
+
+	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+	private Set<Agency> agencies = new HashSet<>();
+
+	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+	private Set<Document> documents = new HashSet<>();
 
 	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
 	private Set<Bag> bags = new HashSet<>();
@@ -377,5 +389,37 @@ public class Flight extends BaseEntityAudit {
 
 	public void setHitDetails(Set<HitDetail> hitDetails) {
 		this.hitDetails = hitDetails;
+	}
+
+	public Set<Email> getEmails() {
+		return emails;
+	}
+
+	public void setEmails(Set<Email> emails) {
+		this.emails = emails;
+	}
+
+	public Set<FrequentFlyer> getFrequentFlyers() {
+		return frequentFlyers;
+	}
+
+	public void setFrequentFlyers(Set<FrequentFlyer> frequentFlyers) {
+		this.frequentFlyers = frequentFlyers;
+	}
+
+	public Set<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(Set<Document> documents) {
+		this.documents = documents;
+	}
+
+	public Set<Agency> getAgencies() {
+		return agencies;
+	}
+
+	public void setAgencies(Set<Agency> agencies) {
+		this.agencies = agencies;
 	}
 }

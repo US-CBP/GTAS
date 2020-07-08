@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.model;
@@ -8,68 +8,101 @@ package gov.gtas.model;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "frequent_flyer")
-public class FrequentFlyer extends BaseEntityAudit {
-	private static final long serialVersionUID = 1L;
+public class FrequentFlyer extends BaseEntityAudit implements PIIObject {
+    private static final long serialVersionUID = 1L;
 
-	public FrequentFlyer() {
-	}
+    public FrequentFlyer() {
+    }
 
-	@Column(nullable = false)
-	private String carrier;
+    @Column(nullable = false)
+    private String carrier;
 
-	@Column(nullable = false)
-	private String number;
+    @Column(nullable = false)
+    private String number;
 
-	@ManyToMany(mappedBy = "frequentFlyers", targetEntity = Pnr.class)
-	private Set<Pnr> pnrs = new HashSet<>();
+    @ManyToMany(mappedBy = "frequentFlyers", targetEntity = Pnr.class)
+    private Set<Pnr> pnrs = new HashSet<>();
 
-	public Set<Pnr> getPnrs() {
-		return pnrs;
-	}
 
-	public void setPnrs(Set<Pnr> pnrs) {
-		this.pnrs = pnrs;
-	}
+    @Column(name = "flight_id", columnDefinition = "bigint unsigned")
+    private Long flightId;
 
-	public String getCarrier() {
-		return carrier;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+    private Flight flight;
 
-	public void setCarrier(String carrier) {
-		this.carrier = carrier;
-	}
+    public Set<Pnr> getPnrs() {
+        return pnrs;
+    }
 
-	public String getNumber() {
-		return number;
-	}
+    public void setPnrs(Set<Pnr> pnrs) {
+        this.pnrs = pnrs;
+    }
 
-	public void setNumber(String number) {
-		this.number = number;
-	}
+    public String getCarrier() {
+        return carrier;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.number, this.carrier);
-	}
+    public void setCarrier(String carrier) {
+        this.carrier = carrier;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final FrequentFlyer other = (FrequentFlyer) obj;
-		return Objects.equals(this.number, other.number) && Objects.equals(this.carrier, other.carrier);
-	}
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.number, this.carrier);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final FrequentFlyer other = (FrequentFlyer) obj;
+        return Objects.equals(this.number, other.number) && Objects.equals(this.carrier, other.carrier);
+    }
+
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
+
+    @Override
+    public PIIObject deletePII() {
+        this.number = "DELETED " + UUID.randomUUID().toString();
+        return this;
+    }
+
+    @Override
+    public PIIObject maskPII() {
+        this.number = "MASKED";
+        return this;
+    }
 }

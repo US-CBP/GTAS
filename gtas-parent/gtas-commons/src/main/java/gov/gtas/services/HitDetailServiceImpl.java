@@ -11,6 +11,7 @@ package gov.gtas.services;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.HitDetailRepository;
+import gov.gtas.util.PaxDetailVoUtil;
 import gov.gtas.vo.HitDetailVo;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,13 +33,16 @@ public class HitDetailServiceImpl implements HitDetailService {
 	}
 
 	@Transactional
-	public List<HitDetailVo> getLast10RecentHits(Set<Passenger> passengerSet) {
+	public List<HitDetailVo> getLast10RecentHits(Set<Passenger> passengerSet, Passenger p) {
 		Set<HitDetail> hitDetailSet = hitDetailRepository.findFirst10ByPassengerInOrderByCreatedDateDesc(passengerSet);
 		Set<HitDetailVo> hitDetailVoSet = new LinkedHashSet<>();
+
 		for (HitDetail hitDetail : hitDetailSet) {
 			HitDetailVo hitDetailVo = HitDetailVo.from(hitDetail);
 			hitDetailVoSet.add(hitDetailVo);
+			PaxDetailVoUtil.deleteAndMaskPIIFromHitDetailVo(hitDetailVo, hitDetail.getPassenger());
 		}
+
 		List<HitDetailVo> hitDetails = new ArrayList<>(hitDetailVoSet);
 		if (!hitDetails.isEmpty()) {
 			hitDetails.sort((hd1, hd2) -> {

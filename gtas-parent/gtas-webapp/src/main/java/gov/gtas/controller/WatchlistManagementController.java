@@ -23,6 +23,8 @@ import gov.gtas.model.watchlist.json.WatchlistSpec;
 import gov.gtas.model.watchlist.json.WatchlistTerm;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.HitCategoryService;
+import gov.gtas.services.PendingHitDetailsService;
+import gov.gtas.services.security.UserService;
 import gov.gtas.svc.RuleManagementService;
 import gov.gtas.svc.WatchlistService;
 import gov.gtas.util.SampleDataGenerator;
@@ -54,6 +56,12 @@ public class WatchlistManagementController {
 
 	@Autowired
 	private RuleManagementService ruleManagementService;
+
+	@Autowired
+	private PendingHitDetailsService pendingHitDetailsService;
+
+	@Autowired
+	UserService userService;
 
 	/**
 	 * Gets the watchlist.
@@ -116,6 +124,9 @@ public class WatchlistManagementController {
 				.orElseThrow(RuntimeException::new);
 		hitCategory.setSeverity(hitSeverityEnum);
 		hitCategoryService.create(hitCategory);
+
+		//This is to make sure that manual hit generation functions on new category additions
+		pendingHitDetailsService.createManualHitMaker(hitCategory.getDescription(), userService.fetchUser(GtasSecurityUtils.fetchLoggedInUserId()), hitCategory.getId());
 
 	}
 

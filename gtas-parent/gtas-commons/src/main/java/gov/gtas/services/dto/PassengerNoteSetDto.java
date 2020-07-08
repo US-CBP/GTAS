@@ -3,6 +3,7 @@ package gov.gtas.services.dto;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import gov.gtas.model.Passenger;
 import gov.gtas.model.PassengerNote;
 import gov.gtas.vo.NoteVo;
 
@@ -26,7 +27,13 @@ public class PassengerNoteSetDto {
 	public static PassengerNoteSetDto fromNotes(List<PassengerNote> passengerNotes) {
 		LinkedHashSet<NoteVo> noteVos = new LinkedHashSet<>();
 		for (PassengerNote pNote : passengerNotes) {
+			Passenger p = pNote.getPassenger();
 			NoteVo noteVo = NoteVo.from(pNote);
+			if (p.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
+				noteVo.deletePII();
+			} else if (p.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()){
+				noteVo.maskPII();
+			}
 			noteVos.add(noteVo);
 		}
 

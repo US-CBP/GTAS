@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.enumtype.MessageType;
 import gov.gtas.model.*;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.util.DateUtils;
@@ -17,14 +18,15 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static gov.gtas.services.LoaderUtils.fromVoAndMessage;
 import static gov.gtas.services.LoaderUtils.getNullPropertyNames;
 
 @Service
 public class GtasLoaderImpl implements GtasLoader {
+
 	private static final Logger logger = LoggerFactory.getLogger(GtasLoaderImpl.class);
 	public static final int ETD_DATE_WITH_TIMESTAMP = 5;
 	public static final int ETD_DATE_NO_TIMESTAMP_AS_LONG = 4;
@@ -73,16 +75,31 @@ public class GtasLoaderImpl implements GtasLoader {
 
 	private final GtasLocalToUTCService gtasLocalToUTCService;
 
+	private final EmailRepository emailRepository;
+
+	private final CodeShareRepository codeShareRepository;
+
 	@Autowired
 	public GtasLoaderImpl(PassengerRepository passengerDao, ReportingPartyRepository rpDao,
-			LoaderServices loaderServices, FlightRepository flightDao, DocumentRepository docDao,
-			PhoneRepository phoneDao, PaymentFormRepository paymentFormDao, CreditCardRepository creditDao,
-			FlightPassengerCountRepository flightPassengerCountRepository, AddressRepository addressDao,
-			AgencyRepository agencyDao, MessageRepository<Message> messageDao,
-			PassengerIDTagRepository passengerIdTagDao, FlightPassengerRepository flightPassengerRepository,
-			FrequentFlyerRepository ffdao, LoaderUtils utils, BookingDetailRepository bookingDetailDao,
-			MutableFlightDetailsRepository mutableFlightDetailsRepository,
-			BagMeasurementsRepository bagMeasurementsRepository, GtasLocalToUTCService gtasLocalToUTCService) {
+						  LoaderServices loaderServices,
+						  FlightRepository flightDao,
+						  DocumentRepository docDao,
+						  PhoneRepository phoneDao,
+						  PaymentFormRepository paymentFormDao,
+						  CreditCardRepository creditDao,
+						  FlightPassengerCountRepository flightPassengerCountRepository,
+						  AddressRepository addressDao,
+						  AgencyRepository agencyDao,
+						  MessageRepository<Message> messageDao,
+						  PassengerIDTagRepository passengerIdTagDao,
+						  FlightPassengerRepository flightPassengerRepository,
+						  FrequentFlyerRepository ffdao, LoaderUtils utils,
+						  BookingDetailRepository bookingDetailDao,
+						  MutableFlightDetailsRepository mutableFlightDetailsRepository,
+						  BagMeasurementsRepository bagMeasurementsRepository,
+						  GtasLocalToUTCService gtasLocalToUTCService,
+						  EmailRepository emailRepository,
+						  CodeShareRepository codeShareRepository) {
 		this.passengerDao = passengerDao;
 		this.rpDao = rpDao;
 		this.loaderServices = loaderServices;
@@ -103,6 +120,8 @@ public class GtasLoaderImpl implements GtasLoader {
 		this.mutableFlightDetailsRepository = mutableFlightDetailsRepository;
 		this.bagMeasurementsRepository = bagMeasurementsRepository;
 		this.gtasLocalToUTCService = gtasLocalToUTCService;
+		this.emailRepository = emailRepository;
+		this.codeShareRepository = codeShareRepository;
 	}
 
 	@Override
@@ -169,9 +188,10 @@ public class GtasLoaderImpl implements GtasLoader {
 		}
 
 		for (FrequentFlyerVo ffvo : vo.getFrequentFlyerDetails()) {
-			List<FrequentFlyer> existingFf = ffdao.findByCarrierAndNumber(ffvo.getCarrier(), ffvo.getNumber());
+			List<FrequentFlyer> existingFf = ffdao.findByCarrierAndNumberAndFlightId(ffvo.getCarrier(), ffvo.getNumber(), flightId);
 			if (existingFf.isEmpty()) {
 				FrequentFlyer newFf = utils.convertFrequentFlyerVo(ffvo);
+				newFf.setFlightId(flightId);
 				pnr.addFrequentFlyer(newFf);
 			} else {
 				pnr.addFrequentFlyer(existingFf.get(0));
@@ -179,9 +199,10 @@ public class GtasLoaderImpl implements GtasLoader {
 		}
 
 		for (AgencyVo avo : vo.getAgencies()) {
-			List<Agency> existingAgency = agencyDao.findByNameAndLocation(avo.getName(), avo.getLocation());
+			List<Agency> existingAgency = agencyDao.findByNameAndLocationAndFlightId(avo.getName(), avo.getLocation(), flightId);
 			if (existingAgency.isEmpty()) {
 				Agency newAgency = utils.convertAgencyVo(avo);
+				newAgency.setFlightId(flightId);
 				newAgency
 						.setCity(newAgency.getCity() != null ? newAgency.getCity().toUpperCase() : newAgency.getCity());
 				pnr.addAgency(newAgency);
@@ -190,13 +211,26 @@ public class GtasLoaderImpl implements GtasLoader {
 			}
 		}
 		for (EmailVo evo : vo.getEmails()) {
-			Email email = utils.convertEmailVo(evo);
-			pnr.addEmail(email);
+			List<Email> existingEmail = emailRepository.findByAddressAndFlightId(evo.getAddress(), flightId);
+			if (existingEmail.isEmpty()) {
+				Email email = utils.convertEmailVo(evo);
+				email.setFlightId(flightId);
+				pnr.addEmail(email);
+			} else {
+				pnr.addEmail(existingEmail.get(0));
+			}
 		}
+
 		for (CodeShareVo cso : vo.getCodeshares()) {
-			CodeShareFlight cs = utils.convertCodeShare(cso);
-			cs.getPnrs().add(pnr);
-			pnr.getCodeshares().add(cs);
+			List<CodeShareFlight> codeShareFlights = codeShareRepository.findByMarketingFlightNumberAndFlightId(cso.getFullMarketingFlightNumber(), flightId);
+			if (codeShareFlights.isEmpty()) {
+				CodeShareFlight cs = utils.convertCodeShare(cso);
+				cs.getPnrs().add(pnr);
+				pnr.getCodeshares().add(cs);
+			} else {
+				pnr.getCodeshares().add(codeShareFlights.get(0));
+				codeShareFlights.get(0).getPnrs().add(pnr);
+			}
 		}
 		logger.debug("processPnr time= " + (System.nanoTime() - startTime) / 1000000);
 	}
@@ -336,17 +370,23 @@ public class GtasLoaderImpl implements GtasLoader {
 		Set<Passenger> oldPassengers = new HashSet<>();
 		Set<Long> oldPassengersId = new HashSet<>();
 		Map<Long, Set<BookingDetail>> bookingDetailsAPassengerOwns = new HashMap<>();
-
+		boolean isPnrMessage = false;
+		boolean isApisMessage = false;
+		if (message instanceof Pnr) {
+			isPnrMessage = true;
+		} else {
+			isApisMessage = true;
+		}
 		// Both PNR and APIS have a transmission date.
 		// To be backwards compatible we will check each value instead of
 		// changing the data model to bring up the edifact message to the message
 		// instead of the sub classes.
 		Integer hoursBeforeTakeOff = null;
-		Date transmissionDate;
-		if (message instanceof Pnr) {
+		Date transmissionDate = null;
+		if (isPnrMessage) {
 			Pnr thisMessage = (Pnr) message;
 			transmissionDate = thisMessage.getEdifactMessage().getTransmissionDate();
-		} else {
+		} else if (isApisMessage){
 			ApisMessage thisMessage = (ApisMessage) message;
 			transmissionDate = thisMessage.getEdifactMessage().getTransmissionDate();
 		}
@@ -366,27 +406,31 @@ public class GtasLoaderImpl implements GtasLoader {
 				hoursBeforeTakeOff = 0;
 			}
 		}
-
+		Set<Document> documents = new HashSet<>();
 		for (PassengerVo pvo : passengers) {
 			Passenger existingPassenger = loaderServices.findPassengerOnFlight(primeFlight, pvo);
 			if (existingPassenger == null) {
-				Passenger newPassenger = utils.createNewPassenger(pvo);
+				Passenger newPassenger = utils.createNewPassenger(pvo, message);
 				newPassenger.getBookingDetails().addAll(bookingDetails);
 				newPassenger.setParserUUID(pvo.getPassengerVoUUID());
 				if (hoursBeforeTakeOff != null) {
 					newPassenger.getPassengerTripDetails().setHoursBeforeTakeOff(hoursBeforeTakeOff);
 				}
 				for (DocumentVo dvo : pvo.getDocuments()) {
-					newPassenger.addDocument(utils.createNewDocument(dvo));
+					Document d = utils.createNewDocument(dvo, message);
+					newPassenger.addDocument(d);
+					documents.add(d);
 				}
+				setHasMessage(isPnrMessage, newPassenger);
 				createSeatAssignment(pvo.getSeatAssignments(), newPassenger, primeFlight);
 				utils.calculateValidVisaDays(primeFlight, newPassenger);
 				newPassengers.add(newPassenger);
 			} else if (!oldPassengersId.contains(existingPassenger.getId())) {
+				setHasMessage(isPnrMessage, existingPassenger);
 				existingPassenger.setParserUUID(pvo.getPassengerVoUUID());
 				existingPassenger.getBookingDetails().addAll(bookingDetails);
 				oldPassengersId.add(existingPassenger.getId());
-				updatePassenger(existingPassenger, pvo);
+				updatePassenger(existingPassenger, pvo, message);
 				if (hoursBeforeTakeOff != null) {
 					existingPassenger.getPassengerTripDetails().setHoursBeforeTakeOff(hoursBeforeTakeOff);
 				}
@@ -397,11 +441,24 @@ public class GtasLoaderImpl implements GtasLoader {
 				oldPassengers.add(existingPassenger);
 			}
 		}
+
+		for (Document d: documents) {
+			d.getMessages().add(message);
+			message.getDocuments().add(d);
+		}
 		messagePassengers.addAll(oldPassengers);
 		PassengerInformationDTO passengerInformationDTO = new PassengerInformationDTO();
 		passengerInformationDTO.setBdSet(bookingDetailsAPassengerOwns);
 		passengerInformationDTO.setNewPax(newPassengers);
 		return passengerInformationDTO;
+	}
+
+	private void setHasMessage(boolean isPnrMessage, Passenger existingPassenger) {
+		if (isPnrMessage) {
+			existingPassenger.getDataRetentionStatus().setHasPnrMessage(true);
+		} else {
+			existingPassenger.getDataRetentionStatus().setHasApisMessage(true);
+		}
 	}
 
 	@Override
@@ -524,17 +581,27 @@ public class GtasLoaderImpl implements GtasLoader {
 	}
 
 	@Override
-	public void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
+	public void updatePassenger(Passenger existingPassenger, PassengerVo pvo, Message message) throws ParseException {
+
+		PassengerDetailFromMessage passengerDetailFromMessage = fromVoAndMessage(pvo, message, existingPassenger);
+		existingPassenger.getPassengerDetailFromMessages().add(passengerDetailFromMessage);
+		MessageType messageType = utils.getMessageType(message);
 		utils.updatePassenger(pvo, existingPassenger);
 		for (DocumentVo dvo : pvo.getDocuments()) {
-			List<Document> existingDocs = new ArrayList<>();
+			List<Document> existingDocs;
 			if (dvo.getDocumentNumber() != null) {
-				existingDocs = docDao.findByDocumentNumberAndPassenger(dvo.getDocumentNumber(), existingPassenger);
+				existingDocs = docDao.findByDocumentNumberAndPassengerAndMessageType(dvo.getDocumentNumber(), existingPassenger, messageType);
 				if (existingDocs.isEmpty()) {
-					existingPassenger.addDocument(utils.createNewDocument(dvo));
+					Document d = utils.createNewDocument(dvo, message);
+					message.getDocuments().add(d);
+					d.getMessages().add(message);
+					existingPassenger.addDocument(d);
 				} else {
-					utils.updateDocument(dvo, existingDocs.get(0)); // For legacy data, always grab first amongst
-																	// potential list of docs
+					Document d = existingDocs.get(0);
+					message.getDocuments().add(d);
+					d.getMessages().add(message);
+					utils.updateDocument(dvo, d); // For legacy data, always grab first amongst
+												  // potential list of docs
 				}
 			}
 		}

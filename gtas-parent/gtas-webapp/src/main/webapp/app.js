@@ -90,7 +90,7 @@ var app;
              $rootScope.$on('$stateChangeStart',
 
                 function (event, toState) {
-            		Idle.watch();
+            		//Idle.watch();
                     var currentUser = $sessionStorage.get(APP_CONSTANTS.CURRENT_USER);
                     if (currentUser === undefined) {
                         $rootScope.$broadcast('unauthorizedEvent');
@@ -104,6 +104,24 @@ var app;
                 });
 
            $rootScope.currentlyLoggedInUser = $sessionStorage.get(APP_CONSTANTS.CURRENT_USER);
+           
+    	   if ($rootScope.currentlyLoggedInUser === undefined || $rootScope.currentlyLoggedInUser == null)
+       		{
+    		   		console.log('## User is not logged in ##'); 
+       	  			if(Idle.running())
+       	  			{
+       	  					Idle.unwatch();
+       	  				    console.log('## Idle Watch stopped. ##'); 
+       	  			}
+       		}
+          else
+       	   {
+       	   		if(!Idle.running())
+       	   		{
+       		      Idle.watch();
+       		      console.log('## Started Idle Watch ##'); 
+       	   		}
+       	   	}
 
            $rootScope.searchBarContent = {
         		   content : ""
@@ -112,20 +130,23 @@ var app;
 
            //  //For tooltips
            $rootScope.refreshCountryTooltips = function() {
+               localStorage.removeItem("countriesList");
               codeService.getCountryTooltips().then(function(result) {
                 $rootScope.countriesList = result;
               });
-            }
+            };
             $rootScope.refreshAirportTooltips = function() {
-              codeService.getAirportTooltips().then(function(result) {
+                localStorage.removeItem("airportCache");
+                codeService.getAirportTooltips().then(function(result) {
               $rootScope.airportsList = result;
              });
-            }
+            };
           $rootScope.refreshCarrierTooltips = function() {
-            codeService.getCarrierTooltips().then(function(result) {
+              localStorage.removeItem("carriersList");
+              codeService.getCarrierTooltips().then(function(result) {
               $rootScope.carriersList = result;
             });
-          }
+          };
 
           $rootScope.refreshAirportTooltips();
           $rootScope.refreshCarrierTooltips();
@@ -168,9 +189,9 @@ var app;
 
            $rootScope.triggerIdle = function(){
         	   	//Prevent triggers pre-login
-        	   	if(Idle.running()){
+        	   /*	if(Idle.running()){
         	   		Idle.watch();
-           		}
+           		}*/
            };
 
            $rootScope.setSelectedTab = function(route){
@@ -233,6 +254,13 @@ var app;
                     url: '/login',
                     controller: 'LoginController',
                     templateUrl: 'login.html',
+                    authenticate: false
+
+                })
+                .state('reset', {
+                    url: '/reset',
+                    controller: 'ResetController',
+                    templateUrl: 'reset.html',
                     authenticate: false
 
                 })
@@ -841,12 +869,15 @@ var app;
         })
         .constant('APP_CONSTANTS', {
             LOGIN_PAGE: 'login.html',
+            RESET_PAGE: 'reset.html',
             HOME_PAGE: 'main.html',
             MAIN_PAGE: 'main.html#/'+ 'flights',
             ONE_DAY_LOOKOUT: 'main.html#/onedaylookout',
             CURRENT_USER: 'CurrentUser',
             LOCALE_COOKIE_KEY: 'myLocaleCookie',  // ngx
-            LOGIN_ERROR_MSG: ' Invalid User Name or Password. Please Try Again '
+            LOGIN_ERROR_MSG: ' Invalid User Name or Password. Please Try Again ',
+            LOGIN_ERROR_MAX_ATTEMPTS: 'Too many failed attempts to log in, please check your email'
+
         })
         .run(initialize)
         .factory('sessionFactory', function () {
@@ -1109,7 +1140,7 @@ var app;
         .factory('httpSecurityInterceptor', function ($q, $rootScope ) {
             return {
                 request: function(config){
-                	$rootScope.triggerIdle();
+                	//$rootScope.triggerIdle();
                 	return config;
                 },
                 responseError: function (response) {

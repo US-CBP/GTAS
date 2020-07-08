@@ -1,0 +1,21 @@
+-- This will fail to run correctly if hit_categories table is not created AND populated
+
+CREATE OR REPLACE PROCEDURE manualHitMakerPopulate()
+BEGIN
+    SET @cnt = (Select IFNULL(MAX(id), 1) FROM hit_category);
+    START TRANSACTION;
+    WHILE @cnt > 0 DO
+            IF ((Select hc.id FROM hit_category hc WHERE hc.id = @cnt) IS NOT NULL)
+            THEN
+                INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', @cnt);
+                SET @DataID = (Select IFNULL(MAX(id), 1) FROM hit_maker);
+                INSERT INTO manual_lookout (description, id) VALUES ('Manually Generated Hit', @DataId);
+            END IF;
+            SET @cnt = @cnt - 1;
+        END WHILE;
+    COMMIT;
+END;
+
+call manualhitMakerPopulate();
+
+DROP PROCEDURE IF EXISTS manualHitMakerPopulate;

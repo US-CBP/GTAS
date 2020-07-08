@@ -20,5 +20,5 @@ import java.util.Set;
 public interface HitDetailService {
 	Set<HitDetail> getByPassengerId(Long passengerId);
 
-	List<HitDetailVo> getLast10RecentHits(Set<Passenger> passengerSet);
+	List<HitDetailVo> getLast10RecentHits(Set<Passenger> passengerSet, Passenger p);
 }

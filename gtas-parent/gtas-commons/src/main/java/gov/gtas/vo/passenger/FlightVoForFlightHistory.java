@@ -4,6 +4,7 @@ public class FlightVoForFlightHistory extends FlightVo {
 
 	private String passId;
 	private boolean bookingDetail;
+	private boolean disabledLink = false;
 
 	public String getPassId() {
 		return passId;
@@ -19,5 +20,13 @@ public class FlightVoForFlightHistory extends FlightVo {
 
 	public void setBookingDetail(boolean bookingDetail) {
 		this.bookingDetail = bookingDetail;
+	}
+
+	public void setDisabledLink(boolean disabledLink) {
+		this.disabledLink = disabledLink;
+	}
+
+	public boolean getDisabledLink() {
+		return disabledLink;
 	}
 }

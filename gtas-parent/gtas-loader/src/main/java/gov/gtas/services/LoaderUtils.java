@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.enumtype.MessageType;
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.lookup.FlightDirectionCode;
@@ -61,15 +62,42 @@ public class LoaderUtils {
 	@Autowired
 	private GtasLocalToUTCService gtasLocalToUTCService;
 
-	public Passenger createNewPassenger(PassengerVo vo) throws ParseException {
+	public Passenger createNewPassenger(PassengerVo vo, Message message) throws ParseException {
 		Passenger p = new Passenger();
+		PassengerDetailFromMessage passengerDetailFromMessage = fromVoAndMessage(vo, message, p);
+		MessageType messageType = getMessageType(message);
+		passengerDetailFromMessage.setMessageType(messageType);
 		PassengerTripDetails passengerTripDetails = new PassengerTripDetails(p);
 		PassengerDetails passengerDetails = new PassengerDetails(p);
 		p.setPassengerDetails(passengerDetails);
 		p.setPassengerTripDetails(passengerTripDetails);
+		p.getPassengerDetailFromMessages().add(passengerDetailFromMessage);
 		p.setCreatedBy(LOADER_USER);
 		updatePassenger(vo, p);
 		return p;
+	}
+
+	public MessageType getMessageType(Message message) {
+		MessageType messageType = MessageType.NO_TYPE;
+		if (message instanceof Pnr) {
+			messageType = MessageType.PNR;
+		} else if (message instanceof ApisMessage) {
+			messageType = MessageType.APIS;
+		}
+		return messageType;
+	}
+
+	public static PassengerDetailFromMessage fromVoAndMessage(PassengerVo passengerVo, Message message, Passenger p) {
+		PassengerDetailFromMessage passengerDetailFromMessage = new PassengerDetailFromMessage(p);
+		BeanUtils.copyProperties(passengerVo, passengerDetailFromMessage, getNullPropertyNames(passengerVo));
+		if (message instanceof Pnr) {
+			passengerDetailFromMessage.setMessageType(MessageType.PNR);
+
+		} else if (message instanceof ApisMessage) {
+			passengerDetailFromMessage.setMessageType(MessageType.APIS);
+		}
+		passengerDetailFromMessage.setMessage(message);
+		return passengerDetailFromMessage;
 	}
 
 	public void updatePassenger(PassengerVo vo, Passenger p) throws ParseException {
@@ -130,8 +158,10 @@ public class LoaderUtils {
 
 	}
 
-	public Document createNewDocument(DocumentVo vo) throws ParseException {
+	public Document createNewDocument(DocumentVo vo, Message message) {
 		Document d = new Document();
+		MessageType messageType = getMessageType(message);
+		d.setMessageType(messageType);
 		updateDocument(vo, d);
 		if ((StringUtils.isNotBlank(d.getIssuanceCountry())) && d.getIssuanceCountry().length() == 2) {
 			d.setIssuanceCountry(normalizeCountryCode(d.getIssuanceCountry()));

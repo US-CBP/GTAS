@@ -8,11 +8,12 @@ package gov.gtas.vo;
 import gov.gtas.model.Document;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsSummary;
+import gov.gtas.model.PIIObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
-public class HitDetailVo {
+public class HitDetailVo implements PIIObject {
 
 	private HitsSummary parent;
 
@@ -44,6 +45,8 @@ public class HitDetailVo {
 	private String ruleAuthor;
 
 	private String passengerDocNumber;
+
+	private boolean isMasked = false;
 
 	public static HitDetailVo from(HitDetail hitDetail) {
 		HitDetailVo hitDetailVo = new HitDetailVo();
@@ -217,5 +220,46 @@ public class HitDetailVo {
 
 	public void setPassengerDocNumber(String passengerDocNumber) {
 		this.passengerDocNumber = passengerDocNumber;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.setRuleDesc("DELETED");
+		this.setRuleTitle("DELETED");
+		this.setRuleConditions("DELETED");
+		this.setPassengerDocNumber("DELETED");
+		this.setRuleType("DELETED");
+		this.setPaxId(null);
+		this.setFlightId(null);
+		this.setCategory("DELETED");
+		this.setHitsRulesAndDetails(new HashMap<>());
+		this.setParent(null);
+		this.isMasked = true;
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.setRuleDesc("MASKED");
+		this.setRuleTitle("MASKED");
+		this.setRuleConditions("MASKED");
+		this.setPassengerDocNumber("MASKED");
+		this.setPassengerDocNumber("MASKED");
+		this.isMasked = true;
+		this.setRuleType("MASKED");
+		this.setCategory("MASKED");
+		this.setPaxId(null);
+		this.setFlightId(null);
+		this.setHitsRulesAndDetails(new HashMap<>());
+		this.setParent(null);
+		return this;
+	}
+
+	public boolean isMasked() {
+		return isMasked;
+	}
+
+	public void setMasked(boolean masked) {
+		isMasked = masked;
 	}
 }

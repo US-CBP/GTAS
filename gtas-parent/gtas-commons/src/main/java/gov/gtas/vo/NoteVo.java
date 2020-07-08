@@ -6,9 +6,10 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gov.gtas.model.NoteType;
+import gov.gtas.model.PIIObject;
 import gov.gtas.model.PassengerNote;
 
-public class NoteVo {
+public class NoteVo implements PIIObject {
 	private Long id;
 	private Long passengerId;
 	private String plainTextNote;
@@ -91,4 +92,17 @@ public class NoteVo {
 	public void setNoteTypeSet(Set<NoteType> noteTypeSet) {
 		this.noteTypeSet = noteTypeSet;
 	}
+
+	@Override
+	public PIIObject deletePII() {
+		setRtfNote("DELETED");
+		setPlainTextNote("DELETED");
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		setRtfNote("MASKED");
+		setPlainTextNote("MASKED");
+		return this;	}
 }

@@ -194,8 +194,8 @@ app.controller('BuildController', function ($scope, $injector, $translate, jquer
         }
         localStorage['query'] = JSON.stringify(query);
         localStorage['qbTitle'] = $scope[$scope.mode].title.length ? $scope[$scope.mode].title.trim() : '';
-        queryFlightsLink.setAttribute('target', 'qf|' + timestamp);
-        queryPassengersLink.setAttribute('target', 'qp|' + timestamp);
+/*      queryFlightsLink.setAttribute('target', 'qf|' + timestamp); //REMOVED IN TESTING TO SEE IF RESOLVED AUTO LOGOUT PREVENTING LOGIN ISSUES
+        queryPassengersLink.setAttribute('target', 'qp|' + timestamp);*/
     };
 
     $scope.ruleId = null;

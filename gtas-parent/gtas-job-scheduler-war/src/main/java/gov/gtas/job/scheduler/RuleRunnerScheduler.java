@@ -5,32 +5,37 @@
  */
 package gov.gtas.job.scheduler;
 
+import gov.gtas.constant.RuleConstants;
 import gov.gtas.job.config.JobSchedulerConfig;
 import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
-import gov.gtas.model.PendingHitDetails;
+import gov.gtas.model.lookup.AppConfiguration;
+import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
+import gov.gtas.svc.UdrService;
+import gov.gtas.svc.WatchlistService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static gov.gtas.repository.AppConfigurationRepository.RECOMPILE_RULES;
+import static org.apache.http.util.TextUtils.isBlank;
 
 /**
  * Rule Runner Scheduler class. Using Spring's Scheduled annotation for
  * scheduling tasks. The class reads configuration values from an external file.
  */
-@Component
-@Conditional(RuleRunnerCondition.class)
+@Component@ConditionalOnProperty(prefix = "rules", name = "enabled")
 public class RuleRunnerScheduler {
 
 	/**
@@ -45,6 +50,9 @@ public class RuleRunnerScheduler {
 	private boolean graphDbOn;
 	private JobSchedulerConfig jobSchedulerConfig;
 	private PendingHitDetailRepository pendingHitDetailRepository;
+	private AppConfigurationRepository appConfigurationRepository;
+	private WatchlistService watchlistService;
+	private UdrService udrService;
 
 	/* The targeting service. */
 
@@ -53,10 +61,17 @@ public class RuleRunnerScheduler {
 	 */
 	@Autowired
 	public RuleRunnerScheduler(ApplicationContext ctx, MessageStatusRepository messageStatusRepository,
-			JobSchedulerConfig jobSchedulerConfig, PendingHitDetailRepository pendingHitDetailRepository) {
+							   JobSchedulerConfig jobSchedulerConfig,
+							   PendingHitDetailRepository pendingHitDetailRepository,
+							   AppConfigurationRepository appConfigurationRepository,
+							   WatchlistService watchlistService,
+							   UdrService udrService) {
+		this.watchlistService = watchlistService;
+		this.udrService = udrService;
 		this.messageStatusRepository = messageStatusRepository;
 		this.jobSchedulerConfig = jobSchedulerConfig;
 		this.pendingHitDetailRepository = pendingHitDetailRepository;
+		this.appConfigurationRepository = appConfigurationRepository;
 
 		try {
 			graphDbOn = this.jobSchedulerConfig.getNeo4JRuleEngineEnabled();
@@ -78,8 +93,16 @@ public class RuleRunnerScheduler {
 	 * rule engine
 	 **/
 	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
-	public void jobScheduling() throws InterruptedException {
+	public void ruleEngine() throws InterruptedException {
 
+		AppConfiguration recompileRulesAndWatchlist = appConfigurationRepository.findByOption(RECOMPILE_RULES);
+		if (!isBlank(recompileRulesAndWatchlist.getOption()) && Boolean.parseBoolean(recompileRulesAndWatchlist.getValue())) {
+			logger.info("RECOMPILING KBS!");
+			watchlistService.activateAllWatchlists();
+			udrService.recompileRules(RuleConstants.UDR_KNOWLEDGE_BASE_NAME, "RULE_SCHEDULER");
+			recompileRulesAndWatchlist.setValue("false");
+			appConfigurationRepository.save(recompileRulesAndWatchlist);
+		}
 
 		int flightLimit = this.jobSchedulerConfig.getMaxFlightsPerRuleRun();
 		Set<Number> flightIdsForPendingHits = pendingHitDetailRepository.getFlightsWithPendingHitsByLimit(flightLimit);
@@ -114,7 +137,7 @@ public class RuleRunnerScheduler {
 				messageLimit);
 		int maxPassengers = this.jobSchedulerConfig.getMaxPassengersPerRuleRun();
 		if (!source.isEmpty()) {
-			Map<Long, List<MessageStatus>> messageFlightMap = geFlightMessageMap(source);
+			Map<Long, List<MessageStatus>> messageFlightMap = SchedulerUtils.geFlightMessageMap(source);
 			int runningTotal = 0;
 			List<MessageStatus> ruleThread = new ArrayList<>();
 			List<RuleRunnerThread> list = new ArrayList<>();
@@ -151,7 +174,7 @@ public class RuleRunnerScheduler {
 			source = messageStatusRepository.getMessagesFromStatus(MessageStatusEnum.NEO_LOADED.getName(),
 					messageLimit);
 			if (!source.isEmpty()) {
-				Map<Long, List<MessageStatus>> messageFlightMap = geFlightMessageMap(source);
+				Map<Long, List<MessageStatus>> messageFlightMap = SchedulerUtils.geFlightMessageMap(source);
 				int runningTotal = 0;
 				List<MessageStatus> ruleThread = new ArrayList<>();
 				List<GraphRulesThread> list = new ArrayList<>();
@@ -184,20 +207,4 @@ public class RuleRunnerScheduler {
 			}
 		}
 	}
-
-	private Map<Long, List<MessageStatus>> geFlightMessageMap(List<MessageStatus> source) {
-		Map<Long, List<MessageStatus>> messageFlightMap = new HashMap<>();
-		for (MessageStatus messageStatus : source) {
-			Long flightId = messageStatus.getFlightId();
-			if (messageFlightMap.containsKey(flightId)) {
-				messageFlightMap.get(flightId).add(messageStatus);
-			} else {
-				List<MessageStatus> messageStatuses = new ArrayList<>();
-				messageStatuses.add(messageStatus);
-				messageFlightMap.put(flightId, messageStatuses);
-			}
-		}
-		return messageFlightMap;
-	}
-
 }

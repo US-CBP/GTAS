@@ -549,7 +549,7 @@ $scope.formatBytes = function(bytes, decimals = 2) {
 
   watchListService.getWatchlistCategories().then(function(res){
       $scope.watchlistCategories =  res.data;
-      $scope.wlCatagoryGrid.data =  res.data;
+      $scope.wlCategoryGrid.data =  res.data;
   	$scope.watchlistCategories.forEach(function(item){
   		$scope.categories[item.id]=item.label;
         });
@@ -571,7 +571,7 @@ $scope.formatBytes = function(bytes, decimals = 2) {
     };
 
   
-  $scope.wlCatagoryGrid = {
+  $scope.wlCategoryGrid = {
           paginationPageSizes: [10, 15, 20],
           paginationPageSize: 10,           
           columnDefs: gridOptionsLookupService.getLookupColumnDefs('watchlist').CATEGORY,
@@ -606,7 +606,7 @@ $scope.formatBytes = function(bytes, decimals = 2) {
         exporterExcelSheetName: 'Data'
     };
 
-    $scope.wlCatagoryGrid.onRegisterApi = function (gridApi) {
+    $scope.wlCategoryGrid.onRegisterApi = function (gridApi) {
         $scope.wlGridApi = gridApi;
     };
 
@@ -619,7 +619,7 @@ $scope.formatBytes = function(bytes, decimals = 2) {
         watchListService.saveCategory($scope.wlCategoryModel).then(function () {
             watchListService.getWatchlistCategories().then(function(res){
                 $scope.watchlistCategories =  res.data;
-                $scope.wlCatagoryGrid.data =  res.data;
+                $scope.wlCategoryGrid.data =  res.data;
                 $scope.severity.data = res.data;
                 $scope.watchlistCategories.forEach(function(item){
                     $scope.categories[item.id]=item.label;

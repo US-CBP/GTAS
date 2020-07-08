@@ -9,10 +9,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Travel agency
@@ -45,9 +42,32 @@ public class Agency extends BaseEntityAudit {
 
 	private String type;
 
+
+	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
+	private Long flightId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+	private Flight flight;
+
 	@ManyToMany(mappedBy = "agencies", targetEntity = Pnr.class)
 	private Set<Pnr> pnrs = new HashSet<>();
+	
+	public Long getFlightId() {
+		return flightId;
+	}
 
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
+
+	public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
 	public String getCity() {
 		return city;
 	}
