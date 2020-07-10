@@ -22,6 +22,7 @@ import gov.gtas.model.watchlist.json.WatchlistItemSpec;
 import gov.gtas.model.watchlist.json.WatchlistSpec;
 import gov.gtas.model.watchlist.json.WatchlistTerm;
 import gov.gtas.security.service.GtasSecurityUtils;
+import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.HitCategoryService;
 import gov.gtas.services.PendingHitDetailsService;
 import gov.gtas.services.security.UserService;
@@ -47,6 +48,10 @@ import java.util.List;
 @RestController
 public class WatchlistManagementController {
 	private static final Logger logger = LoggerFactory.getLogger(WatchlistManagementController.class);
+
+
+	@Autowired
+	private AppConfigurationService appConfigurationService;
 
 	@Autowired
 	private WatchlistService watchlistService;
@@ -171,7 +176,8 @@ public class WatchlistManagementController {
 	 */
 	@RequestMapping(value = Constants.WL_COMPILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public JsonServiceResponse compileWatchlists() {
-		return watchlistService.activateAllWatchlists();
+		appConfigurationService.setRecompileFlag();
+		return new JsonServiceResponse(Status.SUCCESS, "Set rule engine to recompile watchlist!");
 	}
 
 	/**
@@ -265,7 +271,9 @@ public class WatchlistManagementController {
 			}
 		}
 
-		return results.stream().reduce(results.get(0),
+		appConfigurationService.setRecompileFlag();
+		return results.stream()
+				.reduce(results.get(0),
 				(a, b) -> new JsonServiceResponse(a.getStatus(), a.getMessage(), merge(a.getResult(), b.getResult())));
 	}
 
