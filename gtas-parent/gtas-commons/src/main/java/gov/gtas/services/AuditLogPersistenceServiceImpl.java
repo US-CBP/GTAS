@@ -11,6 +11,7 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.AuditRecord;
+import gov.gtas.model.GeneralAuditRecord;
 import gov.gtas.model.User;
 import gov.gtas.repository.AuditRecordRepository;
 import gov.gtas.services.security.UserService;
@@ -135,7 +136,7 @@ public class AuditLogPersistenceServiceImpl implements AuditLogPersistenceServic
 			}
 		}
 		return auditLogRepository
-				.save(new AuditRecord(actionType, target, Status.SUCCESS, message, actionDataString, user));
+				.save(new GeneralAuditRecord(actionType, target, Status.SUCCESS, message, actionDataString, user));
 	}
 
 	/*
