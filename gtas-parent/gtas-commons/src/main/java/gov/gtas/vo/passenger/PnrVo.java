@@ -357,6 +357,9 @@ public class PnrVo extends MessageVo implements PIIObject {
         for (PassengerVo pVo : passengers) {
             pVo.deletePII();
         }
+        for (CreditCardVo cVo : creditCards) {
+            cVo.deletePII();
+        }
         for (DocumentVo dVo : documents) {
             dVo.deletePII();
         }
@@ -384,6 +387,9 @@ public class PnrVo extends MessageVo implements PIIObject {
     public PIIObject maskPII() {
         for (PassengerVo pVo : passengers) {
             pVo.maskPII();
+        }
+        for (CreditCardVo cVo : creditCards) {
+            cVo.maskPII();
         }
         for (PhoneVo phones : phoneNumbers) {
             phones.maskPII();
