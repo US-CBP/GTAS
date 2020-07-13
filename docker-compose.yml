@@ -70,9 +70,9 @@ services:
     image: rmohr/activemq:5.15.9
     container_name: activemq
     restart: always
-    ports:
-      - 8161:8161
-      - 61616:61616
+    # ports:
+    #   - 8161:8161
+    #   - 61616:61616
     networks: 
       - gtas-webapp-network
 
