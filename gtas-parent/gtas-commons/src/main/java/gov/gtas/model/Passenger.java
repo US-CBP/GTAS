@@ -101,6 +101,9 @@ public class Passenger extends BaseEntityAudit {
 	@Column(nullable = false)
 	private Boolean deleted = Boolean.FALSE;
 
+	@OneToMany(mappedBy = "passenger")
+	private Set<PassengerAuditRecord> auditRecords;
+
 	/*
 	 * Used to keep a referenced to passengerVO from parser. Only used in loader to
 	 * help establish relationships. This is *not* used
@@ -328,5 +331,13 @@ public class Passenger extends BaseEntityAudit {
 
 	public void setPendingHitDetails(Set<PendingHitDetails> pendingHitDetails) {
 		this.pendingHitDetails = pendingHitDetails;
+	}
+
+	public Set<PassengerAuditRecord> getAuditRecords() {
+		return auditRecords;
+	}
+
+	public void setAuditRecords(Set<PassengerAuditRecord> auditRecords) {
+		this.auditRecords = auditRecords;
 	}
 }

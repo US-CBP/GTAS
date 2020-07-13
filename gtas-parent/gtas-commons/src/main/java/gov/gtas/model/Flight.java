@@ -137,6 +137,9 @@ public class Flight extends BaseEntityAudit {
 	@ManyToMany(mappedBy = "flights", targetEntity = ApisMessage.class)
 	private Set<ApisMessage> apis = new HashSet<>();
 
+	@OneToMany(mappedBy = "flight", targetEntity = FlightAuditRecord.class)
+	private Set<FlightAuditRecord> flightAuditRecords = new HashSet<>();
+
 	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
 	private Set<BookingDetail> bookingDetails = new HashSet<>();
 
@@ -436,5 +439,13 @@ public class Flight extends BaseEntityAudit {
 
 	public void setFlightHitsExternal(FlightHitsExternal flightHitsExternal) {
 		this.flightHitsExternal = flightHitsExternal;
+	}
+
+	public Set<FlightAuditRecord> getFlightAuditRecords() {
+		return flightAuditRecords;
+	}
+
+	public void setFlightAuditRecords(Set<FlightAuditRecord> flightAuditRecords) {
+		this.flightAuditRecords = flightAuditRecords;
 	}
 }

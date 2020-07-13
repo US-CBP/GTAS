@@ -10,5 +10,8 @@ public enum Status {
 
 	SUCCESS_WITH_WARNING,
 
-	FAILURE
+	FAILURE,
+
+	WEB_CALL;
+
 }
