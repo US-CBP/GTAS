@@ -3,7 +3,7 @@ services:
   http-proxy:
     image: simbam1/http-proxy:dev
     container_name: http-proxy
-    build: 
+    build:  
       context: ./gtas-parent
       dockerfile: docker-resources/proxy.Dockerfile
     restart: always
