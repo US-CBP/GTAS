@@ -23,6 +23,7 @@ import gov.gtas.model.HitDetail;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.model.Passenger;
+import gov.gtas.rule.KIEAndLastUpdate;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.ErrorPersistenceService;
 import gov.gtas.services.NotificatonService;
@@ -48,6 +49,9 @@ import gov.gtas.svc.util.TargetingResultUtils;
 public class RuleRunnerThread implements Callable<Boolean> {
 
 	private Logger logger = LoggerFactory.getLogger(RuleRunnerThread.class);
+
+
+	private Map<String, KIEAndLastUpdate> rules = new HashMap<>();
 
 	private final ApplicationContext applicationContext;
 	/**
@@ -84,7 +88,7 @@ public class RuleRunnerThread implements Callable<Boolean> {
 		TargetingService targetingService = applicationContext.getBean(TargetingService.class);
 		RuleHitPersistenceService persistenceService = applicationContext.getBean(RuleHitPersistenceService.class);
 		try {
-			ruleResults = targetingService.analyzeLoadedMessages(messageStatuses);
+			ruleResults = targetingService.analyzeLoadedMessages(messageStatuses, rules);
 			logger.debug("generating hit details");
 			Set<HitDetail> hitDetails = targetingService.generateHitDetails(ruleResults.getRuleResults());
 			logger.debug("About to batch");
@@ -208,5 +212,8 @@ public class RuleRunnerThread implements Callable<Boolean> {
 
 	void setMessageStatuses(List<MessageStatus> messageStatuses) {
 		this.messageStatuses = messageStatuses;
+	}
+	public void setRules(Map<String, KIEAndLastUpdate> rules) {
+		this.rules = rules;
 	}
 }

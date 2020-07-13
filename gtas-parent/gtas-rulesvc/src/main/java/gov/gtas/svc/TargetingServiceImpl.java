@@ -7,6 +7,7 @@ package gov.gtas.svc;
 
 import gov.gtas.bo.CompositeRuleServiceResult;
 import gov.gtas.bo.RuleExecutionStatistics;
+import gov.gtas.constant.RuleConstants;
 import gov.gtas.model.RuleHitDetail;
 import gov.gtas.bo.RuleServiceResult;
 import gov.gtas.constant.RuleServiceConstants;
@@ -15,6 +16,7 @@ import gov.gtas.error.CommonServiceException;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
 import gov.gtas.repository.udr.RuleMetaRepository;
+import gov.gtas.rule.KIEAndLastUpdate;
 import gov.gtas.rule.RuleService;
 import gov.gtas.services.*;
 import gov.gtas.svc.request.builder.RuleEngineRequestBuilder;
@@ -102,7 +104,7 @@ public class TargetingServiceImpl implements TargetingService {
 
 	@Override
 	@Transactional
-	public RuleResultsWithMessageStatus analyzeLoadedMessages(List<MessageStatus> source) {
+	public RuleResultsWithMessageStatus analyzeLoadedMessages(List<MessageStatus> source, Map<String, KIEAndLastUpdate> rules) {
 		logger.info("Entering analyzeLoadedMessages()");
 
 		RuleResultsWithMessageStatus ruleResultsWithMessageStatus = new RuleResultsWithMessageStatus();
@@ -121,7 +123,7 @@ public class TargetingServiceImpl implements TargetingService {
 		RuleResults ruleResults = null;
 		try {
 			logger.info("About to execute rules");
-			ruleResults = executeRules(target);
+			ruleResults = executeRules(target, rules);
 			logger.info("updating messages status from loaded to analyzed.");
 			for (MessageStatus ms : procssedMessages) {
 				ms.setMessageStatusEnum(MessageStatusEnum.RUNNING_RULES);
@@ -182,14 +184,13 @@ public class TargetingServiceImpl implements TargetingService {
 		return context;
 	}
 
-	private RuleResults executeRules(List<Message> target) {
+	private RuleResults executeRules(List<Message> target, Map<String, KIEAndLastUpdate> rules) {
 		logger.debug("Entering executeRules().");
 		RuleExecutionContext ctx = createPnrApisRequestContext(target);
 		logger.debug("Running Rule set.");
 		// default knowledge Base is the UDR KB
-		RuleServiceResult udrResult = ruleService.invokeRuleEngine(ctx.getRuleServiceRequest());
+		RuleServiceResult udrResult = ruleService.invokeRuleEngine(ctx.getRuleServiceRequest(), RuleConstants.UDR_KNOWLEDGE_BASE_NAME, rules);
 		logger.debug("Ran Rule set.");
-
 		if (udrResult != null) {
 			RuleExecutionStatistics res = udrResult.getExecutionStatistics();
 			int totalRulesFired = res.getTotalRulesFired();
@@ -201,13 +202,11 @@ public class TargetingServiceImpl implements TargetingService {
 			}
 			logger.debug("\n\n**********************************************************************");
 		}
-
 		RuleServiceResult wlResult = ruleService.invokeRuleEngine(ctx.getRuleServiceRequest(),
-				WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
+				WatchlistConstants.WL_KNOWLEDGE_BASE_NAME, rules);
 		RuleResults ruleResults = new RuleResults();
 		ruleResults.setUdrResult(udrResult);
 		ruleResults.setWatchListResult(wlResult);
-
 		logger.debug("Exiting executeRules().");
 		return ruleResults;
 	}
@@ -311,6 +310,7 @@ public class TargetingServiceImpl implements TargetingService {
 		messageStatusRepository.saveAll(messageStatuses);
 	}
 
+	@Override
 	public Set<HitDetail> generateHitDetails(RuleResults ruleRunningResult) {
 		logger.debug("in create hits and cases");
 		Set<HitDetail> hitDetails = new HashSet<>();
