@@ -259,9 +259,9 @@ secrets:
   elastic-ca:
     file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
   etl-neo4j-user:
-    file: ./gtas-parent/gtas-commons/certs/etl_neo4j_user.txt
+    file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_user.txt
   etl-neo4j-password:
-    file: ./gtas-parent/gtas-commons/certs/etl_neo4j_password.txt
+    file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_password.txt
 volumes:
   db-data:
   m2:
