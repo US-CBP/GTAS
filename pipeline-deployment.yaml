@@ -119,7 +119,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
     volumes:
       - certs:/usr/share/elasticsearch/config/certs/elasticsearch/
     environment:  
