@@ -87,7 +87,7 @@ services:
     labels:
       kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
-      kompose.volume.size: 200Gi
+      # kompose.volume.size: 200Gi
     deploy:
       placement:
         constraints:
@@ -134,7 +134,7 @@ services:
     labels:
       kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
-      kompose.volume.size: 200Gi
+      # kompose.volume.size: 200Gi
     deploy:
       placement:
         constraints:
