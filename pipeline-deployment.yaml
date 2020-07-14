@@ -7,7 +7,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
     environment:
       BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
     volumes:
