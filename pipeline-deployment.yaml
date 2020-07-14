@@ -155,6 +155,6 @@ networks:
   gtas_webapp-network:
     attachable: true
 volumes:
-  - type: bind
+  - type: volume
     source: ./gtas-parent/gtas-commons/certs
     target: certs
