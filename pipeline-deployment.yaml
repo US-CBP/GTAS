@@ -11,7 +11,7 @@ services:
     environment:
       BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
     volumes:
-      - ./gtas-parent/gtas-commons/certs:/temp-cert
+      - certs:/temp-cert
   web-app:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -37,7 +37,7 @@ services:
         constraints:
           - node.labels.role == backend
     volumes:
-      - ./gtas-parent/gtas-commons/certs:/temp-cert
+      - certs:/temp-cert
   gtas-scheduler:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -82,7 +82,7 @@ services:
         constraints:
           - node.labels.role == backend
     volumes:
-      - ./gtas-parent/gtas-commons/certs:/etc/kibana/config/
+      - certs:/etc/kibana/config/
   elasticsearch:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -92,7 +92,7 @@ services:
         constraints:
           - node.labels.role == backend
     volumes:
-      - ./gtas-parent/gtas-commons/certs:/usr/share/elasticsearch/temp-cert
+      - certs:/usr/share/elasticsearch/temp-cert
   mariadb:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -121,7 +121,7 @@ services:
         constraints:
           - node.labels.role == frontend
     volumes:
-      - ./gtas-parent/gtas-commons/certs:/usr/share/elasticsearch/config/certs/elasticsearch/
+      - certs:/usr/share/elasticsearch/config/certs/elasticsearch/
     environment:  
       LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password/logstash-keystore-password' 
       MYSQL_USER_PATH: '/run/secrets/mysql-logstash-user/mysql-logstash-user'
