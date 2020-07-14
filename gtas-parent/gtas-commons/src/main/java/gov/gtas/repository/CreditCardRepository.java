@@ -25,8 +25,7 @@ public interface CreditCardRepository extends CrudRepository<CreditCard, Long> {
 			"from CreditCard cc " +
 			"left join fetch cc.pnrs ccPnrs " +
 			"left join fetch ccPnrs.passengers " +
-			"where cc.id in :creditCardIds " +
-			"and cc.flightId in :flightIds " +
+			"where cc.flightId in :flightIds " +
 			"and ccPnrs.id in :pnrIds")
-	Set<CreditCard> findCreditCardToDelete(@Param("creditCardIds") Set<Long> creditCardIds, @Param("flightIds")Set<Long> flightIds, @Param("pnrIds") Set<Long> pnrIds);
+	Set<CreditCard> findCreditCardToDelete(@Param("flightIds")Set<Long> flightIds, @Param("pnrIds") Set<Long> pnrIds);
 }
