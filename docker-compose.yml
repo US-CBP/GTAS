@@ -268,10 +268,14 @@ volumes:
   scheduler-logs:
   certs:
   neo4j-data:
+    labels:
+      kompose.volume.size: 200Gi
   logstash-conf:
   kibana-conf:
   elasticsearch-conf:
   es-data:
+    labels:
+      kompose.volume.size: 200Gi
 
 networks:
   gtas-webapp-network:

@@ -87,8 +87,6 @@ services:
     labels:
       kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
-      kompose.volume.selector: es-data
-      kompose.volume.size: 200Gi
     deploy:
       placement:
         constraints:
@@ -135,8 +133,6 @@ services:
     labels:
       kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
-      kompose.volume.selector: neo4j-data
-      kompose.volume.size: 200Gi
     deploy:
       placement:
         constraints:
