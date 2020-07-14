@@ -11,7 +11,7 @@ services:
     environment:
       BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
     volumes:
-      - certs:/certs
+      - certs:/
   web-app:
     labels:
       kompose.image-pull-policy: "Always" 
