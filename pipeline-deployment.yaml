@@ -11,7 +11,7 @@ services:
     environment:
       BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
     volumes:
-      - certs:/
+      - certs:/temp-cert
   web-app:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -100,7 +100,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == not-deployed
   logstash:
     labels:
       kompose.image-pull-policy: "Always" 
