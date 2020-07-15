@@ -7,24 +7,24 @@ jobs:
     steps:
       - uses: actions/checkout@master
         name: Checkout latest code
-      # - uses: docker/build-push-action@v1
-      #   name: Build and push GTAS web application image
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }} 
-      #     repository: simbam1/webapp 
-      #     path: ./gtas-parent
-      #     dockerfile: ./gtas-parent/web-app.Dockerfile
-      #     tags: dev
-      # - uses: docker/build-push-action@v1
-      #   name: Build and push mariadb image
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }} 
-      #     repository: simbam1/mariadb
-      #     path: ./gtas-parent
-      #     dockerfile: ./gtas-parent/mariadb.Dockerfile
-      #     tags: dev
+      - uses: docker/build-push-action@v1
+        name: Build and push GTAS web application image
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/webapp 
+          path: ./gtas-parent
+          dockerfile: ./gtas-parent/web-app.Dockerfile
+          tags: dev
+      - uses: docker/build-push-action@v1
+        name: Build and push mariadb image
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/mariadb
+          path: ./gtas-parent
+          dockerfile: ./gtas-parent/mariadb.Dockerfile
+          tags: dev
       - uses: docker/build-push-action@v1
         name: Build and push GTAS proxy image
         with:
@@ -34,69 +34,69 @@ jobs:
           path: ./gtas-parent
           dockerfile: ./gtas-parent/docker-resources/proxy.Dockerfile
           tags: dev
-      # - uses: docker/build-push-action@v1
-      #   name: Build and push GTAS scheduler image
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}  
-      #     repository: simbam1/gtas-scheduler
-      #     path: .
-      #     dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
-      #     tags: dev
-      # - uses: docker/build-push-action@v1
-      #   name: Build and push kibana image
-      #   with: 
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }} 
-      #     repository: simbam1/kibana
-      #     path: ./gtas-parent/scripts/elastic
-      #     dockerfile: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
-      #     tags: dev
-      # - uses: docker/build-push-action@v1
-      #   name: Build and push elasticsearch image
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }} 
-      #     repository: simbam1/elasticsearch
-      #     path: ./gtas-parent/scripts/elastic    
-      #     dockerfile: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
-      #     tags: dev
-      # - uses: docker/build-push-action@v1
-      #   name: Build and push logstash image
-      #   with:  
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}   
-      #     repository: simbam1/logstash
-      #     path: ./gtas-parent/scripts/elastic
-      #     dockerfile: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
-      #     tags: dev
-      # - uses: docker/build-push-action@v1
-      #   name: Build and push ELK setup image
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }} 
-      #     repository: simbam1/elk-setup
-      #     path: ./gtas-parent/scripts/elastic
-      #     dockerfile: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
-      #     tags: dev
-      # - uses: docker/build-push-action@v1 
-      #   name: Build and push Neo4J ETL job image     
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }} 
-      #     password: ${{ secrets.DOCKER_PASSWORD }}  
-      #     repository: simbam1/neo4j-etl-job
-      #     path: .
-      #     dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
-      #     tags: dev
-      # - uses: docker/build-push-action@v1 
-      #   name: Build and push Neo4J image
-      #   with: 
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}  
-      #     repository: simbam1/neo4j 
-      #     path: .
-      #     dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
-      #     tags: dev
+      - uses: docker/build-push-action@v1
+        name: Build and push GTAS scheduler image
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}  
+          repository: simbam1/gtas-scheduler
+          path: .
+          dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
+          tags: dev
+      - uses: docker/build-push-action@v1
+        name: Build and push kibana image
+        with: 
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/kibana
+          path: ./gtas-parent/scripts/elastic
+          dockerfile: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
+          tags: dev
+      - uses: docker/build-push-action@v1
+        name: Build and push elasticsearch image
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/elasticsearch
+          path: ./gtas-parent/scripts/elastic    
+          dockerfile: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
+          tags: dev
+      - uses: docker/build-push-action@v1
+        name: Build and push logstash image
+        with:  
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}   
+          repository: simbam1/logstash
+          path: ./gtas-parent/scripts/elastic
+          dockerfile: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
+          tags: dev
+      - uses: docker/build-push-action@v1
+        name: Build and push ELK setup image
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+          repository: simbam1/elk-setup
+          path: ./gtas-parent/scripts/elastic
+          dockerfile: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
+          tags: dev
+      - uses: docker/build-push-action@v1 
+        name: Build and push Neo4J ETL job image     
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }} 
+          password: ${{ secrets.DOCKER_PASSWORD }}  
+          repository: simbam1/neo4j-etl-job
+          path: .
+          dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
+          tags: dev
+      - uses: docker/build-push-action@v1 
+        name: Build and push Neo4J image
+        with: 
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}  
+          repository: simbam1/neo4j 
+          path: .
+          dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
+          tags: dev
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
