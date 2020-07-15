@@ -89,7 +89,6 @@ public final class EdifactLexer {
 		if (end == -1) {
 			return null;
 		}
-
 		return this.message.substring(start, end);
 	}
 

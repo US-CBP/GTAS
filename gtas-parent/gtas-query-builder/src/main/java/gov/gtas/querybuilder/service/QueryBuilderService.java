@@ -7,11 +7,9 @@ package gov.gtas.querybuilder.service;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_QUERIES;
 
-import gov.gtas.enumtype.EntityEnum;
+import gov.gtas.aop.annotations.QueryRequestAudit;
 import gov.gtas.model.*;
-import gov.gtas.model.udr.json.QueryEntity;
 import gov.gtas.model.udr.json.QueryObject;
-import gov.gtas.model.udr.json.QueryTerm;
 import gov.gtas.querybuilder.exceptions.InvalidQueryException;
 import gov.gtas.querybuilder.exceptions.InvalidQueryRepositoryException;
 import gov.gtas.querybuilder.exceptions.InvalidUserRepositoryException;
@@ -28,7 +26,6 @@ import gov.gtas.querybuilder.repository.QueryBuilderRepository;
 import gov.gtas.querybuilder.validation.util.QueryValidationUtils;
 import gov.gtas.querybuilder.vo.FlightQueryVo;
 import gov.gtas.querybuilder.vo.PassengerQueryVo;
-import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.SeatServiceImpl;
 import gov.gtas.services.dto.FlightsPageDto;
@@ -39,7 +36,6 @@ import gov.gtas.vo.passenger.PassengerGridItemVo;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -138,6 +134,7 @@ public class QueryBuilderService {
 	}
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
+	@QueryRequestAudit
 	public FlightsPageDto runFlightQuery(QueryRequest queryRequest) throws InvalidQueryException {
 
 		// validate queryRequest
@@ -177,6 +174,7 @@ public class QueryBuilderService {
 	}
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
+	@QueryRequestAudit
 	public PassengersPageDto runPassengerQuery(QueryRequest queryRequest) throws InvalidQueryException {
 
 		// validate queryRequest
@@ -218,7 +216,13 @@ public class QueryBuilderService {
 					
 					String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), passenger.getId());
 					vo.setSeat(seatNumber);
-					
+
+					if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
+						vo.maskPII();
+					}
+					if (passenger.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
+						vo.deletePII();
+					}
 					passengerList.add(vo);
 				}
 			}
@@ -244,7 +248,9 @@ public class QueryBuilderService {
 		boolean isWatchlistHit = false;
 		HitsSummary hs = passenger.getHits();
 		if (hs != null) {
-			isRuleHit = hs.getRuleHitCount() != null && hs.getRuleHitCount() > 0;
+			isRuleHit = hs.getRuleHitCount() != null && hs.getRuleHitCount() > 0 ||
+					(hs.getGraphHitCount() != null && hs.getGraphHitCount() > 0) ||
+					(hs.getExternalHitCount() > 0);
 			isWatchlistHit = hs.getWatchListHitCount() != null && hs.getWatchListHitCount() > 0;
 		}
 		vo.setOnRuleHitList(isRuleHit);
@@ -320,30 +326,6 @@ public class QueryBuilderService {
 		}
 
 		return resultList;
-	}
-
-	private boolean hasFlightLeg(QueryObject queryObject) {
-		boolean result = false;
-		QueryEntity queryEntity = null;
-
-		List<QueryEntity> rules = queryObject.getRules();
-		if (rules != null) {
-			for (QueryEntity rule : rules) {
-
-				queryEntity = rule;
-				if (queryEntity instanceof QueryTerm) {
-					QueryTerm queryTerm = (QueryTerm) queryEntity;
-					String entity = queryTerm.getEntity();
-					if (entity != null && entity.equalsIgnoreCase(EntityEnum.BOOKING_DETAIL.getEntityName()))
-						result = true;
-
-				}
-
-			}
-
-		}
-
-		return result;
 	}
 
 }

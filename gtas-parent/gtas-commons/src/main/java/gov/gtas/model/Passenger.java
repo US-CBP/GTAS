@@ -35,10 +35,20 @@ public class Passenger extends BaseEntityAudit {
 			CascadeType.PERSIST }, targetEntity = PassengerTripDetails.class, fetch = FetchType.LAZY, mappedBy = "passenger", optional = false)
 	private PassengerTripDetails passengerTripDetails;
 
+	@OneToOne(cascade = {
+			CascadeType.PERSIST }, targetEntity = DataRetentionStatus.class, mappedBy = "passenger", optional = false)
+	private DataRetentionStatus dataRetentionStatus = new DataRetentionStatus(this);
+
+	@OneToMany(cascade = {
+			CascadeType.PERSIST }, mappedBy = "passenger", targetEntity = PassengerDetailFromMessage.class, fetch = FetchType.LAZY)
+	private Set<PassengerDetailFromMessage> passengerDetailFromMessages = new HashSet<>();
+
+
 	@OneToOne(mappedBy = "passenger", targetEntity = PassengerWLTimestamp.class, fetch = FetchType.LAZY)
 	private PassengerWLTimestamp passengerWLTimestamp;
 
-	@OneToOne(mappedBy = "passenger", targetEntity = PassengerIDTag.class, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {
+			CascadeType.PERSIST }, mappedBy = "passenger", targetEntity = PassengerIDTag.class, fetch = FetchType.LAZY)
 	private PassengerIDTag passengerIDTag;
 
 	@ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
@@ -81,12 +91,18 @@ public class Passenger extends BaseEntityAudit {
 	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
 	private Set<Notification> notifications = new HashSet<>();
 
+	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<PassengerNote> notes = new HashSet<>();
+
 	@Type(type = "uuid-char")
 	@Column(name = "uuid", updatable = false)
 	private UUID uuid = UUID.randomUUID();
 
 	@Column(nullable = false)
 	private Boolean deleted = Boolean.FALSE;
+
+	@OneToMany(mappedBy = "passenger")
+	private Set<PassengerAuditRecord> auditRecords;
 
 	/*
 	 * Used to keep a referenced to passengerVO from parser. Only used in loader to
@@ -95,6 +111,16 @@ public class Passenger extends BaseEntityAudit {
 	@Transient
 	private UUID parserUUID;
 
+	@Transient
+	private Set<PendingHitDetails> pendingHitDetails = new HashSet<>();
+
+	public Set<PassengerNote> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(Set<PassengerNote> notes) {
+		this.notes = notes;
+	}
 	public UUID getParserUUID() {
 		return parserUUID;
 	}
@@ -281,5 +307,37 @@ public class Passenger extends BaseEntityAudit {
 
 	public void setHitViewStatuses(Set<HitViewStatus> hitViewStatuses) {
 		this.hitViewStatuses = hitViewStatuses;
+	}
+
+	public DataRetentionStatus getDataRetentionStatus() {
+		return dataRetentionStatus;
+	}
+
+	public void setDataRetentionStatus(DataRetentionStatus dataRetentionStatus) {
+		this.dataRetentionStatus = dataRetentionStatus;
+	}
+
+	public Set<PassengerDetailFromMessage> getPassengerDetailFromMessages() {
+		return passengerDetailFromMessages;
+	}
+
+	public void setPassengerDetailFromMessages(Set<PassengerDetailFromMessage> passengerDetailFromMessages) {
+		this.passengerDetailFromMessages = passengerDetailFromMessages;
+	}
+
+	public Set<PendingHitDetails> getPendingHitDetails() {
+		return pendingHitDetails;
+	}
+
+	public void setPendingHitDetails(Set<PendingHitDetails> pendingHitDetails) {
+		this.pendingHitDetails = pendingHitDetails;
+	}
+
+	public Set<PassengerAuditRecord> getAuditRecords() {
+		return auditRecords;
+	}
+
+	public void setAuditRecords(Set<PassengerAuditRecord> auditRecords) {
+		this.auditRecords = auditRecords;
 	}
 }

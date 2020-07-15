@@ -6,24 +6,29 @@
 package gov.gtas.services;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.repository.PendingHitDetailRepository;
+import gov.gtas.summary.MessageAction;
+import gov.gtas.summary.MessageSummary;
+import gov.gtas.summary.MessageSummaryList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.util.FileUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.repository.MessageRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class Loader {
@@ -38,8 +43,18 @@ public class Loader {
 	@Autowired
 	private PnrMessageService pnrLoader;
 
+	@Autowired
+	private GenericLoading genericLoading;
+
+	@Autowired
+	private PendingHitDetailRepository pendingHitDetailRepository;
+
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
+
+	@Value("${additional.processing.enabled.passenger}")
+	private Boolean additionalProcessing;
+
 
 	/**
 	 * Processes all the messages in a single file.
@@ -52,12 +67,13 @@ public class Loader {
 	 * @return array of integers containing loaded message count at index 0 and
 	 *         failed message count at index 1.
 	 */
-	@Transactional
 	public ProcessedMessages processMessage(File f, String[] primeFlightKey) {
 		String filePath = f.getAbsolutePath();
 		MessageDto msgDto = new MessageDto();
-		MessageLoaderService svc;
-		List<String> rawMessages;
+		MessageLoaderService svc = null;
+		boolean genericLoad = false;
+		MessageSummaryList msl = null;
+		String text = null;
 		try {
 			if (exceedsMaxSize(f)) {
 				throw new LoaderException("exceeds max file size");
@@ -66,21 +82,35 @@ public class Loader {
 
 			byte[] raw = FileUtils.readSmallFile(filePath);
 			String tmp = new String(raw, StandardCharsets.UTF_8);
-			String text = ParseUtils.stripStxEtxHeaderAndFooter(tmp);
-
-			if (text.contains("PAXLST")) {
+			text = ParseUtils.stripStxEtxHeaderAndFooter(tmp);
+			String potentialMessageList = tmp.trim();
+			if (maybeJSON(potentialMessageList)) {
+				try {
+					ObjectMapper om = new ObjectMapper();
+					msl = om.readValue(potentialMessageList, MessageSummaryList.class);
+					if ((msl.getMessageAction() == MessageAction.RAW || msl.getMessageAction() == MessageAction.RAW_APIS
+					|| msl.getMessageAction() == MessageAction.RAW_PNR)) {
+						// Raw messages are ALWAYS contained as the first message summary and are ALWAYS
+						// pertaining to a file instead of a specific summary.
+						// Raw messages will always have 1 and only 1 message.
+						text = msl.getMessageSummaryList().get(0).getRawMessage();
+					} else {
+						genericLoad = true;
+					}
+				} catch (Exception ignored) {
+					//We don't care if the message doesn't marshall. It might be a legitimate APIS/PNR edifact
+				}
+			}
+			if (!genericLoad && text.contains("PAXLST")) {
 				svc = apisLoader;
 				msgDto.setMsgType("APIS");
-			} else if (text.contains("PNRGOV")) {
+			} else if (!genericLoad && text.contains("PNRGOV")) {
 				svc = pnrLoader;
 				msgDto.setMsgType("PNR");
-			} else {
+			} else if (!genericLoad){
 				throw new LoaderException("unrecognized file type");
 			}
-
-			msgDto.setRawMsgs(svc.preprocess(text));
-
-		} catch (Exception e) {
+		} catch (LoaderException | IOException e) {
 			logger.error("error processing message.", e);
 			String stacktrace = ErrorUtils.getStacktrace(e);
 			Message m = new Message();
@@ -97,37 +127,74 @@ public class Loader {
 			return processedMessages;
 		}
 
-		int successMsgCount = 0;
-		int failedMsgCount = 0;
-		msgDto.setFilepath(filePath);
-		rawMessages = msgDto.getRawMsgs();
+
 		List<MessageStatus> messageStatuses = new ArrayList<>();
 		List<TamrPassenger> tamrPassengers = new ArrayList<>();
-		for (String rawMessage : rawMessages) {
-			msgDto.setRawMsg(rawMessage);
-			MessageDto parsedMessageDto = svc.parse(msgDto);
-			if (parsedMessageDto.getMessageStatus().isSuccess()) {
-				MessageInformation messageInformation = svc.load(parsedMessageDto);
-				MessageStatus messageStatus = messageInformation.getMessageStatus();
-				if (tamrEnabled) {
-					tamrPassengers.addAll(messageInformation.getTamrPassengers());
-				}
-				messageStatuses.add(messageStatus);
-				if (messageStatus.isSuccess()) {
+		List<MessageSummary> messageSummaries = new ArrayList<>();
+		int successMsgCount = 0;
+		int failedMsgCount = 0;
+		if (genericLoad) {
+			for (MessageSummary ms : msl.getMessageSummaryList()) {
+				MessageInformation mi = genericLoading.load(ms, filePath);
+				MessageStatus messageStatus = mi.getMessageStatus();
+				if (messageStatus.isNoLoadingError()) {
+					messageStatus.setMessageStatusEnum(MessageStatusEnum.LOADED);
 					successMsgCount++;
-				} else {
+					if (tamrEnabled) {
+						tamrPassengers.addAll(mi.getTamrPassengers());
+					}
+					if (additionalProcessing) {
+						messageSummaries.add(mi.getMessageSummary());
+					}
+					if (!mi.getPendingHitDetailsSet().isEmpty()) {
+						pendingHitDetailRepository.saveAll(mi.getPendingHitDetailsSet());
+					}
+		 		} else {
+					messageStatus.setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 					failedMsgCount++;
 				}
-			} else {
-				messageStatuses.add(parsedMessageDto.getMessageStatus());
-				failedMsgCount++;
+				messageStatuses.add(messageStatus);
+			}
+		} else {
+			msgDto.setRawMsgs(svc.preprocess(text));
+			msgDto.setFilepath(filePath);
+			List<String> rawMessages = msgDto.getRawMsgs();
+
+			for (String rawMessage : rawMessages) {
+				msgDto.setRawMsg(rawMessage);
+				MessageDto parsedMessageDto = svc.parse(msgDto);
+				if (parsedMessageDto.getMessageStatus().isNoLoadingError()) {
+					MessageInformation messageInformation = svc.load(parsedMessageDto);
+					MessageStatus messageStatus = messageInformation.getMessageStatus();
+					if (tamrEnabled) {
+						tamrPassengers.addAll(messageInformation.getTamrPassengers());
+					}
+					if (additionalProcessing) {
+						messageSummaries.add(messageInformation.getMessageSummary());
+					}
+					messageStatuses.add(messageStatus);
+					if (messageStatus.isNoLoadingError()) {
+						successMsgCount++;
+					} else {
+						failedMsgCount++;
+					}
+				} else {
+					messageStatuses.add(parsedMessageDto.getMessageStatus());
+					failedMsgCount++;
+				}
 			}
 		}
 		ProcessedMessages processedMessages = new ProcessedMessages();
 		processedMessages.setProcessed(new int[] { successMsgCount, failedMsgCount });
 		processedMessages.setMessageStatusList(messageStatuses);
 		processedMessages.setTamrPassengers(tamrPassengers);
+		processedMessages.setMessageSummaries(messageSummaries);
 		return processedMessages;
+	}
+
+	private boolean maybeJSON(String potentialMessageList) {
+		return (potentialMessageList.startsWith("{") || potentialMessageList.startsWith("[")) &&
+				(potentialMessageList.endsWith("}") || potentialMessageList.endsWith("]"));
 	}
 
 	private boolean exceedsMaxSize(File f) {

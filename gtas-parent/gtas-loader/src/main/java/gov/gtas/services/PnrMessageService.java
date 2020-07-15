@@ -10,25 +10,21 @@ import gov.gtas.enumtype.TripTypeEnum;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import gov.gtas.model.*;
 import gov.gtas.parsers.tamr.TamrAdapter;
-import gov.gtas.parsers.tamr.TamrAdapterImpl;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.pnrgov.PnrGovParser;
@@ -43,11 +39,7 @@ public class PnrMessageService extends MessageLoaderService {
 
 	private final LoaderUtils utils;
 
-	private final LookUpRepository lookupRepo;
-
 	private final BagRepository bagDao;
-
-	private final FlightPaxRepository flightPaxRepository;
 
 	private final BookingBagRepository bookingBagRepository;
     
@@ -56,14 +48,16 @@ public class PnrMessageService extends MessageLoaderService {
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
 
+	@Value("${additional.processing.enabled.passenger}")
+	private Boolean additionalProcessing;
+
+
 	@Autowired
-	public PnrMessageService(PnrRepository msgDao, LoaderUtils utils, LookUpRepository lookupRepo,
-			FlightPaxRepository flightPaxRepository, BagRepository bagRepository,
+	public PnrMessageService(PnrRepository msgDao, LoaderUtils utils,
+			BagRepository bagRepository,
 			BookingBagRepository bookingBagRepository, TamrAdapter tamrAdapter) {
 		this.msgDao = msgDao;
 		this.utils = utils;
-		this.lookupRepo = lookupRepo;
-		this.flightPaxRepository = flightPaxRepository;
 		this.bagDao = bagRepository;
 		this.bookingBagRepository = bookingBagRepository;
 		this.tamrAdapter = tamrAdapter;
@@ -75,6 +69,7 @@ public class PnrMessageService extends MessageLoaderService {
 	}
 
 	@Override
+	@Transactional
 	public MessageDto parse(MessageDto msgDto) {
 		logger.debug("@ parse");
 		long startTime = System.nanoTime();
@@ -91,7 +86,7 @@ public class PnrMessageService extends MessageLoaderService {
 			loaderRepo.checkHashCode(vo.getHashCode());
 			pnr.setRaw(LobUtils.createClob(vo.getRaw()));
 			messageStatus = new MessageStatus(pnr.getId(), MessageStatusEnum.PARSED);
-			messageStatus.setSuccess(true);
+			messageStatus.setNoLoadingError(true);
 			msgDto.setMessageStatus(messageStatus);
 			pnr.setHashCode(vo.getHashCode());
 			EdifactMessage em = new EdifactMessage();
@@ -104,12 +99,13 @@ public class PnrMessageService extends MessageLoaderService {
 		} catch (Exception e) {
 			messageStatus = new MessageStatus(pnr.getId(), MessageStatusEnum.FAILED_PARSING);
 			msgDto.setMessageStatus(messageStatus);
-			msgDto.getMessageStatus().setSuccess(false);
-			handleException(e, pnr);
+			msgDto.getMessageStatus().setNoLoadingError(false);
+			pnr.setStatus(messageStatus);
+			GtasLoaderImpl.handleException(e, pnr);
 		} finally {
 			msgDto.setPnr(pnr);
-			if (!createMessage(pnr)) {
-				msgDto.getMessageStatus().setSuccess(false);
+			if (!loaderRepo.createMessage(pnr)) {
+				msgDto.getMessageStatus().setNoLoadingError(false);
 				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_PARSING);
 			}
 		}
@@ -118,8 +114,9 @@ public class PnrMessageService extends MessageLoaderService {
 	}
 
 	@Override
+	@Transactional
 	public MessageInformation load(MessageDto msgDto) {
-		msgDto.getMessageStatus().setSuccess(true);
+		msgDto.getMessageStatus().setNoLoadingError(true);
 		MessageInformation messageInformation = new MessageInformation();
 		Pnr pnr = msgDto.getPnr();
 		try {
@@ -130,20 +127,18 @@ public class PnrMessageService extends MessageLoaderService {
 			PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(primeFlight,
 					vo.getPassengers(), pnr.getPassengers(), pnr.getBookingDetails(), pnr);
 			loaderRepo.processPnr(pnr, vo);
-
 			int createdPassengers = loaderRepo.createPassengers(passengerInformationDTO.getNewPax(),
-					passengerInformationDTO.getOldPax(), pnr.getPassengers(), primeFlight, pnr.getBookingDetails());
+				 pnr.getPassengers(), primeFlight, pnr.getBookingDetails());
 			loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
 			Set<Bag> bagList = createBagInformation(vo, pnr, primeFlight);
 			WeightCountDto weightCountDto = getBagStatistics(bagList);
 			pnr.setBagCount(weightCountDto.getCount());
 			pnr.setBaggageWeight(weightCountDto.getWeight());
-			createFlightPax(pnr);
 			// update flight legs
 			for (FlightLeg leg : pnr.getFlightLegs()) {
 				leg.setMessage(pnr);
 			}
-			calculateDwellTimes(pnr);
+			loaderRepo.calculateDwellTimes(pnr);
 			updatePaxEmbarkDebark(pnr);
 			loaderRepo.createFormPfPayments(vo, pnr);
 			setCodeShareFlights(pnr);
@@ -151,23 +146,27 @@ public class PnrMessageService extends MessageLoaderService {
 			msgDto.getMessageStatus().setFlightId(primeFlight.getId());
 			msgDto.getMessageStatus().setFlight(primeFlight);
 			pnr.setPassengerCount(pnr.getPassengers().size());
-
-			TripTypeEnum tripType = calculateTripType(pnr.getFlightLegs(), pnr.getDwellTimes());
+			TripTypeEnum tripType = loaderRepo.calculateTripType(pnr.getFlightLegs(), pnr.getDwellTimes());
 			pnr.setTripType(tripType.toString());
 			if (tamrEnabled) {
 				List<TamrPassenger> tamrPassengers = tamrAdapter
 						.convertPassengers(pnr.getFlights().iterator().next(), pnr.getPassengers());
 				messageInformation.setTamrPassengers(tamrPassengers);
 			}
+			if (additionalProcessing) {
+				String rawMessage = msgDto.getRawMsg();
+				String [] pflightKey = msgDto.getPrimeFlightKey();
+				loaderRepo.prepareAdditionalProcessing(messageInformation, pnr, pflightKey, rawMessage);
+			}
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
-			msgDto.getMessageStatus().setSuccess(false);
+			msgDto.getMessageStatus().setNoLoadingError(false);
 			pnr.setError(e.toString());
 			logger.error("ERROR", e);
 		} finally {
-			boolean success = createMessage(pnr);
+			boolean success = loaderRepo.createMessage(pnr);
 			if (!success) {
-				msgDto.getMessageStatus().setSuccess(false);
+				msgDto.getMessageStatus().setNoLoadingError(false);
 				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			}
 		}
@@ -237,95 +236,9 @@ public class PnrMessageService extends MessageLoaderService {
 		logger.debug("updatePaxEmbarkDebark time = " + (System.nanoTime() - startTime) / 1000000);
 	}
 
-	public TripTypeEnum calculateTripType(List<FlightLeg> flightLegList, Set<DwellTime> dwellTimeSet) {
 
-		if (flightLegList.size() == 1) {
-			return TripTypeEnum.ONEWAY;
-		}
 
-		TripTypeEnum tripType = null;
-		Collections.sort(flightLegList);
 
-		FlightLeg first = flightLegList.get(0);
-		FlightLeg last = flightLegList.get(flightLegList.size() - 1);
-
-		String firstLegOrigin = getFlightLegOrigin(first);
-		String lastLegDestination = getFlightLegDest(last);
-		String previousDest = firstLegOrigin;
-		boolean noncontig = false;
-		boolean hasLongDwellTime = false;
-
-		for (FlightLeg flightLeg : flightLegList) {
-			if (!getFlightLegOrigin(flightLeg).equals(previousDest)) {
-				noncontig = true;
-			}
-			previousDest = getFlightLegDest(flightLeg);
-		}
-
-		// check dwell times for ones over 24 hours
-		for (DwellTime dwellTime : dwellTimeSet) {
-			if (dwellTime.getDwellTime() != null) {
-				double dwellTimeHours = dwellTime.getDwellTime();
-				if (dwellTimeHours > 24.0) {
-					hasLongDwellTime = true;
-					break;
-				}
-			}
-		}
-
-		if (noncontig) {
-			tripType = TripTypeEnum.NONCONTIGUOUS;
-		} else if (firstLegOrigin.equalsIgnoreCase(lastLegDestination)) {
-			tripType = TripTypeEnum.ROUNDTRIP;
-		} else {
-			tripType = hasLongDwellTime ? TripTypeEnum.MULTICITY : TripTypeEnum.ONEWAY;
-		}
-
-		return tripType;
-	}
-
-	// TODO - REFAC as member of FlightLeg?
-	private String getFlightLegOrigin(FlightLeg leg) {
-		if (leg.getBookingDetail() != null) {
-			return leg.getBookingDetail().getOrigin().toUpperCase();
-		}
-		return leg.getFlight().getOrigin().toUpperCase();
-	}
-
-	private String getFlightLegDest(FlightLeg leg) {
-		if (leg.getBookingDetail() != null) {
-			return leg.getBookingDetail().getDestination().toUpperCase();
-		}
-		return leg.getFlight().getDestination().toUpperCase();
-	}
-
-	private void calculateDwellTimes(Pnr pnr) {
-		logger.debug("@ calculateDwellTimes");
-		long startTime = System.nanoTime();
-		List<FlightLeg> legs = pnr.getFlightLegs();
-		if (CollectionUtils.isEmpty(legs)) {
-			return;
-		}
-
-		for (int i = 0; i < legs.size(); i++) {
-			if (i + 1 < legs.size()) { // If the 'next' leg actually exists
-				// 4 different combinations of flights and booking details n^2, where n = 2.
-				// FxF, FxB, BxF, BxB. Order matters due to time calc
-				if (legs.get(i).getFlight() != null) {
-					if (legs.get(i + 1).getFlight() != null) { // FxF
-						utils.setDwellTime(legs.get(i).getFlight(), legs.get(i + 1).getFlight(), pnr);
-					} else { // next leg is a booking detail //FxB
-						utils.setDwellTime(legs.get(i).getFlight(), legs.get(i + 1).getBookingDetail(), pnr);
-					}
-				} else if (legs.get(i + 1).getFlight() != null) { // first leg is booking detail BxF
-					utils.setDwellTime(legs.get(i).getBookingDetail(), legs.get(i + 1).getFlight(), pnr);
-				} else { // both legs are booking details BxB
-					utils.setDwellTime(legs.get(i).getBookingDetail(), legs.get(i + 1).getBookingDetail(), pnr);
-				}
-			}
-		}
-		logger.debug("calculateDwellTime time = " + (System.nanoTime() - startTime) / 1000000);
-	}
 
 	private void setCodeShareFlights(Pnr pnr) {
 		Set<Flight> flights = pnr.getFlights();
@@ -374,102 +287,9 @@ public class PnrMessageService extends MessageLoaderService {
 
 	}
 
-	private void handleException(Exception e, Pnr pnr) {
-		// set all the collections to null so we can save the message itself
-		pnr.setFlights(null);
-		pnr.setPassengers(null);
-		pnr.setCreditCards(null);
-		pnr.setAddresses(null);
-		pnr.setAgencies(null);
-		pnr.setEmails(null);
-		pnr.setFrequentFlyers(null);
-		pnr.setPhones(null);
-		pnr.setDwellTimes(null);
-		pnr.setPaymentForms(null);
-		String stacktrace = ErrorUtils.getStacktrace(e);
-		pnr.setError(stacktrace);
-		if (e instanceof DuplicateHashCodeException) {
-			logger.info(e.getMessage());
-		} else {
-			logger.error(stacktrace);
-		}
-	}
 
-	private boolean createMessage(Pnr m) {
-		boolean ret = true;
-		logger.debug("@createMessage");
-		long startTime = System.nanoTime();
-		try {
-			m.setFilePath(utils.getUpdatedPath(m.getFilePath()));
-			m = msgDao.save(m);
-		} catch (Exception e) {
-			handleException(e, m);
-			ret = false;
-			try {
-				logger.info("ERROR FILE FILEPATH: " + m.getFilePath());
-				m.setFilePath(utils.getUpdatedPath(m.getFilePath()));
-				m = msgDao.save(m);
-			} catch (Exception ignored) {
-			}
-			logger.warn("Error saving message!", e);
-		} finally {
-			logger.debug("createMessage time = " + (System.nanoTime() - startTime) / 1000000);
-		}
-		return ret;
-	}
 
-	private void createFlightPax(Pnr pnr) {
-		logger.debug("@ createFlightPax");
-		Set<FlightPax> paxRecords = new HashSet<>();
-		Set<Flight> flights = pnr.getFlights();
-		String homeAirport = lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
-		for (Flight f : flights) {
-			for (Passenger p : pnr.getPassengers()) {
-				FlightPax fp = p.getFlightPaxList().stream()
-						.filter(flightPax -> "PNR".equalsIgnoreCase(flightPax.getMessageSource())).findFirst()
-						.orElse(new FlightPax(p.getId()));
 
-				Set<Bag> pnrBags = p.getBags().stream().filter(b -> "PNR".equalsIgnoreCase(b.getData_source()))
-						.filter(Bag::isPrimeFlight).collect(Collectors.toSet());
-
-				boolean headPool = pnrBags.stream().anyMatch(Bag::isHeadPool);
-				fp.setHeadOfPool(headPool);
-
-				WeightCountDto weightCountDto = getBagStatistics(pnrBags);
-				fp.setAverageBagWeight(weightCountDto.average());
-				if (weightCountDto.getWeight() == null) {
-					fp.setBagWeight(0D);
-				} else {
-					fp.setBagWeight(weightCountDto.getWeight());
-				}
-				if (weightCountDto.getCount() == null) {
-					fp.setBagCount(0);
-				} else {
-					fp.setBagCount(weightCountDto.getCount());
-				}
-
-				fp.setDebarkation(f.getDestination());
-				fp.setDebarkationCountry(f.getDestinationCountry());
-				fp.setEmbarkation(f.getOrigin());
-				fp.setEmbarkationCountry(f.getOriginCountry());
-				fp.setPortOfFirstArrival(f.getDestination());
-				fp.setMessageSource("PNR");
-				fp.setFlightId(f.getId());
-				fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
-				fp.setTravelerType(p.getPassengerDetails().getPassengerType());
-				fp.setReservationReferenceNumber(p.getPassengerTripDetails().getReservationReferenceNumber());
-				if (StringUtils.isNotBlank(fp.getDebarkation()) && StringUtils.isNotBlank(fp.getEmbarkation())) {
-					if (homeAirport.equalsIgnoreCase(fp.getDebarkation())
-							|| homeAirport.equalsIgnoreCase(fp.getEmbarkation())) {
-						p.getPassengerTripDetails()
-								.setTravelFrequency(p.getPassengerTripDetails().getTravelFrequency() + 1);
-					}
-				}
-				paxRecords.add(fp);
-			}
-		}
-		flightPaxRepository.saveAll(paxRecords);
-	}
 
 	@SuppressWarnings("Duplicates")
 	// Logic similar to APIS but differ in making new bags and booking detail

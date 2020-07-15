@@ -18,7 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "hit_maker")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class HitMaker extends BaseEntity {
+public abstract class HitMaker extends BaseEntityAudit {
 
 	@Column(name = "hm_hit_type", nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -34,6 +34,18 @@ public abstract class HitMaker extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "hm_author", referencedColumnName = "user_id", nullable = false)
 	protected User author;
+
+	@ManyToOne
+	@JoinColumn(name = "hm_cg_id", referencedColumnName = "id", columnDefinition = "bigint unsigned")
+	private CountryGroup countryGroup;
+
+	public CountryGroup getCountryGroup() {
+		return countryGroup;
+	}
+
+	public void setCountryGroup(CountryGroup countryGroup) {
+		this.countryGroup = countryGroup;
+	}
 
 	public User getAuthor() {
 		return author;

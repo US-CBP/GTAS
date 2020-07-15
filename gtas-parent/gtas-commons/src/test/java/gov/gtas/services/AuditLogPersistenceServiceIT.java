@@ -14,10 +14,7 @@ import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
-import gov.gtas.model.AuditRecord;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.PassengerDetails;
-import gov.gtas.model.User;
+import gov.gtas.model.*;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.security.UserServiceUtil;
 import gov.gtas.test.util.TestUtils;
@@ -64,7 +61,7 @@ public class AuditLogPersistenceServiceIT {
 	public void testCreateFetchAuditLog() {
 		TestUtils.insertAdminUser(userService, "jpjones", "password", "firstName", "lastName");
 		User user = TestUtils.fetchUser(userService, userServiceUtil, "jpjones");
-		testTarget.create(new AuditRecord(AuditActionType.CREATE_UDR, "UDR_TITLE", user));
+		testTarget.create(new GeneralAuditRecord(AuditActionType.CREATE_UDR, "UDR_TITLE", user));
 		List<AuditRecord> recList = testTarget.findByUser("jpjones");
 		assertNotNull(recList);
 		assertEquals(1, recList.size());
@@ -81,9 +78,9 @@ public class AuditLogPersistenceServiceIT {
 	public void testCreateFetchAuditLogWithData() {
 		TestUtils.insertAdminUser(userService, "jpjones", "password", "firstName", "lastName");
 		User user = TestUtils.fetchUser(userService, userServiceUtil, "jpjones");
-		testTarget.create(new AuditRecord(AuditActionType.CREATE_UDR, "UDR_TITLE", Status.SUCCESS, "Creating UDR",
+		testTarget.create(new GeneralAuditRecord(AuditActionType.CREATE_UDR, "UDR_TITLE", Status.SUCCESS, "Creating UDR",
 				"{jhhgjghgkjhgkjh}", user));
-		testTarget.create(new AuditRecord(AuditActionType.CREATE_WL, "WL_NAME", Status.SUCCESS_WITH_WARNING,
+		testTarget.create(new GeneralAuditRecord(AuditActionType.CREATE_WL, "WL_NAME", Status.SUCCESS_WITH_WARNING,
 				"Creating WL", null, user));
 
 		List<AuditRecord> recList = testTarget.findByUser("jpjones");
@@ -141,13 +138,13 @@ public class AuditLogPersistenceServiceIT {
 	public void testCreateFetchAuditLogWithQueryByActionType() {
 		TestUtils.insertAdminUser(userService, "jpjones", "password", "firstName", "lastName");
 		User user = TestUtils.fetchUser(userService, userServiceUtil, "jpjones");
-		testTarget.create(new AuditRecord(AuditActionType.CREATE_UDR, "UDR_TITLE", user));
+		testTarget.create(new GeneralAuditRecord(AuditActionType.CREATE_UDR, "UDR_TITLE", user));
 		testTarget.create(
-				new AuditRecord(AuditActionType.CREATE_WL, "WL_NAME", Status.SUCCESS_WITH_WARNING, null, null, user));
+				new GeneralAuditRecord(AuditActionType.CREATE_WL, "WL_NAME", Status.SUCCESS_WITH_WARNING, null, null, user));
 		testTarget.create(
-				new AuditRecord(AuditActionType.CREATE_WL, "WL_NAME2", Status.SUCCESS_WITH_WARNING, null, null, user));
+				new GeneralAuditRecord(AuditActionType.CREATE_WL, "WL_NAME2", Status.SUCCESS_WITH_WARNING, null, null, user));
 		testTarget.create(
-				new AuditRecord(AuditActionType.CREATE_WL, "WL_NAME3", Status.SUCCESS_WITH_WARNING, null, null, user));
+				new GeneralAuditRecord(AuditActionType.CREATE_WL, "WL_NAME3", Status.SUCCESS_WITH_WARNING, null, null, user));
 
 		List<AuditRecord> recList = testTarget.findByUser("jpjones");
 		assertNotNull(recList);
@@ -177,9 +174,9 @@ public class AuditLogPersistenceServiceIT {
 			Thread.sleep(1000);
 		} catch (Exception e) {
 		}
-		testTarget.create(new AuditRecord(AuditActionType.CREATE_UDR, "UDR_TITLE", user2));
+		testTarget.create(new GeneralAuditRecord(AuditActionType.CREATE_UDR, "UDR_TITLE", user2));
 		testTarget.create(
-				new AuditRecord(AuditActionType.CREATE_WL, "WL_NAME", Status.SUCCESS_WITH_WARNING, null, null, user2));
+				new GeneralAuditRecord(AuditActionType.CREATE_WL, "WL_NAME", Status.SUCCESS_WITH_WARNING, null, null, user2));
 		try {
 			Thread.sleep(1000);
 		} catch (Exception e) {
@@ -190,9 +187,9 @@ public class AuditLogPersistenceServiceIT {
 		} catch (Exception e) {
 		}
 		testTarget.create(
-				new AuditRecord(AuditActionType.CREATE_WL, "WL_NAME2", Status.SUCCESS_WITH_WARNING, null, null, user));
+				new GeneralAuditRecord(AuditActionType.CREATE_WL, "WL_NAME2", Status.SUCCESS_WITH_WARNING, null, null, user));
 		testTarget.create(
-				new AuditRecord(AuditActionType.CREATE_WL, "WL_NAME3", Status.SUCCESS_WITH_WARNING, null, null, user));
+				new GeneralAuditRecord(AuditActionType.CREATE_WL, "WL_NAME3", Status.SUCCESS_WITH_WARNING, null, null, user));
 
 		List<AuditRecord> recList = testTarget.findByDateFrom(date1);
 		assertNotNull(recList);
@@ -211,12 +208,12 @@ public class AuditLogPersistenceServiceIT {
 		TestUtils.insertAdminUser(userService, "jpjones", "password", "firstName", "lastName");
 		User user = TestUtils.fetchUser(userService, userServiceUtil, "jpjones");
 		User user2 = TestUtils.fetchUser(userService, userServiceUtil, "nimitz");
-		testTarget.create(new AuditRecord(AuditActionType.CREATE_UDR, "UDR_TITLE", user2));
-		testTarget.create(new AuditRecord(AuditActionType.CREATE_WL, "WL_NAME", Status.SUCCESS_WITH_WARNING,
+		testTarget.create(new GeneralAuditRecord(AuditActionType.CREATE_UDR, "UDR_TITLE", user2));
+		testTarget.create(new GeneralAuditRecord(AuditActionType.CREATE_WL, "WL_NAME", Status.SUCCESS_WITH_WARNING,
 				"{DocWatchList1}", null, user2));
 		testTarget.create(
-				new AuditRecord(AuditActionType.CREATE_WL, "WL_NAME2", Status.SUCCESS_WITH_WARNING, null, null, user));
-		testTarget.create(new AuditRecord(AuditActionType.UPDATE_WL, "WL_NAME", Status.SUCCESS_WITH_WARNING,
+				new GeneralAuditRecord(AuditActionType.CREATE_WL, "WL_NAME2", Status.SUCCESS_WITH_WARNING, null, null, user));
+		testTarget.create(new GeneralAuditRecord(AuditActionType.UPDATE_WL, "WL_NAME", Status.SUCCESS_WITH_WARNING,
 				"{DocWatchList2}", null, user));
 
 		List<AuditRecord> recList = testTarget.findByUserAndTarget("nimitz", "WL_NAME");

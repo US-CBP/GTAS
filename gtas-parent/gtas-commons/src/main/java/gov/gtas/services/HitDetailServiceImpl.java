@@ -9,13 +9,17 @@
 package gov.gtas.services;
 
 import gov.gtas.model.HitDetail;
+import gov.gtas.model.HitMaker;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.HitDetailRepository;
+import gov.gtas.services.dto.MappedGroups;
+import gov.gtas.util.PaxDetailVoUtil;
 import gov.gtas.vo.HitDetailVo;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class HitDetailServiceImpl implements HitDetailService {
@@ -31,14 +35,44 @@ public class HitDetailServiceImpl implements HitDetailService {
 		return hitDetailRepository.getSetFromPassengerId(passengerId);
 	}
 
+	public MappedGroups getHitDetailsWithGroups(Set<HitDetail> hitDetailList) {
+		Set<Long> hdIds = hitDetailList.stream().map(HitDetail::getId).collect(Collectors.toSet());
+		Set<Long> flightIds = hitDetailList.stream().map(HitDetail::getFlightId).collect(Collectors.toSet());
+		Set<HitDetail> hitDetails = hitDetailRepository.getHitDetailsWithCountryGroups(hdIds, flightIds);
+		MappedGroups mappedGroups = new MappedGroups();
+		Map<String, Set<HitDetail>> stringHitDetailMap = new HashMap<>();
+		for (HitDetail hd : hitDetails) {
+			HitMaker hm = hd.getHitMaker();
+			//Check sharable hit and sort into map based on labels.
+			if (hm.getCountryGroup() != null) {
+				String label = hm.getCountryGroup().getCountryGroupLabel();
+				if (stringHitDetailMap.containsKey(label)) {
+					stringHitDetailMap.get(label).add(hd);
+				} else {
+					Set<HitDetail> hitDetailSet = new HashSet<>();
+					hitDetailSet.add(hd);
+					stringHitDetailMap.put(label, hitDetailSet);
+				}
+			}
+		}
+
+		mappedGroups.setCountryMap(stringHitDetailMap);
+
+		return mappedGroups;
+	}
+
+
 	@Transactional
-	public List<HitDetailVo> getLast10RecentHits(Set<Passenger> passengerSet) {
+	public List<HitDetailVo> getLast10RecentHits(Set<Passenger> passengerSet, Passenger p) {
 		Set<HitDetail> hitDetailSet = hitDetailRepository.findFirst10ByPassengerInOrderByCreatedDateDesc(passengerSet);
 		Set<HitDetailVo> hitDetailVoSet = new LinkedHashSet<>();
+
 		for (HitDetail hitDetail : hitDetailSet) {
 			HitDetailVo hitDetailVo = HitDetailVo.from(hitDetail);
 			hitDetailVoSet.add(hitDetailVo);
+			PaxDetailVoUtil.deleteAndMaskPIIFromHitDetailVo(hitDetailVo, hitDetail.getPassenger());
 		}
+
 		List<HitDetailVo> hitDetails = new ArrayList<>(hitDetailVoSet);
 		if (!hitDetails.isEmpty()) {
 			hitDetails.sort((hd1, hd2) -> {

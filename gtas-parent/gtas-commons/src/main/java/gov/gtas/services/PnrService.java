@@ -5,10 +5,9 @@
  */
 package gov.gtas.services;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import gov.gtas.model.Pnr;
+import gov.gtas.model.*;
 
 public interface PnrService {
 
@@ -31,4 +30,18 @@ public interface PnrService {
 	public List<Pnr> findPnrByPassengerIdAndFlightId(Long passengerId, Long flightId);
 
 	public List<Pnr> getPNRsByDates(Date startDate, Date endDate);
-}
+	Map<Long, Set<FrequentFlyer>> createFrequentFlyersMap(Set<Long> pnrIds);
+	Map<Long, Set<BookingDetail>> createBookingDetailMap(Set<Long> pnrIds);
+	Map<Long, Set<CreditCard>> createCreditCardMap(Set<Long> pnrIds);
+	Map<Long, Set<Email>> createEmailMap(Set<Long> pnrIds);
+	Map<Long, Set<Phone>> createPhoneMap(Set<Long> pnrIds);
+	Map<Long, Set<Address>> createAddressMap(Set<Long> pnrIds);
+	Map<Long, Set<Passenger>> createPaxMap(Set<Long> pnrIds);
+	Map<Long, Set<PaymentForm>> createPaymentFormMap(Set<Long> pnrIds);
+	Map<Long, Set<DwellTime>> createDwellTime(Set<Long> pnrIds);
+	Map<Long, Set<Agency>> createTravelAgencyMap(Set<Long> pnrIds);
+	Map<Long, Set<Passenger>> getPassengersOnPnr(Set<Long> pids, Set<Long> hitApisIds);
+	Set<Pnr> pnrMessageWithFlightInfo(Set<Long> pids,Set<Long> messageIds, Long flightId);
+
+
+	}

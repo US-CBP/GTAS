@@ -6,7 +6,7 @@
 * [Supporting Files on Google Drive](https://drive.google.com/drive/u/1/folders/1rAlHrBQZwaZmU45MH8DyhW5rlffkCqGO)
 
 #
-<p align="center"><img width=50% src="https://user-images.githubusercontent.com/20464494/62487148-1ad6c580-b78f-11e9-9327-816d1590ad7f.png"></p>
+<p align="center"><img width=50% src="https://user-images.githubusercontent.com/20464494/85605594-4f11d980-b620-11ea-9424-a8d2c8064f53.png"></p>
 
 ## Developed by U.S. Customs and Border Protection for The World Customs Organization
 <center>

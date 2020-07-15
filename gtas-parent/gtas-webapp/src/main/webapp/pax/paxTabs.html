@@ -35,6 +35,34 @@
         </form>
     </md-sidenav>
 
+<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="createManualHit">
+    <h4 class="block-label no-margin-top">{{'hit.manualCategory' | translate}}</h4>
+    <form name="manualHit" class="filters" _lpchecked="1" ng-submit="showConfirmManualHit()">
+        <h4  aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup8" aria-controls="filterGroup8" class="filter-group-title">
+            <a href="#"><i class="fa fa-angle-right pull-right"></i></a>{{'wl.category' | translate}}:
+        </h4>
+        <div id="filterGroup8" class="collapse in" aria-expanded="true">
+            <div class="filter-group-content">
+                <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield&#45;&#45;full-width is-upgraded" data-upgraded="MaterialSelectfield">
+                    <select class="cbp-non-chip-input mdl-selectfield__select" id="manualHitDirection" aria-required="true"
+                            ng-model="$parent.watchlistCategoryId" required>
+                        <option ng-repeat="category in watchlistCategories" value="{{category.id}}" translate>
+                            {{category.label}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="md-pad">
+
+            <button type="submit" class="btn btn-icon-only btn-primary pull-right">
+                <i class="fa fa-inverse fa-floppy-o"></i>
+                <md-tooltip>{{'wl.save' | translate}}</md-tooltip>
+            </button>
+        </div>
+    </form>
+</md-sidenav>
+
     <!-- BEGIN CONTENT -->
     <div>
 
@@ -56,7 +84,11 @@
                                 <!------ Hit Details   ------>
                                 <div class="full-width cbp-card-container"  ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
                                     <div class="cbp-card cbp-card-shadow">
-                                        <h4 class="h-label no-margin-top" >{{'hit.hitssummary' | translate}}</h4>
+                                        <h4 class="h-label no-margin-top" >{{'hit.hitssummary' | translate}}
+                                            <button ng-click="refreshHitDetailsList();" type="button" class="btn btn-icon-only btn-primary">
+                                                <i class="fa fa-inverse fa-refresh"></i>
+                                            </button>
+                                        </h4>
                                         <div class="no-pad-top panel-body flex flex-vert ie-fix-md" style="overflow-x: auto;">
                                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                                 <thead>
@@ -174,6 +206,7 @@
                                                     <th>{{'doc.type' | translate}}</th>
                                                     <th>{{'doc.iss.country' | translate}}</th>
                                                     <th>{{'doc.exp.date' | translate}}</th>
+                                                    <th>{{'doc.msg.type' | translate}}</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -194,6 +227,7 @@
                       </span>
                                                     </td>
                                                     <td>{{doc.expirationDate}}</td>
+                                                    <td>{{doc.messageType}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -254,7 +288,7 @@
                                                     <td>{{j.passengerDocNumber}}</td>
                                                     <td>{{j.ruleConditions}}</td>
                                                     <td>{{j.flightDate |date:'yyyy-MM-dd'}}</td>
-                                                    <td> <a ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{j.paxId}}/{{j.flightId}}">Details</a></td>
+                                                    <td> <a ng-class="{'disabled': (disableLinks || j.masked)}" href="#/paxdetail/{{j.paxId}}/{{j.flightId}}">Details</a></td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -833,9 +867,9 @@
                                                 <tbody>
                                                 <tr ng-repeat="k in flight | orderBy:'-etd'">
                                                     <td ng-if="!k.bookingDetail">
-                                                        <a class="primary-link" ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
+                                                        <a class="primary-link" ng-class="{'disabled': (disableLinks || k.disabledLinks)}" href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
                                                            target="pax.detail" title="{{'msg.showflightdetails' | translate}}"
-                                                           ng-class="{'disabled': disableLinks}"
+                                                           ng-class="{'disabled': (disableLinks || k.disabledLinks)}"
                                                         >
                                                             {{k.fullFlightNumber}}
                                                         </a>
@@ -1009,6 +1043,9 @@
      				</md-button> &nbsp;
                     <md-button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="button" class="btn btn-danger" ng-click="addToWatchlist() ">
                         &nbsp;{{'btn.addtowatchlist' | translate}}
+                    </md-button>&nbsp;
+                    <md-button ng-disabled = "!userHasRole(5) && !userHasRole(1) && !userHasRole(7)" type="button" class="btn btn-danger" ng-click="createManualHit() ">
+                        &nbsp;{{'btn.createmanualhit' | translate}}
                     </md-button>&nbsp;
                     <md-button ng-if="isEmailEnabled()" type="button" class="btn btn-warning" ng-click="notify()">
                         &nbsp;{{'btn.notify' | translate}} &nbsp;

@@ -10,6 +10,7 @@ import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.UserRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.HitDetailService;
+import gov.gtas.util.PaxDetailVoUtil;
 import gov.gtas.vo.HitDetailVo;
 
 import java.util.*;
@@ -55,29 +56,10 @@ public class HitsSummaryController {
 
 	@Transactional
 	public LinkedHashSet<HitDetailVo> getHitDetailsMapped(Set<HitDetail> passengerHitDetails, User user) {
-
 		LinkedHashSet<HitDetailVo> hitDetailVoList = new LinkedHashSet<>();
 		for (HitDetail htd : passengerHitDetails) {
 			HitDetailVo hitDetailVo = new HitDetailVo();
-			hitDetailVo.setRuleId(htd.getRuleId());
-			hitDetailVo.setRuleTitle(htd.getTitle());
-			hitDetailVo.setRuleDesc(htd.getDescription());
-			hitDetailVo.setSeverity(htd.getHitMaker().getHitCategory().getSeverity().toString());
-			HitMaker lookout = htd.getHitMaker();
-			HitCategory hitCategory = lookout.getHitCategory();
-			hitDetailVo.setCategory(hitCategory.getName() + "(" + htd.getHitEnum().getDisplayName() + ")");
-			hitDetailVo.setRuleAuthor(htd.getHitMaker().getAuthor().getUserId());
-			hitDetailVo.setRuleConditions(htd.getRuleConditions());
-			hitDetailVo.setRuleTitle(htd.getTitle());
-			StringJoiner stringJoiner = new StringJoiner(", ");
-			Set<UserGroup> userGroups = user.getUserGroups();
-			for (HitViewStatus hitViewStatus : htd.getHitViewStatus()) {
-				if (userGroups.contains(hitViewStatus.getUserGroup())) {
-					stringJoiner.add(hitViewStatus.getHitViewStatusEnum().toString());
-				}
-			}
-			hitDetailVo.setFlightDate(htd.getFlight().getMutableFlightDetails().getEtd());
-			hitDetailVo.setStatus(stringJoiner.toString());
+			PaxDetailVoUtil.populateHitDetailVo(hitDetailVo, htd, user);
 			hitDetailVoList.add(hitDetailVo);
 		}
 		return hitDetailVoList;

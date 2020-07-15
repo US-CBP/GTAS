@@ -1,29 +1,17 @@
 package gov.gtas.services;
 
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
+import gov.gtas.enumtype.MessageType;
+import gov.gtas.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.enumtype.HitSeverityEnum;
-import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
-import gov.gtas.model.HitDetail;
-import gov.gtas.model.HitMaker;
-import gov.gtas.model.HitViewStatus;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Pnr;
 import gov.gtas.model.lookup.HitCategory;
-import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.services.dto.PassengerNoteSetDto;
 import gov.gtas.services.dto.PaxDetailPdfDocRequest;
 import gov.gtas.services.dto.PaxDetailPdfDocResponse;
@@ -50,9 +38,6 @@ public class EventReportServiceImpl implements EventReportService {
 
 	private EventReportPdfService<PaxDetailPdfDocRequest, PaxDetailPdfDocResponse> passengerEventReportService;
 
-	@Resource
-	private ApisMessageRepository apisMessageRepository;
-
 	public EventReportServiceImpl(FlightService flightService, PnrService pnrService,
 			PassengerService passengerService, HitDetailService hitDetailService,
 			EventReportPdfService<PaxDetailPdfDocRequest, PaxDetailPdfDocResponse> passengerEventReportService,
@@ -74,7 +59,8 @@ public class EventReportServiceImpl implements EventReportService {
 		PassengerVo passengerVo = new PassengerVo();
 		Flight flight = flightService.findById(flightId);
 
-		Passenger passenger = passengerService.findByIdWithFlightAndDocuments(paxId);
+		Passenger passenger = passengerService.findByIdWithFlightAndDocumentsAndMessageDetails(paxId);
+		PassengerDetails passengerDetails = PaxDetailVoUtil.filterOutMaskedAPISOrPnr(passenger);
 
 		if (passenger != null && flight != null) {
 			if (flight.getId().equals(flightId)) {
@@ -94,33 +80,25 @@ public class EventReportServiceImpl implements EventReportService {
 			if (passenger.getPassengerIDTag() != null) {
 				passengerVo.setPaxIdTag(passenger.getPassengerIDTag().getIdTag());
 			}
-			passengerVo.setPassengerType(passenger.getPassengerDetails().getPassengerType());
-			passengerVo.setLastName(passenger.getPassengerDetails().getLastName());
-			passengerVo.setFirstName(passenger.getPassengerDetails().getFirstName());
-			passengerVo.setMiddleName(passenger.getPassengerDetails().getMiddleName());
-			passengerVo.setNationality(passenger.getPassengerDetails().getNationality());
-			passengerVo.setDebarkation(passenger.getPassengerTripDetails().getDebarkation());
-			passengerVo.setDebarkCountry(passenger.getPassengerTripDetails().getDebarkCountry());
-			passengerVo.setDob(passenger.getPassengerDetails().getDob());
-			passengerVo.setAge(passenger.getPassengerDetails().getAge());
-			passengerVo.setEmbarkation(passenger.getPassengerTripDetails().getEmbarkation());
-			passengerVo.setEmbarkCountry(passenger.getPassengerTripDetails().getEmbarkCountry());
-			passengerVo.setGender(
-					passenger.getPassengerDetails().getGender() != null ? passenger.getPassengerDetails().getGender()
-							: "");
-			passengerVo.setResidencyCountry(passenger.getPassengerDetails().getResidencyCountry());
-			passengerVo.setSuffix(passenger.getPassengerDetails().getSuffix());
-			passengerVo.setTitle(passenger.getPassengerDetails().getTitle());
+			PaxDetailVoUtil.populatePassengerVoWithPassengerDetails(passengerVo, passengerDetails, passenger);
 
-			Iterator<Document> documentIterator = passenger.getDocuments().iterator();
-			while (documentIterator.hasNext()) {
-				Document document = documentIterator.next();
+			for (Document document : passenger.getDocuments()) {
 				DocumentVo documentVo = new DocumentVo();
 				documentVo.setDocumentNumber(document.getDocumentNumber());
 				documentVo.setDocumentType(document.getDocumentType());
 				documentVo.setIssuanceCountry(document.getIssuanceCountry());
 				documentVo.setExpirationDate(document.getExpirationDate());
 				documentVo.setIssuanceDate(document.getIssuanceDate());
+				documentVo.setMessageType(document.getMessageType() == null ? "" : document.getMessageType().toString());
+				if (passenger.getDataRetentionStatus().requiresDeletedAPIS() && document.getMessageType() == MessageType.APIS) {
+					documentVo.deletePII();
+				} else if (passenger.getDataRetentionStatus().requiresMaskedAPIS() && document.getMessageType() == MessageType.APIS) {
+					documentVo.maskPII();
+				} else if (passenger.getDataRetentionStatus().requiresDeletedPNR() && document.getMessageType() == MessageType.PNR) {
+					documentVo.deletePII();
+				} else if (passenger.getDataRetentionStatus().requiresMaskedPNR() && document.getMessageType() == MessageType.PNR) {
+					documentVo.maskPII();
+				}
 				passengerVo.addDocument(documentVo);
 			}
 
@@ -184,6 +162,7 @@ public class EventReportServiceImpl implements EventReportService {
 				}
 				hitDetailVo.setFlightDate(htd.getFlight().getMutableFlightDetails().getEtd());
 				hitDetailVo.setStatus(stringJoiner.toString());
+				PaxDetailVoUtil.deleteAndMaskPIIFromHitDetailVo(hitDetailVo, htd.getPassenger());
 				hitDetailVoList.add(hitDetailVo);
 			}
 
@@ -200,24 +179,35 @@ public class EventReportServiceImpl implements EventReportService {
 		List<Passenger> passengersWithSamePassengerIdTag = passengerService
 				.getBookingDetailHistoryByPaxID(paxId);
 		Set<Passenger> passengerSet = new HashSet<>(passengersWithSamePassengerIdTag);
+		Set<Passenger> unmaskedPassengers = passengerSet.stream().filter(p ->
+				(!p.getDataRetentionStatus().requiresMaskedAPIS() && p.getDataRetentionStatus().isHasApisMessage())
+						|| (!p.getDataRetentionStatus().requiresMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage()))
+				.collect(Collectors.toSet());
+
 		Passenger p = passengerService.findById(paxId);
-		passengerSet.remove(p);
-		List<HitDetailVo> hitDetailHistoryVoList = hitDetailService.getLast10RecentHits(passengerSet);
-		paxDetailPdfDocRequest.setHitDetailHistoryVoList(hitDetailHistoryVoList);
-		
-		
-		
+		if (!((p.getDataRetentionStatus().requiresDeletedPNR() && p.getDataRetentionStatus().isHasPnrMessage())
+				|| (p.getDataRetentionStatus().requiresDeletedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
+			paxDetailPdfDocRequest.setHitDetailHistoryVoList(new ArrayList<>());
+		}
+		else if (!((p.getDataRetentionStatus().requiresMaskedPNR() && p.getDataRetentionStatus().isHasPnrMessage())
+				|| (p.getDataRetentionStatus().requiresMaskedAPIS() && p.getDataRetentionStatus().isHasApisMessage()))) {
+			paxDetailPdfDocRequest.setHitDetailHistoryVoList(new ArrayList<>());
+		} else {
+			passengerSet.remove(p);
+			List<HitDetailVo> hitDetailHistoryVoList = hitDetailService.getLast10RecentHits(unmaskedPassengers, p);
+			paxDetailPdfDocRequest.setHitDetailHistoryVoList(hitDetailHistoryVoList);
+		}
 	}
 	
 	public void setFlightHistory(PaxDetailPdfDocRequest paxDetailPdfDocRequest, Long paxId)
 	{
-		List<Passenger> passengerRecList = passengerService.getBookingDetailHistoryByPaxID(paxId);
-		if (passengerRecList != null) {
-			List<FlightVoForFlightHistory> flightVoFHList = PaxDetailVoUtil
-					.copyBookingDetailFlightModelToVo(passengerRecList);
-			paxDetailPdfDocRequest.setFlightHistoryVoList(flightVoFHList);
-		}
-	
+		List<Passenger> passengerRecList = passengerService.getBookingDetailHistoryByPaxID(paxId).stream()
+				.filter(p -> p.getDataRetentionStatus().requiresMaskedPnrAndApisMessage() || p.getDataRetentionStatus().requiresDeletedPnrAndApisMessage())
+				.collect(Collectors.toList());
+
+		List<FlightVoForFlightHistory> flightVoFHList = PaxDetailVoUtil
+				.copyBookingDetailFlightModelToVo(passengerRecList);
+		paxDetailPdfDocRequest.setFlightHistoryVoList(flightVoFHList);
 	}
 	
 	public void setNotes(PaxDetailPdfDocRequest paxDetailPdfDocRequest, Long paxId)

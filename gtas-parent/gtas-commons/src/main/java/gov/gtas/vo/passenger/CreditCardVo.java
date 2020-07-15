@@ -5,9 +5,11 @@
  */
 package gov.gtas.vo.passenger;
 
+import gov.gtas.model.PIIObject;
+
 import java.util.Date;
 
-public class CreditCardVo {
+public class CreditCardVo implements PIIObject {
 	private String cardType;
 	private String number;
 	private Date expiration;
@@ -43,5 +45,19 @@ public class CreditCardVo {
 
 	public void setAccountHolder(String accountHolder) {
 		this.accountHolder = accountHolder;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.number = "DELETED";
+		this.accountHolder = "DELETED";
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.number = "MASKED";
+		this.accountHolder = "MASKED";
+		return this;
 	}
 }

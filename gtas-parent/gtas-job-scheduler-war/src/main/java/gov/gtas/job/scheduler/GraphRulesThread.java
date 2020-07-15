@@ -8,6 +8,7 @@
 
 package gov.gtas.job.scheduler;
 
+import gov.gtas.job.scheduler.service.AdditionalProcessingService;
 import gov.gtas.model.RuleHitDetail;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Scope("prototype")
-public class GraphRulesThread implements Callable<Boolean> {
+public class GraphRulesThread  extends RuleThread implements Callable<Boolean> {
 
 	private Logger logger = LoggerFactory.getLogger(GraphRulesThread.class);
 
@@ -66,6 +67,8 @@ public class GraphRulesThread implements Callable<Boolean> {
 	public Boolean call() {
 		RuleHitPersistenceService ruleHitPersistenceService = applicationContext
 				.getBean(RuleHitPersistenceService.class);
+		AdditionalProcessingService additionalProcessingService = applicationContext
+				.getBean(AdditionalProcessingService.class);
 
 		boolean returnVal = true;
 		long start = System.nanoTime();
@@ -92,19 +95,7 @@ public class GraphRulesThread implements Callable<Boolean> {
 
 			List<Set<HitDetail>> batchedTargetingServiceResults = TargetingResultUtils.batchResults(hitDetails,
 					BATCH_SIZE);
-
-			int count = 1;
-			for (Set<HitDetail> hitDetailSet : batchedTargetingServiceResults) {
-				try {
-					logger.info("Saving batched graph results " + count + " of " + batchedTargetingServiceResults.size()
-							+ "...");
-					ruleHitPersistenceService.persistToDatabase(hitDetailSet);
-				} catch (Exception ignored) {
-					logger.warn("Exception saving hits summaries count " + count + " and/or hit details! ", ignored);
-					processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.FAILED_NEO_4_J));
-				}
-				count++;
-			}
+			processHits(processedMessages, ruleHitPersistenceService, batchedTargetingServiceResults, additionalProcessingService);
 			if (!batchedTargetingServiceResults.isEmpty()) {
 				logger.info("Graph Database Ran in " + (System.nanoTime() - start) / 1000000 + "m/s.");
 			}

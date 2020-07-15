@@ -65,6 +65,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		Join<Flight, FlightHitsWatchlist> watchlistHits = root.join("flightHitsWatchlist", JoinType.LEFT);
 		Join<Flight, FlightHitsWatchlist> fuzzyHits = root.join("flightHitsFuzzy", JoinType.LEFT);
 		Join<Flight, FlightHitsWatchlist> graphHits = root.join("flightHitsGraph", JoinType.LEFT);
+		Join<Flight, FlightHitsExternal> externalHits = root.join("flightHitsExternal", JoinType.LEFT);
 		Join<Flight, FlightPassengerCount> passengerCountJoin = root.join("flightPassengerCount", JoinType.LEFT);
 		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = root.join("mutableFlightDetails", JoinType.LEFT);
 		Join<Flight, FlightCountDownView> countDownViewJoin = root.join("flightCountDownView", JoinType.LEFT);
@@ -83,7 +84,9 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 					orderByItem.add(graphHits.get("hitCount"));
 				} else if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn())) {
 					orderByItem.add(fuzzyHits.get("hitCount"));
-				} else if (sort.getColumn().equalsIgnoreCase("passengerCount")) {
+				} else if ("externalHitCount".equalsIgnoreCase(sort.getColumn())) {
+					orderByItem.add(externalHits.get("hitCount"));
+			    } else if (sort.getColumn().equalsIgnoreCase("passengerCount")) {
 					orderByItem.add(passengerCountJoin.get("passengerCount"));
 				} else if (sort.getColumn().equalsIgnoreCase("eta") || sort.getColumn().equalsIgnoreCase("etd")) {
 					orderByItem.add(mutableFlightDetailsJoin.get(sort.getColumn()));
@@ -224,89 +227,5 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 			relevantDateExpression = cb.and(startPredicate, endPredicate);
 		}
 		return relevantDateExpression;
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional
-	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef) {
-		StringBuilder sqlStr = new StringBuilder();
-		sqlStr.append("SELECT DISTINCT f.* FROM ");
-		if (pnrId != null && pnrRef != null) {
-			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
-			sqlStr.append(
-					"JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
-			sqlStr.append(
-					"LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
-			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
-			sqlStr.append("WHERE pp.pnr_id = ");
-			sqlStr.append(pnrId);
-			sqlStr.append(" OR ");
-			sqlStr.append("fpa.ref_number = '");
-			sqlStr.append(pnrRef);
-			sqlStr.append("'");
-		} else if (pnrId != null) {
-			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
-			sqlStr.append(
-					"JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
-			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
-			sqlStr.append("WHERE pp.pnr_id = ");
-			sqlStr.append(pnrId);
-		} else if (pnrRef != null) {
-			sqlStr.append(
-					"flight_passenger fp LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
-			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
-			sqlStr.append("WHERE fpa.ref_number = '");
-			sqlStr.append(pnrRef);
-			sqlStr.append("'");
-		} else {
-			return new ArrayList<Flight>();
-		}
-		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class).getResultList();
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional
-	public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef) {
-		StringBuilder sqlStr = new StringBuilder();
-		sqlStr.append("SELECT DISTINCT f.* FROM ");
-		if (pnrId != null && pnrRef != null) {
-			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
-			sqlStr.append(
-					"JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
-			sqlStr.append(
-					"LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
-			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
-			sqlStr.append("WHERE pp.pnr_id != ");
-			sqlStr.append(pnrId);
-			sqlStr.append(" AND ");
-			sqlStr.append("fpa.ref_number != '");
-			sqlStr.append(pnrRef);
-			sqlStr.append("'");
-			sqlStr.append(" AND ");
-		} else if (pnrId != null) {
-			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
-			sqlStr.append(
-					"JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
-			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
-			sqlStr.append("WHERE pp.pnr_id != ");
-			sqlStr.append(pnrId);
-			sqlStr.append(" AND ");
-		} else if (pnrRef != null) {
-			sqlStr.append(
-					"flight_passenger fp LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
-			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
-			sqlStr.append("WHERE fpa.ref_number != '");
-			sqlStr.append(pnrRef);
-			sqlStr.append("'");
-			sqlStr.append(" AND ");
-		} else {
-			sqlStr.append("WHERE ");
-		}
-		sqlStr.append(" fp.passenger_id = ");
-		sqlStr.append(paxId);
-
-		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class).getResultList();
 	}
 }
