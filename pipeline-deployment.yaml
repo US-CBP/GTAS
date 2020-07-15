@@ -108,7 +108,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
     environment:
       MARIADB_HOST: ${MARIADB_HOST}
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca/elastic-ca
