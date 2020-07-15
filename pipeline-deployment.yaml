@@ -3,7 +3,7 @@ services:
   http-proxy:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "NodePort"
+      kompose.service.type: "LoadBalancer"
     deploy:
       placement:
         constraints:
@@ -15,7 +15,7 @@ services:
   web-app:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "NodePort"
+      kompose.service.type: "LoadBalancer"
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
       JAVA_OPTS: "-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=UTC"
@@ -41,7 +41,7 @@ services:
   gtas-scheduler:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "NodePort"
+      kompose.service.type: "LoadBalancer"
     ports:
       - 8080:8080
     environment:
