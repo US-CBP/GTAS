@@ -3,7 +3,7 @@ services:
   http-proxy:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
+      kompose.service.type: "NodePort"
     deploy:
       placement:
         constraints:
@@ -15,7 +15,7 @@ services:
   web-app:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
+      kompose.service.type: "NodePort"
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
       JAVA_OPTS: "-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=UTC"
@@ -41,7 +41,7 @@ services:
   gtas-scheduler:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
+      kompose.service.type: "NodePort"
     ports:
       - 8080:8080
     environment:
@@ -66,7 +66,7 @@ services:
   activemq:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
+      kompose.service.type: "NodePort"
     ports:
       - 61616:61616
     deploy:
@@ -76,7 +76,7 @@ services:
   kibana:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
+      kompose.service.type: "NodePort"
     deploy:
       placement:
         constraints:
@@ -86,7 +86,7 @@ services:
   elasticsearch:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
+      kompose.service.type: "NodePort"
     deploy:
       placement:
         constraints:
@@ -96,7 +96,7 @@ services:
   mariadb:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
+      kompose.service.type: "NodePort"
     deploy:
       placement:
         constraints:
@@ -104,7 +104,7 @@ services:
   logstash:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
+      kompose.service.type: "NodePort"
     deploy:
       placement:
         constraints:
@@ -115,7 +115,7 @@ services:
   elk-setup:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
+      kompose.service.type: "NodePort"
     # deploy:
     #   placement:
     #     constraints:
@@ -132,7 +132,7 @@ services:
   neo4j:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
+      kompose.service.type: "NodePort"
     deploy:
       placement:
         constraints:
@@ -140,7 +140,7 @@ services:
   etl-job:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
+      kompose.service.type: "NodePort"
     deploy:
       placement:
         constraints:
