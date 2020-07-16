@@ -67,6 +67,8 @@ services:
     labels:
       kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
+    environment:
+      ACTIVEMQ_OPTS: "-Xms2g -Xmx8g"
     ports:
       - 61616:61616
     deploy:
