@@ -74,7 +74,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
   kibana:
     labels:
       kompose.image-pull-policy: "Always" 

@@ -201,6 +201,9 @@ services:
     environment:
       KIBANA_HOST: 'kibana'
       ELASTICSEARCH_HOST: 'elasticsearch'
+    deploy:
+      restart_policy:
+        condition: on-failure
     volumes:
       - logstash-conf:/logstash-conf
       - kibana-conf:/kibana-conf
