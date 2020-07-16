@@ -71,7 +71,7 @@ services:
       ACTIVEMQ_OPTS: "-Xms2g -Xmx8g"
     ports:
       - 61616:61616
-      - 81616:81616
+      - 8161:8161
     deploy:
       placement:
         constraints:
