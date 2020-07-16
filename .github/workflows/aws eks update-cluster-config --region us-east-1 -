@@ -1,1 +1,0 @@
-aws eks update-cluster-config --region us-east-1 --name gtas-dev-eks --resources-vpc-config endpointPublicAccess=true,endpointPrivateAccess=true
