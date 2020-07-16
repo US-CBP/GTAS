@@ -34,20 +34,20 @@ jobs:
       #     path: ./gtas-parent
       #     dockerfile: ./gtas-parent/docker-resources/proxy.Dockerfile
       #     tags: dev
-      # - uses: docker/build-push-action@v1
-      #   name: Build and push GTAS scheduler image
+       - uses: docker/build-push-action@v1
+         name: Build and push GTAS scheduler image
+         with:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+           repository: simbam1/gtas-scheduler
+           path: .
+           dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
+           tags: dev
+     # - uses: docker/build-push-action@v1
+     #   name: Build and push kibana image
       #   with:
       #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}  
-      #     repository: simbam1/gtas-scheduler
-      #     path: .
-      #     dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
-      #     tags: dev
-      # - uses: docker/build-push-action@v1
-      #   name: Build and push kibana image
-      #   with: 
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }} 
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
       #     repository: simbam1/kibana
       #     path: ./gtas-parent/scripts/elastic
       #     dockerfile: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
