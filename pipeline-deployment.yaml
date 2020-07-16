@@ -62,7 +62,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == backend
+          - node.labels.role == frontend
   activemq:
     labels:
       kompose.image-pull-policy: "Always" 
