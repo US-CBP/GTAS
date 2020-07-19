@@ -87,4 +87,6 @@ public interface UserService {
 
 	boolean treatAsOneDay(String userId);
 
+	boolean matchUserPassword(String savedPassword, String newPassword);
+
 }

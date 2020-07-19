@@ -21,7 +21,7 @@ public class UserData implements Serializable {
 	 */
 	private static final long serialVersionUID = -2939774474055002106L;
 	private final String userId;
-	private final String password;
+	private String password;
 	private final String firstName;
 	private final String lastName;
 	private final int active;
@@ -62,7 +62,10 @@ public class UserData implements Serializable {
 	public final String getPassword() {
 		return password;
 	}
-
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
 	@JsonProperty("firstName")
 	public final String getFirstName() {
 		return firstName;

@@ -28,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import dtos.PasswordChangeDTO;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.security.service.GtasSecurityUtils;
@@ -40,7 +41,6 @@ import gov.gtas.validator.UserDataValidator;
 public class UserController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
 	@Autowired
 	private UserService userService;
 
@@ -124,6 +124,45 @@ public class UserController {
 			logger.info("The User Information is updated sucessfully for " + userData.getUserId());
 			return new JsonServiceResponse(Status.SUCCESS, validator.getErrMessage(), rUserData);
 		}
+	}
+	
+	@PutMapping(value="user/change-password")
+	public JsonServiceResponse changePassword(@RequestBody PasswordChangeDTO passChangeDto) {
+		
+		String userId = GtasSecurityUtils.fetchLoggedInUserId(); 
+		UserData user = userService.findById(userId);
+		Validator validator = this.new Validator();
+		String savedPassword = user.getPassword();
+		String oldPassword = passChangeDto.getOldPassword();
+		String newPassword = passChangeDto.getNewPassword();
+		String confirmPassword = passChangeDto.getConfirmPassword();
+		
+		if (newPassword == null ) {
+			return new JsonServiceResponse(Status.FAILURE, "Invalid Password! Password cannot be null.", passChangeDto);
+		}
+		if (newPassword.equals(oldPassword)) {
+			return new JsonServiceResponse(Status.FAILURE, "Please choose password different from the current one!", passChangeDto);
+		}
+		
+		if (!newPassword.equals(confirmPassword)) {
+			return new JsonServiceResponse(Status.FAILURE, "The passwords you entered do not match!", passChangeDto);
+		}
+		
+		if (!userService.matchUserPassword(savedPassword, oldPassword)) {
+			return new JsonServiceResponse(Status.FAILURE, "Your current password is not correct. Please enter the correct password!", passChangeDto);
+		}
+		
+		if (!validator.isValid(passChangeDto.getNewPassword(), userId)) {
+			return new JsonServiceResponse(Status.FAILURE, validator.getErrMessage(), passChangeDto);
+		}
+		
+		//change password
+		user.setPassword(newPassword);
+		userService.update(user);
+		
+		return new JsonServiceResponse(Status.SUCCESS, "Your password has successfully been changed!");
+		
+		
 	}
 
 	@ResponseStatus(HttpStatus.OK)

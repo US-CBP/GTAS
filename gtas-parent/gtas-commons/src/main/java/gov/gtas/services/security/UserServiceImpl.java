@@ -230,5 +230,11 @@ public class UserServiceImpl implements UserService {
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean matchUserPassword(String savedPassword, String newPassword) {
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		return encoder.matches(newPassword, savedPassword);
+	}
 
 }
