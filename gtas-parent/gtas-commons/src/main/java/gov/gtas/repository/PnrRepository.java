@@ -81,14 +81,17 @@ public interface PnrRepository extends MessageRepository<Pnr> {
 	List<Object[]> getEmailByPnrIds(@Param("pnrIds") Set<Long> pnrIds);
 
 	@Query ("SELECT pnr from Pnr pnr " +
-			"left join fetch pnr.addresses " +
-			"left join fetch pnr.phones " +
-			"left join fetch pnr.creditCards " +
-			"left join fetch pnr.frequentFlyers " +
-			"left join fetch pnr.emails " +
 			"left join pnr.flights flights " +
-			"left join fetch pnr.passengers pnrPassengers " +
 			"where flights.id in :flightIds " +
 			"and pnr.id in :messageIds ")
     Set<Pnr> getPnrsToScrub(@Param("flightIds") Set<Long> flightIds, @Param("messageIds") Set<Long> messageIds);
+
+
+	@Query("SELECT pnr from Pnr pnr left join fetch pnr.flights flight join pnr.passengers passenger where pnr.id in :messageIds" +
+			" and passenger.id in :passengerIds and flight.id = :flightId")
+    Set<Pnr> pnrMessageWithFlightInfo(@Param("passengerIds")Set<Long> pids, @Param("messageIds")Set<Long> messageIds,@Param("flightId") Long flightId);
+
+	@Query("SELECT pnrs.id, passenger from Passenger passenger left join fetch passenger.documents left join fetch passenger.hitDetails hd left join fetch hd.hitMaker hm left join fetch hm.hitCategory join passenger.pnrs pnrs where pnrs.id in :pnrIds" +
+			" and passenger.id in :passengerIds")
+	List<Object[]> pnrAndObject(@Param("passengerIds") Set<Long>passengerIds, @Param("pnrIds") Set<Long> pnrIds);
 }

@@ -8,6 +8,8 @@ package gov.gtas.rule;
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceResult;
 
+import java.util.Map;
+
 /**
  * The interface for the Rule Engine.
  */
@@ -25,28 +27,6 @@ public interface RuleService {
 	RuleServiceResult invokeAdhocRules(String ruleFilePath, RuleServiceRequest req);
 
 	/**
-	 * Execute the rule engine on the specified request for the specified rules
-	 * provided as a DRL string.
-	 * 
-	 * @param rules
-	 *            the rules to invoke the engine on.
-	 * @param req
-	 *            the rule request message.
-	 * @return the result of the rule engine invocation.
-	 */
-	RuleServiceResult invokeAdhocRulesFromString(String rules, RuleServiceRequest req);
-
-	/**
-	 * Execute the rule engine on the specified request for the default
-	 * KnowledgeBase.
-	 * 
-	 * @param req
-	 *            the rule request message.
-	 * @return the result of the rule engine invocation.
-	 */
-	RuleServiceResult invokeRuleEngine(RuleServiceRequest req);
-
-	/**
 	 * Execute the rule engine on the specified request for the default
 	 * KnowledgeBase.
 	 * 
@@ -56,6 +36,6 @@ public interface RuleService {
 	 *            The name of the knowledge base to use for executing the request.
 	 * @return the result of the rule engine invocation.
 	 */
-	RuleServiceResult invokeRuleEngine(RuleServiceRequest req, String kbName);
+	RuleServiceResult invokeRuleEngine(RuleServiceRequest req, String kbName, Map<String, KIEAndLastUpdate> rules);
 
 }

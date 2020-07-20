@@ -27,6 +27,8 @@ public enum HitTypeEnum {
 
 	MANUAL_HIT("M", "M"), // Manual Hit
 
+	EXTERNAL_HIT("EH", "EXTERNAL_HIT"), // External Hit
+
 	NOT_USED("VV", "VV"); // Not used - for sorting in database.
 
 	private final String hitType;

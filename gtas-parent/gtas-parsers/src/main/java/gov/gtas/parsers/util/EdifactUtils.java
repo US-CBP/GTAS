@@ -38,11 +38,14 @@ public final class EdifactUtils {
 	 * Create a formatted string of segments, putting a carriage return at the end
 	 * of each segment.
 	 *
+	 *
+	 * @param unaText
 	 * @param segments
 	 * @return
 	 */
-	public static String prettyPrint(List<Segment> segments) {
+	public static String prettyPrint(String unaText, List<Segment> segments) {
 		StringBuffer buff = new StringBuffer();
+		buff.append(unaText).append("\n");
 		for (Segment s : segments) {
 			buff.append(s.getText()).append("\n");
 		}

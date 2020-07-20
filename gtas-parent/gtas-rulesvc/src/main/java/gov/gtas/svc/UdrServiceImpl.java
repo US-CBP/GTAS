@@ -29,6 +29,7 @@ import gov.gtas.model.udr.json.QueryObject;
 import gov.gtas.model.udr.json.UdrSpecification;
 import gov.gtas.model.udr.json.util.JsonToDomainObjectConverter;
 import gov.gtas.repository.udr.UdrRuleRepository;
+import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.AuditLogPersistenceService;
 import gov.gtas.services.HitCategoryService;
 import gov.gtas.services.security.UserService;
@@ -57,6 +58,9 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class UdrServiceImpl implements UdrService {
 	private static Logger logger = LoggerFactory.getLogger(UdrServiceImpl.class);
+
+	@Autowired
+	private AppConfigurationService appConfigurationService;
 
 	@Autowired
 	private RulePersistenceService rulePersistenceService;
@@ -260,7 +264,8 @@ public class UdrServiceImpl implements UdrService {
 		}
 
 		UdrRule savedRule = rulePersistenceService.create(ruleToSave, userId);
-		recompileRules(RuleConstants.UDR_KNOWLEDGE_BASE_NAME, userId);
+		appConfigurationService.setRecompileFlag();
+
 		writeAuditLog(AuditActionType.CREATE_UDR, savedRule, udrToCreate, userId, author);
 		return UdrServiceJsonResponseHelper.createResponse(true, RuleConstants.UDR_CREATE_OP_NAME, savedRule);
 	}
@@ -358,8 +363,7 @@ public class UdrServiceImpl implements UdrService {
 			} else {
 				updatedRule = rulePersistenceService.update(ruleToUpdate, userId);
 			}
-
-			recompileRules(RuleConstants.UDR_KNOWLEDGE_BASE_NAME, userId);
+			appConfigurationService.setRecompileFlag();
 
 			writeAuditLog(AuditActionType.UPDATE_UDR, updatedRule, udrToUpdate, userId, author);
 		} else {
@@ -392,7 +396,8 @@ public class UdrServiceImpl implements UdrService {
 	public JsonServiceResponse deleteUdr(String userId, Long id) {
 		UdrRule deletedRule = rulePersistenceService.delete(id, userId);
 		if (deletedRule != null) {
-			recompileRules(RuleConstants.UDR_KNOWLEDGE_BASE_NAME, userId);
+			appConfigurationService.setRecompileFlag();
+
 			writeAuditLog(AuditActionType.DELETE_UDR, deletedRule, null, userId, null);
 			return UdrServiceJsonResponseHelper.createResponse(true, RuleConstants.UDR_DELETE_OP_NAME, deletedRule);
 		} else {

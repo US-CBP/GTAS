@@ -15,7 +15,9 @@ import javax.validation.constraints.Size;
 @Cacheable
 @Entity
 @Table(name = "flight", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "carrier", "flight_number", "etd_date", "origin", "destination" }) })
+		@UniqueConstraint(columnNames = { "carrier", "flight_number", "etd_date", "origin", "destination" }),
+		@UniqueConstraint(columnNames = {"id_tag"})}
+		)
 public class Flight extends BaseEntityAudit {
 	private static final long serialVersionUID = 1L;
 
@@ -109,6 +111,11 @@ public class Flight extends BaseEntityAudit {
 	private FlightHitsWatchlist flightHitsWatchlist;
 
 	@OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+	@JoinColumn(name = "id", unique = true, referencedColumnName = "fhe_flight_id", updatable = false, insertable = false)
+	@JsonIgnore
+	private FlightHitsExternal flightHitsExternal;
+
+	@OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
 	@JoinColumn(name = "id", unique = true, referencedColumnName = "fp_flight_id", updatable = false, insertable = false)
 	@JsonIgnore
 	private FlightPassengerCount flightPassengerCount;
@@ -129,6 +136,9 @@ public class Flight extends BaseEntityAudit {
 
 	@ManyToMany(mappedBy = "flights", targetEntity = ApisMessage.class)
 	private Set<ApisMessage> apis = new HashSet<>();
+
+	@OneToMany(mappedBy = "flight", targetEntity = FlightAuditRecord.class)
+	private Set<FlightAuditRecord> flightAuditRecords = new HashSet<>();
 
 	@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
 	private Set<BookingDetail> bookingDetails = new HashSet<>();
@@ -421,5 +431,21 @@ public class Flight extends BaseEntityAudit {
 
 	public void setAgencies(Set<Agency> agencies) {
 		this.agencies = agencies;
+	}
+
+	public FlightHitsExternal getFlightHitsExternal() {
+		return flightHitsExternal;
+	}
+
+	public void setFlightHitsExternal(FlightHitsExternal flightHitsExternal) {
+		this.flightHitsExternal = flightHitsExternal;
+	}
+
+	public Set<FlightAuditRecord> getFlightAuditRecords() {
+		return flightAuditRecords;
+	}
+
+	public void setFlightAuditRecords(Set<FlightAuditRecord> flightAuditRecords) {
+		this.flightAuditRecords = flightAuditRecords;
 	}
 }

@@ -7,6 +7,7 @@ package gov.gtas.querybuilder.service;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_QUERIES;
 
+import gov.gtas.aop.annotations.QueryRequestAudit;
 import gov.gtas.model.*;
 import gov.gtas.model.udr.json.QueryObject;
 import gov.gtas.querybuilder.exceptions.InvalidQueryException;
@@ -133,6 +134,7 @@ public class QueryBuilderService {
 	}
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
+	@QueryRequestAudit
 	public FlightsPageDto runFlightQuery(QueryRequest queryRequest) throws InvalidQueryException {
 
 		// validate queryRequest
@@ -172,6 +174,7 @@ public class QueryBuilderService {
 	}
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
+	@QueryRequestAudit
 	public PassengersPageDto runPassengerQuery(QueryRequest queryRequest) throws InvalidQueryException {
 
 		// validate queryRequest
@@ -245,7 +248,9 @@ public class QueryBuilderService {
 		boolean isWatchlistHit = false;
 		HitsSummary hs = passenger.getHits();
 		if (hs != null) {
-			isRuleHit = hs.getRuleHitCount() != null && hs.getRuleHitCount() > 0;
+			isRuleHit = hs.getRuleHitCount() != null && hs.getRuleHitCount() > 0 ||
+					(hs.getGraphHitCount() != null && hs.getGraphHitCount() > 0) ||
+					(hs.getExternalHitCount() > 0);
 			isWatchlistHit = hs.getWatchListHitCount() != null && hs.getWatchListHitCount() > 0;
 		}
 		vo.setOnRuleHitList(isRuleHit);

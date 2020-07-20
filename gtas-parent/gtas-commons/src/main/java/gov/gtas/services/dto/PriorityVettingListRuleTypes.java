@@ -19,6 +19,8 @@ public class PriorityVettingListRuleTypes {
 	private Boolean watchlist = false;
 	@JsonProperty("USER_RULE")
 	private Boolean userRule = false;
+	@JsonProperty("EXTERNAL_RULE")
+	private Boolean externalHit = false;
 	@JsonProperty("GRAPH_RULE")
 	private Boolean graphRule = false;
 	@JsonProperty("MANUAL")
@@ -85,9 +87,20 @@ public class PriorityVettingListRuleTypes {
 		if (manual) {
 			hitTypeEnums.add(HitTypeEnum.MANUAL_HIT);
 		}
+		if (externalHit) {
+			hitTypeEnums.add(HitTypeEnum.EXTERNAL_HIT);
+		}
 		if (hitTypeEnums.isEmpty()) {
 			hitTypeEnums.add(HitTypeEnum.NOT_USED);
 		}
 		return hitTypeEnums;
+	}
+
+	public Boolean getExternalHit() {
+		return externalHit;
+	}
+
+	public void setExternalHit(Boolean externalHit) {
+		this.externalHit = externalHit;
 	}
 }

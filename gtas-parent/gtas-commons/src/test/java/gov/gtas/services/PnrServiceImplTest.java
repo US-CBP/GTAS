@@ -37,9 +37,7 @@ public class PnrServiceImplTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(pnrRespository);
-
-
-        ReflectionTestUtils.setField(pnrService, "pnrRespository", pnrRespository);
+        ReflectionTestUtils.setField(pnrService, "pnrRepository", pnrRespository);
     }
 
     @Test

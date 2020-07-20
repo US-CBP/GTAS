@@ -18,6 +18,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import gov.gtas.repository.*;
+import gov.gtas.services.PnrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,11 +84,14 @@ public class RuleEngineRequestBuilder {
 	@Value("${ruleRunner.makeEmptyPnrBagsOnNullBag}")
 	private Boolean makeEmptyPnrBagsOnNullBag;
 
+	private final PnrService pnrService;
+
 	@Autowired
-	public RuleEngineRequestBuilder(PnrRepository pnrRepository, SeatRepository seatRepository,
-			BagRepository bagRepository, FlightPaxRepository flightPaxRepository, DocumentRepository documentRepository,
-			ApisMessageRepository apisMessageRepository, PassengerRepository passengerRepository) {
+	public RuleEngineRequestBuilder(PnrRepository pnrRepository, PnrService pnrService, SeatRepository seatRepository,
+									BagRepository bagRepository, FlightPaxRepository flightPaxRepository, DocumentRepository documentRepository,
+									ApisMessageRepository apisMessageRepository, PassengerRepository passengerRepository) {
 		this.passengerRepository = passengerRepository;
+		this.pnrService = pnrService;
 		this.requestObjectList = new ArrayList<>(300000);
 		this.addressIdSet = new HashSet<>();
 		this.creditCardIdSet = new HashSet<>();
@@ -223,16 +227,16 @@ public class RuleEngineRequestBuilder {
 		// add PNR objects
 		logger.debug("Calling DB");
 		Set<Long> pnrIds = pnrList.stream().map(Pnr::getId).collect(Collectors.toSet());
-		Map<Long, Set<Address>> addressObjects = createAddressMap(pnrIds);
-		Map<Long, Set<Phone>> phoneObjects = createPhoneMap(pnrIds);
-		Map<Long, Set<Email>> emailsObjects = createEmailMap(pnrIds);
-		Map<Long, Set<CreditCard>> creditCardObjects = createCreditCardMap(pnrIds);
-		Map<Long, Set<BookingDetail>> bookingDetailObjects = createBookingDetailMap(pnrIds);
-		Map<Long, Set<FrequentFlyer>> frequentFlyerObjects = createFrequentFlyersMap(pnrIds);
-		Map<Long, Set<Agency>> travelAgency = createTravelAgencyMap(pnrIds);
-		Map<Long, Set<DwellTime>> dwellMap = createDwellTime(pnrIds);
-		Map<Long, Set<Passenger>> paxMap = createPaxMap(pnrIds);
-		Map<Long, Set<PaymentForm>> pnrPaymentForm = createPaymentFormMap(pnrIds);
+		Map<Long, Set<Address>> addressObjects = pnrService.createAddressMap(pnrIds);
+		Map<Long, Set<Phone>> phoneObjects = pnrService.createPhoneMap(pnrIds);
+		Map<Long, Set<Email>> emailsObjects = pnrService.createEmailMap(pnrIds);
+		Map<Long, Set<CreditCard>> creditCardObjects = pnrService.createCreditCardMap(pnrIds);
+		Map<Long, Set<BookingDetail>> bookingDetailObjects = pnrService.createBookingDetailMap(pnrIds);
+		Map<Long, Set<FrequentFlyer>> frequentFlyerObjects = pnrService.createFrequentFlyersMap(pnrIds);
+		Map<Long, Set<Agency>> travelAgency = pnrService.createTravelAgencyMap(pnrIds);
+		Map<Long, Set<DwellTime>> dwellMap = pnrService.createDwellTime(pnrIds);
+		Map<Long, Set<Passenger>> paxMap = pnrService.createPaxMap(pnrIds);
+		Map<Long, Set<PaymentForm>> pnrPaymentForm = pnrService.createPaymentFormMap(pnrIds);
 
 		Set<Passenger> passengersFromPnr = pnrRepository.getPassengersWithFlight(pnrIds);
 		if (passengersFromPnr.isEmpty()) {
@@ -405,129 +409,9 @@ public class RuleEngineRequestBuilder {
 		logger.debug("pax info done");
 	}
 
-	private Map<Long, Set<Passenger>> createPaxMap(Set<Long> pnrIds) {
-		Map<Long, Set<Passenger>> objectMap = new HashMap<>();
-		List<Object[]> oList = pnrRepository.getPax(pnrIds);
-		for (Object[] answerKey : oList) {
-			Long pnrId = (Long) answerKey[0];
-			Passenger object = (Passenger) answerKey[1];
-			processObject(object, objectMap, pnrId);
-		}
-		return objectMap;
-	}
-
-	private Map<Long, Set<PaymentForm>> createPaymentFormMap(Set<Long> pnrIds) {
-		Map<Long, Set<PaymentForm>> objectMap = new HashMap<>();
-		List<Object[]> oList = pnrRepository.getPaymentFormsByPnrIds(pnrIds);
-		for (Object[] answerKey : oList) {
-			Long pnrId = (Long) answerKey[0];
-			PaymentForm object = (PaymentForm) answerKey[1];
-			processObject(object, objectMap, pnrId);
-		}
-		return objectMap;
-	}
-
-	private Map<Long, Set<DwellTime>> createDwellTime(Set<Long> pnrIds) {
-		Map<Long, Set<DwellTime>> objectMap = new HashMap<>();
-		List<Object[]> oList = pnrRepository.getDwellTimeByPnr(pnrIds);
-		for (Object[] answerKey : oList) {
-			Long pnrId = (Long) answerKey[0];
-			DwellTime object = (DwellTime) answerKey[1];
-			processObject(object, objectMap, pnrId);
-		}
-		return objectMap;
-	}
-
-	private Map<Long, Set<Agency>> createTravelAgencyMap(Set<Long> pnrIds) {
-		Map<Long, Set<Agency>> objectMap = new HashMap<>();
-		List<Object[]> oList = pnrRepository.getTravelAgencyByPnr(pnrIds);
-		for (Object[] answerKey : oList) {
-			Long pnrId = (Long) answerKey[0];
-			Agency object = (Agency) answerKey[1];
-			processObject(object, objectMap, pnrId);
-		}
-		return objectMap;
-	}
-
-	private Map<Long, Set<FrequentFlyer>> createFrequentFlyersMap(Set<Long> pnrIds) {
-		Map<Long, Set<FrequentFlyer>> objectMap = new HashMap<>();
-		List<Object[]> oList = pnrRepository.getFrequentFlyerByPnrId(pnrIds);
-		for (Object[] answerKey : oList) {
-			Long pnrId = (Long) answerKey[0];
-			FrequentFlyer object = (FrequentFlyer) answerKey[1];
-			processObject(object, objectMap, pnrId);
-		}
-		return objectMap;
-	}
-
-	private Map<Long, Set<BookingDetail>> createBookingDetailMap(Set<Long> pnrIds) {
-		Map<Long, Set<BookingDetail>> objectMap = new HashMap<>();
-		List<Object[]> oList = pnrRepository.getBookingDetailsByPnrId(pnrIds);
-		for (Object[] answerKey : oList) {
-			Long pnrId = (Long) answerKey[0];
-			BookingDetail object = (BookingDetail) answerKey[1];
-			processObject(object, objectMap, pnrId);
-		}
-		return objectMap;
-	}
-
-	private Map<Long, Set<CreditCard>> createCreditCardMap(Set<Long> pnrIds) {
-		Map<Long, Set<CreditCard>> objectMap = new HashMap<>();
-		List<Object[]> oList = pnrRepository.getCreditCardByIds(pnrIds);
-		for (Object[] answerKey : oList) {
-			Long pnrId = (Long) answerKey[0];
-			CreditCard object = (CreditCard) answerKey[1];
-			processObject(object, objectMap, pnrId);
-		}
-		return objectMap;
-	}
-
-	private Map<Long, Set<Email>> createEmailMap(Set<Long> pnrIds) {
-		Map<Long, Set<Email>> emailMap = new HashMap<>();
-		List<Object[]> emailList = pnrRepository.getEmailByPnrIds(pnrIds);
-		for (Object[] answerKey : emailList) {
-			Long pnrId = (Long) answerKey[0];
-			Email email = (Email) answerKey[1];
-			processObject(email, emailMap, pnrId);
-		}
-		return emailMap;
-	}
-
-	private Map<Long, Set<Phone>> createPhoneMap(Set<Long> pnrIds) {
-		Map<Long, Set<Phone>> phoneMap = new HashMap<>();
-		List<Object[]> phoneList = pnrRepository.getPhonesByPnr(pnrIds);
-		for (Object[] answerKey : phoneList) {
-			Long pnrId = (Long) answerKey[0];
-			Phone phone = (Phone) answerKey[1];
-			processObject(phone, phoneMap, pnrId);
-		}
-		return phoneMap;
-	}
-
-	private Map<Long, Set<Address>> createAddressMap(Set<Long> pnrIds) {
-		Map<Long, Set<Address>> addressMap = new HashMap<>();
-		List<Object[]> addressList = pnrRepository.getAddressesByPnr(pnrIds);
-		for (Object[] answerKey : addressList) {
-			Long pnrId = (Long) answerKey[0];
-			Address address = (Address) answerKey[1];
-			processObject(address, addressMap, pnrId);
-		}
-		return addressMap;
-	}
-
 	private <T extends Collection> void addToRequestObjectSet(T set) {
 		if (!set.isEmpty()) {
 			requestObjectList.addAll(set);
-		}
-	}
-
-	private static <T> void processObject(T type, Map<Long, Set<T>> map, Long pnrId) {
-		if (map.containsKey(pnrId)) {
-			map.get(pnrId).add(type);
-		} else {
-			Set<T> objectHashSet = new HashSet<>(map.values().size() * 50);
-			objectHashSet.add(type);
-			map.put(pnrId, objectHashSet);
 		}
 	}
 
