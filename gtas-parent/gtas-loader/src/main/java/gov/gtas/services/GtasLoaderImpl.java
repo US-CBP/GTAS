@@ -799,16 +799,20 @@ public class GtasLoaderImpl implements GtasLoader {
 				s.setNumber(seat.getNumber());
 				s.setPassengerId(p.getId());
 				s.setApis(seat.getApis());
-				Boolean alreadyExistsSeat = Boolean.FALSE;
+				s.setCabinClass(seat.getCabinClass());
+				boolean alreadyExistsSeat = false;
 				for (Seat s2 : p.getSeatAssignments()) {
 					if (s.equals(s2)) {
-						alreadyExistsSeat = Boolean.TRUE;
+						alreadyExistsSeat = true;
+						if (s.getCabinClass() != null &&
+								!s.getCabinClass().equals(s2.getCabinClass())) {
+							s2.setCabinClass(s.getCabinClass());
+						}
 					}
 				}
 				if (!alreadyExistsSeat) {
 					p.getSeatAssignments().add(s);
 				}
-				return;
 			}
 		}
 	}
