@@ -5,7 +5,6 @@
  */
 package gov.gtas.services;
 
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
@@ -19,8 +18,10 @@ import java.util.List;
 import java.util.Set;
 
 import gov.gtas.vo.passenger.FlightVo;
+
 import gov.gtas.vo.passenger.FlightGridVo;
 import org.springframework.security.access.prepost.PreAuthorize;
+
 
 public interface FlightService {
 	public Flight create(Flight flight);
@@ -37,6 +38,10 @@ public interface FlightService {
 
 	// always a list of 1.
 	public List<Flight> getFlightByPaxId(Long paxId);
+
+
+	public Set<Flight> getFlightByPaxIds(Set<Long> paxId);
+
 
 	public List<Flight> getFlightsByDates(Date startDate, Date endDate);
 
@@ -55,12 +60,6 @@ public interface FlightService {
 	public void setSinglePassenger(Long passengerId, Long flightId);
 
 	public int getPassengerCount(Flight f);
-
-	/*
-	 * Get fuzzy matches only. Does not get fuzzy matches that have firm watchlist
-	 * matches.
-	 */
-	public Long getFlightFuzzyMatchesOnly(Long flightId);
 
 	public List<SeatVo> getSeatsByFlightId(Long flightId);
 

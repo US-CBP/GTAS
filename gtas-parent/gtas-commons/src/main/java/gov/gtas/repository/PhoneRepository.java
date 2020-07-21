@@ -22,6 +22,10 @@ public interface PhoneRepository extends CrudRepository<Phone, Long> {
 	List<Phone> findByNumberAndFlightId(String number, Long flightId);
 
 
-	@Query("Select phone from Phone phone left join fetch phone.pnrs phonePnrs left join fetch phonePnrs.passengers where phone.id in :phoneIds and phonePnrs.id in :pnrIds and phone.flightId in :flightIds")
-	Set<Phone> findPhonesFromPnr(@Param("phoneIds") Set<Long> phoneIds, @Param("flightIds")Set<Long> flightIds,@Param("pnrIds") Set<Long> pnrIds);
+	@Query("Select phone from Phone phone " +
+			"left join fetch phone.pnrs phonePnrs " +
+			"left join fetch phonePnrs.passengers " +
+			"where phonePnrs.id in :pnrIds " +
+			"and phone.flightId in :flightIds")
+	Set<Phone> findPhonesFromPnr(@Param("flightIds")Set<Long> flightIds,@Param("pnrIds") Set<Long> pnrIds);
 }

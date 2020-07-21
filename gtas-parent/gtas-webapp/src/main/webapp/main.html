@@ -1,331 +1,469 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" ng-app="myApp">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GTAS</title>
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/npm-font-open-sans/open-sans.css"
+    />
+    <link rel="stylesheet" href="resources/css/style-icomoon.css" />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/cbp-theme/dist/cbp-theme.css"
+      type="text/css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/bootstrap-select/dist/css/bootstrap-select.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css"
+    />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/selectize/dist/css/selectize.bootstrap3.css"
+    />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/angular-ui-grid/ui-grid.min.css"
+    />
+    <link rel="stylesheet" href="resources/css/query-builder.default.css" />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/angular-material/angular-material.min.css"
+    />
+    <link rel="stylesheet" href="resources/css/sb-admin-2.css" />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/font-awesome/css/font-awesome.min.css"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="resources/css/gtas.css" />
+    <link rel="stylesheet" href="resources/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/angularjs-bootstrap-datetimepicker/src/css/datetimepicker.css"
+    />
+    <link href="resources/css/misc_fonts.css" rel="stylesheet" />
+    <link href="resources/css/misc_italian.css" rel="stylesheet" />
+    <script src="resources/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="resources/node_modules/summernote/dist/summernote.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/summernote/dist/summernote.css"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="resources/node_modules/trix/dist/trix.css"
+    />
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/vaquita/dist/vaquita.min.css"
+      type="text/css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      href="seatsMap/jquery.seat-charts.css"
+      type="text/css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      href="seatsMap/seats-map.css"
+      type="text/css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="resources/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css"
+    />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GTAS</title>
-  <link rel="stylesheet" href="resources/node_modules/npm-font-open-sans/open-sans.css" />
-  <link rel="stylesheet" href="resources/css/style-icomoon.css" />
-   <link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
-  <link rel="stylesheet" href="resources/node_modules/bootstrap-select/dist/css/bootstrap-select.min.css" />
-  <link rel="stylesheet" href="resources/node_modules/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
-  <link rel="stylesheet" href="resources/node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css" />
-  <link rel="stylesheet" href="resources/node_modules/selectize/dist/css/selectize.bootstrap3.css" />
-  <link rel="stylesheet" href="resources/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" />
-  <link rel="stylesheet" href="resources/node_modules/angular-ui-grid/ui-grid.min.css" />
-  <link rel="stylesheet" href="resources/css/query-builder.default.css" />
-  <link rel="stylesheet" href="resources/node_modules/angular-material/angular-material.min.css" />
-  <link rel="stylesheet" href="resources/css/sb-admin-2.css">
-  <link rel="stylesheet" href="resources/node_modules/font-awesome/css/font-awesome.min.css" type="text/css">
-  <link rel="stylesheet" href="resources/css/gtas.css" />
-  <link rel="stylesheet" href="resources/css/main.css" />
-  <link rel="stylesheet" href="resources/node_modules/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="resources/node_modules/angularjs-bootstrap-datetimepicker/src/css/datetimepicker.css"/>
-  <link href="resources/css/misc_fonts.css" rel="stylesheet">
-  <link href="resources/css/misc_italian.css" rel="stylesheet">
-  <script src="resources/node_modules/jquery/dist/jquery.min.js"></script>
-  <script src="resources/node_modules/summernote/dist/summernote.min.js"></script>
-  <link rel="stylesheet" href="resources/node_modules/summernote/dist/summernote.css" type="text/css">
-  <link rel="stylesheet" type="text/css" href="resources/node_modules/trix/dist/trix.css">
-  <link rel="stylesheet" href='resources/node_modules/vaquita/dist/vaquita.min.css' type="text/css" media="all" />
-  <link rel="stylesheet" href='seatsMap/jquery.seat-charts.css' type="text/css" media="all" />
-<link rel="stylesheet" href='seatsMap/seats-map.css' type="text/css" media="all" />
-<link rel="stylesheet" type="text/css" href="resources/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css">
-</head>
-
-<body ng-cloak>
-
-  <!-- CBP and APP HEADER  -->
-  <div data-ng-controller="NavCtrl" role="navigation" class="cbp-header">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" ng-href="#/{{homePage}}">
-          <div class="gtas-brand"></div>
-          <div class="gtas-brand-sub">{{getAgencyName()}}</div>
-        </a>
-        <button data-target="#navbar-user-info" data-toggle="collapse" type="button" class="navbar-toggle">
-		    <span class="sr-only">Toggle Global Navigation</span>
-		   	<span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-		    </button>
-        
-      </div>
-      <div id="navbar-user-info" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav navbar-left">
-          <li class="dropdown mobile-hide">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
-              {{'nav.tools' | translate}}<span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu" role="menu">
-              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="#/build/query">
-                <i class="fa fa-filter" aria-hidden="true"></i>
-                &nbsp;{{'nav.queries' | translate}}</a>
-              </li>
-              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]"><a href="#/build/rule">
-                <i class="fa fa-flag" aria-hidden="true"></i>
-                &nbsp;{{'nav.riskcriteria' | translate}}</a>
-              </li>
-              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]"><a href="#/watchlists">
-                <i class="fa fa-eye" aria-hidden="true"></i>
-                &nbsp;{{'nav.watchlist' | translate}}</a>
-              </li>
-              <li data-has-role="[{{ ROLES.ADMIN }}]">
-                <a href="#/admin">
-                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                &nbsp;{{'nav.admin' | translate}}</a>
-              </li>
-              <!-- Neo4J Browser pop out-->
-              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="{{getNeo4JUrl()}}" target="_blank">
-                <i class="fa fa-filter" aria-hidden="true"></i>
-                &nbsp;{{'nav.neo4j' | translate}}</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-
-
-        	<ul class="nav navbar-nav navbar-right">
-         		 <li class="dropdown mobile-hide">
-            		<a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
-              			{{'nav.help' | translate}}<span class="caret"></span>
-           			 </a>
-           	 <ul class="dropdown-menu" role="menu">
-              	<li ><a href="#/aboutgtas">
-                <i class="fa fa-info-circle" aria-hidden="true"></i>
-                &nbsp;{{'gtas.about' | translate}}</a>
-              </li>
+  <body ng-cloak>
+    <!-- CBP and APP HEADER  -->
+    <div data-ng-controller="NavCtrl" role="navigation" class="cbp-header">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" ng-href="#/{{homePage}}">
+            <div class="gtas-brand"></div>
+            <div class="gtas-brand-sub">{{getAgencyName()}}</div>
+          </a>
+          <button
+            data-target="#navbar-user-info"
+            data-toggle="collapse"
+            type="button"
+            class="navbar-toggle"
+          >
+            <span class="sr-only">Toggle Global Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div id="navbar-user-info" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li class="dropdown mobile-hide">
+              <a
+                class="dropdown-toggle"
+                data-toggle="dropdown"
+                role="button"
+                href="#"
+              >
+                {{'nav.tools' | translate}}<span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu" role="menu">
+                <li
+                  data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"
+                >
+                  <a href="#/build/query">
+                    <i class="fa fa-filter" aria-hidden="true"></i>
+                    &nbsp;{{'nav.queries' | translate}}</a
+                  >
+                </li>
+                <li
+                  data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]"
+                >
+                  <a href="#/build/rule">
+                    <i class="fa fa-flag" aria-hidden="true"></i>
+                    &nbsp;{{'nav.riskcriteria' | translate}}</a
+                  >
+                </li>
+                <li
+                  data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]"
+                >
+                  <a href="#/watchlists">
+                    <i class="fa fa-eye" aria-hidden="true"></i>
+                    &nbsp;{{'nav.watchlist' | translate}}</a
+                  >
+                </li>
+                <li data-has-role="[{{ ROLES.ADMIN }}]">
+                  <a href="#/admin">
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                    &nbsp;{{'nav.admin' | translate}}</a
+                  >
+                </li>
+                <!-- Neo4J Browser pop out-->
+                <li
+                  data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"
+                >
+                  <a href="{{getNeo4JUrl()}}" target="_blank">
+                    <i class="fa fa-filter" aria-hidden="true"></i>
+                    &nbsp;{{'nav.neo4j' | translate}}</a
+                  >
+                </li>
               </ul>
+            </li>
           </ul>
 
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown mobile-hide">
+              <a
+                class="dropdown-toggle"
+                data-toggle="dropdown"
+                role="button"
+                href="#"
+              >
+                {{'nav.help' | translate}}<span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu" role="menu">
+                <li>
+                  <a href="#/aboutgtas">
+                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                    &nbsp;{{'gtas.about' | translate}}</a
+                  >
+                </li>
+              </ul>
+            </li>
+          </ul>
 
-
-        <ul class="nav navbar-nav navbar-right">
-          <li data-toggle="hover" class="dropdown">
-            <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-		          <span class="fa fa-user"></span>
-		          <span class="hidden-sm">
-		          	{{currentlyLoggedInUser.lastName}}, {{currentlyLoggedInUser.firstName}}
-		          </span>
-		          <span class="caret"></span>
-		        </a>
-            <ul rel="right-menu-links" role="menu" class="dropdown-menu">
-              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }},{{ROLES.MANAGE_CASES}}]">
-                <a href="#/userSettings">{{'nav.settings' | translate}}</a>
-              </li>
-             <!-- <li class="divider"></li>
+          <ul class="nav navbar-nav navbar-right">
+            <li data-toggle="hover" class="dropdown">
+              <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+                <span class="fa fa-user"></span>
+                <span class="hidden-sm">
+                  {{currentlyLoggedInUser.lastName}},
+                  {{currentlyLoggedInUser.firstName}}
+                </span>
+                <span class="caret"></span>
+              </a>
+              <ul rel="right-menu-links" role="menu" class="dropdown-menu">
+                <li
+                  data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }},{{ROLES.MANAGE_CASES}}]"
+                >
+                  <a href="#/userSettings">{{'nav.settings' | translate}}</a>
+                </li>
+                <!-- <li class="divider"></li>
               <li data-has-role="[{{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}, {{ROLES.ONE_DAY_LOOKOUT }} ]">
                 <a title="Office Location" href="#/userlocation"> <span class="fa fa-building"></span>&nbsp;  {{'officelocation' | translate}}  </a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}]">
                 <a title=""> <span style="opacity: 0.4;filter: alpha(opacity=40);" class="fa fa-building"></span>&nbsp;<span style="color:lightgrey">{{'officelocation' | translate}}</span>   </a>
               </li>-->
-              <li class="divider"></li>
-              <li>
-                <a href ng-click="logout()">{{'login.logout' | translate}}</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div data-ng-controller="NavCtrl" role="navigation" class="app-header">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#subnav">
-	        <span class="sr-only">Toggle Application Navigation</span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	        </button>
-      </div>
-
-      <!-- Flights, Passengers, Cases Tab -->
-      <div id="subnav" class="collapse navbar-collapse">
-        <div class="nav navbar-nav">
-          <ul class="nav nav-tabs nav-tabs-light" role="tablist">
-            <li ng-class="{'active': setSelectedTab('/flights')}">
-              <a ng-disabled="onRoute('flights')" href="#/flights" role="tab">
-	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; {{'nav.flights' | translate}}</a></li>
-            <!--<li ng-class="{'active': setSelectedTab('/passengers')}">-->
-              <!--<a ng-disabled="onRoute('passengers')" href="#/passengers" role="tab">-->
-	              	<!--<i class="fa fa-user" aria-hidden="true"></i> &nbsp; Passengers-->
-	              <!--</a></li>-->
-            <li data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.VIEW_FLIGHT_PASSENGERS}}]"
-              ng-class="{'active': setSelectedTab('/casedisposition')}">
-              <a ng-disabled="onRoute('cases')" href="#/casedisposition" role="tab">
-	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;{{'case.cases' | translate}}
-	              </a></li>
+                <li class="divider"></li>
+                <li>
+                  <a href ng-click="logout()">{{'login.logout' | translate}}</a>
+                </li>
+              </ul>
+            </li>
           </ul>
         </div>
+      </div>
+    </div>
+    <div data-ng-controller="NavCtrl" role="navigation" class="app-header">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#subnav"
+          >
+            <span class="sr-only">Toggle Application Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
 
-        <div class="nav navbar-nav navbar-form navbar-right">
-          <form role="search">
-            <div data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES }}]" class="form-group">
-              <div class="input-group">
-                <div class="mdl-textfield mdl-js-textfield">
-                  <label for="main-search" class="mdl-textfield__label">{{'nav.search' | translate}}</label>
-                  <input ng-model="searchBarContent.content" ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'" ng-keypress="$event.which === 13 && searchBarQuery() && setSelectedTab('adhocquery')" type="text" id="main-search" class="mdl-textfield__input"
-                  />
+        <!-- Flights, Passengers, Cases Tab -->
+        <div id="subnav" class="collapse navbar-collapse">
+          <div class="nav navbar-nav">
+            <ul class="nav nav-tabs nav-tabs-light" role="tablist">
+              <li ng-class="{'active': setSelectedTab('/flights')}">
+                <a ng-disabled="onRoute('flights')" href="#/flights" role="tab">
+                  <i class="fa fa-plane" aria-hidden="true"></i> &nbsp;
+                  {{'nav.flights' | translate}}</a
+                >
+              </li>
+              <!--<li ng-class="{'active': setSelectedTab('/passengers')}">-->
+              <!--<a ng-disabled="onRoute('passengers')" href="#/passengers" role="tab">-->
+              <!--<i class="fa fa-user" aria-hidden="true"></i> &nbsp; Passengers-->
+              <!--</a></li>-->
+              <li
+                data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.VIEW_FLIGHT_PASSENGERS}}]"
+                ng-class="{'active': setSelectedTab('/casedisposition')}"
+              >
+                <a
+                  ng-disabled="onRoute('cases')"
+                  href="#/casedisposition"
+                  role="tab"
+                >
+                  <i class="fa fa-folder" aria-hidden="true"></i>
+                  &nbsp;{{'case.cases' | translate}}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="nav navbar-nav navbar-form navbar-right">
+            <form role="search">
+              <div
+                data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES }}]"
+                class="form-group"
+              >
+                <div class="input-group">
+                  <div class="mdl-textfield mdl-js-textfield">
+                    <label for="main-search" class="mdl-textfield__label"
+                      >{{'nav.search' | translate}}</label
+                    >
+                    <input
+                      ng-model="searchBarContent.content"
+                      ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'"
+                      ng-keypress="$event.which === 13 && searchBarQuery() && setSelectedTab('adhocquery')"
+                      type="text"
+                      id="main-search"
+                      class="mdl-textfield__input"
+                    />
+                  </div>
+                  <span class="input-group-btn">
+                    <button
+                      ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'"
+                      ng-click="searchBarQuery() && setSelectedTab('adhocquery')"
+                      aria-label="Search"
+                      type="submit"
+                      class="btn btn-primary"
+                    >
+                      <i class="fa fa-search"></i>
+                    </button>
+                  </span>
                 </div>
-                <span class="input-group-btn">
-	                  <button ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'"
-	                  	ng-click="searchBarQuery() && setSelectedTab('adhocquery')"
-	                  	aria-label="Search"  type="submit" class="btn btn-primary">
-	                  	<i class="fa fa-search"></i></button>
-	                </span>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
+    <div ui-view="nav"></div>
+    <div ui-view="header" href="#/dashboard"></div>
+    <div class="content" ui-view=""></div>
+    <div ui-view="footer"></div>
 
-<div ui-view="nav"></div>
-  <div ui-view="header" href="#/dashboard"></div>
-  <div class="content" ui-view=""  ></div>
-  <div ui-view="footer"></div>
+    <script src="resources/node_modules/angular/angular.min.js"></script>
+    <script src="resources/node_modules/ng-idle/angular-idle.min.js"></script>
+    <script src="resources/node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="resources/node_modules/moment/min/moment.min.js"></script>
+    <script src="resources/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>
+    <script src="resources/node_modules/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="resources/node_modules/bootbox/bootbox.min.js"></script>
+    <script src="resources/node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"></script>
+    <script src="resources/js/selectize.js"></script>
+    <script src="resources/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="resources/node_modules/jquery-extendext/jQuery.extendext.min.js"></script>
+    <script src="resources/node_modules/csv-js/csv.js"></script>
+    <script src="resources/node_modules/pdfmake/build/pdfmake.min.js"></script>
+    <script src="resources/node_modules/pdfmake/build/vfs_fonts.js"></script>
+    <script src="resources/node_modules/lodash/lodash.min.js"></script>
+    <script src="resources/node_modules/jszip/dist/jszip.min.js"></script>
+    <script src="resources/node_modules/excel-builder/dist/excel-builder.dist.min.js"></script>
+    <script src="resources/node_modules/angular-ui-grid/ui-grid.min.js"></script>
+    <script src="resources/node_modules/angular-material/angular-material.min.js"></script>
+    <script src="resources/node_modules/angular-aria/angular-aria.min.js"></script>
+    <script src="resources/node_modules/angular-spinners/dist/angular-spinners.min.js"></script>
+    <script src="resources/node_modules/angular-animate/angular-animate.min.js"></script>
+    <script src="resources/node_modules/angular-messages/angular-messages.min.js"></script>
+    <script src="resources/node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js"></script>
+    <script src="resources/node_modules/ng-file-upload/dist/ng-file-upload.min.js"></script>
+    <script src="resources/node_modules/spring-security-csrf-token-interceptor/dist/spring-security-csrf-token-interceptor.min.js"></script>
+    <script src="resources/node_modules/angular-swx-session-storage/release/swx-session-storage.min.js"></script>
+    <script src="resources/js/query-builder.js"></script>
+    <script src="resources/node_modules/jspdf/dist/jspdf.min.js"></script>
+    <script src="resources/js/html2canvas.js"></script>
+    <script src="resources/js/html2pdf.js"></script>
+    <!-- // ngx -->
+    <script src="resources/node_modules/angular-translate/dist/angular-translate.min.js"></script>
+    <script src="resources/node_modules/angular-cookies/angular-cookies.min.js"></script>
+    <script src="resources/node_modules/angular-translate-storage-cookie/angular-translate-storage-cookie.min.js"></script>
+    <script src="resources/node_modules/angular-translate-loader-url/angular-translate-loader-url.min.js"></script>
+    <script src="resources/node_modules/chart.js/dist/Chart.min.js"></script>
+    <script src="resources/node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+    <script src="resources/node_modules/ammap3/ammap/ammap.js"></script>
+    <script src="resources/node_modules/ammap3/ammap/maps/js/worldLow.js"></script>
+    <script src="resources/node_modules/ammap3/ammap/plugins/export/export.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/ammap3/ammap/plugins/export/export.css"
+      type="text/css"
+      media="all"
+    />
+    <script src="resources/node_modules/ammap3/ammap/themes/light.js"></script>
+    <script src="resources/node_modules/cbp-theme/dist/inputmask.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="resources/node_modules/cbp-theme/dist/cbp-theme.css"
+      type="text/css"
+      media="all"
+    />
+    <script src="resources/node_modules/angular-summernote/dist/angular-summernote.min.js"></script>
+    <script src="resources/node_modules/trix/dist/trix.js"></script>
+    <script src="resources/node_modules/angular-trix/dist/angular-trix.min.js"></script>
+    <script src="seatsMap/jquery.seat-charts.min.js"></script>
+    <script src="resources/node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
+    <script src="resources/node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.templates.js"></script>
+    <script src="resources/node_modules/angular-datetime-input/dist/datetime.js"></script>
+    <script src="resources/node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js"></script>
+    <script src="resources/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
 
-  <script src="resources/node_modules/angular/angular.min.js"></script>
-  <script src="resources/node_modules/ng-idle/angular-idle.min.js"></script>
-  <script src="resources/node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
-  <script src="resources/node_modules/moment/min/moment.min.js"></script>
-  <script src="resources/node_modules/jquery/dist/jquery.min.js"></script>
-  <script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>
-  <script src="resources/node_modules/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-  <script src="resources/node_modules/bootbox/bootbox.min.js"></script>
-  <script src="resources/node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"></script>
-  <script src="resources/js/selectize.js"></script>
-  <script src="resources/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-  <script src="resources/node_modules/jquery-extendext/jQuery.extendext.min.js"></script>
-  <script src="resources/node_modules/csv-js/csv.js"></script>
-  <script src="resources/node_modules/pdfmake/build/pdfmake.min.js"></script>
-  <script src="resources/node_modules/pdfmake/build/vfs_fonts.js"></script>
-  <script src="resources/node_modules/lodash/lodash.min.js"></script>
-  <script src="resources/node_modules/jszip/dist/jszip.min.js"></script>
-  <script src="resources/node_modules/excel-builder/dist/excel-builder.dist.min.js"></script>
-  <script src="resources/node_modules/angular-ui-grid/ui-grid.min.js"></script>
-  <script src="resources/node_modules/angular-material/angular-material.min.js"></script>
-  <script src="resources/node_modules/angular-aria/angular-aria.min.js"></script>
-  <script src="resources/node_modules/angular-spinners/dist/angular-spinners.min.js"></script>
-  <script src="resources/node_modules/angular-animate/angular-animate.min.js"></script>
-  <script src="resources/node_modules/angular-messages/angular-messages.min.js"></script>
-  <script src="resources/node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js"></script>
-  <script src="resources/node_modules/ng-file-upload/dist/ng-file-upload.min.js"></script>
-  <script src="resources/node_modules/spring-security-csrf-token-interceptor/dist/spring-security-csrf-token-interceptor.min.js"></script>
-  <script src="resources/node_modules/angular-swx-session-storage/release/swx-session-storage.min.js"></script>
-  <script src='resources/js/query-builder.js'></script>
-  <script src="resources/node_modules/jspdf/dist/jspdf.min.js"></script>
-  <script src='resources/js/html2canvas.js'></script>
-  <script src='resources/js/html2pdf.js'></script>
-  <!-- // ngx -->
-  <script src="resources/node_modules/angular-translate/dist/angular-translate.min.js"></script>
-  <script src="resources/node_modules/angular-cookies/angular-cookies.min.js"></script>
-  <script src="resources/node_modules/angular-translate-storage-cookie/angular-translate-storage-cookie.min.js"></script>
-  <script src="resources/node_modules/angular-translate-loader-url/angular-translate-loader-url.min.js"></script>
-  <script src="resources/node_modules/chart.js/dist/Chart.min.js"></script>
-  <script src="resources/node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
-  <script src="resources/node_modules/ammap3/ammap/ammap.js"></script>
-  <script src="resources/node_modules/ammap3/ammap/maps/js/worldLow.js"></script>
-  <script src="resources/node_modules/ammap3/ammap/plugins/export/export.min.js"></script>
-  <link rel="stylesheet" href="resources/node_modules/ammap3/ammap/plugins/export/export.css" type="text/css" media="all" />
-  <script src="resources/node_modules/ammap3/ammap/themes/light.js"></script>
-  <script src="resources/node_modules/cbp-theme/dist/inputmask.min.js"></script>
-  <link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
-  <script src="resources/node_modules/angular-summernote/dist/angular-summernote.min.js"></script>
-  <script src="resources/node_modules/trix/dist/trix.js"></script>
-  <script src="resources/node_modules/angular-trix/dist/angular-trix.min.js"></script>
-  <script src='seatsMap/jquery.seat-charts.min.js'></script>
-  <script src="resources/node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
-  <script src="resources/node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.templates.js"></script>
-  <script src="resources/node_modules/angular-datetime-input/dist/datetime.js"></script>
-  <script src="resources/node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js"></script>
-  <script src="resources/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+    <script src="resources/node_modules/d3/dist/d3.min.js"></script>
+    <script src="resources/node_modules/vaquita/dist/vaquita.min.js"></script>
+    <script src="app.js"></script>
+    <script src="login/AuthService.js"></script>
+    <script src="login/LoginController.js"></script>
+    <script src="common/directives.js"></script>
+    <script src="common/filters.js"></script>
+    <script src="common/services.js"></script>
+    <script src="factory/ModalGridFactory.js"></script>
+    <script src="factory/JqueryQueryBuilderWidget.js"></script>
+    <script src="adhocquery/linkGraph.js"></script>
+    <script src="dashboard/DashboardController.js"></script>
+    <script src="dashboard/DashboardService.js"></script>
+    <script src="flights/FlightsModel.js"></script>
+    <script src="cases/CaseModel.js"></script>
+    <script src="flights/FlightsController.js"></script>
+    <script src="flights/FlightsService.js"></script>
+    <script src="pax/PaxModel.js"></script>
+    <script src="pax/PaxController.js"></script>
+    <script src="pax/PaxService.js"></script>
+    <script src="pax/PaxFactory.js"></script>
+    <script src="build/BuildController.js"></script>
+    <script src="watchlists/WatchListController.js"></script>
+    <script src="admin/AdminController.js"></script>
+    <script src="admin/UserController.js"></script>
+    <script src="admin/UploadController.js"></script>
+    <script src="userSettings/UserSettingsController.js"></script>
+    <script src="userSettings/FilterCtrl.js"></script>
+    <script src="userlocation/UserLocationController.js"></script>
+    <script src="userlocation/UserLocationService.js"></script>
+    <script src="common/languagecontroller.js"></script>
+    <script src="cases/CasesController.js"></script>
+    <script src="cases/CaseDispositionController.js"></script>
+    <script src="cases/CaseDispositionDetailController.js"></script>
+    <script src="cases/CaseDispositionManualController.js"></script>
+    <script src="cases/CaseDispositionService.js"></script>
+    <script src="onedaylookout/OneDayLookoutController.js"></script>
+    <script src="onedaylookout/OneDayLookoutService.js"></script>
+    <script src="adhocquery/AdhocQueryController.js"></script>
+    <script src="adhocquery/AdhocQueryService.js"></script>
+    <script src="seatsMap/SeatsMapController.js"></script>
+    <script src="seatsMap/SeatService.js"></script>
+    <script src="help/AboutGtasController.js"></script>
+    <script src="help/AboutGtasService.js"></script>
+    <script src="common/NotificationModalController.js"></script>
+    <script src="signup/SignupController.js"></script>
+    <script src="signup/SignupService.js"></script>
 
-<script src='resources/node_modules/d3/dist/d3.min.js'></script>
-<script src='resources/node_modules/vaquita/dist/vaquita.min.js'></script>
-<script src='app.js'></script>
-<script src='login/AuthService.js'></script>
-<script src='login/LoginController.js'></script>
-<script src='common/directives.js'></script>
-<script src='common/filters.js'></script>
-<script src='common/services.js'></script>
-<script src='factory/ModalGridFactory.js'></script>
-<script src='factory/JqueryQueryBuilderWidget.js'></script>
-<script src='adhocquery/linkGraph.js'></script>
-<script src='dashboard/DashboardController.js'></script>
-<script src='dashboard/DashboardService.js'></script>
-<script src='flights/FlightsModel.js'></script>
-<script src='cases/CaseModel.js'></script>
-<script src='flights/FlightsController.js'></script>
-<script src='flights/FlightsService.js'></script>
-<script src='pax/PaxModel.js'></script>
-<script src='pax/PaxController.js'></script>
-<script src='pax/PaxService.js'></script>
-<script src='pax/PaxFactory.js'></script>
-<script src='build/BuildController.js'></script>
-<script src='watchlists/WatchListController.js'></script>
-<script src='admin/AdminController.js'></script>
-<script src='admin/UserController.js'></script>
-<script src='admin/UploadController.js'></script>
-<script src='userSettings/UserSettingsController.js'></script>
-<script src='userSettings/FilterCtrl.js'></script>
-<script src='userlocation/UserLocationController.js'></script>
-<script src='userlocation/UserLocationService.js'></script>
-<script src='common/languagecontroller.js'></script>
-<script src='cases/CasesController.js'></script>
-<script src='cases/CaseDispositionController.js'></script>
-<script src='cases/CaseDispositionDetailController.js'></script>
-<script src='cases/CaseDispositionManualController.js'></script>
-<script src='cases/CaseDispositionService.js'></script>
-<script src='onedaylookout/OneDayLookoutController.js'></script>
-<script src='onedaylookout/OneDayLookoutService.js'></script>
-<script src='adhocquery/AdhocQueryController.js'></script>
-<script src='adhocquery/AdhocQueryService.js'></script>
-<script src='seatsMap/SeatsMapController.js'></script>
-<script src='seatsMap/SeatService.js'></script>
-<script src='help/AboutGtasController.js'></script>
-<script src='help/AboutGtasService.js'></script>
-<script src= 'common/NotificationModalController.js'></script>
-
-
-  <script type="text/ng-template" id="dialog1.tmpl.html">
-    <md-dialog ng-cloak>
-      <form>
-        <md-dialog-content>
-          <div class="md-dialog-content">
-            <h2 class="md-title">{{'msg.idletimeoutwarning' | translate}}</h2>
-            <div class="_md-dialog-content-body ng-scope">
-              <p class="ng-binding">{{'msg.idletoolong' | translate}}</p>
+    <script type="text/ng-template" id="dialog1.tmpl.html">
+      <md-dialog ng-cloak>
+        <form>
+          <md-dialog-content>
+            <div class="md-dialog-content">
+              <h2 class="md-title">{{'msg.idletimeoutwarning' | translate}}</h2>
+              <div class="_md-dialog-content-body ng-scope">
+                <p class="ng-binding">{{'msg.idletoolong' | translate}}</p>
+              </div>
+              <span idle-countdown="countdown">{{'msg.youwillbeloggedout' | translate}} <strong style="font-size:xx-large;">{{countdown}}</strong> {{'msg.seconds' | translate}}. </span>
             </div>
-            <span idle-countdown="countdown">{{'msg.youwillbeloggedout' | translate}} <strong style="font-size:xx-large;">{{countdown}}</strong> {{'msg.seconds' | translate}}. </span>
-          </div>
-        </md-dialog-content>
-        <md-dialog-actions layout="row">
-          <md-dialog-actions layout="row" class="layout-row">
-            <md-button ng-click="dialog.hide()">{{'msg.continuesession' | translate}}</md-button>
+          </md-dialog-content>
+          <md-dialog-actions layout="row">
+            <md-dialog-actions layout="row" class="layout-row">
+              <md-button ng-click="dialog.hide()">{{'msg.continuesession' | translate}}</md-button>
+            </md-dialog-actions>
           </md-dialog-actions>
-        </md-dialog-actions>
-      </form>
-    </md-dialog>
+        </form>
+      </md-dialog>
+    </script>
 
-  </script>
-
-  <div>
-    <spinner name="html5spinner" ng-cloak="">
-      <div class="overlay"></div>
-      <div class="spinner">
-        <button class="btn btn-default" disabled>
+    <div>
+      <spinner name="html5spinner" ng-cloak="">
+        <div class="overlay"></div>
+        <div class="spinner">
+          <button class="btn btn-default" disabled>
             <i class="fa fa-spinner fa-spin"></i> {{'msg.wait' | translate}}...
-        </button>
-      </div>
-    </spinner>
-  </div>
-</body>
-
+          </button>
+        </div>
+      </spinner>
+    </div>
+  </body>
 </html>

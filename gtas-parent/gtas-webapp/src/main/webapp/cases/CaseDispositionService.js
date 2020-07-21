@@ -50,6 +50,39 @@
       return getTargetDate(DEFAULT_DAYS_BACK);
     }
 
+    var pageRequest = {
+      pageSize: "10",
+      pageNumber: "1",
+      displayStatusCheckBoxes: getDefaultDispCheckboxes(),
+      withTimeLeft: getDefaultTimeLeft(),
+      myRulesOnly: false,
+      ruleTypes: {
+        WATCHLIST: true,
+        USER_RULE: true,
+        GRAPH_RULE: true,
+        MANUAL: true,
+        EXTERNAL_RULE: true,
+        PARTIAL_WATCHLIST: false
+      },
+      ruleCatFilter: getDefaultCats(),
+      etaStart: getDefaultStartDate(),
+      etaEnd: getDefaultEndDate(),
+      sort: getDefaultSort()
+    };
+    var dfd = $q.defer();
+    dfd.resolve(
+      $http({
+        method: "get",
+        url: "/gtas/hits/",
+        params: { requestDto: pageRequest },
+        data: "",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+    );
+    return dfd.promise;
+
     function getTargetDate(days) {
       let targetDate = new Date();
       targetDate.setDate(targetDate.getDate() + days);

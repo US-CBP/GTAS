@@ -3,6 +3,7 @@
  *
  * Please see LICENSE.txt for details.
  */
+
 app.controller("AdminCtrl", function(
   $scope,
   $mdDialog,
@@ -24,7 +25,8 @@ app.controller("AdminCtrl", function(
   $translate,
   watchListService,
   statisticService,
-  paxNotesService
+  paxNotesService,
+  SignupService
 ) {
   "use strict";
   var CARRIER = "carrier";
@@ -290,6 +292,23 @@ app.controller("AdminCtrl", function(
         break;
     }
   });
+
+  var removeRow = function(row, grid, gridApi) {
+    grid.data.splice(grid.data.indexOf(row), 1);
+    grid.data = grid.data;
+  };
+
+  $scope.approveSignupRequest = function(row) {
+    SignupService.approveSignupRequest(row).then(function(data) {
+      removeRow(row, $scope.signupRequestsGrid, $scope.signupRequestsGridApi);
+    });
+  };
+
+  $scope.rejectSignupRequest = function(row) {
+    SignupService.rejectSignupRequest(row).then(function() {
+      removeRow(row, $scope.signupRequestsGrid, $scope.signupRequestsGridApi);
+    });
+  };
 
   $scope.viewCodes = function(tab) {
     $scope.activeCodeTab = tab;
@@ -640,6 +659,24 @@ app.controller("AdminCtrl", function(
     m.noteTypeModel = {
       noteType: ""
     };
+    paxNotesService.getNoteTypes().then(function(res) {
+      $scope.noteTypeGrid.data = res.data;
+    });
+
+    SignupService.getAllNewSignupRequests().then(function(res) {
+      $scope.signupRequestsGrid.data = res.data;
+    });
+
+    $scope.addWlCategory = function() {
+      $scope.resetModels($scope);
+      $scope.watchlistCategory = new watchListModel.WatchlistCategory();
+      $mdSidenav("wlCatSave").open();
+    };
+    $scope.addNoteTypeCategory = function() {
+      $scope.resetModels($scope);
+      $scope.noteTypeModel = new noteTypeModel.noteTypeModel();
+      $mdSidenav("noteTypeSave").open();
+    };
   };
 
   $scope.wlCategoryModel = new watchListModel.WatchlistCategory();
@@ -656,6 +693,58 @@ app.controller("AdminCtrl", function(
   paxNotesService.getNoteTypes().then(function(res) {
     $scope.noteTypeGrid.data = res.data;
   });
+
+  $scope.noteTypeGrid = {
+    paginationPageSizes: [10, 15, 20],
+    paginationPageSize: 10,
+    columnDefs: gridOptionsLookupService.getLookupColumnDefs("watchlist")
+      .NOTE_TYPE,
+    enableGridMenu: true,
+    exporterPdfDefaultStyle: { fontSize: 9 },
+    exporterPdfTableHeaderStyle: {
+      fontSize: 10,
+      bold: true,
+      italics: true,
+      color: "red"
+    },
+    exporterPdfFooter: function(currentPage, pageCount) {
+      return {
+        text: currentPage.toString() + " of " + pageCount.toString(),
+        style: "footerStyle"
+      };
+    },
+    exporterPdfPageSize: "LETTER",
+    exporterPdfMaxGridWidth: 500,
+    exporterCsvFilename: "note-list-types.csv",
+    exporterExcelFilename: "note-list-types.xlsx",
+    exporterExcelSheetName: "Data"
+  };
+
+  $scope.signupRequestsGrid = {
+    paginationPageSizes: [10, 15, 20],
+    paginationPageSize: 10,
+    columnDefs: gridOptionsLookupService.getLookupColumnDefs("watchlist")
+      .SIGNUP_REQUEST,
+    enableGridMenu: true,
+    exporterPdfDefaultStyle: { fontSize: 9 },
+    exporterPdfTableHeaderStyle: {
+      fontSize: 10,
+      bold: true,
+      italics: true,
+      color: "red"
+    },
+    exporterPdfFooter: function(currentPage, pageCount) {
+      return {
+        text: currentPage.toString() + " of " + pageCount.toString(),
+        style: "footerStyle"
+      };
+    },
+    exporterPdfPageSize: "LETTER",
+    exporterPdfMaxGridWidth: 500,
+    exporterCsvFilename: "note-list-types.csv",
+    exporterExcelFilename: "note-list-types.xlsx",
+    exporterExcelSheetName: "Data"
+  };
 
   $scope.addWlCategory = function() {
     $scope.resetModels($scope);
@@ -718,6 +807,14 @@ app.controller("AdminCtrl", function(
     exporterCsvFilename: "note-list-types.csv",
     exporterExcelFilename: "note-list-types.xlsx",
     exporterExcelSheetName: "Data"
+  };
+
+  $scope.noteTypeGrid.onRegisterApi = function(gridApi) {
+    $scope.noteTypeGridApi = gridApi;
+  };
+
+  $scope.signupRequestsGrid.onRegisterApi = function(gridApi) {
+    $scope.signupRequestsGridApi = gridApi;
   };
 
   $scope.wlCategoryGrid.onRegisterApi = function(gridApi) {

@@ -161,21 +161,23 @@ public class DataRetentionServiceImpl implements DataRetentionService {
 
 
 
-    @Transactional(readOnly = true)
     public PnrFieldsToScrub scrubPnrs(Set<Long> flightIds, Set<Long> messageIds, Date pnrCutOffDate, GTASShareConstraint gtasShareConstraint) {
 
         PnrFieldsToScrub pnrFieldsToScrub = new PnrFieldsToScrub();
         if (messageIds.isEmpty()) {
             return pnrFieldsToScrub;
         }
+
+//        logger.info("getting pnrs");
         Set<Pnr> pnrs = pnrRepository.getPnrsToScrub(flightIds, messageIds);
+ //       logger.info("got pnrs");
         Set<Long> pnrIds = pnrs.stream().map(Pnr::getId).collect(toSet());
         Set<Passenger> retainedPassengers = gtasShareConstraint.getWhitelistedPassengers();
 
+  //      logger.info("doing address");
         //Address
-        Set<Long> addressIds = pnrs.stream().flatMap(pnr -> pnr.getAddresses().stream()).map(Address::getId).collect(toSet());
-        if (!addressIds.isEmpty()) {
-            Set<Address> addressesWithPnr = addressRepository.findAddressesToDelete(addressIds, flightIds, pnrIds);
+        Set<Address> addressesWithPnr = addressRepository.findAddressesToDelete(flightIds, pnrIds);
+        if (!addressesWithPnr.isEmpty()) {
             Set<Address> addressToSave = new HashSet<>();
             Set<AddressDataRetentionPolicyAudit> addressDataRetentionPolicyAudits = new HashSet<>();
             for (Address address : addressesWithPnr) {
@@ -183,7 +185,7 @@ public class DataRetentionServiceImpl implements DataRetentionService {
                 Set<Passenger> retainedPassengerLinked = Sets.intersection(retainedPassengers, address.getPnrs().stream().flatMap(p -> p.getPassengers().stream()).collect(toSet()));
                 boolean noActionMarkedForRetention = !retainedPassengerLinked.isEmpty();
                 AddressDataRetentionPolicyAudit addressDataRetentionPolicyAudit = new AddressDataRetentionPolicyAudit();
-            addressDataRetentionPolicyAudit.setAddress(address);
+                addressDataRetentionPolicyAudit.setAddress(address);
                 if (noActionMarkedForRetention) {
                     populateNoActionRetainedRecord(addressDataRetentionPolicyAudit);
                 } else if (referenceBeforeCutOffDate) {
@@ -196,13 +198,15 @@ public class DataRetentionServiceImpl implements DataRetentionService {
                 addressDataRetentionPolicyAudits.add(addressDataRetentionPolicyAudit);
             }
             pnrFieldsToScrub.setAddresses(addressToSave);
+      //      logger.info("deleted addr number: " + addressToSave.size());
+
             pnrFieldsToScrub.setAddressAudits(addressDataRetentionPolicyAudits);
         }
+ //       logger.info("addr done, getting cc now");
 
         //Credit Cards
-        Set<Long> creditCardIds = pnrs.stream().flatMap(pnr -> pnr.getCreditCards().stream()).map(CreditCard::getId).collect(toSet());
-        if (!creditCardIds.isEmpty()) {
-            Set<CreditCard> creditCardsFromPnr = creditCardRepository.findCreditCardToDelete(creditCardIds, flightIds, pnrIds);
+          Set<CreditCard> creditCardsFromPnr = creditCardRepository.findCreditCardToDelete(flightIds, pnrIds);
+          if (!creditCardsFromPnr.isEmpty()) {
             Set<CreditCard> creditCardsToSave = new HashSet<>();
             Set<CreditCardDataRetentionPolicyAudit> cardDataRetentionPolicyAudits = new HashSet<>();
 
@@ -224,13 +228,14 @@ public class DataRetentionServiceImpl implements DataRetentionService {
                 cardDataRetentionPolicyAudits.add(creditCardDataRetentionPolicyAudit);
             }
             pnrFieldsToScrub.setCreditCard(creditCardsToSave);
-            pnrFieldsToScrub.setCreditCardAudits(cardDataRetentionPolicyAudits);
-        }
+//              logger.info("deleted cc number: " + creditCardsToSave.size());
 
+              pnrFieldsToScrub.setCreditCardAudits(cardDataRetentionPolicyAudits);
+        }
+//            logger.info("cc done getting phones now");
         //Phones
-        Set<Long> phoneIds = pnrs.stream().flatMap(pnr -> pnr.getPhones().stream()).map(Phone::getId).collect(toSet());
-        if (!phoneIds.isEmpty()) {
-            Set<Phone> phonesFromPnr = phoneRepository.findPhonesFromPnr(phoneIds, flightIds, pnrIds);
+        Set<Phone> phonesFromPnr = phoneRepository.findPhonesFromPnr( flightIds, pnrIds);
+        if (!phonesFromPnr.isEmpty()) {
             Set<Phone> phoneToSave = new HashSet<>();
             Set<PhoneDataRetentionPolicyAudit> phoneRetentionPolicyAudits = new HashSet<>();
             for (Phone phone : phonesFromPnr) {
@@ -251,13 +256,16 @@ public class DataRetentionServiceImpl implements DataRetentionService {
                 phoneRetentionPolicyAudits.add(phoneDataRetentionPolicyAudit);
             }
             pnrFieldsToScrub.setPhones(phoneToSave);
+//            logger.info("deleted phone number: " + phoneToSave.size());
+
             pnrFieldsToScrub.setPhoneDataRetentionPolicy(phoneRetentionPolicyAudits);
         }
 
+//        logger.info("phone done doing emails now");
+
         //Emails
-        Set<Long> emailIds = pnrs.stream().flatMap(pnr -> pnr.getEmails().stream()).map(Email::getId).collect(toSet());
-        if (!emailIds.isEmpty()) {
-            Set<Email> emailsFromPnr = emailRepository.findEmails(emailIds, flightIds, pnrIds);
+        Set<Email> emailsFromPnr = emailRepository.findEmails( flightIds, pnrIds);
+        if (!emailsFromPnr.isEmpty()) {
             Set<Email> emailsToSave = new HashSet<>();
             Set<EmailDataRetentionPolicyAudit> emailRetentionPolciyAudit = new HashSet<>();
             for (Email email : emailsFromPnr) {
@@ -278,13 +286,15 @@ public class DataRetentionServiceImpl implements DataRetentionService {
                 emailRetentionPolciyAudit.add(emailDataRetentionPolicyAudit);
             }
             pnrFieldsToScrub.setEmails(emailsToSave);
+//            logger.info("deleted email number: " + emailsToSave.size());
             pnrFieldsToScrub.setEmailsDataRetentionPolicy(emailRetentionPolciyAudit);
         }
+ //       logger.info("email done about to do ff");
 
         //Frequent Flyers
-        Set<Long> ffIds = pnrs.stream().flatMap(pnr -> pnr.getFrequentFlyers().stream()).map(FrequentFlyer::getId).collect(toSet());
-        if (!ffIds.isEmpty()) {
-            Set<FrequentFlyer> ffFromPnr = frequentFlyerRepository.findFrequentFlyers(ffIds, flightIds, pnrIds);
+       // Set<Long> ffIds = pnrs.stream().flatMap(pnr -> pnr.getFrequentFlyers().stream()).map(FrequentFlyer::getId).collect(toSet());
+        Set<FrequentFlyer> ffFromPnr = frequentFlyerRepository.findFrequentFlyers(flightIds, pnrIds);
+        if (!ffFromPnr.isEmpty()) {
             Set<FrequentFlyer> frequentFlyers = new HashSet<>();
             Set<FrequentFlyerDataRetentionPolicyAudit> frequentFlyerDataRetentionPolicyAudits = new HashSet<>();
             for (FrequentFlyer ff : ffFromPnr) {
@@ -305,8 +315,11 @@ public class DataRetentionServiceImpl implements DataRetentionService {
                 frequentFlyerDataRetentionPolicyAudits.add(frequentFlyerDataRetentionPolicyAudit);
             }
         pnrFieldsToScrub.setFrequentFlyers(frequentFlyers);
-        pnrFieldsToScrub.setFrequentFlyersDataRetentionPolicy(frequentFlyerDataRetentionPolicyAudits);
+//            logger.info("deleted ff number: " + frequentFlyers.size());
+
+            pnrFieldsToScrub.setFrequentFlyersDataRetentionPolicy(frequentFlyerDataRetentionPolicyAudits);
         }
+ //       logger.info("done ff done it all");
 
         return pnrFieldsToScrub;
 

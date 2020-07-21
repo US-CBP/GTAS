@@ -31,6 +31,12 @@ public class AppConfigurationServiceImpl implements AppConfigurationService {
 
 	}
 
+	public void setRecompileFlag() {
+		AppConfiguration ap = appConfigurationRepository.findByOption("RECOMPILE_RULES");
+		ap.setValue("true");
+		appConfigurationRepository.save(ap);
+	}
+
 	public Date offSetTimeZone(Date date) {
 		if (date == null) {
 			return null;

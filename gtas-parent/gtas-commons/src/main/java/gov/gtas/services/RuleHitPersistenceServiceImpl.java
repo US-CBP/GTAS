@@ -42,12 +42,14 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 
 	private final FlightGraphHitsRepository flightGraphHitsRepository;
 
+	private final FlightHitsExternalRepository flightHitsExternalRepository;
+
 	private final HitMakerRepository hitMakerRepository;
 
 	public RuleHitPersistenceServiceImpl(PassengerService passengerService, HitDetailRepository hitDetailRepository,
-			HitsSummaryRepository hitsSummaryRepository, FlightHitsWatchlistRepository flightHitsWatchlistRepository,
-			FlightHitsRuleRepository flightHitsRuleRepository, FlightFuzzyHitsRepository flightFuzzyHitsRepository,
-			FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository) {
+										 HitsSummaryRepository hitsSummaryRepository, FlightHitsWatchlistRepository flightHitsWatchlistRepository,
+										 FlightHitsRuleRepository flightHitsRuleRepository, FlightFuzzyHitsRepository flightFuzzyHitsRepository,
+										 FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository, FlightHitsExternalRepository flightHitsExternalRepository) {
 		this.passengerService = passengerService;
 		this.hitDetailRepository = hitDetailRepository;
 		this.hitsSummaryRepository = hitsSummaryRepository;
@@ -56,6 +58,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		this.flightFuzzyHitsRepository = flightFuzzyHitsRepository;
 		this.flightGraphHitsRepository = flightGraphHitsRepository;
 		this.hitMakerRepository = hitMakerRepository;
+		this.flightHitsExternalRepository = flightHitsExternalRepository;
 	}
 
 	@Transactional
@@ -89,6 +92,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 				int graphHits = 0;
 				int pwlHits = 0;
 				int manualHits = 0;
+				int externalHits = 0;
 				for (Passenger passenger : passengersWithHitDetails) {
 					Set<HitDetail> passengerHitDetails = passenger.getHitDetails();
 					Set<HitDetail> ruleEngineHitDetails = hitDetailMappedToPassengerId.get(passenger.getId());
@@ -134,6 +138,10 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 								hitsSummary.setManualHitCount(hitsSummary.getManualHitCount() + 1);
 								manualHits++;
 								break;
+							case EXTERNAL_HIT:
+								hitsSummary.setExternalHitCount(hitsSummary.getExternalHitCount() + 1);
+								externalHits++;
+								break;
 							default:
 								logger.warn("UNIMPLEMENTED FIELD - COUNT NOT SAVED - " + ruleEngineDetail.getHitEnum());
 							}
@@ -171,7 +179,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 					updateFlightHitCounts(flightIds);
 				}
 				logger.debug("Processed... rule hits: " + ruleHits + " wlHits: " + wlHits + " graphHits" + graphHits
-						+ " partial hits: " + pwlHits + " manual hits: " + manualHits);
+						+ " partial hits: " + pwlHits + " manual hits: " + manualHits + " external hits: " + externalHits);
 				logger.info("Persisted " + newDetails + " new passenger hit details, ignored " + existingDetails
 						+ " existing passenger hit details.");
 			}
@@ -199,6 +207,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		Set<FlightHitsWatchlist> flightHitsWatchlists = new HashSet<>();
 		Set<FlightHitsGraph> flightHitsGraphs = new HashSet<>();
 		Set<FlightHitsFuzzy> flightHitsFuzzies = new HashSet<>();
+		Set<FlightHitsExternal> flightHitsExternals = new HashSet<>();
 		for (Long flightId : flights) {
 			Integer ruleHits = hitsSummaryRepository.ruleHitCount(flightId);
 			FlightHitsRule ruleFlightHits = new FlightHitsRule(flightId, ruleHits);
@@ -215,10 +224,16 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 			Integer partialHitCount = hitsSummaryRepository.partialHitCount(flightId);
 			FlightHitsFuzzy flightHitsFuzzy = new FlightHitsFuzzy(flightId, partialHitCount);
 			flightHitsFuzzies.add(flightHitsFuzzy);
+
+			Integer externalHitCount = hitsSummaryRepository.externalHitCount(flightId);
+			FlightHitsExternal flightHitsExternal = new FlightHitsExternal(flightId, externalHitCount);
+			flightHitsExternals.add(flightHitsExternal);
+
 		}
 		flightHitsRuleRepository.saveAll(flightHitsRules);
 		flightHitsWatchlistRepository.saveAll(flightHitsWatchlists);
 		flightGraphHitsRepository.saveAll(flightHitsGraphs);
 		flightFuzzyHitsRepository.saveAll(flightHitsFuzzies);
+		flightHitsExternalRepository.saveAll(flightHitsExternals);
 	}
 }

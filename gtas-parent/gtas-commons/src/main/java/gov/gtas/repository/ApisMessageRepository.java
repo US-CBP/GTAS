@@ -47,4 +47,14 @@ public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
 
 	@Query("SELECT passenger.id from ApisMessage apismessage join apismessage.passengers passenger where apismessage.id in :apisIds")
 	Set<Long> getPassengerWithFlightInfo(@Param("apisIds") Set<Long> apisIds);
+
+	@Query("SELECT apismessage from ApisMessage apismessage left join fetch apismessage.flights flights join apismessage.passengers passenger where apismessage.id in :apisIds" +
+			" and passenger.id in :passengerIds and flights.id = :flightId")
+	Set<ApisMessage> apisMessageWithFlightInfo(@Param("passengerIds") Set<Long>passengerIds, @Param("apisIds") Set<Long> apisIds, @Param("flightId") Long flightId);
+
+	@Query("SELECT apismessage.id, passenger from Passenger passenger left join fetch passenger.documents left join fetch passenger.hitDetails hd left join fetch hd.hitMaker hm left join fetch hm.hitCategory join passenger.apisMessage apismessage join passenger.flight flight where apismessage.id in :apisIds" +
+			" and passenger.id in :passengerIds and flight.id = :flightId")
+	List<Object[]> apisAndObject(@Param("passengerIds") Set<Long>passengerIds, @Param("apisIds") Set<Long> apisIds,  @Param("flightId") Long flightId);
+
+
 }

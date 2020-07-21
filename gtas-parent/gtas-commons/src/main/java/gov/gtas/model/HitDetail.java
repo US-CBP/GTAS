@@ -44,7 +44,6 @@ public class HitDetail extends BaseEntity {
 	private HitTypeEnum hitEnum;
 
 	// Binds directly to rule, watchlist item, or graph hit
-	// Null when manual hit.
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hm_id", referencedColumnName = "id", insertable = false, updatable = false)
 	@JsonIgnore
