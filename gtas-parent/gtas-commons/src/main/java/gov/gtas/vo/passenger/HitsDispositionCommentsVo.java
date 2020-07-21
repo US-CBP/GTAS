@@ -6,12 +6,14 @@
 
 package gov.gtas.vo.passenger;
 
+import gov.gtas.model.PIIObject;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class HitsDispositionCommentsVo implements Serializable {
+public class HitsDispositionCommentsVo implements Serializable, PIIObject {
 
 	private static final long serialVersionUID = 1L;
 
@@ -98,4 +100,15 @@ public class HitsDispositionCommentsVo implements Serializable {
 		this.updatedBy = updatedBy;
 	}
 
+	@Override
+	public PIIObject deletePII() {
+		this.comments = "DELETED";
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.comments = "MASKED";
+		return this;
+	}
 }

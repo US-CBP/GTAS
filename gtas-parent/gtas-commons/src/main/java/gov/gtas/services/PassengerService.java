@@ -28,7 +28,7 @@ public interface PassengerService {
 	Passenger findById(Long id);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	Passenger findByIdWithFlightAndDocuments(Long paxId);
+	Passenger findByIdWithFlightAndDocumentsAndMessageDetails(Long paxId);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	Passenger findByIdWithFlightAndDocumentsAndHitDetails(Long paxId);
@@ -44,9 +44,6 @@ public interface PassengerService {
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES)
 	PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request);
-
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	List<Flight> getTravelHistoryNotByItinerary(Long pId, Long pnrId, String pnrRef);
@@ -65,4 +62,12 @@ public interface PassengerService {
 	Set<Passenger> getPassengersWithHitDetails(Set<Long> passengerIds);
 
     Set<Passenger> getPassengersForEmailMatching(Set<Passenger> passengers);
+
+	Set<Passenger> getPassengersFromMessageIds(Set<Long> messageIds, Set<Long> flightIds);
+
+	Set<Passenger> getFullPassengersFromMessageIds(Set<Long> messageIds, Set<Long> flightIds);
+
+	Set<Document> getPassengerDocuments(Set<Long> passengerIds, Set<Long> flightIds);
+
+    Set<Passenger> getPassengersWithBags(Set<Long> passengerIds, Long flightId);
 }

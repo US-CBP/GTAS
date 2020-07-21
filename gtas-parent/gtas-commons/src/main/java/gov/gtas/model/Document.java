@@ -5,14 +5,15 @@
  */
 package gov.gtas.model;
 
-import java.util.Date;
-import java.util.Objects;
+import gov.gtas.enumtype.MessageType;
+
+import java.util.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "document")
-public class Document extends BaseEntity {
+public class Document extends BaseEntity implements PIIObject {
 	private static final long serialVersionUID = 1L;
 
 	public Document() {
@@ -39,9 +40,24 @@ public class Document extends BaseEntity {
 	@Column(name = "issuance_country")
 	private String issuanceCountry;
 
+	@Column(name = "message_type")
+	@Enumerated(EnumType.STRING)
+	private MessageType messageType;
+
 	@JoinColumn(name = "passenger_id", columnDefinition = "bigint unsigned")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Passenger passenger;
+
+	@ManyToMany(mappedBy = "documents")
+	private Set<Message> messages = new HashSet<>();
+
+
+	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
+	private Long flightId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+	private Flight flight;
 
 	@Column(name = "passenger_id", columnDefinition = "bigint unsigned", insertable = false, updatable = false)
 	private Long passengerId;
@@ -50,6 +66,23 @@ public class Document extends BaseEntity {
 	@Column(name = "days_valid")
 	private Integer numberOfDaysValid;
 
+	@OneToMany(mappedBy = "document", fetch = FetchType.LAZY)
+	private Set<DocumentRetentionPolicyAudit> documentRetentionPolicyAudits = new HashSet<>();
+
+	public MessageType getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(MessageType messageType) {
+		this.messageType = messageType;
+	}
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
 	public Integer getNumberOfDaysValid() {
 		return numberOfDaysValid;
 	}
@@ -116,7 +149,7 @@ public class Document extends BaseEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.documentNumber, this.issuanceCountry, this.documentType, this.passengerId);
+		return Objects.hash(this.documentNumber, this.messageType, this.documentType, this.passengerId);
 	}
 
 	@Override
@@ -127,6 +160,43 @@ public class Document extends BaseEntity {
 			return false;
 		final Document other = (Document) obj;
 		return Objects.equals(this.documentNumber, other.documentNumber)
-				&& Objects.equals(this.passengerId, other.passengerId);
+				&& Objects.equals(this.passengerId, other.passengerId)
+				&& Objects.equals(this.messageType, other.messageType);
+	}
+
+	public Set<Message> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(Set<Message> messages) {
+		this.messages = messages;
+	}
+
+	public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+
+	public Set<DocumentRetentionPolicyAudit> getDocumentRetentionPolicyAudits() {
+		return documentRetentionPolicyAudits;
+	}
+
+	public void setDocumentRetentionPolicyAudits(Set<DocumentRetentionPolicyAudit> documentRetentionPolicyAudits) {
+		this.documentRetentionPolicyAudits = documentRetentionPolicyAudits;
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.documentNumber  = "DELETED " + UUID.randomUUID().toString();
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.documentNumber = "MASKED";
+		return this;
 	}
 }

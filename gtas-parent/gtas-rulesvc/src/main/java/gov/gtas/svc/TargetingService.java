@@ -9,10 +9,12 @@
 package gov.gtas.svc;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.MessageStatus;
+import gov.gtas.rule.KIEAndLastUpdate;
 import gov.gtas.svc.util.RuleResults;
 import gov.gtas.svc.util.RuleResultsWithMessageStatus;
 
@@ -21,7 +23,7 @@ import gov.gtas.svc.util.RuleResultsWithMessageStatus;
  */
 public interface TargetingService {
 
-	RuleResultsWithMessageStatus analyzeLoadedMessages(List<MessageStatus> messageStatuses);
+	RuleResultsWithMessageStatus analyzeLoadedMessages(List<MessageStatus> messageStatuses, Map<String, KIEAndLastUpdate> rules);
 
 	void saveMessageStatuses(List<MessageStatus> setMessagesToAnalyzed);
 

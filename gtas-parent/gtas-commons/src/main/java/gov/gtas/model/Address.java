@@ -8,12 +8,13 @@ package gov.gtas.model;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "address")
-public class Address extends BaseEntityAudit {
+public class Address extends BaseEntityAudit implements PIIObject {
 	private static final long serialVersionUID = 1L;
 
 	public Address() {
@@ -146,5 +147,25 @@ public class Address extends BaseEntityAudit {
 				&& Objects.equals(this.line3, other.line3) && Objects.equals(this.city, other.city)
 				&& Objects.equals(this.state, other.state) && Objects.equals(this.country, other.country)
 				&& Objects.equals(this.postalCode, other.postalCode);
+	}
+
+	@Override
+	public PIIObject deletePII() {
+		this.line1 = "DELETED " + UUID.randomUUID().toString() ;
+		this.line2 = "DELETED " + UUID.randomUUID().toString();
+		this.line3 = "DELETED " + UUID.randomUUID().toString();
+		this.state = "DELETED " + UUID.randomUUID().toString();
+		this.postalCode = "DELETED " + UUID.randomUUID().toString();
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.line1 = "MASKED";
+		this.line2 = "MASKED";
+		this.line3 = "MASkED";
+		this.state = "MASKED";
+		this.postalCode = "MASKED";
+		return this;
 	}
 }

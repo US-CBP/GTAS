@@ -18,7 +18,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "message")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Message extends BaseEntity {
+//@NamedEntityGraph(name = "messageRetention", attributeNodes = { @NamedAttributeNode("id"),
+//		@NamedAttributeNode(("createDate")) })
+public class Message extends BaseEntity implements MessageFields {
 	private static final long serialVersionUID = 1L;
 
 	public Message() {
@@ -37,7 +39,7 @@ public class Message extends BaseEntity {
 	@Column(name = "file_path", nullable = false)
 	private String filePath;
 
-	@OneToOne(targetEntity = MessageStatus.class, mappedBy = "message", fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.PERSIST, targetEntity = MessageStatus.class, mappedBy = "message", fetch = FetchType.EAGER)
 	@JoinColumn(name = "id", unique = true, referencedColumnName = "ms_message_id", insertable = false, updatable = false)
 	private MessageStatus status;
 
@@ -51,9 +53,26 @@ public class Message extends BaseEntity {
 	@Column(length = 4000)
 	private String error;
 
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "message")
+	private Set<PassengerDetailFromMessage> passengerDetailFromMessages = new HashSet<>();
+
+	@ManyToMany
+	@JoinTable(name = "message_document", joinColumns = @JoinColumn(name = "document_id"), inverseJoinColumns = @JoinColumn(name = "message_id"))
+	private Set<Document> documents = new HashSet<>();
+
 	@Column(name = "passenger_count")
 	protected Integer passengerCount;
 
+	@Transient
+	private List<PendingHitDetails> pendingHitDetails = new ArrayList<>();
+
+	public List<PendingHitDetails> getPendingHitDetails() {
+		return pendingHitDetails;
+	}
+
+	public void setPendingHitDetails(List<PendingHitDetails> pendingHitDetails) {
+		this.pendingHitDetails = pendingHitDetails;
+	}
 	public Integer getPassengerCount() {
 		return passengerCount;
 	}
@@ -165,5 +184,51 @@ public class Message extends BaseEntity {
 			return false;
 		final Message other = (Message) obj;
 		return Objects.equals(this.hashCode, other.hashCode);
+	}
+
+	public Set<PassengerDetailFromMessage> getPassengerDetailFromMessages() {
+		return passengerDetailFromMessages;
+	}
+
+	public void setPassengerDetailFromMessages(Set<PassengerDetailFromMessage> passengerDetailFromMessages) {
+		this.passengerDetailFromMessages = passengerDetailFromMessages;
+	}
+
+	public Set<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(Set<Document> documents) {
+		this.documents = documents;
+	}
+
+	@Override
+	public EdifactMessage getEdifactMessage() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setEdifactMessage(EdifactMessage edifactMessage) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Set<Passenger> getPassengers() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setPassengers(Set<Passenger> passengers) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Set<Flight> getFlights() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setFlights(Set<Flight> flights) {
+		throw new UnsupportedOperationException();
 	}
 }

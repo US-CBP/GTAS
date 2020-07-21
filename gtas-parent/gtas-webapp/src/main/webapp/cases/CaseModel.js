@@ -20,6 +20,8 @@ app.service("caseModel",  function (caseDispositionService) {
         WATCHLIST: true,
         USER_RULE: true,
         GRAPH_RULE: true,
+        MANUAL: true,
+        EXTERNAL_RULE: true,
         PARTIAL_WATCHLIST: false
     },
     ruleCatFilter,

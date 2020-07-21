@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.aop.annotations.FlightAuditFirstArgFlightIdAsLong;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
@@ -76,6 +77,7 @@ public class PassengerServiceImpl implements PassengerService {
 
 	@Override
 	@Transactional
+	@FlightAuditFirstArgFlightIdAsLong
 	public PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request) {
 		List<PassengerGridItemVo> rv = new ArrayList<>();
 		Pair<Long, List<Passenger>> tuple = passengerRespository.findByCriteria(flightId, request);
@@ -108,6 +110,7 @@ public class PassengerServiceImpl implements PassengerService {
 					vo.setOnWatchListLink(true);
 					break;
 				case USER_DEFINED_RULE:
+				case EXTERNAL_HIT:
 				case GRAPH_HIT:
 					vo.setOnRuleHitList(true);
 					break;
@@ -126,7 +129,13 @@ public class PassengerServiceImpl implements PassengerService {
 			vo.setFlightDestination(passengerFlight.getDestination());
 			vo.setEtd(passengerFlight.getMutableFlightDetails().getEtd());
 			vo.setEta(passengerFlight.getMutableFlightDetails().getEta());
+			if (passenger.getDataRetentionStatus().requiresDeletedPnrAndApisMessage()) {
+				vo.deletePII();
+			} else if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
+				vo.maskPII();
+			}
 			rv.add(vo);
+
 			count++;
 		}
 		return new PassengersPageDto(rv, tuple.getLeft());
@@ -176,7 +185,7 @@ public class PassengerServiceImpl implements PassengerService {
 			actionData.addProperty("PassengerType", passenger.getPassengerDetails().getPassengerType());
 			//
 			String message = "Disposition Status Change run on " + passenger.getCreatedAt();
-			auditLogRepository.save(new AuditRecord(AuditActionType.DISPOSITION_STATUS_CHANGE, target.toString(),
+			auditLogRepository.save(new GeneralAuditRecord(AuditActionType.DISPOSITION_STATUS_CHANGE, target.toString(),
 					Status.SUCCESS, message, actionData.toString(), loggedinUser, new Date()));
 
 		} catch (Exception ex) {
@@ -192,8 +201,8 @@ public class PassengerServiceImpl implements PassengerService {
 
 	@Override
 	@Transactional
-	public Passenger findByIdWithFlightAndDocuments(Long paxId) {
-		return passengerRepository.findByIdWithFlightAndDocuments(paxId);
+	public Passenger findByIdWithFlightAndDocumentsAndMessageDetails(Long paxId) {
+		return passengerRepository.findByIdWithFlightAndDocumentsAndMessageDetails(paxId);
 	}
 	
 	@Override
@@ -203,15 +212,9 @@ public class PassengerServiceImpl implements PassengerService {
 	}
 
 	@Override
-	@Transactional
-	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef) {
-		return flightRespository.getTravelHistoryByItinerary(pnrId, pnrRef);
-	}
-
-	@Override
-	@Transactional
 	public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef) {
-		return flightRespository.getTravelHistoryNotByItinerary(paxId, pnrId, pnrRef);
+		Optional<Passenger> p = passengerRepository.findById(paxId);
+		return p.map(passenger -> Collections.singletonList(passenger.getFlight())).orElseGet(ArrayList::new);
 	}
 
 	@Override
@@ -285,4 +288,40 @@ public class PassengerServiceImpl implements PassengerService {
 		return passengerRepository.getPassengersForEmailDto(paxIds);
 	}
 
+	@Override
+	public Set<Passenger> getPassengersFromMessageIds(Set<Long> messageIds, Set<Long> flightIds) {
+		if (messageIds.isEmpty()) {
+			return new HashSet<>();
+		} else {
+			return passengerRepository.getPassengerIncludingHitsByMessageId(messageIds, flightIds);
+		}
+	}
+
+	@Override
+	public Set<Passenger> getFullPassengersFromMessageIds(Set<Long> messageIds, Set<Long> flightIds) {
+		if (messageIds.isEmpty()) {
+			return new HashSet<>();
+		} else {
+			return passengerRepository.getFullPassengerIncludingHitsByMessageId(messageIds, flightIds);
+		}
+	}
+
+	@Override
+	public 	Set<Document> getPassengerDocuments(Set<Long> passengerIds, Set<Long> flightIds) {
+		if (passengerIds.isEmpty()) {
+			return new HashSet<>();
+		} else {
+			return documentRepository.getDocumentsByPaxIdFlightId(passengerIds);
+		}
+	}
+
+
+	@Override
+	public 	Set<Passenger> getPassengersWithBags(Set<Long> passengerIds, Long flightId) {
+		if (passengerIds.isEmpty()) {
+			return new HashSet<>();
+		} else {
+			return passengerRepository.getDocumentsByPaxIdFlightId(passengerIds, flightId);
+		}
+	}
 }

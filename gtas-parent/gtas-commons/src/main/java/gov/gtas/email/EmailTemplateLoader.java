@@ -18,8 +18,13 @@ import java.util.Set;
 @Component
 public class EmailTemplateLoader {
 
+
 	@Resource
 	private Configuration configuration;
+	 private static final String HIGH_PROFILE_NOTIFICATION_FTL = "highProfileHitNotification.ftl";
+	 private static final String ACCOUNT_LOCKED_RESET_PWORD_FTL = "accountLockedResetPassword.ftl";
+
+	    
 
 	public String generateHtmlString(String templateName, Set<HitEmailDTO> hitEmailDTOs)
 			throws IOException, TemplateException {
@@ -50,4 +55,25 @@ public class EmailTemplateLoader {
 		Template template = configuration.getTemplate(templateName);
 		return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 	}
+	
+   
+
+    public String generateAccountLockedResetPasswordHtmlContent(String email, String resetLinkUrl) throws IOException, TemplateException {
+        Template template = configuration.getTemplate(ACCOUNT_LOCKED_RESET_PWORD_FTL);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("userEmail", email);
+        model.put("resetLinkUrl", resetLinkUrl);
+
+        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+    }
+
+    public String generateHitEmailHtmlContent(Set<HitEmailDTO> hitEmailDTOs) throws IOException, TemplateException {
+        Template template = configuration.getTemplate(HIGH_PROFILE_NOTIFICATION_FTL);
+        Map<String, Object> model = new HashMap<>();
+        model.put("hits", hitEmailDTOs);
+
+        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+    }
+
 }

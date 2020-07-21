@@ -8,6 +8,7 @@
 
 package gov.gtas.services;
 
+import gov.gtas.aop.annotations.PVLRequestAuditFirstArgRequest;
 import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.*;
@@ -43,6 +44,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 
 	@Override
 	@Transactional
+	@PVLRequestAuditFirstArgRequest
 	public PriorityVettingListDTO generateDtoFromRequest(PriorityVettingListRequest request, String userId) {
 		Set<UserGroup> userGroups = userService.fetchUserGroups(userId);
 
@@ -56,6 +58,11 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		List<CaseVo> caseVOS = new ArrayList<>();
 
 		for (Passenger passenger : immutablePair.getRight()) {
+
+			//todo: implement smarter logic that goes beyond default behavior for data masking.
+			if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()){
+				continue;
+			}
 			CaseVo caseVo = new CaseVo();
 			Date countDownTo = passenger.getFlight().getFlightCountDownView().getCountDownTimer();
 			CountDownCalculator countDownCalculator = new CountDownCalculator();
@@ -78,6 +85,10 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 						title = hd.getTitle().substring(0, 8) + "...";
 					} else {
 						title = hd.getTitle();
+					}
+
+					if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage())  {
+						title = "MASKED";
 					}
 					hitDetailsTitles.add(severity + " | " + hd.getHitMaker().getHitCategory().getName() + " | " + title
 							+ "(" + hd.getHitEnum().getDisplayName() + ")");
@@ -123,6 +134,9 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			caseVo.setFlightETDDate(passenger.getFlight().getMutableFlightDetails().getEtd());
 			caseVo.setFlightOrigin(passenger.getFlight().getOrigin());
 			caseVo.setFlightDestination(passenger.getFlight().getDestination());
+			if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
+				caseVo.maskPII();
+			}
 			caseVOS.add(caseVo);
 		}
 		return new PriorityVettingListDTO(caseVOS, count);

@@ -120,8 +120,6 @@ public class PassengerDetailsControllerIT {
 		PnrVo pnrVo = passengerVo.getPnrVo();
 		assertEquals(pnrVo.getBags().size(), 1);
 		BagVo bagVo = pnrVo.getBags().get(0);
-		assertEquals(bagVo.getPassLastName(), LAST_NAME);
-		assertEquals(bagVo.getPassFirstName(), FIRST_NAME);
 		assertEquals(new Integer(bagVo.getBag_count()), BAG_COUNT_PNR);
 		assertEquals(new Double(bagVo.getBag_weight()), new Double(BAG_WEIGHT_PNR));
 		assertEquals(new Double(bagVo.getAverage_bag_weight()), new Double(BAG_AVERAGE_WEIGHT_PNR));

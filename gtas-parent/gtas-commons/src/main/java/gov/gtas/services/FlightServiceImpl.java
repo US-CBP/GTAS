@@ -110,6 +110,9 @@ public class FlightServiceImpl implements FlightService {
 			if (f.getFlightHitsRule() != null) {
 				vo.setRuleHitCount(f.getFlightHitsRule().getHitCount());
 			}
+			if (f.getFlightHitsExternal() != null) {
+				vo.setExternalHitCount(f.getFlightHitsExternal().getHitCount());
+			}
 			if (f.getFlightPassengerCount() != null) {
 				vo.setPassengerCount(f.getFlightPassengerCount().getPassengerCount());
 			}
@@ -190,6 +193,13 @@ public class FlightServiceImpl implements FlightService {
 
 	@Override
 	@Transactional
+	public Set<Flight> getFlightByPaxIds(Set<Long> passengerIds) {
+		return flightRespository.getFlightByPassengerIds(passengerIds);
+	}
+
+
+	@Override
+	@Transactional
 	public List<Flight> getFlightsByDates(Date startDate, Date endDate) {
 		return flightRespository.getFlightsByDates(startDate, endDate);
 	}
@@ -227,17 +237,6 @@ public class FlightServiceImpl implements FlightService {
 			resultSet = new HashSet<Passenger>(resultList);
 		}
 		return resultSet;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Long getFlightFuzzyMatchesOnly(Long flightId) {
-		String sqlStr = "SELECT count(DISTINCT pwl.passenger_id) " + "FROM pax_watchlist_link pwl "
-				+ "WHERE pwl.passenger_id not in (SELECT hitSumm.passenger_id "
-				+ "FROM hits_summary hitSumm where wl_hit_count > 0) " + "and pwl.passenger_id in "
-				+ "(select passenger_id from gtas.flight_passenger where flight_id = " + flightId + " )";
-		List<BigInteger> resultList = em.createNativeQuery(sqlStr).getResultList();
-		return resultList.get(0).longValueExact();
 	}
 
 	@Override
@@ -286,6 +285,16 @@ public class FlightServiceImpl implements FlightService {
 				vo.setFlightNumber(flight.getFlightNumber());
 				vo.setRefNumber(passenger.getPassengerTripDetails().getReservationReferenceNumber());
 				vo.setHasHits(passenger.getHits() != null && passenger.getHits().hasHits());
+
+				if (passenger.getDataRetentionStatus().requiresDeletedAPIS() && seat.getApis()) {
+					vo.deletePII();
+				} else if (passenger.getDataRetentionStatus().requiresMaskedAPIS() && seat.getApis()) {
+					vo.maskPII();
+				} else if (passenger.getDataRetentionStatus().requiresDeletedPNR() && !seat.getApis()) {
+					vo.deletePII();
+				} else if (passenger.getDataRetentionStatus().requiresMaskedPNR() && !seat.getApis()) {
+					vo.maskPII();
+				}
 				seatVos.add(vo);
 			}
 		}
@@ -298,6 +307,7 @@ public class FlightServiceImpl implements FlightService {
 						.collect(Collectors.toList()).stream().map(SeatVo::getNumber).toArray(String[]::new));
 			}
 		});
+
 
 		return seatVos;
 	}

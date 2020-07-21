@@ -33,12 +33,16 @@ services:
       context: .
       dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
     restart: always
+    volumes:
+       - neo4j-data:/data
     ports:
       - 7474:7474   
       - 7687:7687
     networks: 
       - GTAS_webapp-network
 
+volumes:
+   neo4j-data:
 
 networks:
   GTAS_webapp-network:

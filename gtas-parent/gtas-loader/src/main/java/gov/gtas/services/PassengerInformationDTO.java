@@ -1,11 +1,8 @@
 package gov.gtas.services;
 
-import gov.gtas.model.BookingDetail;
 import gov.gtas.model.Passenger;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class PassengerInformationDTO {
@@ -21,7 +18,6 @@ public class PassengerInformationDTO {
 	}
 
 	private Set<Passenger> oldPax = new HashSet<>();
-	private Map<Long, Set<BookingDetail>> bdSet = new HashMap<>();
 
 	public Set<Passenger> getNewPax() {
 		return newPax;
@@ -31,11 +27,4 @@ public class PassengerInformationDTO {
 		this.newPax = newPax;
 	}
 
-	public Map<Long, Set<BookingDetail>> getBdSet() {
-		return bdSet;
-	}
-
-	public void setBdSet(Map<Long, Set<BookingDetail>> bdSet) {
-		this.bdSet = bdSet;
-	}
 }

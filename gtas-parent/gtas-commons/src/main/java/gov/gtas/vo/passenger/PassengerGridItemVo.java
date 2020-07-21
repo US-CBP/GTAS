@@ -9,13 +9,14 @@
 package gov.gtas.vo.passenger;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import gov.gtas.model.PIIObject;
 import gov.gtas.vo.BaseVo;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class PassengerGridItemVo extends BaseVo {
+public class PassengerGridItemVo extends BaseVo implements PIIObject {
 	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
 	private static final String SHORT_DATE_FORMAT = "yyyy-MM-dd";
 
@@ -246,4 +247,30 @@ public class PassengerGridItemVo extends BaseVo {
 		this.documents = documents;
 	}
 
+	@Override
+	public PIIObject deletePII() {
+		this.dob = null;
+		this.firstName = "DELETED";
+		this.lastName = "DELETED";
+		this.middleName = "DELETED";
+		this.nationality = "DELETED";
+		for (DocumentVo documentVo : documents) {
+			documentVo.deletePII();
+		}
+
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		this.dob = null;
+		this.firstName = "MASKED";
+		this.lastName = "MASKED";
+		this.middleName = "MASKED";
+		this.nationality = "MASKED";
+		for (DocumentVo documentVo : documents) {
+			documentVo.maskPII();
+		}
+		return this;
+	}
 }

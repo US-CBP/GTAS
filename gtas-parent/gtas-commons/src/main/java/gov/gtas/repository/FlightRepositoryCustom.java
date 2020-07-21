@@ -27,7 +27,4 @@ public interface FlightRepositoryCustom {
 	 */
 	public Pair<Long, List<Flight>> findByCriteria(FlightsRequestDto dto);
 
-	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);
-
-	public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef);
 }

@@ -12,4 +12,6 @@ public interface AppConfigurationService {
 
 	public Date offSetTimeZone(Date date);
 
+	public void setRecompileFlag();
+
 }

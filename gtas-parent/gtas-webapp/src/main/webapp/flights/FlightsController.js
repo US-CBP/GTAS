@@ -381,6 +381,17 @@
               cellTemplate: '<span ng-if="row.entity.fuzzyHitCount" class="badge info-back info-border-th">{{row.entity.fuzzyHitCount}}</span>'
           },
           {
+              name: 'externalHitCount',
+              displayName: $translate.instant('hit.external'),
+              enableFiltering: false,
+              cellClass: "gridService.colorHits",
+              sort: {
+                  direction: uiGridConstants.DESC,
+                  priority: 0
+              },
+              cellTemplate: '<span ng-if="row.entity.externalHitCount" class="badge warning-back warning-border-th">{{row.entity.externalHitCount}}</span>'
+          },
+          {
               name: 'direction',
               displayName: $translate.instant('flight.direction'),
               cellTemplate: '<span>{{COL_FIELD}}</span>',

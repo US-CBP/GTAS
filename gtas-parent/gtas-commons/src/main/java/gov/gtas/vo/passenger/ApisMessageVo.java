@@ -10,10 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import gov.gtas.model.PIIObject;
 import gov.gtas.services.search.FlightPassengerVo;
 import gov.gtas.vo.MessageVo;
 
-public class ApisMessageVo extends MessageVo {
+public class ApisMessageVo extends MessageVo implements PIIObject {
 	private String travelerType;
 	private String residenceCountry;
 	private List<PhoneVo> phoneNumbers = new ArrayList<>();
@@ -21,6 +22,7 @@ public class ApisMessageVo extends MessageVo {
 	private double bagWeight;
 	private List<BagVo> bags = new ArrayList<>();
 	private boolean apisRecordExists = false;
+
 	private Set<FlightPassengerVo> flightpaxs = new HashSet<>();
 
 	public boolean isApisRecordExists() {
@@ -91,4 +93,34 @@ public class ApisMessageVo extends MessageVo {
 		this.bagWeight = bagWeight;
 	}
 
+	public Set<FlightPassengerVo> getFlightpaxs() {
+		return flightpaxs;
+	}
+
+	public void setFlightpaxs(Set<FlightPassengerVo> flightpaxs) {
+		this.flightpaxs = flightpaxs;
+	}
+
+
+	@Override
+	public PIIObject deletePII() {
+		for (PhoneVo pVo : this.phoneNumbers) {
+			pVo.deletePII();
+		}
+		for (FlightPassengerVo passengerVo : flightpaxs) {
+			passengerVo.deletePII();
+		}
+		return this;
+	}
+
+	@Override
+	public PIIObject maskPII() {
+		for (PhoneVo pVo : this.phoneNumbers) {
+			pVo.maskPII();
+		}
+		for (FlightPassengerVo passengerVo : flightpaxs) {
+			passengerVo.maskPII();
+		}
+		return this;
+	}
 }
