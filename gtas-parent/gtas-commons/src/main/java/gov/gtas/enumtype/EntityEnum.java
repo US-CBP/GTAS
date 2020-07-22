@@ -47,6 +47,8 @@ public enum EntityEnum {
 
 	FLIGHT_PAX("FLIGHT PAX", "FlightPax", "flightpax", ".flightPaxList"),
 
+	SEAT("SEAT", "Seat", "seat", ".seatAssignments"),
+
 	DATA_RETENTION_STATUS("DATA RETENTION STATUS", "DataRetentionStatus", "drs", ".dataRetentionStatus"),
 
 	NOT_LISTED("NOT LISTED!", "BAD VALUE", "ERROR", "BAD VALUE");
