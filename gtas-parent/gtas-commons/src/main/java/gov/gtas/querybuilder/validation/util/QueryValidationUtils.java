@@ -133,6 +133,9 @@ public class QueryValidationUtils {
 				case Constants.CREDITCARD:
 					validField = validateField(CreditCardMapping.values(), field);
 					break;
+				case Constants.SEAT:
+					validField = validateField(SeatMapping.values(), field);
+					break;
 				case Constants.DOCUMENT:
 					validField = validateField(DocumentMapping.values(), field);
 					break;

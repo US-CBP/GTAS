@@ -21,6 +21,8 @@ public class Seat extends BaseEntity {
 	@Column(nullable = false)
 	private String number;
 
+	@Column(name = "cabin_class")
+	private String cabinClass;
 	/** true if the seat number was derived from APIS data */
 	@Column(nullable = false)
 	private Boolean apis = Boolean.FALSE;
@@ -113,5 +115,12 @@ public class Seat extends BaseEntity {
 		}
 		return Objects.equals(num, num2) && Objects.equals(this.apis, other.apis)
 				&& Objects.equals(this.passengerId, other.passengerId);
+	}
+	public void setCabinClass(String cabinClass) {
+		this.cabinClass = cabinClass;
+	}
+
+	public String getCabinClass() {
+		return cabinClass;
 	}
 }

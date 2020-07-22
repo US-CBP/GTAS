@@ -71,6 +71,14 @@ public class PnrGovParserTest implements ParserTestHelper {
     }
 
     @Test
+    public void pnrSeatClassTest() throws ParseException, IOException, URISyntaxException {
+        String msg = getMessageText(PNR_EXAMPLE);
+        PnrVo vo = this.parser.parse(msg);
+        List<SeatVo> seatVos = vo.getPassengers().get(0).getSeatAssignments();
+        SeatVo sVo = seatVos.get(1); // Second seat comes from SSD, SSR seats cabin class is always null.
+        assertEquals( "Y", sVo.getCabinClass());
+    }
+    @Test
     public void reservationDateMapsToRCITimeCreated() throws ParseException, IOException, URISyntaxException {
         String message77 = getMessageText(PNR_MESSAGE_PG_77);
         PnrVo vo = this.parser.parse(message77);
