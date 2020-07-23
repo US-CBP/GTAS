@@ -24,7 +24,7 @@ public class User implements Serializable {
 	public User() {
 	}
 
-	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles) {
+	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles, Boolean archived) {
 
 		this.userId = userId;
 		this.password = password;
@@ -32,9 +32,10 @@ public class User implements Serializable {
 		this.lastName = lastName;
 		this.active = active;
 		this.roles = roles;
+		this.archived = archived;
 	}
 
-	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles, String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification) {
+	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles, String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification, Boolean archived) {
 
 		this.userId = userId;
 		this.password = password;
@@ -45,6 +46,7 @@ public class User implements Serializable {
 		this.email = email;
 		this.isEmailEnabled = isEmailEnabled;
 		this.highPriorityHitsEmailNotification = highPriorityHitsEmailNotification;
+		this.archived = archived;
 	}
 
 	@Id
@@ -78,7 +80,11 @@ public class User implements Serializable {
 	@Column(name = "high_priority_hits_email")
 	private Boolean highPriorityHitsEmailNotification;
 
-	@ManyToMany(targetEntity = UserGroup.class, fetch = FetchType.LAZY, mappedBy = "groupMembers")
+	@Column(name = "archived")
+	private Boolean archived;
+
+	@ManyToMany(targetEntity = UserGroup.class, fetch = FetchType.LAZY)
+	@JoinTable(name = "ug_user_join", inverseJoinColumns = @JoinColumn(name = "ug_id"),  joinColumns = @JoinColumn(name = "user_id"))
 	private Set<UserGroup> userGroups = new HashSet<>();
 
 	// Notification that the user is a part of (elected or assigned)
@@ -188,6 +194,10 @@ public class User implements Serializable {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+
+	public Boolean getArchived() { return archived; }
+
+	public void setArchived(Boolean archived) { this.archived = archived; }
 
 	@Override
 	public int hashCode() {

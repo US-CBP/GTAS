@@ -57,6 +57,11 @@ public class UserController {
 		return userService.findAll();
 	}
 
+	@RequestMapping(method = RequestMethod.GET, value = "/users/nonarchived")
+	public List<UserDisplayData> getAllNonArchivedUsers() {
+		return userService.findAllNonArchivedUsers();
+	}
+
 	@RequestMapping(method = RequestMethod.POST, value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public JsonServiceResponse createUser(@RequestBody @Valid UserData userData) {
 		UserData rUserData = userData;
@@ -164,6 +169,28 @@ public class UserController {
 		
 		
 	}
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.DELETE, value = "/users/{id}")
+	public JsonServiceResponse deleteOrArchiveUser(@PathVariable(value = "id") String paxId){
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		boolean isAdmin = userService.isAdminUser(userId);
+		if (!isAdmin) {
+			logger.error("The logged in user does not have a permission to delete another user");
+			return new JsonServiceResponse(Status.FAILURE, "Not Authorized to delete the user with that ID", paxId);
+		}
+		//Make attempt to delete, due to constraints potentially on our Users and wanting to preserve history of those
+		//constrained elements user will become archived instead
+		try {
+			userService.delete(paxId);
+		} catch (Exception e){ //TODO change to appropriate exception
+			logger.info("The User with id " +paxId+" was unable to be deleted. Attempting to archive instead");
+			UserData tmpUser = userService.findById(paxId);
+			tmpUser.setArchived(Boolean.TRUE);
+			userService.updateByAdmin(tmpUser);
+			return new JsonServiceResponse(Status.SUCCESS_WITH_WARNING, "Failed To Delete User, Archived User Instead");
+		}
+		return new JsonServiceResponse(Status.SUCCESS, "Successfully Deleted User", paxId);
+	};
 
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/user")

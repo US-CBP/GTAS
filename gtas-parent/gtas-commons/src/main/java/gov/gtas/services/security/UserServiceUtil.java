@@ -64,7 +64,7 @@ public class UserServiceUtil {
 		Set<RoleData> roles = entity.getRoles().stream()
 				.map(role -> new RoleData(role.getRoleId(), role.getRoleDescription())).collect(Collectors.toSet());
 		return new UserData(entity.getUserId().toUpperCase(), entity.getPassword(), entity.getFirstName(), entity.getLastName(),
-				entity.getActive(), roles, entity.getEmail(), entity.getEmailEnabled(), entity.getHighPriorityHitsEmailNotification());
+				entity.getActive(), roles, entity.getEmail(), entity.getEmailEnabled(), entity.getHighPriorityHitsEmailNotification(), entity.getArchived());
 	}
 
 	/**
@@ -79,6 +79,6 @@ public class UserServiceUtil {
 		Set<Role> roles = userData.getRoles().stream().map(roleData -> new Role(roleData.getRoleId(), roleData.getRoleDescription())).collect(Collectors.toSet());
 
 		return new User(userData.getUserId().toUpperCase(), userData.getPassword(), userData.getFirstName(), userData.getLastName(),
-				userData.getActive(), roles, userData.getEmail(), userData.getEmailEnabled(), userData.getHighPriorityEmail());
+				userData.getActive(), roles, userData.getEmail(), userData.getEmailEnabled(), userData.getHighPriorityEmail(), userData.getArchived());
 	}
 }

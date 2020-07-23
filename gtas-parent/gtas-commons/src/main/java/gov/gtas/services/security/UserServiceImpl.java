@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -201,6 +202,7 @@ public class UserServiceImpl implements UserService {
 			entity.setEmail(mappedEnity.getEmail());
 			entity.setEmailEnabled(mappedEnity.getEmailEnabled());
 			entity.setHighPriorityHitsEmailNotification(mappedEnity.getHighPriorityHitsEmailNotification());
+			entity.setArchived(mappedEnity.getArchived());
 
 			if (data.getPassword() != null && !data.getPassword().isEmpty()) {
 				if (!BCRYPT_PATTERN.matcher(mappedEnity.getPassword()).matches()) {
@@ -230,7 +232,14 @@ public class UserServiceImpl implements UserService {
 		}
 		return null;
 	}
-	
+
+	@Override
+	@Transactional
+	public List<UserDisplayData> findAllNonArchivedUsers() {
+		Iterable<User> usersCollection = userRepository.getNonArchivedUsers();
+		return userServiceUtil.getUserDataListFromEntityCollection(usersCollection);
+	}
+
 	@Override
 	public boolean matchUserPassword(String savedPassword, String newPassword) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
