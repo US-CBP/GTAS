@@ -90,8 +90,8 @@ INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, 
 -- ----------------------------
 -- Manual Hit HitMaker Population
 -- ----------------------------
-CREATE OR REPLACE PROCEDURE manualHitMakerPopulate() BEGIN SET @cnt = (Select IFNULL(MAX(id), 1) FROM hit_category); START TRANSACTION; WHILE @cnt > 0 DO INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', @cnt); SET @DataID = LAST_INSERT_ID(); INSERT INTO manual_lookout (description, id) VALUES ('Manually Generated Hit', @DataId); SET @cnt = @cnt - 1; END WHILE; COMMIT; END;
-
-CALL manualHitMakerPopulate();
-
-DROP PROCEDURE IF EXISTS manualHitMakerPopulate;
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 1);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 2);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 3);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 4);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 5);
