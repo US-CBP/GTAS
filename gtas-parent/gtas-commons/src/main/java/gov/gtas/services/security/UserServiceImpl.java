@@ -65,6 +65,7 @@ public class UserServiceImpl implements UserService {
 	public UserData create(UserData userData) {
 		User userEntity = userServiceUtil.mapUserEntityFromUserData(userData);
 		userEntity.setPassword((new BCryptPasswordEncoder()).encode(userEntity.getPassword()));
+		userEntity.setArchived(false); //Default do not archive new users.
 		if (userData.getRoles() != null) {
 			Set<Role> roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(userData.getRoles());
 			userEntity.setRoles(roleCollection);

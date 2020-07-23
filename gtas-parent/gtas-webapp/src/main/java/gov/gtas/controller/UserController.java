@@ -182,6 +182,7 @@ public class UserController {
 		//constrained elements user will become archived instead
 		try {
 			userService.delete(paxId);
+			logger.info("The User with Id " +paxId+" was successfully deleted.");
 		} catch (Exception e){ //TODO change to appropriate exception
 			logger.info("The User with id " +paxId+" was unable to be deleted. Attempting to archive instead");
 			UserData tmpUser = userService.findById(paxId);
