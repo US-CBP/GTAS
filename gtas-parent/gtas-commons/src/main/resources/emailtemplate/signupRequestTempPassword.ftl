@@ -12,8 +12,9 @@ This email was sent from a notification-only address that cannot accept an incom
  <br>
  <br>
  
- Please click on the link below and use the temporary password given in the "Old Password" field.
+ Please click on the link below and use your username and temporary password to login. 
+ You can change your password once you access your account.
  <br>
 
-<p><a href="http://localhost:8080/gtas/resetpassword">Change Password</a></p>
+<p><a href="http://localhost:3000/login">WCO-GTAS Login Page</a></p>
 </body>

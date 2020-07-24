@@ -23,6 +23,9 @@ public class SignupRequest extends BaseEntityAudit {
 
 	@Column
 	private String username;
+	
+	private String firstName;
+	private String lastName;
 
 	@Column
 	private String email;
@@ -46,6 +49,23 @@ public class SignupRequest extends BaseEntityAudit {
 
 	@Column(name = "reviewed_date")
 	private Date reviewedDate;
+	
+	
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
 	public Long getSignupLocationId() {
 		return signupLocationId;

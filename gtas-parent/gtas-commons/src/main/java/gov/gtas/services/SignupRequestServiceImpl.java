@@ -134,7 +134,11 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 		email.setSubject("Signup Request Confirmation");
 		email.setBody(emailTemplateLoader.signupRequestEmailHtmlString(SIGNUP_REQUEST_NOTIFICATION_TO_ADMIN_TEMPLATE,
 				signupRequestDTO));
+		try {
 		this.emailService.sendHTMLEmail(email);
+		}catch(MessagingException e) {
+			logger.info(e.toString());
+		}
 	}
 
 	@Override
