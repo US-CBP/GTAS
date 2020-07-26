@@ -138,6 +138,7 @@ public class PnrMessageService extends MessageLoaderService {
 			WeightCountDto weightCountDto = getBagStatistics(bagList);
 			pnr.setBagCount(weightCountDto.getCount());
 			pnr.setBaggageWeight(weightCountDto.getWeight());
+			createFlightPax(pnr);
 			// update flight legs
 			for (FlightLeg leg : pnr.getFlightLegs()) {
 				leg.setMessage(pnr);
@@ -417,6 +418,58 @@ public class PnrMessageService extends MessageLoaderService {
 		return ret;
 	}
 
+	private void createFlightPax(Pnr pnr) {
+		logger.debug("@ createFlightPax");
+		Set<FlightPax> paxRecords = new HashSet<>();
+		Set<Flight> flights = pnr.getFlights();
+		String homeAirport = lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
+		for (Flight f : flights) {
+			for (Passenger p : pnr.getPassengers()) {
+				FlightPax fp = p.getFlightPaxList().stream()
+						.filter(flightPax -> "PNR".equalsIgnoreCase(flightPax.getMessageSource())).findFirst()
+						.orElse(new FlightPax(p.getId()));
+
+				Set<Bag> pnrBags = p.getBags().stream().filter(b -> "PNR".equalsIgnoreCase(b.getData_source()))
+						.filter(Bag::isPrimeFlight).collect(Collectors.toSet());
+
+				boolean headPool = pnrBags.stream().anyMatch(Bag::isHeadPool);
+				fp.setHeadOfPool(headPool);
+
+				WeightCountDto weightCountDto = getBagStatistics(pnrBags);
+				fp.setAverageBagWeight(weightCountDto.average());
+				if (weightCountDto.getWeight() == null) {
+					fp.setBagWeight(0D);
+				} else {
+					fp.setBagWeight(weightCountDto.getWeight());
+				}
+				if (weightCountDto.getCount() == null) {
+					fp.setBagCount(0);
+				} else {
+					fp.setBagCount(weightCountDto.getCount());
+				}
+
+				fp.setDebarkation(f.getDestination());
+				fp.setDebarkationCountry(f.getDestinationCountry());
+				fp.setEmbarkation(f.getOrigin());
+				fp.setEmbarkationCountry(f.getOriginCountry());
+				fp.setPortOfFirstArrival(f.getDestination());
+				fp.setMessageSource("PNR");
+				fp.setFlightId(f.getId());
+				fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
+				fp.setTravelerType(p.getPassengerDetails().getPassengerType());
+				fp.setReservationReferenceNumber(p.getPassengerTripDetails().getReservationReferenceNumber());
+				if (StringUtils.isNotBlank(fp.getDebarkation()) && StringUtils.isNotBlank(fp.getEmbarkation())) {
+					if (homeAirport.equalsIgnoreCase(fp.getDebarkation())
+							|| homeAirport.equalsIgnoreCase(fp.getEmbarkation())) {
+						p.getPassengerTripDetails()
+								.setTravelFrequency(p.getPassengerTripDetails().getTravelFrequency() + 1);
+					}
+				}
+				paxRecords.add(fp);
+			}
+		}
+		flightPaxRepository.saveAll(paxRecords);
+	}
 	@SuppressWarnings("Duplicates")
 	// Logic similar to APIS but differ in making new bags and booking detail
 	// relationship.
