@@ -2,6 +2,7 @@ package gov.gtas.services;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 
@@ -26,4 +27,6 @@ public interface SignupRequestService {
 	void approve(SignupRequestDTO signupRequest, String approvedBy) throws IOException, TemplateException, MessagingException;
 	
 	void reject(SignupRequestDTO signupRequest, String approvedBy) throws MessagingException, IOException, TemplateException;
+
+	List<SignupRequestDTO> search(Map<String, Object> queryParameters);
 }

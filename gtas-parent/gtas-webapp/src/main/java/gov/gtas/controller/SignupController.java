@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
@@ -20,6 +21,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import freemarker.template.TemplateException;
@@ -106,6 +108,22 @@ public class SignupController {
 		List<SignupLocation> physicalLocations = this.signupLocationRepository.findAllActiveSignupLocations();
 
 		return new ResponseEntity<>(physicalLocations, HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/api/signup-requests")
+	public ResponseEntity<Object> getSignupRequests(@RequestParam Map<String, Object> params) {
+		
+		String status = (String) params.get("status");
+		
+		if (status != null) {
+			SignupRequestStatus statusEnum = SignupRequestStatus.valueOf(status);
+			params.put("status", statusEnum);
+		}
+		
+		List<SignupRequestDTO> requests = this.signupRequestService.search(params);
+		return new ResponseEntity<>(requests, HttpStatus.OK);
+		
+		
 	}
 
 	@GetMapping(value = "/user/allNewSignupRequests")

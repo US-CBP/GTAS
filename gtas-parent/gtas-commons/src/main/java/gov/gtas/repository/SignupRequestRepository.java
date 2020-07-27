@@ -2,6 +2,7 @@ package gov.gtas.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -9,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import gov.gtas.enumtype.SignupRequestStatus;
 import gov.gtas.model.SignupRequest;
 
-public interface SignupRequestRepository extends CrudRepository<SignupRequest, Long> {
+public interface SignupRequestRepository extends CrudRepository<SignupRequest, Long>,JpaSpecificationExecutor<SignupRequest> {
 
 	/*
 	 * This is using Spring's derived query method feature to formulate the query.

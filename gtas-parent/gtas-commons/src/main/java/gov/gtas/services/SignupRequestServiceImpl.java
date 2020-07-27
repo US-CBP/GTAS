@@ -2,6 +2,7 @@ package gov.gtas.services;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.google.inject.internal.util.Sets;
@@ -22,6 +24,7 @@ import gov.gtas.model.SignupRequest;
 import gov.gtas.repository.SignupLocationRepository;
 import gov.gtas.repository.SignupRequestRepository;
 import gov.gtas.repository.UserRepository;
+import gov.gtas.search.SignupRequestSpecificationBuilder;
 import gov.gtas.services.dto.EmailDTO;
 import gov.gtas.services.dto.SignupRequestDTO;
 import gov.gtas.services.security.UserData;
@@ -63,6 +66,17 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 		this.userRepository = userRepository;
 		this.signupLocationRepository = signupLocationRepository;
 		this.userService = userService;
+	}
+	
+	@Override
+	@Transactional
+	public List<SignupRequestDTO> search(Map<String, Object> queryParameters) {
+		Specification<SignupRequest> searchCriteria = new SignupRequestSpecificationBuilder().with(queryParameters).build();
+		
+		List<SignupRequest> signupRequests = this.signupRequestRepository.findAll(searchCriteria);
+		
+		return signupRequests.stream().map(this::convertToDTO).collect(Collectors.toList());
+		
 	}
 
 	/**
