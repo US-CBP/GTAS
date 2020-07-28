@@ -143,18 +143,20 @@ public class SignupController {
 			String message = signupRequestDTO.getUsername() + "'s request is approved!";
 			return new JsonServiceResponse(Status.SUCCESS, message);
 			
-		} catch (IOException | TemplateException | MessagingException e) {
+		}  catch (MailSendException e) {
+			logger.error("Sending email failed", e);
+			
+			String message = "Could not send approval email to: " + signupRequestDTO.getUsername();
+			return new JsonServiceResponse(Status.FAILURE, message);
+			
+		}catch (Exception  e) {
 			logger.error("Sign up approval failed", e);	
 			
 			String message = "Something went wrong when approving a request from username: " + signupRequestDTO.getUsername();
 			return new JsonServiceResponse(Status.FAILURE, message);
 			
-		} catch (MailSendException e) {
-			logger.error("Sending email failed", e);
-			
-			String message = "Could not send approval email to: " + signupRequestDTO.getUsername();
-			return new JsonServiceResponse(Status.FAILURE, message);
 		}
+		
 
 	}
 
