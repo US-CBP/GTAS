@@ -99,7 +99,7 @@ public class SignupRequest extends BaseEntityAudit {
 		this.supervisor = supervisor;
 	}
 
-	public SignupLocation getSignupLocationn() {
+	public SignupLocation getSignupLocation() {
 		return signupLocation;
 	}
 

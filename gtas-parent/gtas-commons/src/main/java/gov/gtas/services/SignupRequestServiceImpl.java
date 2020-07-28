@@ -98,14 +98,14 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 		org.springframework.beans.BeanUtils.copyProperties(dto, signupRequest);
 		signupRequest.setSignupLocation(
 				this.signupLocationRepository.findById(signupRequest.getSignupLocationId()).orElse(null));
-		dto.setSignupLocation(signupRequest.getSignupLocationn().getName());
+		dto.setSignupLocation(signupRequest.getSignupLocation().getName());
 		return signupRequest;
 	}
 
 	private SignupRequestDTO convertToDTO(SignupRequest model) {
 		SignupRequestDTO dto = new SignupRequestDTO();
 		org.springframework.beans.BeanUtils.copyProperties(model, dto);
-		dto.setSignupLocation(model.getSignupLocationn().getName());
+		dto.setSignupLocation(model.getSignupLocation().getName());
 		return dto;
 	}
 
