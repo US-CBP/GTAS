@@ -56,6 +56,9 @@ public class ApisMessageService extends MessageLoaderService {
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
 
+	@Value("${looseparse.enabled}")
+	private Boolean looseParseApis;
+
 	@Autowired
 	private PassengerTripRepository passengerTripRepository;
 
@@ -76,9 +79,9 @@ public class ApisMessageService extends MessageLoaderService {
 		try {
 			EdifactParser<ApisMessageVo> parser = null;
 			if (isUSEdifactFile(msgDto.getRawMsg())) {
-				parser = new PaxlstParserUSedifact();
+				parser = new PaxlstParserUSedifact(looseParseApis);
 			} else {
-				parser = new PaxlstParserUNedifact();
+				parser = new PaxlstParserUNedifact(looseParseApis);
 			}
 
 			vo = parser.parse(msgDto.getRawMsg());

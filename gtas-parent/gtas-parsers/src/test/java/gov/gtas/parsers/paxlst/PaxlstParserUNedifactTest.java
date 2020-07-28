@@ -39,7 +39,7 @@ public final class PaxlstParserUNedifactTest implements ParserTestHelper {
 
 	@Before
 	public void setUp() {
-		this.parser = new PaxlstParserUNedifact();
+		this.parser = new PaxlstParserUNedifact(true);
 	}
 
 	@Test
@@ -275,7 +275,7 @@ public final class PaxlstParserUNedifactTest implements ParserTestHelper {
 
 	@Test
 	public void testTrimSeatNumber() {
-		PaxlstParserUNedifact edifact = new PaxlstParserUNedifact();
+		PaxlstParserUNedifact edifact = new PaxlstParserUNedifact(false);
 		assertTrue(edifact.trimSeatNumber("12B").equals("12B"));
 		assertTrue(edifact.trimSeatNumber("012B").equals("12B"));
 		assertTrue(edifact.trimSeatNumber("00012B").equals("12B"));

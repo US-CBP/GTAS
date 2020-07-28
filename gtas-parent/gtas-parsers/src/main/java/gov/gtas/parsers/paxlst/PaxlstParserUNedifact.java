@@ -41,6 +41,7 @@ import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.util.FlightUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.util.MathUtils;
+import org.jsoup.helper.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +49,11 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
 
 	private Logger logger = LoggerFactory.getLogger(PaxlstParserUNedifact.class);
 
-	public PaxlstParserUNedifact() {
+	private boolean looseParse = false;
+
+	public PaxlstParserUNedifact(Boolean looseParseApis) {
 		this.parsedMessage = new ApisMessageVo();
+		this.looseParse = looseParseApis == null ? false : looseParseApis;
 	}
 
 	protected String getPayloadText() throws ParseException {
@@ -554,6 +558,12 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
 	 */
 	private void processDocument(PassengerVo p, DOC doc) throws ParseException {
 		DocumentVo d = new DocumentVo();
+		if (looseParse) {
+			// loosely parse records without document codes
+			if (StringUtil.isBlank(doc.getDocCode())) {
+				doc.setDocCode("VV");
+			}
+		}
 
 		d.setDocumentType(doc.getDocCode());
 		d.setDocumentNumber(doc.getDocumentIdentifier());

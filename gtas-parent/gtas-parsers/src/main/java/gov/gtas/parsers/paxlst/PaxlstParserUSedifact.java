@@ -28,8 +28,12 @@ import gov.gtas.parsers.vo.PassengerVo;
 import gov.gtas.parsers.vo.ReportingPartyVo;
 
 public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
-	public PaxlstParserUSedifact() {
+
+	private boolean looseParse = false;
+
+	public PaxlstParserUSedifact(Boolean looseParseApis) {
 		this.parsedMessage = new ApisMessageVo();
+		this.looseParse = looseParseApis == null ? false : looseParseApis;
 	}
 
 	@Override

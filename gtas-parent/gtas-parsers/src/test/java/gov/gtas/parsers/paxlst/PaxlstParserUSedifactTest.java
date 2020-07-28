@@ -26,7 +26,7 @@ public final class PaxlstParserUSedifactTest {
 
 	@Before
 	public void setUp() {
-		this.parser = new PaxlstParserUSedifact();
+		this.parser = new PaxlstParserUSedifact(false);
 	}
 
 	@Test
