@@ -173,6 +173,10 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.DELETE, value = "/users/{id}")
 	public JsonServiceResponse deleteOrArchiveUser(@PathVariable(value = "id") String paxId){
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		if(userId.equals(paxId)){
+			return new JsonServiceResponse(Status.FAILURE, "Not Authorized to delete the user with that ID. " +
+					"User ID is the same as the currently logged in user", paxId);
+		}
 		boolean isAdmin = userService.isAdminUser(userId);
 		if (!isAdmin) {
 			logger.error("The logged in user does not have a permission to delete another user");
