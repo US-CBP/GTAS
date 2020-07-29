@@ -162,15 +162,16 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 
 	@Transactional
 	@Override
-	public void approve(SignupRequestDTO signupRequest, String approvedBy)
+	public void approve(Long requestId, String approvedBy)
 			throws IOException, TemplateException, MessagingException {
+		SignupRequest signupRequest = this.findById(requestId);
 
 		signupRequest.setUpdatedBy(approvedBy);
 		signupRequest.setStatus(SignupRequestStatus.APPROVED);
 
 		//
 		logger.debug("update sign up request to approved status");
-		this.save(signupRequest);
+		this.signupRequestRepository.save(signupRequest);
 
 		// Generate a random password that wi
 		String password = new UserServiceUtil().generateRandomPassword();
@@ -184,25 +185,27 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 
 		// Send temporary password to user
 		logger.debug("Sending email with temporary password");
-		this.sendEmailWithTemporaryPassword(signupRequest, password);
+		this.sendEmailWithTemporaryPassword(convertToDTO(signupRequest), password);
 
 		logger.debug("Email sent successfully");
 	}
 
+	
 	@Transactional
 	@Override
-	public void reject(SignupRequestDTO signupRequest, String rejectedBy)
+	public void reject(Long requestId, String rejectedBy)
 			throws MessagingException, IOException, TemplateException {
+		SignupRequest signupRequest = this.findById(requestId);
 
 		signupRequest.setUpdatedBy(rejectedBy);
 		signupRequest.setStatus(SignupRequestStatus.REJECTED);
 
 		//
 		logger.debug("update sign up request to rejected status");
-		this.save(signupRequest);
+		this.signupRequestRepository.save(signupRequest);
 
 		logger.debug("Sending rejection email");
-		this.sendRejectionEmail(signupRequest);
+		this.sendRejectionEmail(convertToDTO(signupRequest));
 
 		logger.debug("Email sent successfully");
 	}

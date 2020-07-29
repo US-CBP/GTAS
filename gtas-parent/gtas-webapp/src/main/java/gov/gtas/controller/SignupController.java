@@ -19,7 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -134,25 +136,25 @@ public class SignupController {
 		return new ResponseEntity<>(requests, HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/signupRequest/approve")
-	public JsonServiceResponse approveSignupRequest(@RequestBody @Valid SignupRequestDTO signupRequestDTO) {
+	@PutMapping(value = "/signupRequest/approve/{requestId}")
+	public JsonServiceResponse approveSignupRequest(@PathVariable Long requestId) {
 
 		try {
-			signupRequestService.approve(signupRequestDTO, GtasSecurityUtils.fetchLoggedInUserId());
+			signupRequestService.approve(requestId, GtasSecurityUtils.fetchLoggedInUserId());
 			
-			String message = signupRequestDTO.getUsername() + "'s request is approved!";
+			String message =  "Request with Id (" + requestId + ") has been approved!";
 			return new JsonServiceResponse(Status.SUCCESS, message);
 			
 		}  catch (MailSendException e) {
 			logger.error("Sending email failed", e);
 			
-			String message = "Could not send approval email to: " + signupRequestDTO.getUsername();
+			String message = "Failed to send approval email to the user";
 			return new JsonServiceResponse(Status.FAILURE, message);
 			
 		}catch (Exception  e) {
 			logger.error("Sign up approval failed", e);	
 			
-			String message = "Something went wrong when approving a request from username: " + signupRequestDTO.getUsername();
+			String message = "Something went wrong when approving a request from request id: " + requestId;
 			return new JsonServiceResponse(Status.FAILURE, message);
 			
 		}
@@ -160,19 +162,19 @@ public class SignupController {
 
 	}
 
-	@PostMapping(value = "/signupRequest/reject")
-	public JsonServiceResponse rejectSignupRequest(@RequestBody @Valid SignupRequestDTO signupRequestDTO) {
+	@PutMapping(value = "/signupRequest/reject/{requestId}")
+	public JsonServiceResponse rejectSignupRequest(@PathVariable Long requestId) {
 
 		try {
-			signupRequestService.reject(signupRequestDTO, GtasSecurityUtils.fetchLoggedInUserId());
+			signupRequestService.reject(requestId, GtasSecurityUtils.fetchLoggedInUserId());
 			
-			String message = signupRequestDTO.getUsername() + "'s request is rejected!";
+			String message =  "Request with Id (" + requestId + ") has been rejected!";
 			return new JsonServiceResponse(Status.SUCCESS, message);
 			
-		} catch (MessagingException | IOException | TemplateException e) {
+		} catch (Exception e) {
 			logger.error("Sign up rejection failed.", e);
 			
-			String message = "Something went wrong when rejecting a request from username: " + signupRequestDTO.getUsername();
+			String message = "Something went wrong when rejecting a request from request Id: " + requestId;
 			return new JsonServiceResponse(Status.FAILURE, message);
 		}
 

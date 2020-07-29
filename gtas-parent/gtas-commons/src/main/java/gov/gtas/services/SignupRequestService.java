@@ -24,9 +24,9 @@ public interface SignupRequestService {
 		
 	List<SignupRequestDTO> getAllNewSignupRequests();
 	
-	void approve(SignupRequestDTO signupRequest, String approvedBy) throws IOException, TemplateException, MessagingException;
-	
-	void reject(SignupRequestDTO signupRequest, String approvedBy) throws MessagingException, IOException, TemplateException;
-
 	List<SignupRequestDTO> search(Map<String, Object> queryParameters);
+
+	void approve(Long requestId, String approvedBy) throws IOException, TemplateException, MessagingException;
+
+	void reject(Long requestId, String rejectedBy) throws MessagingException, IOException, TemplateException;
 }
