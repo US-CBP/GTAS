@@ -93,70 +93,114 @@
       class="login-container cbp-card-container gtas-card-container"
     >
       <div class="cbp-card cbp-card-shadow">
-        <h3 class="login-header">GTAS Login</h3>
+        <h3 class="login-header">GTAS Sign Up</h3>
         <div class="panel-body">
           <form
             role="form"
-            id="loginform"
+            id="signupform"
             class="form"
-            ng-controller="LoginController"
-            ng-submit="login(credentials)"
+            name="signupform"
+            ng-controller="SignupController"
+            ng-submit="signup(credentials)"
+            novalidate="novalidate"
           >
-            <div
-              class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width"
-            >
-              <input
-                class="mdl-textfield__input"
-                type="text"
-                id="user_login"
-                ng-model="credentials.j_username"
-                name="username"
-                autocomplete="off"
-                required
-                disabled
-              />
-              <label class="mdl-textfield__label" for="user_login"
-                >User Name</label
+            <div ng-hide="submitted">
+              <div
+                class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width"
               >
-            </div>
-            <div
-              class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width"
-            >
-              <input
-                class="mdl-textfield__input"
-                type="password"
-                id="user_pass"
-                ng-model="credentials.j_password"
-                name="password"
-                required
-                disabled
-              />
-              <label class="mdl-textfield__label" for="user_pass"
-                >Password</label
+                <input
+                  class="mdl-textfield__input"
+                  type="text"
+                  id="user_username"
+                  ng-model="credentials.username"
+                  name="username"
+                  autocomplete="off"
+                  required
+                />
+                <label class="mdl-textfield__label" for="user_username"
+                  >User Name</label
+                >
+              </div>
+
+              <div
+                class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width"
               >
-            </div>
-
-            <button
-              type="submit"
-              name="wp-submit"
-              id="wp-submit"
-              class="btn btn-primary full-width"
-            >
-              <i class="fa fa-sign-in" aria-hidden="true"></i> Sign In
-            </button>
-
-            <div class="form-group" style="margin-top: 20px;">
-              <a href="signup.html"
-                ><button
-                  type="button"
+                <input
+                  class="mdl-textfield__input"
+                  type="email"
+                  id="user_email"
+                  ng-model="credentials.email"
+                  name="email"
+                  required
+                />
+                <label class="mdl-textfield__label" for="user_email"
+                  >Email</label
+                >
+              </div>
+              <div
+                class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width"
+              >
+                <select
+                  class="mdl-textfield__input"
+                  id="user_physicalLocation"
+                  ng-model="credentials.physicalLocationId"
+                  name="physicalLocationId"
+                  required
+                >
+                  <option
+                    ng-repeat="location in physical_locations"
+                    value="{{location.id}}"
+                    translate
+                  >
+                    {{location.label}}
+                  </option>
+                </select>
+                <!-- <input class="mdl-textfield__input" type="text"
+                id="user_physical_location" ng-model="credentials.physical_location"
+                name="physical_location" required disabled> -->
+                <label class="mdl-textfield__label" for="user_physical_location"
+                  >Physical Location</label
+                >
+              </div>
+              <div
+                class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label full-width"
+              >
+                <input
+                  class="mdl-textfield__input"
+                  type="text"
+                  id="user_supervisor"
+                  ng-model="credentials.supervisor"
+                  name="supervisor"
+                  required
+                />
+                <label class="mdl-textfield__label" for="user_supervisor"
+                  >Supervisor</label
+                >
+              </div>
+              <div class="form-group" style="margin-top: 20px;">
+                <a href="signin.html"
+                  ><button
+                    type="button"
+                    name="wp-submit1"
+                    id="wp-submit1"
+                    class="btn btn-default pull-left"
+                  >
+                    <i class="fa fa-key" aria-hidden="true"></i> Cancel
+                  </button>
+                </a>
+                <button
+                  type="submit"
+                  ng-disabled="submitted"
                   name="wp-submit2"
                   id="wp-submit2"
                   class="btn btn-success pull-right"
                 >
-                  <i class="fa fa-user-plus" aria-hidden="true"></i> Sign Up
+                  <i class="fa fa-user-plus" aria-hidden="true"></i>
+                  {{submitButtonLabel}}
                 </button>
-              </a>
+              </div>
             </div>
+            <div ng-bind-html="message" ng-hide="!submitted"></div>
           </form>
         </div>
       </div>
@@ -230,4 +274,6 @@
   <script src="userSettings/UserSettingsController.js"></script>
   <script src="userSettings/FilterCtrl.js"></script>
   <script src="common/languagecontroller.js"></script>
+  <script src="signup/SignupController.js"></script>
+  <script src="signup/SignupService.js"></script>
 </html>
