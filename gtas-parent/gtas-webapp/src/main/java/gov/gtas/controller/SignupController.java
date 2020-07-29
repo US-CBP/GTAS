@@ -83,19 +83,16 @@ public class SignupController {
 				try {
 					logger.debug("sending confirmation email to {}", signupRequestDTO.getEmail());
 					signupRequestService.sendConfirmationEmail(signupRequestDTO);
-				} catch (MessagingException | IOException | TemplateException e) {
-					logger.error("Sending sign up confirmation email failed.", e);
 				} catch (Exception e) {
-					logger.error("Failed sending email messages");
-				}
+					String message = "Failed sending sign up confirmation email to:  " + signupRequestDTO.getEmail();
+					logger.error(message, e);
+				} 
 
 				try {
 					logger.debug("sending notification email to admin");
 					signupRequestService.sendEmailNotificationToAdmin(signupRequestDTO);
-				} catch (MessagingException | IOException | TemplateException e) {
+				} catch (Exception  e) {
 					logger.error("Sending email notification to admin failed.", e);
-				} catch (Exception e) {
-					logger.error("Failed sending email messages");
 				}
 
 				return new JsonServiceResponse(Status.SUCCESS, "The request has been submited");
