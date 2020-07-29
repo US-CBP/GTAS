@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import gov.gtas.config.ParserConfig;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,9 +25,12 @@ public final class PaxlstParserUSedifactTest {
 	private static final Logger logger = LoggerFactory.getLogger(PaxlstParserUSedifactTest.class);
 	EdifactParser<ApisMessageVo> parser;
 
+
+
 	@Before
 	public void setUp() {
-		this.parser = new PaxlstParserUSedifact();
+		ParserConfig parserConfig = new ParserConfig(false, "VV");
+		this.parser = new PaxlstParserUSedifact(parserConfig);
 	}
 
 	@Test

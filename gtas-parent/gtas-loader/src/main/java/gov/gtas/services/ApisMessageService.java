@@ -8,6 +8,7 @@ package gov.gtas.services;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import gov.gtas.config.ParserConfig;
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.tamr.TamrAdapter;
@@ -57,6 +58,9 @@ public class ApisMessageService extends MessageLoaderService {
 	private Boolean tamrEnabled;
 
 	@Autowired
+	private ParserConfig parserConfig;
+
+	@Autowired
 	private PassengerTripRepository passengerTripRepository;
 
 	@Override
@@ -76,9 +80,9 @@ public class ApisMessageService extends MessageLoaderService {
 		try {
 			EdifactParser<ApisMessageVo> parser = null;
 			if (isUSEdifactFile(msgDto.getRawMsg())) {
-				parser = new PaxlstParserUSedifact();
+				parser = new PaxlstParserUSedifact(parserConfig);
 			} else {
-				parser = new PaxlstParserUNedifact();
+				parser = new PaxlstParserUNedifact(parserConfig);
 			}
 
 			vo = parser.parse(msgDto.getRawMsg());
