@@ -8,6 +8,7 @@ package gov.gtas.parsers.paxlst;
 import java.util.Date;
 import java.util.StringJoiner;
 
+import gov.gtas.config.ParserConfig;
 import gov.gtas.parsers.pnrgov.enums.MeasurementQualifier;
 import gov.gtas.parsers.vo.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -49,11 +50,11 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
 
 	private Logger logger = LoggerFactory.getLogger(PaxlstParserUNedifact.class);
 
-	private boolean looseParse = false;
+	private ParserConfig parserConfig;
 
-	public PaxlstParserUNedifact(Boolean looseParseApis) {
+	public PaxlstParserUNedifact(ParserConfig parserConfig) {
 		this.parsedMessage = new ApisMessageVo();
-		this.looseParse = looseParseApis == null ? false : looseParseApis;
+		this.parserConfig = parserConfig;
 	}
 
 	protected String getPayloadText() throws ParseException {
@@ -558,10 +559,10 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
 	 */
 	private void processDocument(PassengerVo p, DOC doc) throws ParseException {
 		DocumentVo d = new DocumentVo();
-		if (looseParse) {
+		if (parserConfig.getEnabled()) {
 			// loosely parse records without document codes
 			if (StringUtil.isBlank(doc.getDocCode())) {
-				doc.setDocCode("VV");
+				doc.setDocCode(parserConfig.getDefaultDocType());
 			}
 		}
 
