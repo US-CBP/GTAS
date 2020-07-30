@@ -1,0 +1,48 @@
+<style>
+  .code-grid.ui-grid {
+    height: calc(100vh - 270px);
+    min-height: 240px;
+  }
+
+  .ui-grid-canvas {
+    /* max-height: calc(100vh - 390px); */
+  }
+
+  .subtabs {
+    border-bottom: 1px solid #ddd !important;
+  }
+  .subtabs > li > a {
+    color: rgba(0, 0, 0, 0.54);
+    font-weight: 500;
+  }
+
+  .subtabs > li > a:hover {
+    border-bottom: 2px solid #00416a !important;
+  }
+  .subtabs > li.active > a {
+    color: rgb(63, 81, 181) !important;
+    outline: 0 !important;
+  }
+  .editLink {
+    color: rgb(63, 81, 181) !important;
+    font-size: 1.3em;
+  }
+  .editLink:hover,
+  .editLink:active {
+    color: rgb(63, 81, 181) !important;
+    cursor: pointer;
+  }
+</style>
+
+<md-content class="md-padding padding-top-0">
+  <md-content>
+    <div
+      id="signupRequestsGrid"
+      ui-grid="signupRequestsGrid"
+      ui-grid-pagination
+      ui-grid-exporter
+      ui-grid-selection
+      class="grid code-grid"
+    ></div>
+  </md-content>
+</md-content>

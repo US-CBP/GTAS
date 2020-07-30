@@ -9,6 +9,7 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -29,6 +30,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import dtos.PasswordChangeDTO;
+import gov.gtas.email.dto.UserEmailDTO;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.security.service.GtasSecurityUtils;
@@ -60,6 +62,14 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.GET, value = "/users/nonarchived")
 	public List<UserDisplayData> getAllNonArchivedUsers() {
 		return userService.findAllNonArchivedUsers();
+	}
+
+	@GetMapping(value = "/users/emails")
+	public List<UserEmailDTO> getAllUsersEmail() {
+		List<UserEmailDTO> usersEmails = userService.findAll().stream().filter(user -> user.getEmail() != null)
+				.map(this::fetchUsernameAndEmail).collect(Collectors.toList());
+
+		return usersEmails;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -130,44 +140,53 @@ public class UserController {
 			return new JsonServiceResponse(Status.SUCCESS, validator.getErrMessage(), rUserData);
 		}
 	}
-	
-	@PutMapping(value="user/change-password")
+
+	@PutMapping(value = "user/change-password")
 	public JsonServiceResponse changePassword(@RequestBody PasswordChangeDTO passChangeDto) {
-		
-		String userId = GtasSecurityUtils.fetchLoggedInUserId(); 
+
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		UserData user = userService.findById(userId);
 		Validator validator = this.new Validator();
 		String savedPassword = user.getPassword();
 		String oldPassword = passChangeDto.getOldPassword();
 		String newPassword = passChangeDto.getNewPassword();
 		String confirmPassword = passChangeDto.getConfirmPassword();
-		
-		if (newPassword == null ) {
+
+		if (newPassword == null) {
 			return new JsonServiceResponse(Status.FAILURE, "Invalid Password! Password cannot be null.", passChangeDto);
 		}
 		if (newPassword.equals(oldPassword)) {
-			return new JsonServiceResponse(Status.FAILURE, "Please choose password different from the current one!", passChangeDto);
+			return new JsonServiceResponse(Status.FAILURE, "Please choose password different from the current one!",
+					passChangeDto);
 		}
-		
+
 		if (!newPassword.equals(confirmPassword)) {
 			return new JsonServiceResponse(Status.FAILURE, "The passwords you entered do not match!", passChangeDto);
 		}
-		
+
 		if (!userService.matchUserPassword(savedPassword, oldPassword)) {
-			return new JsonServiceResponse(Status.FAILURE, "Your current password is not correct. Please enter the correct password!", passChangeDto);
+			return new JsonServiceResponse(Status.FAILURE,
+					"Your current password is not correct. Please enter the correct password!", passChangeDto);
 		}
-		
+
 		if (!validator.isValid(passChangeDto.getNewPassword(), userId)) {
 			return new JsonServiceResponse(Status.FAILURE, validator.getErrMessage(), passChangeDto);
 		}
-		
-		//change password
+
+		// change password
 		user.setPassword(newPassword);
 		userService.update(user);
-		
+
 		return new JsonServiceResponse(Status.SUCCESS, "Your password has successfully been changed!");
-		
-		
+
+	}
+
+	private UserEmailDTO fetchUsernameAndEmail(UserDisplayData user) {
+		UserEmailDTO dto = new UserEmailDTO();
+		dto.setEmail(user.getEmail());
+		dto.setUsername(user.getUserId());
+
+		return dto;
 	}
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.DELETE, value = "/users/{id}")

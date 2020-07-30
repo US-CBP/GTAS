@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends CrudRepository<User, String> {
@@ -21,6 +22,9 @@ public interface UserRepository extends CrudRepository<User, String> {
 
 	@Query("select u from User u left join fetch u.userGroups where u.userId = :userId")
 	Optional<User> userAndGroups(@Param("userId") String userId);
+
+	@Query( "select u.email from User u inner join u.roles r where r.roleId in :roleIds" )
+	List<String> findEmailsByRoleIds(@Param("roleIds") List<Integer> roleIds);
 
 	@Query("select u from User u where u.archived = false  OR u.archived IS NULL")
 	Iterable<User> getNonArchivedUsers();

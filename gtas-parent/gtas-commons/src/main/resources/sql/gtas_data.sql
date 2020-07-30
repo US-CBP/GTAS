@@ -103,3 +103,9 @@ CALL externalHitMaker();
 
 DROP PROCEDURE IF EXISTS externalHitMaker;
 
+-- ----------------------------
+-- User Location 
+-- ----------------------------
+INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "IAD");
+INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "DCA");
+INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "ADD");

@@ -18,6 +18,7 @@
           USER_RULE: true,
           GRAPH_RULE: true,
           MANUAL: true,
+          EXTERNAL_RULE: true,
           PARTIAL_WATCHLIST: false
         },
         ruleCatFilter: getDefaultCats(),
@@ -351,13 +352,13 @@
       return dfd.promise;
     }
 
-    //            function getAppConfigAPISFlag(){
+    // function getAppConfigAPISFlag(){
     //
-    //                var dfd = $q.defer();
-    //                dfd.resolve($http.get("/gtas/countdownAPISFlag"));
-    //                return dfd.promise;
+    // var dfd = $q.defer();
+    // dfd.resolve($http.get("/gtas/countdownAPISFlag"));
+    // return dfd.promise;
     //
-    //            }
+    // }
 
     function updatePassengerHitViews(hitViewVo, status) {
       let dfd = $q.defer();
@@ -422,7 +423,7 @@
       getDefaultSort: getDefaultSort,
       getDefaultTimeLeft: getDefaultTimeLeft,
       getDefaultModel: getDefaultModel
-      //getAppConfigAPISFlag: getAppConfigAPISFlag
+      // getAppConfigAPISFlag: getAppConfigAPISFlag
     };
   });
 })();
