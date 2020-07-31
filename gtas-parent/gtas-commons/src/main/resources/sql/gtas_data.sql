@@ -95,3 +95,9 @@ INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_
 INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 3);
 INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 4);
 INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 5);
+
+INSERT INTO manual_lookout (description, id) VALUES ('General', 1);
+INSERT INTO manual_lookout (description, id) VALUES ('Terrorism', 2);
+INSERT INTO manual_lookout (description, id) VALUES ('World Health', 3);
+INSERT INTO manual_lookout (description, id) VALUES ('Federal Law Enforcement', 4);
+INSERT INTO manual_lookout (description, id) VALUES ('Local Law Enforcement', 5);
