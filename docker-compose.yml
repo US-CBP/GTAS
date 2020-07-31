@@ -76,7 +76,7 @@ services:
     networks: 
       - gtas-webapp-network
 
-  mariadb:
+  mariadb: 
     image: simbam1/mariadb:dev
     build:
       context: ./gtas-parent
