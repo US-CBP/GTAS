@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-  http-proxy:
+  http-proxy: 
     image: simbam1/http-proxy:dev
     container_name: http-proxy
     build:  
