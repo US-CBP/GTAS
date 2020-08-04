@@ -172,12 +172,12 @@ public class ApisMessageService extends MessageLoaderService {
 	private void updateApisCoTravelerCount(ApisMessage apis) {
 		Map<String, Integer> caching = new HashMap<>();
 		for (Passenger p : apis.getPassengers()) {
-			int apisCoTravelerCount;
+			int apisCoTravelerCount = 0;
 			String reservationNumber = p.getPassengerTripDetails().getReservationReferenceNumber();
 			if (!StringUtils.isBlank(reservationNumber) && !caching.containsKey(reservationNumber)) {
 				apisCoTravelerCount = passengerTripRepository.getCoTravelerCount(p.getId(), reservationNumber);
 				caching.put(reservationNumber, apisCoTravelerCount);
-			} else {
+			} else if (!StringUtils.isBlank(reservationNumber)){
 				apisCoTravelerCount = caching.get(reservationNumber);
 			}
 			p.getPassengerTripDetails().setCoTravelerCount(apisCoTravelerCount);
