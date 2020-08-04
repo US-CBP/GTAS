@@ -3,7 +3,7 @@
 ## Resources
 
 * [How to Install Complete GTAS Environment with Docker in 25 min] (https://youtu.be/vR9ihvtP5BA)
-* [How to Install Core GTAS, start-to-finsih] (https://youtu.be/cDXOYdAVTHc)
+* [How to Install Core GTAS, start-to-finsih] (https://youtu.be/Jj1WeVz5Cpo)
 * [How to Install Neo4j Integration] (https://youtu.be/cDXOYdAVTHc)
 * [Supporting Files on Google Drive](https://drive.google.com/drive/u/1/folders/1rAlHrBQZwaZmU45MH8DyhW5rlffkCqGO)
 
