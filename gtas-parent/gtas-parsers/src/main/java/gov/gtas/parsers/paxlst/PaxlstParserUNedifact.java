@@ -8,6 +8,7 @@ package gov.gtas.parsers.paxlst;
 import java.util.Date;
 import java.util.StringJoiner;
 
+import gov.gtas.config.ParserConfig;
 import gov.gtas.parsers.pnrgov.enums.MeasurementQualifier;
 import gov.gtas.parsers.vo.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,6 +42,7 @@ import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.util.FlightUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.util.MathUtils;
+import org.jsoup.helper.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +50,11 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
 
 	private Logger logger = LoggerFactory.getLogger(PaxlstParserUNedifact.class);
 
-	public PaxlstParserUNedifact() {
+	private ParserConfig parserConfig;
+
+	public PaxlstParserUNedifact(ParserConfig parserConfig) {
 		this.parsedMessage = new ApisMessageVo();
+		this.parserConfig = parserConfig;
 	}
 
 	protected String getPayloadText() throws ParseException {
@@ -554,6 +559,12 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
 	 */
 	private void processDocument(PassengerVo p, DOC doc) throws ParseException {
 		DocumentVo d = new DocumentVo();
+		if (parserConfig.getEnabled()) {
+			// loosely parse records without document codes
+			if (StringUtil.isBlank(doc.getDocCode())) {
+				doc.setDocCode(parserConfig.getDefaultDocType());
+			}
+		}
 
 		d.setDocumentType(doc.getDocCode());
 		d.setDocumentNumber(doc.getDocumentIdentifier());
