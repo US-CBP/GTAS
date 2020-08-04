@@ -10,6 +10,7 @@ import gov.gtas.enumtype.TripTypeEnum;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -19,6 +20,7 @@ import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,10 @@ public class PnrMessageService extends MessageLoaderService {
 
 	private final LoaderUtils utils;
 
+	private final LookUpRepository lookupRepo;
+
+	private final FlightPaxRepository flightPaxRepository;
+
 	private final BagRepository bagDao;
 
 	private final BookingBagRepository bookingBagRepository;
@@ -54,10 +60,12 @@ public class PnrMessageService extends MessageLoaderService {
 
 	@Autowired
 	public PnrMessageService(PnrRepository msgDao, LoaderUtils utils,
-			BagRepository bagRepository,
-			BookingBagRepository bookingBagRepository, TamrAdapter tamrAdapter) {
+							 LookUpRepository lookupRepo, FlightPaxRepository flightPaxRepository, BagRepository bagRepository,
+							 BookingBagRepository bookingBagRepository, TamrAdapter tamrAdapter) {
 		this.msgDao = msgDao;
 		this.utils = utils;
+		this.lookupRepo = lookupRepo;
+		this.flightPaxRepository = flightPaxRepository;
 		this.bagDao = bagRepository;
 		this.bookingBagRepository = bookingBagRepository;
 		this.tamrAdapter = tamrAdapter;

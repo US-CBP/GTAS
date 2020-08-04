@@ -6,6 +6,7 @@
 package gov.gtas.services;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import gov.gtas.config.ParserConfig;
 import gov.gtas.model.*;
@@ -46,6 +47,9 @@ public class ApisMessageService extends MessageLoaderService {
 	
 	@Autowired
 	private TamrAdapter tamrAdapter;
+
+	@Autowired
+	private LookUpRepository lookupRepo;
 
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
