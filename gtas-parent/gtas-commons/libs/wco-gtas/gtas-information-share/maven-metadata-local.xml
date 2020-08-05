@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>wco-gtas</groupId>
+  <artifactId>gtas-information-share</artifactId>
+  <versioning>
+    <versions>
+      <version>0.1-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20200629221436</lastUpdated>
+  </versioning>
+</metadata>

@@ -2,21 +2,23 @@
 
 ## Resources
 
-* [Installation Videos on YouTube](https://www.youtube.com/watch?v=1h626On3Tto&t=18s)
+* [How to Install Complete GTAS Environment with Docker in 25 min] (https://youtu.be/vR9ihvtP5BA)
+* [How to Install Core GTAS, start-to-finsih] (https://youtu.be/Jj1WeVz5Cpo)
+* [How to Install Neo4j Integration] (https://youtu.be/cDXOYdAVTHc)
 * [Supporting Files on Google Drive](https://drive.google.com/drive/u/1/folders/1rAlHrBQZwaZmU45MH8DyhW5rlffkCqGO)
 
 #
-<p align="center"><img width=50% src="https://user-images.githubusercontent.com/20464494/62487148-1ad6c580-b78f-11e9-9327-816d1590ad7f.png"></p>
+<p align="center"><img width=50% src="https://user-images.githubusercontent.com/20464494/85605594-4f11d980-b620-11ea-9424-a8d2c8064f53.png"></p>
 
 ## Developed by U.S. Customs and Border Protection for The World Customs Organization
 <center>
   <table>
     <tr>
-      <td><a href="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png"><img width="100%" alt="Flights Grid" src="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png"></a></td>
+      <td><a href="https://user-images.githubusercontent.com/20464494/89311595-31368c00-d644-11ea-8831-f515f4f77b64.png"><img width="100%" alt="Flights Grid" src="https://user-images.githubusercontent.com/20464494/89311595-31368c00-d644-11ea-8831-f515f4f77b64.png"></a></td>
       <td><a href="https://user-images.githubusercontent.com/20464494/62390364-106ac080-b530-11e9-8617-0e48c678ebaf.png"><img width="100%" alt="Seating Chart" src="https://user-images.githubusercontent.com/20464494/62390364-106ac080-b530-11e9-8617-0e48c678ebaf.png"></a></td>
     </tr>
         <tr>
-      <td><a href="https://user-images.githubusercontent.com/20464494/62390314-f7faa600-b52f-11e9-9df2-49e1a6f11f19.png"><img width="100%" alt="Passenger Details" src="https://user-images.githubusercontent.com/20464494/62390314-f7faa600-b52f-11e9-9df2-49e1a6f11f19.png"></a></td>
+      <td><a href="https://user-images.githubusercontent.com/20464494/89312051-c76ab200-d644-11ea-8505-1ce3e70e1003.png"><img width="100%" alt="Passenger Details" src="https://user-images.githubusercontent.com/20464494/89312051-c76ab200-d644-11ea-8505-1ce3e70e1003.png"></a></td>
       <td><a href="https://user-images.githubusercontent.com/20464494/62390327-ffba4a80-b52f-11e9-85e2-824fdd349c90.png"><img width="100%" alt="Graph Database" src="https://user-images.githubusercontent.com/20464494/62390327-ffba4a80-b52f-11e9-85e2-824fdd349c90.png"></a></td>
     </tr>
   </table>

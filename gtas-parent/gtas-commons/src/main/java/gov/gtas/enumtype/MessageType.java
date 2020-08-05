@@ -25,6 +25,9 @@ public enum MessageType {
             .collect(toMap(o -> o.toString().toUpperCase(), e -> e));
 
     public static Optional<MessageType> fromString(String entityName) {
+        if (entityName == null) {
+           return Optional.of(NO_TYPE);
+        }
         return Optional.ofNullable(stringToEnum.get(entityName.toUpperCase()));
     }
 

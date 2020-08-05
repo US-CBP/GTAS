@@ -5,6 +5,9 @@
  */
 package gov.gtas.model;
 
+import gov.gtas.summary.PassengerBiographic;
+import gov.gtas.summary.PassengerSummary;
+
 import java.util.Date;
 import javax.persistence.*;
 
@@ -247,9 +250,9 @@ public class PassengerDetails extends BaseEntityAudit implements PIIObject {
 
 	public static PassengerDetails from(PassengerDetailFromMessage pdfm) {
 		PassengerDetails pd = new PassengerDetails();
+		pd.setDeleted(pd.getDeleted());
 		pd.setAge(pdfm.getAge());
 		pd.setDob(pdfm.getDob());
-		pd.setDeleted(pd.getDeleted());
 		pd.setFirstName(pdfm.getFirstName());
 		pd.setLastName(pdfm.getLastName());
 		pd.setGender(pdfm.getGender());
@@ -259,6 +262,21 @@ public class PassengerDetails extends BaseEntityAudit implements PIIObject {
 		pd.setSuffix(pdfm.getSuffix());
 		pd.setTitle(pdfm.getTitle());
 		return pd;
+	}
+
+	public static void mapFields(PassengerSummary ps, PassengerDetails pd) {
+		PassengerBiographic passBio = ps.getPassengerBiographic();
+		pd.setAge(passBio.getAge());
+		pd.setDob(passBio.getDob());
+		pd.setFirstName(passBio.getFirstName());
+		pd.setLastName(passBio.getLastName());
+		pd.setGender(passBio.getGender());
+		pd.setMiddleName(passBio.getMiddleName());
+		pd.setNationality(passBio.getNationality());
+		pd.setResidencyCountry(passBio.getResidencyCountry());
+		pd.setSuffix(passBio.getSuffix());
+		pd.setTitle(passBio.getTitle());
+		pd.setPassengerType(passBio.getPassengerType());
 	}
 
 	@Override

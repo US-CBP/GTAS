@@ -101,3 +101,20 @@ INSERT INTO manual_lookout (description, id) VALUES ('Terrorism', 2);
 INSERT INTO manual_lookout (description, id) VALUES ('World Health', 3);
 INSERT INTO manual_lookout (description, id) VALUES ('Federal Law Enforcement', 4);
 INSERT INTO manual_lookout (description, id) VALUES ('Local Law Enforcement', 5);
+
+-- ----------------------------
+-- External Hit HitMaker Population
+-- ----------------------------
+
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 1);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 2);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 3);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 4);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 5);
+
+INSERT INTO external_hit (description, id) VALUES ('General', 6);
+INSERT INTO external_hit (description, id) VALUES ('Terrorism', 7);
+INSERT INTO external_hit (description, id) VALUES ('World Health', 8);
+INSERT INTO external_hit (description, id) VALUES ('Federal Law Enforcement', 9);
+INSERT INTO external_hit (description, id) VALUES ('Local Law Enforcement', 10);
+

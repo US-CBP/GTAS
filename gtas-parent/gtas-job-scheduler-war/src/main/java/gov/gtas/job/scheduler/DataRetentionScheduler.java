@@ -83,7 +83,9 @@ public class DataRetentionScheduler {
                 exec.invokeAll(list);
                 logger.info("Pnr data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             }
-            List<MessageStatus> messagesToRunDeleteOn = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedPnrDateMask, pnrMessageStatusForDelete);
+   //         logger.info("gettingmessages to run delete on");
+            List<MessageStatus> messagesToRunDeleteOn = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedPnrDateDelete, pnrMessageStatusForDelete);
+     //       logger.info("got to run delete on size of " + messagesToRunDeleteOn.size());
             if (!messagesToRunDeleteOn.isEmpty()) {
                 long start = System.nanoTime();
                 List<PnrDataDeletionThread> list = getRetentionThreads(messagesToRunDeleteOn, convertedAPISDateDelete, convertedPnrDateDelete,  maxPassengers, PnrDataDeletionThread.class);

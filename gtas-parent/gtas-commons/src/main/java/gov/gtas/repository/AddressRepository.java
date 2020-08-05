@@ -25,8 +25,7 @@ public interface AddressRepository extends CrudRepository<Address, Long> {
 			"from Address add " +
 			"left join fetch add.pnrs addPnr " +
 			"left join fetch addPnr.passengers " +
-			"where add.id in :addressIds " +
-			"and add.flightId in :flightIds " +
+			"where add.flightId in :flightIds " +
 			"and addPnr.id in :pnrIds")
-    Set<Address> findAddressesToDelete(@Param("addressIds") Set<Long> addressIds, @Param("flightIds")Set<Long> flightIds, @Param("pnrIds") Set<Long> pnrIds);
+    Set<Address> findAddressesToDelete(@Param("flightIds")Set<Long> flightIds, @Param("pnrIds") Set<Long> pnrIds);
 }

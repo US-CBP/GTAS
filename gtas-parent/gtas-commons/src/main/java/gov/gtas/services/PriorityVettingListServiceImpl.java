@@ -8,6 +8,7 @@
 
 package gov.gtas.services;
 
+import gov.gtas.aop.annotations.PVLRequestAuditFirstArgRequest;
 import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.*;
@@ -43,6 +44,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 
 	@Override
 	@Transactional
+	@PVLRequestAuditFirstArgRequest
 	public PriorityVettingListDTO generateDtoFromRequest(PriorityVettingListRequest request, String userId) {
 		Set<UserGroup> userGroups = userService.fetchUserGroups(userId);
 

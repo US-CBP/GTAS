@@ -54,6 +54,7 @@ public class FlightVo extends BaseVo {
 	private Integer listHitCount;
 	private Integer graphHitCount;
 	private Integer fuzzyHitCount;
+	private Integer externalHitCount;
 	private Long paxWatchlistLinkHits = 0L;
 	private int ruleHits;
 	private int listHits;
@@ -314,5 +315,13 @@ public class FlightVo extends BaseVo {
 
 	public void setEtaDate(Date etaDate) {
 		this.etaDate = etaDate;
+	}
+
+	public Integer getExternalHitCount() {
+		return externalHitCount;
+	}
+
+	public void setExternalHitCount(Integer externalHitCount) {
+		this.externalHitCount = externalHitCount;
 	}
 }

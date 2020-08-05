@@ -295,6 +295,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					orderByItem.add(hits.get("ruleHitCount"));
 					orderByItem.add(hits.get("graphHitCount"));
 					orderByItem.add(hits.get("manualHitCount"));
+					orderByItem.add(hits.get("externalHitCount"));
 				} else if (column.equals("onWatchList")) {
 					orderByItem.add(hits.get("watchListHitCount"));
 					orderByItem.add(hits.get("partialHitCount"));

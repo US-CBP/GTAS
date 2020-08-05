@@ -507,6 +507,10 @@ public class JPQLGenerator {
 						+ EntityEnum.DOCUMENT.getEntityReference() + " " + EntityEnum.DOCUMENT.getAlias();
 			}
 			break;
+		case Constants.SEAT:
+				joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias()
+						+ EntityEnum.SEAT.getEntityReference() + " " + EntityEnum.SEAT.getAlias();
+		    break;
 		case Constants.EMAIL:
 			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.EMAIL.getEntityReference()
 					+ " " + EntityEnum.EMAIL.getAlias();

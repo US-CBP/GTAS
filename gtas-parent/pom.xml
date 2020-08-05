@@ -11,6 +11,7 @@
     
     <properties>
         <jdk.version>8</jdk.version>
+        <main.basedir>${project.basedir}</main.basedir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <skip.integration.tests>true</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
@@ -21,14 +22,24 @@
         <jackson.version>2.9.9</jackson.version>
         <hibernate.version>5.3.7.Final</hibernate.version>
     </properties>
-    
- <repositories>
-    <repository>
-      <id>maven central</id>
-      <url>http://repo.maven.apache.org/maven2/</url>
-    </repository>
-  </repositories>
-    
+
+    <repositories>
+        <repository>
+            <id>local-maven-repository</id>
+            <url>file://${project.basedir}${file.separator}libs</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>maven central</id>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
         	 <!-- elastic -->
@@ -204,7 +215,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-		        <module>gtas-parsers</module> 
+                <module>gtas-parsers</module>
 		        <module>gtas-loader</module> 
 		        <module>gtas-commons</module>
 		        <module>gtas-rulesvc</module> 
