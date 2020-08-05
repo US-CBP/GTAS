@@ -26,13 +26,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import dtos.PasswordChangeDTO;
+import dtos.PasswordResetDto;
 import gov.gtas.email.dto.UserEmailDTO;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.User;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.security.UserData;
 import gov.gtas.services.security.UserDisplayData;
@@ -175,7 +178,67 @@ public class UserController {
 		return new JsonServiceResponse(Status.SUCCESS, "Your password has successfully been changed!");
 
 	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/forgot-password")
+	public JsonServiceResponse forgotPassword(@RequestParam String userId) {
+		
+		try {
+			User user = userService.fetchUser(userId);
+			userService.forgotPassword(user);
 
+			return new JsonServiceResponse(Status.SUCCESS,
+					"A temporary  password has been sent to your email. Please use your temporary password to access your account!");
+ 
+		} catch (Exception e) {
+			return new JsonServiceResponse(Status.FAILURE,
+						"The provided user ID (" + userId + ") is not on the system!");
+			
+		}
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/reset-password")
+    public JsonServiceResponse isValidToken(@RequestParam String token) {
+    	boolean isValidToken = userService.isValidToken(token);
+    	
+    	if (isValidToken) {
+    		return new JsonServiceResponse(Status.SUCCESS, "Valid token provided");
+    	}
+    	
+    	return new JsonServiceResponse(Status.FAILURE, "Ivalid token provided");
+	
+    }
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/reset-password")
+	public JsonServiceResponse resetPassword(@Valid @RequestBody PasswordResetDto dto, BindingResult bindingResult) {
+		
+		if (bindingResult.hasErrors()) {
+
+			String errorMessage = bindingResult.getFieldErrors().stream().map(error -> error.getDefaultMessage())
+					.collect(Collectors.joining(",  "));
+
+			return new JsonServiceResponse(Status.FAILURE, errorMessage);
+		}
+		
+		UserData user = userService.findById(dto.getUsername());
+		Validator validator = this.new Validator();
+		
+		if (!dto.getPassword().equals(dto.getPasswordConfirm())) {
+			return new JsonServiceResponse(Status.FAILURE, "The passwords you entered do not match!", dto);
+		}
+		if (!validator.isValid(dto.getPassword(), dto.getUsername())) {
+			return new JsonServiceResponse(Status.FAILURE, validator.getErrMessage(), dto);
+		}
+		
+		user.setPassword(dto.getPassword());
+		userService.update(user);
+		
+		return new JsonServiceResponse(Status.SUCCESS, "Your password has been reset!");
+		
+		
+		
+	}
+	
 	private UserEmailDTO fetchUsernameAndEmail(UserDisplayData user) {
 		UserEmailDTO dto = new UserEmailDTO();
 		dto.setEmail(user.getEmail());

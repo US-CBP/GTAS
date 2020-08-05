@@ -1,6 +1,7 @@
 package gov.gtas.email;
 
 import freemarker.template.TemplateException;
+import gov.gtas.model.PasswordResetToken;
 import gov.gtas.services.GtasEmailService;
 import gov.gtas.services.dto.EmailDTO;
 import org.apache.http.client.utils.URIBuilder;
@@ -39,4 +40,18 @@ public class ResetPasswordEmailService {
 
         emailService.sendHTMLEmail(emailDTO);
     }
+    
+    @Transactional
+    public void sendPasswordResetEmail(String userId, String email, PasswordResetToken resetToken) throws IOException, TemplateException, MessagingException, URISyntaxException {
+        String resetLinkUrl = new URIBuilder(resetLinkUrlBase + "/" + userId + "/" + resetToken.getToken()).build().toString();
+        String htmlContent = emailTemplateLoader.forgotPasswordEmailHtmlString(resetLinkUrl, userId);
+
+        EmailDTO emailDTO = new EmailDTO();
+        emailDTO.setSubject("Reset Your Password");
+        emailDTO.setTo(new String[] {email});
+        emailDTO.setBody(htmlContent);
+
+        emailService.sendHTMLEmail(emailDTO);
+    }
+    
 }
