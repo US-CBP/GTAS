@@ -5,18 +5,25 @@
  */
 package gov.gtas.services.security;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import gov.gtas.model.UserGroup;
+import gov.gtas.repository.PasswordResetTokenRepository;
 import gov.gtas.repository.UserGroupRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +32,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import freemarker.template.TemplateException;
 import gov.gtas.constant.CommonErrorConstants;
+import gov.gtas.email.EmailTemplateLoader;
+import gov.gtas.email.ResetPasswordEmailService;
 import gov.gtas.error.ErrorHandlerFactory;
+import gov.gtas.model.PasswordResetToken;
 import gov.gtas.model.Role;
 import gov.gtas.model.User;
 import gov.gtas.repository.UserRepository;
+import gov.gtas.services.GtasEmailService;
 
 /**
  * The Class UserServiceImpl.
@@ -51,9 +63,18 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private RoleServiceUtil roleServiceUtil;
-
+	
+	@Resource
+    private ResetPasswordEmailService resetPasswordEmailService;
+	
+	@Resource
+	private PasswordResetTokenRepository passwordResetTokenRepository;
+	
 	@Value("${user.group.default}")
 	private Long defaultUserGroupId;
+	
+	@Value("${reset.password.token.expiry.minutes}")
+	private int expiryTimeInMinutes;
 
 	private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
 
@@ -123,6 +144,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public UserData findById(String id) {
 		String allCapsName = id.toUpperCase();
 		User userEntity = userRepository.findOne(allCapsName);
@@ -236,5 +258,57 @@ public class UserServiceImpl implements UserService {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		return encoder.matches(newPassword, savedPassword);
 	}
+	
+	@Override
+	@Transactional
+	public void forgotPassword(User user) {
+		user.setPasswordResetToken(generatePasswordResetToken());
+		userRepository.save(user);//update reset password
+		
+		try {
+			resetPasswordEmailService.sendPasswordResetEmail(user.getUserId(), user.getEmail(), user.getPasswordResetToken());
+		} catch (IOException | TemplateException | MessagingException | URISyntaxException e) {
+			
+			logger.info(e.getMessage());
+		}
+		
+	}
+	
+	@Override
+	@Transactional
+	public boolean isValidToken(String token) {
+		PasswordResetToken prt = passwordResetTokenRepository.findByTokenValue(token).orElse(null);
+		
+		return isValidToken(prt);
+		
+	}
+	
+	private Date calculateExpiryDate() {
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(new Date().getTime());
+        cal.add(Calendar.MINUTE, expiryTimeInMinutes);
+        return new Date(cal.getTime().getTime());
+    }
+	
+	private boolean isValidToken(PasswordResetToken prt) {
+		Date now = new Date();
+		return prt != null && prt.getExpiryData().after(now);
+	}
+	
+	private PasswordResetToken generatePasswordResetToken() {
+		PasswordResetToken token = new PasswordResetToken();
+		String tokenValue = UUID.randomUUID().toString();
+		Date tokenExpiryDate = calculateExpiryDate();
+		
+		token.setToken(tokenValue);
+		token.setExpiryData(tokenExpiryDate);
+		
+		return token;
+	}
+
+	
+	
+
+	
 
 }

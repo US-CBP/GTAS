@@ -68,6 +68,10 @@ public class User implements Serializable {
 
 	@Column(name = "reset_token")
 	private String resetToken;
+	
+	@OneToOne(cascade = { CascadeType.ALL })
+	@JoinColumn(name = "password_reset_token_id")
+	private PasswordResetToken passwordResetToken;
 
 	@Column(name = "email")
 	private String email;
@@ -187,6 +191,15 @@ public class User implements Serializable {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	
+
+	public PasswordResetToken getPasswordResetToken() {
+		return passwordResetToken;
+	}
+
+	public void setPasswordResetToken(PasswordResetToken passwordResetToken) {
+		this.passwordResetToken = passwordResetToken;
 	}
 
 	@Override

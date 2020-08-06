@@ -89,4 +89,8 @@ public interface UserService {
 
 	boolean matchUserPassword(String savedPassword, String newPassword);
 
+	void forgotPassword(User user);
+
+	boolean isValidToken(String token);
+
 }

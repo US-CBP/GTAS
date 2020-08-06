@@ -82,7 +82,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.cors().and().authorizeRequests()
 				.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**",
-						"/reset.html", "/password-reset", "/authenticate" , "/signup.html", "/user/signup/new","/signup/**/*","/user/signup/**/*")
+						"/reset.html", "/password-reset", "/authenticate" , "/signup.html", "/user/signup/new","/signup/**/*","/user/signup/**/*", "/forgot-password", "/reset-password")
 				.permitAll().anyRequest().authenticated().and().formLogin().loginProcessingUrl("/authenticate")
 				.usernameParameter("username").passwordParameter("password")
 				.successHandler(new AjaxAuthenticationSuccessHandler(savedReqHandler))
