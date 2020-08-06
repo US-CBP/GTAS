@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import gov.gtas.services.security.RoleData;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.LengthRule;
@@ -97,6 +98,22 @@ public class UserController {
 			}
 		}
 
+		//Prevent user from disabling themselves OR removing admin role from themselves
+		if(userId.equals(userData.getUserId())){
+			if (userData.getActive() == 0){
+				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not disable  themsel");
+			}
+			Boolean retainsAdmin = false;
+			for(RoleData role : userData.getRoles()){
+				if(role.getRoleId() == 1){
+					retainsAdmin = true;
+				}
+			}
+			if(!retainsAdmin){
+				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not remove Admin role from themselves");
+			}
+		}
+
 		Validator validator = this.new Validator();
 		if (validator.isValid(userData.getPassword(), userData.getUserId())) {
 			rUserData = userService.update(userData);
@@ -118,6 +135,22 @@ public class UserController {
 		if (!isAdmin) {
 			logger.error("The logged in user does not have a permission to update another user's credentials");
 			return new JsonServiceResponse(Status.FAILURE, "Not Authorized to update user credentials", rUserData);
+		}
+
+		//Prevent user from disabling themselves OR removing admin role from themselves
+		if(userId.equals(userData.getUserId())){
+			if (userData.getActive() == 0){
+				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not disable themselves");
+			}
+			Boolean retainsAdmin = false;
+			for(RoleData role : userData.getRoles()){
+				if(role.getRoleId() == 1){
+					retainsAdmin = true;
+				}
+			}
+			if(!retainsAdmin){
+				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not remove Admin role from themselves");
+			}
 		}
 
 		Validator validator = this.new Validator();
