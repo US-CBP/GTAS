@@ -21,6 +21,8 @@ public class ResetPasswordEmailService {
 
     @Value("${reset.link.url}")
     private String resetLinkUrlBase;
+    @Value("reset.password.link.url")
+    private String passwordResetLinkBase;
 
     @Autowired
     private EmailTemplateLoader emailTemplateLoader;
@@ -43,7 +45,7 @@ public class ResetPasswordEmailService {
     
     @Transactional
     public void sendPasswordResetEmail(String userId, String email, PasswordResetToken resetToken) throws IOException, TemplateException, MessagingException, URISyntaxException {
-        String resetLinkUrl = new URIBuilder(resetLinkUrlBase + "/" + userId + "/" + resetToken.getToken()).build().toString();
+        String resetLinkUrl = new URIBuilder(passwordResetLinkBase + "/" + userId + "/" + resetToken.getToken()).build().toString();
         String htmlContent = emailTemplateLoader.forgotPasswordEmailHtmlString(resetLinkUrl, userId);
 
         EmailDTO emailDTO = new EmailDTO();
