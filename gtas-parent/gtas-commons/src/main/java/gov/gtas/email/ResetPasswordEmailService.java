@@ -21,7 +21,8 @@ public class ResetPasswordEmailService {
 
     @Value("${reset.link.url}")
     private String resetLinkUrlBase;
-    @Value("reset.password.link.url")
+    
+    @Value("${reset.password.link.url}")
     private String passwordResetLinkBase;
 
     @Autowired

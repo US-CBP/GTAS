@@ -6,7 +6,7 @@
     <p>Hello ${userId}!</p>
     <p></p>
     <p>You have requested to reset your password.</p>
-    <p>If you do not request this, please ignore this email and your password remain the same.</p>
+    <p>If you did not request this, please ignore this email and your password will remain the same.</p>
     <p></p>
     <p>Click the link below to proceed:</p>
     <p></p>
