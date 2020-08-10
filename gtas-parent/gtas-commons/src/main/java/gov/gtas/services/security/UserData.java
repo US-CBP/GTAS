@@ -29,10 +29,12 @@ public class UserData implements Serializable {
 	private String email;
 	private Boolean emailEnabled;
 	private Boolean highPriorityEmail;
+	private Boolean archived;
 
 	public UserData(@JsonProperty("userId") String userId, @JsonProperty("password") String password,
 					@JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName,
-					@JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles, @JsonProperty("email")String email, @JsonProperty("emailEnabled")Boolean emailEnabled, @JsonProperty("highPriorityEmail")Boolean highPriorityEmail) {
+					@JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles, @JsonProperty("email")String email,
+					@JsonProperty("emailEnabled")Boolean emailEnabled, @JsonProperty("highPriorityEmail")Boolean highPriorityEmail, @JsonProperty("archived")Boolean archived) {
 		this.userId = userId;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -42,6 +44,7 @@ public class UserData implements Serializable {
 		this.email = email;
 		this.emailEnabled = emailEnabled;
 		this.highPriorityEmail = highPriorityEmail;
+		this.archived = archived;
 	}
 
 	@JsonProperty("email")
@@ -84,6 +87,11 @@ public class UserData implements Serializable {
 	public final Set<RoleData> getRoles() {
 		return roles;
 	}
+
+	@JsonProperty("archived")
+	public Boolean getArchived() { return archived; }
+
+	public void setArchived(Boolean archived) { this.archived = archived; }
 
 	@Override
 	public int hashCode() {

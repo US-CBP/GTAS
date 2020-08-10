@@ -81,6 +81,14 @@ public interface UserService {
 	 */
 	User fetchUser(final String userId);
 
+	/**
+	 * Fetch non-archived users.
+	 *
+	 * @return list of non-archived users
+	 */
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	List<UserDisplayData> findAllNonArchivedUsers();
+
 	Set<UserGroup> fetchUserGroups(final String userId);
 
 	boolean isAdminUser(String userId);

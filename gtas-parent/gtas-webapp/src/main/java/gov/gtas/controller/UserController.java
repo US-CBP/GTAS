@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import gov.gtas.services.security.RoleData;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.LengthRule;
@@ -62,6 +63,11 @@ public class UserController {
 		return userService.findAll();
 	}
 
+	@RequestMapping(method = RequestMethod.GET, value = "/users/nonarchived")
+	public List<UserDisplayData> getAllNonArchivedUsers() {
+		return userService.findAllNonArchivedUsers();
+	}
+
 	@GetMapping(value = "/users/emails")
 	public List<UserEmailDTO> getAllUsersEmail() {
 		List<UserEmailDTO> usersEmails = userService.findAll().stream().filter(user -> user.getEmail() != null)
@@ -95,6 +101,22 @@ public class UserController {
 			}
 		}
 
+		//Prevent user from disabling themselves OR removing admin role from themselves
+		if(userId.equals(userData.getUserId())){
+			if (userData.getActive() == 0){
+				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not disable  themsel");
+			}
+			Boolean retainsAdmin = false;
+			for(RoleData role : userData.getRoles()){
+				if(role.getRoleId() == 1){
+					retainsAdmin = true;
+				}
+			}
+			if(!retainsAdmin){
+				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not remove Admin role from themselves");
+			}
+		}
+
 		Validator validator = this.new Validator();
 		if (validator.isValid(userData.getPassword(), userData.getUserId())) {
 			rUserData = userService.update(userData);
@@ -116,6 +138,22 @@ public class UserController {
 		if (!isAdmin) {
 			logger.error("The logged in user does not have a permission to update another user's credentials");
 			return new JsonServiceResponse(Status.FAILURE, "Not Authorized to update user credentials", rUserData);
+		}
+
+		//Prevent user from disabling themselves OR removing admin role from themselves
+		if(userId.equals(userData.getUserId())){
+			if (userData.getActive() == 0){
+				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not disable themselves");
+			}
+			Boolean retainsAdmin = false;
+			for(RoleData role : userData.getRoles()){
+				if(role.getRoleId() == 1){
+					retainsAdmin = true;
+				}
+			}
+			if(!retainsAdmin){
+				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not remove Admin role from themselves");
+			}
 		}
 
 		Validator validator = this.new Validator();
@@ -246,6 +284,33 @@ public class UserController {
 
 		return dto;
 	}
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.DELETE, value = "/users/{id}")
+	public JsonServiceResponse deleteOrArchiveUser(@PathVariable(value = "id") String paxId){
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		if(userId.equals(paxId)){
+			return new JsonServiceResponse(Status.FAILURE, "Not Authorized to delete the user with that ID. " +
+					"User ID is the same as the currently logged in user", paxId);
+		}
+		boolean isAdmin = userService.isAdminUser(userId);
+		if (!isAdmin) {
+			logger.error("The logged in user does not have a permission to delete another user");
+			return new JsonServiceResponse(Status.FAILURE, "Not Authorized to delete the user with that ID", paxId);
+		}
+		//Make attempt to delete, due to constraints potentially on our Users and wanting to preserve history of those
+		//constrained elements user will become archived instead
+		try {
+			userService.delete(paxId);
+			logger.info("The User with Id " +paxId+" was successfully deleted.");
+		} catch (Exception e){ //TODO change to appropriate exception
+			logger.info("The User with id " +paxId+" was unable to be deleted. Attempting to archive instead");
+			UserData tmpUser = userService.findById(paxId);
+			tmpUser.setArchived(Boolean.TRUE);
+			userService.updateByAdmin(tmpUser);
+			return new JsonServiceResponse(Status.SUCCESS_WITH_WARNING, "Failed To Delete User, Archived User Instead");
+		}
+		return new JsonServiceResponse(Status.SUCCESS, "Successfully Deleted User", paxId);
+	};
 
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/user")

@@ -69,9 +69,8 @@ public class UserServiceUtil {
 	public UserData mapUserDataFromEntity(User entity) {
 		Set<RoleData> roles = entity.getRoles().stream()
 				.map(role -> new RoleData(role.getRoleId(), role.getRoleDescription())).collect(Collectors.toSet());
-		return new UserData(entity.getUserId().toUpperCase(), entity.getPassword(), entity.getFirstName(),
-				entity.getLastName(), entity.getActive(), roles, entity.getEmail(), entity.getEmailEnabled(),
-				entity.getHighPriorityHitsEmailNotification());
+		return new UserData(entity.getUserId().toUpperCase(), entity.getPassword(), entity.getFirstName(), entity.getLastName(),
+				entity.getActive(), roles, entity.getEmail(), entity.getEmailEnabled(), entity.getHighPriorityHitsEmailNotification(), entity.getArchived());
 	}
 
 	/**
@@ -89,7 +88,7 @@ public class UserServiceUtil {
 
 		return new User(userData.getUserId().toUpperCase(), userData.getPassword(), userData.getFirstName(),
 				userData.getLastName(), userData.getActive(), roles, userData.getEmail(), userData.getEmailEnabled(),
-				userData.getHighPriorityEmail());
+				userData.getHighPriorityEmail(), userData.getArchived());
 	}
 
 	/**
@@ -99,7 +98,7 @@ public class UserServiceUtil {
 	 * and two special characters;
 	 * <p>
 	 * The password will meets the criteria of the validator at {@link UserController.Validator}
-	 * 
+	 *
 	 * @return a random password
 	 */
 	public String generateRandomPassword() {
@@ -114,7 +113,7 @@ public class UserServiceUtil {
 
 	/**
 	 * Returns a given {@code count} of special characters
-	 * 
+	 *
 	 * @param count
 	 * @return
 	 */
@@ -124,7 +123,7 @@ public class UserServiceUtil {
 
 	/**
 	 * Returns a given {@code count} of lowercase characters
-	 * 
+	 *
 	 * @param count
 	 * @return
 	 */
@@ -134,7 +133,7 @@ public class UserServiceUtil {
 
 	/**
 	 * Returns a given {@code count} of random uppercase characters
-	 * 
+	 *
 	 * @param count
 	 * @return
 	 */
@@ -144,7 +143,7 @@ public class UserServiceUtil {
 
 	/**
 	 * Returns a given {@code count} of random number characters
-	 * 
+	 *
 	 * @param count
 	 * @return
 	 */
@@ -154,7 +153,7 @@ public class UserServiceUtil {
 
 	/**
 	 * Returns a given {@code count} of characters
-	 * 
+	 *
 	 * @param count
 	 * @param randomNumberOrigin
 	 * @param randomNumberBound
