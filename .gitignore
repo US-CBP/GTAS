@@ -67,3 +67,19 @@ gradle*
 
 # scheduler messages folder
 **__data**
+
+# omni/kaizen folder
+.idea/
+*.iml
+__pycache__/
+*.tgz
+*.tar.gz
+*.model/
+
+*.run
+*.jar
+*.zip
+# Directories to ignore
+target/
+.build/
+.env/

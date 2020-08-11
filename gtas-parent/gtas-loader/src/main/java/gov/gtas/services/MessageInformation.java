@@ -11,6 +11,7 @@ package gov.gtas.services;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.PendingHitDetails;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.parsers.omni.model.OmniPassenger;
 import gov.gtas.summary.MessageSummary;
 
 import java.util.HashSet;
@@ -22,6 +23,7 @@ public class MessageInformation {
 	MessageStatus messageStatus;
 
 	private List<TamrPassenger> tamrPassengers;
+	private List<OmniPassenger> omniPassengers;
 
 	private MessageSummary messageSummary = new MessageSummary();
 
@@ -42,6 +44,12 @@ public class MessageInformation {
 	public List<TamrPassenger> getTamrPassengers() {
 		return tamrPassengers;
 	}
+
+	public void setOmniPassengers(List<OmniPassenger> omniPassengers) {
+		this.omniPassengers = omniPassengers;
+	}
+
+	public List<OmniPassenger> getOmniPassengers() { return omniPassengers;}
 
 	public MessageSummary getMessageSummary() {
 		return messageSummary;

@@ -20,6 +20,9 @@ import gov.gtas.parsers.tamr.jms.TamrMessageSender;
 import gov.gtas.parsers.tamr.model.TamrMessageType;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.tamr.model.TamrQuery;
+import gov.gtas.parsers.omni.jms.OmniMessageSender;
+import gov.gtas.parsers.omni.model.OmniMessageType;
+import gov.gtas.parsers.omni.model.OmniPassenger;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
@@ -87,6 +90,9 @@ public class LoaderScheduler {
 	@Autowired(required=false)
 	private TamrMessageSender tamrMessageSender;
 
+	@Autowired(required=false)
+	private OmniMessageSender omniMessageSender;
+
 	@Value("${message.dir.processed}")
 	private String messageProcessedDir;
 
@@ -104,6 +110,9 @@ public class LoaderScheduler {
 
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
+
+	@Value("${omni.enabled}")
+	private Boolean omniEnabled;
 
 	@Value("${additional.processing.enabled.passenger}")
 	private Boolean additionalProcessing;
@@ -126,6 +135,12 @@ public class LoaderScheduler {
 			TamrQuery tamrQuery = new TamrQuery(passToSend);
 			tamrMessageSender.sendMessageToTamr(
 			        TamrMessageType.QUERY, tamrQuery);
+		}
+
+		if (omniEnabled) {
+			List<OmniPassenger> passengerList = processedMessages.getOmniPassengers();
+			omniMessageSender.sendMessageToOmni(
+					OmniMessageType.ASSESS_RISK_REQUEST, passengerList);
 		}
 
 		if (additionalProcessing) {

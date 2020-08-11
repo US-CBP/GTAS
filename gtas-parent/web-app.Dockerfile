@@ -18,6 +18,19 @@ FROM tomcat:9-jdk8-adoptopenjdk-openj9 as tomcat
 
 RUN mkdir -p /usr/local/tomcat/webapps/gtas /logs/apache-tomcat-web /logs/apache-tomcat /temp
 
+# AlanM-Workaround: EMAIL Configuration
+RUN export EMAIL_SENDER_USERNAME
+RUN export EMAIL_SENDER_PASSWORD
+RUN export EMAIL_SENDER_HOST
+
+# AlanM-Workaround: MariaDB and other configurations
+RUN export DB_HOST
+RUN export KIBANA_HOST
+RUN export NEO4J_HOST
+RUN export ACTIVEMQ_HOST
+RUN export PROXY_HOST
+RUN export ELASTICSEARCH
+
 COPY --from=build-stage /root/.m2/repository/gov/gtas/gtas-webapp/1.0.0-BUILD-SNAPSHOT/gtas-webapp-1.0.0-BUILD-SNAPSHOT.war /usr/local/tomcat/webapps/gtas.war
 COPY --from=build-stage /temp-dos/setenv.sh /usr/local/tomcat/bin/setenv.sh
 COPY ./docker-resources/default.application.properties /usr/local/tomcat/conf/application.properties

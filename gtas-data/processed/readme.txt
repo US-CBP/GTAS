@@ -1,1 +1,1 @@
-this contains the processed files for GTAS
+this contains the input files for GTAS

@@ -979,12 +979,10 @@
         "id": "Seat.apis",
         "label": "Is Apis",
         "type": "boolean",
-        "operators": "EQUALS",
-        "input": "radio",
-        "values": {
-          "1": "Yes",
-          "0": "No"
-        }
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL"
+        ]
       }
     ]
   },
