@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>gtas-delete-nodes</name>
+    <name>gtas-delete-nodes-by-name</name>
     <description/>
     <extended_description/>
     <trans_version/>
     <trans_type>Normal</trans_type>
+    <trans_status>0</trans_status>
     <directory>/</directory>
     <parameters>
     </parameters>
@@ -458,17 +459,27 @@
   </notepads>
   <order>
     <hop>
-      <from>Get variables</from>
-      <to>User defined Java class</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>User defined Java class</from>
       <to>Select values</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
+      <from>Get variables</from>
+      <to>Write to log</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Write to log</from>
+      <to>User defined Java class</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
       <from>Select values</from>
+      <to>User defined Java class 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>User defined Java class 2</from>
       <to>Neo4j Cypher</to>
       <enabled>Y</enabled>
     </hop>
@@ -497,6 +508,18 @@
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
+      <field>
+        <name>nodeName</name>
+        <variable>${VAR_NODE_NAME}</variable>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -507,7 +530,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>192</xloc>
+      <xloc>112</xloc>
       <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
@@ -524,13 +547,10 @@
       <schema_name/>
     </partitioning>
     <connection>neo4j-db</connection>
-    <cypher>MATCH(n) 
-WHERE date(n.node_updated_on)  &lt;  date({retention_date}) 
-WITH n 
-DETACH DELETE n</cypher>
+    <cypher/>
     <batch_size/>
-    <cypher_from_field>N</cypher_from_field>
-    <cypher_field/>
+    <cypher_from_field>Y</cypher_from_field>
+    <cypher_field>cypherQueryStr</cypher_field>
     <unwind>N</unwind>
     <unwind_map/>
     <returning_graph>N</returning_graph>
@@ -552,7 +572,7 @@ DETACH DELETE n</cypher>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>784</xloc>
+      <xloc>1088</xloc>
       <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
@@ -724,7 +744,198 @@ public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws K
       </output>
     </remotesteps>
     <GUI>
-      <xloc>400</xloc>
+      <xloc>432</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>User defined Java class 2</name>
+    <type>UserDefinedJavaClass</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <definitions>
+      <definition>
+        <class_type>TRANSFORM_CLASS</class_type>
+        <class_name>Processor</class_name>
+        <class_source>
+
+
+public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws KettleException
+{
+    
+
+	// First, get a row from the default input hop
+	//
+	Object[] r = getRow();
+
+    // If the row object is null, we are done processing.
+	//
+	if (r == null) {
+		setOutputDone();
+		return false;
+	}
+
+	String cypherQueryStr = null;
+	boolean flag = false;
+
+    // It is always safest to call createOutputRow() to ensure that your output row's Object[] is large
+    // enough to handle any new fields you are creating in this step.
+	//
+    Object[] outputRow = createOutputRow(r, data.outputRowMeta.size());
+
+	String nodeNameStr = get(Fields.In, "nodeName").getString(r);
+	String dataRetentionDate = get(Fields.In, "dataRetentionDateStr").getString(r);
+
+
+	if(nodeNameStr!=null &amp;&amp; !nodeNameStr.trim().isEmpty())
+	{
+
+			if(nodeNameStr.equalsIgnoreCase("Phone"))
+			{
+				cypherQueryStr = "MATCH(n:Phone) ";
+				flag = true;
+
+			} 
+			else if(nodeNameStr.equalsIgnoreCase("Email"))
+			{
+				cypherQueryStr = "MATCH(n:Email) ";
+				flag = true;
+			}
+			else if(nodeNameStr.equalsIgnoreCase("CreditCard"))
+			{
+				cypherQueryStr = "MATCH(n:CreditCard) ";
+				flag = true;
+			}
+			else if(nodeNameStr.equalsIgnoreCase("Hit"))
+			{
+				cypherQueryStr = "MATCH(n:Hit) ";
+				flag = true;
+			}
+			else if(nodeNameStr.equalsIgnoreCase("Flight"))
+			{
+				cypherQueryStr = "MATCH(n:Flight) ";
+				flag = true;
+			}
+			else if(nodeNameStr.equalsIgnoreCase("Passenger"))
+			{
+				cypherQueryStr = "MATCH(n:Passenger) ";
+				flag = true;
+			}
+			else if(nodeNameStr.equalsIgnoreCase("Address"))
+			{
+				cypherQueryStr = "MATCH(n:Address) ";
+				flag = true;
+			}
+			else if(nodeNameStr.equalsIgnoreCase("Document"))
+			{
+				cypherQueryStr = "MATCH(n:Document) ";
+				flag = true;
+			}
+			else if(nodeNameStr.equalsIgnoreCase("Airport"))
+			{
+				cypherQueryStr = "MATCH(n:Airport) ";
+				flag = true;
+			}
+
+			if(flag == true)
+			{
+				cypherQueryStr = cypherQueryStr + " WHERE date(n.node_updated_on)  &lt;  date({retention_date})";
+                cypherQueryStr = cypherQueryStr + " DETACH DELETE n "; 
+			}
+
+
+			logDebug("### DELETE CYPHER QUERY: cypherQueryStr = " + cypherQueryStr);
+						 
+	}
+	
+	else
+	{
+		logError("### ERROR! The NodeName passed to this transformation is null or Empty.");
+		setOutputDone();
+		return false;
+
+	}
+
+	
+	// Set the value in the output field
+
+	get(Fields.Out, "cypherQueryStr").setValue(outputRow, cypherQueryStr);
+	
+
+
+    
+    // putRow will send the row on to the default output hop.
+	//
+    putRow(data.outputRowMeta, outputRow);
+
+	return true;
+}</class_source>
+      </definition>
+    </definitions>
+    <fields>
+      <field>
+        <field_name>cypherQueryStr</field_name>
+        <field_type>String</field_type>
+        <field_length>-1</field_length>
+        <field_precision>-1</field_precision>
+      </field>
+    </fields>
+    <clear_result_fields>N</clear_result_fields>
+    <info_steps/>
+    <target_steps/>
+    <usage_parameters/>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>832</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Write to log</name>
+    <type>WriteToLog</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <loglevel>log_level_minimal</loglevel>
+    <displayHeader>Y</displayHeader>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <logmessage>##### NODE TO BE DELETED ####</logmessage>
+    <fields>
+      <field>
+        <name>nodeName</name>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>272</xloc>
       <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>

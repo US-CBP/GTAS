@@ -15,6 +15,7 @@ import java.util.UUID;
 
 public class SeatVo implements Validatable {
 	private String number;
+	private String cabinClass;
 	private Boolean apis = Boolean.valueOf(false);
 	private UUID uuid = UUID.randomUUID();
 
@@ -81,5 +82,12 @@ public class SeatVo implements Validatable {
 
 	public UUID getUuid() {
 		return uuid;
+	}
+	public String getCabinClass() {
+		return cabinClass;
+	}
+
+	public void setCabinClass(String cabinClass) {
+		this.cabinClass = cabinClass;
 	}
 }

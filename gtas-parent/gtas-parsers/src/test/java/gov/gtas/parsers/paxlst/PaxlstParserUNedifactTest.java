@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import gov.gtas.config.ParserConfig;
 import gov.gtas.parsers.ParserTestHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,8 @@ public final class PaxlstParserUNedifactTest implements ParserTestHelper {
 
 	@Before
 	public void setUp() {
-		this.parser = new PaxlstParserUNedifact();
+		ParserConfig parserConfig = new ParserConfig(false, "VV");
+		this.parser = new PaxlstParserUNedifact(parserConfig);
 	}
 
 	@Test
@@ -275,7 +277,8 @@ public final class PaxlstParserUNedifactTest implements ParserTestHelper {
 
 	@Test
 	public void testTrimSeatNumber() {
-		PaxlstParserUNedifact edifact = new PaxlstParserUNedifact();
+		ParserConfig parserConfig = new ParserConfig(false, "VV");
+		PaxlstParserUNedifact edifact = new PaxlstParserUNedifact(parserConfig);
 		assertTrue(edifact.trimSeatNumber("12B").equals("12B"));
 		assertTrue(edifact.trimSeatNumber("012B").equals("12B"));
 		assertTrue(edifact.trimSeatNumber("00012B").equals("12B"));

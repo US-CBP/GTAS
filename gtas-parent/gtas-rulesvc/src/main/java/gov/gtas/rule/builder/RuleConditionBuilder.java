@@ -30,6 +30,7 @@ public class RuleConditionBuilder {
 
 	private List<DocumentConditionBuilder> documentConditionBuilder = new ArrayList<>();
 	private List<BagConditionBuilder> bagConditionBuilder = new ArrayList<>();
+	private List<SeatConditionBuilder> seatConditionBuilders = new ArrayList<>();
 
 	private PnrRuleConditionBuilder pnrRuleConditionBuilder;
 	private SeatConditionBuilder pnrSeatConditionBuilder;
@@ -74,6 +75,7 @@ public class RuleConditionBuilder {
 			switch (entityEnum) {
 			case DOCUMENT:
 			case BAG:
+			case SEAT:
 				groupNumber = conditionBuilderMap.size() + 1;
 				ecb = getEntityConditionBuilder(entityEnum, groupNumber);
 				conditionBuilderMap.put(uuid, ecb);
@@ -97,8 +99,8 @@ public class RuleConditionBuilder {
 			}
 		}
 		this.pnrRuleConditionBuilder = new PnrRuleConditionBuilder(queryTermList);
-		this.pnrSeatConditionBuilder = new SeatConditionBuilder(RuleTemplateConstants.SEAT_VARIABLE_NAME, false);
-		this.apisSeatConditionBuilder = new SeatConditionBuilder(RuleTemplateConstants.SEAT_VARIABLE_NAME + "2", true);
+		this.pnrSeatConditionBuilder = new SeatConditionBuilder(RuleTemplateConstants.SEAT_VARIABLE_NAME);
+		this.apisSeatConditionBuilder = new SeatConditionBuilder(RuleTemplateConstants.SEAT_VARIABLE_NAME + "2");
 		this.flightPaxConditionBuilder = new FlightPaxConditionBuilder(FLIGHT_PAX_VARIABLE_NAME);
 		this.passengerConditionBuilder = new PassengerConditionBuilder(passengerVariableName);
 		this.detailsConditionBuilder = new PassengerDetailsConditionBuilder(
@@ -122,6 +124,11 @@ public class RuleConditionBuilder {
 			ecb = new BagConditionBuilder(drlVariableName);
 			ecb.setGroupNumber(groupNumber);
 			bagConditionBuilder.add((BagConditionBuilder) ecb);
+			break;
+		case SEAT:
+			ecb = new SeatConditionBuilder(drlVariableName);
+			ecb.setGroupNumber(groupNumber);
+			seatConditionBuilders.add((SeatConditionBuilder)ecb);
 			break;
 		case EMAIL:
 		case FREQUENT_FLYER:
@@ -183,6 +190,9 @@ public class RuleConditionBuilder {
 		for (BagConditionBuilder bcb : bagConditionBuilder) {
 			parentStringBuilder.append(bcb.build());
 		}
+		for (SeatConditionBuilder scb : seatConditionBuilders) {
+			parentStringBuilder.append(scb.build());
+		}
 		// order doesn't matter
 		pnrRuleConditionBuilder.reset();
 		tripDetailsConditionBuilder.reset();
@@ -194,6 +204,7 @@ public class RuleConditionBuilder {
 		pnrSeatConditionBuilder.reset();
 		apisSeatConditionBuilder.reset();
 		bagConditionBuilder = new ArrayList<>();
+		seatConditionBuilders = new ArrayList<>();
 		flightConditionBuilder.reset();
 		mutableFlightDetailsConditionBuilder.reset();
 	}
@@ -218,7 +229,7 @@ public class RuleConditionBuilder {
 			this.flightCriteriaPresent = true;
 		}
 		if (!apisSeatConditionBuilder.isEmpty()) {
-			apisSeatConditionBuilder.addApisCondition();
+			apisSeatConditionBuilder.addApisCondition(true);
 			this.flightCriteriaPresent = true;
 		}
 
@@ -302,6 +313,7 @@ public class RuleConditionBuilder {
 				flightPaxConditionBuilder.addCondition(opCode, trm.getField(), attributeType, trm.getValue());
 				break;
 			case DOCUMENT:
+			case SEAT:
 			case BAG:
 				ebd = conditionBuilderMap.get(trm.getUuid());
 				ebd.addCondition(opCode, trm.getField(), attributeType, trm.getValue());
