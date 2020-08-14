@@ -438,11 +438,6 @@
   </notepads>
   <order>
     <hop>
-      <from>Add constants - airport labels</from>
-      <to>Select values-convert etd dates</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Select values-convert etd dates</from>
       <to>Neo4J Output - Airport</to>
       <enabled>Y</enabled>
@@ -470,6 +465,16 @@
     <hop>
       <from>Dummy - after sort</from>
       <to>Add constants - airport labels</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants - airport labels</from>
+      <to>Get system info</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get system info</from>
+      <to>Select values-convert etd dates</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -519,7 +524,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1072</xloc>
+      <xloc>816</xloc>
       <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
@@ -785,7 +790,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>800</xloc>
+      <xloc>640</xloc>
       <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
@@ -889,6 +894,12 @@
           <type>String</type>
           <primary>N</primary>
         </property>
+        <property>
+          <name>node_updated_on</name>
+          <value>node_updated_on</value>
+          <type>Date</type>
+          <primary>N</primary>
+        </property>
       </properties>
     </from>
     <to>
@@ -930,7 +941,7 @@
     </remotesteps>
     <GUI>
       <xloc>1296</xloc>
-      <yloc>448</yloc>
+      <yloc>464</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -967,6 +978,23 @@
       <meta>
         <name>full_etd_dtm</name>
         <rename>full_etd_dtm</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>NODE_DATETIME</name>
+        <rename>node_updated_on</rename>
         <type>Date</type>
         <length>-2</length>
         <precision>-2</precision>
@@ -1033,7 +1061,38 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>528</xloc>
+      <xloc>464</xloc>
+      <yloc>320</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Get system info</name>
+    <type>SystemInfo</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>NODE_DATETIME</name>
+        <type>system date (variable)</type>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1024</xloc>
       <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
