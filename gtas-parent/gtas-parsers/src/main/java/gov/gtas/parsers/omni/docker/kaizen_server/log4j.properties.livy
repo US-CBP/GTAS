@@ -1,9 +1,0 @@
-log4j.rootCategory=WARN, FILE
-log4j.appender.FILE=org.apache.log4j.FileAppender
-log4j.appender.FILE.File=/var/log/omni/livy.log
-log4j.appender.FILE.layout=org.apache.log4j.PatternLayout
-log4j.appender.FILE.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n
-
-log4j.logger.org.apache.livy=DEBUG
-log4j.logger.org.apache.livy.rsc.rpc=INFO
-log4j.logger.org.eclipse.jetty=WARN
