@@ -36,9 +36,6 @@ services:
       - ACTIVEMQ_HOST=activemq
       - PROXY_HOST=httpproxy
       - ELASTICSEARCH=elasticsearch
-      - EMAIL_SENDER_USERNAME=kaizen.modelo@gmail.com
-      - EMAIL_SENDER_PASSWORD=Beaut1ful
-      - EMAIL_SENDER_HOST=smtp.gmail.com
     networks:
       - GTAS_webapp-network
     restart: always
