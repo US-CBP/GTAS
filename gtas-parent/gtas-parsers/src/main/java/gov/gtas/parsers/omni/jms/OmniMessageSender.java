@@ -145,7 +145,7 @@ public class OmniMessageSender {
             int i = 0;
             for (OmniRawProfile omniRawProfile : omniRawProfileList) {
                 displayOmniRawProfileBucket.add(omniRawProfile);
-                displayOmniLookoutCategoryBucket.add(lookoutCategoryList.get(i++));
+                displayOmniLookoutCategoryBucket.add(lookoutCategoryList.get(i));
                 i++;
                 if (i >= maxElementShown) {
                     break;
