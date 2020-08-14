@@ -53,6 +53,8 @@ public class OmniDerogUpdateScheduler {
     public static final String GTAS_HIT_CATEGORY_FEDERAL_LAW_ENFORCEMENT = "Federal Law Enforcement";
     public static final String GTAS_HIT_CATEGORY_LOCAL_LAW_ENFORCEMENT = "Local Law Enforcement";
 
+    public static final String NO_PAYLOAD = "";
+
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     private static final Logger logger =
@@ -73,7 +75,7 @@ public class OmniDerogUpdateScheduler {
 
     OmniMessageSender omniMessageSender;
 
-    private Date lastRun = null;
+    private static Date lastRun = null;
 
     public OmniDerogUpdateScheduler(
             OmniMessageSender omniMessageSender,
@@ -84,6 +86,7 @@ public class OmniDerogUpdateScheduler {
         this.omniAdapter = omniAdapter;
         this.hitDetailRepository = hitDetailRepository;
         this.passengerRepository = passengerRepository;
+        omniMessageSender.sendMessageToOmni(OmniMessageType.UPDATE_DEROG_LAST_RUN_REQUEST, NO_PAYLOAD);
     }
 
     /**
@@ -94,7 +97,6 @@ public class OmniDerogUpdateScheduler {
     // via kaizen ...
     @Scheduled(fixedDelay = 5000)
     public void omniJobScheduling() throws InterruptedException {
-        logger.info("############# Checking for derog updates to send to Omni... ##########");
         try {
 
             int batchIndex = 0;
@@ -205,6 +207,9 @@ public class OmniDerogUpdateScheduler {
             }
 
             OmniDerogPassengerUpdate omniDerogPassengerUpdate = new OmniDerogPassengerUpdate();
+            OmniLastRun omniLastRun = new OmniLastRun();
+            omniLastRun.setTimeMillisecs(lastRun.getTime());
+            omniDerogPassengerUpdate.setLastRun(omniLastRun);
             omniDerogPassengerUpdate.setProfiles(omniRawProfileList);
             omniDerogPassengerUpdate.setLookoutCategories(omniLookoutCategoryList);
 
@@ -223,6 +228,12 @@ public class OmniDerogUpdateScheduler {
             }
         } catch (Exception ex) {
             logger.error("omniJobScheduling() - Got an exception: ", ex);
+        }
+    }
+
+    public static void initLastRun(final Long timeMillisecs) {
+        if (null != timeMillisecs) {
+            lastRun = new Date(timeMillisecs);
         }
     }
 }

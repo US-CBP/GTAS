@@ -26,7 +26,7 @@ public class OmniMessageSender {
 
     private final Logger logger = LoggerFactory.getLogger(OmniMessageSender.class);
 
-    private final int MAX_DEBUG_PRINT_ROWS = 5;
+    private final int MAX_DEBUG_PRINT_ROWS = 2;
 
     private JmsTemplate jmsTemplate;
 
@@ -57,8 +57,10 @@ public class OmniMessageSender {
                 // logger.info(" ========= Sending Kaizen this batch of omniDerogPassengerUpdate={}", messageJson);
                 logger.info(" ========= Sending Kaizen batch of OmniDerogPassengerUpdate =========");
                 debugPrintOmniDerogPassengerUpdateRequestPayload(omniDerogPassengerUpdate);
+            } else if (Objects.equals(messageType, OmniMessageType.UPDATE_DEROG_LAST_RUN_REQUEST)) {
+                logger.info(" ========= Asking Kaizen To Fetch the Last Time Derog updates were performed  =========");
+                messageJson = "BOGUS";
             }
-
         } catch (JsonProcessingException e) {
             logger.error("Could not send {} message (type={}) to Omni: {}",
                     messageObject.getClass(), messageType, e);
@@ -77,7 +79,8 @@ public class OmniMessageSender {
                     queueConfig.senderConnectionFactory());
         }
         logger.info("========= Sending {} message to Omni. =========", messageType);
-        logger.debug(messageText);
+
+        // logger.debug(messageText);
  
         jmsTemplate.send("GTAS_TO_KAIZEN_Q", new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
@@ -99,8 +102,13 @@ public class OmniMessageSender {
                 maxElementShown = totalSize;
             }
             List<OmniRawProfile> displayPayloadBucket = new ArrayList<>();
+            int i = 0;
             for (OmniRawProfile omniRawProfile : omniRawProfileList) {
                 displayPayloadBucket.add(omniRawProfile);
+                i++;
+                if (i >= maxElementShown) {
+                    break;
+                }
             }
             String displayTitle = "========= Showing the first " + maxElementShown + " OmniRawProfiles sent to Kaizen =======";
 
@@ -138,6 +146,10 @@ public class OmniMessageSender {
             for (OmniRawProfile omniRawProfile : omniRawProfileList) {
                 displayOmniRawProfileBucket.add(omniRawProfile);
                 displayOmniLookoutCategoryBucket.add(lookoutCategoryList.get(i++));
+                i++;
+                if (i >= maxElementShown) {
+                    break;
+                }
             }
 
             String displayOmniRawProfileTitle = "========= Showing the first " + maxElementShown + " OmniRawProfiles sent to Kaizen =======";

@@ -30,28 +30,30 @@ public class OmniMessageReceiver {
     
     @JmsListener(destination = "KAIZEN_TO_GTAS_Q")
 	public void receive(Message msg) {
-        logger.debug("############### GTAS received data from KAIZEN SERVER.... ################");
+		logger.debug("############### GTAS received data from KAIZEN SERVER.... ################");
 		TextMessage textMessage = null;
 		String jmsMessageType, messageText;
 
 		if (msg == null) {
-		    logger.warn("Received null JMS message from Omni");
-		    return;
-		}
-		
-		textMessage = (TextMessage) msg;
-		try {
-		    jmsMessageType = textMessage.getJMSType();
-		    messageText = textMessage.getText();
-		} catch (JMSException e) {
-			logger.error("Error handling Omni JMS message: {}",
-			        e);
+			logger.warn("Received null JMS message from Omni");
 			return;
 		}
-        logger.debug("Message type: {}", jmsMessageType);
+
+		textMessage = (TextMessage) msg;
+		try {
+			jmsMessageType = textMessage.getJMSType();
+			messageText = textMessage.getText();
+		} catch (JMSException e) {
+			logger.error("Error handling Omni JMS message: {}",
+					e);
+			return;
+		}
+		logger.debug("Message type: {}", jmsMessageType);
 
 		if (Objects.equals(jmsMessageType, OmniMessageType.ASSESS_RISK_RESPONSE.getStringValue())) {
 			omniMessageHandler.handlePassengersRiskAssessmentResponse(messageText);
+		} else if (Objects.equals(jmsMessageType, OmniMessageType.UPDATE_DEROG_LAST_RUN_RESPONSE.getStringValue())) {
+			omniMessageHandler.handleRetrieveLastRunResponse(messageText);
 		}
 	}
 }

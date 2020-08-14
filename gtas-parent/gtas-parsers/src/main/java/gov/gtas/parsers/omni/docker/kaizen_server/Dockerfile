@@ -50,6 +50,8 @@ RUN mkdir -p /var/log/omni
 
 RUN mkdir -p /opt/omni/bin
 
+RUN mkdir -p /opt/omni/certs
+
 RUN mkdir -p /opt/omni/.model_repository
 
 RUN mkdir -p /opt/omni/.model_repository/v0
@@ -106,8 +108,15 @@ RUN export KAIZEN_HTTP_SCHEME
 
 # EMAIL Configuration
 RUN export KAIZEN_SERVER_EMAIL_SENDER_USERNAME
-
 RUN export KAIZEN_SERVER_EMAIL_SENDER_PASSWORD
+
+# SSL Certs Configuration
+ADD kaizen_ca.p12 /opt/omni/certs/kaizen_ca.p12
+RUN chmod 640 /opt/omni/certs/kaizen_ca.p12
+RUN export KAIZEN_EXTERNAL_KEYSTORE
+RUN export KAIZEN_EXTERNAL_KEYSTORE_PASSWORD
+RUN export KAIZEN_EXTERNAL_KEYSTORE_TYPE
+RUN export KAIZEN_EXTERNAL_KEY_ALIAS
 
 RUN export KAIZEN_SUPPORT_PHONE
 
@@ -121,6 +130,8 @@ RUN export KAIZEN_SERVER_MYSQL_DB_DATASOURCE
 
 # SYSTEM MODE Configuration
 RUN export KAIZEN_SERVER_DEVELOPMENT_MODE
+
+RUN export KAIZEN_SPRING_PROFILES_ACTIVE
 
 ADD model-manager-1.0.0.jar /opt/omni/model-manager-1.0.0.jar
 

@@ -144,8 +144,8 @@ public class OmniAssessPassengersResponse {
     StringBuilder sb = new StringBuilder();
     sb.append("class OmniAssessPassengersResponse {\n");
     sb.append("    supportInfo: ").append(toIndentedString(supportInfo)).append("\n");
+    sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    predictions: ").append(toIndentedString(predictions)).append("\n");
-    sb.append("    error: ").append(toIndentedString(error)).append("\n");
     sb.append("    startPredictionTimeMillisecs: ").append(toIndentedString(startPredictionTimeMillisecs)).append("\n");
     sb.append("    endPredictionTimeMillisecs: ").append(toIndentedString(endPredictionTimeMillisecs)).append("\n");
     sb.append("    predictionTimeMillisecs: ").append(toIndentedString(predictionTimeMillisecs)).append("\n");

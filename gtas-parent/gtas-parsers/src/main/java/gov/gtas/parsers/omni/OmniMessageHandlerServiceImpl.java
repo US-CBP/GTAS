@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.PendingHitDetails;
+import gov.gtas.services.AppConfigurationService;
+import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.parsers.omni.model.*;
 import gov.gtas.repository.FlightPassengerRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
@@ -26,8 +28,13 @@ import java.util.regex.*;
 
 @Component
 public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService {
+    private static final String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
 
-    private final int MAX_DEBUG_PRINT_ROWS = 5;
+    @Autowired
+    private final AppConfigurationService appConfigurationService;
+
+    private final int OMNI_DEROG_INDEX = 1;
+    private final int MAX_DEBUG_PRINT_ROWS = 2;
 
     private final Logger logger = LoggerFactory.getLogger(OmniMessageHandlerServiceImpl.class);
 
@@ -48,10 +55,11 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
     @Value("${omni.derog_hit.description}")
     private String derogHitDescription;
 
-    public OmniMessageHandlerServiceImpl(
+    public OmniMessageHandlerServiceImpl(AppConfigurationService appConfigurationService,
             PendingHitDetailRepository pendingHitDetailRepository,
             FlightPassengerRepository flightPassengerRepository,
             HitCategoryRepository hitCateogoryRepository) {
+        this.appConfigurationService = appConfigurationService;
         this.pendingHitDetailRepository = pendingHitDetailRepository;
         this.flightPassengerRepository = flightPassengerRepository;
         this.hitCategoryRepository = hitCategoryRepository;
@@ -66,14 +74,21 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
         try {
             OmniAssessPassengersResponse omniAssessPassengersResponse = objectMapper.readValue(jsonStream, OmniAssessPassengersResponse.class);
             String status = omniAssessPassengersResponse.getStatus();
-            // logger.info("Omni returned passengers risk assessments JSON Stream: " + jsonStream);
+            OmniSupportInfo omniSupportInfo = omniAssessPassengersResponse.getSupportInfo();
+
             logger.info("Omni returned passengers risk assessments. Status: " + status);
 
-            debugPrintOmniPassengersRiskAssessmentResponsePayload(omniAssessPassengersResponse);
+            String supportInfoDetails = omniSupportInfo.toString();
+            logger.info("support info: {}", supportInfoDetails);
 
             if (Objects.equals(status, "ERROR")) {
+                OmniErrorResponse omniErrorResponse = omniAssessPassengersResponse.getError();
+                String errorMessage = omniErrorResponse.toString();
+                logger.error("Got an error: {}", errorMessage);
                 return;
             }
+
+            debugPrintOmniPassengersRiskAssessmentResponsePayload(omniAssessPassengersResponse);
 
             List<OmniModelPredictions> omniModelPredictionsList = omniAssessPassengersResponse.getPredictions();
 
@@ -84,9 +99,7 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
                 omniTravelerResponseList.add(convertOmniModelPredictionsToOmniTravelerResponse(entry));
             }
 
-            // String jsonOmniTraverResponseList = objectMapper.writer().writeValueAsString(omniTravelerResponseList);
-
-            // logger.info(" ========= About to save Kaizen Predictions as OmniTravelerResponseList={}", jsonOmniTraverResponseList);
+            debugPrintOmniTravelerResponsePayload(omniTravelerResponseList);
 
             this.createPendingHits(omniTravelerResponseList);
 
@@ -94,6 +107,38 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
             logger.error("handlePassengersRiskAssessmentResponse() - Got an exception: ", ex);
         }
     }
+
+    @Override
+    public void handleRetrieveLastRunResponse(String jsonStream) {
+        try {
+            OmniRetrieveUpdateDerogLastRunResponse omniRetrieveUpdateDerogLastRunResponse = objectMapper.readValue(jsonStream, OmniRetrieveUpdateDerogLastRunResponse.class);
+            String status = omniRetrieveUpdateDerogLastRunResponse.getStatus();
+            OmniSupportInfo omniSupportInfo = omniRetrieveUpdateDerogLastRunResponse.getSupportInfo();
+
+            logger.info("Omni returned derog update last run. Status: {}", status);
+
+            String supportInfoDetails = omniSupportInfo.toString();
+            logger.info("support info: {}", supportInfoDetails);
+
+            if (Objects.equals(status, "ERROR")) {
+                OmniErrorResponse omniErrorResponse = omniRetrieveUpdateDerogLastRunResponse.getError();
+                String errorMessage = omniErrorResponse.toString();
+                logger.error("Got an error: {}", errorMessage);
+                return;
+            }
+            OmniLastRun omniLastRun = omniRetrieveUpdateDerogLastRunResponse.getLastRun();
+
+            Long timeMillisecs = omniLastRun.getTimeMillisecs();
+
+            logger.info("Omni returned derog update last run. timeMillisecs: {}", timeMillisecs);
+
+            OmniDerogUpdateScheduler.initLastRun(timeMillisecs);
+
+        } catch (Exception ex) {
+            logger.error("handleRetrieveLastRunResponse() - Got an exception: ", ex);
+        }
+    }
+
 
     private boolean isNumeric(String strNum) {
         if (strNum == null) {
@@ -103,87 +148,95 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
     }
 
     private OmniTravelerResponse convertOmniModelPredictionsToOmniTravelerResponse(OmniModelPredictions omniModelPredictions) {
-        double scoreDoubleValue = omniModelPredictions.getLabelAnyProb().get(0).doubleValue();
-        float scoreFloatValue = (float) scoreDoubleValue;
-        double cat1DoubleValue = omniModelPredictions.getCat1Prob().get(0).doubleValue();
-        double cat2DoubleValue = omniModelPredictions.getCat2Prob().get(0).doubleValue();
-        double cat3DoubleValue = omniModelPredictions.getCat3Prob().get(0).doubleValue();
-        double cat4DoubleValue = omniModelPredictions.getCat4Prob().get(0).doubleValue();
-        double cat5DoubleValue = omniModelPredictions.getCat5Prob().get(0).doubleValue();
-        double cat6DoubleValue = omniModelPredictions.getCat6Prob().get(0).doubleValue();
-
-        float cat1Prob = (float) cat1DoubleValue;
-        float cat2Prob = (float) cat2DoubleValue;
-        float cat3Prob = (float) cat3DoubleValue;
-        float cat4Prob = (float) cat4DoubleValue;
-        float cat5Prob = (float) cat5DoubleValue;
-        float cat6Prob = (float) cat6DoubleValue;
-
-        Iterable<HitCategory> allHitCategories = hitCategoryRepository.findAll();
-
         OmniTravelerResponse omniTravelerResponse = new OmniTravelerResponse();
-        omniTravelerResponse.setPaxId(Long.toString(omniModelPredictions.getPassengerNumber()));
-        omniTravelerResponse.setScore(scoreFloatValue);
+        try {
+            Double matchingThreshold = Double.parseDouble(appConfigurationService.findByOption(MATCHING_THRESHOLD).getValue());
 
-        List<OmniDerogHit> omniDerogHitList = new ArrayList<>();
+            // logger.info("========= GTAS matchingThreshold={} =======", matchingThreshold);
 
-        allHitCategories.forEach( (hitCategory) -> {
-            String categoryName = hitCategory.getName();
-            Long id = hitCategory.getId();
-            String idStr = Long.toString(id);
-            switch(categoryName) {
-                case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_GENERAL:
-                    if (cat1Prob > 0) {
-                        OmniDerogHit omniDerogHit = new OmniDerogHit();
-                        omniDerogHit.setDerogId(idStr);
-                        omniDerogHit.setScore(cat1Prob);
-                        omniDerogHitList.add(omniDerogHit);
-                    }
-                    break;
-                case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_TERRORISM:
-                    if (cat2Prob > 0) {
-                        OmniDerogHit omniDerogHit = new OmniDerogHit();
-                        omniDerogHit.setDerogId(idStr);
-                        omniDerogHit.setScore(cat2Prob);
-                        omniDerogHitList.add(omniDerogHit);
-                    }
-                    break;
-                case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_WORLD_HEALTH:
-                    if (cat3Prob > 0) {
-                        OmniDerogHit omniDerogHit = new OmniDerogHit();
-                        omniDerogHit.setDerogId(idStr);
-                        omniDerogHit.setScore(cat3Prob);
-                        omniDerogHitList.add(omniDerogHit);
-                    }
-                    break;
-                case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_FEDERAL_LAW_ENFORCEMENT:
-                    if (cat4Prob > 0) {
-                        OmniDerogHit omniDerogHit = new OmniDerogHit();
-                        omniDerogHit.setDerogId(idStr);
-                        omniDerogHit.setScore(cat4Prob);
-                        omniDerogHitList.add(omniDerogHit);
-                    }
-                    break;
-                case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_LOCAL_LAW_ENFORCEMENT:
-                    if (cat5Prob > 0) {
-                        OmniDerogHit omniDerogHit = new OmniDerogHit();
-                        omniDerogHit.setDerogId(idStr);
-                        omniDerogHit.setScore(cat5Prob);
-                        omniDerogHitList.add(omniDerogHit);
-                    }
-                    break;
-                default:
-                    if (cat6Prob > 0) {
-                        OmniDerogHit omniDerogHit = new OmniDerogHit();
-                        omniDerogHit.setDerogId(idStr);
-                        omniDerogHit.setScore(cat6Prob);
-                        omniDerogHitList.add(omniDerogHit);
-                    }
-                    break;
-            }
-        });
+            double scoreDoubleValue = omniModelPredictions.getLabelAnyProb().get(OMNI_DEROG_INDEX).doubleValue();
+            float scoreFloatValue = (float) scoreDoubleValue;
+            double cat1DoubleValue = omniModelPredictions.getCat1Prob().get(OMNI_DEROG_INDEX).doubleValue();
+            double cat2DoubleValue = omniModelPredictions.getCat2Prob().get(OMNI_DEROG_INDEX).doubleValue();
+            double cat3DoubleValue = omniModelPredictions.getCat3Prob().get(OMNI_DEROG_INDEX).doubleValue();
+            double cat4DoubleValue = omniModelPredictions.getCat4Prob().get(OMNI_DEROG_INDEX).doubleValue();
+            double cat5DoubleValue = omniModelPredictions.getCat5Prob().get(OMNI_DEROG_INDEX).doubleValue();
+            double cat6DoubleValue = omniModelPredictions.getCat6Prob().get(OMNI_DEROG_INDEX).doubleValue();
 
-        omniTravelerResponse.setDerogIds(omniDerogHitList);
+            float cat1Prob = (float) cat1DoubleValue;
+            float cat2Prob = (float) cat2DoubleValue;
+            float cat3Prob = (float) cat3DoubleValue;
+            float cat4Prob = (float) cat4DoubleValue;
+            float cat5Prob = (float) cat5DoubleValue;
+            float cat6Prob = (float) cat6DoubleValue;
+
+            Iterable<HitCategory> allHitCategories = hitCategoryRepository.findAll();
+
+            omniTravelerResponse.setPaxId(Long.toString(omniModelPredictions.getPassengerNumber()));
+            omniTravelerResponse.setScore(scoreFloatValue);
+
+            List<OmniDerogHit> omniDerogHitList = new ArrayList<>();
+
+            allHitCategories.forEach((hitCategory) -> {
+                String categoryName = hitCategory.getName();
+                Long id = hitCategory.getId();
+                String idStr = Long.toString(id);
+                switch (categoryName) {
+                    case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_GENERAL:
+                        if (cat1Prob > matchingThreshold) {
+                            OmniDerogHit omniDerogHit = new OmniDerogHit();
+                            omniDerogHit.setDerogId(idStr);
+                            omniDerogHit.setScore(cat1Prob);
+                            omniDerogHitList.add(omniDerogHit);
+                        }
+                        break;
+                    case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_TERRORISM:
+                        if (cat2Prob > matchingThreshold) {
+                            OmniDerogHit omniDerogHit = new OmniDerogHit();
+                            omniDerogHit.setDerogId(idStr);
+                            omniDerogHit.setScore(cat2Prob);
+                            omniDerogHitList.add(omniDerogHit);
+                        }
+                        break;
+                    case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_WORLD_HEALTH:
+                        if (cat3Prob > matchingThreshold) {
+                            OmniDerogHit omniDerogHit = new OmniDerogHit();
+                            omniDerogHit.setDerogId(idStr);
+                            omniDerogHit.setScore(cat3Prob);
+                            omniDerogHitList.add(omniDerogHit);
+                        }
+                        break;
+                    case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_FEDERAL_LAW_ENFORCEMENT:
+                        if (cat4Prob > matchingThreshold) {
+                            OmniDerogHit omniDerogHit = new OmniDerogHit();
+                            omniDerogHit.setDerogId(idStr);
+                            omniDerogHit.setScore(cat4Prob);
+                            omniDerogHitList.add(omniDerogHit);
+                        }
+                        break;
+                    case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_LOCAL_LAW_ENFORCEMENT:
+                        if (cat5Prob > matchingThreshold) {
+                            OmniDerogHit omniDerogHit = new OmniDerogHit();
+                            omniDerogHit.setDerogId(idStr);
+                            omniDerogHit.setScore(cat5Prob);
+                            omniDerogHitList.add(omniDerogHit);
+                        }
+                        break;
+                    default:
+                        if (cat6Prob > matchingThreshold) {
+                            OmniDerogHit omniDerogHit = new OmniDerogHit();
+                            omniDerogHit.setDerogId(idStr);
+                            omniDerogHit.setScore(cat6Prob);
+                            omniDerogHitList.add(omniDerogHit);
+                        }
+                        break;
+                }
+            });
+
+            omniTravelerResponse.setDerogIds(omniDerogHitList);
+        } catch (Exception ex) {
+            logger.error("convertOmniModelPredictionsToOmniTravelerResponse() - Got an exception: ", ex);
+        }
 
         return omniTravelerResponse;
     }
@@ -289,19 +342,6 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
 
     private void debugPrintOmniPassengersRiskAssessmentResponsePayload(OmniAssessPassengersResponse omniAssessPassengersResponse) {
         try {
-            OmniSupportInfo omniSupportInfo = omniAssessPassengersResponse.getSupportInfo();
-            String status = omniAssessPassengersResponse.getStatus();
-
-            String supportInfoDetails = omniSupportInfo.toString();
-            logger.info("support info: {}", supportInfoDetails);
-
-            if (Objects.equals(status, "ERROR")) {
-                OmniErrorResponse omniErrorResponse = omniAssessPassengersResponse.getError();
-                String errorMessage = omniErrorResponse.toString();
-                logger.error("Got an error: {}", errorMessage);
-                return;
-            }
-
             int maxElementShown = MAX_DEBUG_PRINT_ROWS;
             List<OmniModelPredictions> omniModelPredictionsList = omniAssessPassengersResponse.getPredictions();
             int totalSize = omniModelPredictionsList.size();
@@ -326,8 +366,13 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
 
             List<OmniModelPredictions> displayOmniModelPredictionsBucket = new ArrayList<>();
 
+            int i = 0;
             for (OmniModelPredictions omniModelPredictions : omniModelPredictionsList) {
                 displayOmniModelPredictionsBucket.add(omniModelPredictions);
+                i++;
+                if (i >= maxElementShown) {
+                    break;
+                }
             }
 
             String displayOmniModelPredictionsTitle = "========= Showing the first " + maxElementShown + " OmniModelPredictions Received from Kaizen =======";
@@ -343,6 +388,40 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
 
         } catch (Exception ex) {
             logger.error("debugPrintOmniPassengersRiskAssessmentResponsePayload() - Got an exception: ", ex);
+        }
+    }
+
+    private void debugPrintOmniTravelerResponsePayload(List<OmniTravelerResponse> omniTravelerResponseList) {
+        try {
+
+            int maxElementShown = MAX_DEBUG_PRINT_ROWS;
+            List<OmniTravelerResponse> displayOmniTravelerResponseBucket = new ArrayList<>();
+            int totalSize = omniTravelerResponseList.size();
+            if (maxElementShown > totalSize) {
+                maxElementShown = totalSize;
+            }
+            int i = 0;
+            for (OmniTravelerResponse omniTravelerResponse: omniTravelerResponseList) {
+                displayOmniTravelerResponseBucket.add(omniTravelerResponse);
+                i++;
+                if (i >= maxElementShown) {
+                    break;
+                }
+            }
+
+            String displayOmniTravelerResponseTitle = "========= Showing the first " + maxElementShown + " OmniTravelerResponse Received from Kaizen =======";
+
+            if (maxElementShown == 1) {
+                displayOmniTravelerResponseTitle = "========= Showing the only OmniTravelerResponse Received from Kaizen =======";
+            }
+
+            String jsonPayload = objectMapper.writer().writeValueAsString(displayOmniTravelerResponseBucket);
+
+            logger.info(displayOmniTravelerResponseTitle);
+            logger.info(jsonPayload);
+
+        } catch (Exception ex) {
+            logger.error("debugPrintOmniTravelerResponsePayload() - Got an exception: ", ex);
         }
     }
 }
