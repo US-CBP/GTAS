@@ -105,7 +105,7 @@ public class UserController {
 		if (userId.equals(userData.getUserId())) {
 			if (userData.getActive() == 0) {
 				return new JsonServiceResponse(Status.FAILURE,
-						"Not Authorized: Logged In User may not disable  themsel");
+						"Not Authorized: Logged In User may not disable  themselves");
 			}
 			Boolean retainsAdmin = false;
 			for (RoleData role : userData.getRoles()) {
@@ -226,7 +226,7 @@ public class UserController {
 			return new JsonServiceResponse(Status.SUCCESS, "Valid token provided");
 		}
 
-		return new JsonServiceResponse(Status.FAILURE, "Ivalid token provided");
+		return new JsonServiceResponse(Status.FAILURE, "Invalid token provided");
 
 	}
 
