@@ -17,7 +17,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import gov.gtas.constant.RuleConstants;
 
 /**
- * Basic adaptation of commons DateHelper.
+ * Basic adaptation of commons DateUtils.
  */
 public final class DateCalendarUtils {
 
