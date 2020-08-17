@@ -8,6 +8,5 @@ import gov.gtas.model.HitDetail;
 import java.util.Set;
 
 public interface OmniDerogUpdateService {
-    // void updateOmniDerogPassengers(Set<HitDetail> firstTimeHits);
     void updateOmniDerogPassengers(Set<Long> flightIds);
 }

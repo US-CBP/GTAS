@@ -95,7 +95,7 @@ public class OmniDerogUpdateServiceImpl implements OmniDerogUpdateService {
 
 	@Override
 	public void updateOmniDerogPassengers(Set<Long> flightIds) {
-		logger.info("=====> Entering updateOmniDerogPassengers()");
+		// logger.info("=====> Entering updateOmniDerogPassengers()");
 		try {
 			int batchIndex = 0;
 			int upperBound = batchSize.intValue();
@@ -127,8 +127,8 @@ public class OmniDerogUpdateServiceImpl implements OmniDerogUpdateService {
 				// logger.info("slice description - page number {}, numberOfElements: {}, size: {}",number, numberOfElements, size);
 
 				for (HitDetail hitDetail: hitDetailList) {
-					String jsonHitDetail = objectMapper.writer().writeValueAsString(hitDetail);
-					logger.info(" ========= Processing Hit Detail={} ========", jsonHitDetail);
+					// String jsonHitDetail = objectMapper.writer().writeValueAsString(hitDetail);
+					// logger.info(" ========= Processing Hit Detail={} ========", jsonHitDetail);
 					Long passengerId = hitDetail.getPassengerId();
 					String passengerIdStr = Long.toString(passengerId);
 					Passenger passenger = passengerRepository.getFullPassengerById(passengerId);
@@ -204,14 +204,14 @@ public class OmniDerogUpdateServiceImpl implements OmniDerogUpdateService {
 			omniDerogPassengerUpdate.setProfiles(omniRawProfileList);
 			omniDerogPassengerUpdate.setLookoutCategories(omniLookoutCategoryList);
 
-			String jsonDerogCategoriesMap = objectMapper.writer().writeValueAsString(derogCategoriesMap);
-			logger.info(" ========= Passengers Derog Category Labels Map={}", jsonDerogCategoriesMap);
+			// String jsonDerogCategoriesMap = objectMapper.writer().writeValueAsString(derogCategoriesMap);
+			// logger.info(" ========= Passengers Derog Category Labels Map={}", jsonDerogCategoriesMap);
 
-			String jsonOmniPassengersMap = objectMapper.writer().writeValueAsString(omniPassengersMap);
-			logger.info(" ========= Omni Passengers Map={}", jsonOmniPassengersMap);
+			// String jsonOmniPassengersMap = objectMapper.writer().writeValueAsString(omniPassengersMap);
+			// logger.info(" ========= Omni Passengers Map={}", jsonOmniPassengersMap);
 
-			String jsonOmniDerogPassengerUpdate = objectMapper.writer().writeValueAsString(omniDerogPassengerUpdate);
-			logger.info(" ========= Omni Derog Passengers Update={}", jsonOmniDerogPassengerUpdate);
+			// String jsonOmniDerogPassengerUpdate = objectMapper.writer().writeValueAsString(omniDerogPassengerUpdate);
+			// logger.info(" ========= Omni Derog Passengers Update={}", jsonOmniDerogPassengerUpdate);
 
 			// Send the message to Omni via Kaizen
 			if (omniRawProfileList.size() > 0) {
@@ -221,118 +221,5 @@ public class OmniDerogUpdateServiceImpl implements OmniDerogUpdateService {
 		} catch (Exception ex) {
 			logger.error("updateOmniDerogPassengers() - Got an exception: ", ex);
 		}
-	}
-
-	public void OLD_updateOmniDerogPassengers(Set<HitDetail> firstTimeHits) {
-		logger.info("=====> Entering updateOmniDerogPassengers()");
-		try {
-			ConcurrentHashMap<String, Long> derogCategoriesMap = new ConcurrentHashMap<>();
-			ConcurrentHashMap<String, OmniPassenger> omniPassengersMap = new ConcurrentHashMap<>();
-			List<OmniRawProfile> omniRawProfileList = new ArrayList<>();
-			List<OmniLookoutCategory> omniLookoutCategoryList = new ArrayList<>();
-
-			Iterator<Map.Entry<String, OmniPassenger>> entryIt = null;
-
-			for (HitDetail hitDetail : firstTimeHits) {
-				Long passengerId = hitDetail.getPassengerId();
-
-				// Set<HitDetail> passengerHitDetails = hitDetailRepository.getSetFromPassengerId(passengerId);
-
-				// for (HitDetail hitEntry: passengerHitDetails) {
-					String passengerIdStr = Long.toString(passengerId);
-					Passenger passenger = passengerRepository.getFullPassengerById(passengerId);
-					Flight flight = hitDetail.getFlight();
-					Long categoryBitMask = (Long) derogCategoriesMap.getOrDefault(passengerIdStr, 0L);
-					HitMaker hitMaker = hitDetail.getHitMaker();
-					// HitMaker hitMaker = hitEntry.getHitMaker();
-
-					String jsonHitMaker = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(hitMaker);
-
-					logger.info("serialized hit maker: {}", jsonHitMaker);
-
-					HitCategory hitCategory = hitMaker.getHitCategory();
-					String categoryName = hitCategory.getName();
-
-					switch (categoryName) {
-						case GTAS_HIT_CATEGORY_GENERAL:
-							categoryBitMask |= OMNI_LOOKOUT_CAT1_BIT_MASK;
-							break;
-
-						case GTAS_HIT_CATEGORY_TERRORISM:
-							categoryBitMask |= OMNI_LOOKOUT_CAT2_BIT_MASK;
-							break;
-
-						case GTAS_HIT_CATEGORY_WORLD_HEALTH:
-							categoryBitMask |= OMNI_LOOKOUT_CAT3_BIT_MASK;
-							break;
-
-						case GTAS_HIT_CATEGORY_FEDERAL_LAW_ENFORCEMENT:
-							categoryBitMask |= OMNI_LOOKOUT_CAT4_BIT_MASK;
-							break;
-
-						case GTAS_HIT_CATEGORY_LOCAL_LAW_ENFORCEMENT:
-							categoryBitMask |= OMNI_LOOKOUT_CAT5_BIT_MASK;
-							break;
-
-						default:
-							categoryBitMask |= OMNI_LOOKOUT_CAT6_BIT_MASK;
-							break;
-					}
-
-					OmniPassenger omniPassenger = omniAdapter.convertPassengerToOmniRawProfile(flight, passenger);
-					derogCategoriesMap.put(passengerIdStr, categoryBitMask);
-					omniPassengersMap.put(passengerIdStr, omniPassenger);
-				}
-			//}
-
-			entryIt = omniPassengersMap.entrySet().iterator();
-
-			// Now, prepare the payload to send to Kaizen
-			// String jsonStream = "";
-
-			while (entryIt.hasNext()) {
-				Map.Entry<String, OmniPassenger> entry = entryIt.next();
-
-				String passengerIdStr = (String) entry.getKey();
-				OmniPassenger omniPassenger = (OmniPassenger) entry.getValue();
-
-				// jsonStream = objectMapper.writer().writeValueAsString(omniPassenger);
-				// logger.info(" ========= Current OmniPassenger={}, passengerIdStr={}", jsonStream, passengerIdStr);
-
-				omniRawProfileList.add(omniPassenger.getOmniRawProfile());
-
-				Long lookoutCategoryBitMask = (Long) derogCategoriesMap.get(passengerIdStr);
-
-				// logger.info(" ========= Current lookoutCategoryBitMask={}, passengerIdStr={}", lookoutCategoryBitMask, passengerIdStr);
-				OmniLookoutCategory omniLookoutCategory = new OmniLookoutCategory();
-				omniLookoutCategory.setPassengerNumber(Long.parseLong(passengerIdStr));
-				omniLookoutCategory.setLookoutCategoryBitMask(lookoutCategoryBitMask);
-				omniLookoutCategoryList.add(omniLookoutCategory);
-			}
-
-			OmniDerogPassengerUpdate omniDerogPassengerUpdate = new OmniDerogPassengerUpdate();
-			// OmniLastRun omniLastRun = new OmniLastRun();
-			// omniLastRun.setTimeMillisecs(lastRun.getTime());
-			// omniDerogPassengerUpdate.setLastRun(omniLastRun);
-			omniDerogPassengerUpdate.setProfiles(omniRawProfileList);
-			omniDerogPassengerUpdate.setLookoutCategories(omniLookoutCategoryList);
-
-			String jsonDerogCategoriesMap = objectMapper.writer().writeValueAsString(derogCategoriesMap);
-			logger.info(" ========= Passengers Derog Category Labels Map={}", jsonDerogCategoriesMap);
-
-			String jsonOmniPassengersMap = objectMapper.writer().writeValueAsString(omniPassengersMap);
-			logger.info(" ========= Omni Passengers Map={}", jsonOmniPassengersMap);
-
-			String jsonOmniDerogPassengerUpdate = objectMapper.writer().writeValueAsString(omniDerogPassengerUpdate);
-			logger.info(" ========= Omni Derog Passengers Update={}", jsonOmniDerogPassengerUpdate);
-
-			// Send the message to Omni via Kaizen
-			if (omniRawProfileList.size() > 0) {
-				omniMessageSender.sendMessageToOmni(OmniMessageType.UPDATE_DEROG_CATEGORY, omniDerogPassengerUpdate);
-			}
-		} catch (Exception ex) {
-			logger.error("updateOmniDerogPassengers() - Got an exception: ", ex);
-		}
-		logger.info("<===== Exiting updateOmniDerogPassengers()");
 	}
 }
