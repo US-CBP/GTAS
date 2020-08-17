@@ -11,20 +11,39 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.PendingHitDetails;
 import gov.gtas.services.AppConfigurationService;
+import gov.gtas.model.HitDetail;
+import gov.gtas.model.ExternalHit;
 import gov.gtas.model.lookup.AppConfiguration;
-import gov.gtas.parsers.omni.model.*;
+import gov.gtas.parsers.omni.model.OmniAssessPassengersResponse;
+import gov.gtas.parsers.omni.model.OmniSupportInfo;
+import gov.gtas.parsers.omni.model.OmniErrorResponse;
+import gov.gtas.parsers.omni.model.OmniModelPredictions;
+import gov.gtas.parsers.omni.model.OmniTravelerResponse;
+import gov.gtas.parsers.omni.model.OmniTravelerResponse;
+import gov.gtas.parsers.omni.model.OmniDerogHit;
+
 import gov.gtas.repository.FlightPassengerRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.repository.HitCategoryRepository;
-import gov.gtas.model.lookup.*;
+import gov.gtas.repository.HitMakerRepository;
+import gov.gtas.repository.ExternalHitRepository;
+import gov.gtas.model.lookup.HitCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
-import java.util.regex.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.Set;
 
 @Component
 public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService {
@@ -46,6 +65,15 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
 
     @Autowired
     private HitCategoryRepository hitCategoryRepository;
+
+    @Autowired
+    private HitMakerRepository hitMakerRepository;
+
+    @Autowired
+    private ExternalHitRepository externalHitRepository;
+
+    @Autowired
+    private OmniDerogUpdateService omniDerogUpdateService;
 
     private Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
@@ -109,36 +137,37 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
     }
 
     @Override
-    public void handleRetrieveLastRunResponse(String jsonStream) {
+    public void handleHitDetailsAvailableNotification(String jsonStream) {
         try {
-            OmniRetrieveUpdateDerogLastRunResponse omniRetrieveUpdateDerogLastRunResponse = objectMapper.readValue(jsonStream, OmniRetrieveUpdateDerogLastRunResponse.class);
-            String status = omniRetrieveUpdateDerogLastRunResponse.getStatus();
-            OmniSupportInfo omniSupportInfo = omniRetrieveUpdateDerogLastRunResponse.getSupportInfo();
+            // logger.info("handleHitDetailsAvailableNotification() got jsonStream: {}", jsonStream);
 
-            logger.info("Omni returned derog update last run. Status: {}", status);
+            Set<HitDetail> firstTimeHits = new HashSet<>();
+            Set<Long> flightIds = new HashSet<>();
 
-            String supportInfoDetails = omniSupportInfo.toString();
-            logger.info("support info: {}", supportInfoDetails);
+            ArrayNode hitDetailsNodeArray = (ArrayNode) objectMapper.readTree(jsonStream);
 
-            if (Objects.equals(status, "ERROR")) {
-                OmniErrorResponse omniErrorResponse = omniRetrieveUpdateDerogLastRunResponse.getError();
-                String errorMessage = omniErrorResponse.toString();
-                logger.error("Got an error: {}", errorMessage);
-                return;
+            if (null != hitDetailsNodeArray && hitDetailsNodeArray.isArray()) {
+                for (JsonNode jsonNodeEntry : hitDetailsNodeArray) {
+                    HitDetail hitDetail = objectMapper.readValue(jsonNodeEntry.toString(), HitDetail.class);
+                    flightIds.add(hitDetail.getFlightId());
+                    firstTimeHits.add(hitDetail);
+                }
             }
-            OmniLastRun omniLastRun = omniRetrieveUpdateDerogLastRunResponse.getLastRun();
 
-            Long timeMillisecs = omniLastRun.getTimeMillisecs();
+            // String jsonFirstTimeHits = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(firstTimeHits);
+            // logger.info("serialized hit details: {}", jsonFirstTimeHits);
 
-            logger.info("Omni returned derog update last run. timeMillisecs: {}", timeMillisecs);
+            // String jsonFlightIds = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(flightIds);
+            // logger.info("serialized hit flight Ids: {}", jsonFlightIds);
 
-            OmniDerogUpdateScheduler.initLastRun(timeMillisecs);
+            if (firstTimeHits.size() > 0) {
+                omniDerogUpdateService.updateOmniDerogPassengers(flightIds);
+            }
 
         } catch (Exception ex) {
-            logger.error("handleRetrieveLastRunResponse() - Got an exception: ", ex);
+            logger.error("handleHitDetailsAvailableNotification() - Got an exception: ", ex);
         }
     }
-
 
     private boolean isNumeric(String strNum) {
         if (strNum == null) {
@@ -152,7 +181,9 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
         try {
             Double matchingThreshold = Double.parseDouble(appConfigurationService.findByOption(MATCHING_THRESHOLD).getValue());
 
-            // logger.info("========= GTAS matchingThreshold={} =======", matchingThreshold);
+            String jsonPayload = objectMapper.writer().writeValueAsString(omniModelPredictions);
+
+            // logger.info("========= omniModelPredictions={} =======", jsonPayload);
 
             double scoreDoubleValue = omniModelPredictions.getLabelAnyProb().get(OMNI_DEROG_INDEX).doubleValue();
             float scoreFloatValue = (float) scoreDoubleValue;
@@ -170,19 +201,20 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
             float cat5Prob = (float) cat5DoubleValue;
             float cat6Prob = (float) cat6DoubleValue;
 
-            Iterable<HitCategory> allHitCategories = hitCategoryRepository.findAll();
+            Iterable<ExternalHit> allExternalHits = externalHitRepository.findAll();
 
             omniTravelerResponse.setPaxId(Long.toString(omniModelPredictions.getPassengerNumber()));
             omniTravelerResponse.setScore(scoreFloatValue);
 
             List<OmniDerogHit> omniDerogHitList = new ArrayList<>();
 
-            allHitCategories.forEach((hitCategory) -> {
-                String categoryName = hitCategory.getName();
-                Long id = hitCategory.getId();
+            allExternalHits.forEach((externalHit) -> {
+                String categoryName = externalHit.getDescription();
+                Long id = externalHit.getId();
                 String idStr = Long.toString(id);
+
                 switch (categoryName) {
-                    case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_GENERAL:
+                    case OmniDerogUpdateServiceImpl.GTAS_HIT_CATEGORY_GENERAL:
                         if (cat1Prob > matchingThreshold) {
                             OmniDerogHit omniDerogHit = new OmniDerogHit();
                             omniDerogHit.setDerogId(idStr);
@@ -190,7 +222,7 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
                             omniDerogHitList.add(omniDerogHit);
                         }
                         break;
-                    case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_TERRORISM:
+                    case OmniDerogUpdateServiceImpl.GTAS_HIT_CATEGORY_TERRORISM:
                         if (cat2Prob > matchingThreshold) {
                             OmniDerogHit omniDerogHit = new OmniDerogHit();
                             omniDerogHit.setDerogId(idStr);
@@ -198,7 +230,7 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
                             omniDerogHitList.add(omniDerogHit);
                         }
                         break;
-                    case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_WORLD_HEALTH:
+                    case OmniDerogUpdateServiceImpl.GTAS_HIT_CATEGORY_WORLD_HEALTH:
                         if (cat3Prob > matchingThreshold) {
                             OmniDerogHit omniDerogHit = new OmniDerogHit();
                             omniDerogHit.setDerogId(idStr);
@@ -206,7 +238,7 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
                             omniDerogHitList.add(omniDerogHit);
                         }
                         break;
-                    case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_FEDERAL_LAW_ENFORCEMENT:
+                    case OmniDerogUpdateServiceImpl.GTAS_HIT_CATEGORY_FEDERAL_LAW_ENFORCEMENT:
                         if (cat4Prob > matchingThreshold) {
                             OmniDerogHit omniDerogHit = new OmniDerogHit();
                             omniDerogHit.setDerogId(idStr);
@@ -214,7 +246,7 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
                             omniDerogHitList.add(omniDerogHit);
                         }
                         break;
-                    case OmniDerogUpdateScheduler.GTAS_HIT_CATEGORY_LOCAL_LAW_ENFORCEMENT:
+                    case OmniDerogUpdateServiceImpl.GTAS_HIT_CATEGORY_LOCAL_LAW_ENFORCEMENT:
                         if (cat5Prob > matchingThreshold) {
                             OmniDerogHit omniDerogHit = new OmniDerogHit();
                             omniDerogHit.setDerogId(idStr);
@@ -253,12 +285,12 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
 
         Set<Long> passengerIds = new HashSet<>();
 
-        Set<Long> watchlistItemIds = new HashSet<>();
+        Set<Long> externalHitItemIds = new HashSet<>();
 
         for (OmniTravelerResponse travelerResponse: travelerResponses) {
             for (OmniDerogHit derogHit: travelerResponse.getDerogIds()) {
                 long paxId;
-                long watchlistItemId;
+                long externalHitItemId;
                 String derogIdStr = derogHit.getDerogId();
 
                 if (!isNumeric(travelerResponse.getPaxId())) {
@@ -276,16 +308,16 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
                     continue;
                 }
 
-                watchlistItemId = Long.parseLong(derogIdStr);
+                externalHitItemId = Long.parseLong(derogIdStr);
 
                 passengerIds.add(paxId);
-                watchlistItemIds.add(watchlistItemId);
+                externalHitItemIds.add(externalHitItemId);
                 derogHits.add(new AbstractMap.SimpleEntry<>(paxId, derogHit));
             }
         }
         
         if (derogHits.isEmpty()) {
-            logger.info("createPendingHits() - Got an empty derogHits list. So, nothting to do...");
+            logger.info("createPendingHits() - Got an empty derogHits list. So, nothing to do...");
             return;
         }
 
@@ -302,7 +334,7 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
                 derogHits) {
             long paxId = derogHitWithId.getKey();
             OmniDerogHit derogHit = derogHitWithId.getValue();
-            long watchlistItemId = Long.parseLong(derogHit.getDerogId());
+            long externalHitItemId = Long.parseLong(derogHit.getDerogId());
 
             PendingHitDetails pendingHit = new PendingHitDetails(); 
 
@@ -312,7 +344,7 @@ public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService 
             pendingHit.setHitEnum(HitTypeEnum.EXTERNAL_HIT);
             pendingHit.setHitType(pendingHit.getHitEnum().toString());
 
-            pendingHit.setHitMakerId(watchlistItemId);
+            pendingHit.setHitMakerId(externalHitItemId);
             pendingHit.setPercentage(derogHit.getScore());
 
             // Omni doesn't return any details about the matching algorithm,

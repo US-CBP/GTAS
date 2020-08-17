@@ -12,14 +12,17 @@ import gov.gtas.model.PassengerDetails;
 import gov.gtas.parsers.omni.model.OmniDerogListEntry;
 import gov.gtas.parsers.omni.model.OmniDocument;
 import gov.gtas.parsers.omni.model.OmniPassenger;
-import gov.gtas.parsers.omni.util.*;
+import gov.gtas.parsers.omni.util.DateHelper;
 import gov.gtas.parsers.omni.model.OmniRawProfile;
 import gov.gtas.services.FlightService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -70,7 +73,7 @@ public class OmniAdapterImpl implements OmniAdapter {
 		omniRawProfile.setPassengerNumber(passengerDetails.getPassengerId());
 		omniRawProfile.setGender(passengerDetails.getGender());
 		omniRawProfile.setAgeBin(DateHelper.convertIntegerToAgeBin(passengerDetails.getAge()));
-		omniRawProfile.setEta(flight.getEtdDate().getTime()/1000); // The ETA is in seconds
+		omniRawProfile.setEta(flight.getMutableFlightDetails().getEta().getTime()/1000); // The ETA is in seconds
 		// Nationalities (only one in GTAS)
 		omniRawProfile.setPassengerCitizenCountry(Collections
 				.singletonList(passengerDetails.getNationality()));

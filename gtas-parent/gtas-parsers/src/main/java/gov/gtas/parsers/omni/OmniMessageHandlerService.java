@@ -13,10 +13,9 @@ public interface OmniMessageHandlerService {
      * Handle passenger risk assessment responses from Omni kaizen Server.
      * This will include the derog scores for a list of passengers
      */
-    public void handlePassengersRiskAssessmentResponse(String jsonStream);
+    void handlePassengersRiskAssessmentResponse(String jsonStream);
     /**
-     * Handle retrieval of the time the passenger derog updates were performed
-     * The last run time initialization will be needed if the system goes down and comes back up
+     * Handle the availability of hit details
      */
-    public void handleRetrieveLastRunResponse(String jsonStream);
+    void handleHitDetailsAvailableNotification(String jsonStream);
 }

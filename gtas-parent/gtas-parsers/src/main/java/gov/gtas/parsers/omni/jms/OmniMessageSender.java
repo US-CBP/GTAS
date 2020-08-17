@@ -7,7 +7,12 @@ package gov.gtas.parsers.omni.jms;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.parsers.omni.jms.OmniQueueConfig;
-import gov.gtas.parsers.omni.model.*;
+import gov.gtas.parsers.omni.model.OmniAssessPassengersRequest;
+import gov.gtas.parsers.omni.model.OmniDerogPassengerUpdate;
+import gov.gtas.parsers.omni.model.OmniMessageType;
+import gov.gtas.parsers.omni.model.OmniLookoutCategory;
+import gov.gtas.parsers.omni.model.OmniPassenger;
+import gov.gtas.parsers.omni.model.OmniRawProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,7 +22,9 @@ import org.springframework.stereotype.Component;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 @ConditionalOnProperty(prefix = "omni", name = "enabled")
@@ -57,9 +64,6 @@ public class OmniMessageSender {
                 // logger.info(" ========= Sending Kaizen this batch of omniDerogPassengerUpdate={}", messageJson);
                 logger.info(" ========= Sending Kaizen batch of OmniDerogPassengerUpdate =========");
                 debugPrintOmniDerogPassengerUpdateRequestPayload(omniDerogPassengerUpdate);
-            } else if (Objects.equals(messageType, OmniMessageType.UPDATE_DEROG_LAST_RUN_REQUEST)) {
-                logger.info(" ========= Asking Kaizen To Fetch the Last Time Derog updates were performed  =========");
-                messageJson = "BOGUS";
             }
         } catch (JsonProcessingException e) {
             logger.error("Could not send {} message (type={}) to Omni: {}",

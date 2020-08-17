@@ -13,8 +13,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
-import javax.jms.*;
-import java.util.*;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 @ConditionalOnProperty(prefix = "omni", name = "enabled")
@@ -52,8 +55,8 @@ public class OmniMessageReceiver {
 
 		if (Objects.equals(jmsMessageType, OmniMessageType.ASSESS_RISK_RESPONSE.getStringValue())) {
 			omniMessageHandler.handlePassengersRiskAssessmentResponse(messageText);
-		} else if (Objects.equals(jmsMessageType, OmniMessageType.UPDATE_DEROG_LAST_RUN_RESPONSE.getStringValue())) {
-			omniMessageHandler.handleRetrieveLastRunResponse(messageText);
+		} else if (Objects.equals(jmsMessageType, OmniMessageType.LOCAL_NOTIFICATION_HIT_DETAILS_AVAILABLE.getStringValue())) {
+			omniMessageHandler.handleHitDetailsAvailableNotification(messageText);
 		}
 	}
 }

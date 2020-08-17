@@ -31,6 +31,6 @@ public interface HitDetailRepository extends PagingAndSortingRepository<HitDetai
 			" where hd.id in :hdIds and hd.flightId in :fIds")
 	Set<HitDetail> getHitDetailsWithCountryGroups(@Param("hdIds")Set<Long> hdIds, @Param("fIds") Set<Long> fIds);
 
-	@Query("SELECT hd from HitDetail hd left join fetch hd.hitMaker l left join fetch l.hitCategory left join fetch hd.hitViewStatus left join fetch hd.flight f left join fetch f.mutableFlightDetails left join fetch hd.passenger where hd.createdDate >= :createdDate")
-	Slice<HitDetail> findAllWithCreationDateAfterSpecifiedDate(@Param("createdDate") Date createdDate, Pageable pageable);
+	@Query("SELECT hd from HitDetail hd left join fetch hd.hitMaker l left join fetch l.hitCategory left join fetch hd.hitViewStatus left join fetch hd.flight f left join fetch f.mutableFlightDetails left join fetch hd.passenger where hd.flightId in :fIds")
+	Slice<HitDetail> findAllByFlightIds(@Param("fIds") Set<Long> fIds, Pageable pageable);
 }

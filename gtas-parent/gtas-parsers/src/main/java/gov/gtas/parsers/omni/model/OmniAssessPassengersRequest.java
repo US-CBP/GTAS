@@ -16,6 +16,9 @@ public class OmniAssessPassengersRequest {
   @JsonProperty("profiles")
   private List<OmniRawProfile> profiles = new ArrayList<OmniRawProfile>();
 
+  @JsonProperty("message_type")
+  private String messageType = "ASSESS_RISK_REQUEST";
+
    /**
    * Get profiles
    * @return profiles
@@ -28,6 +31,14 @@ public class OmniAssessPassengersRequest {
     this.profiles = profiles;
   }
 
+  public String getMessageType() {
+    return messageType;
+  }
+
+  public void setMessageType(String messageType) {
+    this.messageType = messageType;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -37,18 +48,20 @@ public class OmniAssessPassengersRequest {
       return false;
     }
     OmniAssessPassengersRequest omniAssessPassengersRequest = (OmniAssessPassengersRequest) o;
-    return Objects.equals(this.profiles, omniAssessPassengersRequest.profiles);
+    return Objects.equals(this.profiles, omniAssessPassengersRequest.profiles) &&
+           Objects.equals(this.messageType, omniAssessPassengersRequest.messageType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(profiles);
+    return Objects.hash(profiles, messageType);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class OmniAssessPassengersRequest {\n");
+    sb.append("    messageType: ").append(toIndentedString(messageType)).append("\n");
     sb.append("    profiles: ").append(toIndentedString(profiles)).append("\n");
     sb.append("}");
     return sb.toString();
