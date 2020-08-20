@@ -17,6 +17,8 @@ import javax.transaction.Transactional;
 import gov.gtas.model.*;
 import gov.gtas.parsers.tamr.TamrAdapter;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.parsers.omni.OmniAdapter;
+import gov.gtas.parsers.omni.model.OmniPassenger;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -51,8 +53,13 @@ public class PnrMessageService extends MessageLoaderService {
     
     private final TamrAdapter tamrAdapter;
 
+	private final OmniAdapter omniAdapter;
+
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
+
+	@Value("${omni.enabled}")
+	private Boolean omniEnabled;
 
 	@Value("${additional.processing.enabled.passenger}")
 	private Boolean additionalProcessing;
@@ -61,7 +68,7 @@ public class PnrMessageService extends MessageLoaderService {
 	@Autowired
 	public PnrMessageService(PnrRepository msgDao, LoaderUtils utils,
 							 LookUpRepository lookupRepo, FlightPaxRepository flightPaxRepository, BagRepository bagRepository,
-							 BookingBagRepository bookingBagRepository, TamrAdapter tamrAdapter) {
+							 BookingBagRepository bookingBagRepository, TamrAdapter tamrAdapter, OmniAdapter omniAdapter) {
 		this.msgDao = msgDao;
 		this.utils = utils;
 		this.lookupRepo = lookupRepo;
@@ -69,6 +76,7 @@ public class PnrMessageService extends MessageLoaderService {
 		this.bagDao = bagRepository;
 		this.bookingBagRepository = bookingBagRepository;
 		this.tamrAdapter = tamrAdapter;
+		this.omniAdapter = omniAdapter;
 	}
 
 	@Override
@@ -161,6 +169,11 @@ public class PnrMessageService extends MessageLoaderService {
 				List<TamrPassenger> tamrPassengers = tamrAdapter
 						.convertPassengers(pnr.getFlights().iterator().next(), pnr.getPassengers());
 				messageInformation.setTamrPassengers(tamrPassengers);
+			}
+			if (omniEnabled) {
+				List<OmniPassenger> omniPassengers = omniAdapter
+						.convertPassengers(pnr.getFlights().iterator().next(), pnr.getPassengers());
+				messageInformation.setOmniPassengers(omniPassengers);
 			}
 			if (additionalProcessing) {
 				String rawMessage = msgDto.getRawMsg();

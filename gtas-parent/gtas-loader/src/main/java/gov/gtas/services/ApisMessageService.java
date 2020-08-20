@@ -13,6 +13,8 @@ import gov.gtas.model.*;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.tamr.TamrAdapter;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.parsers.omni.OmniAdapter;
+import gov.gtas.parsers.omni.model.OmniPassenger;
 import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.repository.*;
 import org.apache.commons.lang3.StringUtils;
@@ -51,8 +53,14 @@ public class ApisMessageService extends MessageLoaderService {
 	@Autowired
 	private LookUpRepository lookupRepo;
 
+	@Autowired
+	private OmniAdapter omniAdapter;
+
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
+
+	@Value("${omni.enabled}")
+	private Boolean omniEnabled;
 
 	@Autowired
 	private ParserConfig parserConfig;
@@ -149,6 +157,11 @@ public class ApisMessageService extends MessageLoaderService {
 				List<TamrPassenger> tamrPassengers = tamrAdapter
 						.convertPassengers(apis.getFlights().iterator().next(), apis.getPassengers());
 				messageInformation.setTamrPassengers(tamrPassengers);
+			}
+			if (omniEnabled) {
+				List<OmniPassenger> omniPassengers = omniAdapter
+						.convertPassengers(apis.getFlights().iterator().next(), apis.getPassengers());
+				messageInformation.setOmniPassengers(omniPassengers);
 			}
 			if (additionalProcessing) {
 				String rawMessage = msgDto.getRawMsg();
