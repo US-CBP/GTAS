@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.TextMessage;
 
 @Component
 public class AdditionalProcessingMessageSender {
@@ -66,7 +67,7 @@ public class AdditionalProcessingMessageSender {
                 messageSummary.setAction(MessageAction.ERROR);
                 logger.error("ERROR WRITING JSON! NO ADDITIONAL PROCESSING!");
             }
-            Message fwd = session.createObjectMessage(messageJson);
+            TextMessage fwd = session.createTextMessage(messageJson);
             setEventIdentifierProps(eventIdentifier, fwd);
             fwd.setStringProperty("action", messageAction.toString());
             return fwd;

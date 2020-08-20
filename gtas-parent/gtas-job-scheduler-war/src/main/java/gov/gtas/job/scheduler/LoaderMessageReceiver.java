@@ -7,6 +7,7 @@ package gov.gtas.job.scheduler;
 
 import javax.jms.Session;
 
+import gov.gtas.job.wrapper.MessageWrapper;
 import gov.gtas.summary.EventIdentifier;
 import gov.gtas.summary.MessageAction;
 import gov.gtas.services.jms.AdditionalProcessingMessageSender;
@@ -89,7 +90,8 @@ public class LoaderMessageReceiver {
 		File workingfile = Utils.writeToDisk(fileName, payload, workingstr);
 
 		try {
-			EventIdentifier eventIdentifier = queueManager.receiveMessages(message);
+			MessageWrapper mw = new MessageWrapper(message, fileName);
+			EventIdentifier eventIdentifier = queueManager.receiveMessages(mw);
 			if (additionalProcessingOn && (eventIdentifier.getEventType().equals("PNR") && proccessPnr
 					|| eventIdentifier.getEventType().equals("APIS") && proccessApis ||
 			addProcessQueue != null && addProcessQueue.contains(eventIdentifier.getEventType()))) {

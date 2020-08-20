@@ -1,6 +1,7 @@
 package gov.gtas.job.scheduler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.gtas.job.wrapper.MessageWrapper;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.edifact.EdifactLexer;
 import gov.gtas.parsers.edifact.Segment;
@@ -38,7 +39,8 @@ public class EventIdentifierFactory {
         this.loaderUtils = loaderUtils;
     }
 
-    public EventIdentifier createEventIdentifier(Message<?> message) throws ParseException {
+    public EventIdentifier createEventIdentifier(MessageWrapper mw) throws ParseException {
+        Message<?> message = mw.getMessage();
         message.getHeaders();
         EventIdentifier eventIdentifier = new EventIdentifier();
 
