@@ -46,7 +46,7 @@ public abstract class RuleThread  implements Callable<Boolean> {
     @Autowired
     private NotificatonService notificationSerivce;
 
-    @Autowired
+    @Autowired(required=false)
     private OmniDerogUpdateService omniDerogUpdateService;
 
     private static final Logger logger = LoggerFactory.getLogger(RuleThread.class);
