@@ -31,6 +31,7 @@ import gov.gtas.model.lookup.HitCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -46,6 +47,7 @@ import java.util.regex.Pattern;
 import java.util.Set;
 
 @Component
+@ConditionalOnProperty(prefix = "omni", name = "enabled")
 public class OmniMessageHandlerServiceImpl implements OmniMessageHandlerService {
     private static final String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
 

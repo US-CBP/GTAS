@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@ConditionalOnProperty(prefix = "omni", name = "enabled")
 public class OmniDerogUpdateServiceImpl implements OmniDerogUpdateService {
 	public static final Long OMNI_LOOKOUT_CAT1_BIT_MASK = 2L;
 	public static final Long OMNI_LOOKOUT_CAT2_BIT_MASK = 4L;
