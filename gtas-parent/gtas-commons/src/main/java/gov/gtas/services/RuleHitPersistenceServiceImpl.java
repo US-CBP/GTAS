@@ -60,7 +60,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 	@Value("${omni.enabled}")
 	private Boolean omniEnabled;
 
-	@Autowired
+	@Autowired(required=false)
 	private OmniLocalGtasSender omniLocalGtasSender;
 
 	public RuleHitPersistenceServiceImpl(PassengerService passengerService, HitDetailRepository hitDetailRepository,

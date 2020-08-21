@@ -10,6 +10,7 @@ package gov.gtas.services.jms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
@@ -17,6 +18,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
+@ConditionalOnProperty(prefix = "omni", name = "enabled")
 public class OmniLocalGtasSender {
     private static final Logger log = LoggerFactory.getLogger(OmniLocalGtasSender.class);
     private static final String GTAS_INBOUND_QUEUE = "KAIZEN_TO_GTAS_Q";
