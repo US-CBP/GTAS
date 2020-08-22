@@ -47,12 +47,12 @@ public class AdditionalProcessingMessageSender {
     }
 
 
-    public void sendRawMessage(String queueName, org.springframework.messaging.Message<?> message, EventIdentifier eventIdentifier, MessageAction messageAction) {
+    public void sendRawMessage(String queueName, String payload, EventIdentifier eventIdentifier, MessageAction messageAction) {
         jmsTemplateFile.setDefaultDestinationName(queueName);
         jmsTemplateFile.send(session -> {
             MessageSummaryList msRawList = new MessageSummaryList();
             MessageSummary messageSummary =  new MessageSummary();
-            messageSummary.setRawMessage((String)message.getPayload());
+            messageSummary.setRawMessage(payload);
             messageSummary.setEventIdentifier(eventIdentifier);
             messageSummary.setAction(messageAction);
             msRawList.setEventIdentifier(eventIdentifier);

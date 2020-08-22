@@ -56,6 +56,7 @@ public class EventIdentifierFactory {
                 // It might be a legitimate APIS/PNR EDIFACT message otherwise.
             }
             if (msl != null) {
+                mw.setFromMessageInfo(true);
                 return msl.getEventIdentifier();
             }
         }

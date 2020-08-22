@@ -7,6 +7,7 @@ package gov.gtas.job.scheduler;
 
 import javax.jms.Session;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.job.wrapper.MessageWrapper;
 import gov.gtas.summary.EventIdentifier;
 import gov.gtas.summary.MessageAction;
@@ -16,6 +17,7 @@ import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.model.Pnr;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.repository.PnrRepository;
+import gov.gtas.summary.MessageSummaryList;
 import gov.gtas.util.LobUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +98,18 @@ public class LoaderMessageReceiver {
 					|| eventIdentifier.getEventType().equals("APIS") && proccessApis ||
 			addProcessQueue != null && addProcessQueue.contains(eventIdentifier.getEventType()))) {
 				MessageAction messageAction = eventIdentifier.getEventType().equals("APIS") ? MessageAction.RAW_APIS : MessageAction.RAW_PNR;
-				apms.sendRawMessage(addProcessQueue, message, eventIdentifier, messageAction);
+
+				String rawMessage = "";
+				if (mw.getFromMessageInfo()) {
+					ObjectMapper om = new ObjectMapper();
+					MessageSummaryList msl = om.readValue((String)message.getPayload(), MessageSummaryList.class);
+					rawMessage = msl.getMessageSummaryList().get(0).getRawMessage();
+				} else {
+					rawMessage = (String)message.getPayload();
+				}
+
+
+				apms.sendRawMessage(addProcessQueue, rawMessage, eventIdentifier, messageAction);
 			}
 		} catch (Exception e) {
 			logger.warn("Failed to parsed message. Is border crossing information corrupt? Error is: " + e);
