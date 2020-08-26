@@ -37,7 +37,7 @@ public class AdditionalProcessingMessageSender {
                 messageJson = e.getMessage();
                 logger.error("ERROR WRITING JSON! NO ADDITIONAL PROCESSING!");
             }
-            Message fwd = session.createObjectMessage(messageJson);
+            Message fwd = session.createTextMessage(messageJson);
             setEventIdentifierProps(eventIdentifier, fwd);
             fwd.setStringProperty("action", messageSummaryList.getMessageAction().toString());
             fwd.setObjectProperty("countryList", smd.getCountryList());
