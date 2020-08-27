@@ -22,6 +22,9 @@ public class CountryGroup extends BaseEntityAudit {
     @Column(name = "cg_label")
     private String countryGroupLabel;
 
+    @Column(name = "cg_send_raw", nullable = false)
+    private boolean sendRaw = true;
+
     public CountryGroup(){}
 
     public Set<CountryAndOrganization> getAssociatedCountries() {
@@ -46,5 +49,13 @@ public class CountryGroup extends BaseEntityAudit {
 
     public void setHitMakers(Set<HitMaker> hitMakers) {
         this.hitMakers = hitMakers;
+    }
+
+    public boolean isSendRaw() {
+        return sendRaw;
+    }
+
+    public void setSendRaw(boolean noRaw) {
+        this.sendRaw = noRaw;
     }
 }
