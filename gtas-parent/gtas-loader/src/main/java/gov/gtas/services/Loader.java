@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.parsers.omni.model.OmniPassenger;
 import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.summary.MessageAction;
 import gov.gtas.summary.MessageSummary;
@@ -51,6 +52,9 @@ public class Loader {
 
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
+
+	@Value("${omni.enabled}")
+	private Boolean omniEnabled;
 
 	@Value("${additional.processing.enabled.passenger}")
 	private Boolean additionalProcessing;
@@ -131,6 +135,7 @@ public class Loader {
 
 		List<MessageStatus> messageStatuses = new ArrayList<>();
 		List<TamrPassenger> tamrPassengers = new ArrayList<>();
+		List<OmniPassenger> omniPassengers = new ArrayList<>();
 		List<MessageSummary> messageSummaries = new ArrayList<>();
 		int successMsgCount = 0;
 		int failedMsgCount = 0;
@@ -141,9 +146,15 @@ public class Loader {
 				if (messageStatus.isNoLoadingError()) {
 					messageStatus.setMessageStatusEnum(MessageStatusEnum.LOADED);
 					successMsgCount++;
+
 					if (tamrEnabled) {
 						tamrPassengers.addAll(mi.getTamrPassengers());
 					}
+
+					if (omniEnabled) {
+						omniPassengers.addAll(mi.getOmniPassengers());
+					}
+
 					if (additionalProcessing) {
 						messageSummaries.add(mi.getMessageSummary());
 					}
@@ -170,6 +181,9 @@ public class Loader {
 					if (tamrEnabled) {
 						tamrPassengers.addAll(messageInformation.getTamrPassengers());
 					}
+					if (omniEnabled) {
+						omniPassengers.addAll(messageInformation.getOmniPassengers());
+					}
 					if (additionalProcessing) {
 						messageSummaries.add(messageInformation.getMessageSummary());
 					}
@@ -189,6 +203,7 @@ public class Loader {
 		processedMessages.setProcessed(new int[] { successMsgCount, failedMsgCount });
 		processedMessages.setMessageStatusList(messageStatuses);
 		processedMessages.setTamrPassengers(tamrPassengers);
+		processedMessages.setOmniPassengers(omniPassengers);
 		processedMessages.setMessageSummaries(messageSummaries);
 		return processedMessages;
 	}

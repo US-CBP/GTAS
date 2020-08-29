@@ -2,6 +2,7 @@ package gov.gtas.services;
 
 import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.parsers.omni.model.OmniPassenger;
 import gov.gtas.summary.MessageSummary;
 
 import java.util.List;
@@ -10,6 +11,7 @@ public class ProcessedMessages {
 	private int[] processed;
 	private List<MessageStatus> messageStatusList;
 	private List<TamrPassenger> tamrPassengers;
+	private List<OmniPassenger> omniPassengers;
 	private List<MessageSummary> messageSummaries;
 	public int[] getProcessed() {
 		return processed;
@@ -33,6 +35,14 @@ public class ProcessedMessages {
 
 	public void setTamrPassengers(List<TamrPassenger> tamrPassengers) {
 		this.tamrPassengers = tamrPassengers;
+	}
+
+	public List<OmniPassenger> getOmniPassengers() {
+		return omniPassengers;
+	}
+
+	public void setOmniPassengers(List<OmniPassenger> omniPassengers) {
+		this.omniPassengers = omniPassengers;
 	}
 
 	public List<MessageSummary> getMessageSummaries() {

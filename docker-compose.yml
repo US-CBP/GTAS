@@ -1,10 +1,9 @@
 version: '3.7'
 services:
-
-  http-proxy:
-    image: wcogtas/http-proxy:1.0.0
+  http-proxy: 
+    image: simbam1/http-proxy:dev
     container_name: http-proxy
-    build: 
+    build:  
       context: ./gtas-parent
       dockerfile: docker-resources/proxy.Dockerfile
     restart: always
@@ -12,16 +11,12 @@ services:
       - 443:443
       - 80:80
     networks:
-      - GTAS_webapp-network
+      - gtas-webapp-network
     secrets:
-      - elastic_bootstrap_password
-      - source: webapp_cert
-        target: /wcogtas.org.crt
-      - source: webapp_key
-        target: /wcogtas.org.key
+      - elastic-bootstrap-password
 
   web-app:
-    image: wcogtas/web-app:1.0.0
+    image: simbam1/webapp:dev
     container_name: web-app
     build: 
       context: ./gtas-parent
@@ -29,141 +24,265 @@ services:
     ports:
       - 8080:8080
       - 8443:8443
-    environment: 
-      - DB_HOST=mariadb
+    environment:
       - KIBANA_HOST=kibana
       - NEO4J_HOST=neo4j
       - ACTIVEMQ_HOST=activemq
       - PROXY_HOST=httpproxy
       - ELASTICSEARCH=elasticsearch
     networks:
-      - GTAS_webapp-network
+      - gtas-webapp-network
     restart: always
     secrets:
-     - mysql_webapp_user
-     - mysql_webapp_password
-     - webapp_neo4j_user
-     - webapp_neo4j_password
-     - elastic_bootstrap_password
-     - source: webapp_cert
-       target: /usr/local/tomcat/conf/wcogtas.org.crt
-     - source: webapp_key
-       target: /usr/local/tomcat/conf/wcogtas.org.key
-     - source: elastic_cert
-       target: /usr/local/tomcat/conf/elasticsearch-node1.crt
-     - source: elastic_key
-       target: /usr/local/tomcat/conf/elasticsearch-node1.key
-     - source: elastic_ca
-       target: /usr/local/tomcat/conf/elastic-ca.crt
+     - mysql-webapp-user
+     - mysql-webapp-password
+     - webapp-neo4j-user
+     - webapp-neo4j-password
+     - elastic-bootstrap-password
     volumes:
       - m2:/root/.m2
       - scheduler-logs:/scheduler-logs
 
   gtas-scheduler:
-    image: wcogtas/gtas-scheduler:1.0.0
+    image: simbam1/gtas-scheduler:dev
     container_name: gtas-scheduler
     build: 
       context: .
       dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
     restart: always
     environment:
-      DB_HOST: mariadb
       KIBANA_HOST: kibana
       NEO4J_HOST: neo4j
       ACTIVEMQ_HOST: activemq
     volumes:
       - scheduler-logs:/usr/local/tomcat/logs
     secrets:
-      - mysql_processor_user
-      - mysql_processor_password
-      - webapp_neo4j_user
-      - webapp_neo4j_password
+      - mysql-processor-user
+      - mysql-processor-password
+      - webapp-neo4j-user
+      - webapp-neo4j-password
     networks:
-      - GTAS_webapp-network
+      - gtas-webapp-network
     depends_on: 
       - activemq
 
   activemq:
     image: rmohr/activemq:5.15.9
     container_name: activemq
+    ports:
+      - "8161:8161"
+      - "61616:61616"
     restart: always
+    # ports:
+    #   - 8161:8161
+    #   - 61616:61616
     networks: 
-      - GTAS_webapp-network
+      - gtas-webapp-network
 
-  mariadb:
-    image: wcogtas/mariadb:1.0.0
+  mariadb: 
+    image: simbam1/mariadb:dev
     build:
       context: ./gtas-parent
       dockerfile: mariadb.Dockerfile
     container_name: mariadb
     environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql-root-password
     secrets:
-     - mysql_etl_user
-     - mysql_etl_password
-     - mysql_processor_user
-     - mysql_processor_password
-     - mysql_webapp_user
-     - mysql_webapp_password
-     - mysql_healthcheck_user
-     - mysql_healthcheck_password
-     - mysql_logstash_user
-     - mysql_logstash_password
-     - mysql_root_password
+     - mysql-etl-user
+     - mysql-etl-password
+     - mysql-processor-user
+     - mysql-processor-password
+     - mysql-webapp-user
+     - mysql-webapp-password
+     - mysql-healthcheck-user
+     - mysql-healthcheck-password
+     - mysql-logstash-user
+     - mysql-logstash-password
+     - mysql-root-password
     ports:
       - 3306:3306
     networks:
-      - GTAS_webapp-network
+      - gtas-webapp-network
     restart: always
     volumes:
       - db-data:/var/lib/mysql
 
+  etl-job:
+    container_name: etl-job
+    image: simbam1/neo4j-etl-job:dev
+    build:
+      context: .
+      dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
+    environment:
+      NEO4J_HOSTNAME: neo4j
+    restart: always
+    secrets:
+      - mysql-etl-user
+      - mysql-etl-password
+      - etl-neo4j-user
+      - etl-neo4j-password
+    networks: 
+      - gtas-webapp-network
+    depends_on: 
+      - neo4j
+
+  neo4j:
+    container_name: neo4j
+    image: simbam1/neo4j:dev
+    build:
+      context: .
+      dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
+    restart: always
+    volumes:
+       - neo4j-data:/data
+    ports:
+      - 7474:7474   
+      - 7687:7687
+    networks: 
+      - gtas-webapp-network
+
+  kibana:
+    container_name: kibana
+    image: simbam1/kibana:dev
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: install/docker/kibana/kibana.Dockerfile
+    environment:
+      ELASTICSEARCH_HOSTS: https://elasticsearch:9200
+    ports:
+      - 5601:5601
+    restart: always
+    volumes:
+      - kibana-conf:/usr/share/kibana/data
+    networks:
+      - gtas-webapp-network
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    image: simbam1/elasticsearch:dev
+    container_name: elasticsearch
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: install/docker/elasticsearch/elasticsearch.Dockerfile
+    ports:
+      - 9300:9300
+      - 9200:9200
+    restart: always
+    volumes: 
+      - es-data:/usr/share/elasticsearch/data
+      - elasticsearch-conf:/usr/share/elasticsearch/config
+    networks: 
+      - gtas-webapp-network
+
+  logstash:
+    image: simbam1/logstash:dev
+    container_name: logstash
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: ./install/docker/logstash/logstash.Dockerfile
+    environment:
+      ELASTIC_HOST: 'https://elasticsearch'
+      XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
+      LOGSTASH_KEYSTORE_PASS: admin123
+    restart: always
+    secrets:
+      - elastic-ca
+    networks:
+      - gtas-webapp-network
+    volumes:
+      - logstash-conf:/usr/share/logstash/config/
+    depends_on:
+      - elasticsearch
+
+  elk-setup:
+    image: simbam1/elk-setup:dev
+    container_name: elk-setup
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: ./install/docker/elk-setup/elk-setup.Dockerfile
+    environment:
+      KIBANA_HOST: 'kibana'
+      ELASTICSEARCH_HOST: 'elasticsearch'
+    deploy:
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - logstash-conf:/logstash-conf
+      - kibana-conf:/kibana-conf
+      - elasticsearch-conf:/elasticsearch-conf
+    secrets:
+      - logstash-keystore-password
+      - mysql-logstash-user
+      - mysql-logstash-password
+      - elastic-password
+      - elasticsearch-kibana-user
+      - elasticsearch-kibana-password
+      - elastic-bootstrap-password
+    networks:
+      - gtas-webapp-network
+
 
 secrets:
-  mysql_etl_user:
+  mysql-etl-user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_etl_user.txt
-  mysql_etl_password:
+  mysql-etl-password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_etl_password.txt
-  mysql_healthcheck_user:
+  mysql-healthcheck-user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_healthcheck_user.txt
-  mysql_healthcheck_password:
+  mysql-healthcheck-password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_healthcheck_password.txt
-  mysql_logstash_user:
-    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_user.txt
-  mysql_logstash_password:
-    file: ./gtas-parent/gtas-commons/secrets/mysql_logstash_password.txt
-  elastic_bootstrap_password:
-    file: ./gtas-parent/gtas-commons/secrets/elastic_bootstrap_password.txt
-  mysql_processor_user:
+  mysql-logstash-user:
+    file: ./gtas-parent/gtas-commons/secrets/mysql-logstash-user
+  mysql-logstash-password:
+    file: ./gtas-parent/gtas-commons/secrets/mysql-logstash-password
+  elastic-bootstrap-password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic-bootstrap-password
+  mysql-processor-user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_processor_user.txt
-  mysql_processor_password:
+  mysql-processor-password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_processor_password.txt
-  mysql_webapp_user:
+  mysql-webapp-user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_webapp_user.txt
-  mysql_webapp_password:
+  mysql-webapp-password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
-  mysql_root_password:
+  mysql-root-password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_root_password.txt
-  webapp_neo4j_user:
+  webapp-neo4j-user:
     file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_user.txt
-  webapp_neo4j_password:
+  webapp-neo4j-password:
     file: ./gtas-parent/gtas-commons/secrets/webapp_neo4j_password.txt
-  elastic_key:
-    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.key
-  elastic_ca:
-    file: ./gtas-parent/gtas-commons/secrets/elastic-ca.crt
-  elastic_cert:
-    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-node1.crt
-  webapp_cert:
-    file: ./gtas-parent/gtas-commons/secrets/wcogtas.org.crt
-  webapp_key:
-    file: ./gtas-parent/gtas-commons/secrets/wcogtas.org.key
-
+  logstash-keystore-password:
+    file: ./gtas-parent/gtas-commons/secrets/logstash-keystore-password
+  elastic-password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic-password
+  elasticsearch-kibana-user:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-kibana-user
+  elasticsearch-kibana-password:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch-kibana-password
+  elastic-bootstrap-password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic-bootstrap-password
+  elastic-ca:
+    file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
+  etl-neo4j-user:
+    file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_user.txt
+  etl-neo4j-password:
+    file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_password.txt
 volumes:
   db-data:
   m2:
   scheduler-logs:
+  certs:
+  neo4j-data:
+    labels:
+      kompose.volume.size: 200Gi
+  logstash-conf:
+  kibana-conf:
+  elasticsearch-conf:
+  es-data:
+    labels:
+      kompose.volume.size: 200Gi
 
 networks:
-  GTAS_webapp-network:
+  gtas-webapp-network:
     attachable: true
