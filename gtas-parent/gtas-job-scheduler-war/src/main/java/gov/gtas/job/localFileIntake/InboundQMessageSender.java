@@ -16,18 +16,18 @@ import javax.jms.Message;
 @Component
 public class InboundQMessageSender {
 
-	private final JmsTemplate jmsTemplateFile;
+    private final JmsTemplate jmsTemplateFile;
 
-	public InboundQMessageSender(JmsTemplate jmsTemplateFile) {
-		this.jmsTemplateFile = jmsTemplateFile;
-	}
+    public InboundQMessageSender(JmsTemplate jmsTemplateFile) {
+        this.jmsTemplateFile = jmsTemplateFile;
+    }
 
-	public void sendFileContent(final String queue, final String stringFile, String filename) {
-		jmsTemplateFile.setDefaultDestinationName(queue);
-		jmsTemplateFile.send(session -> {
-			Message message = session.createObjectMessage(stringFile);
-			message.setStringProperty("filename", filename);
-			return message;
-		});
-	}
+    public void sendFileContent(final String queue, final String stringFile, String filename) {
+        jmsTemplateFile.setDefaultDestinationName(queue);
+        jmsTemplateFile.send(session -> {
+            Message message = session.createObjectMessage(stringFile);
+            message.setStringProperty("filename", filename);
+            return message;
+        });
+    }
 }

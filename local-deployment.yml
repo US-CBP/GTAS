@@ -1,5 +1,11 @@
 version: '3.7'
 services:
+  http-proxy:
+    secrets:
+      - source: webapp-cert
+        target: /wcogtas.org.crt
+      - source: webapp-key
+        target: /wcogtas.org.key
   web-app:
     environment:
       EMAIL_SENDER_USERNAME: "some.user@somedomain.com"
@@ -23,3 +29,45 @@ services:
         source: ./gtas-data
         target: /usr/local/gtas-data
         consistency: consistent
+    secrets:
+      - source: webapp-cert
+        target: /usr/local/tomcat/conf/wcogtas.org.crt
+      - source: webapp-key
+        target: /usr/local/tomcat/conf/wcogtas.org.key
+      - source: elastic-cert
+        target: /usr/local/tomcat/conf/elasticsearch-node1.crt
+      - source: elastic-key
+        target: /usr/local/tomcat/conf/elasticsearch-node1.key
+      - source: elastic-ca
+        target: /usr/local/tomcat/conf/elastic-ca.crt
+  elasticsearch:
+    secrets:
+      - source: elastic-ca
+        target: /usr/share/elasticsearch/config/certs/elasticsearch/elastic-ca.crt
+      - source: elastic-cert
+        target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.crt
+      - source: elastic-key
+        target: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.key
+  kibana:
+    secrets:
+      - source: elastic-ca
+        target: /etc/kibana/config/ca.crt
+      - source: kibana-crt
+        target: /etc/kibana/config/kibana.crt
+      - source: kibana-key
+        target: /etc/kibana/config/kibana.key
+secrets:
+  elastic-key:
+    file: ./gtas-parent/gtas-commons/certs/elasticsearch-node1.key
+  elastic-ca:
+    file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
+  elastic-cert:
+    file: ./gtas-parent/gtas-commons/certs/elasticsearch-node1.crt
+  webapp-cert:
+    file: ./gtas-parent/gtas-commons/certs/wcogtas.org.crt
+  webapp-key:
+    file: ./gtas-parent/gtas-commons/certs/wcogtas.org.key
+  kibana-crt:
+    file: ./gtas-parent/gtas-commons/certs/kibana.crt
+  kibana-key:
+    file: ./gtas-parent/gtas-commons/certs/kibana.key
