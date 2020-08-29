@@ -12,7 +12,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
-          repository: simbam1/webapp 
+          repository: wcogtas/webapp 
           path: ./gtas-parent
           dockerfile: ./gtas-parent/web-app.Dockerfile
           tags: dev
@@ -21,7 +21,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
-          repository: simbam1/mariadb
+          repository: wcogtas/mariadb
           path: ./gtas-parent
           dockerfile: ./gtas-parent/mariadb.Dockerfile
           tags: dev
@@ -30,7 +30,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
-          repository: simbam1/http-proxy
+          repository: wcogtas/http-proxy
           path: ./gtas-parent
           dockerfile: ./gtas-parent/docker-resources/proxy.Dockerfile
           tags: dev
@@ -39,7 +39,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: simbam1/gtas-scheduler
+          repository: wcogtas/gtas-scheduler
           path: .
           dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
           tags: dev
@@ -48,7 +48,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: simbam1/kibana
+          repository: wcogtas/kibana
           path: ./gtas-parent/scripts/elastic
           dockerfile: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
           tags: dev
@@ -57,7 +57,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
-          repository: simbam1/elasticsearch
+          repository: wcogtas/elasticsearch
           path: ./gtas-parent/scripts/elastic    
           dockerfile: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
           tags: dev
@@ -66,7 +66,7 @@ jobs:
         with:  
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}   
-          repository: simbam1/logstash
+          repository: wcogtas/logstash
           path: ./gtas-parent/scripts/elastic
           dockerfile: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
           tags: dev
@@ -75,7 +75,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
-          repository: simbam1/elk-setup
+          repository: wcogtas/elk-setup
           path: ./gtas-parent/scripts/elastic
           dockerfile: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
           tags: dev
@@ -84,7 +84,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }} 
           password: ${{ secrets.DOCKER_PASSWORD }}  
-          repository: simbam1/neo4j-etl-job
+          repository: wcogtas/neo4j-etl-job
           path: .
           dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
           tags: dev
@@ -93,7 +93,7 @@ jobs:
         with: 
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}  
-          repository: simbam1/neo4j 
+          repository: wcogtas/neo4j 
           path: .
           dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
           tags: dev
