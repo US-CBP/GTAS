@@ -1,7 +1,6 @@
 # mvn, javac
 log/
 target/
-gtas-data/
 *.jar
 *.war
 *.ear
