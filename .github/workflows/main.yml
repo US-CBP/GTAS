@@ -1,5 +1,7 @@
 name: Pipeline workflow
-on: push
+on:
+  branches:
+    - dev
 jobs:
   build:
     name: webapp
