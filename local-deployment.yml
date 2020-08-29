@@ -8,19 +8,19 @@ services:
         target: /wcogtas.org.key
   web-app:
     environment:
-      EMAIL_SENDER_USERNAME: ""
-      EMAIL_SENDER_PASSWORD: ""
-      EMAIL_SENDER_HOST: ""
-      SSL_TRUST_HOST: ""
+      EMAIL_SENDER_USERNAME: "some.user@somedomain.com"
+      EMAIL_SENDER_PASSWORD: "somepassword"
+      EMAIL_SENDER_HOST: "some.smtp.somedomain.com"
+      SSL_TRUST_HOST: "bogus"
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       PROXY_IP: localhost
   gtas-scheduler:
     environment:
-      EMAIL_SENDER_USERNAME: ""
-      EMAIL_SENDER_PASSWORD: ""
-      EMAIL_SENDER_HOST: ""
-      SSL_TRUST_HOST: ""
+      EMAIL_SENDER_USERNAME: "some.user@somedomain.com"
+      EMAIL_SENDER_PASSWORD: "somepassword"
+      EMAIL_SENDER_HOST: "some.smtp.somedomain.com"
+      SSL_TRUST_HOST: "bogus"
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       PROXY_IP: localhost

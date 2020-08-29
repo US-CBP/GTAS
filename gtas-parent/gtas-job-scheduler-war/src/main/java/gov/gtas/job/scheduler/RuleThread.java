@@ -8,6 +8,7 @@ import gov.gtas.model.HitDetail;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.model.Passenger;
+import gov.gtas.parsers.omni.OmniDerogUpdateService;
 import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.NotificatonService;
@@ -30,7 +31,6 @@ import java.util.stream.Collectors;
 @Component
 public abstract class RuleThread  implements Callable<Boolean> {
 
-
     @Autowired
     private AppConfigurationService appConfigurationService;
 
@@ -40,9 +40,14 @@ public abstract class RuleThread  implements Callable<Boolean> {
     @Value("${additional.processing.enabled.rules}")
     private Boolean additionalProcessHit;
 
+    @Value("${omni.enabled}")
+    private Boolean omniEnabled;
+
     @Autowired
     private NotificatonService notificationSerivce;
 
+    @Autowired(required=false)
+    private OmniDerogUpdateService omniDerogUpdateService;
 
     private static final Logger logger = LoggerFactory.getLogger(RuleThread.class);
 
@@ -76,6 +81,14 @@ public abstract class RuleThread  implements Callable<Boolean> {
             if (additionalProcessHit) {
                 Set<Long> mIds = messageStatusList.stream().map(MessageStatus::getMessageId).collect(Collectors.toSet());
                 additionalProcessingService.passengersAdditionalHits(firstTimeHits, mIds);
+            }
+
+            if (omniEnabled) {
+                Set<Long> flightIds = new HashSet<>();
+                for (HitDetail hitDetail : firstTimeHits) {
+                    flightIds.add(hitDetail.getFlightId());
+                }
+                omniDerogUpdateService.updateOmniDerogPassengers(flightIds);
             }
         }
     }
