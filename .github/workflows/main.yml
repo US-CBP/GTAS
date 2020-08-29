@@ -1,6 +1,7 @@
 name: Pipeline workflow
 on:
-  branches:
+  push:
+   branches:
     - dev
 jobs:
   build:
