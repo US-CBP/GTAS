@@ -40,7 +40,6 @@ public class LoaderMessageReceiver {
 	private final MessageStatusRepository messageStatusRepository;
 	private final AdditionalProcessingMessageSender apms;
 
-	private static final String GTAS_LOADER_QUEUE = "GTAS_LOADER_Q";
 	static final Logger logger = LoggerFactory.getLogger(LoaderMessageReceiver.class);
 
 	@Value("${message.dir.processed}")
@@ -69,15 +68,17 @@ public class LoaderMessageReceiver {
 
 
 	@Autowired
-	public LoaderMessageReceiver(LoaderQueueThreadManager queueManager, PnrRepository pnrRepository,
-								 MessageStatusRepository messageStatusRepository, AdditionalProcessingMessageSender apms) {
+	public LoaderMessageReceiver(LoaderQueueThreadManager queueManager,
+								 PnrRepository pnrRepository,
+								 MessageStatusRepository messageStatusRepository,
+								 AdditionalProcessingMessageSender apms) {
 		this.queueManager = queueManager;
 		this.pnrRepository = pnrRepository;
 		this.messageStatusRepository = messageStatusRepository;
 		this.apms = apms;
 	}
 
-	@JmsListener(destination = GTAS_LOADER_QUEUE, concurrency = "10")
+	@JmsListener(destination ="${inbound.loader.jms.queue}", concurrency = "10")
 	public void receiveMessagesForLoader(Message<?> message, Session session, javax.jms.Message msg) {
 		final String filenameprop = "filename";
 		MessageHeaders headers = message.getHeaders();
@@ -99,7 +100,7 @@ public class LoaderMessageReceiver {
 			addProcessQueue != null && addProcessQueue.contains(eventIdentifier.getEventType()))) {
 				MessageAction messageAction = eventIdentifier.getEventType().equals("APIS") ? MessageAction.RAW_APIS : MessageAction.RAW_PNR;
 
-				String rawMessage = "";
+				String rawMessage;
 				if (mw.getFromMessageInfo()) {
 					ObjectMapper om = new ObjectMapper();
 					MessageSummaryList msl = om.readValue((String)message.getPayload(), MessageSummaryList.class);
