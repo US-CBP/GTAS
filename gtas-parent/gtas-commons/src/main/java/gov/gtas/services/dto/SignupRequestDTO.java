@@ -41,6 +41,15 @@ public class SignupRequestDTO {
 	private Date reviewedDate;
 	private String createdBy;
 	private String updatedBy;
+	private String phoneNumber;
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 
 	public String getUpdatedBy() {
 		return updatedBy;

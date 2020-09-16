@@ -24,7 +24,8 @@ public class User implements Serializable {
 	public User() {
 	}
 
-	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles, Boolean archived) {
+	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles,
+			Boolean archived) {
 
 		this.userId = userId;
 		this.password = password;
@@ -35,7 +36,9 @@ public class User implements Serializable {
 		this.archived = archived;
 	}
 
-	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles, String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification, Boolean archived) {
+	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles,
+			String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification, Boolean archived,
+			String phoneNumber) {
 
 		this.userId = userId;
 		this.password = password;
@@ -47,6 +50,7 @@ public class User implements Serializable {
 		this.isEmailEnabled = isEmailEnabled;
 		this.highPriorityHitsEmailNotification = highPriorityHitsEmailNotification;
 		this.archived = archived;
+		this.phoneNumber = phoneNumber;
 	}
 
 	@Id
@@ -70,7 +74,7 @@ public class User implements Serializable {
 
 	@Column(name = "reset_token")
 	private String resetToken;
-	
+
 	@OneToOne(cascade = { CascadeType.ALL })
 	@JoinColumn(name = "password_reset_token_id")
 	private PasswordResetToken passwordResetToken;
@@ -87,8 +91,10 @@ public class User implements Serializable {
 	@Column(name = "archived")
 	private Boolean archived;
 
+	private String phoneNumber;
+
 	@ManyToMany(targetEntity = UserGroup.class, fetch = FetchType.LAZY)
-	@JoinTable(name = "ug_user_join", inverseJoinColumns = @JoinColumn(name = "ug_id"),  joinColumns = @JoinColumn(name = "user_id"))
+	@JoinTable(name = "ug_user_join", inverseJoinColumns = @JoinColumn(name = "ug_id"), joinColumns = @JoinColumn(name = "user_id"))
 	private Set<UserGroup> userGroups = new HashSet<>();
 
 	// Notification that the user is a part of (elected or assigned)
@@ -105,6 +111,14 @@ public class User implements Serializable {
 
 	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
 	private Set<HitMaker> hitMakers = new HashSet<>();
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 
 	public Integer getConsecutiveFailedLoginAttempts() {
 		return consecutiveFailedLoginAttempts;
@@ -137,7 +151,6 @@ public class User implements Serializable {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
 
 	public Boolean getEmailEnabled() {
 		return isEmailEnabled;
@@ -198,7 +211,6 @@ public class User implements Serializable {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	
 
 	public PasswordResetToken getPasswordResetToken() {
 		return passwordResetToken;
@@ -208,9 +220,13 @@ public class User implements Serializable {
 		this.passwordResetToken = passwordResetToken;
 	}
 
-	public Boolean getArchived() { return archived; }
+	public Boolean getArchived() {
+		return archived;
+	}
 
-	public void setArchived(Boolean archived) { this.archived = archived; }
+	public void setArchived(Boolean archived) {
+		this.archived = archived;
+	}
 
 	@Override
 	public int hashCode() {

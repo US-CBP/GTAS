@@ -88,7 +88,13 @@ public class UserServiceImpl implements UserService {
 		userEntity.setPassword((new BCryptPasswordEncoder()).encode(userEntity.getPassword()));
 		userEntity.setArchived(false); //Default do not archive new users.
 		if (userData.getRoles() != null) {
-			Set<Role> roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(userData.getRoles());
+			//check if Admin role is passed
+			Set<Role> roleCollection = roleServiceUtil.getAdminRoleIfExists(userData.getRoles());
+			
+			if (roleCollection.isEmpty()) {
+				roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(userData.getRoles());
+			}
+			 
 			userEntity.setRoles(roleCollection);
 		}
 		User newUserEntity = userRepository.save(userEntity);
@@ -131,10 +137,15 @@ public class UserServiceImpl implements UserService {
 			}
 
 			entity.setActive(mappedEnity.getActive());
-			if (data.getRoles() != null && !data.getRoles().isEmpty()) {
+			if (data.getRoles() != null && !data.getRoles().isEmpty()) {			
 				Set<Role> oRoles = entity.getRoles();
 				oRoles.clear();
-				Set<Role> roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(data.getRoles());
+				Set<Role> roleCollection = roleServiceUtil.getAdminRoleIfExists(data.getRoles());
+				
+				if (roleCollection.isEmpty()) {
+					 roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(data.getRoles());
+				}
+				
 				oRoles.addAll(roleCollection);
 				entity.setRoles(oRoles);
 			}
@@ -240,7 +251,11 @@ public class UserServiceImpl implements UserService {
 				if (!data.getRoles().isEmpty()) {
 					Set<Role> oRoles = entity.getRoles();
 					oRoles.clear();
-					Set<Role> roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(data.getRoles());
+					Set<Role> roleCollection = roleServiceUtil.getAdminRoleIfExists(data.getRoles());
+					if (roleCollection.isEmpty()) {
+						roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(data.getRoles());
+					}
+					
 					oRoles.addAll(roleCollection);
 					entity.setRoles(oRoles);
 				} else {

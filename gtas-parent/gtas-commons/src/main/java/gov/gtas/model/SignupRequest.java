@@ -32,6 +32,17 @@ public class SignupRequest extends BaseEntityAudit {
 
 	@Column
 	private String supervisor;
+	
+	@Column
+	private String phoneNumber;
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 
 	@Column(name = "signup_location_id", insertable = false, updatable = false, nullable = false, columnDefinition = "bigint unsigned")
 	private Long signupLocationId;

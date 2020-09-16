@@ -28,9 +28,13 @@ public class UserDisplayData implements Serializable {
 	private String email;
 	private Boolean emailEnabled;
 	private Boolean highPriorityEmail;
+	private String phoneNumber;
 
-	public UserDisplayData(@JsonProperty("userId") String userId, @JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName,
-					@JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles, @JsonProperty("email")String email, @JsonProperty("emailEnabled")Boolean emailEnabled, @JsonProperty("highPriorityEmail")Boolean highPriorityEmail) {
+	public UserDisplayData(@JsonProperty("userId") String userId, @JsonProperty("firstName") String firstName,
+			@JsonProperty("lastName") String lastName, @JsonProperty("active") int active,
+			@JsonProperty("roles") Set<RoleData> roles, @JsonProperty("email") String email,
+			@JsonProperty("emailEnabled") Boolean emailEnabled,
+			@JsonProperty("highPriorityEmail") Boolean highPriorityEmail, @JsonProperty("phoneNumber") String phoneNumber) {
 		this.userId = userId;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -39,7 +43,18 @@ public class UserDisplayData implements Serializable {
 		this.email = email;
 		this.emailEnabled = emailEnabled;
 		this.highPriorityEmail = highPriorityEmail;
+		this.phoneNumber = phoneNumber;
 	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 
 	@JsonProperty("email")
 	public String getEmail() {
@@ -94,8 +109,8 @@ public class UserDisplayData implements Serializable {
 
 	@Override
 	public String toString() {
-		return "UserDisplayData [userId=" + userId + ", firstName=" + firstName + ", lastName="
-				+ lastName + ", active=" + active + ", roles=" + roles + "]";
+		return "UserDisplayData [userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", active="
+				+ active + ", roles=" + roles + "]";
 	}
 
 	public Boolean getEmailEnabled() {
