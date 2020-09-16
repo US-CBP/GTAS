@@ -115,13 +115,13 @@ public class LoaderScheduler {
 	private Boolean omniEnabled;
 
 	@Value("${additional.processing.enabled.passenger}")
-	private Boolean additionalProcessing;
+	private Boolean additionalChecks;
 
 	@Autowired
 	private AdditionalProcessingMessageSender apms;
 
-	@Value("${additional.processing.queue}")
-	private String addProcessQueue;
+	@Value("${additional.checks.queue}")
+	private String addChecks;
 
 	void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) {
 		logger.debug(String.format("Processing %s", f.getAbsolutePath()));
@@ -143,9 +143,9 @@ public class LoaderScheduler {
 					OmniMessageType.ASSESS_RISK_REQUEST, passengerList);
 		}
 
-		if (additionalProcessing) {
+		if (additionalChecks) {
 			MessageSummaryList msl = MessageSummaryList.from(processedMessages.getMessageSummaries());
-			apms.sendProcessedMessage(addProcessQueue, msl, new SummaryMetaData());
+			apms.sendProcessedMessage(addChecks, msl, new SummaryMetaData());
 		}
 
 		if (result != null) {
