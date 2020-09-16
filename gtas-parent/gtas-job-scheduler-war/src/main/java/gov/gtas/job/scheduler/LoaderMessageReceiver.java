@@ -7,6 +7,8 @@ package gov.gtas.job.scheduler;
 
 import javax.jms.Session;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.gtas.job.wrapper.MessageWrapper;
 import gov.gtas.summary.EventIdentifier;
 import gov.gtas.summary.MessageAction;
 import gov.gtas.services.jms.AdditionalProcessingMessageSender;
@@ -15,6 +17,7 @@ import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.model.Pnr;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.repository.PnrRepository;
+import gov.gtas.summary.MessageSummaryList;
 import gov.gtas.util.LobUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +40,6 @@ public class LoaderMessageReceiver {
 	private final MessageStatusRepository messageStatusRepository;
 	private final AdditionalProcessingMessageSender apms;
 
-	private static final String GTAS_LOADER_QUEUE = "GTAS_LOADER_Q";
 	static final Logger logger = LoggerFactory.getLogger(LoaderMessageReceiver.class);
 
 	@Value("${message.dir.processed}")
@@ -66,15 +68,17 @@ public class LoaderMessageReceiver {
 
 
 	@Autowired
-	public LoaderMessageReceiver(LoaderQueueThreadManager queueManager, PnrRepository pnrRepository,
-								 MessageStatusRepository messageStatusRepository, AdditionalProcessingMessageSender apms) {
+	public LoaderMessageReceiver(LoaderQueueThreadManager queueManager,
+								 PnrRepository pnrRepository,
+								 MessageStatusRepository messageStatusRepository,
+								 AdditionalProcessingMessageSender apms) {
 		this.queueManager = queueManager;
 		this.pnrRepository = pnrRepository;
 		this.messageStatusRepository = messageStatusRepository;
 		this.apms = apms;
 	}
 
-	@JmsListener(destination = GTAS_LOADER_QUEUE, concurrency = "10")
+	@JmsListener(destination ="${inbound.loader.jms.queue}", concurrency = "10")
 	public void receiveMessagesForLoader(Message<?> message, Session session, javax.jms.Message msg) {
 		final String filenameprop = "filename";
 		MessageHeaders headers = message.getHeaders();
@@ -89,12 +93,24 @@ public class LoaderMessageReceiver {
 		File workingfile = Utils.writeToDisk(fileName, payload, workingstr);
 
 		try {
-			EventIdentifier eventIdentifier = queueManager.receiveMessages(message);
+			MessageWrapper mw = new MessageWrapper(message, fileName);
+			EventIdentifier eventIdentifier = queueManager.receiveMessages(mw);
 			if (additionalProcessingOn && (eventIdentifier.getEventType().equals("PNR") && proccessPnr
 					|| eventIdentifier.getEventType().equals("APIS") && proccessApis ||
 			addProcessQueue != null && addProcessQueue.contains(eventIdentifier.getEventType()))) {
 				MessageAction messageAction = eventIdentifier.getEventType().equals("APIS") ? MessageAction.RAW_APIS : MessageAction.RAW_PNR;
-				apms.sendRawMessage(addProcessQueue, message, eventIdentifier, messageAction);
+
+				String rawMessage;
+				if (mw.getFromMessageInfo()) {
+					ObjectMapper om = new ObjectMapper();
+					MessageSummaryList msl = om.readValue((String)message.getPayload(), MessageSummaryList.class);
+					rawMessage = msl.getMessageSummaryList().get(0).getRawMessage();
+				} else {
+					rawMessage = (String)message.getPayload();
+				}
+
+
+				apms.sendRawMessage(addProcessQueue, rawMessage, eventIdentifier, messageAction);
 			}
 		} catch (Exception e) {
 			logger.warn("Failed to parsed message. Is border crossing information corrupt? Error is: " + e);

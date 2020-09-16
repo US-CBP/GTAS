@@ -98,6 +98,7 @@ public class Loader {
 						// pertaining to a file instead of a specific summary.
 						// Raw messages will always have 1 and only 1 message.
 						text = msl.getMessageSummaryList().get(0).getRawMessage();
+						msgDto.setRawMsg(text);
 					} else {
 						genericLoad = true;
 					}

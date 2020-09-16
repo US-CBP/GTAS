@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import gov.gtas.job.wrapper.MessageWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class LoaderWorkerThread implements Runnable {
 	private Semaphore semaphore;
 	int lockExceptionCount = 0;
 
-	private BlockingQueue<Message<?>> queue;
+	private BlockingQueue<MessageWrapper> queue;
 	private ConcurrentMap<String, LoaderWorkerThread> map;
 
 	private static final Logger logger = LoggerFactory.getLogger(LoaderWorkerThread.class);
@@ -45,7 +46,7 @@ public class LoaderWorkerThread implements Runnable {
 	public LoaderWorkerThread() {
 	}
 
-	public LoaderWorkerThread(BlockingQueue<Message<?>> queue, ConcurrentMap<String, LoaderWorkerThread> map,
+	public LoaderWorkerThread(BlockingQueue<MessageWrapper> queue, ConcurrentMap<String, LoaderWorkerThread> map,
 			String[] primeFlightKey) {
 		this.queue = queue;
 		this.map = map;
@@ -55,20 +56,20 @@ public class LoaderWorkerThread implements Runnable {
 	@Override
 	public void run() {
 		while (true) {
+			MessageWrapper mw = null;
 			Message<?> msg = null;
 			try {
-				msg = queue.poll(timeout, TimeUnit.MILLISECONDS);
+				mw = queue.poll(timeout, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				logger.error("error polling queue", e);
 				Thread.currentThread().interrupt();
 			}
-			if (msg != null) {
+			if (mw != null) {
 				try {
+					msg = mw.getMessage();
+					fileName = mw.getFileName();
 
-					MessageHeaders headers = msg.getHeaders();
-					fileName = (String) headers.get("filename");
-
-					logger.debug(Thread.currentThread().getName() + " FileName = " + fileName);
+					logger.debug(Thread.currentThread().getName() + " FileName = " + mw.getFileName());
 					try {
 						processCommand();
 						lockExceptionCount = 0; // reset tries on a per file bases.
@@ -89,7 +90,7 @@ public class LoaderWorkerThread implements Runnable {
 						} else {
 							logger.warn("LOCK FAIL COUNT  " + lockExceptionCount + " FOR PRIME FLIGHT KEY:"
 									+ primeFlightKey + "PUTTING MESSAGE BACK ON QUEUE!");
-							queue.add(msg);
+							queue.add(mw);
 						}
 					} catch (Exception e) {
 						logger.error("Catastrophic failure, " + "uncaught exception would cause"
@@ -134,7 +135,7 @@ public class LoaderWorkerThread implements Runnable {
 		return deleted;
 	}
 
-	synchronized boolean addMessageToQueue(Message<?> message) throws InterruptedException {
+	synchronized boolean addMessageToQueue(MessageWrapper mw) throws InterruptedException {
 		if (this.queue == null) {
 			// Handling data race condition. Add message to queue called AFTER
 			// destroyQueue() which causes
@@ -151,7 +152,7 @@ public class LoaderWorkerThread implements Runnable {
 			// This is acceptable as the other contention for the worker's lock only happens
 			// when
 			// the queue is empty and destroyQueue is called.
-			this.queue.put(message);
+			this.queue.put(mw);
 		}
 		return true;
 	}
@@ -177,11 +178,11 @@ public class LoaderWorkerThread implements Runnable {
 		this.fileName = fileName;
 	}
 
-	public BlockingQueue<Message<?>> getQueue() {
+	public BlockingQueue<MessageWrapper> getQueue() {
 		return queue;
 	}
 
-	public void setQueue(BlockingQueue<Message<?>> queue) {
+	public void setQueue(BlockingQueue<MessageWrapper> queue) {
 		this.queue = queue;
 	}
 
