@@ -30,8 +30,7 @@ public class UserServiceUtil {
 	/**
 	 * Gets the user data list from entity collection.
 	 *
-	 * @param userEntities
-	 *            the user entities
+	 * @param userEntities the user entities
 	 * @return the user data list from entity collection
 	 */
 	public List<UserDisplayData> getUserDataListFromEntityCollection(Iterable<User> userEntities) {
@@ -50,7 +49,8 @@ public class UserServiceUtil {
 			}).collect(Collectors.toSet());
 
 			UserDisplayData userData = new UserDisplayData(user.getUserId().toUpperCase(), user.getFirstName(),
-					user.getLastName(), user.getActive(), roles, user.getEmail(), user.getEmailEnabled(), user.getHighPriorityHitsEmailNotification());
+					user.getLastName(), user.getActive(), roles, user.getEmail(), user.getEmailEnabled(),
+					user.getHighPriorityHitsEmailNotification(), user.getPhoneNumber());
 
 			userData.setEmail(user.getEmail());
 			return userData;
@@ -62,22 +62,21 @@ public class UserServiceUtil {
 	/**
 	 * Map user data from entity.
 	 *
-	 * @param entity
-	 *            the entity
+	 * @param entity the entity
 	 * @return the user data
 	 */
 	public UserData mapUserDataFromEntity(User entity) {
 		Set<RoleData> roles = entity.getRoles().stream()
 				.map(role -> new RoleData(role.getRoleId(), role.getRoleDescription())).collect(Collectors.toSet());
-		return new UserData(entity.getUserId().toUpperCase(), entity.getPassword(), entity.getFirstName(), entity.getLastName(),
-				entity.getActive(), roles, entity.getEmail(), entity.getEmailEnabled(), entity.getHighPriorityHitsEmailNotification(), entity.getArchived());
+		return new UserData(entity.getUserId().toUpperCase(), entity.getPassword(), entity.getFirstName(),
+				entity.getLastName(), entity.getActive(), roles, entity.getEmail(), entity.getEmailEnabled(),
+				entity.getHighPriorityHitsEmailNotification(), entity.getArchived(), entity.getPhoneNumber());
 	}
 
 	/**
 	 * Map user entity from user data.
 	 *
-	 * @param userData
-	 *            the user data
+	 * @param userData the user data
 	 * @return the user
 	 */
 	public User mapUserEntityFromUserData(UserData userData) {
@@ -88,7 +87,7 @@ public class UserServiceUtil {
 
 		return new User(userData.getUserId().toUpperCase(), userData.getPassword(), userData.getFirstName(),
 				userData.getLastName(), userData.getActive(), roles, userData.getEmail(), userData.getEmailEnabled(),
-				userData.getHighPriorityEmail(), userData.getArchived());
+				userData.getHighPriorityEmail(), userData.getArchived(), userData.getPhoneNumber());
 	}
 
 	/**
@@ -97,7 +96,8 @@ public class UserServiceUtil {
 	 * A minimum of four lowercase characters, two uppercase characters, two digits
 	 * and two special characters;
 	 * <p>
-	 * The password will meets the criteria of the validator at {@link UserController.Validator}
+	 * The password will meets the criteria of the validator at
+	 * {@link UserController.Validator}
 	 *
 	 * @return a random password
 	 */

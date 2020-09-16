@@ -178,7 +178,7 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 
 		// Create temporary password
 		UserData userData = new UserData(signupRequest.getUsername(), password, signupRequest.getFirstName(),
-				signupRequest.getLastName(), 1, Sets.newHashSet(), signupRequest.getEmail(), false, false, false);
+				signupRequest.getLastName(), 1, Sets.newHashSet(), signupRequest.getEmail(), false, false, false, signupRequest.getPhoneNumber());
 
 		logger.debug("create a new user");
 		this.userService.create(userData);

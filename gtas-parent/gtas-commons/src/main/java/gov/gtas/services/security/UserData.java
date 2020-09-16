@@ -30,11 +30,14 @@ public class UserData implements Serializable {
 	private Boolean emailEnabled;
 	private Boolean highPriorityEmail;
 	private Boolean archived;
+	private String phoneNumber;
 
 	public UserData(@JsonProperty("userId") String userId, @JsonProperty("password") String password,
-					@JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName,
-					@JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles, @JsonProperty("email")String email,
-					@JsonProperty("emailEnabled")Boolean emailEnabled, @JsonProperty("highPriorityEmail")Boolean highPriorityEmail, @JsonProperty("archived")Boolean archived) {
+			@JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName,
+			@JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles,
+			@JsonProperty("email") String email, @JsonProperty("emailEnabled") Boolean emailEnabled,
+			@JsonProperty("highPriorityEmail") Boolean highPriorityEmail, @JsonProperty("archived") Boolean archived,
+			@JsonProperty("phoneNumber") String phoneNumber) {
 		this.userId = userId;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -45,6 +48,15 @@ public class UserData implements Serializable {
 		this.emailEnabled = emailEnabled;
 		this.highPriorityEmail = highPriorityEmail;
 		this.archived = archived;
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	@JsonProperty("email")
@@ -65,10 +77,11 @@ public class UserData implements Serializable {
 	public final String getPassword() {
 		return password;
 	}
-	
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 	@JsonProperty("firstName")
 	public final String getFirstName() {
 		return firstName;
@@ -89,9 +102,13 @@ public class UserData implements Serializable {
 	}
 
 	@JsonProperty("archived")
-	public Boolean getArchived() { return archived; }
+	public Boolean getArchived() {
+		return archived;
+	}
 
-	public void setArchived(Boolean archived) { this.archived = archived; }
+	public void setArchived(Boolean archived) {
+		this.archived = archived;
+	}
 
 	@Override
 	public int hashCode() {
