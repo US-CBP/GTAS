@@ -101,19 +101,21 @@ public class UserController {
 			}
 		}
 
-		//Prevent user from disabling themselves OR removing admin role from themselves
-		if(userId.equals(userData.getUserId())){
-			if (userData.getActive() == 0){
-				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not disable  themsel");
+		// Prevent user from disabling themselves OR removing admin role from themselves
+		if (userId.equals(userData.getUserId())) {
+			if (userData.getActive() == 0) {
+				return new JsonServiceResponse(Status.FAILURE,
+						"Not Authorized: Logged In User may not disable  themselves");
 			}
 			Boolean retainsAdmin = false;
-			for(RoleData role : userData.getRoles()){
-				if(role.getRoleId() == 1){
+			for (RoleData role : userData.getRoles()) {
+				if (role.getRoleId() == 1) {
 					retainsAdmin = true;
 				}
 			}
-			if(!retainsAdmin){
-				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not remove Admin role from themselves");
+			if (!retainsAdmin) {
+				return new JsonServiceResponse(Status.FAILURE,
+						"Not Authorized: Logged In User may not remove Admin role from themselves");
 			}
 		}
 
@@ -140,19 +142,21 @@ public class UserController {
 			return new JsonServiceResponse(Status.FAILURE, "Not Authorized to update user credentials", rUserData);
 		}
 
-		//Prevent user from disabling themselves OR removing admin role from themselves
-		if(userId.equals(userData.getUserId())){
-			if (userData.getActive() == 0){
-				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not disable themselves");
+		// Prevent user from disabling themselves OR removing admin role from themselves
+		if (userId.equals(userData.getUserId())) {
+			if (userData.getActive() == 0) {
+				return new JsonServiceResponse(Status.FAILURE,
+						"Not Authorized: Logged In User may not disable themselves");
 			}
 			Boolean retainsAdmin = false;
-			for(RoleData role : userData.getRoles()){
-				if(role.getRoleId() == 1){
+			for (RoleData role : userData.getRoles()) {
+				if (role.getRoleId() == 1) {
 					retainsAdmin = true;
 				}
 			}
-			if(!retainsAdmin){
-				return new JsonServiceResponse(Status.FAILURE, "Not Authorized: Logged In User may not remove Admin role from themselves");
+			if (!retainsAdmin) {
+				return new JsonServiceResponse(Status.FAILURE,
+						"Not Authorized: Logged In User may not remove Admin role from themselves");
 			}
 		}
 
@@ -180,76 +184,55 @@ public class UserController {
 	@PutMapping(value = "user/change-password")
 	public JsonServiceResponse changePassword(@RequestBody PasswordChangeDTO passChangeDto) {
 
-		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		UserData user = userService.findById(userId);
-		Validator validator = this.new Validator();
-		String savedPassword = user.getPassword();
-		String oldPassword = passChangeDto.getOldPassword();
-		String newPassword = passChangeDto.getNewPassword();
-		String confirmPassword = passChangeDto.getConfirmPassword();
+		String loggedinUserId = GtasSecurityUtils.fetchLoggedInUserId();
+		UserData loggedinUser = userService.findById(loggedinUserId);
+		String savedPassword = loggedinUser.getPassword();
 
-		if (newPassword == null) {
-			return new JsonServiceResponse(Status.FAILURE, "Invalid Password! Password cannot be null.", passChangeDto);
-		}
-		if (newPassword.equals(oldPassword)) {
-			return new JsonServiceResponse(Status.FAILURE, "Please choose password different from the current one!",
-					passChangeDto);
-		}
-
-		if (!newPassword.equals(confirmPassword)) {
-			return new JsonServiceResponse(Status.FAILURE, "The passwords you entered do not match!", passChangeDto);
-		}
-
-		if (!userService.matchUserPassword(savedPassword, oldPassword)) {
-			return new JsonServiceResponse(Status.FAILURE,
-					"Your current password is not correct. Please enter the correct password!", passChangeDto);
-		}
-
-		if (!validator.isValid(passChangeDto.getNewPassword(), userId)) {
-			return new JsonServiceResponse(Status.FAILURE, validator.getErrMessage(), passChangeDto);
-		}
-
-		// change password
-		user.setPassword(newPassword);
-		userService.update(user);
-
-		return new JsonServiceResponse(Status.SUCCESS, "Your password has successfully been changed!");
+		return changePassword(loggedinUser, passChangeDto, savedPassword);
 
 	}
-	
+
+	@PutMapping(value = "user/change-password/{userId}")
+	public JsonServiceResponse changePasswordByAdmin(@RequestBody PasswordChangeDTO passChangeDto,
+			@PathVariable(value = "userId") String userId) {
+		UserData user = userService.findById(userId);
+
+		return changePassword(user, passChangeDto, null);
+	}
+
 	@RequestMapping(method = RequestMethod.POST, value = "/forgot-password")
 	public JsonServiceResponse forgotPassword(@RequestParam String userId) {
-		
+
 		try {
 			User user = userService.fetchUser(userId);
 			userService.forgotPassword(user);
 
 			return new JsonServiceResponse(Status.SUCCESS,
 					"A temporary  password has been sent to your email. Please use your temporary password to access your account!");
- 
+
 		} catch (Exception e) {
 			return new JsonServiceResponse(Status.FAILURE,
-						"The provided user ID (" + userId + ") is not on the system!");
-			
+					"The provided user ID (" + userId + ") is not on the system!");
+
 		}
-		
+
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/reset-password")
-    public JsonServiceResponse isValidToken(@RequestParam String token) {
-    	boolean isValidToken = userService.isValidToken(token);
-    	
-    	if (isValidToken) {
-    		return new JsonServiceResponse(Status.SUCCESS, "Valid token provided");
-    	}
-    	
-    	return new JsonServiceResponse(Status.FAILURE, "Ivalid token provided");
-	
-    }
-	
+	public JsonServiceResponse isValidToken(@RequestParam String token) {
+		boolean isValidToken = userService.isValidToken(token);
+
+		if (isValidToken) {
+			return new JsonServiceResponse(Status.SUCCESS, "Valid token provided");
+		}
+
+		return new JsonServiceResponse(Status.FAILURE, "Invalid token provided");
+
+	}
+
 	@RequestMapping(method = RequestMethod.POST, value = "/reset-password")
 	public JsonServiceResponse resetPassword(@Valid @RequestBody PasswordResetDto dto, BindingResult bindingResult) {
-		
+
 		if (bindingResult.hasErrors()) {
 
 			String errorMessage = bindingResult.getFieldErrors().stream().map(error -> error.getDefaultMessage())
@@ -257,26 +240,24 @@ public class UserController {
 
 			return new JsonServiceResponse(Status.FAILURE, errorMessage);
 		}
-		
+
 		UserData user = userService.findById(dto.getUsername());
 		Validator validator = this.new Validator();
-		
+
 		if (!dto.getPassword().equals(dto.getPasswordConfirm())) {
 			return new JsonServiceResponse(Status.FAILURE, "The passwords you entered do not match!", dto);
 		}
 		if (!validator.isValid(dto.getPassword(), dto.getUsername())) {
 			return new JsonServiceResponse(Status.FAILURE, validator.getErrMessage(), dto);
 		}
-		
+
 		user.setPassword(dto.getPassword());
 		userService.update(user);
-		
+
 		return new JsonServiceResponse(Status.SUCCESS, "Your password has been reset!");
-		
-		
-		
+
 	}
-	
+
 	private UserEmailDTO fetchUsernameAndEmail(UserDisplayData user) {
 		UserEmailDTO dto = new UserEmailDTO();
 		dto.setEmail(user.getEmail());
@@ -284,26 +265,28 @@ public class UserController {
 
 		return dto;
 	}
+
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.DELETE, value = "/users/{id}")
-	public JsonServiceResponse deleteOrArchiveUser(@PathVariable(value = "id") String paxId){
+	public JsonServiceResponse deleteOrArchiveUser(@PathVariable(value = "id") String paxId) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		if(userId.equals(paxId)){
-			return new JsonServiceResponse(Status.FAILURE, "Not Authorized to delete the user with that ID. " +
-					"User ID is the same as the currently logged in user", paxId);
+		if (userId.equals(paxId)) {
+			return new JsonServiceResponse(Status.FAILURE, "Not Authorized to delete the user with that ID. "
+					+ "User ID is the same as the currently logged in user", paxId);
 		}
 		boolean isAdmin = userService.isAdminUser(userId);
 		if (!isAdmin) {
 			logger.error("The logged in user does not have a permission to delete another user");
 			return new JsonServiceResponse(Status.FAILURE, "Not Authorized to delete the user with that ID", paxId);
 		}
-		//Make attempt to delete, due to constraints potentially on our Users and wanting to preserve history of those
-		//constrained elements user will become archived instead
+		// Make attempt to delete, due to constraints potentially on our Users and
+		// wanting to preserve history of those
+		// constrained elements user will become archived instead
 		try {
 			userService.delete(paxId);
-			logger.info("The User with Id " +paxId+" was successfully deleted.");
-		} catch (Exception e){ //TODO change to appropriate exception
-			logger.info("The User with id " +paxId+" was unable to be deleted. Attempting to archive instead");
+			logger.info("The User with Id " + paxId + " was successfully deleted.");
+		} catch (Exception e) { // TODO change to appropriate exception
+			logger.info("The User with id " + paxId + " was unable to be deleted. Attempting to archive instead");
 			UserData tmpUser = userService.findById(paxId);
 			tmpUser.setArchived(Boolean.TRUE);
 			userService.updateByAdmin(tmpUser);
@@ -316,6 +299,43 @@ public class UserController {
 	@GetMapping("/user")
 	public UserData user(Principal principal) {
 		return userService.findById(principal.getName());
+	}
+
+	private JsonServiceResponse changePassword(UserData user, PasswordChangeDTO passChangeDto, String savedPassword) {
+
+		Validator validator = this.new Validator();
+		String newPassword = passChangeDto.getNewPassword();
+		String confirmPassword = passChangeDto.getConfirmPassword();
+		String oldPassword = passChangeDto.getOldPassword();
+
+		if (newPassword == null) {
+			return new JsonServiceResponse(Status.FAILURE, "Invalid Password! Password cannot be null.", passChangeDto);
+		}
+
+		if (newPassword.equals(oldPassword)) {// if oldPassword is provided (users change their own password)
+			return new JsonServiceResponse(Status.FAILURE, "Please choose password different from the current one!",
+					passChangeDto);
+		}
+
+		if (!newPassword.equals(confirmPassword)) {
+			return new JsonServiceResponse(Status.FAILURE, "The passwords you entered do not match!", passChangeDto);
+		}
+
+		// applies only when users change their own password
+		if (savedPassword != null && !userService.matchUserPassword(savedPassword, oldPassword)) {
+			return new JsonServiceResponse(Status.FAILURE,
+					"Your current password is not correct. Please enter the correct password!", passChangeDto);
+		}
+
+		if (!validator.isValid(passChangeDto.getNewPassword(), user.getUserId())) {
+			return new JsonServiceResponse(Status.FAILURE, validator.getErrMessage(), passChangeDto);
+		}
+
+		// change password
+		user.setPassword(newPassword);
+		userService.update(user);
+
+		return new JsonServiceResponse(Status.SUCCESS, user.getUserId() + "'s password has successfully been changed!");
 	}
 
 	private class Validator {
