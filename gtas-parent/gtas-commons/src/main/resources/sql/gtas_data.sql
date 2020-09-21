@@ -10,6 +10,7 @@ INSERT INTO `role` VALUES ('5', 'Manage Rules');
 INSERT INTO `role` VALUES ('6', 'SysAdmin');
 INSERT INTO `role` VALUES ('7', 'Manage Hits');
 INSERT INTO `role` VALUES ('8', 'Manage Cases');
+INSERT INTO `role` VALUES ('9', 'View Flights');
 
 
 -- ----------------------------
