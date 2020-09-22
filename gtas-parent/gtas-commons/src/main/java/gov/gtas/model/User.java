@@ -25,7 +25,7 @@ public class User implements Serializable {
 	}
 
 	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles,
-			Boolean archived) {
+			boolean archived) {
 
 		this.userId = userId;
 		this.password = password;
@@ -37,7 +37,7 @@ public class User implements Serializable {
 	}
 
 	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles,
-			String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification, Boolean archived,
+			String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification, boolean archived,
 			String phoneNumber) {
 
 		this.userId = userId;
@@ -89,7 +89,7 @@ public class User implements Serializable {
 	private Boolean highPriorityHitsEmailNotification;
 
 	@Column(name = "archived")
-	private Boolean archived;
+	private boolean archived;
 
 	private String phoneNumber;
 
@@ -220,11 +220,11 @@ public class User implements Serializable {
 		this.passwordResetToken = passwordResetToken;
 	}
 
-	public Boolean getArchived() {
+	public boolean getArchived() {
 		return archived;
 	}
 
-	public void setArchived(Boolean archived) {
+	public void setArchived(boolean archived) {
 		this.archived = archived;
 	}
 

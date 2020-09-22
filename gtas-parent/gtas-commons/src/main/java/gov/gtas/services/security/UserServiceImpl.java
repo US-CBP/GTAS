@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
 			} else {
 				entity.setPassword(mappedEnity.getPassword());
 			}
-
+			entity.setArchived(mappedEnity.getArchived());
 			entity.setActive(mappedEnity.getActive());
 			if (data.getRoles() != null && !data.getRoles().isEmpty()) {			
 				Set<Role> oRoles = entity.getRoles();

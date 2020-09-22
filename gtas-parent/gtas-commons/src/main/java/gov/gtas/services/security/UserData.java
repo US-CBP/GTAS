@@ -29,14 +29,14 @@ public class UserData implements Serializable {
 	private String email;
 	private Boolean emailEnabled;
 	private Boolean highPriorityEmail;
-	private Boolean archived;
+	private boolean archived;
 	private String phoneNumber;
 
 	public UserData(@JsonProperty("userId") String userId, @JsonProperty("password") String password,
 			@JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName,
 			@JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles,
 			@JsonProperty("email") String email, @JsonProperty("emailEnabled") Boolean emailEnabled,
-			@JsonProperty("highPriorityEmail") Boolean highPriorityEmail, @JsonProperty("archived") Boolean archived,
+			@JsonProperty("highPriorityEmail") Boolean highPriorityEmail, @JsonProperty("archived") boolean archived,
 			@JsonProperty("phoneNumber") String phoneNumber) {
 		this.userId = userId;
 		this.firstName = firstName;
@@ -102,11 +102,11 @@ public class UserData implements Serializable {
 	}
 
 	@JsonProperty("archived")
-	public Boolean getArchived() {
+	public boolean getArchived() {
 		return archived;
 	}
 
-	public void setArchived(Boolean archived) {
+	public void setArchived(boolean archived) {
 		this.archived = archived;
 	}
 
