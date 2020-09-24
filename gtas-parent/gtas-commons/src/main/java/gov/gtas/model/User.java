@@ -37,7 +37,7 @@ public class User implements Serializable {
 	}
 
 	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles,
-			String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification, boolean archived,
+			String email, boolean isEmailEnabled, boolean highPriorityHitsEmailNotification, boolean archived,
 			String phoneNumber) {
 
 		this.userId = userId;
@@ -83,10 +83,10 @@ public class User implements Serializable {
 	private String email;
 
 	@Column(name = "email_enabled")
-	private Boolean isEmailEnabled;
+	private boolean isEmailEnabled;
 
 	@Column(name = "high_priority_hits_email")
-	private Boolean highPriorityHitsEmailNotification;
+	private boolean highPriorityHitsEmailNotification;
 
 	@Column(name = "archived")
 	private boolean archived;
@@ -136,11 +136,11 @@ public class User implements Serializable {
 		this.resetToken = resetToken;
 	}
 
-	public Boolean getHighPriorityHitsEmailNotification() {
+	public boolean getHighPriorityHitsEmailNotification() {
 		return highPriorityHitsEmailNotification;
 	}
 
-	public void setHighPriorityHitsEmailNotification(Boolean highPriorityHitsEmailNotification) {
+	public void setHighPriorityHitsEmailNotification(boolean highPriorityHitsEmailNotification) {
 		this.highPriorityHitsEmailNotification = highPriorityHitsEmailNotification;
 	}
 
@@ -152,7 +152,7 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
-	public Boolean getEmailEnabled() {
+	public boolean getEmailEnabled() {
 		return isEmailEnabled;
 	}
 

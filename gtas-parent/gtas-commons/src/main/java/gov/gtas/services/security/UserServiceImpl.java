@@ -29,20 +29,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import freemarker.template.TemplateException;
 import gov.gtas.constant.CommonErrorConstants;
-import gov.gtas.email.EmailTemplateLoader;
 import gov.gtas.email.ResetPasswordEmailService;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.PasswordResetToken;
 import gov.gtas.model.Role;
 import gov.gtas.model.User;
 import gov.gtas.repository.UserRepository;
-import gov.gtas.services.GtasEmailService;
 
 /**
  * The Class UserServiceImpl.
