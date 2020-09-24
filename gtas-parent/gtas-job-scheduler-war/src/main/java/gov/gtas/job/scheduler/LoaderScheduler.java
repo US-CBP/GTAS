@@ -26,6 +26,7 @@ import gov.gtas.parsers.omni.model.OmniPassenger;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
+import gov.gtas.summary.MessageAction;
 import gov.gtas.summary.MessageSummaryList;
 import gov.gtas.services.jms.AdditionalProcessingMessageSender;
 import gov.gtas.summary.SummaryMetaData;
@@ -145,6 +146,7 @@ public class LoaderScheduler {
 
 		if (additionalChecks) {
 			MessageSummaryList msl = MessageSummaryList.from(processedMessages.getMessageSummaries());
+			msl.setMessageAction(MessageAction.PROCESSED_MESSAGE);
 			apms.sendProcessedMessage(addChecks, msl, new SummaryMetaData());
 		}
 
