@@ -5,11 +5,6 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-webapp-node
-    secrets:
-      - source: webapp-cert
-        target: /wcogtas.org.crt
-      - source: webapp-key
-        target: /wcogtas.org.key
   web-app:
     deploy:
       placement:
@@ -51,11 +46,11 @@ services:
       PROXY_IP: ""
     volumes:
       - type: bind
-        source: /mnt/gtas-java-jre
-        target: /usr/local/gtas-java-jre
-      - type: bind
-        source: /var/opt/gtas_scheduler_application_properties
-        target: /usr/local/tomcat/conf
+      #   source: /mnt/gtas-java-jre
+      #   target: /usr/local/gtas-java-jre
+      # - type: bind
+      #   source: /var/opt/gtas_scheduler_application_properties
+      #   target: /usr/local/tomcat/conf
       - type: bind
         source: /mnt
         target: /usr/local/gtas-data
