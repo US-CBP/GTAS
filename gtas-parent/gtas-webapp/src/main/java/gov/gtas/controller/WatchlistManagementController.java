@@ -25,6 +25,9 @@ import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.HitCategoryService;
 import gov.gtas.services.PendingHitDetailsService;
+import gov.gtas.services.dto.DocumentWatchlistItemDto;
+import gov.gtas.services.dto.PassengerWatchlistItemDto;
+import gov.gtas.services.dto.WLRequest;
 import gov.gtas.services.security.UserService;
 import gov.gtas.svc.RuleManagementService;
 import gov.gtas.svc.WatchlistService;
@@ -144,12 +147,101 @@ public class WatchlistManagementController {
 	 *            the input spec
 	 * @return the json service response
 	 */
+	@Deprecated
 	@PostMapping(value = Constants.WL_CREATE_UPDATE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
 	public JsonServiceResponse createWatchlist(@PathVariable String entity, @RequestBody WatchlistSpec inputSpec) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		logger.info("******** Received Watchlist Create request by user: {}", userId);
 
 		return createUpdateWatchlist(inputSpec);
+	}
+	
+	@PostMapping(value = "/wl/passenger", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json")
+	public JsonServiceResponse createPaxWatchlist(@RequestBody WLRequest<PassengerWatchlistItemDto> request) {
+		
+		return  addUpdatePaxWatchlist(request);		
+	}
+	
+	@PostMapping(value = "/wl/document", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json")
+	public JsonServiceResponse createDocWatchlist(@RequestBody WLRequest<DocumentWatchlistItemDto> request) {
+		
+		return addUpdateDocWatchlist(request);
+	}
+	@PutMapping(value = "/wl/passenger", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json")
+	public JsonServiceResponse updatePaxWatchlist(@RequestBody WLRequest<PassengerWatchlistItemDto> request) {
+		
+		return  addUpdatePaxWatchlist(request);		
+	}
+	
+	@PutMapping(value = "/wl/document", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json")
+	public JsonServiceResponse updateDocWatchlist(@RequestBody WLRequest<DocumentWatchlistItemDto> request) {
+		
+		return addUpdateDocWatchlist(request);
+	}
+	
+	public JsonServiceResponse addUpdatePaxWatchlist(@RequestBody WLRequest<PassengerWatchlistItemDto> request) {
+		List<PassengerWatchlistItemDto> wlItems =  request.getWlItems();
+		List<JsonServiceResponse> results = new ArrayList<JsonServiceResponse>();
+		
+		for (PassengerWatchlistItemDto wlitem : wlItems) {
+			WatchlistSpec wlSpec = new WatchlistSpec("Passenger","PASSENGER");
+			List<WatchlistTerm> terms = new ArrayList<WatchlistTerm>();
+			terms.add(new WatchlistTerm("firstName", "string", wlitem.getFirstName()));
+			terms.add(new WatchlistTerm("lastName", "string", wlitem.getLastName()));
+			terms.add(new WatchlistTerm("dob", "date", wlitem.getDob()));
+			Long categoryId = Long.parseLong(wlitem.getCategoryId());
+			
+			WatchlistItemSpec wlItemSpec = new WatchlistItemSpec(request.getId(), request.getAction(), terms.toArray(new WatchlistTerm[0]));
+			
+			wlSpec.getWatchlistItems().add(wlItemSpec);
+			JsonServiceResponse result = createUpdateWatchlist(wlSpec, categoryId);
+			results.add(result);
+		}
+		
+		return setRecompileFlagAndReturnResult(results);
+	}
+	private JsonServiceResponse addUpdateDocWatchlist(WLRequest<DocumentWatchlistItemDto> request) {
+		List<DocumentWatchlistItemDto> wlItems =  request.getWlItems();
+		List<JsonServiceResponse> results = new ArrayList<JsonServiceResponse>();
+		
+		for (DocumentWatchlistItemDto wlitem : wlItems) {
+			WatchlistSpec wlSpec = new WatchlistSpec("Document","DOCUMENT");
+			List<WatchlistTerm> terms = new ArrayList<WatchlistTerm>();
+			terms.add(new WatchlistTerm("documentType", "string", wlitem.getDocumentType()));
+			terms.add(new WatchlistTerm("documentNumber", "string", wlitem.getDocumentNumber()));
+			
+			Long categoryId = Long.parseLong(wlitem.getCategoryId());
+			
+			WatchlistItemSpec wlItemSpec = new WatchlistItemSpec(request.getId(), request.getAction(), terms.toArray(new WatchlistTerm[0]));
+			
+			wlSpec.getWatchlistItems().add(wlItemSpec);
+
+
+			JsonServiceResponse result = createUpdateWatchlist(wlSpec, categoryId);
+			results.add(result);
+		}
+		return setRecompileFlagAndReturnResult(results);
+		
+	}
+	
+	private JsonServiceResponse createUpdateWatchlist(WatchlistSpec wlSpec, Long categoryId) {
+		validateInput(wlSpec);
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		JsonServiceResponse result = watchlistService.createUpdateDeleteWatchlistItems(userId, wlSpec,
+				categoryId);
+		if (categoryId > 0) {
+			List<Long> ids = (List<Long>) result.getResult();
+			watchlistService.updateWatchlistItemCategory(categoryId, ids.get(0));
+		}
+		
+		return result;
+	}
+	
+	private JsonServiceResponse setRecompileFlagAndReturnResult(List<JsonServiceResponse> results) {
+		appConfigurationService.setRecompileFlag();
+		return results.stream()
+				.reduce(results.get(0),
+				(a, b) -> new JsonServiceResponse(a.getStatus(), a.getMessage(), merge(a.getResult(), b.getResult())));
 	}
 
 	/**
@@ -234,6 +326,7 @@ public class WatchlistManagementController {
 		}
 	}
 
+	@Deprecated
 	private JsonServiceResponse createUpdateWatchlist(WatchlistSpec inputSpec) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		logger.info("******** Received Watchlist Create/Update request by user =" + userId);
@@ -252,7 +345,7 @@ public class WatchlistManagementController {
 						categoryId = Long.parseLong(spec.getTerms()[i].getValue());
 				}
 				spec.setTerms((_terms.toArray(new WatchlistTerm[1])));
-
+				
 				WatchlistSpec _spec = new WatchlistSpec(inputSpec.getName(), inputSpec.getEntity());
 
 				_spec.addWatchlistItem(spec);
