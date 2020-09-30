@@ -9,7 +9,7 @@ import gov.gtas.model.Translation;
 import java.io.IOException;
 
 public class TranslationVo {
-  private Long id;
+   private Long id;
   private String code;
   private String language;
   private String translation;
@@ -18,18 +18,18 @@ public class TranslationVo {
   }
 
   public TranslationVo(Translation translation) throws IOException {
-    this.id = translation.getId();
+     this.id = translation.getId();
     this.code = translation.getCode();
     this.language = translation.getLanguage();
     this.translation = translation.getTranslation();
   }
 
-  public Long getId() {
-    return id;
-  }
-  public void setId(Long id) {
-    this.id = id;
-  }
+   public Long getId() {
+     return id;
+   }
+   public void setId(Long id) {
+     this.id = id;
+   }
 
   public String getCode() {
     return code;

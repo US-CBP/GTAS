@@ -38,6 +38,14 @@ import org.springframework.cache.annotation.Cacheable;
 		this.translation = translation;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getCode() {
 		return code;
 	}
