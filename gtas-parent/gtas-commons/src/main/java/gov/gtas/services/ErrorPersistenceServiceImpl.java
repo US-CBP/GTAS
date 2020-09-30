@@ -59,7 +59,9 @@ public class ErrorPersistenceServiceImpl implements ErrorPersistenceService {
 		List<ErrorDetailInfo> ret;
 		if (!CollectionUtils.isEmpty(lst)) {
 			ret = lst.stream().map((ErrorRecord e) -> new BasicErrorDetailInfo(e.getId(), e.getCode(), e.getTimestamp(),
-					e.getDescription(), e.fetchErrorDetails())).collect(Collectors.toList());
+					e.getDescription(), null)).collect(Collectors.toList());
+			//Fix for GTAS-UI ticket #69. Returning the entire stack trace to the front end for every error is cumbersone minimally.
+			//The error details can be gathered in a different service/request
 		} else {
 			ret = new LinkedList<ErrorDetailInfo>();
 		}

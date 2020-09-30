@@ -25,7 +25,7 @@ public class User implements Serializable {
 	}
 
 	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles,
-			Boolean archived) {
+			boolean archived) {
 
 		this.userId = userId;
 		this.password = password;
@@ -37,7 +37,7 @@ public class User implements Serializable {
 	}
 
 	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles,
-			String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification, Boolean archived,
+			String email, boolean isEmailEnabled, boolean highPriorityHitsEmailNotification, boolean archived,
 			String phoneNumber) {
 
 		this.userId = userId;
@@ -83,13 +83,13 @@ public class User implements Serializable {
 	private String email;
 
 	@Column(name = "email_enabled")
-	private Boolean isEmailEnabled;
+	private boolean isEmailEnabled;
 
 	@Column(name = "high_priority_hits_email")
-	private Boolean highPriorityHitsEmailNotification;
+	private boolean highPriorityHitsEmailNotification;
 
 	@Column(name = "archived")
-	private Boolean archived;
+	private boolean archived;
 
 	private String phoneNumber;
 
@@ -136,11 +136,11 @@ public class User implements Serializable {
 		this.resetToken = resetToken;
 	}
 
-	public Boolean getHighPriorityHitsEmailNotification() {
+	public boolean getHighPriorityHitsEmailNotification() {
 		return highPriorityHitsEmailNotification;
 	}
 
-	public void setHighPriorityHitsEmailNotification(Boolean highPriorityHitsEmailNotification) {
+	public void setHighPriorityHitsEmailNotification(boolean highPriorityHitsEmailNotification) {
 		this.highPriorityHitsEmailNotification = highPriorityHitsEmailNotification;
 	}
 
@@ -152,7 +152,7 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
-	public Boolean getEmailEnabled() {
+	public boolean getEmailEnabled() {
 		return isEmailEnabled;
 	}
 
@@ -220,11 +220,11 @@ public class User implements Serializable {
 		this.passwordResetToken = passwordResetToken;
 	}
 
-	public Boolean getArchived() {
+	public boolean getArchived() {
 		return archived;
 	}
 
-	public void setArchived(Boolean archived) {
+	public void setArchived(boolean archived) {
 		this.archived = archived;
 	}
 
