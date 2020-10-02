@@ -20,6 +20,7 @@ import gov.gtas.vo.lookup.CarrierVo;
 import gov.gtas.vo.lookup.CarrierLookupVo;
 import gov.gtas.vo.lookup.CountryVo;
 import gov.gtas.vo.lookup.CountryLookupVo;
+import gov.gtas.vo.lookup.CreditCardTypeVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +79,8 @@ public class AdminController {
 
   private final AirportService airportService;
 
+  private final CreditCardTypeService cctypeService;
+
   private final FileService fileService;
 
   private final NoteTypeService noteTypeService;
@@ -86,7 +89,7 @@ public class AdminController {
   public AdminController(AppConfigurationService appConfigurationService, AuditLogPersistenceService auditService,
       ErrorPersistenceService errorService, AdminService adminService, ApiAccessService apiAccessService,
       CarrierService carrierService, CountryService countryService, AirportService airportService,
-      FileService fileService, NoteTypeService noteTypeService) {
+      CreditCardTypeService cctypeService, FileService fileService, NoteTypeService noteTypeService) {
     this.appConfigurationService = appConfigurationService;
     this.auditService = auditService;
     this.errorService = errorService;
@@ -95,6 +98,7 @@ public class AdminController {
     this.carrierService = carrierService;
     this.countryService = countryService;
     this.airportService = airportService;
+    this.cctypeService = cctypeService;
     this.fileService = fileService;
     this.noteTypeService = noteTypeService;
   }
@@ -250,6 +254,38 @@ public class AdminController {
   public int restoreAllAirport() {
     return airportService.restoreAll();
   }
+
+  // credit card type
+  @RequestMapping(method = RequestMethod.GET, value = "/api/cctype")
+  public List<CreditCardTypeVo> getAllCreditCardType() {
+    return cctypeService.findAll();
+  }
+
+  @RequestMapping(method = RequestMethod.POST, value = "/api/cctype")
+  public CreditCardTypeVo createCreditCardType(@RequestBody @Valid CreditCardTypeVo cctype) {
+    return cctypeService.create(cctype);
+  }
+
+  @RequestMapping(method = RequestMethod.PUT, value = "/api/cctype", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+  public CreditCardTypeVo updateCreditCardType(@RequestBody @Valid CreditCardTypeVo cctype) {
+    return cctypeService.update(cctype);
+  }
+
+  @RequestMapping(method = RequestMethod.DELETE, value = "/api/cctype/{id}")
+  public CreditCardTypeVo deleteCreditCardType(@PathVariable Long id) {
+    return cctypeService.delete(id);
+  }
+
+  @RequestMapping(method = RequestMethod.PUT, value = "/api/cctype/restore")
+  public CreditCardTypeVo restoreCreditCardType(@RequestBody @Valid CreditCardTypeVo cctype) {
+    return cctypeService.restore(cctype);
+  }
+
+  @RequestMapping(method = RequestMethod.PUT, value = "/api/cctype/restoreAll")
+  public int restoreAllCreditCardType() {
+    return cctypeService.restoreAll();
+  }
+  /// end lookups
 
   @RequestMapping(method = RequestMethod.GET, value = "/auditlog")
   public List<AuditRecordVo> getAuditlog(@RequestParam(value = "user", required = false) String user,
