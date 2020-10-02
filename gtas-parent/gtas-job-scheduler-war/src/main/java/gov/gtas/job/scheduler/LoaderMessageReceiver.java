@@ -9,6 +9,8 @@ import javax.jms.Session;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.job.wrapper.MessageWrapper;
+import gov.gtas.model.PendingHitDetails;
+import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.summary.EventIdentifier;
 import gov.gtas.summary.MessageAction;
 import gov.gtas.services.jms.AdditionalProcessingMessageSender;
@@ -66,16 +68,19 @@ public class LoaderMessageReceiver {
 	@Value("${additional.processing.queue}")
 	private String addProcessQueue;
 
+	private PendingHitDetailRepository pendingHitDetailRepository;
 
 	@Autowired
 	public LoaderMessageReceiver(LoaderQueueThreadManager queueManager,
 								 PnrRepository pnrRepository,
 								 MessageStatusRepository messageStatusRepository,
-								 AdditionalProcessingMessageSender apms) {
+								 AdditionalProcessingMessageSender apms,
+								 PendingHitDetailRepository pendingHitDetailRepository) {
 		this.queueManager = queueManager;
 		this.pnrRepository = pnrRepository;
 		this.messageStatusRepository = messageStatusRepository;
 		this.apms = apms;
+		this.pendingHitDetailRepository = pendingHitDetailRepository;
 	}
 
 	@JmsListener(destination ="${inbound.loader.jms.queue}", concurrency = "10")
@@ -122,6 +127,18 @@ public class LoaderMessageReceiver {
 			failedMessage = pnrRepository.save(failedMessage);
 			MessageStatus messageStatus = new MessageStatus(failedMessage.getId(), MessageStatusEnum.FAILED_PRE_PARSE);
 			messageStatusRepository.save(messageStatus);
+		}
+	}
+
+	@JmsListener(destination = "${inbound.loader.pendinghits.queue}", concurrency = "10")
+	public void pendingHitEndPoint(Message<?> message, Session session, javax.jms.Message msg) {
+		String payload = message.getPayload().toString();
+		ObjectMapper om = new ObjectMapper();
+		try {
+			PendingHitDetails phd = om.readValue(payload, PendingHitDetails.class);
+			pendingHitDetailRepository.save(phd);
+		} catch (Exception e) {
+			logger.error("Unable to save pending hit detail! Error: " + e);
 		}
 	}
 }
