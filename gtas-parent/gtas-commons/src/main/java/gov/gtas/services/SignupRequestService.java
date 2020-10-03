@@ -3,12 +3,14 @@ package gov.gtas.services;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.mail.MessagingException;
 
 import freemarker.template.TemplateException;
 import gov.gtas.model.SignupRequest;
 import gov.gtas.services.dto.SignupRequestDTO;
+import gov.gtas.services.security.RoleData;
 
 public interface SignupRequestService {
 	
@@ -26,7 +28,7 @@ public interface SignupRequestService {
 	
 	List<SignupRequestDTO> search(Map<String, Object> queryParameters);
 
-	void approve(Long requestId, String approvedBy) throws IOException, TemplateException, MessagingException;
+	void approve(Long requestId, Set<RoleData> roles, String approvedBy) throws IOException, TemplateException, MessagingException;
 
 	void reject(Long requestId, String rejectedBy) throws MessagingException, IOException, TemplateException;
 }

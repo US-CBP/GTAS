@@ -1,13 +1,10 @@
 package gov.gtas.controller;
 
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -26,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import freemarker.template.TemplateException;
 import gov.gtas.enumtype.SignupRequestStatus;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
@@ -34,6 +30,7 @@ import gov.gtas.model.SignupLocation;
 import gov.gtas.repository.SignupLocationRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.SignupRequestService;
+import gov.gtas.services.dto.SignupRequestAprroveDTO;
 import gov.gtas.services.dto.SignupRequestDTO;
 import gov.gtas.services.security.UserService;
 
@@ -133,13 +130,13 @@ public class SignupController {
 		return new ResponseEntity<>(requests, HttpStatus.OK);
 	}
 
-	@PutMapping(value = "/signupRequest/approve/{requestId}")
-	public JsonServiceResponse approveSignupRequest(@PathVariable Long requestId) {
+	@PostMapping(value = "/signupRequest/approve")
+	public JsonServiceResponse approveSignupRequest(@RequestBody SignupRequestAprroveDTO request) {
 
 		try {
-			signupRequestService.approve(requestId, GtasSecurityUtils.fetchLoggedInUserId());
+			signupRequestService.approve(request.getRequestId(), request.getRoles(), GtasSecurityUtils.fetchLoggedInUserId());
 			
-			String message =  "Request with Id (" + requestId + ") has been approved!";
+			String message =  "Request with Id (" + request.getRequestId() + ") has been approved!";
 			return new JsonServiceResponse(Status.SUCCESS, message);
 			
 		}  catch (MailSendException e) {
@@ -151,7 +148,7 @@ public class SignupController {
 		}catch (Exception  e) {
 			logger.error("Sign up approval failed", e);	
 			
-			String message = "Something went wrong when approving a request from request id: " + requestId;
+			String message = "Something went wrong when approving a request from request id: " + request.getRequestId();
 			return new JsonServiceResponse(Status.FAILURE, message);
 			
 		}
@@ -177,4 +174,5 @@ public class SignupController {
 
 		
 	}
+	
 }
