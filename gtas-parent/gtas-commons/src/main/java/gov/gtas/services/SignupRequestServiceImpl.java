@@ -1,8 +1,10 @@
 package gov.gtas.services;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
@@ -14,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import com.google.inject.internal.util.Sets;
 
 import freemarker.template.TemplateException;
 import gov.gtas.email.EmailTemplateLoader;
@@ -162,7 +162,7 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 
 	@Transactional
 	@Override
-	public void approve(Long requestId, String approvedBy)
+	public void approve(Long requestId, Set<RoleData> roles, String approvedBy)
 			throws IOException, TemplateException, MessagingException {
 		SignupRequest signupRequest = this.findById(requestId);
 
@@ -175,10 +175,10 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 
 		// Generate a random password that wi
 		String password = new UserServiceUtil().generateRandomPassword();
-
+		
 		// Create temporary password
 		UserData userData = new UserData(signupRequest.getUsername(), password, signupRequest.getFirstName(),
-				signupRequest.getLastName(), 1, Sets.newHashSet(), signupRequest.getEmail(), false, false, false, signupRequest.getPhoneNumber());
+				signupRequest.getLastName(), 1, roles, signupRequest.getEmail(), false, false, false, signupRequest.getPhoneNumber());
 
 		logger.debug("create a new user");
 		this.userService.create(userData);
