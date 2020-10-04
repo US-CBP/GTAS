@@ -64,7 +64,7 @@ public class SignupController {
 
 				logger.debug("A sign up request with the same email or username already exists - {}",
 						signupRequestDTO.getEmail());
-				return new JsonServiceResponse(Status.FAILURE,"A sign up request with the same email or email already exists", signupRequestDTO);
+				return new JsonServiceResponse(Status.FAILURE,"A sign up request with the same email or username already exists", signupRequestDTO);
 			} 
 			else if (isExistingUser) {
 				logger.debug("The username is already taken - {}",
