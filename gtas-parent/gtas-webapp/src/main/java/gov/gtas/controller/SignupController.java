@@ -110,6 +110,15 @@ public class SignupController {
 	public ResponseEntity<Object> getSignupRequests(@RequestParam Map<String, Object> params) {
 		
 		String status = (String) params.get("status");
+		String locationName = (String) params.get("location");
+		SignupLocation location = signupLocationRepository.findLocationByName(locationName);
+		
+		if (location != null) {
+			Long signupLocationId = location.getId();
+			params.put("signupLocationId", signupLocationId);
+			params.remove("location");
+		}
+		
 		
 		if (status != null) {
 			SignupRequestStatus statusEnum = SignupRequestStatus.valueOf(status);
