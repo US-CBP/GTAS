@@ -1,0 +1,24 @@
+-- Add view flights role
+INSERT IGNORE into Role(role_id, role_description) VALUES(9,'View Flights');
+-- Begin create procedure
+DROP PROCEDURE IF EXISTS ADDVIEWFLIGHTSROLE;
+DELIMITER ;;
+--For every user that exists, give them the new user_role of id = 9
+Create Procedure ADDVIEWFLIGHTSROLE()
+BEGIN
+DECLARE n INT DEFAULT 0;
+DECLARE i INT DEFAULT 0;
+DECLARE test VARCHAR(500);
+SELECT COUNT(*) FROM user into n;
+WHILE i<n DO
+	SET test = (Select (user_id) from user LIMIT i, 1);
+	INSERT INTO user_role(user_id, role_id) VALUES (test, 9);
+	SET i = i + 1;
+END WHILE;
+End;
+;;
+--Call Procedure
+DELIMITER ;
+CALL ADDVIEWFLIGHTSROLE();
+--Remove Procedure
+DROP PROCEDURE IF EXISTS ADDVIEWFLIGHTSROLE;

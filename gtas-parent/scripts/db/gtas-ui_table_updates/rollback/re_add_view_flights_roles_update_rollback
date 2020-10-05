@@ -1,0 +1,2 @@
+DELETE FROM user_role WHERE role_id = 9;
+DELETE FROM role WHERE role_id = 9;
