@@ -1,2 +1,3 @@
-DELETE FROM user_role WHERE role_id = 9;
-DELETE FROM role WHERE role_id = 9;
+
+DELETE FROM user_role WHERE role_id = (SELECT role_id FROM role WHERE role_description = 'View Flights');
+DELETE FROM role WHERE role_description = 'View Flights';
