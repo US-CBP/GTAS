@@ -2,6 +2,9 @@ package gov.gtas.services.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import gov.gtas.model.NoteType;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -73,6 +76,8 @@ public class PriorityVettingListRequest extends PassengersRequestDto implements 
 	private Date etaEnd;
 
 	private transient List<SortOptionsDto> sort;
+	
+	private List<NoteType> noteTypes;
 
 	public PriorityVettingListRuleTypes getPriorityVettingListRuleTypes() {
 		return priorityVettingListRuleTypes;
@@ -285,5 +290,13 @@ public class PriorityVettingListRequest extends PassengersRequestDto implements 
 
 	public void setAuthorOnly(Boolean authorOnly) {
 		isAuthorOnly = authorOnly;
+	}
+
+	public List<NoteType> getNoteTypes() {
+		return noteTypes;
+	}
+
+	public void setNoteTypes(List<NoteType> noteTypes) {
+		this.noteTypes = noteTypes;
 	}
 }

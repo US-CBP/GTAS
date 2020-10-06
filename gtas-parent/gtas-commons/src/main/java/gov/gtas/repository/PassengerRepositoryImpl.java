@@ -86,6 +86,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		Join<Flight, FlightCountDownView> flightCountDownViewJoin = flight.join("flightCountDownView", JoinType.INNER);
 		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.INNER);
 		Join<Passenger, HitDetail> hitDetails = pax.join("hitDetails", JoinType.INNER);
+		Join<Passenger, PassengerNote> passengerNote = pax.join("notes", JoinType.INNER);
 		Join<HitDetail, HitViewStatus> hitViewJoin = hitDetails.join("hitViewStatus", JoinType.INNER);
 		Join<HitDetail, HitMaker> hitMakerJoin = hitDetails.join("hitMaker", JoinType.INNER);
 		Join<HitMaker, HitCategory> hitCategoryJoin = hitMakerJoin.join("hitCategory", JoinType.INNER);
@@ -101,6 +102,14 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		 * .and(cb.greaterThanOrEqualTo(flightCountDownViewJoin.get("countDownTimer"),
 		 * oneHourAgo)); queryPredicates.add(countDownPredicate); }
 		 */
+		
+		if (dto.getNoteTypes() != null && !dto.getNoteTypes().isEmpty()) {
+			List<NoteType> noteTypes = dto.getNoteTypes();
+			Predicate noteTypesIn = cb.in(passengerNote.get("noteType")).value(noteTypes);
+			queryPredicates.add(noteTypesIn);
+		}
+		
+		
 
 		Set<HitViewStatusEnum> hitViewStatusEnumSet = new HashSet<>();
 		if (dto.getDisplayStatusCheckBoxes() != null) {
