@@ -87,6 +87,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.INNER);
 		Join<Passenger, HitDetail> hitDetails = pax.join("hitDetails", JoinType.INNER);
 		Join<Passenger, PassengerNote> passengerNote = pax.join("notes", JoinType.INNER);
+		Join<Passenger, NoteType> passengerNoteType = passengerNote.join("noteType", JoinType.INNER);
 		Join<HitDetail, HitViewStatus> hitViewJoin = hitDetails.join("hitViewStatus", JoinType.INNER);
 		Join<HitDetail, HitMaker> hitMakerJoin = hitDetails.join("hitMaker", JoinType.INNER);
 		Join<HitMaker, HitCategory> hitCategoryJoin = hitMakerJoin.join("hitCategory", JoinType.INNER);
@@ -105,7 +106,13 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		
 		if (dto.getNoteTypes() != null && !dto.getNoteTypes().isEmpty()) {
 			List<NoteType> noteTypes = dto.getNoteTypes();
-			Predicate noteTypesIn = cb.in(passengerNote.get("noteType")).value(noteTypes);
+			Set<String> types = new HashSet<>();
+			
+			for (NoteType nt : noteTypes) {
+				types.add(nt.getType());
+			}
+
+			Predicate noteTypesIn = cb.in(passengerNoteType.get("type")).value(types);
 			queryPredicates.add(noteTypesIn);
 		}
 		
