@@ -109,13 +109,15 @@ public class LoaderMessageReceiver {
 				if (mw.getFromMessageInfo()) {
 					ObjectMapper om = new ObjectMapper();
 					MessageSummaryList msl = om.readValue((String)message.getPayload(), MessageSummaryList.class);
-					rawMessage = msl.getMessageSummaryList().get(0).getRawMessage();
+					if (eventIdentifier.getReceiverCanForward() != null && eventIdentifier.getReceiverCanForward()) {
+						eventIdentifier.setReceiverCanForward(false); // only forward a message once.
+						rawMessage = msl.getMessageSummaryList().get(0).getRawMessage();
+						apms.sendRawMessage(addProcessQueue, rawMessage, eventIdentifier, messageAction);
+					}
 				} else {
 					rawMessage = (String)message.getPayload();
+					apms.sendRawMessage(addProcessQueue, rawMessage, eventIdentifier, messageAction);
 				}
-
-
-				apms.sendRawMessage(addProcessQueue, rawMessage, eventIdentifier, messageAction);
 			}
 		} catch (Exception e) {
 			logger.warn("Failed to parsed message. Is border crossing information corrupt? Error is: " + e);
