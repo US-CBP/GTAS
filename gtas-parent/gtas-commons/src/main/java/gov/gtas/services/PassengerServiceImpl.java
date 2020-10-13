@@ -119,6 +119,9 @@ public class PassengerServiceImpl implements PassengerService {
 					break;
 				}
 			}
+			for ( Pnr pnr : passenger.getPnrs()){
+				vo.setCoTravelerId(pnr.getId());
+			}
 
 			// grab flight info
 			Flight passengerFlight = passenger.getFlight();
@@ -305,6 +308,18 @@ public class PassengerServiceImpl implements PassengerService {
 				vo.addDocument(docVo);
 			}
 
+			Pnr latestPnr = null; //grab most recent pnr (assumed to be most up to date)
+			Date mostRecentDate = null;
+			for(Pnr pnr : passenger.getPnrs()){
+				if(mostRecentDate == null) {
+					mostRecentDate = pnr.getDateReceived();
+					latestPnr = pnr;
+				} else if(mostRecentDate.before(pnr.getDateReceived())) {
+					latestPnr = pnr;
+				}//Flaw? Date booked better?
+				vo.setCoTravellerId(latestPnr.getId());
+			}
+
 			for (HitDetail hd : passenger.getHitDetails()) {
 				switch (hd.getHitEnum()) {
 				case MANUAL_HIT:
@@ -320,6 +335,13 @@ public class PassengerServiceImpl implements PassengerService {
 				}
 			}
 			rv.add(vo);
+			rv.sort((fp1, fp2) -> {
+				if(fp1.getCoTravellerId() == fp2.getCoTravellerId()){
+					return 0;
+				} else{
+					return (fp1.getCoTravellerId().intValue() - fp2.getCoTravellerId().intValue());
+				}
+			});
 		}
 		return rv;
 	}

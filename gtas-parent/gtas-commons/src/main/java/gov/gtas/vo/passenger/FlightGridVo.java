@@ -40,6 +40,7 @@ public class FlightGridVo {
   private Integer listHitCount;
   private Integer graphHitCount;
   private Integer fuzzyHitCount;
+  private Integer externalHitCount;
 
   public static FlightGridVo from(Flight flight) {
     FlightGridVo fgvo = new FlightGridVo();
@@ -147,6 +148,10 @@ public class FlightGridVo {
   public void setFuzzyHitCount(Integer fuzzyHitcount) {
     this.fuzzyHitCount = fuzzyHitcount;
   }
+
+  public Integer getExternalHitCount() { return externalHitCount; }
+
+  public void setExternalHitCount(Integer externalHitCount) { this.externalHitCount = externalHitCount; }
 
   public Date getEtd() {
     return etd;
