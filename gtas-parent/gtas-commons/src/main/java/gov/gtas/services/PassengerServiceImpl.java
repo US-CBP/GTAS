@@ -119,8 +119,16 @@ public class PassengerServiceImpl implements PassengerService {
 					break;
 				}
 			}
-			for ( Pnr pnr : passenger.getPnrs()){
-				vo.setCoTravelerId(pnr.getId());
+			Pnr latestPnr = null; //grab most recent pnr (assumed to be most up to date)
+			Date mostRecentDate = null;
+			for(Pnr pnr : passenger.getPnrs()){
+				if(mostRecentDate == null) {
+					mostRecentDate = pnr.getDateReceived();
+					latestPnr = pnr;
+				} else if(mostRecentDate.before(pnr.getDateReceived())) {
+					latestPnr = pnr;
+				}//Flaw? Date booked better?
+				vo.setCoTravellerId(latestPnr.getRecordLocator());
 			}
 
 			// grab flight info
