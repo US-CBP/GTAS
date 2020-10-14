@@ -134,7 +134,7 @@ public class AuditRecordVo {
 		AuditRecordVo vo = new AuditRecordVo();
 		final User user = auditRecord.getUser();
 		
-		vo.setActionData(auditRecord.getActionType().toString());
+		vo.setActionType(auditRecord.getActionType().toString());
 		vo.setStatus(auditRecord.getActionStatus().toString());
 		vo.setMessage(auditRecord.getMessage());
 		vo.setUser(user.getUserId());

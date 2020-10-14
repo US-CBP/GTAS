@@ -315,32 +315,28 @@ public class AdminController {
     }
     return fetchAuditLogData(user, actionType, st, nd);
   }
-  
   @RequestMapping(method = RequestMethod.GET, value = "/api/auditlog")
-  public List<AuditRecordVo> filterAuditlog(@RequestParam(value = "user", required = false) String user,
-      @RequestParam(value = "action", required = false) String action,
-      @RequestParam(value = "startDate", required = false) String startDate,
-      @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
-    Date st = null;
-    Date nd = null;
-    if (startDate != null) {
-      st = DateCalendarUtils.parseJsonDate(startDate);
-    }
-    if (endDate != null) {
-      nd = DateCalendarUtils.parseJsonDate(endDate);
-      nd = DateCalendarUtils.addOneDayToDate(nd);
-    }
-    AuditActionType actionType = null;
-    if (action != null && !action.equals(AuditLogConstants.SHOW_ALL_ACTION)) {
-      try {
-        actionType = AuditActionType.valueOf(action);
-      } catch (Exception ex) {
-        logger.error("AdminController.getAuditlog - invalid action type:" + action);
-      }
-    }
-    return filterAuditLogData(user, actionType, st, nd);
+  public List<AuditRecordVo> getAuditlog(@RequestParam Map<String, Object> params) throws ParseException{
+	    Date startDate = DateCalendarUtils.parseJsonDate((String)params.get("startDate"));
+	    Date endDate = DateCalendarUtils.parseJsonDate((String)params.get("endDate"));
+	    String action = (String)params.get("actionType");
+	    
+	    DateRange range = new DateRange();
+	    range.setStart(startDate);
+	    range.setEnd(endDate);
+	    
+	    AuditActionType actionType = getAuditlogActionType(action);
+	    
+	    params.remove("startDate");
+	    params.remove("endDate");
+	    
+	    params.put("timestamp", range);
+	    params.put("actionType", actionType);
+	   
+	    
+	    return auditService.getAuditlog(params);
   }
-
+  
   @RequestMapping(method = RequestMethod.GET, value = "/apiAccess")
   public List<ApiAccessVo> getAllApiAccess() {
     return apiAccessService.findAll();
@@ -517,26 +513,6 @@ public class AdminController {
     return ret;
   }
   
-  private List<AuditRecordVo> filterAuditLogData(String userId, AuditActionType action, Date startDate, Date endDate) {
-	    Date from = startDate;
-	    Date to = endDate;
-	    if (from == null && StringUtils.isEmpty(userId) && action == null) {
-	      logger.debug("AdminController: fetchAuditLogData - start date is null, using current date.");
-	      from = DateCalendarUtils.stripTime(new Date());
-	    }
-
-	    if (from != null && to == null) {
-	      logger.debug("AdminController: fetchAuditLogData - end date is null, using current date.");
-	      to = DateCalendarUtils.addOneDayToDate(DateCalendarUtils.stripTime(new Date()));
-	    }
-	    List<AuditRecord> res = auditService.findByUserActionDateRange(userId, action, from, to);
-	    List<AuditRecordVo> ret = new LinkedList<AuditRecordVo>();
-	    if (res != null) {
-	      res.forEach(ar -> ret.add(AuditRecordVo.from(ar)));
-	    }
-	    return ret;
-	  }
-
   private List<ErrorDetailInfo> fetchErrorLogData(String code, Date startDate, Date endDate) {
     Date from = startDate;
     Date to = endDate;
@@ -557,5 +533,18 @@ public class AdminController {
     }
     return res;
   }
+  
+  private AuditActionType getAuditlogActionType(String action) {
+	  AuditActionType actionType = null;
+	    if (action != null && !action.equals(AuditLogConstants.SHOW_ALL_ACTION)) {
+	      try {
+	        actionType = AuditActionType.valueOf(action);
+	      } catch (Exception ex) {
+	        logger.error("AdminController.getAuditlog - invalid action type:" + action);
+	      }
+	    }
+	    return actionType;
+  }
+  
 
 }
