@@ -134,6 +134,7 @@ public class UserServiceImpl implements UserService {
 			}
 			entity.setArchived(mappedEnity.getArchived());
 			entity.setActive(mappedEnity.getActive());
+			entity.setPhoneNumber(mappedEnity.getPhoneNumber());
 			if (data.getRoles() != null && !data.getRoles().isEmpty()) {			
 				Set<Role> oRoles = entity.getRoles();
 				oRoles.clear();
@@ -234,7 +235,8 @@ public class UserServiceImpl implements UserService {
 			entity.setEmailEnabled(mappedEnity.getEmailEnabled());
 			entity.setHighPriorityHitsEmailNotification(mappedEnity.getHighPriorityHitsEmailNotification());
 			entity.setArchived(mappedEnity.getArchived());
-
+			entity.setPhoneNumber(mappedEnity.getPhoneNumber());
+			
 			if (data.getPassword() != null && !data.getPassword().isEmpty()) {
 				if (!BCRYPT_PATTERN.matcher(mappedEnity.getPassword()).matches()) {
 					entity.setPassword(passwordEncoder.encode(mappedEnity.getPassword()));
