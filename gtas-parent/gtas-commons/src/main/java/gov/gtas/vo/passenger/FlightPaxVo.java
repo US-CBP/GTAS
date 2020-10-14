@@ -24,7 +24,7 @@ public class FlightPaxVo {
   private String seat;
   private Boolean onRuleHitList = Boolean.FALSE;
   private Boolean onWatchList = Boolean.FALSE;
-  private Long coTravellerId;
+  private String coTravellerId;
 
   private List<String> documents = new ArrayList<>();
 
@@ -124,7 +124,7 @@ public class FlightPaxVo {
     this.onWatchList = onWatchList;
   }
 
-  public Long getCoTravellerId() { return coTravellerId; }
+  public String getCoTravellerId() { return coTravellerId; }
 
-  public void setCoTravellerId(Long coTravellerId) { this.coTravellerId = coTravellerId; }
+  public void setCoTravellerId(String coTravellerId) { this.coTravellerId = coTravellerId; }
 }

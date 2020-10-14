@@ -317,7 +317,7 @@ public class PassengerServiceImpl implements PassengerService {
 				} else if(mostRecentDate.before(pnr.getDateReceived())) {
 					latestPnr = pnr;
 				}//Flaw? Date booked better?
-				vo.setCoTravellerId(latestPnr.getId());
+				vo.setCoTravellerId(latestPnr.getRecordLocator());
 			}
 
 			for (HitDetail hd : passenger.getHitDetails()) {
@@ -335,13 +335,6 @@ public class PassengerServiceImpl implements PassengerService {
 				}
 			}
 			rv.add(vo);
-			rv.sort((fp1, fp2) -> {
-				if(fp1.getCoTravellerId() == fp2.getCoTravellerId()){
-					return 0;
-				} else{
-					return (fp1.getCoTravellerId().intValue() - fp2.getCoTravellerId().intValue());
-				}
-			});
 		}
 		return rv;
 	}
