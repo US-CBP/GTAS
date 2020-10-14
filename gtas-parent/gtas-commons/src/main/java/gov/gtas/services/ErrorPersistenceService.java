@@ -6,10 +6,13 @@
 package gov.gtas.services;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
+
+import gov.gtas.email.dto.ErrorRecordDto;
 import gov.gtas.error.ErrorDetailInfo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -25,5 +28,7 @@ public interface ErrorPersistenceService {
 
 	@PreAuthorize(PRIVILEGE_ADMIN)
 	public List<ErrorDetailInfo> findByCode(String code);
+
+	List<ErrorRecordDto> search(Map<String, Object> queryParameters);
 
 }

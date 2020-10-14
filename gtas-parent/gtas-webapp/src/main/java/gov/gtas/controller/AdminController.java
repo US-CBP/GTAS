@@ -6,10 +6,12 @@
 package gov.gtas.controller;
 
 import gov.gtas.constant.AuditLogConstants;
+import gov.gtas.email.dto.ErrorRecordDto;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.lookup.AppConfiguration;
+import gov.gtas.search.DateRange;
 import gov.gtas.services.*;
 import gov.gtas.services.dto.ApplicationStatisticsDTO;
 import gov.gtas.util.DateCalendarUtils;
@@ -43,6 +45,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static gov.gtas.repository.AppConfigurationRepository.MAX_FLIGHT_QUERY_RESULT;
@@ -287,6 +290,7 @@ public class AdminController {
   }
   /// end lookups
 
+  @Deprecated
   @RequestMapping(method = RequestMethod.GET, value = "/auditlog")
   public List<AuditRecordVo> getAuditlog(@RequestParam(value = "user", required = false) String user,
       @RequestParam(value = "action", required = false) String action,
@@ -311,6 +315,31 @@ public class AdminController {
     }
     return fetchAuditLogData(user, actionType, st, nd);
   }
+  
+  @RequestMapping(method = RequestMethod.GET, value = "/api/auditlog")
+  public List<AuditRecordVo> filterAuditlog(@RequestParam(value = "user", required = false) String user,
+      @RequestParam(value = "action", required = false) String action,
+      @RequestParam(value = "startDate", required = false) String startDate,
+      @RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
+    Date st = null;
+    Date nd = null;
+    if (startDate != null) {
+      st = DateCalendarUtils.parseJsonDate(startDate);
+    }
+    if (endDate != null) {
+      nd = DateCalendarUtils.parseJsonDate(endDate);
+      nd = DateCalendarUtils.addOneDayToDate(nd);
+    }
+    AuditActionType actionType = null;
+    if (action != null && !action.equals(AuditLogConstants.SHOW_ALL_ACTION)) {
+      try {
+        actionType = AuditActionType.valueOf(action);
+      } catch (Exception ex) {
+        logger.error("AdminController.getAuditlog - invalid action type:" + action);
+      }
+    }
+    return filterAuditLogData(user, actionType, st, nd);
+  }
 
   @RequestMapping(method = RequestMethod.GET, value = "/apiAccess")
   public List<ApiAccessVo> getAllApiAccess() {
@@ -332,6 +361,7 @@ public class AdminController {
     return apiAccessService.delete(id);
   }
 
+  @Deprecated
   @RequestMapping(method = RequestMethod.GET, value = "/errorlog")
   public List<ErrorDetailInfo> getErrorlog(@RequestParam(value = "code", required = false) String code,
       @RequestParam(value = "startDate", required = false) String startDate,
@@ -347,6 +377,24 @@ public class AdminController {
     }
     return fetchErrorLogData(code, st, nd);
   }
+  
+  @RequestMapping(method = RequestMethod.GET, value = "/api/errorlog")
+  public List<ErrorRecordDto> filterErrorlog(@RequestParam Map<String, Object> params) throws ParseException{
+	  DateRange range = new DateRange();
+	 
+    Date startDate = DateCalendarUtils.parseJsonDate((String)params.get("startDate"));
+    Date endDate = DateCalendarUtils.parseJsonDate((String)params.get("endDate"));
+   
+    range.setStart(startDate);
+    range.setEnd(endDate);
+    params.remove("startDate");
+    params.remove("endDate");
+    params.put("timestamp", range);
+    
+    return errorService.search(params);
+	  
+  }
+  
 
   @RequestMapping(method = RequestMethod.GET, value = "/settingsinfo")
   public SettingsVo getSettings() {
@@ -435,6 +483,7 @@ public class AdminController {
     }
   }
 
+  @Deprecated
   @RequestMapping(method = RequestMethod.GET, value = "/auditlog/{startDate}/{endDate}")
   public List<AuditRecordVo> getAuditlog(@PathVariable String startDate, @PathVariable String endDate)
       throws ParseException {
@@ -442,11 +491,12 @@ public class AdminController {
     Date endt = StringUtils.isEmpty(endDate) ? null : DateCalendarUtils.parseJsonDate(endDate);
     return fetchAuditLogData(stdt, endt);
   }
-
+ 
+  @Deprecated
   private List<AuditRecordVo> fetchAuditLogData(Date startDate, Date endDate) {
     return fetchAuditLogData(null, null, startDate, endDate);
   }
-
+  @Deprecated
   private List<AuditRecordVo> fetchAuditLogData(String userId, AuditActionType action, Date startDate, Date endDate) {
     Date from = startDate;
     Date to = endDate;
@@ -466,6 +516,26 @@ public class AdminController {
     }
     return ret;
   }
+  
+  private List<AuditRecordVo> filterAuditLogData(String userId, AuditActionType action, Date startDate, Date endDate) {
+	    Date from = startDate;
+	    Date to = endDate;
+	    if (from == null && StringUtils.isEmpty(userId) && action == null) {
+	      logger.debug("AdminController: fetchAuditLogData - start date is null, using current date.");
+	      from = DateCalendarUtils.stripTime(new Date());
+	    }
+
+	    if (from != null && to == null) {
+	      logger.debug("AdminController: fetchAuditLogData - end date is null, using current date.");
+	      to = DateCalendarUtils.addOneDayToDate(DateCalendarUtils.stripTime(new Date()));
+	    }
+	    List<AuditRecord> res = auditService.findByUserActionDateRange(userId, action, from, to);
+	    List<AuditRecordVo> ret = new LinkedList<AuditRecordVo>();
+	    if (res != null) {
+	      res.forEach(ar -> ret.add(AuditRecordVo.from(ar)));
+	    }
+	    return ret;
+	  }
 
   private List<ErrorDetailInfo> fetchErrorLogData(String code, Date startDate, Date endDate) {
     Date from = startDate;
