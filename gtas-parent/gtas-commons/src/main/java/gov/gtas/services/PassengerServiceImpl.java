@@ -121,15 +121,16 @@ public class PassengerServiceImpl implements PassengerService {
 			}
 			Pnr latestPnr = null; //grab most recent pnr (assumed to be most up to date)
 			Date mostRecentDate = null;
-			for(Pnr pnr : passenger.getPnrs()){
-				if(mostRecentDate == null) {
+			for(Pnr pnr : passenger.getPnrs()) {
+				if (mostRecentDate == null) {
 					mostRecentDate = pnr.getDateReceived();
 					latestPnr = pnr;
-				} else if(mostRecentDate.before(pnr.getDateReceived())) {
+				} else if (mostRecentDate.before(pnr.getDateReceived())) {
 					latestPnr = pnr;
+					mostRecentDate = pnr.getDateReceived();
 				}//Flaw? Date booked better?
-				vo.setCoTravellerId(latestPnr.getRecordLocator());
 			}
+			vo.setCoTravellerId(latestPnr.getRecordLocator());
 
 			// grab flight info
 			Flight passengerFlight = passenger.getFlight();
@@ -318,15 +319,17 @@ public class PassengerServiceImpl implements PassengerService {
 
 			Pnr latestPnr = null; //grab most recent pnr (assumed to be most up to date)
 			Date mostRecentDate = null;
-			for(Pnr pnr : passenger.getPnrs()){
-				if(mostRecentDate == null) {
+			for(Pnr pnr : passenger.getPnrs()) {
+				if (mostRecentDate == null) {
 					mostRecentDate = pnr.getDateReceived();
 					latestPnr = pnr;
-				} else if(mostRecentDate.before(pnr.getDateReceived())) {
+				} else if (mostRecentDate.before(pnr.getDateReceived())) {
 					latestPnr = pnr;
+					mostRecentDate = pnr.getDateReceived();
 				}//Flaw? Date booked better?
-				vo.setCoTravellerId(latestPnr.getRecordLocator());
 			}
+			vo.setCoTravellerId(latestPnr.getRecordLocator());
+
 
 			for (HitDetail hd : passenger.getHitDetails()) {
 				switch (hd.getHitEnum()) {
