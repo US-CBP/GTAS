@@ -10,10 +10,12 @@ import gov.gtas.email.dto.ErrorRecordDto;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.model.AuditRecord;
+import gov.gtas.model.User;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.search.DateRange;
 import gov.gtas.services.*;
 import gov.gtas.services.dto.ApplicationStatisticsDTO;
+import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.vo.*;
 import gov.gtas.vo.lookup.AirportVo;
@@ -87,12 +89,14 @@ public class AdminController {
   private final FileService fileService;
 
   private final NoteTypeService noteTypeService;
+ 
+private UserService userService;
 
   @Autowired
   public AdminController(AppConfigurationService appConfigurationService, AuditLogPersistenceService auditService,
       ErrorPersistenceService errorService, AdminService adminService, ApiAccessService apiAccessService,
       CarrierService carrierService, CountryService countryService, AirportService airportService,
-      CreditCardTypeService cctypeService, FileService fileService, NoteTypeService noteTypeService) {
+      CreditCardTypeService cctypeService, FileService fileService, NoteTypeService noteTypeService, UserService userService) {
     this.appConfigurationService = appConfigurationService;
     this.auditService = auditService;
     this.errorService = errorService;
@@ -104,6 +108,7 @@ public class AdminController {
     this.cctypeService = cctypeService;
     this.fileService = fileService;
     this.noteTypeService = noteTypeService;
+    this.userService = userService;
   }
 
   // ------------------------------------------------- //
@@ -317,21 +322,34 @@ public class AdminController {
   }
   @RequestMapping(method = RequestMethod.GET, value = "/api/auditlog")
   public List<AuditRecordVo> getAuditlog(@RequestParam Map<String, Object> params) throws ParseException{
+	  
 	    Date startDate = DateCalendarUtils.parseJsonDate((String)params.get("startDate"));
 	    Date endDate = DateCalendarUtils.parseJsonDate((String)params.get("endDate"));
 	    String action = (String)params.get("actionType");
+	    String userId = (String)params.get("user");
+	    AuditActionType actionType = getAuditlogActionType(action);
 	    
 	    DateRange range = new DateRange();
 	    range.setStart(startDate);
 	    range.setEnd(endDate);
-	    
-	    AuditActionType actionType = getAuditlogActionType(action);
-	    
+
 	    params.remove("startDate");
 	    params.remove("endDate");
 	    
 	    params.put("timestamp", range);
-	    params.put("actionType", actionType);
+	    
+	    if (actionType != null ) {
+	    	params.put("actionType", actionType);
+	    }
+	    
+	    if (userId != null ) {
+	    	User user = userService.fetchUser(userId);
+	    	
+	    	if (user != null ) {
+		    	params.put("user", user);
+		    }
+	    }
+	    
 	   
 	    
 	    return auditService.getAuditlog(params);
@@ -375,7 +393,7 @@ public class AdminController {
   }
   
   @RequestMapping(method = RequestMethod.GET, value = "/api/errorlog")
-  public List<ErrorRecordDto> filterErrorlog(@RequestParam Map<String, Object> params) throws ParseException{
+  public List<ErrorRecordDto> getErrorlog(@RequestParam Map<String, Object> params) throws ParseException{
 	  DateRange range = new DateRange();
 	 
     Date startDate = DateCalendarUtils.parseJsonDate((String)params.get("startDate"));
@@ -513,6 +531,7 @@ public class AdminController {
     return ret;
   }
   
+  @Deprecated
   private List<ErrorDetailInfo> fetchErrorLogData(String code, Date startDate, Date endDate) {
     Date from = startDate;
     Date to = endDate;
