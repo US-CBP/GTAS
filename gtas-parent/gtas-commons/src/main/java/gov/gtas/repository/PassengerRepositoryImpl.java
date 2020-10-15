@@ -86,8 +86,8 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		Join<Flight, FlightCountDownView> flightCountDownViewJoin = flight.join("flightCountDownView", JoinType.INNER);
 		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.INNER);
 		Join<Passenger, HitDetail> hitDetails = pax.join("hitDetails", JoinType.INNER);
-		Join<Passenger, PassengerNote> passengerNote = pax.join("notes", JoinType.INNER);
-		Join<PassengerNote, NoteType> passengerNoteType = passengerNote.join("noteType", JoinType.INNER);
+		Join<PassengerNote ,Passenger> passengerNote = pax.join("notes", JoinType.LEFT);
+		Join<NoteType, PassengerNote> passengerNoteType = passengerNote.join("noteType", JoinType.LEFT);
 		Join<HitDetail, HitViewStatus> hitViewJoin = hitDetails.join("hitViewStatus", JoinType.INNER);
 		Join<HitDetail, HitMaker> hitMakerJoin = hitDetails.join("hitMaker", JoinType.INNER);
 		Join<HitMaker, HitCategory> hitCategoryJoin = hitMakerJoin.join("hitCategory", JoinType.INNER);
