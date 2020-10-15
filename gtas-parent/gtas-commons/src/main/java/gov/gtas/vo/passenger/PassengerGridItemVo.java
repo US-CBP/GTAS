@@ -31,6 +31,7 @@ public class PassengerGridItemVo extends BaseVo implements PIIObject {
 	private Date dob;
 	private String paxId;
 	private String seat;
+	private String coTravellerId;
 
 	// flight info
 	private String flightId;
@@ -246,6 +247,10 @@ public class PassengerGridItemVo extends BaseVo implements PIIObject {
 	public void setDocuments(List<DocumentVo> documents) {
 		this.documents = documents;
 	}
+
+	public String getCoTravellerId() { return coTravellerId; }
+
+	public void setCoTravellerId(String coTravellerId) { this.coTravellerId = coTravellerId; }
 
 	@Override
 	public PIIObject deletePII() {
