@@ -15,9 +15,12 @@ public class AuditRecordVo {
 	private String message;
 	private String user;
 	private String userName;
+	@Deprecated
 	private String timestamp;
 	private String target;
 	private String actionData;
+	private Long timestampInMilli;
+	
 
 	public AuditRecordVo() {
 	}
@@ -32,6 +35,14 @@ public class AuditRecordVo {
 		this.timestamp = DateCalendarUtils.formatRuleEngineDateTime(auditRecord.getTimestamp());
 		this.target = auditRecord.getTarget();
 		this.actionData = auditRecord.getActionData();
+	}
+
+	public Long getTimestampInMilli() {
+		return timestampInMilli;
+	}
+
+	public void setTimestampInMilli(Long timestampInMilli) {
+		this.timestampInMilli = timestampInMilli;
 	}
 
 	public String getActionType() {
@@ -117,6 +128,23 @@ public class AuditRecordVo {
 	 */
 	public void setActionData(String actionData) {
 		this.actionData = actionData;
+	}
+	
+	public static AuditRecordVo from(AuditRecord auditRecord) {
+		AuditRecordVo vo = new AuditRecordVo();
+		final User user = auditRecord.getUser();
+		
+		vo.setActionType(auditRecord.getActionType().toString());
+		vo.setStatus(auditRecord.getActionStatus().toString());
+		vo.setMessage(auditRecord.getMessage());
+		vo.setUser(user.getUserId());
+		vo.setUserName(user.getFirstName() + " " + user.getLastName());
+		vo.setTimestamp(DateCalendarUtils.formatRuleEngineDateTime(auditRecord.getTimestamp()));
+		vo.setTimestampInMilli(auditRecord.getTimestamp().getTime());
+		vo.setTarget(auditRecord.getTarget());
+		vo.setActionData(auditRecord.getActionData());
+		
+		return vo;
 	}
 
 }

@@ -5,18 +5,23 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.email.dto.ErrorRecordDto;
+import gov.gtas.enumtype.FilterOperationsEnum;
 import gov.gtas.error.BasicErrorDetailInfo;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.model.ErrorRecord;
 import gov.gtas.repository.ErrorRecordRepository;
+import gov.gtas.search.SearchSpecificationBuilder;
 
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -53,6 +58,19 @@ public class ErrorPersistenceServiceImpl implements ErrorPersistenceService {
 	@Override
 	public List<ErrorDetailInfo> findByCode(String code) {
 		return convert(errorRecordRepository.findByCode(code));
+	}
+	
+	@Override
+	public List<ErrorRecordDto> search(Map<String, Object> queryParameters) {
+		SearchSpecificationBuilder<ErrorRecord> specificationBuilder = new SearchSpecificationBuilder<ErrorRecord> ();
+		specificationBuilder.addFilterOperation("timestamp", FilterOperationsEnum.BETWEEN.toString());
+		
+		Specification<ErrorRecord> searchCriteria = specificationBuilder.with(queryParameters).build();
+		
+		List<ErrorRecord> errorLogs = this.errorRecordRepository.findAll(searchCriteria);
+		
+		return errorLogs.stream().map(ErrorRecordDto::from).collect(Collectors.toList());
+		
 	}
 
 	private List<ErrorDetailInfo> convert(List<ErrorRecord> lst) {

@@ -6,15 +6,15 @@
 package gov.gtas.repository;
 
 import gov.gtas.model.ErrorRecord;
-
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-public interface ErrorRecordRepository extends CrudRepository<ErrorRecord, Long> {
+public interface ErrorRecordRepository extends CrudRepository<ErrorRecord, Long> , JpaSpecificationExecutor<ErrorRecord>{
 	public List<ErrorRecord> findByCode(String code);
 
 	@Query("SELECT er FROM ErrorRecord er WHERE er.timestamp >= :fromDate and  er.timestamp <= :toDate ORDER BY er.timestamp DESC ")
