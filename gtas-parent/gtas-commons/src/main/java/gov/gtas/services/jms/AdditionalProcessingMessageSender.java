@@ -21,14 +21,15 @@ public class AdditionalProcessingMessageSender {
     private final JmsTemplate jmsTemplateFile;
 
     @Autowired
-    public AdditionalProcessingMessageSender(JmsTemplate jmsTemplateFile) {
+    public AdditionalProcessingMessageSender(
+            JmsTemplate jmsTemplateFile) {
         this.jmsTemplateFile = jmsTemplateFile;
     }
 
     public void sendProcessedMessage(String queueName, MessageSummaryList messageSummaryList, SummaryMetaData smd) {
         jmsTemplateFile.setDefaultDestinationName(queueName);
         EventIdentifier eventIdentifier = messageSummaryList.getEventIdentifier();
-        jmsTemplateFile.send(session -> {
+        jmsTemplateFile.send(queueName, session -> {
             ObjectMapper mapper = new ObjectMapper();
             String messageJson;
             try {

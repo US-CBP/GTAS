@@ -389,10 +389,14 @@ public class SummaryFactory {
     public static PendingHitDetails from(PassengerPendingDetail passengerPendingDetail) {
         PendingHitDetails phd = new PendingHitDetails();
         phd.setCreatedDate(passengerPendingDetail.getCreatedDate());
+        if (phd.getCreatedDate() == null) {
+       //     logger.warn("No create date! Setting one to now.");
+            phd.setCreatedDate(new Date());
+        }
         phd.setDescription(passengerPendingDetail.getDescription());
         phd.setFlightId(passengerPendingDetail.getFlightId());
         Optional<HitTypeEnum> hteo = HitTypeEnum.fromString(passengerPendingDetail.getHitEnum());
-
+        phd.setTitle(passengerPendingDetail.getTitle());
         if (hteo.isPresent()) {
             phd.setHitEnum(hteo.get());
         } else {
