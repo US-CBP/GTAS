@@ -29,6 +29,13 @@ public class NoteType extends BaseEntityAudit {
     @Column(name = "nt_type", unique = true)
     private String type;
 
+    @Column(name = "archived")
+    private boolean archived;
+
+    public boolean isArchived() { return archived; }
+
+    public void setArchived(boolean archived) { this.archived = archived; }
+
     public String getType() {
         return type;
     }

@@ -5,6 +5,9 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.enumtype.Status;
+import gov.gtas.json.JsonLookupData;
+import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.UserGroup;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.HitCategoryRepository;
@@ -19,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RuleCatServiceImpl implements HitCategoryService {
@@ -57,5 +62,20 @@ public class RuleCatServiceImpl implements HitCategoryService {
 		defaultUserGroup.getHitCategories().add(hitCategory);
 		userGroupRepository.save(defaultUserGroup);
 	}
+
+	@Override
+	public JsonServiceResponse updateHitCategory(HitCategory hitCategory) {
+		hitCategoryRepository.save(hitCategory);
+		return new JsonServiceResponse(Status.SUCCESS, "Updated hit category", hitCategory);
+	}
+
+	@Override
+	public List<JsonLookupData> getAllNonArchivedCategories() {
+		List<JsonLookupData> result = hitCategoryRepository.getAllNonArchivedCategories().stream().map(w ->
+				new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString(), w.isArchived()))
+				.collect(Collectors.toList());
+		return result;
+	}
+
 
 }

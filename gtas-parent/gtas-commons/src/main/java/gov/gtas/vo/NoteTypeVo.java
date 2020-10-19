@@ -24,6 +24,9 @@ public class NoteTypeVo {
     @JsonProperty("noteType")
     private String noteType;
 
+    @JsonProperty("archived")
+    private boolean archived;
+
     public NoteTypeVo(){}
 
     public String getNoteType() {
@@ -42,11 +45,16 @@ public class NoteTypeVo {
         this.id = id;
     }
 
+    public boolean isArchived() { return archived; }
+
+    public void setArchived(boolean archived) { this.archived = archived; }
+
 
     public static NoteTypeVo from(NoteType noteType) {
         NoteTypeVo noteTypeVo = new NoteTypeVo();
         noteTypeVo.setId(noteType.getId());
         noteTypeVo.setNoteType(noteType.getType());
+        noteTypeVo.setArchived(noteType.isArchived());
         return noteTypeVo;
     }
 

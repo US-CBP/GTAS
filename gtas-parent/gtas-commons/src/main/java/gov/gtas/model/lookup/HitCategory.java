@@ -37,6 +37,9 @@ public class HitCategory extends BaseEntityAudit {
 	@JsonIgnore
 	private Set<UserGroup> userGroups = new HashSet<>();
 
+	@Column(name = "archived")
+	private boolean archived;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -91,4 +94,8 @@ public class HitCategory extends BaseEntityAudit {
 	public void setSeverity(HitSeverityEnum severity) {
 		this.severity = severity;
 	}
+
+	public boolean isArchived() { return archived; }
+
+	public void setArchived(boolean archived) { this.archived = archived; }
 }

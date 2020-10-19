@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -138,6 +139,26 @@ public class WatchlistManagementController {
 		pendingHitDetailsService.createManualHitMaker(hitCategory.getDescription(),
 				userService.fetchUser(GtasSecurityUtils.fetchLoggedInUserId()), hitCategory.getId());
 
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE, value =Constants.WL_CATEGORY_DELETEBYID)
+	public JsonServiceResponse deleteWatchlistCategoryById(@PathVariable("id") Long id){
+		return watchlistService.deleteWatchlistCategory(id);
+	}
+
+	@RequestMapping(method = RequestMethod.PUT, value=Constants.WL_ADD_WL_CAT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public JsonServiceResponse editWatchlistCategoryById(@RequestBody JsonLookupData wlCategory){
+		HitCategory tmpHc = hitCategoryService.findById(wlCategory.getId());
+		if(tmpHc != null){
+			Optional<HitSeverityEnum> tmpHitEnum = HitSeverityEnum.fromString(wlCategory.getSeverity());
+			if(tmpHitEnum.isPresent()){
+				tmpHc.setSeverity(tmpHitEnum.get());
+			}
+			tmpHc.setDescription(wlCategory.getDescription());
+			tmpHc.setName(wlCategory.getLabel());
+			return hitCategoryService.updateHitCategory(tmpHc);
+		}
+		return new JsonServiceResponse(Status.FAILURE, "No change detected for given hit category", wlCategory);
 	}
 
 	/**
@@ -292,8 +313,14 @@ public class WatchlistManagementController {
 	@RequestMapping(value = Constants.WL_CATEGORY_GETALL, method = RequestMethod.GET)
 	@ResponseBody
 	public List<JsonLookupData> getWatchlistCategories() {
-
 		List<JsonLookupData> result = watchlistService.findWatchlistCategories();
+		return result;
+	}
+
+	@RequestMapping(value = Constants.WL_CATEGORY_GETALLNONARCHIVED, method = RequestMethod.GET)
+	@ResponseBody
+	public List<JsonLookupData> getAllNonArchivedWatchlistCategories() {
+		List<JsonLookupData> result = hitCategoryService.getAllNonArchivedCategories();
 		return result;
 	}
 

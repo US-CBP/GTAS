@@ -70,11 +70,11 @@ INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Noti
 INSERT INTO app_configuration (description, opt, val) VALUES ('Recompile Rules', 'RECOMPILE_RULES', 'false');
 
 
-insert into hit_category(id, category, description, severity) values(1, 'General', 'General category', 2);
-insert into hit_category(id, category, description, severity) values(2, 'Terrorism', 'Terrorism related entities',0);
-insert into hit_category(id, category, description, severity) values(3, 'World Health', 'Health Alert related',1);
-insert into hit_category(id, category, description, severity) values(4, 'Federal Law Enforcement', 'Federal watch category',0);
-insert into hit_category(id, category, description, severity) values(5, 'Local Law Enforcement', 'Local watch category',0);
+insert into hit_category(id, category, description, severity, archived) values(1, 'General', 'General category', 2, false);
+insert into hit_category(id, category, description, severity, archived) values(2, 'Terrorism', 'Terrorism related entities',0, false);
+insert into hit_category(id, category, description, severity, archived) values(3, 'World Health', 'Health Alert related',1, false);
+insert into hit_category(id, category, description, severity, archived) values(4, 'Federal Law Enforcement', 'Federal watch category',0, false);
+insert into hit_category(id, category, description, severity, archived) values(5, 'Local Law Enforcement', 'Local watch category',0, false);
 
 INSERT INTO gtas.user_group (id, created_at, created_by, updated_at, updated_by, ug_name) VALUES (1, null, null, null, null, 'default');
 INSERT INTO gtas.ug_user_join (ug_id, user_id) VALUES (1, 'ADMIN');
@@ -85,8 +85,8 @@ INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 3);
 INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 4);
 INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 5);
 
-INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (1, null, null, null, null, 'GENERAL_PASSENGER');
-INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (2, null, null, null, null, 'DELETED');
+INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type, archived) VALUES (1, null, null, null, null, 'GENERAL_PASSENGER', false);
+INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type, archived) VALUES (2, null, null, null, null, 'DELETED', false);
 
 -- ----------------------------
 -- Manual Hit HitMaker Population
