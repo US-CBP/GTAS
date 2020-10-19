@@ -158,7 +158,7 @@ public class WatchlistManagementController {
 			tmpHc.setName(wlCategory.getLabel());
 			return hitCategoryService.updateHitCategory(tmpHc);
 		}
-		return new JsonServiceResponse(Status.FAILURE, "No change detected for given hit category", wlCategory);
+		return new JsonServiceResponse(Status.FAILURE, "Invalid hit category update", wlCategory);
 	}
 
 	/**
