@@ -11,9 +11,11 @@ import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.User;
+import gov.gtas.vo.AuditRecordVo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -49,4 +51,6 @@ public interface AuditLogPersistenceService {
 	public List<AuditRecord> findByTarget(String target);
 
 	public List<AuditRecord> findAll();
+
+	public List<AuditRecordVo> getAuditlog(Map<String, Object> params);
 }

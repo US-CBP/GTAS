@@ -1,7 +1,6 @@
 package gov.gtas.services;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +23,7 @@ import gov.gtas.model.SignupRequest;
 import gov.gtas.repository.SignupLocationRepository;
 import gov.gtas.repository.SignupRequestRepository;
 import gov.gtas.repository.UserRepository;
-import gov.gtas.search.SignupRequestSpecificationBuilder;
+import gov.gtas.search.SearchSpecificationBuilder;
 import gov.gtas.services.dto.EmailDTO;
 import gov.gtas.services.dto.SignupRequestDTO;
 import gov.gtas.services.security.UserData;
@@ -71,7 +70,7 @@ public class SignupRequestServiceImpl implements SignupRequestService {
 	@Override
 	@Transactional
 	public List<SignupRequestDTO> search(Map<String, Object> queryParameters) {
-		Specification<SignupRequest> searchCriteria = new SignupRequestSpecificationBuilder().with(queryParameters).build();
+		Specification<SignupRequest> searchCriteria = new SearchSpecificationBuilder<SignupRequest>().with(queryParameters).build();
 		
 		List<SignupRequest> signupRequests = this.signupRequestRepository.findAll(searchCriteria);
 		
