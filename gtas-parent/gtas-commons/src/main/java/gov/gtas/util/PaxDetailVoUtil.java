@@ -207,6 +207,7 @@ public class PaxDetailVoUtil {
 			target.setFullFlightNumber(source.getFullFlightNumber());
 			target.setFlightId(source.getId().toString());
 			target.setIdTag(source.getIdTag());
+			target.setPassengerCount(source.getFlightPassengerCount().getPassengerCount());
 		} catch (Exception e) {
 			logger.error("error populating flight vo", e);
 		}
