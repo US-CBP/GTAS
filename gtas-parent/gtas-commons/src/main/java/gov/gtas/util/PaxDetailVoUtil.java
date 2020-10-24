@@ -342,6 +342,7 @@ public class PaxDetailVoUtil {
 							fl.getFlight().getMutableFlightDetails().getEta());
 					flVo.setFlightId(Long.toString(fl.getFlight().getId()));
 					flVo.setDirection(fl.getFlight().getDirection());
+					flVo.setPassengerCount(fl.getFlight().getFlightPassengerCount().getPassengerCount());
 				} else {
 					flVo.setFlightNumber(fl.getBookingDetail().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getBookingDetail().getOrigin());
@@ -349,6 +350,7 @@ public class PaxDetailVoUtil {
 					flVo.setEtd(fl.getBookingDetail().getEtd());
 					flVo.setEta(fl.getBookingDetail().getEta());
 					flVo.setBookingDetailId(Long.toString(fl.getBookingDetail().getId()));
+					flVo.setPassengerCount(fl.getBookingDetail().getPassengers().size());
 				}
 				target.getFlightLegs().add(flVo);
 			}
