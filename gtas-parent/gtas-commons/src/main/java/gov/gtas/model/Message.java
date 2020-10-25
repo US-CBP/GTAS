@@ -66,6 +66,9 @@ public class Message extends BaseEntity implements MessageFields {
 	@Transient
 	private List<PendingHitDetails> pendingHitDetails = new ArrayList<>();
 
+	@Transient
+	private List<PassengerNote> passengerNotes = new ArrayList<>();
+
 	public List<PendingHitDetails> getPendingHitDetails() {
 		return pendingHitDetails;
 	}
@@ -230,5 +233,13 @@ public class Message extends BaseEntity implements MessageFields {
 	@Override
 	public void setFlights(Set<Flight> flights) {
 		throw new UnsupportedOperationException();
+	}
+
+	public List<PassengerNote> getPassengerNotes() {
+		return passengerNotes;
+	}
+
+	public void setPassengerNotes(List<PassengerNote> passengerNotes) {
+		this.passengerNotes = passengerNotes;
 	}
 }

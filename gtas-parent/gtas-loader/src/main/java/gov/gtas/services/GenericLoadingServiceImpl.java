@@ -4,6 +4,7 @@ import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.enumtype.MessageType;
 import gov.gtas.enumtype.TripTypeEnum;
 import gov.gtas.model.*;
+import gov.gtas.model.PassengerNote;
 import gov.gtas.parsers.util.TextUtils;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
@@ -43,6 +44,8 @@ public class GenericLoadingServiceImpl implements GenericLoading {
 
     private final HitMakerRepository hitMakerRepository;
 
+    private final NoteTypeRepository noteTypeRepository;
+
     final
     GtasLoader gtasLoader;
 
@@ -59,7 +62,7 @@ public class GenericLoadingServiceImpl implements GenericLoading {
                                      MutableFlightDetailsRepository mutableFlightDetailsRepository,
                                      BookingDetailRepository bookingDetailRepository,
                                      LoaderServices loaderServices,
-                                     HitMakerRepository hitMakerRepository, GtasLoader gtasLoader,
+                                     HitMakerRepository hitMakerRepository, NoteTypeRepository noteTypeRepository, GtasLoader gtasLoader,
                                      PnrRepository pnrRepository,
                                      ApisMessageRepository apisMessageRepository,
                                      MessageStatusRepository messageStatusRepository) {
@@ -68,6 +71,7 @@ public class GenericLoadingServiceImpl implements GenericLoading {
         this.bookingDetailRepository = bookingDetailRepository;
         this.loaderServices = loaderServices;
         this.hitMakerRepository = hitMakerRepository;
+        this.noteTypeRepository = noteTypeRepository;
         this.gtasLoader = gtasLoader;
         this.pnrRepository = pnrRepository;
         this.apisMessageRepository = apisMessageRepository;
@@ -94,6 +98,10 @@ public class GenericLoadingServiceImpl implements GenericLoading {
 
                 // Set hit information, if any
                 messageInformation.getPendingHitDetailsSet().addAll(pnr.getPendingHitDetails());
+
+                // Set passenger note information, if any
+                messageInformation.getPassengerNotes().addAll(pnr.getPassengerNotes());
+
 
                 // PNR Specific Loading
                 pnr.setRecordLocator(messageSummary.getPnrRefNumber());
@@ -134,6 +142,9 @@ public class GenericLoadingServiceImpl implements GenericLoading {
                 // Set hit information, if any
                 messageInformation.getPendingHitDetailsSet().addAll(apisMessage.getPendingHitDetails());
 
+                //Set pending note info, if any
+                messageInformation.getPassengerNotes().addAll(apisMessage.getPassengerNotes());
+
                 // Prep message for sending to additional processing
                 if (additionalProcessing) {
                     String rawMessage = messageSummary.getRawMessage();
@@ -173,7 +184,7 @@ public class GenericLoadingServiceImpl implements GenericLoading {
         message.setEdifactMessage(edifactMessage);
         message.setRaw(LobUtils.createClob(messageSummary.getRawMessage()));
 
-        //Make flight and passenger. Save temp hits to message (as passengers are created)
+        //Make flight and passenger. Save temp hits to message (as passengers are created) Save temp notes to message (as passenger s
         Flight bcEvent = ProcessFlightAndPassenger(messageSummary, eventIdentifier, message);
 
         message.setPassengerCount(message.getPassengers().size());
@@ -217,12 +228,30 @@ public class GenericLoadingServiceImpl implements GenericLoading {
         Flight bcEvent = processMessageTravel(messageSummary, eventIdentifier, pnr);
         int passengerCount = processPassengerInformation(messageSummary, pnr, bcEvent);
 
-        // Pending hit details require a passenger Id to process, but one is not guaranteed until passengers are fully processed.
-        // processPassengerInformation will add a mostly completed pending hit detail to the message. This will add the ID
+        // Notes require a passenger Id to process, but one is not guaranteed until passengers are fully processed.
+        // processPassengerInformation will add a mostly completed note to the message. This will add the ID
         // and the passenger object needed to save correctly.
         addPassengerToPendingHitDetails(pnr);
+
+        // Notes require a passenger Id to process, but one is not guaranteed until passengers are fully processed.
+        // processPassengerInformation will add a mostly completed note to the message. This will add the ID
+        // and the passenger object needed to save correctly.
+        addPassengerToPendingNotes(pnr);
+
+
         gtasLoader.updateFlightPassengerCount(bcEvent, passengerCount);
         return bcEvent;
+    }
+
+    private void addPassengerToPendingNotes(Message pnr) {
+        List<PassengerNote> paxNoteList = pnr.getPassengerNotes();
+        Map<UUID, Passenger> paxMap = pnr.getPassengers().stream().collect(
+                Collectors.toMap(Passenger::getUuid, Function.identity()));
+        for (PassengerNote paxNote : paxNoteList) {
+            Passenger p = paxMap.get(paxNote.getPassengerGUID());
+            paxNote.setPassenger(p);
+            paxNote.setPassengerId(p.getId());
+        }
     }
 
     private void addPassengerToPendingHitDetails(Message pnr) {
@@ -246,6 +275,8 @@ public class GenericLoadingServiceImpl implements GenericLoading {
         Set<Passenger> newPassengers = new HashSet<>();
         MessageType mt =  MessageType.fromString(messageSummary.getMessageType()).orElse(MessageType.NO_TYPE);
         List<PendingHitDetails> phdList = new ArrayList<>();
+        List<PassengerNote> passengerNotes = new ArrayList<>();
+
         for (PassengerSummary ps : passengerSummaries) {
             Optional<Passenger> passengerOptional = loaderServices.findPassengerOnFlight(bcEvent, ps, recordLocatorNumber);
             if (passengerOptional.isPresent()) {
@@ -255,6 +286,7 @@ public class GenericLoadingServiceImpl implements GenericLoading {
                 populatePassengerDetails(ps, passengerDetails);
 
                 createPendingHitDetails(bcEvent, phdList, ps, existingPassenger);
+                createPassengerNotes(passengerNotes, ps, existingPassenger);
                 PassengerTripDetails tripDetails = existingPassenger.getPassengerTripDetails();
                 populatePassengerTripInfo(hoursBeforeTakeOff, ps, tripDetails);
                 LoaderUtils.calculateValidVisaDays(bcEvent, existingPassenger);
@@ -301,6 +333,7 @@ public class GenericLoadingServiceImpl implements GenericLoading {
                 PassengerDetailFromMessage pdfm = fromVoAndMessage(ps, message, passenger);
                 passenger.getPassengerDetailFromMessages().add(pdfm);
                 createPendingHitDetails(bcEvent, phdList, ps, passenger);
+                createPassengerNotes(passengerNotes, ps, passenger);
                 if (mt == MessageType.PNR) {
                     passenger.getDataRetentionStatus().setHasPnrMessage(true);
                 } else if (mt == MessageType.APIS) {
@@ -309,6 +342,7 @@ public class GenericLoadingServiceImpl implements GenericLoading {
             }
         }
         message.getPendingHitDetails().addAll(phdList);
+        message.getPassengerNotes().addAll(passengerNotes);
         return gtasLoader.createPassengers(newPassengers, pax, bcEvent, bd);
     }
 
@@ -344,6 +378,30 @@ public class GenericLoadingServiceImpl implements GenericLoading {
             phd.setHitMaker(ehl);
             phd.setTitle(ph.getTitle());
             phdList.add(phd);
+        }
+    }
+
+    private void createPassengerNotes(List<PassengerNote> phdList, PassengerSummary ps, Passenger existingPassenger) {
+        List<gov.gtas.summary.PassengerNote> passengerNotes = ps.getPassengerNotes();
+        for (gov.gtas.summary.PassengerNote pn : passengerNotes) {
+            List<String> noteTypes = pn.getNoteType();
+            PassengerNote pnote = new PassengerNote();
+            pnote.setPassengerGUID(existingPassenger.getUuid());
+            pnote.setRtfComment(pn.getRtfNote());
+            pnote.setPlainTextComment(pn.getPlainTextNote());
+            pnote.setPassenger(existingPassenger);
+            pnote.setPassengerId(existingPassenger.getId());
+            if (noteTypes.isEmpty()) {
+                logger.error("no type given for note! Using type LOOKOUT");
+                NoteType nt = noteTypeRepository.getLookoutNoteType();
+                pnote.getNoteType().add(nt);
+            } else {
+                Set<NoteType> noteTypesSet = noteTypeRepository.findByTypes(noteTypes);
+                NoteType nt = noteTypeRepository.getLookoutNoteType();
+                noteTypesSet.add(nt);
+                pnote.getNoteType().addAll(noteTypesSet);
+            }
+            phdList.add(pnote);
         }
     }
 

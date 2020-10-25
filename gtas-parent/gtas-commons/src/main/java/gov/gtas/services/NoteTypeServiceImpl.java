@@ -45,4 +45,11 @@ public class NoteTypeServiceImpl implements NoteTypeService {
 	public NoteType getDeletedNoteType() {
 		return noteTypeRepository.findByType("DELETED").orElseThrow(RuntimeException::new);
 	}
+
+	@Override
+	public NoteType getLookoutNoteType() {
+		return noteTypeRepository.findByType("LOOKOUT").orElseThrow(RuntimeException::new);
+	}
+
+
 }

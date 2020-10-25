@@ -15,6 +15,7 @@ import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.omni.model.OmniPassenger;
+import gov.gtas.repository.PassengerNoteRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.summary.MessageAction;
 import gov.gtas.summary.MessageSummary;
@@ -49,6 +50,9 @@ public class Loader {
 
 	@Autowired
 	private PendingHitDetailRepository pendingHitDetailRepository;
+
+	@Autowired
+	private PassengerNoteRepository passengerNoteRepository;
 
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
@@ -160,6 +164,9 @@ public class Loader {
 					}
 					if (!mi.getPendingHitDetailsSet().isEmpty()) {
 						pendingHitDetailRepository.saveAll(mi.getPendingHitDetailsSet());
+					}
+					if (!mi.getPassengerNotes().isEmpty()) {
+						passengerNoteRepository.saveAll(mi.getPassengerNotes());
 					}
 		 		} else {
 					messageStatus.setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);

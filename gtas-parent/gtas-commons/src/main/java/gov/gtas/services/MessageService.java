@@ -13,4 +13,6 @@ public interface MessageService {
 
 	List<Message> getMostRecent500Messages();
 
+	RecentMessageInformation mostRecentId(Long passengerId, Long flightId);
+
 }
