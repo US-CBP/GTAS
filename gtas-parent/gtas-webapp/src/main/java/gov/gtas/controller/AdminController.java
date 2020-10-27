@@ -15,6 +15,7 @@ import gov.gtas.model.User;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.search.DateRange;
 import gov.gtas.services.*;
+import gov.gtas.services.dto.AppStatisticsDTO;
 import gov.gtas.services.dto.ApplicationStatisticsDTO;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
@@ -116,9 +117,15 @@ private UserService userService;
   // ADMIN LOG FILE DOWNLOAD
   // ------------------------------------------------- //
 
+  @Deprecated
   @RequestMapping(method = RequestMethod.GET, value = "/api/statistics")
   public ApplicationStatisticsDTO getApplicationStatistics() {
     return adminService.createApplicationStatisticsDto();
+  }
+  
+  @RequestMapping(method = RequestMethod.GET, value = "/api/application/statistics")
+  public AppStatisticsDTO getAppStatistics() {
+    return adminService.getAppStatistics();
   }
 
   // GET LIST OF AVAILABLE LOG TYPES

@@ -11,7 +11,7 @@ package gov.gtas.services.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
-
+@Deprecated
 @SuppressWarnings("unused") // Data is returned to the front end and IS used to display.
 public class ApplicationStatisticsDTO {
 	private static final String DATE_FORMAT = "yyyy-MM-dd@HH:mm:ss";
