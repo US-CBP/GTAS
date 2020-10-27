@@ -11,13 +11,15 @@ public class JsonLookupData {
 	private String label;
 	private String description;
 	private String severity;
+	private boolean archived;
 
-	public JsonLookupData(Long id, String label, String description, String severity) {
+	public JsonLookupData(Long id, String label, String description, String severity, boolean archived) {
 		super();
 		this.id = id;
 		this.label = label;
 		this.description = description;
 		this.severity = severity;
+		this.archived = archived;
 	}
 
 	@SuppressWarnings("unused") // Used to marshal object.
@@ -55,5 +57,9 @@ public class JsonLookupData {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public boolean isArchived() { return archived; }
+
+	public void setArchived(boolean archived) { this.archived = archived; }
 
 }

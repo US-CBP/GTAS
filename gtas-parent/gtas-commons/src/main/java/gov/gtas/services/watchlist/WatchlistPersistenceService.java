@@ -6,9 +6,11 @@
 package gov.gtas.services.watchlist;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 
 import java.util.List;
 
+import gov.gtas.json.JsonServiceResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import gov.gtas.enumtype.EntityEnum;
@@ -121,7 +123,9 @@ public interface WatchlistPersistenceService {
 	WatchlistItem findWatchlistItemById(Long watchlistItemId);
 
 	List<WatchlistItem> findItemsByWatchlistName(String watchlistName);
-	
+
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public JsonServiceResponse deleteWatchlistCategoryById(long categoryId);
 	/**
 	 * Deletes a given list of individual watchlist item ids
 	 * @param watchlistItemIds

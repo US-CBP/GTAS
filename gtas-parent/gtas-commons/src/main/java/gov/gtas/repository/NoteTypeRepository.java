@@ -29,4 +29,7 @@ public interface NoteTypeRepository extends CrudRepository<NoteType, Long> {
     Set<NoteType> findAllById(@Param("ids") Set<Long> ids);
     
     List<NoteType> findAll();
+
+    @Query("select n from NoteType n where n.archived = false  OR n.archived IS NULL")
+    List<NoteType> getNonArchivedNoteTypes();
 }

@@ -19,6 +19,7 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
+import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.GeneralAuditRecord;
 import gov.gtas.model.User;
@@ -26,6 +27,7 @@ import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.repository.AuditRecordRepository;
+import gov.gtas.repository.HitCategoryRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
 import gov.gtas.services.HitCategoryService;
@@ -68,6 +70,9 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private HitCategoryRepository hitCategoryRepository;
 
 	@Resource
 	private HitCategoryService hitCategoryService;
@@ -269,6 +274,27 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 	public HitCategory fetchWatchlistCategoryById(Long categoryID) {
 		//
 		return this.watchlistRepository.getWatchlistCategoryById(categoryID);
+	}
+
+	@Override
+	public JsonServiceResponse deleteWatchlistCategoryById(long categoryId){
+		// Make attempt to delete, due to constraints potentially on hitcategories and
+		// wanting to preserve history of those
+		// constrained elements hitcategory will become archived instead
+		try {
+			hitCategoryRepository.deleteById(categoryId);;
+			logger.info("The HitCategory with Id " + categoryId + " was successfully deleted.");
+		} catch (Exception e) { // TODO change to appropriate exception
+			logger.info("The HitCategory with id " + categoryId + " was unable to be deleted. Attempting to archive instead");
+			Optional<HitCategory> tmpHitCategory = hitCategoryRepository.findById(categoryId);
+			if(tmpHitCategory.isPresent()) {
+				HitCategory hc = tmpHitCategory.get();
+				hc.setArchived(Boolean.TRUE);
+				hitCategoryRepository.save(hc);
+			}
+			return new JsonServiceResponse(Status.SUCCESS_WITH_WARNING, "Failed To Delete HitCategory, Archived HitCategory Instead");
+		}
+		return new JsonServiceResponse(Status.SUCCESS, "Successfully Deleted HitCategory", categoryId);
 	}
 
 	@Override

@@ -326,6 +326,8 @@ public class PassengerServiceImpl implements PassengerService {
 			}
 			if(latestPnr != null) {
 				vo.setCoTravellerId(latestPnr.getRecordLocator());
+			} else{
+				vo.setCoTravellerId(passenger.getPassengerTripDetails().getReservationReferenceNumber());
 			}
 
 

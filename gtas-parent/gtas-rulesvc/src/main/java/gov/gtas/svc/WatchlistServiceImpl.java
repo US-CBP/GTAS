@@ -146,10 +146,15 @@ public class WatchlistServiceImpl implements WatchlistService {
 	public List<JsonLookupData> findWatchlistCategories() {
 		//
 		List<JsonLookupData> result = this.watchlistPersistenceService.findWatchlistCategories().stream()
-				.map(w -> new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString()))
+				.map(w -> new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString(), w.isArchived()))
 				.collect(Collectors.toList());
 
 		return result;
+	}
+
+	@Override
+	public JsonServiceResponse deleteWatchlistCategory(Long categoryId){
+		return this.watchlistPersistenceService.deleteWatchlistCategoryById(categoryId);
 	}
 
 	@Override

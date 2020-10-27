@@ -9,6 +9,7 @@ import gov.gtas.constant.AuditLogConstants;
 import gov.gtas.email.dto.ErrorRecordDto;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.error.ErrorDetailInfo;
+import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.User;
 import gov.gtas.model.lookup.AppConfiguration;
@@ -131,6 +132,21 @@ private UserService userService;
   @PostMapping(value = "/api/noteType", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   public void saveNoteType(@RequestBody NoteTypeVo noteTypeVo) {
     noteTypeService.saveNoteType(noteTypeVo);
+  }
+
+  @RequestMapping(method = RequestMethod.PUT, value ="/api/noteType")
+  public JsonServiceResponse editNoteType(@RequestBody NoteTypeVo noteTypeVo){
+    return noteTypeService.editNoteType(noteTypeVo);
+  }
+
+  @RequestMapping(method = RequestMethod.DELETE, value ="/api/noteType/{id}")
+  public JsonServiceResponse deleteNoteType(@PathVariable("id") Long id ){
+    return noteTypeService.deleteNoteType(id);
+  }
+
+  @RequestMapping(method = RequestMethod.GET, value ="/api/noteType/nonarchived")
+  public List<NoteTypeVo> getAllNonArchivedNoteTypes(){
+    return noteTypeService.getAllNonArchivedNoteTypes();
   }
 
   // GET LIST OF AVAILABLE LOG FILES BY LOG TYPE. SHOW ZIP FILES ONLY
