@@ -86,6 +86,7 @@ INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 5);
 
 INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (1, null, null, null, null, 'GENERAL_PASSENGER');
 INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (2, null, null, null, null, 'DELETED');
+INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (3, null, null, null, null, 'LOOKOUT');
 
 -- ----------------------------
 -- Manual Hit HitMaker Population

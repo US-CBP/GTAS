@@ -31,4 +31,7 @@ public interface MessageRepository<T extends Message> extends CrudRepository<T, 
 			"(SELECT pnr.id FROM Pnr pnr left join pnr.passengers pax " +
 			"where pax.id in (select hd.passengerId from HitDetail  hd where hd.passenger in pax) and pnr.id in :mIds)")
 			Set<T> messagesWithNoPnrHits(@Param("mIds") Set<Long> mIds);
+
+
+
 }

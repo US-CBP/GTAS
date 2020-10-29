@@ -20,11 +20,11 @@ import java.util.stream.Collectors;
 @Component
 public class PassengerNoteServiceImpl implements PassengerNoteService {
 
-	private PassengerNoteRepository passengerNoteRepository;
+	private final PassengerNoteRepository passengerNoteRepository;
 
-	private NoteTypeRepository noteTypeRepository;
+	private final NoteTypeRepository noteTypeRepository;
 
-	private PassengerService passengerService;
+	private final PassengerService passengerService;
 
 	public PassengerNoteServiceImpl(PassengerNoteRepository passengerNoteRepository, NoteTypeRepository noteTypeRepository, PassengerService passengerService) {
 		this.passengerNoteRepository = passengerNoteRepository;
@@ -77,6 +77,12 @@ public class PassengerNoteServiceImpl implements PassengerNoteService {
 		note.setNoteTypeSet(types);
 		PassengerNote paxNote = PassengerNote.from(note, userId);
 		passengerNoteRepository.save(paxNote);
+	}
+
+	@Override
+	@Transactional
+	public PassengerNote saveNote(PassengerNote passengerNote) {
+		return passengerNoteRepository.save(passengerNote);
 	}
 
 }
