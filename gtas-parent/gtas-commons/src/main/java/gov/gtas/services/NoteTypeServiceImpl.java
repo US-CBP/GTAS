@@ -35,6 +35,10 @@ public class NoteTypeServiceImpl implements NoteTypeService {
 		return noteTypeVoList;
 	}
 
+	@Override
+	public void deleteNoteTypes(Long id) {
+		noteTypeRepository.deleteById(id);
+	}
 
 	@Override
 	public void saveNoteType(NoteTypeVo noteTypeVo) {
