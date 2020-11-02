@@ -11,6 +11,8 @@ public class ExternalHit extends HitMaker {
 
     private String description;
 
+    private Boolean lookout;
+
     public ExternalHit() {
         setHitTypeEnum(HitTypeEnum.EXTERNAL_HIT);
     }
@@ -21,5 +23,13 @@ public class ExternalHit extends HitMaker {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getLookout() {
+        return lookout;
+    }
+
+    public void setLookout(Boolean lookout) {
+        this.lookout = lookout;
     }
 }

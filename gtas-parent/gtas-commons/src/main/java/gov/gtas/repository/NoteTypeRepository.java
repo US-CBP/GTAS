@@ -29,4 +29,10 @@ public interface NoteTypeRepository extends CrudRepository<NoteType, Long> {
     Set<NoteType> findAllById(@Param("ids") Set<Long> ids);
     
     List<NoteType> findAll();
+
+    @Query("Select nt from NoteType  nt where nt.type in :types")
+    Set<NoteType> findByTypes(@Param("types") List<String> types);
+
+    @Query("Select nt from NoteType nt where nt.type = 'LOOKOUT'")
+    NoteType getLookoutNoteType();
 }

@@ -10,20 +10,14 @@ package gov.gtas.job.scheduler;
 
 import static gov.gtas.repository.AppConfigurationRepository.FUZZY_MATCHING;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
-import com.amazonaws.services.sns.AmazonSNSClientBuilder;
-import freemarker.template.TemplateException;
-import gov.gtas.aws.HitNotificationConfig;
 import gov.gtas.email.HitEmailNotificationService;
-import gov.gtas.job.scheduler.service.AdditionalProcessingService;
+import gov.gtas.services.AdditionalProcessingService;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
-import gov.gtas.model.Passenger;
 import gov.gtas.rule.KIEAndLastUpdate;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.ErrorPersistenceService;
@@ -31,7 +25,6 @@ import gov.gtas.services.NotificatonService;
 import gov.gtas.services.RuleHitPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

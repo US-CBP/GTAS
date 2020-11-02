@@ -80,6 +80,9 @@ public class PendingHitDetails extends BaseEntityAudit {
     @Column(name = "percentage_match")
     private float percentage = 1; // 1 = 100%
 
+    @Column(name="lookout")
+    private Boolean lookout;
+
     @Transient
     private UUID passengerGUID;
 
@@ -209,5 +212,13 @@ public class PendingHitDetails extends BaseEntityAudit {
 
     public void setPassengerGUID(UUID passengerGUID) {
         this.passengerGUID = passengerGUID;
+    }
+
+    public Boolean getLookout() {
+        return lookout;
+    }
+
+    public void setLookout(Boolean lookout) {
+        this.lookout = lookout;
     }
 }

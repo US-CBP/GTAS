@@ -9,6 +9,7 @@
 package gov.gtas.services;
 
 import gov.gtas.model.MessageStatus;
+import gov.gtas.model.PassengerNote;
 import gov.gtas.model.PendingHitDetails;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.omni.model.OmniPassenger;
@@ -28,6 +29,7 @@ public class MessageInformation {
 	private MessageSummary messageSummary = new MessageSummary();
 
 	private Set<PendingHitDetails> pendingHitDetailsSet = new HashSet<>();
+	private Set<PassengerNote> passengerNotes = new HashSet<>();
 
 	public MessageStatus getMessageStatus() {
 		return messageStatus;
@@ -65,5 +67,13 @@ public class MessageInformation {
 
 	public void setPendingHitDetailsSet(Set<PendingHitDetails> pendingHitDetailsSet) {
 		this.pendingHitDetailsSet = pendingHitDetailsSet;
+	}
+
+	public Set<PassengerNote> getPassengerNotes() {
+		return passengerNotes;
+	}
+
+	public void setPassengerNotes(Set<PassengerNote> passengerNotes) {
+		this.passengerNotes = passengerNotes;
 	}
 }

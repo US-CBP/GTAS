@@ -23,4 +23,6 @@ public interface NoteTypeService {
 	public void deleteNoteTypes(Long id);
 
     NoteType getDeletedNoteType();
+
+    NoteType getLookoutNoteType();
 }
