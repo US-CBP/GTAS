@@ -14,6 +14,7 @@ import gov.gtas.vo.NoteVo;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name = "passenger_notes")
@@ -27,6 +28,9 @@ public class PassengerNote extends Note implements PIIObject{
 	@JsonIgnore
 	@Column(name = "cmt_passenger_id", columnDefinition = "bigint unsigned")
 	private Long passengerId;
+
+	@Transient
+	private UUID passengerGUID;
 
 	public static PassengerNote from(NoteVo note, String userId) {
 		PassengerNote passengerNote = new PassengerNote();
@@ -69,4 +73,12 @@ public class PassengerNote extends Note implements PIIObject{
 		setPlainTextComment("MASKED");
 		setRtfComment("MASKED");
 		return this;	}
+
+	public UUID getPassengerGUID() {
+		return passengerGUID;
+	}
+
+	public void setPassengerGUID(UUID passengerGUID) {
+		this.passengerGUID = passengerGUID;
+	}
 }

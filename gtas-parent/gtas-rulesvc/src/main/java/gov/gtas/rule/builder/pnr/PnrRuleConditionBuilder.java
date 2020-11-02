@@ -48,7 +48,7 @@ public class PnrRuleConditionBuilder {
 			orderedUUIDList.add(qt.getUuid());
 		}
 		int groupNumber = 0;
-		pnrSeatConditionBuilder = new SeatConditionBuilder(RuleTemplateConstants.PNR_SEAT + groupNumber, false);
+		pnrSeatConditionBuilder = new SeatConditionBuilder(RuleTemplateConstants.PNR_SEAT + groupNumber);
 		this.pnrConditionBuilder = new PnrConditionBuilder(DOLLAR_SIGN + EntityEnum.PNR.getAlias() + groupNumber);
 		EntityConditionBuilder ecb;
 
@@ -273,7 +273,7 @@ public class PnrRuleConditionBuilder {
 		}
 
 		if (!pnrSeatConditionBuilder.isEmpty()) {
-			pnrSeatConditionBuilder.addApisCondition();
+			pnrSeatConditionBuilder.addApisCondition(false);
 			parentStringBuilder.append(pnrSeatConditionBuilder.build());
 		}
 		for (AddressConditionBuilder acb : addressConditionBuilder) {

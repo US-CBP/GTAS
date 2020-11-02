@@ -885,23 +885,6 @@
         "dataSource": "countries"
       },
       {
-        "id": "Passenger.seat",
-        "label": "Seat",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]               
-      },
-      {
         "id": "Passenger.passengerDetails.passengerType",
         "label": "Type",
         "type": "string",
@@ -952,6 +935,56 @@
           "ENDS_WITH",
           "NOT_ENDS_WITH"
         ]                       
+      }
+    ]
+  },
+  "Seat": {
+    "label": "SEAT",
+    "columns": [
+      {
+        "id": "Seat.number",
+        "label": "Number",
+        "type": "string",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "IN",
+          "NOT_IN",
+          "BEGINS_WITH",
+          "NOT_BEGINS_WITH",
+          "CONTAINS",
+          "NOT_CONTAINS",
+          "ENDS_WITH",
+          "NOT_ENDS_WITH"
+        ]
+      },
+      {
+        "id": "Seat.cabinClass",
+        "label": "Cabin Class",
+        "type": "string",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "IN",
+          "NOT_IN",
+          "BEGINS_WITH",
+          "NOT_BEGINS_WITH",
+          "CONTAINS",
+          "NOT_CONTAINS",
+          "ENDS_WITH",
+          "NOT_ENDS_WITH"
+        ]
+      },
+      {
+        "id": "Seat.apis",
+        "label": "Is Apis",
+        "type": "boolean",
+        "operators": "EQUALS",
+        "input": "radio",
+        "values": {
+          "1": "Yes",
+          "0": "No"
+        }
       }
     ]
   },
@@ -1323,23 +1356,6 @@
           "NOT_ENDS_WITH"
         ]                       
       },
-      {
-        "id": "Pnr.seat",
-        "label": "Seat",
-        "type": "string",
-        "operators": [
-          "EQUAL",
-          "NOT_EQUAL",
-          "IN",
-          "NOT_IN",
-          "BEGINS_WITH",
-          "NOT_BEGINS_WITH",
-          "CONTAINS",
-          "NOT_CONTAINS",
-          "ENDS_WITH",
-          "NOT_ENDS_WITH"
-        ]             
-      },     
       {
       	"id": "Pnr.tripType",
       	"label": "Trip Type",

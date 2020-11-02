@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.parsers.omni.model.OmniPassenger;
+import gov.gtas.repository.PassengerNoteRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.summary.MessageAction;
 import gov.gtas.summary.MessageSummary;
@@ -49,8 +51,14 @@ public class Loader {
 	@Autowired
 	private PendingHitDetailRepository pendingHitDetailRepository;
 
+	@Autowired
+	private PassengerNoteRepository passengerNoteRepository;
+
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
+
+	@Value("${omni.enabled}")
+	private Boolean omniEnabled;
 
 	@Value("${additional.processing.enabled.passenger}")
 	private Boolean additionalProcessing;
@@ -94,6 +102,7 @@ public class Loader {
 						// pertaining to a file instead of a specific summary.
 						// Raw messages will always have 1 and only 1 message.
 						text = msl.getMessageSummaryList().get(0).getRawMessage();
+						msgDto.setRawMsg(text);
 					} else {
 						genericLoad = true;
 					}
@@ -130,6 +139,7 @@ public class Loader {
 
 		List<MessageStatus> messageStatuses = new ArrayList<>();
 		List<TamrPassenger> tamrPassengers = new ArrayList<>();
+		List<OmniPassenger> omniPassengers = new ArrayList<>();
 		List<MessageSummary> messageSummaries = new ArrayList<>();
 		int successMsgCount = 0;
 		int failedMsgCount = 0;
@@ -140,14 +150,23 @@ public class Loader {
 				if (messageStatus.isNoLoadingError()) {
 					messageStatus.setMessageStatusEnum(MessageStatusEnum.LOADED);
 					successMsgCount++;
+
 					if (tamrEnabled) {
 						tamrPassengers.addAll(mi.getTamrPassengers());
 					}
+
+					if (omniEnabled) {
+						omniPassengers.addAll(mi.getOmniPassengers());
+					}
+
 					if (additionalProcessing) {
 						messageSummaries.add(mi.getMessageSummary());
 					}
 					if (!mi.getPendingHitDetailsSet().isEmpty()) {
 						pendingHitDetailRepository.saveAll(mi.getPendingHitDetailsSet());
+					}
+					if (!mi.getPassengerNotes().isEmpty()) {
+						passengerNoteRepository.saveAll(mi.getPassengerNotes());
 					}
 		 		} else {
 					messageStatus.setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
@@ -169,6 +188,9 @@ public class Loader {
 					if (tamrEnabled) {
 						tamrPassengers.addAll(messageInformation.getTamrPassengers());
 					}
+					if (omniEnabled) {
+						omniPassengers.addAll(messageInformation.getOmniPassengers());
+					}
 					if (additionalProcessing) {
 						messageSummaries.add(messageInformation.getMessageSummary());
 					}
@@ -188,6 +210,7 @@ public class Loader {
 		processedMessages.setProcessed(new int[] { successMsgCount, failedMsgCount });
 		processedMessages.setMessageStatusList(messageStatuses);
 		processedMessages.setTamrPassengers(tamrPassengers);
+		processedMessages.setOmniPassengers(omniPassengers);
 		processedMessages.setMessageSummaries(messageSummaries);
 		return processedMessages;
 	}

@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  kaizen:
+    image: wcogtas/kaizen:1.0.0
+    container_name: kaizen
+    build: ./gtas-parent/gtas-parsers/src/main/java/gov/gtas/parsers/omni/docker/kaizen_server
+    ports:
+      - "9081:9081"
+      - "9443:9443"
+      - "8998:8998"
+      - "222:22"
+    depends_on:
+      - mariadb
+      - activemq
+    env_file: ./gtas-parent/gtas-parsers/src/main/java/gov/gtas/parsers/omni/docker/kaizen_server/.env
+    volumes:
+      - kaizen_data:/opt/omni
+    networks:
+      - GTAS_webapp-network
+volumes:
+  kaizen_data:
+
+networks:
+  GTAS_webapp-network:
+    attachable: true

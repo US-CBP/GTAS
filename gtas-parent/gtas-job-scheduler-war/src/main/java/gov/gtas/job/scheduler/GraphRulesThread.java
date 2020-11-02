@@ -8,7 +8,7 @@
 
 package gov.gtas.job.scheduler;
 
-import gov.gtas.job.scheduler.service.AdditionalProcessingService;
+import gov.gtas.services.AdditionalProcessingService;
 import gov.gtas.model.RuleHitDetail;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;

@@ -6,6 +6,10 @@ services:
         constraints:
           - node.hostname == gtas-webapp-node
   web-app:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-webapp-node
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
       JAVA_HOME: "/usr/local/gtas-java-jre"
@@ -24,37 +28,33 @@ services:
       - type: bind
         source: /var/opt/gtas_web_app_application_properties
         target: /usr/local/tomcat/conf
+  gtas-scheduler:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-webapp-node
-  gtas-scheduler:
+          - node.hostname == gtas-messenger-node
     environment:
+      EMAIL_SENDER_HOST: ""
+      EMAIL_SENDER_USERNAME: ""
+      EMAIL_SENDER_PASSWORD: ""
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
       JAVA_HOME: "/usr/local/gtas-java-jre"
       JAVA_OPTS: "-Xms8000m -Xmx16000m -Duser.timezone=UTC -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
-      EMAIL_SENDER_USERNAME: ""
-      EMAIL_SENDER_PASSWORD: ""
-      EMAIL_SENDER_HOST: ""
       SSL_TRUST_HOST: ""
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       PROXY_IP: ""
     volumes:
       - type: bind
-        source: /mnt/gtas-java-jre
-        target: /usr/local/gtas-java-jre
-      - type: bind
-        source: /var/opt/gtas_scheduler_application_properties
-        target: /usr/local/tomcat/conf
+      #   source: /mnt/gtas-java-jre
+      #   target: /usr/local/gtas-java-jre
+      # - type: bind
+      #   source: /var/opt/gtas_scheduler_application_properties
+      #   target: /usr/local/tomcat/conf
       - type: bind
         source: /mnt
         target: /usr/local/gtas-data
         consistency: consistent
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == gtas-messenger-node
   activemq:
     deploy:
       placement:
@@ -90,8 +90,12 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-neo4j-node
-
+  etl-job:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-neo4j-node
 networks:
-  GTAS_webapp-network:
+  GTAS-webapp-network:
     driver: "overlay"
     attachable: true

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.TextMessage;
 
 @Component
 public class AdditionalProcessingMessageSender {
@@ -20,14 +21,15 @@ public class AdditionalProcessingMessageSender {
     private final JmsTemplate jmsTemplateFile;
 
     @Autowired
-    public AdditionalProcessingMessageSender(JmsTemplate jmsTemplateFile) {
+    public AdditionalProcessingMessageSender(
+            JmsTemplate jmsTemplateFile) {
         this.jmsTemplateFile = jmsTemplateFile;
     }
 
     public void sendProcessedMessage(String queueName, MessageSummaryList messageSummaryList, SummaryMetaData smd) {
         jmsTemplateFile.setDefaultDestinationName(queueName);
         EventIdentifier eventIdentifier = messageSummaryList.getEventIdentifier();
-        jmsTemplateFile.send(session -> {
+        jmsTemplateFile.send(queueName, session -> {
             ObjectMapper mapper = new ObjectMapper();
             String messageJson;
             try {
@@ -36,7 +38,7 @@ public class AdditionalProcessingMessageSender {
                 messageJson = e.getMessage();
                 logger.error("ERROR WRITING JSON! NO ADDITIONAL PROCESSING!");
             }
-            Message fwd = session.createObjectMessage(messageJson);
+            Message fwd = session.createTextMessage(messageJson);
             setEventIdentifierProps(eventIdentifier, fwd);
             fwd.setStringProperty("action", messageSummaryList.getMessageAction().toString());
             fwd.setObjectProperty("countryList", smd.getCountryList());
@@ -46,12 +48,12 @@ public class AdditionalProcessingMessageSender {
     }
 
 
-    public void sendRawMessage(String queueName, org.springframework.messaging.Message<?> message, EventIdentifier eventIdentifier, MessageAction messageAction) {
+    public void sendRawMessage(String queueName, String payload, EventIdentifier eventIdentifier, MessageAction messageAction) {
         jmsTemplateFile.setDefaultDestinationName(queueName);
         jmsTemplateFile.send(session -> {
             MessageSummaryList msRawList = new MessageSummaryList();
             MessageSummary messageSummary =  new MessageSummary();
-            messageSummary.setRawMessage((String)message.getPayload());
+            messageSummary.setRawMessage(payload);
             messageSummary.setEventIdentifier(eventIdentifier);
             messageSummary.setAction(messageAction);
             msRawList.setEventIdentifier(eventIdentifier);
@@ -66,7 +68,7 @@ public class AdditionalProcessingMessageSender {
                 messageSummary.setAction(MessageAction.ERROR);
                 logger.error("ERROR WRITING JSON! NO ADDITIONAL PROCESSING!");
             }
-            Message fwd = session.createObjectMessage(messageJson);
+            TextMessage fwd = session.createTextMessage(messageJson);
             setEventIdentifierProps(eventIdentifier, fwd);
             fwd.setStringProperty("action", messageAction.toString());
             return fwd;

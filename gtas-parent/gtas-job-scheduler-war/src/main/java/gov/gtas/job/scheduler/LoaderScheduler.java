@@ -20,9 +20,13 @@ import gov.gtas.parsers.tamr.jms.TamrMessageSender;
 import gov.gtas.parsers.tamr.model.TamrMessageType;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.tamr.model.TamrQuery;
+import gov.gtas.parsers.omni.jms.OmniMessageSender;
+import gov.gtas.parsers.omni.model.OmniMessageType;
+import gov.gtas.parsers.omni.model.OmniPassenger;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
+import gov.gtas.summary.MessageAction;
 import gov.gtas.summary.MessageSummaryList;
 import gov.gtas.services.jms.AdditionalProcessingMessageSender;
 import gov.gtas.summary.SummaryMetaData;
@@ -87,6 +91,9 @@ public class LoaderScheduler {
 	@Autowired(required=false)
 	private TamrMessageSender tamrMessageSender;
 
+	@Autowired(required=false)
+	private OmniMessageSender omniMessageSender;
+
 	@Value("${message.dir.processed}")
 	private String messageProcessedDir;
 
@@ -105,14 +112,17 @@ public class LoaderScheduler {
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
 
+	@Value("${omni.enabled}")
+	private Boolean omniEnabled;
+
 	@Value("${additional.processing.enabled.passenger}")
-	private Boolean additionalProcessing;
+	private Boolean additionalChecks;
 
 	@Autowired
 	private AdditionalProcessingMessageSender apms;
 
-	@Value("${additional.processing.queue}")
-	private String addProcessQueue;
+	@Value("${additional.checks.queue}")
+	private String addChecks;
 
 	void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) {
 		logger.debug(String.format("Processing %s", f.getAbsolutePath()));
@@ -128,9 +138,16 @@ public class LoaderScheduler {
 			        TamrMessageType.QUERY, tamrQuery);
 		}
 
-		if (additionalProcessing) {
+		if (omniEnabled) {
+			List<OmniPassenger> passengerList = processedMessages.getOmniPassengers();
+			omniMessageSender.sendMessageToOmni(
+					OmniMessageType.ASSESS_RISK_REQUEST, passengerList);
+		}
+
+		if (additionalChecks) {
 			MessageSummaryList msl = MessageSummaryList.from(processedMessages.getMessageSummaries());
-			apms.sendProcessedMessage(addProcessQueue, msl, new SummaryMetaData());
+			msl.setMessageAction(MessageAction.PROCESSED_MESSAGE);
+			apms.sendProcessedMessage(addChecks, msl, new SummaryMetaData());
 		}
 
 		if (result != null) {

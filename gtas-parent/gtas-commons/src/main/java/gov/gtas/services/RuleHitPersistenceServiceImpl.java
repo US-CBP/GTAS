@@ -11,6 +11,7 @@ package gov.gtas.services;
 import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
+import gov.gtas.services.jms.OmniLocalGtasSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -19,12 +20,22 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 @Scope("prototype")
 public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService {
+
+	private static final String OMNI_LOCAL_HIT_DETAILS_AVAILABLE_NOTIFICATION = "LOCAL_NOTIFICATION_HIT_DETAILS_AVAILABLE";
+
+	private static ObjectMapper objectMapper = new ObjectMapper();
 
 	private static final Logger logger = LoggerFactory.getLogger(RuleHitPersistenceServiceImpl.class);
 
@@ -45,6 +56,12 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 	private final FlightHitsExternalRepository flightHitsExternalRepository;
 
 	private final HitMakerRepository hitMakerRepository;
+
+	@Value("${omni.enabled}")
+	private Boolean omniEnabled;
+
+	@Autowired(required=false)
+	private OmniLocalGtasSender omniLocalGtasSender;
 
 	public RuleHitPersistenceServiceImpl(PassengerService passengerService, HitDetailRepository hitDetailRepository,
 										 HitsSummaryRepository hitsSummaryRepository, FlightHitsWatchlistRepository flightHitsWatchlistRepository,
@@ -173,6 +190,10 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 						}
 					}
 					hitDetailIterable = hitDetailRepository.saveAll(hitDetailsToPersist);
+
+					if (omniEnabled) {
+						sendHitDetailsToOmniHandler(hitDetailsToPersist);
+					}
 				}
 				if (!updatedHitsSummaries.isEmpty()) {
 					hitsSummaryRepository.saveAll(updatedHitsSummaries);
@@ -235,5 +256,14 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		flightGraphHitsRepository.saveAll(flightHitsGraphs);
 		flightFuzzyHitsRepository.saveAll(flightHitsFuzzies);
 		flightHitsExternalRepository.saveAll(flightHitsExternals);
+	}
+
+	private void sendHitDetailsToOmniHandler(Set<HitDetail> hitDetailsToPersist) {
+		try {
+			String jsonResponse = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(hitDetailsToPersist);
+			omniLocalGtasSender.send(OMNI_LOCAL_HIT_DETAILS_AVAILABLE_NOTIFICATION, jsonResponse);
+		} catch(Exception ex) {
+			logger.error("sendHitDetailsToOmniHandler() - Got an execption", ex);
+		}
 	}
 }
