@@ -31,6 +31,7 @@ services:
       MYSQL_PASSWORD_PATH: "/run/secrets/mysql-webapp-password/mysql-webapp-password"
       NEO4J_USER_PATH: "/run/secrets/webapp-neo4j-user/webapp-neo4j-user"
       NEO4J_PASSWORD_PATH: "/run/secrets/webapp-neo4j-password/webapp-neo4j-password"
+      ADDITIONAL_PROCESSING_ENABLED_PASSENGER: true
       DB_HOST: ${MARIADB_HOST}
     deploy:
       placement:
@@ -59,6 +60,7 @@ services:
       MYSQL_PASSWORD_PATH: "/run/secrets/mysql-processor-password/mysql-processor-password"
       NEO4J_USER_PATH: "/run/secrets/webapp-neo4j-user/webapp-neo4j-user"
       NEO4J_PASSWORD_PATH: "/run/secrets/webapp-neo4j-password/webapp-neo4j-password"
+      ADDITIONAL_PROCESSING_ENABLED_PASSENGER: true
     deploy:
       placement:
         constraints:
