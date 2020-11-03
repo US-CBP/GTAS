@@ -14,15 +14,21 @@ jobs:
         uses: docker/setup-buildx-action@v1
       - uses: actions/checkout@master
         name: Checkout latest code
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - uses: docker/build-push-action@v2
         name: Build and push GTAS web application image
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
-          repository: wcogtas/webapp 
-          path: ./gtas-parent
+          repository: wcogtas/webapp
+          context: ./gtas-parent
           push: true
-          dockerfile: ./gtas-parent/web-app.Dockerfile
+          platforms: linux/amd64
+          file: ./gtas-parent/web-app.Dockerfile
           tags: dev
       - uses: docker/build-push-action@v2
         name: Build and push mariadb image
@@ -30,9 +36,10 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
           repository: wcogtas/mariadb
-          path: ./gtas-parent
+          context: ./gtas-parent
           push: true
-          dockerfile: ./gtas-parent/mariadb.Dockerfile
+          platforms: linux/amd64
+          file: ./gtas-parent/mariadb.Dockerfile
           tags: dev
       - uses: docker/build-push-action@v2
         name: Build and push GTAS proxy image
@@ -40,9 +47,10 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
           repository: wcogtas/http-proxy
-          path: ./gtas-parent
+          context: ./gtas-parent
           push: true
-          dockerfile: ./gtas-parent/docker-resources/proxy.Dockerfile
+          platforms: linux/amd64
+          file: ./gtas-parent/docker-resources/proxy.Dockerfile
           tags: dev
       - uses: docker/build-push-action@v2
         name: Build and push GTAS scheduler image
@@ -50,9 +58,10 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: wcogtas/gtas-scheduler
-          path: .
+          context: .
+          platforms: linux/amd64
           push: true
-          dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
+          file: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
           tags: dev
       - uses: docker/build-push-action@v2
         name: Build and push kibana image
@@ -60,9 +69,10 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: wcogtas/kibana
+          platforms: linux/amd64
           push: true
-          path: ./gtas-parent/scripts/elastic
-          dockerfile: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
+          context: ./gtas-parent/scripts/elastic
+          file: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
           tags: dev
       - uses: docker/build-push-action@v2
         name: Build and push elasticsearch image
@@ -70,8 +80,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
           repository: wcogtas/elasticsearch
-          path: ./gtas-parent/scripts/elastic    
-          dockerfile: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
+          platforms: linux/amd64
+          context: ./gtas-parent/scripts/elastic
+          file: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
           tags: dev
       - uses: docker/build-push-action@v2
         name: Build and push logstash image
@@ -79,9 +90,10 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}   
           repository: wcogtas/logstash
+          platforms: linux/amd64
           push: true
-          path: ./gtas-parent/scripts/elastic
-          dockerfile: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
+          context: ./gtas-parent/scripts/elastic
+          file: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
           tags: dev
       - uses: docker/build-push-action@v2
         name: Build and push ELK setup image
@@ -89,29 +101,28 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }} 
           repository: wcogtas/elk-setup
+          platforms: linux/amd64
           push: true
-          path: ./gtas-parent/scripts/elastic
-          dockerfile: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
+          context: ./gtas-parent/scripts/elastic
+          file: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
           tags: dev
       - uses: docker/build-push-action@v2
         name: Build and push Neo4J ETL job image     
         with:
-          username: ${{ secrets.DOCKER_USERNAME }} 
-          password: ${{ secrets.DOCKER_PASSWORD }}  
           repository: wcogtas/neo4j-etl-job
+          platforms: linux/amd64
           push: true
-          path: .
-          dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
+          context: .
+          file: ./gtas-neo4j-etl/etl_job.Dockerfile
           tags: dev
       - uses: docker/build-push-action@v2
         name: Build and push Neo4J image
-        with: 
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}  
+        with:
           repository: wcogtas/neo4j
+          platforms: linux/amd64
           push: true
-          path: .
-          dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
+          context: .
+          file: ./gtas-neo4j-etl/neo4j.Dockerfile
           tags: dev
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
