@@ -70,6 +70,7 @@ services:
       placement:
         constraints:
           - node.labels.role == backend
+
   activemq:
     labels:
       kompose.image-pull-policy: "Always" 
