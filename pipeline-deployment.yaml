@@ -31,6 +31,9 @@ services:
       MYSQL_PASSWORD_PATH: "/run/secrets/mysql-webapp-password/mysql-webapp-password"
       NEO4J_USER_PATH: "/run/secrets/webapp-neo4j-user/webapp-neo4j-user"
       NEO4J_PASSWORD_PATH: "/run/secrets/webapp-neo4j-password/webapp-neo4j-password"
+      ADDITIONAL_PROCESSING_THIRD_PARTY: false
+      ADDITIONAL_PROCESSING_RAW: true
+      ADDITIONAL_PROCESSING_RULES: true
       DB_HOST: ${MARIADB_HOST}
     deploy:
       placement:
@@ -59,10 +62,14 @@ services:
       MYSQL_PASSWORD_PATH: "/run/secrets/mysql-processor-password/mysql-processor-password"
       NEO4J_USER_PATH: "/run/secrets/webapp-neo4j-user/webapp-neo4j-user"
       NEO4J_PASSWORD_PATH: "/run/secrets/webapp-neo4j-password/webapp-neo4j-password"
+      ADDITIONAL_PROCESSING_THIRD_PARTY: false
+      ADDITIONAL_PROCESSING_RAW: true
+      ADDITIONAL_PROCESSING_RULES: true
     deploy:
       placement:
         constraints:
           - node.labels.role == backend
+
   activemq:
     labels:
       kompose.image-pull-policy: "Always" 
