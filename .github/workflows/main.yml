@@ -8,6 +8,10 @@ jobs:
     name: webapp
     runs-on: ubuntu-latest
     steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
       - uses: actions/checkout@master
         name: Checkout latest code
       - uses: docker/build-push-action@v2
