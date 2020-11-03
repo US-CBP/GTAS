@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   http-proxy: 
-    image: simbam1/http-proxy:dev
+    image: wcogtas/http-proxy:dev
     container_name: http-proxy
     build:  
       context: ./gtas-parent
@@ -16,7 +16,7 @@ services:
       - elastic-bootstrap-password
 
   web-app:
-    image: simbam1/webapp:dev
+    image: wcogtas/webapp:dev
     container_name: web-app
     build: 
       context: ./gtas-parent
@@ -44,7 +44,7 @@ services:
       - scheduler-logs:/scheduler-logs
 
   gtas-scheduler:
-    image: simbam1/gtas-scheduler:dev
+    image: wcogtas/gtas-scheduler:dev
     container_name: gtas-scheduler
     build: 
       context: .
@@ -74,7 +74,7 @@ services:
       - gtas-webapp-network
 
   mariadb: 
-    image: simbam1/mariadb:dev
+    image: wcogtas/mariadb:dev
     build:
       context: ./gtas-parent
       dockerfile: mariadb.Dockerfile
@@ -103,7 +103,7 @@ services:
 
   etl-job:
     container_name: etl-job
-    image: simbam1/neo4j-etl-job:dev
+    image: wcogtas/neo4j-etl-job:dev
     build:
       context: .
       dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
@@ -122,7 +122,7 @@ services:
 
   neo4j:
     container_name: neo4j
-    image: simbam1/neo4j:dev
+    image: wcogtas/neo4j:dev
     build:
       context: .
       dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
@@ -137,7 +137,7 @@ services:
 
   kibana:
     container_name: kibana
-    image: simbam1/kibana:dev
+    image: wcogtas/kibana:dev
     build:
       context: ./gtas-parent/scripts/elastic
       dockerfile: install/docker/kibana/kibana.Dockerfile
@@ -154,7 +154,7 @@ services:
       - elasticsearch
 
   elasticsearch:
-    image: simbam1/elasticsearch:dev
+    image: wcogtas/elasticsearch:dev
     container_name: elasticsearch
     build:
       context: ./gtas-parent/scripts/elastic
@@ -170,7 +170,7 @@ services:
       - gtas-webapp-network
 
   logstash:
-    image: simbam1/logstash:dev
+    image: wcogtas/logstash:dev
     container_name: logstash
     build:
       context: ./gtas-parent/scripts/elastic
@@ -190,7 +190,7 @@ services:
       - elasticsearch
 
   elk-setup:
-    image: simbam1/elk-setup:dev
+    image: wcogtas/elk-setup:dev
     container_name: elk-setup
     build:
       context: ./gtas-parent/scripts/elastic
