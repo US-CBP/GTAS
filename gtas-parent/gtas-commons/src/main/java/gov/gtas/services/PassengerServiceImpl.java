@@ -334,32 +334,32 @@ public class PassengerServiceImpl implements PassengerService {
 			for (HitDetail hd : passenger.getHitDetails()) {
 				switch (hd.getHitEnum()) {
 					case MANUAL_HIT:
-						vo.setManualHitCount(vo.getManualHitCount()+1);
+						vo.setManualHitCount(Optional.ofNullable(vo.getManualHitCount()).orElse(0)+1);
 						break;
 					case WATCHLIST:
-						vo.setWatchlistHitCount(vo.getWatchlistHitCount()+1);
+						vo.setWatchlistHitCount(Optional.ofNullable(vo.getWatchlistHitCount()).orElse(0)+1);
 						vo.setOnWatchList(true);
 						break;
 					case WATCHLIST_PASSENGER:
-						vo.setWatchlistHitCount(vo.getWatchlistHitCount()+1);
+						vo.setWatchlistHitCount(Optional.ofNullable(vo.getWatchlistHitCount()).orElse(0)+1);
 						vo.setOnWatchList(true);
 					case WATCHLIST_DOCUMENT:
-						vo.setWatchlistHitCount(vo.getWatchlistHitCount()+1);
+						vo.setWatchlistHitCount(Optional.ofNullable(vo.getWatchlistHitCount()).orElse(0)+1);
 						vo.setOnWatchList(true);
 						break;
 					case USER_DEFINED_RULE:
-						vo.setRuleHitCount(vo.getRuleHitCount()+1);
+						vo.setRuleHitCount(Optional.ofNullable(vo.getRuleHitCount()).orElse(0)+1);
 						vo.setOnRuleHitList(true);
 						break;
 					case GRAPH_HIT:
-						vo.setGraphHitCount(vo.getGraphHitCount()+1);
+						vo.setGraphHitCount(Optional.ofNullable(vo.getGraphHitCount()).orElse(0)+1);
 						vo.setOnRuleHitList(true);
 						break;
 					case PARTIAL_WATCHLIST:
-						vo.setFuzzyHitCount(vo.getFuzzyHitCount()+1);
+						vo.setFuzzyHitCount(Optional.ofNullable(vo.getFuzzyHitCount()).orElse(0)+1);
 						break;
 					case EXTERNAL_HIT:
-						vo.setExternalHitCount(vo.getExternalHitCount());
+						vo.setExternalHitCount(Optional.ofNullable(vo.getExternalHitCount()).orElse(0)+1);
 						break;
 				}
 			}
