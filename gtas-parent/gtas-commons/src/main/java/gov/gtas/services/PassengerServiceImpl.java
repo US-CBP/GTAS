@@ -333,16 +333,34 @@ public class PassengerServiceImpl implements PassengerService {
 
 			for (HitDetail hd : passenger.getHitDetails()) {
 				switch (hd.getHitEnum()) {
-				case MANUAL_HIT:
-					break;
-				case WATCHLIST_PASSENGER:
-				case WATCHLIST_DOCUMENT:
-					vo.setOnWatchList(true);
-					break;
-				case USER_DEFINED_RULE:
-				case GRAPH_HIT:
-					vo.setOnRuleHitList(true);
-					break;
+					case MANUAL_HIT:
+						vo.setManualHitCount(vo.getManualHitCount()+1);
+						break;
+					case WATCHLIST:
+						vo.setWatchlistHitCount(vo.getWatchlistHitCount()+1);
+						vo.setOnWatchList(true);
+						break;
+					case WATCHLIST_PASSENGER:
+						vo.setWatchlistHitCount(vo.getWatchlistHitCount()+1);
+						vo.setOnWatchList(true);
+					case WATCHLIST_DOCUMENT:
+						vo.setWatchlistHitCount(vo.getWatchlistHitCount()+1);
+						vo.setOnWatchList(true);
+						break;
+					case USER_DEFINED_RULE:
+						vo.setRuleHitCount(vo.getRuleHitCount()+1);
+						vo.setOnRuleHitList(true);
+						break;
+					case GRAPH_HIT:
+						vo.setGraphHitCount(vo.getGraphHitCount()+1);
+						vo.setOnRuleHitList(true);
+						break;
+					case PARTIAL_WATCHLIST:
+						vo.setFuzzyHitCount(vo.getFuzzyHitCount()+1);
+						break;
+					case EXTERNAL_HIT:
+						vo.setExternalHitCount(vo.getExternalHitCount());
+						break;
 				}
 			}
 			rv.add(vo);

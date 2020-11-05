@@ -36,11 +36,12 @@ public class FlightGridVo {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
   private Date countdown;
   private Integer passengerCount = 0;
-  private Integer ruleHitCount = 0;
+  private Integer ruleHitCount;
   private Integer listHitCount;
   private Integer graphHitCount;
   private Integer fuzzyHitCount;
   private Integer externalHitCount;
+  private Integer manualHitCount;
 
   public static FlightGridVo from(Flight flight) {
     FlightGridVo fgvo = new FlightGridVo();
@@ -152,6 +153,10 @@ public class FlightGridVo {
   public Integer getExternalHitCount() { return externalHitCount; }
 
   public void setExternalHitCount(Integer externalHitCount) { this.externalHitCount = externalHitCount; }
+
+  public Integer getManualHitCount() { return manualHitCount; }
+
+  public void setManualHitCount(Integer manualHitCount) { this.manualHitCount = manualHitCount; }
 
   public Date getEtd() {
     return etd;
