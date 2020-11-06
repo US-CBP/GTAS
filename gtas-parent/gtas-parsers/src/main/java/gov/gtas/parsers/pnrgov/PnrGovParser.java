@@ -684,6 +684,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			SeatVo seat = new SeatVo();
 			seat.setTravelerReferenceNumber(currentPassenger.getTravelerReferenceNumber());
 			seat.setNumber(ssd.getSeatNumber());
+			seat.setCabinClass(ssd.getCabinClass());
 			seat.setOrigin(tvl.getOrigin());
 			seat.setDestination(tvl.getDestination());
 			if (seat.isValid()) {

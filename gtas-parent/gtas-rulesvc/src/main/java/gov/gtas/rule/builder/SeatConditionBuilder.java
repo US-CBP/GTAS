@@ -14,13 +14,13 @@ public class SeatConditionBuilder extends EntityConditionBuilder {
 
 	private boolean apis;
 
-	public SeatConditionBuilder(final String drlVariableName, final boolean apis) {
+	public SeatConditionBuilder(final String drlVariableName) {
 		super(drlVariableName, RuleTemplateConstants.SEAT_ENTITY_NAME);
 		this.apis = apis;
 	}
 
-	public void addApisCondition() {
-		if (isApis()) {
+	public void addApisCondition(boolean isApis) {
+		if (isApis) {
 			super.addConditionAsString("apis == true");
 		} else {
 			super.addConditionAsString("apis == false");

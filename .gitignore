@@ -1,6 +1,7 @@
 # mvn, javac
 log/
 target/
+gtas-data/
 *.jar
 *.war
 *.ear
@@ -69,3 +70,19 @@ gradle*
 # scheduler messages folder
 **__data**
 tomcat/
+
+# omni/kaizen folder
+.idea/
+*.iml
+__pycache__/
+*.tgz
+*.tar.gz
+*.model/
+
+*.run
+*.jar
+*.zip
+# Directories to ignore
+target/
+.build/
+.env/

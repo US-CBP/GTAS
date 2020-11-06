@@ -23,7 +23,7 @@ public class NoteTypeServiceImpl implements NoteTypeService {
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(NoteTypeService.class);
-	
+
 	@Override
 	public List<NoteTypeVo> getAllNoteTypes() {
 		List<NoteType> noteTypeList = noteTypeRepository.findAll();
@@ -35,6 +35,10 @@ public class NoteTypeServiceImpl implements NoteTypeService {
 		return noteTypeVoList;
 	}
 
+	@Override
+	public void deleteNoteTypes(Long id) {
+		noteTypeRepository.deleteById(id);
+	}
 
 	@Override
 	public void saveNoteType(NoteTypeVo noteTypeVo) {
@@ -74,6 +78,11 @@ public class NoteTypeServiceImpl implements NoteTypeService {
 	@Override
 	public NoteType getDeletedNoteType() {
 		return noteTypeRepository.findByType("DELETED").orElseThrow(RuntimeException::new);
+	}
+
+	@Override
+	public NoteType getLookoutNoteType() {
+		return noteTypeRepository.findByType("LOOKOUT").orElseThrow(RuntimeException::new);
 	}
 
 	@Override

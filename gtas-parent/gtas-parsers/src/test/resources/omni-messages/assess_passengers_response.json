@@ -1,0 +1,36 @@
+{
+  "support_info" : {
+    "internal_trace_id" : "5ca9474a-36ce-4449-ab03-88a7f3186dde"
+  },
+  "predictions" : [ {
+    "passenger_num" : 587,
+    "unique_id" : "309f3a1a-6ce9-4e75-8aa4-08b6b8e0317a",
+    "gender" : "M",
+    "age_bin" : "20-25",
+    "eta" : "01AUG2020:00:00:00",
+    "passenger_citizen_country" : [ "USA" ],
+    "documentation_country" : [ "USA" ],
+    "documentation_type" : [ "P" ],
+    "flight_number" : "0551",
+    "carrier" : "BW",
+    "flight_origin_country" : "USA",
+    "flight_origin_airport" : "JFK",
+    "flight_arrival_country" : "TTO",
+    "flight_arrival_airport" : "POS",
+    "cat1_prob" : [ 0.9996136486657832, 3.8635133421676787E-4 ],
+    "cat2_prob" : [ 0.9881431089262391, 0.011856891073760962 ],
+    "cat3_prob" : [ 0.9962797208265632, 0.003720279173436741 ],
+    "cat4_prob" : [ 0.9997820684983912, 2.179315016087733E-4 ],
+    "cat5_prob" : [ 0.9999920703169048, 7.929683095167712E-6 ],
+    "cat6_prob" : [ 0.9997558807189566, 2.4411928104338564E-4 ],
+    "label_any_prob" : [ 0.9802939094899582, 0.019706090510041685 ],
+    "label_any_pred" : 0.0,
+    "anomaly_pred" : 0.0,
+    "anomaly_score" : 0.0
+  } ],
+  "start_prediction_time_millisecs" : 1597003027457,
+  "end_prediction_time_millisecs" : 1597003084056,
+  "prediction_time_millisecs" : 56599,
+  "status" : "SUCCESS",
+  "error" : null
+}

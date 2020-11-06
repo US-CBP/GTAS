@@ -21,13 +21,19 @@ public interface NoteTypeService {
 	public void saveNoteType(NoteTypeVo noteTypeVo);
 	
 	@PreAuthorize(PRIVILEGE_ADMIN)
+	public void deleteNoteTypes(Long id);
+
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public JsonServiceResponse deleteNoteType(Long id);
 
 	@PreAuthorize(PRIVILEGE_ADMIN)
 	public JsonServiceResponse editNoteType(NoteTypeVo noteTypeVo);
 
-    NoteType getDeletedNoteType();
+	NoteType getLookoutNoteType();
 
-    @PreAuthorize(PRIVILEGE_ADMIN)
-    public List<NoteTypeVo> getAllNonArchivedNoteTypes();
+	NoteType getDeletedNoteType();
+
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public List<NoteTypeVo> getAllNonArchivedNoteTypes();
+
 }

@@ -155,11 +155,12 @@ public class HitDetail extends BaseEntity {
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (!(o instanceof HitDetail))
+		if (null == o || !(o instanceof HitDetail))
 			return false;
 		HitDetail hitDetail = (HitDetail) o;
-		return getPassengerId().equals(hitDetail.getPassengerId()) && getHitMakerId().equals(hitDetail.getHitMakerId())
-				&& getHitEnum().equals(hitDetail.getHitEnum());
+		return Objects.equals(getPassengerId(), hitDetail.getPassengerId()) &&
+				Objects.equals(getHitMakerId(), hitDetail.getHitMakerId()) &&
+				Objects.equals(getHitEnum(), hitDetail.getHitEnum());
 	}
 
 	@Override

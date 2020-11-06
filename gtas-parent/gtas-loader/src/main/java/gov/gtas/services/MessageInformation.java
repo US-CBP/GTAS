@@ -9,8 +9,10 @@
 package gov.gtas.services;
 
 import gov.gtas.model.MessageStatus;
+import gov.gtas.model.PassengerNote;
 import gov.gtas.model.PendingHitDetails;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.parsers.omni.model.OmniPassenger;
 import gov.gtas.summary.MessageSummary;
 
 import java.util.HashSet;
@@ -22,10 +24,12 @@ public class MessageInformation {
 	MessageStatus messageStatus;
 
 	private List<TamrPassenger> tamrPassengers;
+	private List<OmniPassenger> omniPassengers;
 
 	private MessageSummary messageSummary = new MessageSummary();
 
 	private Set<PendingHitDetails> pendingHitDetailsSet = new HashSet<>();
+	private Set<PassengerNote> passengerNotes = new HashSet<>();
 
 	public MessageStatus getMessageStatus() {
 		return messageStatus;
@@ -43,6 +47,12 @@ public class MessageInformation {
 		return tamrPassengers;
 	}
 
+	public void setOmniPassengers(List<OmniPassenger> omniPassengers) {
+		this.omniPassengers = omniPassengers;
+	}
+
+	public List<OmniPassenger> getOmniPassengers() { return omniPassengers;}
+
 	public MessageSummary getMessageSummary() {
 		return messageSummary;
 	}
@@ -57,5 +67,13 @@ public class MessageInformation {
 
 	public void setPendingHitDetailsSet(Set<PendingHitDetails> pendingHitDetailsSet) {
 		this.pendingHitDetailsSet = pendingHitDetailsSet;
+	}
+
+	public Set<PassengerNote> getPassengerNotes() {
+		return passengerNotes;
+	}
+
+	public void setPassengerNotes(Set<PassengerNote> passengerNotes) {
+		this.passengerNotes = passengerNotes;
 	}
 }
