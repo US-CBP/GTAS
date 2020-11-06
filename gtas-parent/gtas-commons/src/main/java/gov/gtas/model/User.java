@@ -24,7 +24,8 @@ public class User implements Serializable {
 	public User() {
 	}
 
-	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles) {
+	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles,
+			boolean archived) {
 
 		this.userId = userId;
 		this.password = password;
@@ -32,9 +33,12 @@ public class User implements Serializable {
 		this.lastName = lastName;
 		this.active = active;
 		this.roles = roles;
+		this.archived = archived;
 	}
 
-	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles, String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification) {
+	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles,
+			String email, boolean isEmailEnabled, boolean highPriorityHitsEmailNotification, boolean archived,
+			String phoneNumber) {
 
 		this.userId = userId;
 		this.password = password;
@@ -45,6 +49,8 @@ public class User implements Serializable {
 		this.email = email;
 		this.isEmailEnabled = isEmailEnabled;
 		this.highPriorityHitsEmailNotification = highPriorityHitsEmailNotification;
+		this.archived = archived;
+		this.phoneNumber = phoneNumber;
 	}
 
 	@Id
@@ -69,16 +75,26 @@ public class User implements Serializable {
 	@Column(name = "reset_token")
 	private String resetToken;
 
+	@OneToOne(cascade = { CascadeType.ALL })
+	@JoinColumn(name = "password_reset_token_id")
+	private PasswordResetToken passwordResetToken;
+
 	@Column(name = "email")
 	private String email;
 
 	@Column(name = "email_enabled")
-	private Boolean isEmailEnabled;
+	private boolean isEmailEnabled;
 
 	@Column(name = "high_priority_hits_email")
-	private Boolean highPriorityHitsEmailNotification;
+	private boolean highPriorityHitsEmailNotification;
 
-	@ManyToMany(targetEntity = UserGroup.class, fetch = FetchType.LAZY, mappedBy = "groupMembers")
+	@Column(name = "archived")
+	private boolean archived;
+
+	private String phoneNumber;
+
+	@ManyToMany(targetEntity = UserGroup.class, fetch = FetchType.LAZY)
+	@JoinTable(name = "ug_user_join", inverseJoinColumns = @JoinColumn(name = "ug_id"), joinColumns = @JoinColumn(name = "user_id"))
 	private Set<UserGroup> userGroups = new HashSet<>();
 
 	// Notification that the user is a part of (elected or assigned)
@@ -89,12 +105,20 @@ public class User implements Serializable {
 	@OneToMany(mappedBy = "notificationOwner", fetch = FetchType.LAZY)
 	private Set<Notification> notificationOwners = new HashSet<>();
 
-	@ManyToMany(targetEntity = Role.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@ManyToMany(targetEntity = Role.class, cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 
 	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
 	private Set<HitMaker> hitMakers = new HashSet<>();
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 
 	public Integer getConsecutiveFailedLoginAttempts() {
 		return consecutiveFailedLoginAttempts;
@@ -112,11 +136,11 @@ public class User implements Serializable {
 		this.resetToken = resetToken;
 	}
 
-	public Boolean getHighPriorityHitsEmailNotification() {
+	public boolean getHighPriorityHitsEmailNotification() {
 		return highPriorityHitsEmailNotification;
 	}
 
-	public void setHighPriorityHitsEmailNotification(Boolean highPriorityHitsEmailNotification) {
+	public void setHighPriorityHitsEmailNotification(boolean highPriorityHitsEmailNotification) {
 		this.highPriorityHitsEmailNotification = highPriorityHitsEmailNotification;
 	}
 
@@ -128,8 +152,7 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
-
-	public Boolean getEmailEnabled() {
+	public boolean getEmailEnabled() {
 		return isEmailEnabled;
 	}
 
@@ -187,6 +210,22 @@ public class User implements Serializable {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public PasswordResetToken getPasswordResetToken() {
+		return passwordResetToken;
+	}
+
+	public void setPasswordResetToken(PasswordResetToken passwordResetToken) {
+		this.passwordResetToken = passwordResetToken;
+	}
+
+	public boolean getArchived() {
+		return archived;
+	}
+
+	public void setArchived(boolean archived) {
+		this.archived = archived;
 	}
 
 	@Override

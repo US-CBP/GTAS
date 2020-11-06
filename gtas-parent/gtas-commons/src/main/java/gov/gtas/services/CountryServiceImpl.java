@@ -9,6 +9,7 @@ import gov.gtas.model.lookup.Country;
 import gov.gtas.repository.CountryRepository;
 import gov.gtas.repository.CountryRepositoryCustom;
 import gov.gtas.vo.lookup.CountryVo;
+import gov.gtas.vo.lookup.CountryLookupVo;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -20,114 +21,127 @@ import java.util.List;
 @Service
 public class CountryServiceImpl implements CountryService {
 
-	@Resource
-	private CountryRepository countryRepository;
-	@Resource
-	private CountryRepositoryCustom countryRepoCust;
+  @Resource
+  private CountryRepository countryRepository;
+  @Resource
+  private CountryRepositoryCustom countryRepoCust;
 
-	@Override
-	@Transactional
-	public CountryVo create(CountryVo country) {
-		Country savedCountry = countryRepository.save(buildCountry(country));
+  @Override
+  @Transactional
+  public CountryVo create(CountryVo country) {
+    Country savedCountry = countryRepository.save(buildCountry(country));
 
-		return buildCountryVo(savedCountry);
-	}
+    return buildCountryVo(savedCountry);
+  }
 
-	@Override
-	@Transactional
-	public CountryVo delete(Long id) {
-		CountryVo countryVo = this.findById(id);
+  @Override
+  @Transactional
+  public CountryVo delete(Long id) {
+    CountryVo countryVo = this.findById(id);
 
-		if (countryVo != null) {
-			countryRepository.delete(buildCountry(countryVo));
-		}
+    if (countryVo != null) {
+      countryRepository.delete(buildCountry(countryVo));
+    }
 
-		return countryVo;
-	}
+    return countryVo;
+  }
 
-	@Override
-	@Transactional
-	public List<CountryVo> findAll() {
-		List<Country> allCountries = (List<Country>) countryRepository.findAll();
+  @Override
+  @Transactional
+  public List<CountryVo> findAll() {
+    List<Country> allCountries = (List<Country>) countryRepository.findAll();
 
-		List<CountryVo> allCountryVos = new ArrayList<>();
+    List<CountryVo> allCountryVos = new ArrayList<>();
 
-		for (Country country : allCountries) {
-			allCountryVos.add(buildCountryVo(country));
-		}
+    for (Country country : allCountries) {
+      allCountryVos.add(buildCountryVo(country));
+    }
 
-		return allCountryVos;
+    return allCountryVos;
 
-	}
+  }
 
-	@Override
-	@Transactional
-	public CountryVo update(CountryVo country) {
-		Country savedCountry = countryRepository.save(buildCountry(country));
+  @Override
+  @Transactional
+  public List<CountryLookupVo> getCountryLookup() {
+    List<Country> allCountries = (List<Country>) countryRepository.findAll();
+    List<CountryLookupVo> allCountryVos = new ArrayList<>();
 
-		return buildCountryVo(savedCountry);
-	}
+    for (Country country : allCountries) {
+      allCountryVos.add(new CountryLookupVo(country.getIso3(), country.getName()));
+    }
 
-	@Override
-	@Transactional
-	public CountryVo findById(Long id) {
-		Country country = countryRepository.findById(id).orElse(null);
+    return allCountryVos;
+  }
 
-		if (country == null) {
-			return null;
-		}
+  @Override
+  @Transactional
+  public CountryVo update(CountryVo country) {
+    Country savedCountry = countryRepository.save(buildCountry(country));
 
-		return buildCountryVo(country);
-	}
+    return buildCountryVo(savedCountry);
+  }
 
-	@Override
-	@Transactional
-	public CountryVo restore(CountryVo country) {
-		Country restoredCountry = countryRepoCust.restore(buildCountry(country));
+  @Override
+  @Transactional
+  public CountryVo findById(Long id) {
+    Country country = countryRepository.findById(id).orElse(null);
 
-		return buildCountryVo(restoredCountry);
-	}
+    if (country == null) {
+      return null;
+    }
 
-	@Override
-	@Transactional
-	public int restoreAll() {
-		return countryRepoCust.restoreAll();
-	}
+    return buildCountryVo(country);
+  }
 
-	@Override
-	@Transactional
-	@Cacheable(value = "countryCache", key = "#country")
-	public CountryVo getCountryByTwoLetterCode(String country) {
-		List<Country> countries = countryRepository.getCountryByTwoLetterCode(country);
+  @Override
+  @Transactional
+  public CountryVo restore(CountryVo country) {
+    Country restoredCountry = countryRepoCust.restore(buildCountry(country));
 
-		if (countries != null && countries.size() > 0) {
-			return buildCountryVo(countries.get(0));
-		}
+    return buildCountryVo(restoredCountry);
+  }
 
-		return null;
-	}
+  @Override
+  @Transactional
+  public int restoreAll() {
+    return countryRepoCust.restoreAll();
+  }
 
-	@Override
-	@Transactional
-	@Cacheable(value = "countryCache", key = "#country")
-	public CountryVo getCountryByThreeLetterCode(String country) {
-		List<Country> countries = countryRepository.getCountryByThreeLetterCode(country);
+  @Override
+  @Transactional
+  @Cacheable(value = "countryCache", key = "#country")
+  public CountryVo getCountryByTwoLetterCode(String country) {
+    List<Country> countries = countryRepository.getCountryByTwoLetterCode(country);
 
-		if (countries != null && countries.size() > 0) {
-			return buildCountryVo(countries.get(0));
-		}
+    if (countries != null && countries.size() > 0) {
+      return buildCountryVo(countries.get(0));
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	private CountryVo buildCountryVo(Country country) {
-		return new CountryVo(country.getId(), country.getOriginId(), country.getIso2(), country.getIso3(),
-				country.getName(), country.getIsoNumeric());
-	}
+  @Override
+  @Transactional
+  @Cacheable(value = "countryCache", key = "#country")
+  public CountryVo getCountryByThreeLetterCode(String country) {
+    List<Country> countries = countryRepository.getCountryByThreeLetterCode(country);
 
-	private Country buildCountry(CountryVo countryVo) {
-		return new Country(countryVo.getId(), countryVo.getOriginId(), countryVo.getIso2(), countryVo.getIso3(),
-				countryVo.getName(), countryVo.getIsoNumeric());
-	}
+    if (countries != null && countries.size() > 0) {
+      return buildCountryVo(countries.get(0));
+    }
+
+    return null;
+  }
+
+  private CountryVo buildCountryVo(Country country) {
+    return new CountryVo(country.getId(), country.getOriginId(), country.getIso2(), country.getIso3(),
+        country.getName(), country.getIsoNumeric());
+  }
+
+  private Country buildCountry(CountryVo countryVo) {
+    return new Country(countryVo.getId(), countryVo.getOriginId(), countryVo.getIso2(), countryVo.getIso3(),
+        countryVo.getName(), countryVo.getIsoNumeric());
+  }
 
 }

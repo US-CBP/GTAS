@@ -86,6 +86,8 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		Join<Flight, FlightCountDownView> flightCountDownViewJoin = flight.join("flightCountDownView", JoinType.INNER);
 		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.INNER);
 		Join<Passenger, HitDetail> hitDetails = pax.join("hitDetails", JoinType.INNER);
+		Join<PassengerNote ,Passenger> passengerNote = pax.join("notes", JoinType.LEFT);
+		Join<NoteType, PassengerNote> passengerNoteType = passengerNote.join("noteType", JoinType.LEFT);
 		Join<HitDetail, HitViewStatus> hitViewJoin = hitDetails.join("hitViewStatus", JoinType.INNER);
 		Join<HitDetail, HitMaker> hitMakerJoin = hitDetails.join("hitMaker", JoinType.INNER);
 		Join<HitMaker, HitCategory> hitCategoryJoin = hitMakerJoin.join("hitCategory", JoinType.INNER);
@@ -101,6 +103,20 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		 * .and(cb.greaterThanOrEqualTo(flightCountDownViewJoin.get("countDownTimer"),
 		 * oneHourAgo)); queryPredicates.add(countDownPredicate); }
 		 */
+		
+		if (dto.getNoteTypes() != null && !dto.getNoteTypes().isEmpty()) {
+			List<NoteType> noteTypes = dto.getNoteTypes();
+			Set<String> types = new HashSet<>();
+			
+			for (NoteType nt : noteTypes) {
+				types.add(nt.getType());
+			}
+
+			Predicate noteTypesIn = cb.in(passengerNoteType.get("type")).value(types);
+			queryPredicates.add(noteTypesIn);
+		}
+		
+		
 
 		Set<HitViewStatusEnum> hitViewStatusEnumSet = new HashSet<>();
 		if (dto.getDisplayStatusCheckBoxes() != null) {
@@ -258,6 +274,36 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		return queryPredicates;
 	}
 
+  @Override
+  public List<Passenger> findByFlightId(Long flightId) {
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<Passenger> q = cb.createQuery(Passenger.class);
+    Root<Passenger> pax = q.from(Passenger.class);
+
+    Join<Passenger, Flight> flight = pax.join("flight");
+    Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.LEFT);
+
+    List<Predicate> predicates = new ArrayList<>();
+
+    if (flightId != null) {
+      hits.on(cb.equal(hits.get("flight").get("id"), cb.parameter(Long.class, "flightId")));
+      predicates.add(cb.equal(flight.<Long>get("id"), flightId));
+    }
+
+    q.select(pax).where(predicates.toArray(new Predicate[] {}));
+    TypedQuery<Passenger> typedQuery = em.createQuery(q);
+
+    if (flightId != null) {
+      typedQuery.setParameter("flightId", flightId);
+    }
+
+    logger.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
+    List<Passenger> results = typedQuery.getResultList();
+
+    return results;
+  } // findByFlightId
+
+
 	@Override
 	public Pair<Long, List<Passenger>> findByCriteria(Long flightId, PassengersRequestDto dto) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -399,5 +445,4 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	private boolean isFlightColumn(String c) {
 		return flightColumns.contains(c);
 	}
-
 }

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="691.77002"
+   width="628.29999"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="WCO_GTAS_logo.svg"
+   version="1.1"
+   viewBox="0 0 600.3 691.77"
+   data-name="Layer 1"
+   id="Layer_1">
+  <metadata
+     id="metadata859">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>WCO_GTAS_logo</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     fit-margin-left="0"
+     inkscape:current-layer="Layer_1"
+     inkscape:window-maximized="1"
+     inkscape:window-y="23"
+     inkscape:window-x="0"
+     inkscape:cy="636.87049"
+     inkscape:cx="259.77759"
+     inkscape:zoom="0.57848045"
+     inkscape:lockguides="false"
+     showgrid="false"
+     id="namedview857"
+     inkscape:window-height="1035"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     inkscape:document-rotation="0" />
+  <defs
+     id="defs844">
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="289.23001"
+       x2="315.59"
+       y1="410.14999"
+       x1="315.59"
+       id="New_Gradient_Swatch_3"
+       gradientTransform="matrix(1.6579277,0,0,1.5702479,-228.11239,-273.93279)">
+      <stop
+         id="stop833"
+         stop-color="#0064b1"
+         offset="0" />
+      <stop
+         id="stop835"
+         stop-color="#00aeef"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="339.26001"
+       x2="281.95999"
+       y1="229.55"
+       x1="281.95999"
+       id="New_Gradient_Swatch_2">
+      <stop
+         id="stop838"
+         stop-color="#6d6e71"
+         offset="0" />
+      <stop
+         id="stop840"
+         stop-color="#c7c8ca"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#New_Gradient_Swatch_2"
+       y2="339.70001"
+       x2="349.07001"
+       y1="224.82001"
+       x1="349.07001"
+       id="New_Gradient_Swatch_2-2"
+       gradientTransform="matrix(1.4934508,0,0,1.4983245,-168.51119,-255.69445)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#New_Gradient_Swatch_2"
+       id="linearGradient853"
+       gradientUnits="userSpaceOnUse"
+       x1="281.95999"
+       y1="229.55"
+       x2="281.95999"
+       y2="339.26001"
+       gradientTransform="matrix(1.5,0,0,1.498692,-181.13,-255.78679)" />
+  </defs>
+  <title
+     id="title846">WCO_GTAS_logo</title>
+  <path
+     style="stroke-width:1.74614168;stroke-miterlimit:4;stroke-dasharray:none"
+     id="path848"
+     fill="#008bc7"
+     d="m 260.2209,479.73982 a 22.058993,22.533345 0 0 1 -4.35647,8.088 18.532321,18.930835 0 0 1 -6.91505,5.05056 26.847662,27.424987 0 0 1 -18.77434,0 18.566897,18.966153 0 0 1 -6.91505,-5.05056 22.30102,22.780575 0 0 1 -4.33919,-8.088 37.254805,38.055922 0 0 1 0,-21.52676 22.30102,22.780575 0 0 1 4.33919,-8.08798 18.618759,19.019131 0 0 1 6.91505,-5.06824 26.346321,26.912866 0 0 1 18.77434,0 18.566897,18.966153 0 0 1 6.91505,5.06824 22.058993,22.533345 0 0 1 4.35647,8.08798 37.65242,38.462086 0 0 1 0,21.52676 m 17.28762,-26.96584 a 37.704283,38.515065 0 0 0 -21.19462,-21.72102 43.37462,44.307335 0 0 0 -16.71711,-3.16101 43.996974,44.943072 0 0 0 -16.75171,3.14336 37.35853,38.161878 0 0 0 -21.28105,21.77399 44.411876,45.366897 0 0 0 0,32.4579 37.514119,38.320811 0 0 0 21.26376,21.73868 46.797567,47.803888 0 0 0 33.46882,0 37.617844,38.426767 0 0 0 12.89656,-8.68841 38.464938,39.292077 0 0 0 8.29806,-13.05027 44.273576,45.225622 0 0 0 0,-32.40492 m -94.42495,35.97212 a 5.7221997,5.8452482 0 0 0 -1.41758,0.90063 21.073599,21.526761 0 0 1 -3.21549,2.40166 17.149311,17.518086 0 0 1 -3.33651,1.57169 19.621441,20.043374 0 0 1 -3.82057,0.86531 40.26285,41.12865 0 0 1 -4.52934,0.24723 19.967193,20.396562 0 0 1 -8.10789,-1.76594 19.016374,19.425297 0 0 1 -6.62117,-4.99759 23.649454,24.158006 0 0 1 -4.49478,-8.08799 32.673588,33.37619 0 0 1 -1.64231,-10.98413 31.256004,31.928124 0 0 1 1.64231,-10.59561 23.632166,24.140347 0 0 1 4.59852,-8.08799 20.122781,20.555496 0 0 1 7.05333,-5.13887 23.0271,23.522268 0 0 1 9.07601,-1.76593 24.894162,25.42948 0 0 1 4.99612,0.44148 21.626803,22.09186 0 0 1 3.73412,1.07722 16.976436,17.341492 0 0 1 2.74872,1.37743 l 2.14367,1.37742 a 21.142749,21.597398 0 0 0 1.83248,1.07722 3.9761508,4.0616528 0 0 0 1.8325,0.4415 3.699549,3.7791031 0 0 0 2.28197,-0.63575 8.159753,8.3352181 0 0 0 1.4003,-1.41275 l 6.15438,-8.44116 a 29.250641,29.879639 0 0 0 -5.08256,-4.32655 34.10846,34.841918 0 0 0 -6.25811,-3.37294 40.69504,41.570134 0 0 0 -7.32995,-2.20742 42.821416,43.742236 0 0 0 -8.34992,-0.79467 45.39727,46.373481 0 0 0 -16.68255,3.01975 38.257487,39.080165 0 0 0 -13.00028,8.51181 37.272093,38.073581 0 0 0 -8.45364,12.99729 42.078049,42.982883 0 0 0 -3.02534,16.52916 47.229757,48.245372 0 0 0 2.64501,16.37023 36.960915,37.755712 0 0 0 7.58927,13.01494 34.765388,35.512973 0 0 0 12.10133,8.61778 40.280137,41.146309 0 0 0 16.07748,3.12571 41.680434,42.576718 0 0 0 16.94184,-3.23167 30.115021,30.762607 0 0 0 11.91118,-9.57138 l -7.24352,-7.78777 a 3.7168366,3.7967625 0 0 0 -1.24471,-0.86531 3.8205623,3.9027186 0 0 0 -1.29656,-0.24723 3.4575224,3.5318721 0 0 0 -1.55588,0.37085 M 34.444688,509.30159 H 50.971645 L 65.99458,459.44921 c 0.25931,-0.77701 0.51863,-1.60699 0.77793,-2.54294 0.25932,-0.93594 0.53593,-1.88954 0.79525,-2.9138 q 0.36303,1.53638 0.77793,2.9138 c 0.2766,0.93595 0.53593,1.76593 0.77796,2.54294 l 14.81546,49.85238 h 16.52696 l 24.32367,-80.42072 h -14.38328 a 6.5174299,6.6575789 0 0 0 -3.88972,1.20083 5.1862837,5.2978082 0 0 0 -2.03994,2.82551 l -10.82203,41.94097 c -0.31119,1.28913 -0.63965,2.66657 -0.93355,4.14995 -0.29388,1.48339 -0.60506,3.01975 -0.89895,4.62676 -0.32847,-1.65999 -0.6915,-3.21401 -1.12369,-4.66208 -0.43219,-1.44806 -0.84709,-2.8255 -1.24471,-4.11463 L 76.79933,432.90721 a 5.3937351,5.5097204 0 0 0 -2.12638,-2.94912 6.7767441,6.9224693 0 0 0 -3.92428,-1.07722 h -5.39373 a 6.1889652,6.322051 0 0 0 -3.87243,1.23615 5.6876245,5.8099296 0 0 0 -2.074516,2.79019 l -12.792835,41.83501 q -0.60506,2.03084 -1.244703,4.34421 -0.639643,2.31337 -1.192842,4.87398 a 40.089974,40.952057 0 0 0 -0.79524,-4.85632 c -0.363031,-1.53636 -0.726074,-3.0021 -1.089119,-4.36187 L 31.488503,432.80125 a 5.0134076,5.1212145 0 0 0 -2.160958,-2.94912 6.9150449,7.0637441 0 0 0 -3.976151,-1.09488 H 10 Z" />
+  <path
+     id="path850"
+     fill="url(#New_Gradient_Swatch_3)"
+     d="m 415.71069,180.23 c -1.12737,62.0719 -54.26397,112.0843 -119.75212,112.0843 -65.48815,0 -118.62473,-50.0124 -119.75212,-112.0843 H 130 c 0.31499,76.83223 56.55191,139.84628 132.07053,153.8843 10.26257,1.9 29.31217,9.15455 34.02069,36.1157 4.97377,-26.89834 22.51464,-34.8281 31.88193,-36.50827 75.13728,-13.3471 131.83843,-77.3347 132.13685,-153.36611 z"
+     style="fill:url(#New_Gradient_Swatch_3);stroke-width:1.61349" />
+  <path
+     id="path852"
+     fill="url(#New_Gradient_Swatch_2)"
+     d="m 200.26,171.82 a 92.235,92.154568 0 0 0 83.1,91.66 v -43.85173 a 48.57,48.527646 0 0 1 0,-95.61654 V 80.16 a 92.22,92.139581 0 0 0 -83.1,91.66"
+     style="fill:url(#linearGradient853);stroke-width:1.49934" />
+  <path
+     id="path854"
+     fill="url(#New_Gradient_Swatch_2-2)"
+     d="m 311.23,123.93602 a 48.343001,48.500763 0 0 1 0,95.72796 V 263.46 a 91.772549,92.072039 0 0 0 0,-183.32 z"
+     style="fill:url(#New_Gradient_Swatch_2-2);stroke-width:1.49589" />
+  <text
+     id="text1463"
+     y="491.69116"
+     x="335.52798"
+     style="font-size:95.99999726999999439px;line-height:1.25;font-family:Lato;-inkscape-font-specification:'Lato Bold';fill:#008bc7;fill-opacity:1;stroke-width:1.85575;font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-miterlimit:4;stroke-dasharray:none;"
+     xml:space="preserve"
+     transform="scale(0.96644643,1.0347185)"><tspan
+       y="491.69116"
+       x="335.52798"
+       id="tspan1461"
+       sodipodi:role="line"
+       style="stroke-width:1.85574798;-inkscape-font-specification:'Lato Bold';font-family:Lato;font-weight:bold;font-style:normal;font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-miterlimit:4;stroke-dasharray:none;font-size:95.99999726999999439px;">GTAS</tspan></text>
+  <text
+     transform="scale(0.34883965,2.8666466)"
+     id="text1482"
+     y="174.89902"
+     x="841.55164"
+     style="font-size:33.7407px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';fill:#008bc7;fill-opacity:1;stroke-width:0.351466"
+     xml:space="preserve"><tspan
+       style="stroke-width:0.351466"
+       y="174.89902"
+       x="841.55164"
+       id="tspan1480"
+       sodipodi:role="line">|</tspan></text>
+</svg>

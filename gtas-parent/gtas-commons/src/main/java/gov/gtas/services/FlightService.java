@@ -19,46 +19,67 @@ import java.util.Set;
 
 import gov.gtas.vo.passenger.FlightVo;
 
+
+import gov.gtas.vo.passenger.FlightGridVo;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import static gov.gtas.constant.GtasSecurityConstants.*;
+
+
 public interface FlightService {
-	public Flight create(Flight flight);
+	Flight create(Flight flight);
 
-	public Flight update(Flight flight);
+	Flight update(Flight flight);
 
-	public Flight findById(Long id);
+	Flight findById(Long id);
 
-	// @PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	public FlightsPageDto findAll(FlightsRequestDto dto);
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHTS)
+	FlightsPageDto findAll(FlightsRequestDto dto);
 
-	public Flight getUniqueFlightByCriteria(String carrier, String flightNumber, String origin, String destination,
+	@Deprecated
+	Flight getUniqueFlightByCriteria(String carrier, String flightNumber, String origin, String destination,
 			Date flightDate);
 
 	// always a list of 1.
-	public List<Flight> getFlightByPaxId(Long paxId);
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHTS)
+	List<Flight> getFlightByPaxId(Long paxId);
 
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHTS)
+	Set<Flight> getFlightByPaxIds(Set<Long> paxId);
 
-	public Set<Flight> getFlightByPaxIds(Set<Long> paxId);
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHTS)
+	@Deprecated
+	List<Flight> getFlightsByDates(Date startDate, Date endDate);
 
-
-	public List<Flight> getFlightsByDates(Date startDate, Date endDate);
-
-	// @PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	public HashMap<Document, List<Flight>> getFlightsByPassengerNameAndDocument(String firstName, String lastName,
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHTS)
+	@Deprecated
+	HashMap<Document, List<Flight>> getFlightsByPassengerNameAndDocument(String firstName, String lastName,
 			Set<Document> documents);
+	@Deprecated
+	List<Flight> getFlightsThreeDaysForwardInbound();
 
-	public List<Flight> getFlightsThreeDaysForwardInbound();
+	@Deprecated
+	List<Flight> getFlightsThreeDaysForwardOutbound();
 
-	public List<Flight> getFlightsThreeDaysForwardOutbound();
+	@Deprecated
+	Set<Passenger> getAllPassengers(Long id);
 
-	public Set<Passenger> getAllPassengers(Long id);
+	@Deprecated
+	void setAllPassengers(Set<Passenger> passengers, Long flightId);
 
-	public void setAllPassengers(Set<Passenger> passengers, Long flightId);
+	@Deprecated
+	void setSinglePassenger(Long passengerId, Long flightId);
 
-	public void setSinglePassenger(Long passengerId, Long flightId);
+	int getPassengerCount(Flight f);
 
-	public int getPassengerCount(Flight f);
+	List<SeatVo> getSeatsByFlightId(Long flightId);
 
-	public List<SeatVo> getSeatsByFlightId(Long flightId);
+	List<FlightVo> convertFlightToFlightVo(List<Flight> flights);
 
-	public List<FlightVo> convertFlightToFlightVo(List<Flight> flights);
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHTS)
+	List<FlightGridVo> findFlights(FlightsRequestDto dto);
+
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHTS)
+	List<FlightGridVo> convertFlightToFlightGridVo(List<Flight> flights);
 
 }

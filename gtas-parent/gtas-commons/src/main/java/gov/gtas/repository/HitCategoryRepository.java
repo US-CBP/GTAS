@@ -28,4 +28,6 @@ public interface HitCategoryRepository extends CrudRepository<HitCategory, Long>
 	@Query("SELECT wl FROM Watchlist wl WHERE wl.watchlistName in :names")
 	public List<Watchlist> getWatchlistByNames(@Param("names") List<String> names);
 
+	@Query("select hc from HitCategory hc where hc.archived = false  OR hc.archived IS NULL")
+    List<HitCategory> getAllNonArchivedCategories();
 }

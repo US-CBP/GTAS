@@ -1,0 +1,67 @@
+.NavBar {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
+.navColor {
+  background-color: var(--color-primary);
+}
+
+.navbar-nav .nav-link {
+  font-size: 1rem !important;
+}
+
+.navbar-nav .nav-link a {
+  font-size: 1rem !important;
+}
+
+.navLinkColor {
+  color: var(--color-offwhite) !important;
+}
+
+button.dropdown-item {
+  color: var(--color-text-primary);
+}
+
+.dropdown-menu {
+  background-color: var(--color-offwhite);
+}
+
+.dropdown-item:focus,
+.dropdown-item:hover {
+  background-color: var(--color-offwhite-hover) !important;
+}
+
+a.navDropdownColor.active,
+a.navDropdownColor:active,
+.dropdown-item.active,
+.dropdown-item:active,
+button.dropdown-item.active,
+button.dropdown-item:active {
+  background-color: var(--color-primary-hover) !important;
+  color: var(--color-offwhite) !important;
+}
+
+.navAbout {
+  margin: 0.5rem;
+  cursor: pointer;
+}
+
+.navbar-brand {
+  padding-top: 0;
+}
+
+a.navbar-brand {
+  font-size: 1.5rem;
+  font-family: "Merriweather", serif !important;
+  font-weight: 300 !important;
+  color: var(--color-offwhite) !important;
+}
+
+.navbar-brand img {
+  margin-right: 0.5rem;
+}
+
+.fa.fa-info-circle {
+  color: var(--color-offwhite);
+}

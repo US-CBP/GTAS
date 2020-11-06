@@ -5,7 +5,11 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.json.JsonLookupData;
+import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.lookup.HitCategory;
+
+import java.util.List;
 
 public interface HitCategoryService {
 
@@ -14,4 +18,8 @@ public interface HitCategoryService {
 	Iterable<HitCategory> findAll();
 
 	void create(HitCategory hitCategory);
+
+	JsonServiceResponse updateHitCategory(HitCategory hitCategory);
+
+    List<JsonLookupData> getAllNonArchivedCategories();
 }

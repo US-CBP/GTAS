@@ -42,6 +42,8 @@ public class GtasSecurityConstants {
 
 	public static final String PRIVILEGES_ADMIN_AND_MANAGE_RULES = "hasAnyAuthority('Admin', 'Manage Rules')";
 
+	public static final String PRIVILEGES_ADMIN_AND_VIEW_FLIGHTS = "hasAnyAuthority('Admin', 'View Flights')";
+
 	public static final String PRIVILEGES_ADMIN_AND_MANAGE_HITS = "hasAnyAuthority('Admin', 'Manage Hits')";
 
 	public static final String PRIVILEGES_ADMIN_AND_MANAGE_CASES = "hasAnyAuthority('Admin', 'Manage Cases')";

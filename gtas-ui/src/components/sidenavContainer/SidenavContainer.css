@@ -1,0 +1,139 @@
+.profile {
+  font-size: 200px;
+}
+
+.profile-container {
+  border: 2px solid #e0e0e0;
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  width: 230px !important;
+  height: 205px !important;
+  overflow: hidden;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 2px;
+}
+
+.white-bg {
+  background-color: white !important;
+}
+
+.container-screen {
+  height: 100% !important;
+}
+
+.filter-container {
+  z-index: 1020;
+}
+
+@media (max-width: 768px) {
+  .filter-container,
+  .filter {
+    width: 34px !important;
+  }
+  .filter-fg {
+    display: none !important;
+  }
+  .filter-toggle {
+    position: fixed;
+    z-index: 2000;
+    overflow: auto;
+    top: 0px;
+    left: 0px;
+    width: 34px;
+    display: block;
+    height: calc(100vh);
+    cursor: pointer;
+  }
+  .filter-toggle:hover {
+    background-color: rgba(1, 153, 184, 0.3);
+  }
+}
+
+@media (min-width: 769px) {
+  .filter-toggle {
+    display: none;
+  }
+}
+
+.filter-open {
+  top: auto;
+  left: 0;
+  display: block;
+  position: fixed;
+  height: calc(100vh - 60px);
+  width: 260px;
+}
+
+.arrow {
+  color: #2f99b8;
+  font-weight: 400;
+}
+
+.arrow-open::before {
+  content: '\f061';
+}
+
+.arrow-hide::before {
+  content: '\f060';
+}
+
+.main-overlay {
+  display: none;
+}
+
+.main-overlay-open {
+  height: calc(100vh - 80px);
+  width: calc(100vw - 20px);
+  position: absolute;
+  top: 60px;
+  z-index: 9;
+}
+
+.filter {
+  top: auto;
+  left: 0;
+  display: block;
+  position: fixed;
+  height: calc(100vh - 60px);
+  width: 260px;
+}
+
+.filter-fg,
+.filter-fg-open {
+  color: #f8f9fa;
+  z-index: 10;
+  overflow: auto;
+}
+
+.margintop20 {
+  margin-top: 20px;
+}
+
+.filter-bg {
+  z-index: 5;
+  background: linear-gradient(hsla(190, 100%, 4%, 1), hsla(190, 100%, 4%, 1), #003f4cb3),
+    url(/static/media/krzysztof-hepner-TH7TW20de9s-unsplash_2.4d0c12e9.jpg) no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+.filter-screen {
+  /* z-index: 5;
+  background: linear-gradient(rgb(0, 5, 8), rgba(0, 5, 8, 0.5));
+  background-size: cover;
+  background-position: center center; */
+  /* background-color: #040606; */
+  /* opacity: 0.8; */
+}
+
+.fg {
+  /* temp placeholder for distinguishing Input styling between dark and light backgrounds.
+  Need to find a better pattern for this.
+   */
+}
+
+hr {
+  border-top: 1px solid rgba(230, 230, 230, 1);
+}

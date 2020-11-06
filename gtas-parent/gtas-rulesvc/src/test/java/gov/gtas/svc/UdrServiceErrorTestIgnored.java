@@ -199,7 +199,7 @@ public class UdrServiceErrorTestIgnored {
 		UdrSpecification spec = UdrSpecificationBuilder.createSampleSpec();
 		String authorId = spec.getSummary().getAuthor();
 
-		UserData authorData = new UserData(authorId, null, null, null, 0, null,"", false, false);
+		UserData authorData = new UserData(authorId, null, null, null, 0, null,"", false, false, false, "");
 		User author = new User();
 		author.setUserId(authorId);
 		try {
@@ -234,7 +234,7 @@ public class UdrServiceErrorTestIgnored {
 					UdrSpecification.class);
 			assertNotNull(testObj);
 			authorId = testObj.getSummary().getAuthor();
-			UserData authorData = new UserData(authorId, null, null, null, 0, null, "", false, false);
+			UserData authorData = new UserData(authorId, null, null, null, 0, null, "", false, false, false, "");
 			User author = new User();
 			author.setUserId(authorId);
 			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(testObj, author);
@@ -268,7 +268,7 @@ public class UdrServiceErrorTestIgnored {
 					UdrSpecification.class);
 			assertNotNull(testObj);
 			authorId = testObj.getSummary().getAuthor();
-			UserData authorData = new UserData(authorId, null, null, null, 0, null,"", false, false);
+			UserData authorData = new UserData(authorId, null, null, null, 0, null,"", false, false, false, "");
 			User author = new User();
 			author.setUserId(authorId);
 			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(testObj, author);
@@ -300,7 +300,7 @@ public class UdrServiceErrorTestIgnored {
 					PassengerMapping.DEBARKATION.getFieldName(), "equal", startDate), UdrSpecification.class);
 			assertNotNull(testObj);
 			authorId = testObj.getSummary().getAuthor();
-			UserData authorData = new UserData(authorId, null, null, null, 0, null, "", false, false);
+			UserData authorData = new UserData(authorId, null, null, null, 0, null, "", false, false, false, "");
 
 			User author = new User();
 			author.setUserId(authorId);

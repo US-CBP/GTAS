@@ -52,7 +52,7 @@ public class RuleServiceDataGenUtils {
 		try {
 			Set<RoleData> roles = new HashSet<RoleData>();
 			roles.add(new RoleData(1, "ADMIN"));
-			UserData userData = new UserData("jJone", "password", "JP", "Jones", 1, roles, "", false, false);
+			UserData userData = new UserData("jJone", "password", "JP", "Jones", 1, roles, "", false, false, false, "1111111111");
 
 			userService.create(userData);
 		} catch (Exception e) {

@@ -1,0 +1,119 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+// Primary colors
+$hover-color: rgb(177, 172, 172);
+$gtas-white: rgba(255, 255, 255, 0.9);
+$wco-blue: rgb(0, 119, 200);
+$wco-gray: rgb(141, 144, 147);
+
+.header-navbar {
+  padding: 0.25rem 1rem !important;
+  background-color: $wco-blue;
+  border-bottom: 3px solid $wco-gray;
+}
+.header-navbar-brand {
+  background-color: white;
+  min-width: 200px;
+  align-self: baseline;
+  text-align: center;
+  border-radius: 10px 0 10px 0 !important;
+  a {
+    img {
+      height: 40px;
+    }
+  }
+}
+.header-navbar-brand:hover {
+  background-color: darken($gtas-white, 10%);
+}
+
+.header-navbar .nav-tabs {
+  border-bottom: none;
+}
+
+.header-navbar .nav-tabs .active-tab {
+  border-color: transparent;
+  border-bottom: 1px solid $gtas-white;
+}
+
+.header-navbar .navbar-nav a.nav-link {
+  color: $gtas-white;
+}
+
+.header-navbar .navbar-nav a.nav-link:hover {
+  color: $hover-color;
+  border-color: transparent;
+  border-bottom: 1px solid $gtas-white;
+}
+
+.header-navbar .navbar-toggler {
+  color: $gtas-white !important;
+  border-color: $gtas-white !important;
+  position: absolute;
+  right: 20px;
+  top: 8px;
+  z-index: 100;
+}
+
+.header-navbar .navbar-toggler-icon {
+  color: $gtas-white !important;
+}
+
+.navbar-search {
+  // The search form on the nav bar needs more thought
+  //on when we are going to use it and on what size of
+  //screen we should display it.
+  //Once we decide, we can display it.
+  display: none !important;
+}
+@include media-breakpoint-up(md) {
+  .navbar-expand-md .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto;
+    align-self: flex-end;
+  }
+
+  .right {
+    position: absolute;
+    right: 30px;
+  }
+
+  .header-navbar {
+    height: 60px;
+  }
+}
+
+//media query for small devices and down(bootstrap's way)
+@include media-breakpoint-down(sm) {
+  .navbar-expand-md .navbar-nav .dropdown-menu {
+    position: absolute;
+  }
+  .navbar-collapse {
+    position: absolute;
+    background-color: $wco-blue;
+    right: 20px;
+    top: 50px;
+    width: 180px !important;
+    padding: 5px;
+    border-radius: 3px;
+    padding-bottom: 10px;
+  }
+  .nav-link {
+    padding-bottom: 5px;
+  }
+  .nav-tabs {
+    margin-right: 15px;
+  }
+  .header-navbar-brand {
+    margin-left: 15% !important;
+  }
+}
+
+.dropdown-item:hover,
+.dropdown-item.active,
+.dropdown-item:focus {
+  color: #16181b;
+  background-color: rgba(0, 0, 0, 0.075);
+}

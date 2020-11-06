@@ -8,6 +8,7 @@ package gov.gtas.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -24,6 +25,13 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 import com.allanditzel.springframework.security.web.csrf.CsrfTokenResponseHeaderBindingFilter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  *
@@ -52,12 +60,14 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
 				"/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
 				"/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
-				"WEB-INF/**/*", "/data/**");
+				"WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
+
 	}
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(daoAuthenticationProvider).userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+		auth.authenticationProvider(daoAuthenticationProvider).userDetailsService(userDetailsService)
+				.passwordEncoder(new BCryptPasswordEncoder());
 	}
 
 	@Override
@@ -70,9 +80,9 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.csrf().disable();
 
-		http.authorizeRequests()
-				.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**", "/reset.html", "/password-reset",
-						"/authenticate")
+		http.cors().and().authorizeRequests()
+				.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**",
+						"/reset.html", "/password-reset", "/authenticate" , "/signup.html", "/user/signup/new","/signup/**/*","/user/signup/**/*", "/forgot-password", "/reset-password")
 				.permitAll().anyRequest().authenticated().and().formLogin().loginProcessingUrl("/authenticate")
 				.usernameParameter("username").passwordParameter("password")
 				.successHandler(new AjaxAuthenticationSuccessHandler(savedReqHandler))

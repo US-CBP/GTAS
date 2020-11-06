@@ -1,0 +1,23 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+$background-image-url: "../../../images/noorulabdeen-ahmad-lpcaOpVIzx8-unsplash.jpg";
+
+.manage-users-side-nav .filter-bg {
+  z-index: 5;
+  background: linear-gradient(
+      rgba(214, 215, 218, 0.83) 10%,
+      rgba(223, 225, 231, 0.83),
+      rgba(255, 255, 255, 0)
+    ),
+    url($background-image-url) no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+//TODO:  decide how we should use the filter nav on small devices and add styling
+@include media-breakpoint-down(md) {
+  .manage-users-side-nav {
+    display: none;
+  }
+}

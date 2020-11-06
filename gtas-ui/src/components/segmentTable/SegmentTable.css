@@ -1,0 +1,8 @@
+.tableHeight {
+  max-height: 65vh;
+  overflow: scroll;
+}
+
+.highlight {
+  background-color: yellow !important;
+}

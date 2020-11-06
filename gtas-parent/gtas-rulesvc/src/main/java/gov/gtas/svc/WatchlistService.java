@@ -6,6 +6,7 @@
 package gov.gtas.svc;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 
 import gov.gtas.json.JsonLookupData;
 import gov.gtas.json.JsonServiceResponse;
@@ -98,6 +99,9 @@ public interface WatchlistService {
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	JsonServiceResponse deleteWatchlist(String userId, String wlName);
+
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public JsonServiceResponse deleteWatchlistCategory(Long categoryId);
 
 	public List<JsonLookupData> findWatchlistCategories();
 

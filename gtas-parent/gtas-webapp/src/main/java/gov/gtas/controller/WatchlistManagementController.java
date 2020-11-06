@@ -16,6 +16,7 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.error.CommonServiceException;
 import gov.gtas.json.JsonLookupData;
 import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.json.BasicApiResponse;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
@@ -25,6 +26,9 @@ import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.HitCategoryService;
 import gov.gtas.services.PendingHitDetailsService;
+import gov.gtas.services.dto.DocumentWatchlistItemDto;
+import gov.gtas.services.dto.PassengerWatchlistItemDto;
+import gov.gtas.services.dto.WLRequest;
 import gov.gtas.services.security.UserService;
 import gov.gtas.svc.RuleManagementService;
 import gov.gtas.svc.WatchlistService;
@@ -36,11 +40,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The REST service end-point controller for creating and managing watch lists.
@@ -48,7 +55,6 @@ import java.util.List;
 @RestController
 public class WatchlistManagementController {
 	private static final Logger logger = LoggerFactory.getLogger(WatchlistManagementController.class);
-
 
 	@Autowired
 	private AppConfigurationService appConfigurationService;
@@ -71,10 +77,8 @@ public class WatchlistManagementController {
 	/**
 	 * Gets the watchlist.
 	 *
-	 * @param entity
-	 *            the entity
-	 * @param name
-	 *            the name
+	 * @param entity the entity
+	 * @param name   the name
 	 * @return the watchlist
 	 */
 	@RequestMapping(value = Constants.WL_GET_BY_NAME, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -130,20 +134,41 @@ public class WatchlistManagementController {
 		hitCategory.setSeverity(hitSeverityEnum);
 		hitCategoryService.create(hitCategory);
 
-		//This is to make sure that manual hit generation functions on new category additions
-		pendingHitDetailsService.createManualHitMaker(hitCategory.getDescription(), userService.fetchUser(GtasSecurityUtils.fetchLoggedInUserId()), hitCategory.getId());
+		// This is to make sure that manual hit generation functions on new category
+		// additions
+		pendingHitDetailsService.createManualHitMaker(hitCategory.getDescription(),
+				userService.fetchUser(GtasSecurityUtils.fetchLoggedInUserId()), hitCategory.getId());
 
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE, value =Constants.WL_CATEGORY_DELETEBYID)
+	public JsonServiceResponse deleteWatchlistCategoryById(@PathVariable("id") Long id){
+		return watchlistService.deleteWatchlistCategory(id);
+	}
+
+	@RequestMapping(method = RequestMethod.PUT, value=Constants.WL_ADD_WL_CAT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public JsonServiceResponse editWatchlistCategoryById(@RequestBody JsonLookupData wlCategory){
+		HitCategory tmpHc = hitCategoryService.findById(wlCategory.getId());
+		if(tmpHc != null){
+			Optional<HitSeverityEnum> tmpHitEnum = HitSeverityEnum.fromString(wlCategory.getSeverity());
+			if(tmpHitEnum.isPresent()){
+				tmpHc.setSeverity(tmpHitEnum.get());
+			}
+			tmpHc.setDescription(wlCategory.getDescription());
+			tmpHc.setName(wlCategory.getLabel());
+			return hitCategoryService.updateHitCategory(tmpHc);
+		}
+		return new JsonServiceResponse(Status.FAILURE, "Invalid hit category update", wlCategory);
 	}
 
 	/**
 	 * Creates the watchlist.
 	 *
-	 * @param entity
-	 *            the entity
-	 * @param inputSpec
-	 *            the input spec
+	 * @param entity    the entity
+	 * @param inputSpec the input spec
 	 * @return the json service response
 	 */
+	@Deprecated
 	@PostMapping(value = Constants.WL_CREATE_UPDATE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
 	public JsonServiceResponse createWatchlist(@PathVariable String entity, @RequestBody WatchlistSpec inputSpec) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
@@ -152,13 +177,110 @@ public class WatchlistManagementController {
 		return createUpdateWatchlist(inputSpec);
 	}
 
+	@PostMapping(value = "/wl/passenger", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json")
+	public ResponseEntity<?> createPaxWatchlist(@RequestBody WLRequest<PassengerWatchlistItemDto> request) {
+
+		return addUpdatePaxWatchlist(request);
+	}
+
+	@PostMapping(value = "/wl/document", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json")
+	public ResponseEntity<?> createDocWatchlist(@RequestBody WLRequest<DocumentWatchlistItemDto> request) {
+
+		return addUpdateDocWatchlist(request);
+	}
+
+	@PutMapping(value = "/wl/passenger", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json")
+	public ResponseEntity<?> updatePaxWatchlist(@RequestBody WLRequest<PassengerWatchlistItemDto> request) {
+
+		return addUpdatePaxWatchlist(request);
+	}
+
+	@PutMapping(value = "/wl/document", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json")
+	public ResponseEntity<?> updateDocWatchlist(@RequestBody WLRequest<DocumentWatchlistItemDto> request) {
+
+		return addUpdateDocWatchlist(request);
+	}
+
+	public ResponseEntity<?> addUpdatePaxWatchlist(@RequestBody WLRequest<PassengerWatchlistItemDto> request) {
+		List<PassengerWatchlistItemDto> wlItems = request.getWlItems();
+		List<JsonServiceResponse> results = new ArrayList<JsonServiceResponse>();
+
+		for (PassengerWatchlistItemDto wlitem : wlItems) {
+			WatchlistSpec wlSpec = new WatchlistSpec("Passenger", "PASSENGER");
+			List<WatchlistTerm> terms = new ArrayList<WatchlistTerm>();
+			terms.add(new WatchlistTerm("firstName", "string", wlitem.getFirstName()));
+			terms.add(new WatchlistTerm("lastName", "string", wlitem.getLastName()));
+			terms.add(new WatchlistTerm("dob", "date", wlitem.getDob()));
+			Long categoryId = Long.parseLong(wlitem.getCategoryId());
+
+			WatchlistItemSpec wlItemSpec = new WatchlistItemSpec(request.getId(), request.getAction(),
+					terms.toArray(new WatchlistTerm[0]));
+
+			wlSpec.getWatchlistItems().add(wlItemSpec);
+			JsonServiceResponse result = createUpdateWatchlist(wlSpec, categoryId);
+			results.add(result);
+		}
+
+		return setRecompileFlagAndReturnResult(results);
+	}
+
+	private ResponseEntity<?> addUpdateDocWatchlist(WLRequest<DocumentWatchlistItemDto> request) {
+		List<DocumentWatchlistItemDto> wlItems = request.getWlItems();
+		List<JsonServiceResponse> results = new ArrayList<JsonServiceResponse>();
+
+		for (DocumentWatchlistItemDto wlitem : wlItems) {
+			WatchlistSpec wlSpec = new WatchlistSpec("Document", "DOCUMENT");
+			List<WatchlistTerm> terms = new ArrayList<WatchlistTerm>();
+			terms.add(new WatchlistTerm("documentType", "string", wlitem.getDocumentType()));
+			terms.add(new WatchlistTerm("documentNumber", "string", wlitem.getDocumentNumber()));
+
+			Long categoryId = Long.parseLong(wlitem.getCategoryId());
+
+			WatchlistItemSpec wlItemSpec = new WatchlistItemSpec(request.getId(), request.getAction(),
+					terms.toArray(new WatchlistTerm[0]));
+
+			wlSpec.getWatchlistItems().add(wlItemSpec);
+
+			JsonServiceResponse result = createUpdateWatchlist(wlSpec, categoryId);
+			results.add(result);
+		}
+		return setRecompileFlagAndReturnResult(results);
+
+	}
+
+	private JsonServiceResponse createUpdateWatchlist(WatchlistSpec wlSpec, Long categoryId) {
+		validateInput(wlSpec);
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		JsonServiceResponse result = watchlistService.createUpdateDeleteWatchlistItems(userId, wlSpec, categoryId);
+		if (categoryId > 0) {
+			List<Long> ids = (List<Long>) result.getResult();
+			watchlistService.updateWatchlistItemCategory(categoryId, ids.get(0));
+		}
+
+		return result;
+	}
+
+	private ResponseEntity<?> setRecompileFlagAndReturnResult(List<JsonServiceResponse> results) {
+		appConfigurationService.setRecompileFlag();
+
+		List<JsonServiceResponse> responsesWithError = results.stream().filter(res -> res.getStatus() == Status.FAILURE)
+				.collect(Collectors.toList());
+
+		if (responsesWithError.isEmpty()) {
+			return ResponseEntity.ok(new BasicApiResponse(Status.SUCCESS, "Watchlist item added"));
+		}
+
+		else {
+			return ResponseEntity.ok(new BasicApiResponse(Status.FAILURE, responsesWithError.get(0).getMessage()));
+		}
+
+	}
+
 	/**
 	 * Updates the watchlist.
 	 *
-	 * @param entity
-	 *            the entity
-	 * @param inputSpec
-	 *            the input spec
+	 * @param entity    the entity
+	 * @param inputSpec the input spec
 	 * @return the json service response
 	 */
 	@PutMapping(value = Constants.WL_CREATE_UPDATE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -191,21 +313,26 @@ public class WatchlistManagementController {
 	@RequestMapping(value = Constants.WL_CATEGORY_GETALL, method = RequestMethod.GET)
 	@ResponseBody
 	public List<JsonLookupData> getWatchlistCategories() {
-
 		List<JsonLookupData> result = watchlistService.findWatchlistCategories();
 		return result;
 	}
-	
+
+	@RequestMapping(value = Constants.WL_CATEGORY_GETALLNONARCHIVED, method = RequestMethod.GET)
+	@ResponseBody
+	public List<JsonLookupData> getAllNonArchivedWatchlistCategories() {
+		List<JsonLookupData> result = hitCategoryService.getAllNonArchivedCategories();
+		return result;
+	}
+
 	@RequestMapping(value = Constants.WL_DELETE_ITEMS, method = RequestMethod.DELETE)
-	public void deleteWatchlistItems(@PathVariable List<Long> watchlistItemIds){	
+	public void deleteWatchlistItems(@PathVariable List<Long> watchlistItemIds) {
 		watchlistService.deleteWatchlistItems(watchlistItemIds);
 	}
 
 	/**
 	 * Creates the DRL rule response JSON object.
 	 *
-	 * @param rules
-	 *            the DRL rules.
+	 * @param rules the DRL rules.
 	 * @return the JSON response object containing the rules.
 	 */
 	private JsonServiceResponse createDrlRulesResponse(String rules) {
@@ -234,6 +361,7 @@ public class WatchlistManagementController {
 		}
 	}
 
+	@Deprecated
 	private JsonServiceResponse createUpdateWatchlist(WatchlistSpec inputSpec) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		logger.info("******** Received Watchlist Create/Update request by user =" + userId);
@@ -272,8 +400,7 @@ public class WatchlistManagementController {
 		}
 
 		appConfigurationService.setRecompileFlag();
-		return results.stream()
-				.reduce(results.get(0),
+		return results.stream().reduce(results.get(0),
 				(a, b) -> new JsonServiceResponse(a.getStatus(), a.getMessage(), merge(a.getResult(), b.getResult())));
 	}
 

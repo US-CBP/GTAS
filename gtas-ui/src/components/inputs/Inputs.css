@@ -1,0 +1,41 @@
+.form-input {
+  background-clip: padding-box;
+  border-radius: 4px;
+  border-style: solid;
+  border-width: 1px;
+  color: rgb(73, 80, 87);
+  border-color: rgb(206, 212, 218);
+  display: block;
+  font-size: 16px;
+  height: 34px;
+  line-height: 24px;
+  outline-color: rgb(73, 80, 87);
+  padding: 6px 12px;
+  text-decoration: none solid rgb(73, 80, 87);
+  text-size-adjust: 100%;
+  transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s,
+    -webkit-box-shadow 0.15s ease-in-out 0s;
+  width: 100%;
+  -webkit-appearance: none;
+  column-rule-color: rgb(73, 80, 87);
+  -webkit-locale: "en";
+  perspective-origin: 270px 19px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-text-emphasis-color: rgb(48, 158, 248);
+  -webkit-text-fill-color: rgb(73, 80, 87);
+  -webkit-text-stroke-color: rgb(73, 80, 87);
+  transform-origin: 270px 19px 0px;
+  caret-color: rgb(73, 80, 87);
+  max-width: 100%;
+}
+
+.form-input:focus {
+  border-color: #80bdff;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.txtlabel {
+  float: left;
+}

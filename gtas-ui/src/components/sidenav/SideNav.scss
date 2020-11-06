@@ -1,0 +1,128 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+$background-image-url: "../../images/WCO_flag.svg";
+$wco-blue: rgb(0, 119, 200);
+$wco-blue-dark: darken($wco-blue, 20%);
+$wco-gray: rgb(141, 144, 147);
+$wco-gray-dark: darken($wco-gray, 20%);
+$gtas-white: rgba(255, 255, 255, 0.9);
+$transparent: rgba(223, 231, 247, 0);
+
+.profile {
+  font-size: 200px;
+}
+
+.profile-container {
+  border: 2px solid #e0e0e0;
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  width: 230px !important;
+  height: 205px !important;
+  overflow: hidden;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 2px;
+}
+
+.filter-container {
+  z-index: 1020;
+}
+
+@include media-breakpoint-down(sm) {
+  .filter-container,
+  .filter {
+    width: 34px !important;
+  }
+  .filter-fg {
+    display: none !important;
+  }
+  .filter-toggle {
+    position: fixed;
+    z-index: 2000;
+    overflow: auto;
+    top: 0px;
+    left: 0px;
+    width: 34px;
+    display: block;
+    height: calc(100vh);
+    cursor: pointer;
+  }
+  .filter-toggle:hover {
+    background-color: $transparent;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .filter-toggle {
+    display: none;
+  }
+}
+
+.filter-open {
+  top: auto;
+  left: 0;
+  display: block;
+  position: fixed;
+  height: calc(100vh - 60px);
+  width: 260px;
+}
+
+.arrow {
+  color: $gtas-white;
+  font-weight: 400;
+}
+
+.arrow-open::before {
+  content: "\f061";
+}
+
+.arrow-hide::before {
+  content: "\f060";
+}
+
+.main-overlay {
+  display: none;
+}
+
+.main-overlay-open {
+  height: calc(100vh - 80px);
+  width: calc(100vw - 20px);
+  position: absolute;
+  top: 60px;
+  z-index: 9;
+}
+
+.filter {
+  top: auto;
+  left: 0;
+  display: block;
+  position: fixed;
+  height: calc(100vh - 60px);
+  width: 260px;
+}
+
+.filter-fg,
+.filter-fg-open {
+  color: #f8f9fa;
+  z-index: 10;
+  overflow: auto;
+}
+
+.margintop20 {
+  margin-top: 20px;
+}
+
+.filter-bg {
+  z-index: 5;
+  background: linear-gradient($wco-blue, $transparent),
+    url($background-image-url) no-repeat no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+hr {
+  border-top: 1px solid rgba(230, 230, 230, 1);
+}

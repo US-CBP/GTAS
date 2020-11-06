@@ -9,12 +9,18 @@
 package gov.gtas.services;
 
 import gov.gtas.services.dto.ApplicationStatisticsDTO;
+import gov.gtas.services.dto.AppStatisticsDTO;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 
 public interface AdminService {
 
+	@Deprecated
 	@PreAuthorize(PRIVILEGE_ADMIN)
 	ApplicationStatisticsDTO createApplicationStatisticsDto();
+
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	AppStatisticsDTO getAppStatistics();
 }

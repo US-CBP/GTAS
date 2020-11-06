@@ -28,4 +28,6 @@ public interface PassengerRepositoryCustom {
 	Pair<Long, List<Passenger>> priorityVettingListQuery(PriorityVettingListRequest request, Set<UserGroup> userGroups,
 			String userId);
 
+  List<Passenger> findByFlightId(Long flightId);
+
 }

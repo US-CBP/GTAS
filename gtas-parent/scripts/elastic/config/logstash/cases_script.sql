@@ -1,8 +1,7 @@
 select c.*,
 	   f.`id` "flight.id",
-       fd.`eta_date` "flight.eta_date", -- 
-       f.`etd_date` "flight.etd_date", 
-       f.`etd_date` "flight.flight_date", 
+       fd.`full_eta_timestamp` "flight.eta_date", -- 
+       fd.`full_etd_timestamp` "flight.etd_date", 
        f.`flight_number` "flight.flight_number", 
        f.`full_flight_number` "flight.full_flight_number", 
        f.`origin` "flight.origin", 

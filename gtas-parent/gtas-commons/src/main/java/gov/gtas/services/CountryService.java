@@ -6,6 +6,7 @@
 package gov.gtas.services;
 
 import gov.gtas.vo.lookup.CountryVo;
+import gov.gtas.vo.lookup.CountryLookupVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
@@ -13,26 +14,28 @@ import java.util.List;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 
 public interface CountryService {
-	@PreAuthorize(PRIVILEGE_ADMIN)
-	public CountryVo create(CountryVo country);
+  @PreAuthorize(PRIVILEGE_ADMIN)
+  public CountryVo create(CountryVo country);
 
-	@PreAuthorize(PRIVILEGE_ADMIN)
-	public CountryVo delete(Long id);
+  @PreAuthorize(PRIVILEGE_ADMIN)
+  public CountryVo delete(Long id);
 
-	public List<CountryVo> findAll();
+  public List<CountryVo> findAll();
 
-	@PreAuthorize(PRIVILEGE_ADMIN)
-	public CountryVo update(CountryVo country);
+  @PreAuthorize(PRIVILEGE_ADMIN)
+  public CountryVo update(CountryVo country);
 
-	public CountryVo findById(Long id);
+  public CountryVo findById(Long id);
 
-	@PreAuthorize(PRIVILEGE_ADMIN)
-	public CountryVo restore(CountryVo country);
+  @PreAuthorize(PRIVILEGE_ADMIN)
+  public CountryVo restore(CountryVo country);
 
-	@PreAuthorize(PRIVILEGE_ADMIN)
-	public int restoreAll();
+  @PreAuthorize(PRIVILEGE_ADMIN)
+  public int restoreAll();
 
-	public CountryVo getCountryByTwoLetterCode(String country);
+  public List<CountryLookupVo> getCountryLookup();
 
-	public CountryVo getCountryByThreeLetterCode(String country);
+  public CountryVo getCountryByTwoLetterCode(String country);
+
+  public CountryVo getCountryByThreeLetterCode(String country);
 }

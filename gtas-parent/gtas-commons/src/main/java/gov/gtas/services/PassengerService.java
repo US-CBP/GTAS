@@ -9,6 +9,7 @@ import gov.gtas.model.*;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
+import gov.gtas.vo.passenger.FlightPaxVo;
 import gov.gtas.vo.passenger.DispositionStatusVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -36,10 +37,8 @@ public interface PassengerService {
 	/**
 	 * Gets the passengers by criteria.
 	 *
-	 * @param flightId
-	 *            optional
-	 * @param request
-	 *            the request
+	 * @param flightId optional
+	 * @param request  the request
 	 * @return the passengers by criteria
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES)
@@ -61,7 +60,10 @@ public interface PassengerService {
 
 	Set<Passenger> getPassengersWithHitDetails(Set<Long> passengerIds);
 
-    Set<Passenger> getPassengersForEmailMatching(Set<Passenger> passengers);
+	Set<Passenger> getPassengersForEmailMatching(Set<Passenger> passengers);
+
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES)
+	List<FlightPaxVo> getFlightPax(Long flightId);
 
 	Set<Passenger> getPassengersFromMessageIds(Set<Long> messageIds, Set<Long> flightIds);
 
@@ -69,5 +71,5 @@ public interface PassengerService {
 
 	Set<Document> getPassengerDocuments(Set<Long> passengerIds, Set<Long> flightIds);
 
-    Set<Passenger> getPassengersWithBags(Set<Long> passengerIds, Long flightId);
+	Set<Passenger> getPassengersWithBags(Set<Long> passengerIds, Long flightId);
 }

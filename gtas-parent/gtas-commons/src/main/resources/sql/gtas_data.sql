@@ -10,14 +10,15 @@ INSERT INTO `role` VALUES ('5', 'Manage Rules');
 INSERT INTO `role` VALUES ('6', 'SysAdmin');
 INSERT INTO `role` VALUES ('7', 'Manage Hits');
 INSERT INTO `role` VALUES ('8', 'Manage Cases');
+INSERT INTO `role` VALUES ('9', 'View Flights');
 
 
 -- ----------------------------
 -- Users
 -- ----------------------------
 -- password is 'password'
-INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, last_name, password) VALUES ('GTAS', 1, 'Email', 'GTAS', false, false, 'Application User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, last_name, password) VALUES ('ADMIN', 1, 'Email', 'Admin', false, false, 'Admin User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
+INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, archived, last_name, password) VALUES ('GTAS', 1, 'Email', 'GTAS', false, false, false, 'Application User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
+INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, archived, last_name, password) VALUES ('ADMIN', 1, 'Email', 'Admin', false, false, false, 'Admin User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 
 -- ----------------------------
 -- Records of user_role
@@ -69,11 +70,11 @@ INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Noti
 INSERT INTO app_configuration (description, opt, val) VALUES ('Recompile Rules', 'RECOMPILE_RULES', 'false');
 
 
-insert into hit_category(id, category, description, severity) values(1, 'General', 'General category', 2);
-insert into hit_category(id, category, description, severity) values(2, 'Terrorism', 'Terrorism related entities',0);
-insert into hit_category(id, category, description, severity) values(3, 'World Health', 'Health Alert related',1);
-insert into hit_category(id, category, description, severity) values(4, 'Federal Law Enforcement', 'Federal watch category',0);
-insert into hit_category(id, category, description, severity) values(5, 'Local Law Enforcement', 'Local watch category',0);
+insert into hit_category(id, category, description, severity, archived) values(1, 'General', 'General category', 2, false);
+insert into hit_category(id, category, description, severity, archived) values(2, 'Terrorism', 'Terrorism related entities',0, false);
+insert into hit_category(id, category, description, severity, archived) values(3, 'World Health', 'Health Alert related',1, false);
+insert into hit_category(id, category, description, severity, archived) values(4, 'Federal Law Enforcement', 'Federal watch category',0, false);
+insert into hit_category(id, category, description, severity, archived) values(5, 'Local Law Enforcement', 'Local watch category',0, false);
 
 INSERT INTO gtas.user_group (id, created_at, created_by, updated_at, updated_by, ug_name) VALUES (1, null, null, null, null, 'default');
 INSERT INTO gtas.ug_user_join (ug_id, user_id) VALUES (1, 'ADMIN');
@@ -84,9 +85,9 @@ INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 3);
 INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 4);
 INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 5);
 
-INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (1, null, null, null, null, 'GENERAL_PASSENGER');
-INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (2, null, null, null, null, 'DELETED');
-INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (3, null, null, null, null, 'LOOKOUT');
+INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type, archived) VALUES (1, null, null, null, null, 'GENERAL_PASSENGER', false);
+INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type, archived) VALUES (2, null, null, null, null, 'DELETED', false);
+INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (3, null, null, null, null, 'LOOKOUT', false);
 
 -- ----------------------------
 -- Manual Hit HitMaker Population
@@ -103,10 +104,6 @@ INSERT INTO manual_lookout (description, id) VALUES ('World Health', 3);
 INSERT INTO manual_lookout (description, id) VALUES ('Federal Law Enforcement', 4);
 INSERT INTO manual_lookout (description, id) VALUES ('Local Law Enforcement', 5);
 
--- ----------------------------
--- External Hit HitMaker Population
--- ----------------------------
-
 INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 1);
 INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 2);
 INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 3);
@@ -119,3 +116,9 @@ INSERT INTO external_hit (description, id) VALUES ('World Health', 8);
 INSERT INTO external_hit (description, id) VALUES ('Federal Law Enforcement', 9);
 INSERT INTO external_hit (description, id) VALUES ('Local Law Enforcement', 10);
 
+-- ----------------------------
+-- User Location
+-- ----------------------------
+INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "IAD");
+INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "DCA");
+INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "ADD");

@@ -1,0 +1,20 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+$gtas-primary-color: #075484;
+$header-text-color: #e0e0e0;
+
+.summary-card-deck .card {
+  min-width: 400px !important;
+  margin: 0.5rem 0.5rem;
+}
+.summary-card-deck .card .card-header {
+  color: $header-text-color;
+  background-color: $gtas-primary-color !important;
+}
+@include media-breakpoint-up(xl) {
+  .summary-card-deck .card {
+    max-width: 50%;
+  }
+}

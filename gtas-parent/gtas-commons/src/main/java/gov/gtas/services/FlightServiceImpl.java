@@ -16,6 +16,7 @@ import gov.gtas.vo.passenger.CountDownVo;
 import gov.gtas.vo.passenger.SeatVo;
 import gov.gtas.vo.passenger.CodeShareVo;
 import gov.gtas.vo.passenger.FlightVo;
+import gov.gtas.vo.passenger.FlightGridVo;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -317,4 +318,53 @@ public class FlightServiceImpl implements FlightService {
 				& !parentSeatVo.getNumber().equals(childSeatVo.getNumber())
 				& parentSeatVo.getRefNumber().equals(childSeatVo.getRefNumber());
 	}
+
+
+  @Override
+  @Transactional
+  public List<FlightGridVo> findFlights(FlightsRequestDto dto) {
+    List<Flight> flightslist = flightRespository.findUpcomingFlights(dto);
+    List<FlightGridVo> vos = convertFlightToFlightGridVo(flightslist);
+    return vos;
+  }
+  
+  @Override
+  public List<FlightGridVo> convertFlightToFlightGridVo(List<Flight> flights) {
+    List<FlightGridVo> fgvo = new ArrayList<>();
+  
+    for (Flight f : flights) {
+      FlightGridVo vo = new FlightGridVo();
+      Date countDownToDate = f.getFlightCountDownView().getCountDownTimer();
+  
+      vo.setCountdown(countDownToDate);
+      vo.setDirection(f.getDirection());
+      BeanUtils.copyProperties(f, vo);
+      BeanUtils.copyProperties(f.getMutableFlightDetails(), vo);
+  
+      if (f.getFlightHitsFuzzy() != null) {
+        Integer fuzzyHits = 0;
+        fuzzyHits = f.getFlightHitsFuzzy().getHitCount();
+        vo.setFuzzyHitCount(fuzzyHits);
+      }
+      if (f.getFlightHitsGraph() != null) {
+        vo.setGraphHitCount(f.getFlightHitsGraph().getHitCount());
+      }
+      if (f.getFlightHitsWatchlist() != null) {
+        vo.setListHitCount(f.getFlightHitsWatchlist().getHitCount());// + fuzzyHits);
+      }
+      if (f.getFlightHitsRule() != null) {
+        vo.setRuleHitCount(f.getFlightHitsRule().getHitCount());
+      }
+      if (f.getFlightPassengerCount() != null) {
+        vo.setPassengerCount(f.getFlightPassengerCount().getPassengerCount());
+      }
+      if (f.getFlightHitsExternal() != null){
+      	vo.setExternalHitCount(f.getFlightHitsExternal().getHitCount());
+	  }
+  
+      fgvo.add(vo);
+    }
+    return fgvo;
+  }
+  
 }

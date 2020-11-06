@@ -6,7 +6,9 @@
 package gov.gtas.services;
 
 import static gov.gtas.constant.AuditLogConstants.AUDIT_LOG_WARNING_CANNOT_CONVERT_JSON_TO_STRING;
+
 import gov.gtas.enumtype.AuditActionType;
+import gov.gtas.enumtype.FilterOperationsEnum;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
@@ -14,11 +16,15 @@ import gov.gtas.model.AuditRecord;
 import gov.gtas.model.GeneralAuditRecord;
 import gov.gtas.model.User;
 import gov.gtas.repository.AuditRecordRepository;
+import gov.gtas.search.SearchSpecificationBuilder;
 import gov.gtas.services.security.UserService;
+import gov.gtas.vo.AuditRecordVo;
 
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -26,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -180,6 +187,7 @@ public class AuditLogPersistenceServiceImpl implements AuditLogPersistenceServic
 	 * (java.lang.String, gov.gtas.enumtype.AuditActionType, java.util.Date,
 	 * java.util.Date)
 	 */
+	@Deprecated
 	@Override
 	public List<AuditRecord> findByUserActionDateRange(String userId, AuditActionType action, Date dateFrom,
 			Date dateTo) {
@@ -208,6 +216,18 @@ public class AuditLogPersistenceServiceImpl implements AuditLogPersistenceServic
 			ret = auditLogRepository.findByActionType(action);
 		}
 		return ret;
+	}
+
+	@Override
+	public List<AuditRecordVo> getAuditlog(Map<String, Object> params) {
+		SearchSpecificationBuilder<AuditRecord> specificationBuilder = new SearchSpecificationBuilder<AuditRecord> ();
+		specificationBuilder.addFilterOperation("timestamp", FilterOperationsEnum.BETWEEN.toString());
+		
+		Specification<AuditRecord> searchCriteria = specificationBuilder.with(params).build();
+		
+		List<AuditRecord> auditLogs = this.auditLogRepository.findAll(searchCriteria);
+		
+		return auditLogs.stream().map(AuditRecordVo::from).collect(Collectors.toList());
 	}
 
 }

@@ -11,7 +11,7 @@ package gov.gtas.services.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
-
+@Deprecated
 @SuppressWarnings("unused") // Data is returned to the front end and IS used to display.
 public class ApplicationStatisticsDTO {
 	private static final String DATE_FORMAT = "yyyy-MM-dd@HH:mm:ss";
@@ -35,6 +35,8 @@ public class ApplicationStatisticsDTO {
 	private int partialAnalyzedCount;
 	private int potentialFileIssue;
 	private int passengerCount;
+	private int totalLoadingParsingErrors;
+	private int totalRuleErros;
 
 	public ApplicationStatisticsDTO() {
 	}
@@ -166,4 +168,25 @@ public class ApplicationStatisticsDTO {
 	public void setPassengerCount(int passengerCount) {
 		this.passengerCount = passengerCount;
 	}
+
+	public int getTotalLoadingParsingErrors() {
+		totalLoadingParsingErrors = this.failedParsingCount + this.failedLoadCount;
+		return totalLoadingParsingErrors;
+	}
+
+	public void setTotalLoadingParsingErrors(int totalLoadingParsingErrors) {
+		this.totalLoadingParsingErrors = totalLoadingParsingErrors;
+	}
+
+	public int getTotalRuleErros() {
+		this.totalRuleErros = this.failedNeo4jCount + this.failedAnalyzedCount + this.partialAnalyzedCount;
+		return totalRuleErros;
+	}
+
+	public void setTotalRuleErros(int totalRuleErros) {
+		this.totalRuleErros = totalRuleErros;
+	}
+	
+	
+	
 }

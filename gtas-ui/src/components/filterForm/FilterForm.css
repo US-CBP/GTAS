@@ -1,0 +1,33 @@
+.FormContainer {
+  min-height: var(--height-content);
+}
+
+.input {
+  margin: 0 0.25rem;
+  min-width: 7.8125rem;
+  border: 1px solid #eee;
+  border-left: 3px solid;
+  border-radius: 5px;
+  transition: border-color 0.5s ease-out;
+}
+.input:optional {
+  border-left-color: #999;
+}
+.input:required:valid {
+  border-left-color: palegreen;
+}
+.input:invalid {
+  border-left-color: salmon;
+}
+
+.form-input:focus {
+  border-color: #80bdff;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.flex-button {
+  display: flex;
+  justify-content: space-evenly;
+}

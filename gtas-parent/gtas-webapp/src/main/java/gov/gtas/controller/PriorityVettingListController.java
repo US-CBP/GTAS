@@ -59,7 +59,7 @@ public class PriorityVettingListController {
 	}
 
 	@RequestMapping(value = "/hits", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody PriorityVettingListDTO getAll(@RequestParam("requestDto") String requestDto)
+	public @ResponseBody PriorityVettingListDTO getAll(@RequestParam(value = "requestDto", required = false) String requestDto)
 			throws IOException {
 		final PriorityVettingListRequest request = objectMapper.readValue(requestDto, PriorityVettingListRequest.class);
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();

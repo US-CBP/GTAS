@@ -3,6 +3,10 @@ package gov.gtas.services;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import gov.gtas.enumtype.Status;
+import gov.gtas.json.JsonServiceResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import gov.gtas.model.NoteType;
@@ -17,7 +21,9 @@ public class NoteTypeServiceImpl implements NoteTypeService {
 	public NoteTypeServiceImpl(NoteTypeRepository noteTypeRepository) {
 		this.noteTypeRepository = noteTypeRepository;
 	}
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(NoteTypeService.class);
+
 	@Override
 	public List<NoteTypeVo> getAllNoteTypes() {
 		List<NoteType> noteTypeList = noteTypeRepository.findAll();
@@ -29,6 +35,10 @@ public class NoteTypeServiceImpl implements NoteTypeService {
 		return noteTypeVoList;
 	}
 
+	@Override
+	public void deleteNoteTypes(Long id) {
+		noteTypeRepository.deleteById(id);
+	}
 
 	@Override
 	public void saveNoteType(NoteTypeVo noteTypeVo) {
@@ -37,8 +47,32 @@ public class NoteTypeServiceImpl implements NoteTypeService {
 	}
 
 	@Override
-	public void deleteNoteTypes(Long id) {
-		noteTypeRepository.deleteById(id);
+	public JsonServiceResponse deleteNoteType(Long id) {
+		// Make attempt to delete, due to constraints potentially on notetypes and
+		// wanting to preserve history of those
+		// constrained elements notetype will become archived instead
+		try {
+			noteTypeRepository.deleteById(id);
+			logger.info("The NoteType with Id " + id + " was successfully deleted.");
+		} catch (Exception e) { // TODO change to appropriate exception
+			logger.info("The NoteType with id " + id + " was unable to be deleted. Attempting to archive instead");
+			Optional<NoteType> tmpNoteType = noteTypeRepository.findById(id);
+			if(tmpNoteType.isPresent()) {
+				NoteType noteToBeArchived = tmpNoteType.get();
+				noteToBeArchived.setArchived(Boolean.TRUE);
+				noteTypeRepository.save(noteToBeArchived);
+			}
+			return new JsonServiceResponse(Status.SUCCESS_WITH_WARNING, "Failed To Delete NoteType, Archived NoteType Instead");
+		}
+		return new JsonServiceResponse(Status.SUCCESS, "Successfully Deleted NoteType", id);
+	}
+
+	@Override
+	public JsonServiceResponse editNoteType(NoteTypeVo noteTypeVo) {
+		NoteType updatedNoteType = NoteType.from(noteTypeVo);
+		updatedNoteType.setId(noteTypeVo.getId());
+		noteTypeRepository.save(updatedNoteType);
+		return new JsonServiceResponse(Status.SUCCESS, "Successfully updated NoteType", noteTypeVo);
 	}
 
 	@Override
@@ -51,5 +85,10 @@ public class NoteTypeServiceImpl implements NoteTypeService {
 		return noteTypeRepository.findByType("LOOKOUT").orElseThrow(RuntimeException::new);
 	}
 
-
+	@Override
+	public List<NoteTypeVo> getAllNonArchivedNoteTypes() {
+		List<NoteTypeVo> noteVos = noteTypeRepository.getNonArchivedNoteTypes().stream().map(n ->
+				new NoteTypeVo().from(n)).collect(Collectors.toList());
+		return noteVos;
+	}
 }

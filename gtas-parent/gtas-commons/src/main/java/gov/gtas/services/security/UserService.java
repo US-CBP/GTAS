@@ -24,8 +24,7 @@ public interface UserService {
 	/**
 	 * Creates the User.
 	 *
-	 * @param userData
-	 *            the user data
+	 * @param userData the user data
 	 * @return the user data
 	 */
 	@PreAuthorize(PRIVILEGE_ADMIN)
@@ -34,8 +33,7 @@ public interface UserService {
 	/**
 	 * Delete.
 	 *
-	 * @param id
-	 *            the user id
+	 * @param id the user id
 	 */
 	@PreAuthorize(PRIVILEGE_ADMIN)
 	void delete(String id);
@@ -46,13 +44,13 @@ public interface UserService {
 	 * @return the list
 	 */
 	@PreAuthorize(GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	List<UserData> findAll();
+
+	public List<UserDisplayData> findAll();
 
 	/**
 	 * Update the user.
 	 *
-	 * @param userData
-	 *            the user data
+	 * @param userData the user data
 	 * @return the updated user data
 	 */
 
@@ -61,8 +59,7 @@ public interface UserService {
 	/**
 	 * Update the user.
 	 *
-	 * @param userData
-	 *            the user data
+	 * @param userData the user data
 	 * @return the updated user data
 	 */
 	@PreAuthorize(PRIVILEGE_ADMIN)
@@ -71,8 +68,7 @@ public interface UserService {
 	/**
 	 * Find by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 * @return the user data
 	 */
 	UserData findById(String id);
@@ -80,16 +76,29 @@ public interface UserService {
 	/**
 	 * Fetch user.
 	 *
-	 * @param userId
-	 *            the user id
+	 * @param userId the user id
 	 * @return the user
 	 */
 	User fetchUser(final String userId);
+
+	/**
+	 * Fetch non-archived users.
+	 *
+	 * @return list of non-archived users
+	 */
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	List<UserDisplayData> findAllNonArchivedUsers();
 
 	Set<UserGroup> fetchUserGroups(final String userId);
 
 	boolean isAdminUser(String userId);
 
 	boolean treatAsOneDay(String userId);
+
+	boolean matchUserPassword(String savedPassword, String newPassword);
+
+	void forgotPassword(User user);
+
+	boolean isValidToken(String token);
 
 }

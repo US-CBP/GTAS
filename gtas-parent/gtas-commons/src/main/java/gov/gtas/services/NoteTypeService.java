@@ -6,6 +6,7 @@ import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 import java.util.List;
 import java.util.Set;
 
+import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.NoteType;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -22,7 +23,17 @@ public interface NoteTypeService {
 	@PreAuthorize(PRIVILEGE_ADMIN)
 	public void deleteNoteTypes(Long id);
 
-    NoteType getDeletedNoteType();
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public JsonServiceResponse deleteNoteType(Long id);
 
-    NoteType getLookoutNoteType();
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public JsonServiceResponse editNoteType(NoteTypeVo noteTypeVo);
+
+	NoteType getLookoutNoteType();
+
+	NoteType getDeletedNoteType();
+
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public List<NoteTypeVo> getAllNonArchivedNoteTypes();
+
 }

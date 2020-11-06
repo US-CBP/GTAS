@@ -1,0 +1,11 @@
+$gtas-primary-color: #075484;
+$header-text-color: #e0e0e0;
+
+.accordion-card {
+  margin-bottom: 1rem !important;
+}
+
+.accordion-card .card-header {
+  color: $header-text-color;
+  background-color: $gtas-primary-color;
+}

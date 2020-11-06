@@ -18,6 +18,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -34,6 +35,9 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
 
 	@Value("${site.language}")
 	String language;
+
+	@Value("${ui.address}")
+	String uiAddress;
 
 	@Bean(name = "gtasMessageSource")
 	public MessageSource messageSource() {
@@ -59,4 +63,13 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
 		registry.addInterceptor(interceptor);
 	}
 
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**").allowedOrigins(uiAddress).allowedMethods("GET", "POST", "OPTIONS", "PUT")
+				.allowedHeaders("Content-Type", "X-Requested-With", "accept", "Access-Control-Request-Method",
+						"Access-Control-Request-Headers", "X-Auth-Token", "X-login-ajax-call")
+				.exposedHeaders("Access-Control-Allow-Credentials", "Access-Control-Allow-Origin")
+				.allowedMethods("GET","PUT","POST","DELETE","PATCH","OPTIONS")
+				.allowCredentials(true).maxAge(3600);
+	}
 }

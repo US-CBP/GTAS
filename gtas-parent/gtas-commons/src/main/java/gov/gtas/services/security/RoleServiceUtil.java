@@ -7,6 +7,7 @@ package gov.gtas.services.security;
 
 import gov.gtas.model.Role;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -24,8 +25,7 @@ public class RoleServiceUtil {
 	/**
 	 * Gets the role data set from entity collection.
 	 *
-	 * @param roleEntities
-	 *            the role entities
+	 * @param roleEntities the role entities
 	 * @return the role data set from entity collection
 	 */
 	public Set<RoleData> getRoleDataSetFromEntityCollection(Iterable<Role> roleEntities) {
@@ -46,8 +46,7 @@ public class RoleServiceUtil {
 	/**
 	 * Map entity collection from role data set.
 	 *
-	 * @param roleDataSet
-	 *            the role data set
+	 * @param roleDataSet the role data set
 	 * @return the sets the
 	 */
 	public Set<Role> mapEntityCollectionFromRoleDataSet(Set<RoleData> roleDataSet) {
@@ -62,6 +61,18 @@ public class RoleServiceUtil {
 
 		aStream.close();
 		return rRoles;
+	}
+
+	public Set<Role> getAdminRoleIfExists(Set<RoleData> roleData) {
+		Set<Role> roles = new HashSet<Role>();
+		for (RoleData rd : roleData) {
+			if (rd.getRoleId() == 1) {
+				Role role = new Role(rd.getRoleId(), rd.getRoleDescription());
+				roles.add(role);
+				break;
+			}
+		}
+		return roles;
 	}
 
 }

@@ -204,7 +204,7 @@ public class WatchlistServiceIT {
 		Set<RoleData> roles = new HashSet<RoleData>();
 		roles.add(new RoleData(1, "ADMIN"));
 
-		UserData usr = new UserData(USER_ID, "password", USER_FNAME, USER_LASTNAME, 1, roles,"", false, false);
+		UserData usr = new UserData(USER_ID, "password", USER_FNAME, USER_LASTNAME, 1, roles,"", false, false, false, "");
 		Role role = new Role();
 		role.setRoleDescription(ROLE_NAME);
 
