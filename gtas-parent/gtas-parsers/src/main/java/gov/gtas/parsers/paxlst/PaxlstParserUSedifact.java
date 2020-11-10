@@ -7,6 +7,7 @@ package gov.gtas.parsers.paxlst;
 
 import java.util.Date;
 
+import gov.gtas.config.ParserConfig;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.paxlst.segment.usedifact.CTA;
@@ -28,8 +29,12 @@ import gov.gtas.parsers.vo.PassengerVo;
 import gov.gtas.parsers.vo.ReportingPartyVo;
 
 public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
-	public PaxlstParserUSedifact() {
+
+	private ParserConfig parserConfig;
+
+	public PaxlstParserUSedifact(ParserConfig parserConfig) {
 		this.parsedMessage = new ApisMessageVo();
+		this.parserConfig = parserConfig;
 	}
 
 	@Override

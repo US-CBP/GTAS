@@ -1,13 +1,13 @@
 select * from (select 
 	concat(fp.`passenger_id`,'+',fp.`flight_id`) "id",
-	fd.`eta_date`  "flight.eta",
+	fd.`full_eta_timestamp`  "flight.eta",
+	fd.`full_etd_timestamp` "flight.etd",
 	f.`carrier`  "flight.carrier",
-	f.`etd_date` "flight.etd", 
 	f.`flight_number` "flight.flight_number",
 	f.`full_flight_number` "flight.full_flight_number",
-	f.`etd_date` "flight.flight_date",
 	f.`id` "flight.id",
 	f.`origin` "flight.origin", 
+	f.`destination` "flight.destination",
 	f.`origin_country` "flight.origin_country",
 -- 	f.`rule_hit_count` "flight.rule_hit_count",
 	-- f.`passenger_count` "flight.passenger_count",
@@ -55,7 +55,7 @@ select * from (select
 	hit_detail.`hitEnum` "hit_detail.hitEnum"
 	-- hit_detail.`watchlist_item_id` "hit_detail.watchlist_item_id"
 	
-	from `flight_pax` fp 
+	from `flight_passenger` fp 
 	join `passenger` p 
 		on (p.`id` = fp.`passenger_id`) 
 	join `passenger_details` pd
@@ -81,7 +81,7 @@ select * from (select
 	left join `message` pnr_message
 		on (pnr_message.id = pnr.id)
 	left join `apis_message_flight_pax` apis_fp
-		on (apis_fp.`flight_pax_id` = fp.id)
+		on (apis_fp.`flight_pax_id` = fp.`flight_id`)
 	left join `apis_message` apis
 		on (apis_fp.`apis_message_id` = apis.id)
 	left join `message` apis_message

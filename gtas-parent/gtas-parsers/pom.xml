@@ -32,6 +32,11 @@
             <artifactId>gtas-commons</artifactId>
 			<version>${gtas.version}</version>
         </dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20200518</version>
+		</dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

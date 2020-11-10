@@ -9,6 +9,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import gov.gtas.job.config.JobSchedulerConfig;
+import gov.gtas.job.wrapper.MessageWrapper;
 import gov.gtas.summary.EventIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +71,7 @@ public class LoaderQueueThreadManager {
         this.exec = Executors.newFixedThreadPool(maxNumOfThreads);
     }
 
-    EventIdentifier receiveMessages(Message<?> message) throws ParseException, InterruptedException {
+    EventIdentifier receiveMessages(MessageWrapper message) throws ParseException, InterruptedException {
 
         EventIdentifier eventIdentifier = eventIdentifierFactory.createEventIdentifier(message);
         String[] primeFlightKeyArray = eventIdentifier.getIdentifierArrayList().toArray(new String[0]);

@@ -42,7 +42,8 @@ import static org.apache.http.util.TextUtils.isBlank;
  * Rule Runner Scheduler class. Using Spring's Scheduled annotation for
  * scheduling tasks. The class reads configuration values from an external file.
  */
-@Component@ConditionalOnProperty(prefix = "rules", name = "enabled")
+@Component
+@ConditionalOnProperty(prefix = "rules", name = "enabled")
 public class RuleRunnerScheduler {
 
 	/**

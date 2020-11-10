@@ -6,11 +6,15 @@
 package gov.gtas.services;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import gov.gtas.config.ParserConfig;
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.tamr.TamrAdapter;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
+import gov.gtas.parsers.omni.OmniAdapter;
+import gov.gtas.parsers.omni.model.OmniPassenger;
 import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.repository.*;
 import org.apache.commons.lang3.StringUtils;
@@ -46,8 +50,20 @@ public class ApisMessageService extends MessageLoaderService {
 	@Autowired
 	private TamrAdapter tamrAdapter;
 
+	@Autowired
+	private LookUpRepository lookupRepo;
+
+	@Autowired
+	private OmniAdapter omniAdapter;
+
 	@Value("${tamr.enabled}")
 	private Boolean tamrEnabled;
+
+	@Value("${omni.enabled}")
+	private Boolean omniEnabled;
+
+	@Autowired
+	private ParserConfig parserConfig;
 
 	@Autowired
 	private PassengerTripRepository passengerTripRepository;
@@ -74,9 +90,9 @@ public class ApisMessageService extends MessageLoaderService {
 		try {
 			EdifactParser<ApisMessageVo> parser = null;
 			if (isUSEdifactFile(msgDto.getRawMsg())) {
-				parser = new PaxlstParserUSedifact();
+				parser = new PaxlstParserUSedifact(parserConfig);
 			} else {
-				parser = new PaxlstParserUNedifact();
+				parser = new PaxlstParserUNedifact(parserConfig);
 			}
 
 			vo = parser.parse(msgDto.getRawMsg());
@@ -129,6 +145,7 @@ public class ApisMessageService extends MessageLoaderService {
 			// MUST be after creation of passengers - otherwise APIS will have empty list of
 			// passengers.
 			createBagInformation(m, apis, primeFlight);
+			createFlightPax(apis);
 			loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
 			createFlightLegs(apis);
 
@@ -140,6 +157,11 @@ public class ApisMessageService extends MessageLoaderService {
 				List<TamrPassenger> tamrPassengers = tamrAdapter
 						.convertPassengers(apis.getFlights().iterator().next(), apis.getPassengers());
 				messageInformation.setTamrPassengers(tamrPassengers);
+			}
+			if (omniEnabled) {
+				List<OmniPassenger> omniPassengers = omniAdapter
+						.convertPassengers(apis.getFlights().iterator().next(), apis.getPassengers());
+				messageInformation.setOmniPassengers(omniPassengers);
 			}
 			if (additionalProcessing) {
 				String rawMessage = msgDto.getRawMsg();
@@ -163,12 +185,12 @@ public class ApisMessageService extends MessageLoaderService {
 	private void updateApisCoTravelerCount(ApisMessage apis) {
 		Map<String, Integer> caching = new HashMap<>();
 		for (Passenger p : apis.getPassengers()) {
-			int apisCoTravelerCount;
+			int apisCoTravelerCount = 0;
 			String reservationNumber = p.getPassengerTripDetails().getReservationReferenceNumber();
 			if (!StringUtils.isBlank(reservationNumber) && !caching.containsKey(reservationNumber)) {
 				apisCoTravelerCount = passengerTripRepository.getCoTravelerCount(p.getId(), reservationNumber);
 				caching.put(reservationNumber, apisCoTravelerCount);
-			} else {
+			} else if (!StringUtils.isBlank(reservationNumber)){
 				apisCoTravelerCount = caching.get(reservationNumber);
 			}
 			p.getPassengerTripDetails().setCoTravelerCount(apisCoTravelerCount);
@@ -276,5 +298,53 @@ public class ApisMessageService extends MessageLoaderService {
 		}
 		// return (msg.contains("CDT") || msg.contains("PDT"));
 		return false;
+	}
+	private void createFlightPax(ApisMessage apisMessage) {
+		Set<Flight> flights = apisMessage.getFlights();
+		String homeAirport = lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
+		for (Flight f : flights) {
+			for (Passenger p : apisMessage.getPassengers()) {
+				FlightPax fp = p.getFlightPaxList().stream()
+						.filter(flightPax -> "APIS".equalsIgnoreCase(flightPax.getMessageSource())).findFirst()
+						.orElse(new FlightPax(p.getId()));
+
+				Set<Bag> apisBags = p.getBags().stream().filter(b -> "APIS".equalsIgnoreCase(b.getData_source()))
+						.filter(Bag::isPrimeFlight).collect(Collectors.toSet());
+
+				WeightCountDto weightCountDto = getBagStatistics(apisBags);
+				fp.setAverageBagWeight(weightCountDto.average());
+				if (weightCountDto.getWeight() == null) {
+					fp.setBagWeight(0D);
+				} else {
+					fp.setBagWeight(weightCountDto.getWeight());
+				}
+				if (weightCountDto.getCount() == null) {
+					fp.setBagCount(0);
+				} else {
+					fp.setBagCount(weightCountDto.getCount());
+				}
+
+				fp.getApisMessage().add(apisMessage);
+				fp.setDebarkation(p.getPassengerTripDetails().getDebarkation());
+				fp.setDebarkationCountry(p.getPassengerTripDetails().getDebarkCountry());
+				fp.setEmbarkation(p.getPassengerTripDetails().getEmbarkation());
+				fp.setEmbarkationCountry(p.getPassengerTripDetails().getEmbarkCountry());
+				fp.setPortOfFirstArrival(f.getDestination());
+				fp.setMessageSource("APIS");
+				fp.setFlight(f);
+				fp.setFlightId(f.getId());
+				fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
+				fp.setTravelerType(p.getPassengerDetails().getPassengerType());
+				fp.setReservationReferenceNumber(p.getPassengerTripDetails().getReservationReferenceNumber());
+				if (StringUtils.isNotBlank(fp.getDebarkation()) && StringUtils.isNotBlank(fp.getEmbarkation())) {
+					if (homeAirport.equalsIgnoreCase(fp.getDebarkation())
+							|| homeAirport.equalsIgnoreCase(fp.getEmbarkation())) {
+						p.getPassengerTripDetails()
+								.setTravelFrequency(p.getPassengerTripDetails().getTravelFrequency() + 1);
+					}
+				}
+				apisMessage.addToFlightPax(fp);
+			}
+		}
 	}
 }

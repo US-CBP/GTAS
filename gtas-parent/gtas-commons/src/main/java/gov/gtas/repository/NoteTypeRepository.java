@@ -32,4 +32,10 @@ public interface NoteTypeRepository extends CrudRepository<NoteType, Long> {
 
     @Query("select n from NoteType n where n.archived = false  OR n.archived IS NULL")
     List<NoteType> getNonArchivedNoteTypes();
+
+    @Query("Select nt from NoteType  nt where nt.type in :types")
+    Set<NoteType> findByTypes(@Param("types") List<String> types);
+
+    @Query("Select nt from NoteType nt where nt.type = 'LOOKOUT'")
+    NoteType getLookoutNoteType();
 }

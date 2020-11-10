@@ -8,6 +8,7 @@ COPY ./docker-resources/host.conf /usr/local/apache2/conf/sites/host.conf
 COPY ./docker-resources/htpasswd /etc/apache2/pass/htpasswd
 
 
-ENTRYPOINT credentials=$(echo "Basic ")$(echo -n $(echo "elastic:")$(cat /run/secrets/elastic_bootstrap_password)| base64) && \
+ENTRYPOINT mkdir -p /certs && cp -a /temp-cert/. /certs/ && \
+    credentials=$(echo "Basic ")$(echo -n $(echo "elastic:")$(cat ${BOOTSTRAP_PATH})| base64) && \
 	export credentials && \
 	httpd -D FOREGROUND
