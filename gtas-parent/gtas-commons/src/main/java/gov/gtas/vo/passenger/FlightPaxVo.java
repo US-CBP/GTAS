@@ -31,6 +31,9 @@ public class FlightPaxVo {
   private Integer fuzzyHitCount;
   private Integer manualHitCount;
   private Integer externalHitCount;
+  private Integer lowPrioHitCount;
+  private Integer medPrioHitCount;
+  private Integer highPrioHitCount;
 
   private List<String> documents = new ArrayList<>();
 
@@ -159,4 +162,16 @@ public class FlightPaxVo {
   public void setExternalHitCount(Integer externalHitCount) { this.externalHitCount = externalHitCount; }
 
   public void setDocuments(List<String> documents) { this.documents = documents; }
+
+  public Integer getLowPrioHitCount() { return lowPrioHitCount; }
+
+  public void setLowPrioHitCount(Integer lowPrioHitCount) { this.lowPrioHitCount = lowPrioHitCount; }
+
+  public Integer getMedPrioHitCount() { return medPrioHitCount; }
+
+  public void setMedPrioHitCount(Integer medPrioHitCount) { this.medPrioHitCount = medPrioHitCount; }
+
+  public Integer getHighPrioHitCount() { return highPrioHitCount; }
+
+  public void setHighPrioHitCount(Integer highPrioHitCount) { this.highPrioHitCount = highPrioHitCount; }
 }

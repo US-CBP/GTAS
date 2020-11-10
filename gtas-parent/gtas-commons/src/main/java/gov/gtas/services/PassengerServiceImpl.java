@@ -362,7 +362,19 @@ public class PassengerServiceImpl implements PassengerService {
 						vo.setExternalHitCount(Optional.ofNullable(vo.getExternalHitCount()).orElse(0)+1);
 						break;
 				}
+				switch(hd.getHitMaker().getHitCategory().getSeverity()) {
+					case NORMAL:
+						vo.setLowPrioHitCount(Optional.ofNullable(vo.getLowPrioHitCount()).orElse(0)+1);
+						break;
+					case HIGH:
+						vo.setMedPrioHitCount(Optional.ofNullable(vo.getMedPrioHitCount()).orElse(0)+1);
+						break;
+					case TOP:
+						vo.setHighPrioHitCount(Optional.ofNullable(vo.getHighPrioHitCount()).orElse(0)+1);
+						break;
+				}
 			}
+
 			rv.add(vo);
 		}
 		return rv;
