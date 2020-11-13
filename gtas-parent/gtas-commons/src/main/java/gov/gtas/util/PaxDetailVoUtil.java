@@ -279,24 +279,12 @@ public class PaxDetailVoUtil {
 
 		target.setTripType(source.getTripType());
 
-		if (!source.getAddresses().isEmpty()) {
-			Iterator it = source.getAddresses().iterator();
-			while (it.hasNext()) {
-				Address a = (Address) it.next();
+		if (CollectionUtils.isNotEmpty(source.getAddresses())) {
+			for (Address a : source.getAddresses()) {
 				AddressVo aVo = new AddressVo();
-
-				try {
-
-					BeanUtils.copyProperties(aVo, a);
-
-				} catch (Exception e) {
-					logger.error("Unable to copy properties, catching and moving to next address", e);
-				}
-
+				copyModelToVo(a, aVo);
 				target.getAddresses().add(aVo);
-
-			} // End of While Loop
-
+			}
 		}
 
 		if (CollectionUtils.isNotEmpty(source.getAgencies())) {

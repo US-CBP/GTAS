@@ -77,6 +77,9 @@ public class LoaderUtils {
 		return p;
 	}
 
+
+
+
 	public MessageType getMessageType(Message message) {
 		MessageType messageType = MessageType.NO_TYPE;
 		if (message instanceof Pnr) {
@@ -209,7 +212,7 @@ public class LoaderUtils {
 		return f;
 	}
 
-	public void calculateValidVisaDays(Flight f, Passenger p) {
+	public static void calculateValidVisaDays(Flight f, Passenger p) {
 		Date etd = f.getEtdDate();
 		Date docExpDate = null;
 		int validdays = 0;
@@ -299,7 +302,7 @@ public class LoaderUtils {
 		}
 	}
 
-	public Address convertAddressVo(AddressVo vo) throws ParseException {
+	public Address convertAddressVo(AddressVo vo) {
 		Address addr = new Address();
 		addr.setCreatedBy(LOADER_USER);
 		BeanUtils.copyProperties(vo, addr);

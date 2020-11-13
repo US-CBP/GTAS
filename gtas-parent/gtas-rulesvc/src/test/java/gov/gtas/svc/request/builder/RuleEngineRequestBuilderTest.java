@@ -11,6 +11,7 @@ package gov.gtas.svc.request.builder;
 import gov.gtas.TestData;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
+import gov.gtas.services.PnrService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +35,9 @@ public class RuleEngineRequestBuilderTest {
 
 	@Mock
 	private PnrRepository pnrRepository;
+
+	@Mock
+	private PnrService pnrService;
 
 	@Mock
 	private ApisMessageRepository apisMessageRepository;
@@ -148,16 +152,6 @@ public class RuleEngineRequestBuilderTest {
 		List<Object[]> emailPnrList = new ArrayList<>();
 		emailPnrList.add(emailPnr);
 
-		Mockito.when(pnrRepository.getAddressesByPnr(any())).thenReturn(addressPnrList);
-		Mockito.when(pnrRepository.getFrequentFlyerByPnrId(any())).thenReturn(frequentFlyerPnrList);
-		Mockito.when(pnrRepository.getCreditCardByIds(any())).thenReturn(creditCardPnrList);
-		Mockito.when(pnrRepository.getPhonesByPnr(any())).thenReturn(phonePnrList);
-		Mockito.when(pnrRepository.getEmailByPnrIds(any())).thenReturn(emailPnrList);
-		Mockito.when(pnrRepository.getBookingDetailsByPnrId(any())).thenReturn(bookingDetailPnrList);
-		Mockito.when(pnrRepository.getTravelAgencyByPnr(any())).thenReturn(agencyPnrList);
-		Mockito.when(pnrRepository.getDwellTimeByPnr(any())).thenReturn(dwellTimePnrList);
-		Mockito.when(pnrRepository.getPax(any())).thenReturn(passengerPnrList);
-		Mockito.when(pnrRepository.getPaymentFormsByPnrIds(any())).thenReturn(paymentPnrList);
 		Mockito.when(pnrRepository.getPassengersWithFlight(any()))
 				.thenReturn(Collections.singleton(TestData.getPassenger()));
 

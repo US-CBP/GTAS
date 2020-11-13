@@ -20,6 +20,7 @@ import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.AuditRecord;
+import gov.gtas.model.GeneralAuditRecord;
 import gov.gtas.model.User;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.Watchlist;
@@ -219,7 +220,7 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 		actionData.addProperty("editDate",
 				watchlist.getEditTimestamp() != null ? DateCalendarUtils.formatJsonDate(watchlist.getEditTimestamp())
 						: StringUtils.EMPTY);
-		return new AuditRecord(type, target.toString(), Status.SUCCESS, message, actionData.toString(), editUser);
+		return new GeneralAuditRecord(type, target.toString(), Status.SUCCESS, message, actionData.toString(), editUser);
 	}
 
 	private Map<Long, WatchlistItem> validateItemsPresentInDb(Collection<WatchlistItem> targetItems) {

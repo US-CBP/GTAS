@@ -11,11 +11,16 @@ import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.model.lookup.AppConfiguration;
+import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.repository.KnowledgeBaseRepository;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
+import gov.gtas.rule.KIEAndLastUpdate;
+import gov.gtas.rule.RuleUtils;
 import gov.gtas.svc.UdrService;
 import gov.gtas.svc.WatchlistService;
+import org.kie.api.KieBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +29,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -53,6 +60,8 @@ public class RuleRunnerScheduler {
 	private AppConfigurationRepository appConfigurationRepository;
 	private WatchlistService watchlistService;
 	private UdrService udrService;
+	private KnowledgeBaseRepository knowledgeBaseRepository;
+	private Map<String, KIEAndLastUpdate> rules = new ConcurrentHashMap<>();
 
 	/* The targeting service. */
 
@@ -65,13 +74,15 @@ public class RuleRunnerScheduler {
 							   PendingHitDetailRepository pendingHitDetailRepository,
 							   AppConfigurationRepository appConfigurationRepository,
 							   WatchlistService watchlistService,
-							   UdrService udrService) {
+							   UdrService udrService,
+							   KnowledgeBaseRepository knowledgeBaseRepository) {
 		this.watchlistService = watchlistService;
 		this.udrService = udrService;
 		this.messageStatusRepository = messageStatusRepository;
 		this.jobSchedulerConfig = jobSchedulerConfig;
 		this.pendingHitDetailRepository = pendingHitDetailRepository;
 		this.appConfigurationRepository = appConfigurationRepository;
+		this.knowledgeBaseRepository = knowledgeBaseRepository;
 
 		try {
 			graphDbOn = this.jobSchedulerConfig.getNeo4JRuleEngineEnabled();
@@ -93,7 +104,7 @@ public class RuleRunnerScheduler {
 	 * rule engine
 	 **/
 	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
-	public void ruleEngine() throws InterruptedException {
+	public void ruleEngine() throws InterruptedException, IOException {
 
 		AppConfiguration recompileRulesAndWatchlist = appConfigurationRepository.findByOption(RECOMPILE_RULES);
 		if (!isBlank(recompileRulesAndWatchlist.getOption()) && Boolean.parseBoolean(recompileRulesAndWatchlist.getValue())) {
@@ -102,6 +113,22 @@ public class RuleRunnerScheduler {
 			udrService.recompileRules(RuleConstants.UDR_KNOWLEDGE_BASE_NAME, "RULE_SCHEDULER");
 			recompileRulesAndWatchlist.setValue("false");
 			appConfigurationRepository.save(recompileRulesAndWatchlist);
+		}
+
+		Iterable<KnowledgeBase> kbs = knowledgeBaseRepository.findAll();
+		for (KnowledgeBase kb : kbs ) {
+			if (rules.containsKey(kb.getKbName())) {
+				KIEAndLastUpdate kau = rules.get(kb.getKbName());
+				if (kau.getUpdated().before(kb.getCreationDt())) {
+					logger.info("updating rule runner kie for " + kb.getKbName());
+					addOrUpdateNameAndKie(kb);
+					logger.info("Done updating rule runner kie for " + kb.getKbName());
+				}
+			} else {
+				logger.info("making new rule kie for " + kb.getKbName());
+				addOrUpdateNameAndKie(kb);
+				logger.info("Done creating rule kie for " + kb.getKbName());
+			}
 		}
 
 		int flightLimit = this.jobSchedulerConfig.getMaxFlightsPerRuleRun();
@@ -151,6 +178,7 @@ public class RuleRunnerScheduler {
 				}
 				if (runningTotal >= maxPassengers) {
 					RuleRunnerThread worker = ctx.getBean(RuleRunnerThread.class);
+					worker.setRules(rules);
 					worker.setMessageStatuses(ruleThread);
 					list.add(worker);
 					ruleThread = new ArrayList<>();
@@ -163,6 +191,7 @@ public class RuleRunnerScheduler {
 			}
 			if (runningTotal != 0) {
 				RuleRunnerThread worker = ctx.getBean(RuleRunnerThread.class);
+				worker.setRules(rules);
 				worker.setMessageStatuses(ruleThread);
 				list.add(worker);
 			}
@@ -206,5 +235,14 @@ public class RuleRunnerScheduler {
 				exec.invokeAll(list);
 			}
 		}
+	}
+
+	private void addOrUpdateNameAndKie(KnowledgeBase kb) throws IOException {
+		KieBase kieBase = RuleUtils.createKieBaseFromDrlString(new String(kb.getRulesBlob()));
+		Date updatedDate = kb.getCreationDt();
+		KIEAndLastUpdate KIEAndLastUpdate = new KIEAndLastUpdate();
+		KIEAndLastUpdate.setKieBase(kieBase);
+		KIEAndLastUpdate.setUpdated(updatedDate);
+		rules.put(kb.getKbName(), KIEAndLastUpdate);
 	}
 }

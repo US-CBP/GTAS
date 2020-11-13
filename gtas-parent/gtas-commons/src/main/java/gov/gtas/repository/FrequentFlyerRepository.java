@@ -18,6 +18,9 @@ public interface FrequentFlyerRepository extends CrudRepository<FrequentFlyer, L
 
 	List<FrequentFlyer> findByCarrierAndNumberAndFlightId(String carrier, String number, Long flightId);
 
-	@Query("Select ff from FrequentFlyer ff left join fetch ff.pnrs ffPnrs left join fetch ffPnrs.passengers where ff.id in :ffIds and ffPnrs.id in :pnrIds and ff.flightId in :flightIds")
-    Set<FrequentFlyer> findFrequentFlyers(@Param("ffIds") Set<Long> ffIds, @Param("flightIds")Set<Long> flightIds, @Param("pnrIds") Set<Long> pnrIds);
+	@Query("Select ff from FrequentFlyer ff " +
+			"left join fetch ff.pnrs ffPnrs " +
+			"left join fetch ffPnrs.passengers " +
+			"where ffPnrs.id in :pnrIds and ff.flightId in :flightIds")
+    Set<FrequentFlyer> findFrequentFlyers(@Param("flightIds")Set<Long> flightIds, @Param("pnrIds") Set<Long> pnrIds);
 }

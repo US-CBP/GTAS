@@ -24,108 +24,42 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "audit_log")
-public class AuditRecord extends BaseEntity {
+public abstract class AuditRecord extends BaseEntity {
 	private static final long serialVersionUID = 18887L;
 
-	/**
-	 * Instantiates a new audit record.
-	 */
 	public AuditRecord() {
-	}
-
-	/**
-	 * Instantiates a new audit record.
-	 *
-	 * @param actionType
-	 *            the action type
-	 * @param target
-	 *            the target
-	 * @param status
-	 *            the status
-	 * @param message
-	 *            the message
-	 * @param data
-	 *            the data
-	 * @param user
-	 *            the user
-	 */
-	public AuditRecord(AuditActionType actionType, String target, Status status, String message, String data,
-			User user) {
-		this.actionType = actionType;
-		this.target = target;
-		this.actionStatus = status;
-		this.message = message;
-		this.actionData = data;
-		this.user = user;
-		this.timestamp = new Date();
-	}
-
-	/**
-	 * Instantiates a new audit record.
-	 *
-	 * @param actionType
-	 *            the action type
-	 * @param target
-	 *            the target
-	 * @param status
-	 *            the status
-	 * @param message
-	 *            the message
-	 * @param data
-	 *            the data
-	 * @param user
-	 *            the user
-	 * @param timestamp
-	 *            the timestamp
-	 */
-	public AuditRecord(AuditActionType actionType, String target, Status status, String message, String data, User user,
-			Date timestamp) {
-		this.actionType = actionType;
-		this.target = target;
-		this.actionStatus = status;
-		this.message = message;
-		this.actionData = data;
-		this.user = user;
-		this.timestamp = timestamp;
-	}
-
-	public AuditRecord(AuditActionType actionType, String target, String message, User user) {
-		this(actionType, target, Status.SUCCESS, message, null, user);
-	}
-
-	public AuditRecord(AuditActionType actionType, String target, User user) {
-		this(actionType, target, Status.SUCCESS, null, null, user);
 	}
 
 	@ManyToOne
 	@JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
-	private User user;
+	protected User user;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "action_type", nullable = false, length = 32)
-	private AuditActionType actionType;
+	protected AuditActionType actionType;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "actionStatus", nullable = false, length = 32)
-	private Status actionStatus;
+	protected Status actionStatus;
 
 	/*
 	 * UDR Title, or WL Name, or loaded message file path, or userId
 	 * created/updated, or ID for a batch job
 	 */
 	@Column(name = "action_target", nullable = false, length = 1024)
-	private String target;
+	protected String target;
 
 	@Column(name = "action_message", nullable = true)
-	private String message;
+	protected String message;
 
 	@Column(name = "action_data", nullable = true, length = 2000000)
 	@Lob
-	private String actionData;
+	protected String actionData;
 
 	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date timestamp;
+	protected Date timestamp;
+
 
 	/**
 	 * @return the time-stamp

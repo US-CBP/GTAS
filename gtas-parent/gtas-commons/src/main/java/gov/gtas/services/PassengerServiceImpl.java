@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.aop.annotations.FlightAuditFirstArgFlightIdAsLong;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
@@ -76,6 +77,7 @@ public class PassengerServiceImpl implements PassengerService {
 
 	@Override
 	@Transactional
+	@FlightAuditFirstArgFlightIdAsLong
 	public PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request) {
 		List<PassengerGridItemVo> rv = new ArrayList<>();
 		Pair<Long, List<Passenger>> tuple = passengerRespository.findByCriteria(flightId, request);
@@ -108,6 +110,7 @@ public class PassengerServiceImpl implements PassengerService {
 					vo.setOnWatchListLink(true);
 					break;
 				case USER_DEFINED_RULE:
+				case EXTERNAL_HIT:
 				case GRAPH_HIT:
 					vo.setOnRuleHitList(true);
 					break;
@@ -182,7 +185,7 @@ public class PassengerServiceImpl implements PassengerService {
 			actionData.addProperty("PassengerType", passenger.getPassengerDetails().getPassengerType());
 			//
 			String message = "Disposition Status Change run on " + passenger.getCreatedAt();
-			auditLogRepository.save(new AuditRecord(AuditActionType.DISPOSITION_STATUS_CHANGE, target.toString(),
+			auditLogRepository.save(new GeneralAuditRecord(AuditActionType.DISPOSITION_STATUS_CHANGE, target.toString(),
 					Status.SUCCESS, message, actionData.toString(), loggedinUser, new Date()));
 
 		} catch (Exception ex) {

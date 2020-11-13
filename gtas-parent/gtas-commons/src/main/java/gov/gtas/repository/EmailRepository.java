@@ -9,8 +9,12 @@ import java.util.List;
 import java.util.Set;
 public interface EmailRepository extends CrudRepository<Email, Long> {
 
-    @Query("select e from Email e left join fetch e.pnrs pnr left join fetch pnr.passengers where pnr.id in :pnrIds and e.id in :emailIds and e.flightId in :flightIds")
-    Set<Email> findEmails(@Param("emailIds") Set<Long> emailIds, @Param("flightIds")Set<Long> flightIds, @Param("pnrIds") Set<Long> pnrIds);
+    @Query("select e from Email e" +
+            " left join fetch e.pnrs pnr" +
+            " left join fetch pnr.passengers" +
+            " where pnr.id in :pnrIds" +
+            " and e.flightId in :flightIds")
+    Set<Email> findEmails( @Param("flightIds")Set<Long> flightIds, @Param("pnrIds") Set<Long> pnrIds);
 
     List<Email> findByAddressAndFlightId(String address, Long flightId);
 }

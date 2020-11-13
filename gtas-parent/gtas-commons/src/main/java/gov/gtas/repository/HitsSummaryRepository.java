@@ -38,17 +38,20 @@ public interface HitsSummaryRepository extends CrudRepository<HitsSummary, Long>
 	@Transactional
 	public void deleteDBData(@Param("id") Long id);
 
-	@Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and watchListHitCount > 0")
+	@Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and hits.watchListHitCount > 0")
 	Integer watchlistHitCount(@Param("flightId") Long flightId);
 
-	@Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and ruleHitCount > 0")
+	@Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and hits.ruleHitCount > 0")
 	Integer ruleHitCount(@Param("flightId") Long flightId);
 
-	@Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and graphHitCount > 0")
+	@Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and hits.graphHitCount > 0")
 	Integer graphHitCount(@Param("flightId") Long flightId);
 
-	@Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and partialHitCount > 0")
+	@Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and hits.partialHitCount > 0")
 	Integer partialHitCount(@Param("flightId") Long flightId);
+
+	@Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and hits.externalHitCount > 0")
+	Integer externalHitCount(@Param("flightId") Long flightId);
 
 	HitsSummary findFirstByOrderByIdDesc();
 }

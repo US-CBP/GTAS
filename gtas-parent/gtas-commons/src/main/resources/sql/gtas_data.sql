@@ -90,8 +90,31 @@ INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, 
 -- ----------------------------
 -- Manual Hit HitMaker Population
 -- ----------------------------
-CREATE OR REPLACE PROCEDURE manualHitMakerPopulate() BEGIN SET @cnt = (Select IFNULL(MAX(id), 1) FROM hit_category); START TRANSACTION; WHILE @cnt > 0 DO INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', @cnt); SET @DataID = LAST_INSERT_ID(); INSERT INTO manual_lookout (description, id) VALUES ('Manually Generated Hit', @DataId); SET @cnt = @cnt - 1; END WHILE; COMMIT; END;
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 1);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 2);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 3);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 4);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('MANUAL_HIT', 'GTAS', 5);
 
-CALL manualHitMakerPopulate();
+INSERT INTO manual_lookout (description, id) VALUES ('General', 1);
+INSERT INTO manual_lookout (description, id) VALUES ('Terrorism', 2);
+INSERT INTO manual_lookout (description, id) VALUES ('World Health', 3);
+INSERT INTO manual_lookout (description, id) VALUES ('Federal Law Enforcement', 4);
+INSERT INTO manual_lookout (description, id) VALUES ('Local Law Enforcement', 5);
 
-DROP PROCEDURE IF EXISTS manualHitMakerPopulate;
+-- ----------------------------
+-- External Hit HitMaker Population
+-- ----------------------------
+
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 1);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 2);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 3);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 4);
+INSERT INTO hit_maker (hm_hit_type, hm_author, hm_hit_category) VALUES ('EXTERNAL_HIT', 'GTAS', 5);
+
+INSERT INTO external_hit (description, id) VALUES ('General', 6);
+INSERT INTO external_hit (description, id) VALUES ('Terrorism', 7);
+INSERT INTO external_hit (description, id) VALUES ('World Health', 8);
+INSERT INTO external_hit (description, id) VALUES ('Federal Law Enforcement', 9);
+INSERT INTO external_hit (description, id) VALUES ('Local Law Enforcement', 10);
+

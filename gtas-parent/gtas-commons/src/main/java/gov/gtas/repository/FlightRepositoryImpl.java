@@ -65,6 +65,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		Join<Flight, FlightHitsWatchlist> watchlistHits = root.join("flightHitsWatchlist", JoinType.LEFT);
 		Join<Flight, FlightHitsWatchlist> fuzzyHits = root.join("flightHitsFuzzy", JoinType.LEFT);
 		Join<Flight, FlightHitsWatchlist> graphHits = root.join("flightHitsGraph", JoinType.LEFT);
+		Join<Flight, FlightHitsExternal> externalHits = root.join("flightHitsExternal", JoinType.LEFT);
 		Join<Flight, FlightPassengerCount> passengerCountJoin = root.join("flightPassengerCount", JoinType.LEFT);
 		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = root.join("mutableFlightDetails", JoinType.LEFT);
 		Join<Flight, FlightCountDownView> countDownViewJoin = root.join("flightCountDownView", JoinType.LEFT);
@@ -83,7 +84,9 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 					orderByItem.add(graphHits.get("hitCount"));
 				} else if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn())) {
 					orderByItem.add(fuzzyHits.get("hitCount"));
-				} else if (sort.getColumn().equalsIgnoreCase("passengerCount")) {
+				} else if ("externalHitCount".equalsIgnoreCase(sort.getColumn())) {
+					orderByItem.add(externalHits.get("hitCount"));
+			    } else if (sort.getColumn().equalsIgnoreCase("passengerCount")) {
 					orderByItem.add(passengerCountJoin.get("passengerCount"));
 				} else if (sort.getColumn().equalsIgnoreCase("eta") || sort.getColumn().equalsIgnoreCase("etd")) {
 					orderByItem.add(mutableFlightDetailsJoin.get(sort.getColumn()));

@@ -9,6 +9,9 @@ package gov.gtas.enumtype;
  * The Enum AuditActionType.
  */
 public enum AuditActionType {
+
+	ACCESS_INFORMATION,
+
 	CREATE_UDR,
 
 	UPDATE_UDR,

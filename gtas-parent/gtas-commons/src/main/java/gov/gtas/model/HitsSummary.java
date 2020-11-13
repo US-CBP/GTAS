@@ -39,11 +39,22 @@ public class HitsSummary extends BaseEntity {
 	@Column(name = "hs_manual_count")
 	private int manualHitCount = 0;
 
+	@Column(name = "hs_external_count")
+	private int externalHitCount = 0;
+
 	@Column(name = "hs_partial_count")
 	private int partialHitCount;
 
 	@Transient
 	boolean updated = false;
+
+	public int getExternalHitCount() {
+		return externalHitCount;
+	}
+
+	public void setExternalHitCount(int externalHitCount) {
+		this.externalHitCount = externalHitCount;
+	}
 
 	public void setRuleHitCount(int ruleHitCount) {
 		this.ruleHitCount = ruleHitCount;
