@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-@ConditionalOnProperty(prefix = "rules", name = "enabled")
+@ConditionalOnProperty(prefix = "lookout", name = "enabled")
 public class LookoutScheduler {
 
 
