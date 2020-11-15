@@ -22,6 +22,15 @@ public class FlightLegVo {
 	private String flightId;
 	private String direction;
 	private String bookingDetailId;
+	private Integer passengerCount;
+
+	public Integer getPassengerCount() {
+		return passengerCount;
+	}
+
+	public void setPassengerCount(Integer passengerCount) {
+		this.passengerCount = passengerCount;
+	}
 
 	public String getFlightId() {
 		return flightId;
