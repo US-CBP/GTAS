@@ -4,7 +4,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-app-node
+          - node.hostname == gtasp2
   web-app:
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
@@ -27,7 +27,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-app-node
+          - node.hostname == gtasp2
   gtas-scheduler:
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
@@ -54,42 +54,42 @@ services:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-app-node
+          - node.hostname == gtasp2
   activemq:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-app-node
+          - node.hostname == gtasp2
   mariadb:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-db-node
+          - node.hostname == gtasp1
   kibana:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-elk-node
+          - node.hostname == gtasp3
   elasticsearch:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-elk-node
+          - node.hostname == gtasp3
   logstash:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-elk-node
+          - node.hostname == gtasp3
   elk-setup:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-elk-node
+          - node.hostname == gtasp3
   neo4j:
     deploy:
       placement:
         constraints:
-          - node.hostname == gtas-app-node
+          - node.hostname == gtasp2
 
 networks:
   GTAS_webapp-network:
