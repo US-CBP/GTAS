@@ -8,6 +8,9 @@ services:
       SSL_TRUST_HOST: "bogus"
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
+      ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
+      ADDITIONAL_PROCESSING_RAW: "false"
+      ADDITIONAL_PROCESSING_RULES: "false"
       PROXY_IP: localhost
   activemq:
     ports:
@@ -21,6 +24,9 @@ services:
       SSL_TRUST_HOST: "bogus"
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
+      ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
+      ADDITIONAL_PROCESSING_RAW: "false"
+      ADDITIONAL_PROCESSING_RULES: "false"
       PROXY_IP: localhost
     volumes:
       - type: bind
