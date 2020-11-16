@@ -22,8 +22,6 @@ import org.springframework.util.CollectionUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
@@ -55,6 +53,8 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 
 	private final FlightHitsExternalRepository flightHitsExternalRepository;
 
+	private final FlightHitsManualRepository flightHitsManualRepository;
+
 	private final HitMakerRepository hitMakerRepository;
 
 	@Value("${omni.enabled}")
@@ -66,7 +66,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 	public RuleHitPersistenceServiceImpl(PassengerService passengerService, HitDetailRepository hitDetailRepository,
 										 HitsSummaryRepository hitsSummaryRepository, FlightHitsWatchlistRepository flightHitsWatchlistRepository,
 										 FlightHitsRuleRepository flightHitsRuleRepository, FlightFuzzyHitsRepository flightFuzzyHitsRepository,
-										 FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository, FlightHitsExternalRepository flightHitsExternalRepository) {
+										 FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository, FlightHitsExternalRepository flightHitsExternalRepository, FlightHitsManualRepository flightHitsManualRepository) {
 		this.passengerService = passengerService;
 		this.hitDetailRepository = hitDetailRepository;
 		this.hitsSummaryRepository = hitsSummaryRepository;
@@ -76,6 +76,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		this.flightGraphHitsRepository = flightGraphHitsRepository;
 		this.hitMakerRepository = hitMakerRepository;
 		this.flightHitsExternalRepository = flightHitsExternalRepository;
+		this.flightHitsManualRepository = flightHitsManualRepository;
 	}
 
 	@Transactional
@@ -229,6 +230,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		Set<FlightHitsGraph> flightHitsGraphs = new HashSet<>();
 		Set<FlightHitsFuzzy> flightHitsFuzzies = new HashSet<>();
 		Set<FlightHitsExternal> flightHitsExternals = new HashSet<>();
+		Set<FlightHitsManual> flightHitsManuals = new HashSet<>();
 		for (Long flightId : flights) {
 			Integer ruleHits = hitsSummaryRepository.ruleHitCount(flightId);
 			FlightHitsRule ruleFlightHits = new FlightHitsRule(flightId, ruleHits);
@@ -250,12 +252,17 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 			FlightHitsExternal flightHitsExternal = new FlightHitsExternal(flightId, externalHitCount);
 			flightHitsExternals.add(flightHitsExternal);
 
+			Integer manualHitCount = hitsSummaryRepository.manualHitCount(flightId);
+			FlightHitsManual flightHitsManual = new FlightHitsManual(flightId, manualHitCount);
+			flightHitsManuals.add(flightHitsManual);
+
 		}
 		flightHitsRuleRepository.saveAll(flightHitsRules);
 		flightHitsWatchlistRepository.saveAll(flightHitsWatchlists);
 		flightGraphHitsRepository.saveAll(flightHitsGraphs);
 		flightFuzzyHitsRepository.saveAll(flightHitsFuzzies);
 		flightHitsExternalRepository.saveAll(flightHitsExternals);
+		flightHitsManualRepository.saveAll(flightHitsManuals);
 	}
 
 	private void sendHitDetailsToOmniHandler(Set<HitDetail> hitDetailsToPersist) {

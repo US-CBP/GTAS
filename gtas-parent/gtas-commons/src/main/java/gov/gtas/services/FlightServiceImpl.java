@@ -361,6 +361,9 @@ public class FlightServiceImpl implements FlightService {
       if (f.getFlightHitsExternal() != null){
       	vo.setExternalHitCount(f.getFlightHitsExternal().getHitCount());
 	  }
+      if (f.getFlightHitsManual() != null){
+      	vo.setManualHitCount(f.getFlightHitsManual().getHitCount());
+	  }
   
       fgvo.add(vo);
     }

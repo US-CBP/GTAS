@@ -42,6 +42,9 @@ public class FlightGridVo {
   private Integer fuzzyHitCount;
   private Integer externalHitCount;
   private Integer manualHitCount;
+  private Integer lowPrioHitCount;
+  private Integer medPrioHitCount;
+  private Integer highPrioHitCount;
 
   public static FlightGridVo from(Flight flight) {
     FlightGridVo fgvo = new FlightGridVo();
@@ -181,4 +184,16 @@ public class FlightGridVo {
   public void setCountdown(Date countdown) {
     this.countdown = countdown;
   }
+
+  public Integer getLowPrioHitCount() { return lowPrioHitCount; }
+
+  public void setLowPrioHitCount(Integer lowPrioHitCount) { this.lowPrioHitCount = lowPrioHitCount; }
+
+  public Integer getMedPrioHitCount() { return medPrioHitCount; }
+
+  public void setMedPrioHitCount(Integer medPrioHitCount) { this.medPrioHitCount = medPrioHitCount; }
+
+  public Integer getHighPrioHitCount() { return highPrioHitCount; }
+
+  public void setHighPrioHitCount(Integer highPrioHitCount) { this.highPrioHitCount = highPrioHitCount; }
 }
