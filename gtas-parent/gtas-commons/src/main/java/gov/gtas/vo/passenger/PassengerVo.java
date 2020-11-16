@@ -56,6 +56,8 @@ public class PassengerVo extends BaseVo implements PIIObject {
 	private String flightETD;
 	private String flightETA;
 	private String flightIdTag;
+	private String direction;
+	private Integer passengerCount;
 
 	// hits info
 	private Boolean onRuleHitList = Boolean.FALSE;
@@ -75,6 +77,23 @@ public class PassengerVo extends BaseVo implements PIIObject {
 	private List<DispositionVo> dispositionHistory;
 
 	private List<AttachmentVo> attachments;
+
+	
+	public String getDirection() {
+		return direction;
+	}
+
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
+
+	public Integer getPassengerCount() {
+		return passengerCount;
+	}
+
+	public void setPassengerCount(Integer passengerCount) {
+		this.passengerCount = passengerCount;
+	}
 
 	public String getPaxId() {
 		return paxId;
