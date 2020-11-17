@@ -6,7 +6,7 @@ services:
     build:  
       context: ./gtas-parent
       dockerfile: docker-resources/proxy.Dockerfile
-    restart: always
+    restart: unless-stopped
     ports:
       - 443:443
       - 80:80
@@ -32,7 +32,7 @@ services:
       - ELASTICSEARCH=elasticsearch
     networks:
       - gtas-webapp-network
-    restart: always
+    restart: unless-stopped
     secrets:
      - mysql-webapp-user
      - mysql-webapp-password
@@ -49,7 +49,7 @@ services:
     build: 
       context: .
       dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
-    restart: always
+    restart: unless-stopped
     environment:
       KIBANA_HOST: kibana
       NEO4J_HOST: neo4j
@@ -69,7 +69,7 @@ services:
   activemq:
     image: rmohr/activemq:5.15.9
     container_name: activemq
-    restart: always
+    restart: unless-stopped
     networks: 
       - gtas-webapp-network
 
@@ -97,7 +97,7 @@ services:
       - 3306:3306
     networks:
       - gtas-webapp-network
-    restart: always
+    restart: unless-stopped
     volumes:
       - db-data:/var/lib/mysql
 
@@ -109,7 +109,7 @@ services:
       dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
     environment:
       NEO4J_HOSTNAME: neo4j
-    restart: always
+    restart: unless-stopped
     secrets:
       - mysql-etl-user
       - mysql-etl-password
@@ -126,7 +126,7 @@ services:
     build:
       context: .
       dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
-    restart: always
+    restart: unless-stopped
     volumes:
        - neo4j-data:/data
     ports:
@@ -145,7 +145,7 @@ services:
       ELASTICSEARCH_HOSTS: https://elasticsearch:9200
     ports:
       - 5601:5601
-    restart: always
+    restart: unless-stopped
     volumes:
       - kibana-conf:/usr/share/kibana/data
     networks:
@@ -162,7 +162,7 @@ services:
     ports:
       - 9300:9300
       - 9200:9200
-    restart: always
+    restart: unless-stopped
     volumes: 
       - es-data:/usr/share/elasticsearch/data
       - elasticsearch-conf:/usr/share/elasticsearch/config
@@ -179,7 +179,7 @@ services:
       ELASTIC_HOST: 'https://elasticsearch'
       XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
       LOGSTASH_KEYSTORE_PASS: admin123
-    restart: always
+    restart: unless-stopped
     secrets:
       - elastic-ca
     networks:
@@ -198,9 +198,7 @@ services:
     environment:
       KIBANA_HOST: 'kibana'
       ELASTICSEARCH_HOST: 'elasticsearch'
-    deploy:
-      restart_policy:
-        condition: on-failure
+    restart: on-failure
     volumes:
       - logstash-conf:/logstash-conf
       - kibana-conf:/kibana-conf
