@@ -28,19 +28,19 @@ RUN cp -r /usr/share/logstash/config/* /logstash-conf/
 
 COPY ./install/docker/elk-setup/kibana.default-dashboard.json .
 
-ENTRYPOINT yes | cp -rf /usr/share/logstash/config/* /logstash-conf/ && yes | cp -rf ./elasticsearch/config/* /elasticsearch-conf/ && echo y | ./elasticsearch/bin/elasticsearch-keystore create \
-	&& ./elasticsearch/bin/elasticsearch-keystore add bootstrap.password <${BOOTSTRAP_PATH} \
-	&& cp ./elasticsearch/config/elasticsearch.keystore /elasticsearch-conf/elasticsearch.keystore \
+ENTRYPOINT yes | cp -rf /usr/share/logstash/config/* /logstash-conf/ && yes | cp -rf /elasticsearch/config/* /elasticsearch-conf/ && echo y | /elasticsearch/bin/elasticsearch-keystore create \
+	&& /elasticsearch/bin/elasticsearch-keystore add bootstrap.password <${BOOTSTRAP_PATH} \
+	&& cp /elasticsearch/config/elasticsearch.keystore /elasticsearch-conf/elasticsearch.keystore \
 	&& export LOGSTASH_KEYSTORE_PASS=$(cat ${LOGSTASH_PASSWORD_PATH}) \
 	&& echo y | ./bin/logstash-keystore create \
 	&& ./bin/logstash-keystore add MARIADB_USER <${MYSQL_USER_PATH} \
 	&& ./bin/logstash-keystore add MARIADB_PASSWORD <${MYSQL_PASSWORD_PATH} \
 	&& ./bin/logstash-keystore add ES_PASSWORD <${ELASTIC_PATH} \
 	&& cp ./config/logstash.keystore /logstash-conf/logstash.keystore \
-	&& echo y | ./kibana/bin/kibana-keystore --allow-root create \
-	&& echo kibana | ./kibana/bin/kibana-keystore --allow-root add elasticsearch.username --stdin \
-	&& ./kibana/bin/kibana-keystore --allow-root add elasticsearch.password --stdin <${KIBANA_PASSWORD_PATH} \
-	&& cp -r ./kibana/data/* /kibana-conf/ && chown -R 1000:1000 /kibana-conf \
+	&& echo y | /kibana/bin/kibana-keystore --allow-root create \
+	&& echo kibana | /kibana/bin/kibana-keystore --allow-root add elasticsearch.username --stdin \
+	&& /kibana/bin/kibana-keystore --allow-root add elasticsearch.password --stdin <${KIBANA_PASSWORD_PATH} \
+	&& cp -r /kibana/data/* /kibana-conf/ && chown -R 1000:1000 /kibana-conf \
 	&& until [ $(curl -k -s -o /dev/null -w "%{http_code}"  https://${ELASTICSEARCH_HOST}:9200/) == 401 ]; do sleep 10 && echo "Waiting for elasticsearch..."; done \
 	&& curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$(cat ${BOOTSTRAP_PATH})@${ELASTICSEARCH_HOST}:9200/_security/user/kibana/_password" -d "{\"password\": \"$(cat ${KIBANA_PASSWORD_PATH})\"}" \
 	&& curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$(cat ${BOOTSTRAP_PATH})@${ELASTICSEARCH_HOST}:9200/_security/user/logstash_system/_password" -d "{\"password\": \"$(cat ${ELASTIC_PATH})\"}" \
