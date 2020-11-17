@@ -126,10 +126,10 @@ services:
     labels:
       kompose.image-pull-policy: "Always" 
       kompose.service.type: "LoadBalancer"
-    # deploy:
-    #   placement:
-    #     constraints:
-    #       - node.labels.role == backend
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == backend
     volumes:
       - certs:/usr/share/elasticsearch/config/certs/elasticsearch/
     environment:  
