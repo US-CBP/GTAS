@@ -5,7 +5,7 @@ FROM docker.elastic.co/logstash/logstash:7.2.0 as logstash-base
 USER root
 
 RUN mkdir /kibana /kibana-conf
-COPY --from=kibana-base /usr/share/kibana/ kibana
+COPY --from=kibana-base /usr/share/kibana/ /kibana
 
 RUN mkdir /usr/share/logstash/pipeline/config/
 COPY config/logstash/pipelines.yml /usr/share/logstash/config/pipelines.yml
