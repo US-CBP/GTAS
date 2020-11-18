@@ -5,6 +5,7 @@ RUN yum install -y wget
 RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
 RUN tar -C /usr/local/bin -xvzf dockerize-linux-amd64-v0.6.1.tar.gz
 RUN sed -i '2icp -R -u -p /keystore/logstash.keystore /usr/share/logstash/config/logstash.keystore' /usr/local/bin/docker-entrypoint
+RUN sed -i '3ichown logstash:logstash /usr/share/logstash/config/logstash.keystore'
 USER logstash
 
 COPY config/logstash/pipelines.yml /usr/share/logstash/config/pipelines.yml
@@ -24,6 +25,5 @@ ENV LOGSTASH_DIR=/usr/share/logstash
 ENV LOGSTASH_LIB=/usr/share/logstash/logstash-core/lib/jars
 
 RUN curl -o  /usr/share/logstash/logstash-core/lib/jars/mariadb-java-client-2.3.0.jar https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar
-
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
