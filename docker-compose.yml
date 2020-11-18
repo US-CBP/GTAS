@@ -182,10 +182,10 @@ services:
     restart: unless-stopped
     secrets:
       - elastic-ca
+      - source: logstash-keystore
+        target: /keystore/logstash.keystore
     networks:
       - gtas-webapp-network
-    volumes:
-      - logstash-conf:/usr/share/logstash/config/
     depends_on:
       - elasticsearch
 
@@ -199,7 +199,7 @@ services:
       KIBANA_HOST: 'kibana'
       ELASTICSEARCH_HOST: 'elasticsearch'
     volumes:
-      - logstash-conf:/logstash-conf
+#      - logstash-conf:/logstash-conf
       - kibana-conf:/kibana-conf
       - elasticsearch-conf:/elasticsearch-conf
     secrets:
@@ -259,6 +259,8 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_user.txt
   etl-neo4j-password:
     file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_password.txt
+  logstash-keystore:
+    file: ./gtas-parent/gtas-commons/secrets/logstash.keystore
 volumes:
   db-data:
   m2:
@@ -267,7 +269,6 @@ volumes:
   neo4j-data:
     labels:
       kompose.volume.size: 200Gi
-  logstash-conf:
   kibana-conf:
   elasticsearch-conf:
   es-data:
