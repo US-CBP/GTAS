@@ -4,11 +4,11 @@ USER root
 RUN yum install -y wget
 RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
 RUN tar -C /usr/local/bin -xvzf dockerize-linux-amd64-v0.6.1.tar.gz
-RUN sed -i '2icp -R -u -p /keystore/logstash.keystore /usr/share/logstash/config/logstash.keystore' /usr/local/bin/docker-entrypoint
+RUN sed -i '2icp /keystore/logstash.keystore /usr/share/logstash/config/logstash.keystore' /usr/local/bin/docker-entrypoint
 RUN sed -i '3ils -l /usr/share/logstash/config/' /usr/local/bin/docker-entrypoint
 RUN sed -i '4ichown logstash:root /usr/share/logstash/config/logstash.keystore' /usr/local/bin/docker-entrypoint
 RUN cat /usr/local/bin/docker-entrypoint
-USER logstash 
+USER logstash
 
 COPY config/logstash/pipelines.yml /usr/share/logstash/config/pipelines.yml
 RUN rm -f /usr/share/logstash/pipeline/logstash.conf
