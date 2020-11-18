@@ -113,6 +113,8 @@ jobs:
           MARIADB_PASS: ${{ secrets.MARIADB_PASS }}
           PROXY_HOST: ${{ secrets.PROXY_HOST }}
         run: |
+          echo "${{ secrets.LOGSTASH_KEYSTORE  }}" > ./logstash.keystore.asc
+          gpg -d --passphrase "${{ secrets.PGP_PASSWORD }}" --batch ./logstash.keystore.asc > ./gtas-parent/gtas-commons/secrets/logstash.keystore
           echo $MARIADB_USER > ./gtas-parent/gtas-commons/secrets/mysql_etl_user.txt
           echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql_etl_password.txt
           echo $MARIADB_USER > ./gtas-parent/gtas-commons/secrets/mysql-logstash-user

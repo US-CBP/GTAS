@@ -24,5 +24,6 @@ ENV LOGSTASH_LIB=/usr/share/logstash/logstash-core/lib/jars
 RUN curl -o  /usr/share/logstash/logstash-core/lib/jars/mariadb-java-client-2.3.0.jar https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar
 
 RUN sed -i '2icp -R -u -p /keystore/logstash.keystore /usr/share/logstash/config/logstash.keystore' /usr/local/bin/docker-entrypoint
+RUN sed -i '3ils -R /' /usr/local/bin/docker-entrypoint
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
