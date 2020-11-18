@@ -146,8 +146,19 @@ services:
     ports:
       - 5601:5601
     restart: unless-stopped
-    volumes:
-      - kibana-conf:/usr/share/kibana/data
+    secrets:
+      - source: kibana-keystore
+        target: /keystore/kibana.keystore
+      - source: elastic-bootstrap-password
+        target: /bootstrap-password/elastic-bootstrap-password
+    command:
+      - bash
+      - -c
+      - |
+        && until [ $(curl -k -s -o /dev/null -w "%{http_code}" -u kibana:$(cat ${KIBANA_PASSWORD_PATH})  https://${KIBANA_HOST}:5601/login) == 200 ]; do sleep 10 && echo "Waiting for kibana..."; done \
+        && curl -k -u elastic:/bootstrap-password/elastic-bootstrap-password -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://localhost:5601/api/telemetry/v2/optIn" -d '{"enabled":false}' \
+        && curl -k -u elastic:/bootstrap-password/elastic-bootstrap-password -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://localhost:5601/api/kibana/dashboards/import?force=true" -d @kibana.default-dashboard.json \
+        && curl -k -u elastic:/bootstrap-password/elastic-bootstrap-password -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://localhost:5601/api/kibana/settings/defaultIndex" -d '{"value": "96df0890-2ba8-11e9-a5e4-2bbcf61c6cb1"}'
     networks:
       - gtas-webapp-network
     depends_on:
@@ -251,8 +262,6 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch-kibana-user
   elasticsearch-kibana-password:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch-kibana-password
-  elastic-bootstrap-password:
-    file: ./gtas-parent/gtas-commons/secrets/elastic-bootstrap-password
   elastic-ca:
     file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
   etl-neo4j-user:
@@ -261,6 +270,8 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_password.txt
   logstash-keystore:
     file: ./gtas-parent/gtas-commons/secrets/logstash.keystore
+  kibana-keystore:
+    file: ./gtas-parent/gtas-commons/secrets/kibana.keystore
 volumes:
   db-data:
   m2:
