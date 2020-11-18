@@ -2,7 +2,6 @@ select * from (select
 	concat(fp.`passenger_id`,'+',fp.`flight_id`) "id",
 	fd.`full_eta_timestamp`  "flight.eta",
 	fd.`full_etd_timestamp` "flight.etd",
-	f.`etd_date` "flight.flight_date",
 	f.`carrier`  "flight.carrier",
 	f.`flight_number` "flight.flight_number",
 	f.`full_flight_number` "flight.full_flight_number",
