@@ -5,6 +5,7 @@ RUN yum install -y wget
 RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
 RUN tar -C /usr/local/bin -xvzf dockerize-linux-amd64-v0.6.1.tar.gz
 RUN sed -i '2icp -R -u -p /keystore/logstash.keystore /usr/share/logstash/config/logstash.keystore' /usr/local/bin/docker-entrypoint
+RUN sed -i '3ils -l' /usr/local/bin/docker-entrypoint
 RUN sed -i '4ichown logstash:logstash /usr/share/logstash/config/logstash.keystore' /usr/local/bin/docker-entrypoint
 
 
