@@ -47,7 +47,7 @@ ENTRYPOINT yes | cp -rf ./elasticsearch/config/* /elasticsearch-conf/ && echo y 
 	&& curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$(cat ${BOOTSTRAP_PATH})@${ELASTICSEARCH_HOST}:9200/_security/user/kibana/_password" -d "{\"password\": \"$(cat ${KIBANA_PASSWORD_PATH})\"}" \
 	&& curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$(cat ${BOOTSTRAP_PATH})@${ELASTICSEARCH_HOST}:9200/_security/user/logstash_system/_password" -d "{\"password\": \"$(cat ${ELASTIC_PATH})\"}" \
 	&& curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$(cat ${BOOTSTRAP_PATH})@${ELASTICSEARCH_HOST}:9200/case" -d '{ "settings" : { "index" : { } }}' \
-	&& until [ $(curl -k -s -o /dev/null -w "%{http_code}" -u kibana:$(cat ${KIBANA_PASSWORD_PATH})  https://${KIBANA_HOST}:5601/login) == 200 ]; do sleep 10 && echo "Waiting for kibana..."; done \
-	&& curl -k -u elastic:$(cat ${BOOTSTRAP_PATH}) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/telemetry/v2/optIn" -d '{"enabled":false}' \
-	&& curl -k -u elastic:$(cat ${BOOTSTRAP_PATH}) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/kibana/dashboards/import?force=true" -d @kibana.default-dashboard.json \
-	&& curl -k -u elastic:$(cat ${BOOTSTRAP_PATH}) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/kibana/settings/defaultIndex" -d '{"value": "96df0890-2ba8-11e9-a5e4-2bbcf61c6cb1"}'
+# 	&& until [ $(curl -k -s -o /dev/null -w "%{http_code}" -u kibana:$(cat ${KIBANA_PASSWORD_PATH})  https://${KIBANA_HOST}:5601/login) == 200 ]; do sleep 10 && echo "Waiting for kibana..."; done \
+# 	&& curl -k -u elastic:$(cat ${BOOTSTRAP_PATH}) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/telemetry/v2/optIn" -d '{"enabled":false}' \
+# 	&& curl -k -u elastic:$(cat ${BOOTSTRAP_PATH}) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/kibana/dashboards/import?force=true" -d @kibana.default-dashboard.json \
+# 	&& curl -k -u elastic:$(cat ${BOOTSTRAP_PATH}) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://${KIBANA_HOST}:5601/api/kibana/settings/defaultIndex" -d '{"value": "96df0890-2ba8-11e9-a5e4-2bbcf61c6cb1"}'
