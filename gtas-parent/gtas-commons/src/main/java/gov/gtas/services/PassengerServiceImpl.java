@@ -124,7 +124,7 @@ public class PassengerServiceImpl implements PassengerService {
 			for(Pnr pnr : passenger.getPnrs()) {
 				//If there is no date recieved then assume message is very old.
 				Date pnrDate = pnr.getDateReceived() == null ? new Date(0L) : pnr.getDateReceived();
-				if (mostRecentDate == null || mostRecentDate.before(pnr.getDateReceived())) {
+				if (mostRecentDate == null || mostRecentDate.before(pnrDate)) {
 					mostRecentDate = pnr.getDateReceived();
 					latestPnr = pnr;
 				}
