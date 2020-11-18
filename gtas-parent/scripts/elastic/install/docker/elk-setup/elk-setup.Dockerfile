@@ -4,8 +4,8 @@ FROM docker.elastic.co/logstash/logstash:7.2.0 as logstash-base
 
 USER root
 
-RUN mkdir kibana /kibana-conf
-COPY --from=kibana-base /usr/share/kibana/ kibana
+RUN mkdir /kibana /kibana-conf
+COPY --from=kibana-base /usr/share/kibana/ /kibana
 
 # RUN mkdir /usr/share/logstash/pipeline/config/
 # COPY config/logstash/pipelines.yml /usr/share/logstash/config/pipelines.yml
@@ -20,13 +20,14 @@ COPY --from=kibana-base /usr/share/kibana/ kibana
 # COPY --chown=logstash config/logstash/cases_mapping.json /usr/share/logstash/config/cases_mapping.json
 # COPY --chown=logstash config/logstash/flightpax_template.json /usr/share/logstash/config/flightpax_template.json
 
-RUN mkdir elasticsearch
-COPY --from=elasticsearch-base /usr/share/elasticsearch/ elasticsearch
+RUN mkdir /elasticsearch
+COPY --from=elasticsearch-base /usr/share/elasticsearch/ /elasticsearch
 
 RUN mkdir /elasticsearch-conf /logstash-conf
 # RUN cp -r /usr/share/logstash/config/* /logstash-conf/
 
 COPY ./install/docker/elk-setup/kibana.default-dashboard.json .
+
 
 # yes | cp -rf /usr/share/logstash/config/* /logstash-conf/ &&
 ENTRYPOINT yes | cp -rf ./elasticsearch/config/* /elasticsearch-conf/ && echo y | ./elasticsearch/bin/elasticsearch-keystore create \

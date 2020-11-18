@@ -68,6 +68,7 @@ public class FlightVo extends BaseVo {
 			BeanUtils.copyProperties(flight, flightVo);
 			BeanUtils.copyProperties(flight.getMutableFlightDetails(), flightVo);
 			flightVo.setId(flight.getId());
+			flightVo.setPassengerCount(flight.getFlightPassengerCount().getPassengerCount());
 		} catch (Exception e) {
 			logger.error("failure to copy proeprties", e);
 		}

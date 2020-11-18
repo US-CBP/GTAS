@@ -207,6 +207,8 @@ public class PaxDetailVoUtil {
 			target.setFullFlightNumber(source.getFullFlightNumber());
 			target.setFlightId(source.getId().toString());
 			target.setIdTag(source.getIdTag());
+			target.setPassengerCount(source.getFlightPassengerCount().getPassengerCount());
+			target.setDirection(source.getDirection());
 		} catch (Exception e) {
 			logger.error("error populating flight vo", e);
 		}
@@ -341,6 +343,7 @@ public class PaxDetailVoUtil {
 							fl.getFlight().getMutableFlightDetails().getEta());
 					flVo.setFlightId(Long.toString(fl.getFlight().getId()));
 					flVo.setDirection(fl.getFlight().getDirection());
+					flVo.setPassengerCount(fl.getFlight().getFlightPassengerCount().getPassengerCount());
 				} else {
 					flVo.setFlightNumber(fl.getBookingDetail().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getBookingDetail().getOrigin());
