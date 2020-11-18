@@ -160,7 +160,7 @@ services:
         nohup dockerize -wait tcp://localhost:5601 -timeout 1000s curl -k -u elastic:$$(cat /bootstrap-password/elastic-bootstrap-password) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://localhost:5601/api/telemetry/v2/optIn" -d '{"enabled":false}' &
         nohup dockerize -wait tcp://localhost:5601 -timeout 1000s curl -k -u elastic:$$(cat /bootstrap-password/elastic-bootstrap-password) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://localhost:5601/api/kibana/dashboards/import?force=true" -d @kibana.default-dashboard.json &
         nohup dockerize -wait tcp://localhost:5601 -timeout 1000s curl -k -u elastic:$$(cat /bootstrap-password/elastic-bootstrap-password) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://localhost:5601/api/kibana/settings/defaultIndex" -d '{"value": "96df0890-2ba8-11e9-a5e4-2bbcf61c6cb1"}' &
-        cp -u -p /kibana/kibana.keystore /usr/share/kibana/data/kibana.keystore
+        cp /kibana/kibana.keystore /usr/share/kibana/data/kibana.keystore
         /usr/local/bin/kibana-docker
     networks:
       - gtas-webapp-network
