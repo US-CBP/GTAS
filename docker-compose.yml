@@ -192,7 +192,7 @@ services:
     environment:
       ELASTIC_HOST: 'https://elasticsearch'
       XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
-      LOGSTASH_KEYSTORE_PASS: admin123
+      LOGSTASH_KEYSTORE_PASS: ''
     restart: unless-stopped
     secrets:
       - elastic-ca
@@ -241,8 +241,6 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/mysql-logstash-user
   mysql-logstash-password:
     file: ./gtas-parent/gtas-commons/secrets/mysql-logstash-password
-  elastic-bootstrap-password:
-    file: ./gtas-parent/gtas-commons/secrets/elastic-bootstrap-password
   mysql-processor-user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_processor_user.txt
   mysql-processor-password:

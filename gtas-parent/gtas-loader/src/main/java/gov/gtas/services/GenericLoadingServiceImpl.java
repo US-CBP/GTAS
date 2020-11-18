@@ -90,6 +90,7 @@ public class GenericLoadingServiceImpl implements GenericLoading {
 
         if (isPnr(eventIdentifier)) {
             Pnr pnr = new Pnr();
+            pnr.setDateReceived(new Date());
             pnr = bootstrapMessage(filePath, messageStatus, pnr, pnrRepository);
             messageStatus = pnr.getStatus();
             try {
