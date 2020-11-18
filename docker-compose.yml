@@ -183,7 +183,7 @@ services:
     secrets:
       - elastic-ca
       - source: logstash-keystore
-        target: /usr/share/logstash/config/logstash.keystore
+        target: /keystore/logstash.keystore
     networks:
       - gtas-webapp-network
     depends_on:
