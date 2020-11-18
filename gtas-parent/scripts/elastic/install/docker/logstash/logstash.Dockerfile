@@ -9,7 +9,7 @@ RUN sed -i '4ichown logstash:logstash /usr/share/logstash/config/logstash.keysto
 #RUN sed -i '5idockerize -wait tcp://localhost:29092 -timeout 1000s ls' /usr/local/bin/docker-entrypoint
 RUN cat /usr/local/bin/docker-entrypoint
 
-RUN yum update -y && yum install -y dos2unix
+RUN yum install -y dos2unix
 
 
 USER logstash
@@ -45,7 +45,7 @@ RUN chown logstash:logstash /usr/share/logstash/config/flightpax_script.sql
 RUN chown logstash:logstash /usr/share/logstash/config/logstash-flight_legs.conf
 RUN chown logstash:logstash /usr/share/logstash/config/logstash-flightpax.conf
 RUN chown logstash:logstash /usr/share/logstash/config/logstash-cases.conf
-RUN chown logstash:logstash /usr/share/logstash/config/pipeline.yml
+RUN chown logstash:logstash /usr/share/logstash/config/pipelines.yml
 
 USER logstash
 
