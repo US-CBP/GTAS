@@ -10,4 +10,4 @@ USER kibana
 
 COPY ./install/docker/elk-setup/kibana.default-dashboard.json .
 
-CMD cp -u -p /kibana/kibana.keystore /usr/share/kibana/data/kibana.keystore && /usr/local/bin/kibana-docker
+CMD cp /kibana/kibana.keystore /usr/share/kibana/data/kibana.keystore && /usr/local/bin/kibana-docker
