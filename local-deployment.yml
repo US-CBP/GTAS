@@ -34,12 +34,6 @@ services:
         target: /usr/local/gtas-data
         consistency: consistent
 secrets:
-  elastic-key:
-    file: ./gtas-parent/gtas-commons/certs/elasticsearch-node1.key
-  elastic-ca:
-    file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
-  elastic-cert:
-    file: ./gtas-parent/gtas-commons/certs/elasticsearch-node1.crt
   webapp-cert:
     file: ./gtas-parent/gtas-commons/certs/wcogtas.org.crt
   webapp-key:

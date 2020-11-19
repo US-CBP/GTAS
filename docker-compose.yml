@@ -255,6 +255,12 @@ services:
 
 
 secrets:
+  elastic-ca:
+    file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
+  elastic-key:
+    file: ./gtas-parent/gtas-commons/certs/elasticsearch-node1.key
+  elastic-cert:
+    file: ./gtas-parent/gtas-commons/certs/elasticsearch-node1.crt
   elastic-keystore:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch.keystore
   elastic-bootstrap-password:
@@ -293,8 +299,6 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch-kibana-user
   elasticsearch-kibana-password:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch-kibana-password
-  elastic-ca:
-    file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
   etl-neo4j-user:
     file: ./gtas-parent/gtas-commons/secrets/etl_neo4j_user.txt
   etl-neo4j-password:
