@@ -155,11 +155,9 @@ services:
       - bash
       - -c
       - |
-        wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
-        tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
-        nohup dockerize -wait tcp://localhost:5601 -timeout 1000s curl -k -u elastic:$$(cat /bootstrap-password/elastic-bootstrap-password) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://localhost:5601/api/telemetry/v2/optIn" -d '{"enabled":false}' &
-        nohup dockerize -wait tcp://localhost:5601 -timeout 1000s curl -k -u elastic:$$(cat /bootstrap-password/elastic-bootstrap-password) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://localhost:5601/api/kibana/dashboards/import?force=true" -d @kibana.default-dashboard.json &
-        nohup dockerize -wait tcp://localhost:5601 -timeout 1000s curl -k -u elastic:$$(cat /bootstrap-password/elastic-bootstrap-password) -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "https://localhost:5601/api/kibana/settings/defaultIndex" -d '{"value": "96df0890-2ba8-11e9-a5e4-2bbcf61c6cb1"}' &
+        until [ $$(curl -k -s -o /dev/null -w "%{http_code}" -u kibana:$$(cat /bootstrap-password/elastic-bootstrap-password) https://elasticsearch:9200/) == 200 ]; do sleep 10 && echo "Waiting for elasticsearch..."; done
+        nohup bash /usr/share/kibana/wait-for-url &
+        dockerize -wait tcp://elasticsearch:9200 -timeout 1000s
         cp /keystore/kibana.keystore /usr/share/kibana/data/kibana.keystore
         /usr/local/bin/kibana-docker
     networks:
@@ -177,10 +175,38 @@ services:
       - 9300:9300
       - 9200:9200
     restart: unless-stopped
+    environment:
+      BOOTSTRAP_PATH: '/bootstrap/elastic-bootstrap-password'
+      KIBANA_PASSWORD_PATH: '/kibana/elasticsearch-kibana-password'
+      ELASTIC_PATH: '/elastic/elastic-password'
+    command:
+      - bash
+      - -c
+      - |
+        wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
+        tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
+        nohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$$(cat $${BOOTSTRAP_PATH})@localhost:9200/_security/user/kibana/_password" -d "{\"password\": \"$$(cat $${KIBANA_PASSWORD_PATH})\"}" &
+        nohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$$(cat $${BOOTSTRAP_PATH})@localhost:9200/_security/user/logstash_system/_password" -d "{\"password\": \"$$(cat $${ELASTIC_PATH})\"}" &
+        nohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$$(cat $${BOOTSTRAP_PATH})@localhost:9200/case" -d '{ "settings" : { "index" : { } }}' &
+        /usr/local/bin/docker-entrypoint.sh
+    secrets:
+      - source: elastic-keystore
+        target: /keystore/elasticsearch.keystore
+      - source: elastic-bootstrap-password
+        target: /bootstrap/elastic-bootstrap-password
+      - source: elastic-password
+        target: /elastic/elastic-password
+      - source: elasticsearch-kibana-password
+        target: /kibana/elasticsearch-kibana-password
+      - source: elastic-ca
+        target: /usr/share/elasticsearch/ca/elastic-ca.crt
+      - source: elastic-cert
+        target: /usr/share/elasticsearch/crt/elasticsearch-node1.crt
+      - source: elastic-key
+        target: /usr/share/elasticsearch/key/elasticsearch-node1.key
     volumes: 
       - es-data:/usr/share/elasticsearch/data
-      - elasticsearch-conf:/usr/share/elasticsearch/config
-    networks: 
+    networks:
       - gtas-webapp-network
 
   logstash:
@@ -203,32 +229,36 @@ services:
     depends_on:
       - elasticsearch
 
-  elk-setup:
-    image: wcogtas/elk-setup:dev
-    container_name: elk-setup
-    build:
-      context: ./gtas-parent/scripts/elastic
-      dockerfile: ./install/docker/elk-setup/elk-setup.Dockerfile
-    environment:
-      KIBANA_HOST: 'kibana'
-      ELASTICSEARCH_HOST: 'elasticsearch'
-    volumes:
-#      - logstash-conf:/logstash-conf
-      - kibana-conf:/kibana-conf
-      - elasticsearch-conf:/elasticsearch-conf
-    secrets:
-      - logstash-keystore-password
-      - mysql-logstash-user
-      - mysql-logstash-password
-      - elastic-password
-      - elasticsearch-kibana-user
-      - elasticsearch-kibana-password
-      - elastic-bootstrap-password
-    networks:
-      - gtas-webapp-network
+#  elk-setup:
+#    image: wcogtas/elk-setup:dev
+#    container_name: elk-setup
+#    build:
+#      context: ./gtas-parent/scripts/elastic
+#      dockerfile: ./install/docker/elk-setup/elk-setup.Dockerfile
+#    environment:
+#      KIBANA_HOST: 'kibana'
+#      ELASTICSEARCH_HOST: 'elasticsearch'
+#    volumes:
+##      - logstash-conf:/logstash-conf
+#      - kibana-conf:/kibana-conf
+#      - elasticsearch-conf:/elasticsearch-conf
+#    secrets:
+#      - logstash-keystore-password
+#      - mysql-logstash-user
+#      - mysql-logstash-password
+#      - elastic-password
+#      - elasticsearch-kibana-user
+#      - elasticsearch-kibana-password
+#      - elastic-bootstrap-password
+#    networks:
+#      - gtas-webapp-network
 
 
 secrets:
+  elastic-keystore:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch.keystore
+  elastic-bootstrap-password:
+    file: ./gtas-parent/gtas-commons/secrets/elastic-bootstrap-password
   mysql-etl-user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_etl_user.txt
   mysql-etl-password:
