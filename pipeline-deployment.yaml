@@ -101,8 +101,6 @@ services:
       placement:
         constraints:
           - node.labels.role == backend
-    volumes:
-      - certs:/usr/share/elasticsearch/temp-cert
   mariadb:
     labels:
       kompose.image-pull-policy: "Always" 
@@ -122,14 +120,14 @@ services:
     environment:
       MARIADB_HOST: ${MARIADB_HOST}
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca/elastic-ca
-  elk-setup:
-    labels:
-      kompose.image-pull-policy: "Always" 
-      kompose.service.type: "LoadBalancer"
-    deploy:
-      placement:
-        constraints:
-          - node.labels.role == backend
+#  elk-setup:
+#    labels:
+#      kompose.image-pull-policy: "Always"
+#      kompose.service.type: "LoadBalancer"
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.labels.role == backend
     volumes:
       - certs:/usr/share/elasticsearch/config/certs/elasticsearch/
     environment:  

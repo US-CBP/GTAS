@@ -28,4 +28,4 @@ ENV LOGSTASH_LIB=/usr/share/logstash/logstash-core/lib/jars
 
 RUN curl -o  /usr/share/logstash/logstash-core/lib/jars/mariadb-java-client-2.3.0.jar https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar
 
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
+CMD until [ $(curl -k -s -o /dev/null -w "%{http_code}"  ${ELASTIC_HOST}:9200/) == 401 ]; do sleep 10 && echo "Waiting for elasticsearch..."; done && /usr/local/bin/docker-entrypoint
