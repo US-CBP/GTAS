@@ -7,10 +7,12 @@ package gov.gtas.services;
 
 import gov.gtas.email.dto.ErrorRecordDto;
 import gov.gtas.enumtype.FilterOperationsEnum;
+import gov.gtas.enumtype.OrderTypeEnum;
 import gov.gtas.error.BasicErrorDetailInfo;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.model.ErrorRecord;
 import gov.gtas.repository.ErrorRecordRepository;
+import gov.gtas.search.OrderSearchResults;
 import gov.gtas.search.SearchSpecificationBuilder;
 
 import java.util.Date;
@@ -64,8 +66,10 @@ public class ErrorPersistenceServiceImpl implements ErrorPersistenceService {
 	public List<ErrorRecordDto> search(Map<String, Object> queryParameters) {
 		SearchSpecificationBuilder<ErrorRecord> specificationBuilder = new SearchSpecificationBuilder<ErrorRecord> ();
 		specificationBuilder.addFilterOperation("timestamp", FilterOperationsEnum.BETWEEN.toString());
+		OrderSearchResults orderSearchResult = new OrderSearchResults();
+		orderSearchResult.put("timestamp", OrderTypeEnum.DESCENDING);
 		
-		Specification<ErrorRecord> searchCriteria = specificationBuilder.with(queryParameters).build();
+		Specification<ErrorRecord> searchCriteria = specificationBuilder.with(queryParameters, orderSearchResult).build();
 		
 		List<ErrorRecord> errorLogs = this.errorRecordRepository.findAll(searchCriteria);
 		
