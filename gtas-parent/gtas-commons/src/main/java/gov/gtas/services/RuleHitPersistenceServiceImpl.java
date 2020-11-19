@@ -55,6 +55,8 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 
 	private final FlightHitsManualRepository flightHitsManualRepository;
 
+	private final FlightPriorityCountRepository flightPriorityCountRepository;
+
 	private final HitMakerRepository hitMakerRepository;
 
 	@Value("${omni.enabled}")
@@ -66,7 +68,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 	public RuleHitPersistenceServiceImpl(PassengerService passengerService, HitDetailRepository hitDetailRepository,
 										 HitsSummaryRepository hitsSummaryRepository, FlightHitsWatchlistRepository flightHitsWatchlistRepository,
 										 FlightHitsRuleRepository flightHitsRuleRepository, FlightFuzzyHitsRepository flightFuzzyHitsRepository,
-										 FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository, FlightHitsExternalRepository flightHitsExternalRepository, FlightHitsManualRepository flightHitsManualRepository) {
+										 FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository, FlightHitsExternalRepository flightHitsExternalRepository, FlightHitsManualRepository flightHitsManualRepository, FlightPriorityCountRepository flightPriorityCountRepository) {
 		this.passengerService = passengerService;
 		this.hitDetailRepository = hitDetailRepository;
 		this.hitsSummaryRepository = hitsSummaryRepository;
@@ -77,6 +79,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		this.hitMakerRepository = hitMakerRepository;
 		this.flightHitsExternalRepository = flightHitsExternalRepository;
 		this.flightHitsManualRepository = flightHitsManualRepository;
+		this.flightPriorityCountRepository = flightPriorityCountRepository;
 	}
 
 	@Transactional
@@ -163,6 +166,22 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 							default:
 								logger.warn("UNIMPLEMENTED FIELD - COUNT NOT SAVED - " + ruleEngineDetail.getHitEnum());
 							}
+							Optional<HitMaker> hm = hitMakerRepository.findById(ruleEngineDetail.getHitMakerId());
+							if(hm.isPresent()) {
+								switch (hm.get().getHitCategory().getSeverity()) {
+									case NORMAL:
+										hitsSummary.setLowPriorityCount(hitsSummary.getLowPriorityCount() + 1);
+										break;
+									case HIGH:
+										hitsSummary.setMedPriorityCount(hitsSummary.getMedPriorityCount() + 1);
+										break;
+									case TOP:
+										hitsSummary.setHighPriorityCount(hitsSummary.getHighPriorityCount() + 1);
+										break;
+									default:
+										logger.warn("UNIMPLEMENTED PRIORITY - COUNT NOT SAVED - " + ruleEngineDetail.getHitMaker().getHitCategory().getSeverity());
+								}
+							}
 							newDetails++;
 							ruleEngineDetail.setPassenger(passenger);
 							ruleEngineDetail.setPassengerId(passenger.getId());
@@ -231,6 +250,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		Set<FlightHitsFuzzy> flightHitsFuzzies = new HashSet<>();
 		Set<FlightHitsExternal> flightHitsExternals = new HashSet<>();
 		Set<FlightHitsManual> flightHitsManuals = new HashSet<>();
+		Set<FlightPriorityCount> flightPriorityCounts = new HashSet<>();
 		for (Long flightId : flights) {
 			Integer ruleHits = hitsSummaryRepository.ruleHitCount(flightId);
 			FlightHitsRule ruleFlightHits = new FlightHitsRule(flightId, ruleHits);
@@ -256,6 +276,19 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 			FlightHitsManual flightHitsManual = new FlightHitsManual(flightId, manualHitCount);
 			flightHitsManuals.add(flightHitsManual);
 
+			Set<HitsSummary> hss = hitsSummaryRepository.findByFlightId(flightId);
+			int highPrioCount = 0;
+			int medPrioCount = 0;
+			int lowPrioCount = 0;
+
+			for(HitsSummary hs : hss){
+				highPrioCount += hs.getHighPriorityCount();
+				medPrioCount += hs.getMedPriorityCount();
+				lowPrioCount += hs.getLowPriorityCount();
+			}
+			FlightPriorityCount flightPriorityCount = new FlightPriorityCount(flightId, highPrioCount, medPrioCount, lowPrioCount);
+			flightPriorityCounts.add(flightPriorityCount);
+
 		}
 		flightHitsRuleRepository.saveAll(flightHitsRules);
 		flightHitsWatchlistRepository.saveAll(flightHitsWatchlists);
@@ -263,6 +296,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		flightFuzzyHitsRepository.saveAll(flightHitsFuzzies);
 		flightHitsExternalRepository.saveAll(flightHitsExternals);
 		flightHitsManualRepository.saveAll(flightHitsManuals);
+		flightPriorityCountRepository.saveAll(flightPriorityCounts);
 	}
 
 	private void sendHitDetailsToOmniHandler(Set<HitDetail> hitDetailsToPersist) {

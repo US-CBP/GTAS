@@ -335,7 +335,7 @@ public class FlightServiceImpl implements FlightService {
     for (Flight f : flights) {
       FlightGridVo vo = new FlightGridVo();
       Date countDownToDate = f.getFlightCountDownView().getCountDownTimer();
-  
+
       vo.setCountdown(countDownToDate);
       vo.setDirection(f.getDirection());
       BeanUtils.copyProperties(f, vo);
@@ -364,6 +364,10 @@ public class FlightServiceImpl implements FlightService {
       if (f.getFlightHitsManual() != null){
       	vo.setManualHitCount(f.getFlightHitsManual().getHitCount());
 	  }
+      //Tally all total priority counts.
+      vo.setHighPrioHitCount(f.getFlightPriorityCount().getHighPriorityCount());
+      vo.setMedPrioHitCount(f.getFlightPriorityCount().getMedPriorityCount());
+      vo.setLowPrioHitCount(f.getFlightPriorityCount().getLowPriorityCount());
   
       fgvo.add(vo);
     }

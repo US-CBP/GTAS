@@ -56,5 +56,8 @@ public interface HitsSummaryRepository extends CrudRepository<HitsSummary, Long>
 	@Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and hits.manualHitCount > 0")
 	Integer manualHitCount(@Param("flightId") Long flightId);
 
+	@Query("select hits from HitsSummary hits where hits.flightId = :flightId")
+	Set<HitsSummary> findByFlightId(@Param("flightId") Long flightId);
+
 	HitsSummary findFirstByOrderByIdDesc();
 }
