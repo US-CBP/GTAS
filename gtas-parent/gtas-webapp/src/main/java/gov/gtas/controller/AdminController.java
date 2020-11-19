@@ -46,10 +46,7 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.gtas.repository.AppConfigurationRepository.MAX_FLIGHT_QUERY_RESULT;
@@ -346,8 +343,8 @@ private UserService userService;
   @RequestMapping(method = RequestMethod.GET, value = "/api/auditlog")
   public List<AuditRecordVo> getAuditlog(@RequestParam Map<String, Object> params) throws ParseException{
 	  
-	    Date startDate = DateCalendarUtils.parseJsonDate((String)params.get("startDate"));
-	    Date endDate = DateCalendarUtils.parseJsonDate((String)params.get("endDate"));
+	    Date startDate = DateCalendarUtils.parseJsonDateTimeUTCFromISO((String)params.get("startDate"));
+	    Date endDate = DateCalendarUtils.parseJsonDateTimeUTCFromISO((String)params.get("endDate"));
 	    String action = (String)params.get("actionType");
 	    String userId = (String)params.get("user");
 	    AuditActionType actionType = getAuditlogActionType(action);
@@ -363,7 +360,9 @@ private UserService userService;
 	    
 	    if (actionType != null ) {
 	    	params.put("actionType", actionType);
-	    }
+	    } else {
+	      params.remove("actionType"); //Correctly allows for search criteria to be built for ALL_ACTIONS.
+        }
 	    
 	    if (userId != null ) {
 	    	User user = userService.fetchUser(userId);
@@ -376,6 +375,13 @@ private UserService userService;
 	   
 	    
 	    return auditService.getAuditlog(params);
+  }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/api/auditlog/actions")
+  public List<AuditActionType> getActionTypes(){
+    List<AuditActionType> actionList = Arrays.asList(AuditActionType.values());
+    actionList.sort(Comparator.comparing(AuditActionType::name));
+    return actionList;
   }
   
   @RequestMapping(method = RequestMethod.GET, value = "/apiAccess")

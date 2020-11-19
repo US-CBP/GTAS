@@ -10,6 +10,8 @@ package gov.gtas.enumtype;
  */
 public enum AuditActionType {
 
+	ALL_ACTIONS,
+
 	ACCESS_INFORMATION,
 
 	CREATE_UDR,
