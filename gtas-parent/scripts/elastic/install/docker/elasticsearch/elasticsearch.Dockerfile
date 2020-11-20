@@ -32,4 +32,5 @@ RUN sed -i '3icp /usr/share/elasticsearch/key/elasticsearch-node1.key /usr/share
 RUN sed -i '4icp /usr/share/elasticsearch/crt/elasticsearch-node1.crt /usr/share/elasticsearch/config/elasticsearch-node1.crt' /usr/local/bin/docker-entrypoint.sh
 RUN sed -i '5icp /usr/share/elasticsearch/ca/elastic-ca.crt /usr/share/elasticsearch/config/elastic-ca.crt' /usr/local/bin/docker-entrypoint.sh
 
+
 CMD ["/usr/local/bin/docker-entrypoint.sh"]
