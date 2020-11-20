@@ -231,7 +231,7 @@ services:
       - source: logstash-keystore
         target: /keystore/logstash.keystore
       - source: elastic-bootstrap-password
-        target: /bootstrap/elastic-bootstrap-password
+        target: /bootstrap-password/elastic-bootstrap-password
     networks:
       - gtas-webapp-network
     depends_on:
