@@ -63,6 +63,7 @@ jobs:
       - uses: docker/build-push-action@v2
         name: Build and push elasticsearch image
         with:
+          push: true
           platforms: linux/amd64
           context: ./gtas-parent/scripts/elastic
           file: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
