@@ -342,6 +342,7 @@ public class PassengerServiceImpl implements PassengerService {
 					break;
 				case USER_DEFINED_RULE:
 				case GRAPH_HIT:
+				case EXTERNAL_HIT:
 					vo.setOnRuleHitList(true);
 					break;
 				}
