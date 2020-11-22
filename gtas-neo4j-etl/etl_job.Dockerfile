@@ -58,5 +58,6 @@ ENTRYPOINT export NEO4J_USER_NAME=$(cat ${NEO4J_USER_PATH}) NEO4J_PASSWORD=$(cat
     sed -i.bak "/\(EXT_VAR_NEO4J_DB_PASSWORD.*=\).*/ s//\1${NEO4J_PASSWORD}/" $CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_GTAS_DB_HOST_NAME.*=\).*/ s//\1${DB_HOSTNAME}/" $CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_NEO4J_DB_HOST_NAME.*=\).*/ s//\1${NEO4J_HOSTNAME}/" $CONFIG_FILE && \
+    sed -i.bak "/\(EXT_VAR_DELETE_OLD_DATA.*=\).*/ s//\1${ENABLE_DATA_RETENTION}/" $CONFIG_FILE && \
     rm ${GTAS_NEO4J_ETL_HOME}/config/*.bak && \
     java -jar /gtas-neo4j-etl/gtas-neo4j-job-scheduler-1.jar
