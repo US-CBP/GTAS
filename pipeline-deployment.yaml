@@ -155,6 +155,7 @@ services:
           - node.labels.role == frontend
     environment:
       DB_HOSTNAME: ${MARIADB_HOST}
+      ENABLE_DATA_RETENTION_POLICY: "Y"
       NEO4J_USER_PATH: '/run/secrets/etl-neo4j-user/etl-neo4j-user'
       NEO4J_PASSWORD_PATH: '/run/secrets/etl-neo4j-password/etl-neo4j-password'
       MYSQL_USER_PATH: '/run/secrets/mysql-etl-user/mysql-etl-user'
