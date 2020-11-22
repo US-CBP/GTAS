@@ -127,7 +127,7 @@ jobs:
 
           sudo apt-get -y update
           sudo apt-get install -y curl
-          curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
+          curl -L https://github.com/kubernetes/kompose/releases/download/v1.22.0/kompose-linux-amd64 -o kompose
           chmod +x kompose
           sudo mv ./kompose /usr/local/bin/kompose
           kompose -f pipeline-deployment.yaml -f docker-compose.yml convert --out deploy.yaml
