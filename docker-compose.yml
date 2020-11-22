@@ -220,7 +220,6 @@ services:
       ELASTIC_HOST: 'https://elasticsearch'
       XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
       LOGSTASH_KEYSTORE_PASS: 'admin123'
-      XPACK_MONITORING_ENABLED: false
     command:
       - bash
       - -c
