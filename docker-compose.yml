@@ -109,6 +109,7 @@ services:
       dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
     environment:
       NEO4J_HOSTNAME: neo4j
+      ENABLE_DATA_RETENTION: N
     restart: unless-stopped
     secrets:
       - mysql-etl-user
@@ -219,6 +220,7 @@ services:
       ELASTIC_HOST: 'https://elasticsearch'
       XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
       LOGSTASH_KEYSTORE_PASS: 'admin123'
+      XPACK_MONITORING_ENABLED: false
     command:
       - bash
       - -c
