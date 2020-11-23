@@ -14,24 +14,23 @@ ENV xpack.security.enabled=true
 ENV xpack.security.http.ssl.enabled=true
 ENV xpack.security.transport.ssl.enabled=true
 
-ENV xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.key
-ENV xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.crt
-ENV xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/elasticsearch/elastic-ca.crt
+ENV xpack.security.http.ssl.key=/usr/share/elasticsearch/config/elasticsearch-node1.key
+ENV xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/elasticsearch-node1.crt
+ENV xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/elastic-ca.crt
 
-ENV xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.key
-ENV xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch-node1.crt
-ENV xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/elasticsearch/elastic-ca.crt
+ENV xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/elasticsearch-node1.key
+ENV xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/elasticsearch-node1.crt
+ENV xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/elastic-ca.crt
 
 ENV xpack.graph.enabled=false
 ENV xpack.ml.enabled=false
 ENV xpack.monitoring.enabled=false
 ENV xpack.watcher.enabled=false
 
-RUN mkdir /temp-store && cp -R /usr/share/elasticsearch /temp-store
+RUN sed -i '2icp /keystore/elasticsearch.keystore /usr/share/elasticsearch/config/elasticsearch.keystore' /usr/local/bin/docker-entrypoint.sh
+RUN sed -i '3icp /usr/share/elasticsearch/key/elasticsearch-node1.key /usr/share/elasticsearch/config/elasticsearch-node1.key' /usr/local/bin/docker-entrypoint.sh
+RUN sed -i '4icp /usr/share/elasticsearch/crt/elasticsearch-node1.crt /usr/share/elasticsearch/config/elasticsearch-node1.crt' /usr/local/bin/docker-entrypoint.sh
+RUN sed -i '5icp /usr/share/elasticsearch/ca/elastic-ca.crt /usr/share/elasticsearch/config/elastic-ca.crt' /usr/local/bin/docker-entrypoint.sh
 
-RUN sed -i '2ichmod -R 777 /usr/share/elasticsearch' /usr/local/bin/docker-entrypoint.sh
-RUN sed -i '3icp -R -u -p /temp-store/* /usr/share/elasticsearch/' /usr/local/bin/docker-entrypoint.sh
-RUN sed -i '4imkdir -p /usr/share/elasticsearch/config/certs/elasticsearch' /usr/local/bin/docker-entrypoint.sh
-RUN sed -i '5icp -R -u -p /usr/share/elasticsearch/temp-cert/* /usr/share/elasticsearch/config/certs/elasticsearch/' /usr/local/bin/docker-entrypoint.sh
 
-ENTRYPOINT ["dockerize", "-wait", "file:///usr/share/elasticsearch/config/elasticsearch.keystore", "-timeout", "1000s", "/usr/local/bin/docker-entrypoint.sh"]
+CMD ["/usr/local/bin/docker-entrypoint.sh"]

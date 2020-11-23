@@ -8,6 +8,9 @@ services:
       SSL_TRUST_HOST: "bogus"
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
+      ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
+      ADDITIONAL_PROCESSING_RAW: "false"
+      ADDITIONAL_PROCESSING_RULES: "false"
       PROXY_IP: localhost
   activemq:
     ports:
@@ -21,6 +24,9 @@ services:
       SSL_TRUST_HOST: "bogus"
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
+      ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
+      ADDITIONAL_PROCESSING_RAW: "false"
+      ADDITIONAL_PROCESSING_RULES: "false"
       PROXY_IP: localhost
     volumes:
       - type: bind
@@ -28,12 +34,6 @@ services:
         target: /usr/local/gtas-data
         consistency: consistent
 secrets:
-  elastic-key:
-    file: ./gtas-parent/gtas-commons/certs/elasticsearch-node1.key
-  elastic-ca:
-    file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
-  elastic-cert:
-    file: ./gtas-parent/gtas-commons/certs/elasticsearch-node1.crt
   webapp-cert:
     file: ./gtas-parent/gtas-commons/certs/wcogtas.org.crt
   webapp-key:

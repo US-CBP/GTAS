@@ -50,16 +50,16 @@ public class ApisDataDeletionThread  extends DataSchedulerThread implements Call
 
             getDefaultShareConstraint().createFilter(passengers);
 
-            logger.debug("Processed passengers in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+            logger.info("Processed passengers in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             PassengerDeletionResult passengerDeletionResult = PassengerDeletionResult.processApisPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
             NoteType noteType = noteTypeService.getDeletedNoteType();
             NoteDeletionResult noteDeletionResult = NoteDeletionResult.processPassengers(passengers, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint(), noteType);
             Set<Long> passengerIds = passengers.stream().map(Passenger::getId).collect(Collectors.toSet());
             Set<Document> documents = passengerService.getPassengerDocuments(passengerIds, messageAndFlightIds.getFlightIds());
             DocumentDeletionResult documentDeletionResult = DocumentDeletionResult.processApisPassengers(documents, getApisCutOffDate(), getPnrCutOffDate(), getDefaultShareConstraint());
-            logger.debug("Processed documents in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+            logger.info("Processed documents in.....  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             dataRetentionService.deleteApisMessage(noteDeletionResult, documentDeletionResult, passengerDeletionResult, getMessageStatuses());
-            logger.debug("Total rule running data deleting task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+            logger.info("Total rule running data deleting task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
         } catch (Exception e) {
             getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.APIS_DELETE_ERROR));
             dataRetentionService.saveMessageStatus(getMessageStatuses());

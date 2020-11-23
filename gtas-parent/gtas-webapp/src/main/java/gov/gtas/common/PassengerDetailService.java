@@ -81,6 +81,8 @@ public class PassengerDetailService {
         vo.setFlightDestination(flight.getDestination());
         vo.setFlightId(flight.getId().toString());
         vo.setFlightIdTag(flight.getIdTag());
+        vo.setPassengerCount(flight.getFlightPassengerCount().getPassengerCount());
+        vo.setDirection(flight.getDirection());
 
         String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), passenger.getId());
         vo.setSeat(seatNumber);

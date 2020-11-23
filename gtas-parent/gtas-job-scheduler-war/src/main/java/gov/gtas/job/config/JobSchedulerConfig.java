@@ -33,6 +33,7 @@ public class JobSchedulerConfig implements SchedulingConfigurer {
 
 
 	private static final String NEO_4_J_RULE_ENGINE_ENABLED="neo4jRuleEngineEnabled";
+	private static final String EXECUTOR_THREADS ="executorThreads";
 	private static final String THREADS_ON_RULES = "threadsOnRules";
 	private static final String THREADS_ON_LOADER= "threadsOnLoader";
 	private static final String MAX_MESSAGES_PER_RULE_RUN="maxMessagesPerRuleRun";
@@ -75,7 +76,8 @@ public class JobSchedulerConfig implements SchedulingConfigurer {
 	 */
 	@Bean(destroyMethod = "shutdown")
 	public Executor taskExecutor() {
-		return Executors.newScheduledThreadPool(30);
+		int executorThreads = Integer.parseInt(env.getRequiredProperty(EXECUTOR_THREADS));
+		return Executors.newScheduledThreadPool(executorThreads);
 	}
 
 	public boolean getNeo4JRuleEngineEnabled() {

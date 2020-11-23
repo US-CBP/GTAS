@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.annotation.PreDestroy;
 
 import gov.gtas.config.ElasticConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.transport.TransportClient;
@@ -166,8 +167,14 @@ public class ElasticHelper {
 			vo.setOrigin((String) result.get("origin"));
 			vo.setDestination((String) result.get("destination"));
 			try {
-				vo.setEta(dateParser.parse((String) result.get("eta")));
-				vo.setEtd(dateParser.parse((String) result.get("etd")));
+				String etaResult = (String) result.get("eta");
+				if (!StringUtils.isBlank(etaResult)) {
+					vo.setEta(dateParser.parse((String) result.get("eta")));
+				}
+				String etdResult = (String) result.get("etd");
+				if (!StringUtils.isBlank(etdResult)) {
+					vo.setEtd(dateParser.parse((String) result.get("etd")));
+				}
 			} catch (ParseException e) {
 				logger.error("Failed to parse date searching for passengers", e);
 			}

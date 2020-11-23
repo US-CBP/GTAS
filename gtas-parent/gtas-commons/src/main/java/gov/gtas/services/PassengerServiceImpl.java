@@ -119,14 +119,7 @@ public class PassengerServiceImpl implements PassengerService {
 					break;
 				}
 			}
-			Pnr latestPnr = null; //grab most recent pnr (assumed to be most up to date)
-			Date mostRecentDate = null;
-			for(Pnr pnr : passenger.getPnrs()) {
-				if (mostRecentDate == null || mostRecentDate.before(pnr.getDateReceived())) {
-					mostRecentDate = pnr.getDateReceived();
-					latestPnr = pnr;
-				}
-			}
+			Pnr latestPnr = getLatestPnr(passenger);
 			if(latestPnr != null) {
 				vo.setCoTravellerId(latestPnr.getRecordLocator());
 			}
@@ -151,6 +144,20 @@ public class PassengerServiceImpl implements PassengerService {
 			count++;
 		}
 		return new PassengersPageDto(rv, tuple.getLeft());
+	}
+
+	private Pnr getLatestPnr(Passenger passenger) {
+		Pnr latestPnr = null; //grab most recent pnr (assumed to be most up to date)
+		Date mostRecentDate = null;
+		for(Pnr pnr : passenger.getPnrs()) {
+			//If there is no date recieved then assume message is very old.
+			Date pnrDate = pnr.getDateReceived() == null ? new Date(0L) : pnr.getDateReceived();
+			if (mostRecentDate == null || mostRecentDate.before(pnrDate)) {
+				mostRecentDate = pnr.getDateReceived();
+				latestPnr = pnr;
+			}
+		}
+		return latestPnr;
 	}
 
 	@Override
@@ -316,14 +323,8 @@ public class PassengerServiceImpl implements PassengerService {
 				vo.addDocument(docVo);
 			}
 
-			Pnr latestPnr = null; //grab most recent pnr (assumed to be most up to date)
-			Date mostRecentDate = null;
-			for(Pnr pnr : passenger.getPnrs()) {
-				if (mostRecentDate == null || mostRecentDate.before(pnr.getDateReceived())) {
-					mostRecentDate = pnr.getDateReceived();
-					latestPnr = pnr;
-				}
-			}
+			Pnr latestPnr = getLatestPnr(passenger);
+
 			if(latestPnr != null) {
 				vo.setCoTravellerId(latestPnr.getRecordLocator());
 			} else{
@@ -374,7 +375,6 @@ public class PassengerServiceImpl implements PassengerService {
 						break;
 				}
 			}
-
 			rv.add(vo);
 		}
 		return rv;

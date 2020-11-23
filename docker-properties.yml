@@ -27,14 +27,6 @@ services:
         target: /temp-cert/elasticsearch-node1.key
       - source: elastic-ca
         target: /temp-cert/elastic-ca.crt
-  elasticsearch:
-    secrets:
-      - source: elastic-ca
-        target: /usr/share/elasticsearch/temp-cert/elastic-ca.crt
-      - source: elastic-cert
-        target: /usr/share/elasticsearch/temp-cert/elasticsearch-node1.crt
-      - source: elastic-key
-        target: /usr/share/elasticsearch/temp-cert/elasticsearch-node1.key
   logstash:
     environment:
       MARIADB_HOST: mariadb
@@ -57,15 +49,16 @@ services:
   etl-job:
     environment:
       DB_HOSTNAME: mariadb
+      ENABLE_DATA_RETENTION_POLICY: "N"
       NEO4J_USER_PATH: '/run/secrets/etl-neo4j-user'
       NEO4J_PASSWORD_PATH: '/run/secrets/etl-neo4j-password'
       MYSQL_USER_PATH: '/run/secrets/mysql-etl-user'
       MYSQL_PASSWORD_PATH: '/run/secrets/mysql-etl-password'
-  elk-setup:
-    environment:
-      LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password' 
-      MYSQL_USER_PATH: '/run/secrets/mysql-logstash-user'
-      MYSQL_PASSWORD_PATH: '/run/secrets/mysql-logstash-password'
-      KIBANA_PASSWORD_PATH: '/run/secrets/elasticsearch-kibana-password'
-      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
-      ELASTIC_PATH: '/run/secrets/elastic-password'
+#  elk-setup:
+#    environment:
+#      LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password'
+#      MYSQL_USER_PATH: '/run/secrets/mysql-logstash-user'
+#      MYSQL_PASSWORD_PATH: '/run/secrets/mysql-logstash-password'
+#      KIBANA_PASSWORD_PATH: '/run/secrets/elasticsearch-kibana-password'
+#      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
+#      ELASTIC_PATH: '/run/secrets/elastic-password'
