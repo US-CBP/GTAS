@@ -19,54 +19,55 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-#      - uses: docker/build-push-action@v2
-#        name: Build and push GTAS web application image
-#        with:
-#          context: ./gtas-parent
-#          push: true
-#          platforms: linux/amd64
-#          file: ./gtas-parent/web-app.Dockerfile
-#          tags: wcogtas/webapp:dev
-#      - uses: docker/build-push-action@v2
-#        name: Build and push mariadb image
-#        with:
-#          context: ./gtas-parent
-#          push: true
-#          platforms: linux/amd64
-#          file: ./gtas-parent/mariadb.Dockerfile
-#          tags: wcogtas/mariadb:dev
-#      - uses: docker/build-push-action@v2
-#        name: Build and push GTAS proxy image
-#        with:
-#          context: ./gtas-parent
-#          push: true
-#          platforms: linux/amd64
-#          file: ./gtas-parent/docker-resources/proxy.Dockerfile
-#          tags: wcogtas/http-proxy:dev
-#      - uses: docker/build-push-action@v2
-#        name: Build and push GTAS scheduler image
-#        with:
-#          repository: wcogtas/gtas-scheduler
-#          context: .
-#          platforms: linux/amd64
-#          push: true
-#          file: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
-#          tags: wcogtas/gtas-scheduler:dev
-#      - uses: docker/build-push-action@v2
-#        name: Build and push kibana image
-#        with:
-#          platforms: linux/amd64
-#          push: true
-#          context: ./gtas-parent/scripts/elastic
-#          file: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
-#          tags: wcogtas/kibana:dev
-#      - uses: docker/build-push-action@v2
-#        name: Build and push elasticsearch image
-#        with:
-#          platforms: linux/amd64
-#          context: ./gtas-parent/scripts/elastic
-#          file: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
-#          tags: wcogtas/elasticsearch:dev
+      - uses: docker/build-push-action@v2
+        name: Build and push GTAS web application image
+        with:
+          context: ./gtas-parent
+          push: true
+          platforms: linux/amd64
+          file: ./gtas-parent/web-app.Dockerfile
+          tags: wcogtas/webapp:dev
+      - uses: docker/build-push-action@v2
+        name: Build and push mariadb image
+        with:
+          context: ./gtas-parent
+          push: true
+          platforms: linux/amd64
+          file: ./gtas-parent/mariadb.Dockerfile
+          tags: wcogtas/mariadb:dev
+      - uses: docker/build-push-action@v2
+        name: Build and push GTAS proxy image
+        with:
+          context: ./gtas-parent
+          push: true
+          platforms: linux/amd64
+          file: ./gtas-parent/docker-resources/proxy.Dockerfile
+          tags: wcogtas/http-proxy:dev
+      - uses: docker/build-push-action@v2
+        name: Build and push GTAS scheduler image
+        with:
+          repository: wcogtas/gtas-scheduler
+          context: .
+          platforms: linux/amd64
+          push: true
+          file: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
+          tags: wcogtas/gtas-scheduler:dev
+      - uses: docker/build-push-action@v2
+        name: Build and push kibana image
+        with:
+          platforms: linux/amd64
+          push: true
+          context: ./gtas-parent/scripts/elastic
+          file: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
+          tags: wcogtas/kibana:dev
+      - uses: docker/build-push-action@v2
+        name: Build and push elasticsearch image
+        with:
+          push: true
+          platforms: linux/amd64
+          context: ./gtas-parent/scripts/elastic
+          file: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
+          tags: wcogtas/elasticsearch:dev
       - uses: docker/build-push-action@v2
         name: Build and push logstash image
         with:
@@ -83,22 +84,22 @@ jobs:
 #          context: ./gtas-parent/scripts/elastic
 #          file: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
 #          tags: wcogtas/elk-setup:dev
-#      - uses: docker/build-push-action@v2
-#        name: Build and push Neo4J ETL job image
-#        with:
-#          platforms: linux/amd64
-#          push: true
-#          context: .
-#          file: ./gtas-neo4j-etl/etl_job.Dockerfile
-#          tags: wcogtas/neo4j-etl-job:dev
-#      - uses: docker/build-push-action@v2
-#        name: Build and push Neo4J image
-#        with:
-#          platforms: linux/amd64
-#          push: true
-#          context: .
-#          file: ./gtas-neo4j-etl/neo4j.Dockerfile
-#          tags: wcogtas/neo4j:dev
+      - uses: docker/build-push-action@v2
+        name: Build and push Neo4J ETL job image
+        with:
+          platforms: linux/amd64
+          push: true
+          context: .
+          file: ./gtas-neo4j-etl/etl_job.Dockerfile
+          tags: wcogtas/neo4j-etl-job:dev
+      - uses: docker/build-push-action@v2
+        name: Build and push Neo4J image
+        with:
+          platforms: linux/amd64
+          push: true
+          context: .
+          file: ./gtas-neo4j-etl/neo4j.Dockerfile
+          tags: wcogtas/neo4j:dev
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -126,7 +127,7 @@ jobs:
 
           sudo apt-get -y update
           sudo apt-get install -y curl
-          curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
+          curl -L https://github.com/kubernetes/kompose/releases/download/v1.22.0/kompose-linux-amd64 -o kompose
           chmod +x kompose
           sudo mv ./kompose /usr/local/bin/kompose
           kompose -f pipeline-deployment.yaml -f docker-compose.yml convert --out deploy.yaml
@@ -135,7 +136,7 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: delete deployments --ignore-not-found=true activemq elasticsearch elk-setup etl-job gtas-scheduler http-proxy kibana logstash mariadb neo4j web-app
+          args: delete deployments --ignore-not-found=true activemq elasticsearch etl-job gtas-scheduler http-proxy kibana logstash mariadb neo4j web-app
       - name: Deploy to cluster
         uses: Consensys/kubernetes-action@master
         env:
