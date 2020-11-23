@@ -117,6 +117,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 				int newDetails = 0;
 				int existingDetails = 0;
 				Set<HitDetail> hitDetailsToPersist = new HashSet<>();
+				Set<HitMaker> hitMakersSet = new HashSet<>();
 				Set<Long> flightIds = passengersWithHitDetails.stream().map(Passenger::getFlight).map(Flight::getId)
 						.collect(Collectors.toSet());
 				Set<HitsSummary> updatedHitsSummaries = new HashSet<>();
@@ -179,22 +180,22 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 								logger.warn("UNIMPLEMENTED FIELD - COUNT NOT SAVED - " + ruleEngineDetail.getHitEnum());
 							}
 							HitMaker hm = hitMakerMappedToHitMakerId.get(ruleEngineDetail.getHitMakerId());
-							if(hm != null) {
-								switch (hm.getHitCategory().getSeverity()) {
-									case NORMAL:
-										hitsSummary.setLowPriorityCount(hitsSummary.getLowPriorityCount() + 1);
-										break;
-									case HIGH:
-										hitsSummary.setMedPriorityCount(hitsSummary.getMedPriorityCount() + 1);
-										break;
-									case TOP:
-										hitsSummary.setHighPriorityCount(hitsSummary.getHighPriorityCount() + 1);
-										break;
-									default:
-										logger.warn("UNIMPLEMENTED PRIORITY - COUNT NOT SAVED - " + ruleEngineDetail.getHitMaker().getHitCategory().getSeverity());
-								}
+							switch (hm.getHitCategory().getSeverity()) {
+								case NORMAL:
+									hitsSummary.setLowPriorityCount(hitsSummary.getLowPriorityCount() + 1);
+									break;
+								case HIGH:
+									hitsSummary.setMedPriorityCount(hitsSummary.getMedPriorityCount() + 1);
+									break;
+								case TOP:
+									hitsSummary.setHighPriorityCount(hitsSummary.getHighPriorityCount() + 1);
+									break;
+								default:
+									logger.warn("UNIMPLEMENTED PRIORITY - COUNT NOT SAVED - " + ruleEngineDetail.getHitMaker().getHitCategory().getSeverity());
 							}
+
 							newDetails++;
+							hitMakersSet.add(hm); //consolidated hit maker's set, above is a super set technically.
 							ruleEngineDetail.setPassenger(passenger);
 							ruleEngineDetail.setPassengerId(passenger.getId());
 							hitDetailsToPersist.add(ruleEngineDetail);
@@ -203,11 +204,6 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 					}
 				}
 				if (!hitDetailsToPersist.isEmpty()) {
-
-					Set<Long> hitMakerIds = hitDetailsToPersist.stream().map(HitDetail::getHitMakerId)
-							.collect(Collectors.toSet());
-
-					Iterable<HitMaker> hitMakersSet = hitMakerRepository.findAllById(hitMakerIds);
 
 					Map<Long, Set<UserGroup>> hitMakerMappedByPrimaryKey = new HashMap<>();
 					for (HitMaker hitMaker : hitMakersSet) {
