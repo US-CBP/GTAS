@@ -4,7 +4,7 @@ services:
 
   etl-job:
     container_name: etl-job
-    image: wcogtas/neo4j-etl-job:1.0.0
+    image: wcogtas/neo4j-etl-job:1.0.14p
     build:
       context: .
       dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile

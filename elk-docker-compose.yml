@@ -4,7 +4,7 @@ services:
 
   kibana:
     container_name: kibana
-    image: wcogtas/kibana:ppc64le-1.0.0
+    image: wcogtas/kibana:ppc64le-1.0.14
     build:
       context: ./gtas-parent/scripts/elastic
       dockerfile: install/docker/kibana/kibana.Dockerfile
@@ -28,7 +28,7 @@ services:
       - elasticsearch
 
   elasticsearch:
-    image: wcogtas/elasticsearch:ppc64le-1.0.0
+    image: wcogtas/elasticsearch:ppc64le-1.0.14
     container_name: elasticsearch
     build:
       context: ./gtas-parent/scripts/elastic

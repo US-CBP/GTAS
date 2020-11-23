@@ -2,7 +2,7 @@ version: '3.7'
 services:
 
   http-proxy:
-    image: wcogtas/http-proxy:1.13.3
+    image: wcogtas/http-proxy:1.0.14p
     container_name: http-proxy
     build: 
       context: ./gtas-parent
@@ -21,7 +21,7 @@ services:
         target: /wcogtas.org.key
 
   web-app:
-    image: wcogtas/web-app:1.13.3
+    image: wcogtas/web-app:1.0.14p
     container_name: web-app
     build: 
       context: ./gtas-parent
@@ -60,7 +60,7 @@ services:
       - scheduler-logs:/scheduler-logs
 
   gtas-scheduler:
-    image: wcogtas/gtas-scheduler:1.13.3
+    image: wcogtas/gtas-scheduler:1.0.14p
     container_name: gtas-scheduler
     build: 
       context: .
@@ -93,7 +93,7 @@ services:
       - GTAS_webapp-network
 
   mariadb:
-    image: wcogtas/mariadb:1.13.3
+    image: wcogtas/mariadb:1.0.14p
     build:
       context: ./gtas-parent
       dockerfile: mariadb.Dockerfile
