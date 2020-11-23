@@ -130,11 +130,11 @@ services:
     volumes:
        - neo4j-data:/data
     ports:
-      - 7474:7474   
+      - 7474:7474
+      - 7473:7473
       - 7687:7687
     networks: 
       - gtas-webapp-network
-
   kibana:
     container_name: kibana
     image: wcogtas/kibana:dev
