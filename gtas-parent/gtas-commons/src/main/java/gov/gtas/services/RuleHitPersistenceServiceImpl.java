@@ -8,6 +8,7 @@
 
 package gov.gtas.services;
 
+import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
@@ -102,6 +103,17 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 				Set<Long> passengerIds = hitDetailSet.stream().filter(hd -> hd.getPassengerId() != null)
 						.map(HitDetail::getPassengerId).collect(Collectors.toSet());
 				Set<Passenger> passengersWithHitDetails = passengerService.getPassengersWithHitDetails(passengerIds);
+				//hitMaker severity calculation work
+				Map<Long, HitMaker> hitMakerMappedToHitMakerId = new HashMap<>();
+				Set<Long> hitMakerIdsForCounting = new HashSet<>();
+				for (HitDetail hd : hitDetailSet){
+					hitMakerIdsForCounting.add(hd.getHitMakerId());
+				}
+				Iterable<HitMaker> relevantHitMakers = hitMakerRepository.findAllById(hitMakerIdsForCounting);
+				for(HitMaker hm : relevantHitMakers){
+					hitMakerMappedToHitMakerId.put(hm.getId(), hm);
+				}
+				//hitMaker severity calculation work
 				int newDetails = 0;
 				int existingDetails = 0;
 				Set<HitDetail> hitDetailsToPersist = new HashSet<>();
@@ -166,9 +178,9 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 							default:
 								logger.warn("UNIMPLEMENTED FIELD - COUNT NOT SAVED - " + ruleEngineDetail.getHitEnum());
 							}
-							Optional<HitMaker> hm = hitMakerRepository.findById(ruleEngineDetail.getHitMakerId());
-							if(hm.isPresent()) {
-								switch (hm.get().getHitCategory().getSeverity()) {
+							HitMaker hm = hitMakerMappedToHitMakerId.get(ruleEngineDetail.getHitMakerId());
+							if(hm != null) {
+								switch (hm.getHitCategory().getSeverity()) {
 									case NORMAL:
 										hitsSummary.setLowPriorityCount(hitsSummary.getLowPriorityCount() + 1);
 										break;
@@ -252,27 +264,27 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		Set<FlightHitsManual> flightHitsManuals = new HashSet<>();
 		Set<FlightPriorityCount> flightPriorityCounts = new HashSet<>();
 		for (Long flightId : flights) {
-			Integer ruleHits = hitsSummaryRepository.ruleHitCount(flightId);
+			Integer ruleHits = hitsSummaryRepository.totalRuleHitCount(flightId);
 			FlightHitsRule ruleFlightHits = new FlightHitsRule(flightId, ruleHits);
 			flightHitsRules.add(ruleFlightHits);
 
-			Integer watchlistHit = hitsSummaryRepository.watchlistHitCount(flightId);
+			Integer watchlistHit = hitsSummaryRepository.totalWatchlistHitCount(flightId);
 			FlightHitsWatchlist watchlistHitCount = new FlightHitsWatchlist(flightId, watchlistHit);
 			flightHitsWatchlists.add(watchlistHitCount);
 
-			Integer graphWatchlistHit = hitsSummaryRepository.graphHitCount(flightId);
+			Integer graphWatchlistHit = hitsSummaryRepository.totalGraphHitCount(flightId);
 			FlightHitsGraph flightHitsGraph = new FlightHitsGraph(flightId, graphWatchlistHit);
 			flightHitsGraphs.add(flightHitsGraph);
 
-			Integer partialHitCount = hitsSummaryRepository.partialHitCount(flightId);
+			Integer partialHitCount = hitsSummaryRepository.totalPartialHitCount(flightId);
 			FlightHitsFuzzy flightHitsFuzzy = new FlightHitsFuzzy(flightId, partialHitCount);
 			flightHitsFuzzies.add(flightHitsFuzzy);
 
-			Integer externalHitCount = hitsSummaryRepository.externalHitCount(flightId);
+			Integer externalHitCount = hitsSummaryRepository.totalExternalHitCount(flightId);
 			FlightHitsExternal flightHitsExternal = new FlightHitsExternal(flightId, externalHitCount);
 			flightHitsExternals.add(flightHitsExternal);
 
-			Integer manualHitCount = hitsSummaryRepository.manualHitCount(flightId);
+			Integer manualHitCount = hitsSummaryRepository.totalManualHitCount(flightId);
 			FlightHitsManual flightHitsManual = new FlightHitsManual(flightId, manualHitCount);
 			flightHitsManuals.add(flightHitsManual);
 

@@ -55,6 +55,24 @@ public interface HitsSummaryRepository extends CrudRepository<HitsSummary, Long>
 
 	@Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and hits.manualHitCount > 0")
 	Integer manualHitCount(@Param("flightId") Long flightId);
+	//The Above Queries Grab Passengers With Hits, The Below Give Total Hits
+	@Query("select sum(hits.watchListHitCount) from HitsSummary hits where hits.flightId = :flightId and hits.watchListHitCount > 0")
+	Integer totalWatchlistHitCount(@Param("flightId") Long flightId);
+
+	@Query("select sum(hits.ruleHitCount) from HitsSummary hits where hits.flightId = :flightId and hits.ruleHitCount > 0")
+	Integer totalRuleHitCount(@Param("flightId") Long flightId);
+
+	@Query("select sum(hits.graphHitCount) from HitsSummary hits where hits.flightId = :flightId and hits.graphHitCount > 0")
+	Integer totalGraphHitCount(@Param("flightId") Long flightId);
+
+	@Query("select sum(hits.partialHitCount) from HitsSummary hits where hits.flightId = :flightId and hits.partialHitCount > 0")
+	Integer totalPartialHitCount(@Param("flightId") Long flightId);
+
+	@Query("select sum(hits.externalHitCount) from HitsSummary hits where hits.flightId = :flightId and hits.externalHitCount > 0")
+	Integer totalExternalHitCount(@Param("flightId") Long flightId);
+
+	@Query("select sum(hits.manualHitCount) from HitsSummary hits where hits.flightId = :flightId and hits.manualHitCount > 0")
+	Integer totalManualHitCount(@Param("flightId") Long flightId);
 
 	@Query("select hits from HitsSummary hits where hits.flightId = :flightId")
 	Set<HitsSummary> findByFlightId(@Param("flightId") Long flightId);
