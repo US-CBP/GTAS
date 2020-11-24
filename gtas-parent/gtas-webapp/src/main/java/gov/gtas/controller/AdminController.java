@@ -8,6 +8,7 @@ package gov.gtas.controller;
 import gov.gtas.constant.AuditLogConstants;
 import gov.gtas.email.dto.ErrorRecordDto;
 import gov.gtas.enumtype.AuditActionType;
+import gov.gtas.enumtype.ErrorCodeEnum;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.AuditRecord;
@@ -340,6 +341,7 @@ private UserService userService;
     }
     return fetchAuditLogData(user, actionType, st, nd);
   }
+
   @RequestMapping(method = RequestMethod.GET, value = "/api/auditlog")
   public List<AuditRecordVo> getAuditlog(@RequestParam Map<String, Object> params) throws ParseException{
 	  
@@ -371,9 +373,7 @@ private UserService userService;
 		    	params.put("user", user);
 		    }
 	    }
-	    
-	   
-	    
+
 	    return auditService.getAuditlog(params);
   }
 
@@ -425,17 +425,29 @@ private UserService userService;
   public List<ErrorRecordDto> getErrorlog(@RequestParam Map<String, Object> params) throws ParseException{
 	  DateRange range = new DateRange();
 	 
-    Date startDate = DateCalendarUtils.parseJsonDate((String)params.get("startDate"));
-    Date endDate = DateCalendarUtils.parseJsonDate((String)params.get("endDate"));
+    Date startDate = DateCalendarUtils.parseJsonDateTimeUTCFromISO((String)params.get("startDate"));
+    Date endDate = DateCalendarUtils.parseJsonDateTimeUTCFromISO((String)params.get("endDate"));
    
     range.setStart(startDate);
     range.setEnd(endDate);
     params.remove("startDate");
     params.remove("endDate");
+
+    if(getErrorlogCodes((String)params.get("code")) == null){
+      params.remove("code");  //ALL_ERRORS and "Blank" should return all errors.
+    }
+
     params.put("timestamp", range);
     
     return errorService.search(params);
 	  
+  }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/api/errorlog/codes")
+  public List<ErrorCodeEnum> getErrorCodes(){
+    List<ErrorCodeEnum> errorCodes = Arrays.asList(ErrorCodeEnum.values());
+    errorCodes.sort(Comparator.comparing(ErrorCodeEnum::name));
+    return errorCodes;
   }
   
 
@@ -593,6 +605,17 @@ private UserService userService;
 	    }
 	    return actionType;
   }
-  
+
+  private ErrorCodeEnum getErrorlogCodes(String code){
+    ErrorCodeEnum errorCode = null;
+    if(code != null && !code.equals(ErrorCodeEnum.ALL_ERRORS.name())){
+      try {
+        errorCode = ErrorCodeEnum.valueOf(code);
+      } catch (Exception ex) {
+        logger.error("AdminController.getErrorlog - invalid error code:" + code);
+      }
+    }
+    return errorCode;
+  }
 
 }
