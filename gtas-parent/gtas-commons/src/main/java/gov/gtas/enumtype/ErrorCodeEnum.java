@@ -11,8 +11,6 @@ package gov.gtas.enumtype;
 
 public enum ErrorCodeEnum {
 
-    ALL_ERRORS,
-
     CONSTRAINT_VIOLATION_EXCEPTION,
 
     UNKNOWN_ERROR_CODE,

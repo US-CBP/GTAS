@@ -362,9 +362,7 @@ private UserService userService;
 	    
 	    if (actionType != null ) {
 	    	params.put("actionType", actionType);
-	    } else {
-	      params.remove("actionType"); //Correctly allows for search criteria to be built for ALL_ACTIONS.
-        }
+	    }
 	    
 	    if (userId != null ) {
 	    	User user = userService.fetchUser(userId);
@@ -427,14 +425,16 @@ private UserService userService;
 	 
     Date startDate = DateCalendarUtils.parseJsonDateTimeUTCFromISO((String)params.get("startDate"));
     Date endDate = DateCalendarUtils.parseJsonDateTimeUTCFromISO((String)params.get("endDate"));
-   
+    String code = (String)params.get("code");
+    ErrorCodeEnum errorCodeEnum = getErrorlogCode(code);
+
     range.setStart(startDate);
     range.setEnd(endDate);
     params.remove("startDate");
     params.remove("endDate");
 
-    if(getErrorlogCodes((String)params.get("code")) == null){
-      params.remove("code");  //ALL_ERRORS and "Blank" should return all errors.
+    if(errorCodeEnum != null){
+      params.put("code",errorCodeEnum.name());
     }
 
     params.put("timestamp", range);
@@ -606,9 +606,9 @@ private UserService userService;
 	    return actionType;
   }
 
-  private ErrorCodeEnum getErrorlogCodes(String code){
+  private ErrorCodeEnum getErrorlogCode(String code){
     ErrorCodeEnum errorCode = null;
-    if(code != null && !code.equals(ErrorCodeEnum.ALL_ERRORS.name())){
+    if(code != null){
       try {
         errorCode = ErrorCodeEnum.valueOf(code);
       } catch (Exception ex) {
