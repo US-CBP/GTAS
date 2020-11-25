@@ -38,6 +38,21 @@ public class SearchSpecificationBuilder<T> {
 		return this;
 	}
 	
+	public SearchSpecificationBuilder<T> with(Map<String, Object> params, OrderSearchResults orderSearchresults) {
+		params.keySet().stream().forEach(fieldName -> {
+			SearchCriteria criteria = new SearchCriteria(fieldName, filterOperations.get(fieldName), params.get(fieldName));
+			if (orderSearchresults.containsKey(fieldName)) {
+				criteria.setOrderBy(true);
+				criteria.setOrderType(orderSearchresults.get(fieldName));
+			}
+			
+			queryParams.add(criteria);
+		});
+
+		return this;
+	}
+	
+	
 	public Specification<T> build() {
 		if (queryParams.isEmpty()) {
 			return null;

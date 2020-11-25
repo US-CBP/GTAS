@@ -9,6 +9,7 @@ import static gov.gtas.constant.AuditLogConstants.AUDIT_LOG_WARNING_CANNOT_CONVE
 
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.FilterOperationsEnum;
+import gov.gtas.enumtype.OrderTypeEnum;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
@@ -16,6 +17,7 @@ import gov.gtas.model.AuditRecord;
 import gov.gtas.model.GeneralAuditRecord;
 import gov.gtas.model.User;
 import gov.gtas.repository.AuditRecordRepository;
+import gov.gtas.search.OrderSearchResults;
 import gov.gtas.search.SearchSpecificationBuilder;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.AuditRecordVo;
@@ -222,8 +224,9 @@ public class AuditLogPersistenceServiceImpl implements AuditLogPersistenceServic
 	public List<AuditRecordVo> getAuditlog(Map<String, Object> params) {
 		SearchSpecificationBuilder<AuditRecord> specificationBuilder = new SearchSpecificationBuilder<AuditRecord> ();
 		specificationBuilder.addFilterOperation("timestamp", FilterOperationsEnum.BETWEEN.toString());
-		
-		Specification<AuditRecord> searchCriteria = specificationBuilder.with(params).build();
+		OrderSearchResults orderSearchResult = new OrderSearchResults();
+		orderSearchResult.put("timestamp", OrderTypeEnum.DESCENDING);
+		Specification<AuditRecord> searchCriteria = specificationBuilder.with(params, orderSearchResult).build();
 		
 		List<AuditRecord> auditLogs = this.auditLogRepository.findAll(searchCriteria);
 		
