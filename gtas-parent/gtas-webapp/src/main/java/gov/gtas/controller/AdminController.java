@@ -8,6 +8,7 @@ package gov.gtas.controller;
 import gov.gtas.constant.AuditLogConstants;
 import gov.gtas.email.dto.ErrorRecordDto;
 import gov.gtas.enumtype.AuditActionType;
+import gov.gtas.enumtype.ErrorCodeEnum;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.AuditRecord;
@@ -46,10 +47,7 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static gov.gtas.repository.AppConfigurationRepository.MAX_FLIGHT_QUERY_RESULT;
@@ -343,11 +341,12 @@ private UserService userService;
     }
     return fetchAuditLogData(user, actionType, st, nd);
   }
+
   @RequestMapping(method = RequestMethod.GET, value = "/api/auditlog")
   public List<AuditRecordVo> getAuditlog(@RequestParam Map<String, Object> params) throws ParseException{
 	  
-	    Date startDate = DateCalendarUtils.parseJsonDate((String)params.get("startDate"));
-	    Date endDate = DateCalendarUtils.parseJsonDate((String)params.get("endDate"));
+	    Date startDate = DateCalendarUtils.parseJsonDateTimeUTCFromISO((String)params.get("startDate"));
+	    Date endDate = DateCalendarUtils.parseJsonDateTimeUTCFromISO((String)params.get("endDate"));
 	    String action = (String)params.get("actionType");
 	    String userId = (String)params.get("user");
 	    AuditActionType actionType = getAuditlogActionType(action);
@@ -372,10 +371,15 @@ private UserService userService;
 		    	params.put("user", user);
 		    }
 	    }
-	    
-	   
-	    
+
 	    return auditService.getAuditlog(params);
+  }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/api/auditlog/actions")
+  public List<AuditActionType> getActionTypes(){
+    List<AuditActionType> actionList = Arrays.asList(AuditActionType.values());
+    actionList.sort(Comparator.comparing(AuditActionType::name));
+    return actionList;
   }
   
   @RequestMapping(method = RequestMethod.GET, value = "/apiAccess")
@@ -419,17 +423,31 @@ private UserService userService;
   public List<ErrorRecordDto> getErrorlog(@RequestParam Map<String, Object> params) throws ParseException{
 	  DateRange range = new DateRange();
 	 
-    Date startDate = DateCalendarUtils.parseJsonDate((String)params.get("startDate"));
-    Date endDate = DateCalendarUtils.parseJsonDate((String)params.get("endDate"));
-   
+    Date startDate = DateCalendarUtils.parseJsonDateTimeUTCFromISO((String)params.get("startDate"));
+    Date endDate = DateCalendarUtils.parseJsonDateTimeUTCFromISO((String)params.get("endDate"));
+    String code = (String)params.get("code");
+    ErrorCodeEnum errorCodeEnum = getErrorlogCode(code);
+
     range.setStart(startDate);
     range.setEnd(endDate);
     params.remove("startDate");
     params.remove("endDate");
+
+    if(errorCodeEnum != null){
+      params.put("code",errorCodeEnum.name());
+    }
+
     params.put("timestamp", range);
     
     return errorService.search(params);
 	  
+  }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/api/errorlog/codes")
+  public List<ErrorCodeEnum> getErrorCodes(){
+    List<ErrorCodeEnum> errorCodes = Arrays.asList(ErrorCodeEnum.values());
+    errorCodes.sort(Comparator.comparing(ErrorCodeEnum::name));
+    return errorCodes;
   }
   
 
@@ -587,6 +605,17 @@ private UserService userService;
 	    }
 	    return actionType;
   }
-  
+
+  private ErrorCodeEnum getErrorlogCode(String code){
+    ErrorCodeEnum errorCode = null;
+    if(code != null){
+      try {
+        errorCode = ErrorCodeEnum.valueOf(code);
+      } catch (Exception ex) {
+        logger.error("AdminController.getErrorlog - invalid error code:" + code);
+      }
+    }
+    return errorCode;
+  }
 
 }

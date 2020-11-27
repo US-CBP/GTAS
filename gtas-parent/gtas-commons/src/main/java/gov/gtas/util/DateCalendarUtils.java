@@ -7,8 +7,10 @@ package gov.gtas.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -124,6 +126,13 @@ public final class DateCalendarUtils {
 
 	public static Date parseJsonDateTime(final String dateString) throws ParseException {
 		return parse(dateString, RuleConstants.UDR_DATETIME_FORMAT);
+	}
+
+	public static Date parseJsonDateTimeUTCFromISO(final String dateString) throws ParseException {
+		TemporalAccessor ta = DateTimeFormatter.ISO_INSTANT.parse(dateString);
+		Instant i = Instant.from(ta);
+		Date d = Date.from(i);
+		return d;
 	}
 
 	public static String formatJsonDate(final Date date) {
