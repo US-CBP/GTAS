@@ -365,9 +365,11 @@ public class FlightServiceImpl implements FlightService {
       	vo.setManualHitCount(f.getFlightHitsManual().getHitCount());
 	  }
       //Tally all total priority counts.
-      vo.setHighPrioHitCount(f.getFlightPriorityCount().getHighPriorityCount());
-      vo.setMedPrioHitCount(f.getFlightPriorityCount().getMedPriorityCount());
-      vo.setLowPrioHitCount(f.getFlightPriorityCount().getLowPriorityCount());
+		if(f.getFlightPriorityCount() != null) {
+			vo.setHighPrioHitCount(f.getFlightPriorityCount().getHighPriorityCount());
+			vo.setMedPrioHitCount(f.getFlightPriorityCount().getMedPriorityCount());
+			vo.setLowPrioHitCount(f.getFlightPriorityCount().getLowPriorityCount());
+		}
   
       fgvo.add(vo);
     }
