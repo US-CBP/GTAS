@@ -344,6 +344,7 @@ public class PassengerServiceImpl implements PassengerService {
 					case WATCHLIST_PASSENGER:
 						vo.setWatchlistHitCount(Optional.ofNullable(vo.getWatchlistHitCount()).orElse(0)+1);
 						vo.setOnWatchList(true);
+						break;
 					case WATCHLIST_DOCUMENT:
 						vo.setWatchlistHitCount(Optional.ofNullable(vo.getWatchlistHitCount()).orElse(0)+1);
 						vo.setOnWatchList(true);
