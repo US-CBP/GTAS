@@ -45,6 +45,16 @@ public class HitsSummary extends BaseEntity {
 	@Column(name = "hs_partial_count")
 	private int partialHitCount;
 
+	@Column(name = "hs_high_prio_count")
+	private int highPriorityCount;
+
+	@Column(name = "hs_med_prio_count")
+	private int medPriorityCount;
+
+	@Column(name = "hs_low_prio_count")
+	private int lowPriorityCount;
+
+
 	@Transient
 	boolean updated = false;
 
@@ -143,6 +153,18 @@ public class HitsSummary extends BaseEntity {
 	public void setFlight(Flight flight) {
 		this.flight = flight;
 	}
+
+	public int getHighPriorityCount() { return highPriorityCount; }
+
+	public void setHighPriorityCount(int highPriorityCount) { this.highPriorityCount = highPriorityCount; }
+
+	public int getMedPriorityCount() { return medPriorityCount; }
+
+	public void setMedPriorityCount(int medPriorityCount) { this.medPriorityCount = medPriorityCount; }
+
+	public int getLowPriorityCount() { return lowPriorityCount; }
+
+	public void setLowPriorityCount(int lowPriorityCount) { this.lowPriorityCount = lowPriorityCount; }
 
 	@Override
 	public boolean equals(Object o) {

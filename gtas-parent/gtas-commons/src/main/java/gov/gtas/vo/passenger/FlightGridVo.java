@@ -36,11 +36,15 @@ public class FlightGridVo {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
   private Date countdown;
   private Integer passengerCount = 0;
-  private Integer ruleHitCount = 0;
+  private Integer ruleHitCount;
   private Integer listHitCount;
   private Integer graphHitCount;
   private Integer fuzzyHitCount;
   private Integer externalHitCount;
+  private Integer manualHitCount;
+  private Integer lowPrioHitCount;
+  private Integer medPrioHitCount;
+  private Integer highPrioHitCount;
 
   public static FlightGridVo from(Flight flight) {
     FlightGridVo fgvo = new FlightGridVo();
@@ -153,6 +157,10 @@ public class FlightGridVo {
 
   public void setExternalHitCount(Integer externalHitCount) { this.externalHitCount = externalHitCount; }
 
+  public Integer getManualHitCount() { return manualHitCount; }
+
+  public void setManualHitCount(Integer manualHitCount) { this.manualHitCount = manualHitCount; }
+
   public Date getEtd() {
     return etd;
   }
@@ -176,4 +184,16 @@ public class FlightGridVo {
   public void setCountdown(Date countdown) {
     this.countdown = countdown;
   }
+
+  public Integer getLowPrioHitCount() { return lowPrioHitCount; }
+
+  public void setLowPrioHitCount(Integer lowPrioHitCount) { this.lowPrioHitCount = lowPrioHitCount; }
+
+  public Integer getMedPrioHitCount() { return medPrioHitCount; }
+
+  public void setMedPrioHitCount(Integer medPrioHitCount) { this.medPrioHitCount = medPrioHitCount; }
+
+  public Integer getHighPrioHitCount() { return highPrioHitCount; }
+
+  public void setHighPrioHitCount(Integer highPrioHitCount) { this.highPrioHitCount = highPrioHitCount; }
 }

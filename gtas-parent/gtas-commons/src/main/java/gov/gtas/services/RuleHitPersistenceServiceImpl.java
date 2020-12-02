@@ -8,6 +8,7 @@
 
 package gov.gtas.services;
 
+import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
@@ -22,8 +23,6 @@ import org.springframework.util.CollectionUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
@@ -55,6 +54,10 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 
 	private final FlightHitsExternalRepository flightHitsExternalRepository;
 
+	private final FlightHitsManualRepository flightHitsManualRepository;
+
+	private final FlightPriorityCountRepository flightPriorityCountRepository;
+
 	private final HitMakerRepository hitMakerRepository;
 
 	@Value("${omni.enabled}")
@@ -66,7 +69,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 	public RuleHitPersistenceServiceImpl(PassengerService passengerService, HitDetailRepository hitDetailRepository,
 										 HitsSummaryRepository hitsSummaryRepository, FlightHitsWatchlistRepository flightHitsWatchlistRepository,
 										 FlightHitsRuleRepository flightHitsRuleRepository, FlightFuzzyHitsRepository flightFuzzyHitsRepository,
-										 FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository, FlightHitsExternalRepository flightHitsExternalRepository) {
+										 FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository, FlightHitsExternalRepository flightHitsExternalRepository, FlightHitsManualRepository flightHitsManualRepository, FlightPriorityCountRepository flightPriorityCountRepository) {
 		this.passengerService = passengerService;
 		this.hitDetailRepository = hitDetailRepository;
 		this.hitsSummaryRepository = hitsSummaryRepository;
@@ -76,6 +79,8 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		this.flightGraphHitsRepository = flightGraphHitsRepository;
 		this.hitMakerRepository = hitMakerRepository;
 		this.flightHitsExternalRepository = flightHitsExternalRepository;
+		this.flightHitsManualRepository = flightHitsManualRepository;
+		this.flightPriorityCountRepository = flightPriorityCountRepository;
 	}
 
 	@Transactional
@@ -98,9 +103,21 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 				Set<Long> passengerIds = hitDetailSet.stream().filter(hd -> hd.getPassengerId() != null)
 						.map(HitDetail::getPassengerId).collect(Collectors.toSet());
 				Set<Passenger> passengersWithHitDetails = passengerService.getPassengersWithHitDetails(passengerIds);
+				//hitMaker severity calculation work
+				Map<Long, HitMaker> hitMakerMappedToHitMakerId = new HashMap<>();
+				Set<Long> hitMakerIdsForCounting = new HashSet<>();
+				for (HitDetail hd : hitDetailSet){
+					hitMakerIdsForCounting.add(hd.getHitMakerId());
+				}
+				Iterable<HitMaker> relevantHitMakers = hitMakerRepository.findAllById(hitMakerIdsForCounting);
+				for(HitMaker hm : relevantHitMakers){
+					hitMakerMappedToHitMakerId.put(hm.getId(), hm);
+				}
+				//hitMaker severity calculation work
 				int newDetails = 0;
 				int existingDetails = 0;
 				Set<HitDetail> hitDetailsToPersist = new HashSet<>();
+				Set<HitMaker> hitMakersSet = new HashSet<>();
 				Set<Long> flightIds = passengersWithHitDetails.stream().map(Passenger::getFlight).map(Flight::getId)
 						.collect(Collectors.toSet());
 				Set<HitsSummary> updatedHitsSummaries = new HashSet<>();
@@ -162,7 +179,23 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 							default:
 								logger.warn("UNIMPLEMENTED FIELD - COUNT NOT SAVED - " + ruleEngineDetail.getHitEnum());
 							}
+							HitMaker hm = hitMakerMappedToHitMakerId.get(ruleEngineDetail.getHitMakerId());
+							switch (hm.getHitCategory().getSeverity()) {
+								case NORMAL:
+									hitsSummary.setLowPriorityCount(hitsSummary.getLowPriorityCount() + 1);
+									break;
+								case HIGH:
+									hitsSummary.setMedPriorityCount(hitsSummary.getMedPriorityCount() + 1);
+									break;
+								case TOP:
+									hitsSummary.setHighPriorityCount(hitsSummary.getHighPriorityCount() + 1);
+									break;
+								default:
+									logger.warn("UNIMPLEMENTED PRIORITY - COUNT NOT SAVED - " + ruleEngineDetail.getHitMaker().getHitCategory().getSeverity());
+							}
+
 							newDetails++;
+							hitMakersSet.add(hm); //consolidated hit maker's set, above is a super set technically.
 							ruleEngineDetail.setPassenger(passenger);
 							ruleEngineDetail.setPassengerId(passenger.getId());
 							hitDetailsToPersist.add(ruleEngineDetail);
@@ -171,11 +204,6 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 					}
 				}
 				if (!hitDetailsToPersist.isEmpty()) {
-
-					Set<Long> hitMakerIds = hitDetailsToPersist.stream().map(HitDetail::getHitMakerId)
-							.collect(Collectors.toSet());
-
-					Iterable<HitMaker> hitMakersSet = hitMakerRepository.findAllById(hitMakerIds);
 
 					Map<Long, Set<UserGroup>> hitMakerMappedByPrimaryKey = new HashMap<>();
 					for (HitMaker hitMaker : hitMakersSet) {
@@ -229,26 +257,45 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		Set<FlightHitsGraph> flightHitsGraphs = new HashSet<>();
 		Set<FlightHitsFuzzy> flightHitsFuzzies = new HashSet<>();
 		Set<FlightHitsExternal> flightHitsExternals = new HashSet<>();
+		Set<FlightHitsManual> flightHitsManuals = new HashSet<>();
+		Set<FlightPriorityCount> flightPriorityCounts = new HashSet<>();
 		for (Long flightId : flights) {
-			Integer ruleHits = hitsSummaryRepository.ruleHitCount(flightId);
+			Integer ruleHits = hitsSummaryRepository.totalRuleHitCount(flightId);
 			FlightHitsRule ruleFlightHits = new FlightHitsRule(flightId, ruleHits);
 			flightHitsRules.add(ruleFlightHits);
 
-			Integer watchlistHit = hitsSummaryRepository.watchlistHitCount(flightId);
+			Integer watchlistHit = hitsSummaryRepository.totalWatchlistHitCount(flightId);
 			FlightHitsWatchlist watchlistHitCount = new FlightHitsWatchlist(flightId, watchlistHit);
 			flightHitsWatchlists.add(watchlistHitCount);
 
-			Integer graphWatchlistHit = hitsSummaryRepository.graphHitCount(flightId);
+			Integer graphWatchlistHit = hitsSummaryRepository.totalGraphHitCount(flightId);
 			FlightHitsGraph flightHitsGraph = new FlightHitsGraph(flightId, graphWatchlistHit);
 			flightHitsGraphs.add(flightHitsGraph);
 
-			Integer partialHitCount = hitsSummaryRepository.partialHitCount(flightId);
+			Integer partialHitCount = hitsSummaryRepository.totalPartialHitCount(flightId);
 			FlightHitsFuzzy flightHitsFuzzy = new FlightHitsFuzzy(flightId, partialHitCount);
 			flightHitsFuzzies.add(flightHitsFuzzy);
 
-			Integer externalHitCount = hitsSummaryRepository.externalHitCount(flightId);
+			Integer externalHitCount = hitsSummaryRepository.totalExternalHitCount(flightId);
 			FlightHitsExternal flightHitsExternal = new FlightHitsExternal(flightId, externalHitCount);
 			flightHitsExternals.add(flightHitsExternal);
+
+			Integer manualHitCount = hitsSummaryRepository.totalManualHitCount(flightId);
+			FlightHitsManual flightHitsManual = new FlightHitsManual(flightId, manualHitCount);
+			flightHitsManuals.add(flightHitsManual);
+
+			Set<HitsSummary> hss = hitsSummaryRepository.findByFlightId(flightId);
+			int highPrioCount = 0;
+			int medPrioCount = 0;
+			int lowPrioCount = 0;
+
+			for(HitsSummary hs : hss){
+				highPrioCount += hs.getHighPriorityCount();
+				medPrioCount += hs.getMedPriorityCount();
+				lowPrioCount += hs.getLowPriorityCount();
+			}
+			FlightPriorityCount flightPriorityCount = new FlightPriorityCount(flightId, highPrioCount, medPrioCount, lowPrioCount);
+			flightPriorityCounts.add(flightPriorityCount);
 
 		}
 		flightHitsRuleRepository.saveAll(flightHitsRules);
@@ -256,6 +303,8 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		flightGraphHitsRepository.saveAll(flightHitsGraphs);
 		flightFuzzyHitsRepository.saveAll(flightHitsFuzzies);
 		flightHitsExternalRepository.saveAll(flightHitsExternals);
+		flightHitsManualRepository.saveAll(flightHitsManuals);
+		flightPriorityCountRepository.saveAll(flightPriorityCounts);
 	}
 
 	private void sendHitDetailsToOmniHandler(Set<HitDetail> hitDetailsToPersist) {

@@ -116,6 +116,16 @@ public class Flight extends BaseEntityAudit {
 	private FlightHitsExternal flightHitsExternal;
 
 	@OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+	@JoinColumn(name = "id", unique = true, referencedColumnName = "fhm_flight_id", updatable = false, insertable = false)
+	@JsonIgnore
+	private FlightHitsManual flightHitsManual;
+
+	@OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+	@JoinColumn(name = "id", unique = true, referencedColumnName = "prio_flight_id", updatable = false, insertable = false)
+	@JsonIgnore
+	private FlightPriorityCount flightPriorityCount;
+
+	@OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
 	@JoinColumn(name = "id", unique = true, referencedColumnName = "fp_flight_id", updatable = false, insertable = false)
 	@JsonIgnore
 	private FlightPassengerCount flightPassengerCount;
@@ -436,6 +446,14 @@ public class Flight extends BaseEntityAudit {
 	public FlightHitsExternal getFlightHitsExternal() {
 		return flightHitsExternal;
 	}
+
+	public FlightHitsManual getFlightHitsManual() { return flightHitsManual; }
+
+	public void setFlightHitsManual(FlightHitsManual flightHitsManual) { this.flightHitsManual = flightHitsManual; }
+
+	public FlightPriorityCount getFlightPriorityCount() { return flightPriorityCount; }
+
+	public void setFlightPriorityCount(FlightPriorityCount flightPriorityCount) { this.flightPriorityCount = flightPriorityCount; }
 
 	public void setFlightHitsExternal(FlightHitsExternal flightHitsExternal) {
 		this.flightHitsExternal = flightHitsExternal;

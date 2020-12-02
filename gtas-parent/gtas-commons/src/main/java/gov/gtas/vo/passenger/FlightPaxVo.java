@@ -25,6 +25,15 @@ public class FlightPaxVo {
   private Boolean onRuleHitList = Boolean.FALSE;
   private Boolean onWatchList = Boolean.FALSE;
   private String coTravellerId;
+  private Integer ruleHitCount;
+  private Integer watchlistHitCount;
+  private Integer graphHitCount;
+  private Integer fuzzyHitCount;
+  private Integer manualHitCount;
+  private Integer externalHitCount;
+  private Integer lowPrioHitCount;
+  private Integer medPrioHitCount;
+  private Integer highPrioHitCount;
 
   private List<String> documents = new ArrayList<>();
 
@@ -127,4 +136,42 @@ public class FlightPaxVo {
   public String getCoTravellerId() { return coTravellerId; }
 
   public void setCoTravellerId(String coTravellerId) { this.coTravellerId = coTravellerId; }
+
+  public Integer getRuleHitCount() { return ruleHitCount; }
+
+  public void setRuleHitCount(Integer ruleHitCount) { this.ruleHitCount = ruleHitCount; }
+
+  public Integer getWatchlistHitCount() { return watchlistHitCount; }
+
+  public void setWatchlistHitCount(Integer watchlistHitCount) { this.watchlistHitCount = watchlistHitCount; }
+
+  public Integer getGraphHitCount() { return graphHitCount; }
+
+  public void setGraphHitCount(Integer graphHitCount) { this.graphHitCount = graphHitCount; }
+
+  public Integer getFuzzyHitCount() { return fuzzyHitCount; }
+
+  public void setFuzzyHitCount(Integer fuzzyHitCount) { this.fuzzyHitCount = fuzzyHitCount; }
+
+  public Integer getManualHitCount() { return manualHitCount; }
+
+  public void setManualHitCount(Integer manualHitCount) { this.manualHitCount = manualHitCount; }
+
+  public Integer getExternalHitCount() { return externalHitCount; }
+
+  public void setExternalHitCount(Integer externalHitCount) { this.externalHitCount = externalHitCount; }
+
+  public void setDocuments(List<String> documents) { this.documents = documents; }
+
+  public Integer getLowPrioHitCount() { return lowPrioHitCount; }
+
+  public void setLowPrioHitCount(Integer lowPrioHitCount) { this.lowPrioHitCount = lowPrioHitCount; }
+
+  public Integer getMedPrioHitCount() { return medPrioHitCount; }
+
+  public void setMedPrioHitCount(Integer medPrioHitCount) { this.medPrioHitCount = medPrioHitCount; }
+
+  public Integer getHighPrioHitCount() { return highPrioHitCount; }
+
+  public void setHighPrioHitCount(Integer highPrioHitCount) { this.highPrioHitCount = highPrioHitCount; }
 }

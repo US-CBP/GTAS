@@ -334,17 +334,46 @@ public class PassengerServiceImpl implements PassengerService {
 
 			for (HitDetail hd : passenger.getHitDetails()) {
 				switch (hd.getHitEnum()) {
-				case MANUAL_HIT:
-					break;
-				case WATCHLIST_PASSENGER:
-				case WATCHLIST_DOCUMENT:
-					vo.setOnWatchList(true);
-					break;
-				case USER_DEFINED_RULE:
-				case GRAPH_HIT:
-				case EXTERNAL_HIT:
-					vo.setOnRuleHitList(true);
-					break;
+					case MANUAL_HIT:
+						vo.setManualHitCount(Optional.ofNullable(vo.getManualHitCount()).orElse(0)+1);
+						break;
+					case WATCHLIST:
+						vo.setWatchlistHitCount(Optional.ofNullable(vo.getWatchlistHitCount()).orElse(0)+1);
+						vo.setOnWatchList(true);
+						break;
+					case WATCHLIST_PASSENGER:
+						vo.setWatchlistHitCount(Optional.ofNullable(vo.getWatchlistHitCount()).orElse(0)+1);
+						vo.setOnWatchList(true);
+						break;
+					case WATCHLIST_DOCUMENT:
+						vo.setWatchlistHitCount(Optional.ofNullable(vo.getWatchlistHitCount()).orElse(0)+1);
+						vo.setOnWatchList(true);
+						break;
+					case USER_DEFINED_RULE:
+						vo.setRuleHitCount(Optional.ofNullable(vo.getRuleHitCount()).orElse(0)+1);
+						vo.setOnRuleHitList(true);
+						break;
+					case GRAPH_HIT:
+						vo.setGraphHitCount(Optional.ofNullable(vo.getGraphHitCount()).orElse(0)+1);
+						vo.setOnRuleHitList(true);
+						break;
+					case PARTIAL_WATCHLIST:
+						vo.setFuzzyHitCount(Optional.ofNullable(vo.getFuzzyHitCount()).orElse(0)+1);
+						break;
+					case EXTERNAL_HIT:
+						vo.setExternalHitCount(Optional.ofNullable(vo.getExternalHitCount()).orElse(0)+1);
+						break;
+				}
+				switch(hd.getHitMaker().getHitCategory().getSeverity()) {
+					case NORMAL:
+						vo.setLowPrioHitCount(Optional.ofNullable(vo.getLowPrioHitCount()).orElse(0)+1);
+						break;
+					case HIGH:
+						vo.setMedPrioHitCount(Optional.ofNullable(vo.getMedPrioHitCount()).orElse(0)+1);
+						break;
+					case TOP:
+						vo.setHighPrioHitCount(Optional.ofNullable(vo.getHighPrioHitCount()).orElse(0)+1);
+						break;
 				}
 			}
 			rv.add(vo);
