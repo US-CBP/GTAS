@@ -1,0 +1,7 @@
+CREATE TABLE flight_priority_count (
+	prio_flight_id BIGINT(20) UNSIGNED NOT NULL PRIMARY KEY,
+	high_prio_count INT(11) NULL DEFAULT NULL,
+	low_prio_count INT(11) NULL DEFAULT NULL,
+	med_prio_count INT(11) NULL DEFAULT NULL,
+	CONSTRAINT FK3vwgh8li8s7u4jxwu6pl2anv4 FOREIGN KEY (prio_flight_id) REFERENCES flight (id)
+)

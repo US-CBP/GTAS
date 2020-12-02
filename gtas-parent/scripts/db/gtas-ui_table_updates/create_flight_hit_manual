@@ -1,0 +1,9 @@
+create table flight_hit_manual
+(
+    fhm_flight_id bigint unsigned not null
+        primary key,
+    fhm_hit_count int null,
+    constraint FKr84ro698u7fxvgo1giycyyeeo
+        foreign key (fhm_flight_id) references flight (id)
+);
+

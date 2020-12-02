@@ -1,0 +1,4 @@
+alter table hits_summary
+    add (hs_high_prio_count int 0,
+    hs_med_prio_count int 0,
+    hs_low_prio_count int 0)

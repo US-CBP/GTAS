@@ -1,0 +1,4 @@
+alter table hits_summary
+    DROP COLUMN hs_high_prio_count,
+	DROP COLUMN hs_med_prio_count,
+	DROP COLUMN hs_low_prio_count;
