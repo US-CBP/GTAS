@@ -50,6 +50,9 @@ public class CaseVo implements PIIObject {
 	private ArrayList<String> hitNames;
 	private String gender;
 	private String docType;
+	private int highPrioHitCount;
+	private int medPrioHitCount;
+	private int lowPrioHitCount;
 
 	public String getCaseOfficerStatus() {
 		return caseOfficerStatus;
@@ -330,6 +333,18 @@ public class CaseVo implements PIIObject {
 	public void setCloseToCountDown(Boolean closeToCountDown) {
 		this.closeToCountDown = closeToCountDown;
 	}
+
+	public int getHighPrioHitCount() { return highPrioHitCount; }
+
+	public void setHighPrioHitCount(int highPrioHitCount) { this.highPrioHitCount = highPrioHitCount; }
+
+	public int getMedPrioHitCount() { return medPrioHitCount; }
+
+	public void setMedPrioHitCount(int medPrioHitCount) { this.medPrioHitCount = medPrioHitCount; }
+
+	public int getLowPrioHitCount() { return lowPrioHitCount; }
+
+	public void setLowPrioHitCount(int lowPrioHitCount) { this.lowPrioHitCount = lowPrioHitCount; }
 
 	@Override
 	public PIIObject deletePII() {
