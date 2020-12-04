@@ -119,7 +119,31 @@ services:
       - gtas-webapp-network
     depends_on: 
       - neo4j
-
+  neo4j-test:
+    container_name: neo4j
+    image: wcogtas/neo4j:dev
+    build:
+      context: .
+      dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
+    restart: unless-stopped
+    environment:
+      NEO4J_dbms_connector_bolt_advertised__address: localhost:443
+      NEO4J_dbms_directories_certificates: "/var/lib/neo4j/https/certificates"
+      NEO4J_dbms_ssl_policy_client__policy_base__directory: "/var/lib/neo4j/https/certificates/"
+      NEO4J_dbms_ssl_policy_client__policy_trust__all: "true"
+      NEO4J_dbms_ssl_policy_client__policy_private__key: "/var/lib/neo4j/https/certificates/key/neo4j.key"
+      NEO4J_dbms_ssl_policy_client__policy_public__certificate: "/var/lib/neo4j/https/certificates/cert/neo4j.cert"
+    secrets:
+      - source: neo4j-key
+        target: /var/lib/neo4j/https/certificates/key/neo4j.key
+      - source: neo4j-crt
+        target: /var/lib/neo4j/https/certificates/cert/neo4j.cert
+    ports:
+      - 7474:7474
+      - 7473:7473
+      - 7687:7687
+    networks:
+      - gtas-webapp-network
   neo4j:
     container_name: neo4j
     image: wcogtas/neo4j:dev
