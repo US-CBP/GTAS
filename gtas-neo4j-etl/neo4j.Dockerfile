@@ -11,3 +11,5 @@ ENV NEO4J_AUTH=neo4j/admin \
     NEO4J_dbms_routing_driver_connection_connect__timeout=60s \
     NEO4J_dbms_connector_bolt_advertised__address=localhost:443 \
     NEO4j_dbms_ssl_policy_default__policy_trust_all=true
+
+RUN mkdir /mnt/revoked /mnt/trusted

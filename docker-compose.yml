@@ -127,6 +127,16 @@ services:
       context: .
       dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
     restart: unless-stopped
+    environment:
+      NEO4J_dbms_ssl_policy_https_trust__all: "true"
+      NEO4J_dbms_ssl_policy_https_base__directory: "/mnt"
+      NEO4J_dbms_ssl_policy_https_private__key: "/var/lib/neo4j/certificates/neo4j.key"
+      NEO4J_dbms_ssl_policy_https_public__certificate: "/var/lib/neo4j/certificates/neo4j.cert"
+    secrets:
+      - source: webapp-cert
+        target: /var/lib/neo4j/certificates/neo4j.cert
+      - source: webapp-key
+        target: /var/lib/neo4j/certificates/neo4j.key
     volumes:
        - neo4j-data:/data
     ports:
@@ -315,6 +325,10 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/logstash.keystore
   kibana-keystore:
     file: ./gtas-parent/gtas-commons/secrets/kibana.keystore
+  webapp-cert:
+    file: ./gtas-parent/gtas-commons/certs/wcogtas.org.crt
+  webapp-key:
+    file: ./gtas-parent/gtas-commons/certs/wcogtas.org.key
 volumes:
   db-data:
   m2:

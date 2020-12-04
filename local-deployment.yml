@@ -34,10 +34,6 @@ services:
         target: /usr/local/gtas-data
         consistency: consistent
 secrets:
-  webapp-cert:
-    file: ./gtas-parent/gtas-commons/certs/wcogtas.org.crt
-  webapp-key:
-    file: ./gtas-parent/gtas-commons/certs/wcogtas.org.key
   kibana-crt:
     file: ./gtas-parent/gtas-commons/certs/kibana.crt
   kibana-key:
