@@ -139,9 +139,7 @@ services:
       - source: neo4j-crt
         target: /var/lib/neo4j/https/certificates/cert/neo4j.cert
     ports:
-      - 7474:7474
       - 7473:7473
-      - 7687:7687
     networks:
       - gtas-webapp-network
   neo4j:
