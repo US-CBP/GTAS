@@ -137,6 +137,14 @@ services:
 #      KIBANA_PASSWORD_PATH: '/run/secrets/elasticsearch-kibana-password/elasticsearch-kibana-password'
 #      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
 #      ELASTIC_PATH: '/run/secrets/elastic-password/elastic-password'
+  neo4j-test:
+    labels:
+      kompose.image-pull-policy: "Always"
+      kompose.service.type: "LoadBalancer"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == frontend
   neo4j:
     labels:
       kompose.image-pull-policy: "Always" 
