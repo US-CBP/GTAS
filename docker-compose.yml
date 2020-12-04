@@ -132,13 +132,9 @@ services:
       NEO4J_dbms_ssl_policy_https_base__directory: "/mnt"
       NEO4J_dbms_ssl_policy_https_private__key: "/var/lib/neo4j/certificates/neo4j.key"
       NEO4J_dbms_ssl_policy_https_public__certificate: "/var/lib/neo4j/certificates/neo4j.cert"
-    secrets:
-      - source: webapp-cert
-        target: /var/lib/neo4j/certificates/neo4j.cert
-      - source: webapp-key
-        target: /var/lib/neo4j/certificates/neo4j.key
     volumes:
        - neo4j-data:/data
+       - ./gtas-parent/gtas-commons/certs/neo4j:/var/lib/neo4j/certificates:ro
     ports:
       - 7474:7474
       - 7473:7473
