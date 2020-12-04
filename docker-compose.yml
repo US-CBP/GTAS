@@ -128,13 +128,19 @@ services:
       dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
     restart: unless-stopped
     environment:
-      NEO4J_dbms_ssl_policy_https_trust__all: "true"
-      NEO4J_dbms_ssl_policy_https_base__directory: "/mnt"
-      NEO4J_dbms_ssl_policy_https_private__key: "/var/lib/neo4j/certificates/neo4j.key"
-      NEO4J_dbms_ssl_policy_https_public__certificate: "/var/lib/neo4j/certificates/neo4j.cert"
+      NEO4J_dbms_connector_bolt_advertised__address: localhost:443
+      NEO4J_dbms_directories_certificates: "/var/lib/neo4j/https/certificates"
+      NEO4J_dbms_ssl_policy_client__policy_base__directory: "/var/lib/neo4j/https/certificates/"
+      NEO4J_dbms_ssl_policy_client__policy_trust__all: "true"
+      NEO4J_dbms_ssl_policy_client__policy_private__key: "/var/lib/neo4j/https/certificates/key/neo4j.key"
+      NEO4J_dbms_ssl_policy_client__policy_public__certificate: "/var/lib/neo4j/https/certificates/cert/neo4j.cert"
     volumes:
        - neo4j-data:/data
-       - ./gtas-parent/gtas-commons/certs/neo4j:/var/lib/neo4j/certificates:ro
+    secrets:
+      - source: neo4j-key
+        target: /var/lib/neo4j/https/certificates/key/neo4j.key
+      - source: neo4j-crt
+        target: /var/lib/neo4j/https/certificates/cert/neo4j.cert
     ports:
       - 7474:7474
       - 7473:7473
@@ -242,7 +248,6 @@ services:
       - gtas-webapp-network
     depends_on:
       - elasticsearch
-
 #  elk-setup:
 #    image: wcogtas/elk-setup:dev
 #    container_name: elk-setup
@@ -325,6 +330,10 @@ secrets:
     file: ./gtas-parent/gtas-commons/certs/wcogtas.org.crt
   webapp-key:
     file: ./gtas-parent/gtas-commons/certs/wcogtas.org.key
+  neo4j-key:
+    file: ./gtas-parent/gtas-commons/certs/neo4j/neo4j.key
+  neo4j-crt:
+    file: ./gtas-parent/gtas-commons/certs/neo4j/neo4j.cert
 volumes:
   db-data:
   m2:
