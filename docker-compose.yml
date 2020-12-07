@@ -128,7 +128,6 @@ services:
       dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
     restart: unless-stopped
     environment:
-      NEO4J_dbms_connector_bolt_advertised__address: localhost:443
       NEO4J_dbms_directories_certificates: "/var/lib/neo4j/https/certificates"
       NEO4J_dbms_ssl_policy_client__policy_base__directory: "/var/lib/neo4j/https/certificates/"
       NEO4J_dbms_ssl_policy_client__policy_trust__all: "true"

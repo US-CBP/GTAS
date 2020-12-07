@@ -13,5 +13,5 @@ ENV NEO4J_AUTH=neo4j/admin \
 RUN mkdir -p /var/lib/neo4j/https/certificates/revoked /var/lib/neo4j/https/certificates/trusted
 
 ENTRYPOINT cp -f /var/lib/neo4j/https/certificates/key/neo4j.key /var/lib/neo4j/https/certificates/neo4j.key && \
-    cp -f /var/lib/neo4j/https/certificates/cert/neo4j.cert /var/lib/neo4j/https/certificates/neo4j.cert && ls -lR /var/lib/neo4j && \
+    cp -f /var/lib/neo4j/https/certificates/cert/neo4j.cert /var/lib/neo4j/https/certificates/neo4j.cert && \
     /docker-entrypoint.sh neo4j

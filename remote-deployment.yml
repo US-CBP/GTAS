@@ -90,6 +90,9 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-neo4j-node
+    environment:
+      NEO4J_dbms_connector_bolt_advertised__address: localhost:7687
+      NEO4J_dbms_connectors_default__advertised__address: localhost
   etl-job:
     deploy:
       placement:

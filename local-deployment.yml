@@ -33,6 +33,10 @@ services:
         source: ./gtas-data
         target: /usr/local/gtas-data
         consistency: consistent
+  neo4j:
+    environment:
+      NEO4J_dbms_connector_bolt_advertised__address: localhost:7687
+      NEO4J_dbms_connectors_default__advertised__address: localhost
 secrets:
   kibana-crt:
     file: ./gtas-parent/gtas-commons/certs/kibana.crt
