@@ -5,11 +5,8 @@
  */
 package gov.gtas.services.security;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.*;
+import java.util.stream.*;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -51,4 +48,20 @@ public class RoleServiceImpl implements RoleService {
 
 		return roles;
 	}
+
+	public Set<Role> getValidRoles(Set<RoleData> roleDataSet) {
+		Set<Role> validRoles = new HashSet<Role>();
+		Iterable<Role> allRoles = roleRepository.findAll();
+		Set<Role> rawRoles = roleServiceUtil.mapEntityCollectionFromRoleDataSet(roleDataSet);
+
+		for (Role raw : rawRoles) {
+			Role validRole = StreamSupport.stream(allRoles.spliterator(), false)
+					.filter(r -> (r.getRoleDescription().equals(raw.getRoleDescription()))).findFirst().get();
+
+			if (validRole != null) validRoles.add(validRole);
+		}
+
+		return validRoles;
+	}
+
 }

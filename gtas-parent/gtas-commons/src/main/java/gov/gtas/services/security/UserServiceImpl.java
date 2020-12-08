@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import gov.gtas.services.security.RoleService;
 
 import freemarker.template.TemplateException;
 import gov.gtas.constant.CommonErrorConstants;
@@ -67,7 +68,10 @@ public class UserServiceImpl implements UserService {
 	
 	@Resource
 	private PasswordResetTokenRepository passwordResetTokenRepository;
-	
+
+	@Resource
+	private RoleService roleService;
+
 	@Value("${user.group.default}")
 	private Long defaultUserGroupId;
 	
@@ -89,7 +93,7 @@ public class UserServiceImpl implements UserService {
 			Set<Role> roleCollection = roleServiceUtil.getAdminRoleIfExists(userData.getRoles());
 			
 			if (roleCollection.isEmpty()) {
-				roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(userData.getRoles());
+				roleCollection = roleService.getValidRoles(userData.getRoles());
 			}
 			 
 			userEntity.setRoles(roleCollection);
@@ -135,13 +139,12 @@ public class UserServiceImpl implements UserService {
 			entity.setArchived(mappedEnity.getArchived());
 			entity.setActive(mappedEnity.getActive());
 			entity.setPhoneNumber(mappedEnity.getPhoneNumber());
-			if (data.getRoles() != null && !data.getRoles().isEmpty()) {			
-				Set<Role> oRoles = entity.getRoles();
-				oRoles.clear();
+			if (data.getRoles() != null && !data.getRoles().isEmpty()) {
+				Set<Role> oRoles = new HashSet<Role>();
 				Set<Role> roleCollection = roleServiceUtil.getAdminRoleIfExists(data.getRoles());
 				
 				if (roleCollection.isEmpty()) {
-					 roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(data.getRoles());
+					 roleCollection = roleService.getValidRoles(data.getRoles());
 				}
 				
 				oRoles.addAll(roleCollection);
@@ -248,11 +251,10 @@ public class UserServiceImpl implements UserService {
 			entity.setActive(mappedEnity.getActive());
 			if (data.getRoles() != null) {// && !data.getRoles().isEmpty()) {
 				if (!data.getRoles().isEmpty()) {
-					Set<Role> oRoles = entity.getRoles();
-					oRoles.clear();
+					Set<Role> oRoles = new HashSet<Role>();
 					Set<Role> roleCollection = roleServiceUtil.getAdminRoleIfExists(data.getRoles());
 					if (roleCollection.isEmpty()) {
-						roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(data.getRoles());
+						roleCollection = roleService.getValidRoles(data.getRoles());
 					}
 					
 					oRoles.addAll(roleCollection);
