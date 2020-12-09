@@ -13,6 +13,8 @@ import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.repository.HitDetailRepository;
 import gov.gtas.services.dto.ApplicationStatisticsDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class AdminServiceImpl implements AdminService {
+
+	private Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
 	private MessageService messageService;
 
@@ -71,10 +75,7 @@ public class AdminServiceImpl implements AdminService {
 				applicationStatisticsDTO.setRunningRules(applicationStatisticsDTO.getRunningRules() + 1);
 				break;
 			case ANALYZED:
-				if (ms.getAnalyzedTimestamp() != null
-						&& ms.getAnalyzedTimestamp().after(applicationStatisticsDTO.getLastMessageAnalyzedByDrools())) {
-					applicationStatisticsDTO.setLastMessageAnalyzedByDrools(ms.getAnalyzedTimestamp());
-				}
+				updateLastAnalyzed(applicationStatisticsDTO, ms);
 				applicationStatisticsDTO.setAnalyzedCount(applicationStatisticsDTO.getAnalyzedCount() + 1);
 				break;
 			case NEO_LOADED:
@@ -82,10 +83,12 @@ public class AdminServiceImpl implements AdminService {
 				break;
 			case NEO_ANALYZED:
 				applicationStatisticsDTO.setNeoAnalyzedCount(applicationStatisticsDTO.getNeoAnalyzedCount() + 1);
+				updateLastAnalyzed(applicationStatisticsDTO, ms);
 				break;
 			case FAILED_PRE_PARSE:
 			case FAILED_PRE_PROCESS:
 			case FAILED_PARSING:
+			case DUPLICATE_MESSAGE:
 				applicationStatisticsDTO.setFailedParsingCount(applicationStatisticsDTO.getFailedParsingCount() + 1);
 				break;
 			case FAILED_LOADING:
@@ -101,9 +104,26 @@ public class AdminServiceImpl implements AdminService {
 				applicationStatisticsDTO
 						.setPartialAnalyzedCount(applicationStatisticsDTO.getPartialAnalyzedCount() + 1);
 				break;
+			case APIS_DATA_MASKED:
+			case PNR_DELETE_ERROR:
+			case APIS_DELETE_ERROR:
+			case APIS_MASK_ERROR:
+			case PNR_MASK_ERROR:
+			case APIS_DATA_DELETED:
+			case PNR_DATA_DELETED:
+			case PNR_DATA_MASKED:
+				updateLastAnalyzed(applicationStatisticsDTO, ms);
+				break;
 			default:
-				throw new RuntimeException("Un-used field!");
+				logger.warn("Un-implemented field." + ms.getMessageStatusEnum().toString());
 			}
+		}
+	}
+
+	private void updateLastAnalyzed(ApplicationStatisticsDTO applicationStatisticsDTO, MessageStatus ms) {
+		if (ms.getAnalyzedTimestamp() != null
+				&& ms.getAnalyzedTimestamp().after(applicationStatisticsDTO.getLastMessageAnalyzedByDrools())) {
+			applicationStatisticsDTO.setLastMessageAnalyzedByDrools(ms.getAnalyzedTimestamp());
 		}
 	}
 
