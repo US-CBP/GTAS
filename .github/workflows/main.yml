@@ -110,6 +110,7 @@ jobs:
         shell: bash
         env:
           NEO4J_HOST: ${{ secrets.NEO4J_HOST }}
+          NEO4J_BOLT: ${{ secrets.NEO4J_BOLT }}
           MARIADB_HOST: ${{ secrets.MARIADB_HOST }}
           MARIADB_USER: ${{ secrets.MARIADB_USER }}
           MARIADB_PASS: ${{ secrets.MARIADB_PASS }}
