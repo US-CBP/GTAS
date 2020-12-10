@@ -128,11 +128,14 @@ services:
       dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
     restart: unless-stopped
     environment:
+      NEO4J_bolt_ssl__policy: "default"
+      NEO4J_https_ssl__policy: "default"
+      NEO4J_dbms_ssl_policy_default_client__auth: "NONE"
+      NEO4J_dbms_ssl_policy_default_allow__key__generation: "false"
       NEO4J_dbms_directories_certificates: "/var/lib/neo4j/https/certificates"
-      NEO4J_dbms_ssl_policy_client__policy_base__directory: "/var/lib/neo4j/https/certificates/"
-      NEO4J_dbms_ssl_policy_client__policy_trust__all: "true"
-      NEO4J_dbms_ssl_policy_client__policy_private__key: "/var/lib/neo4j/https/certificates/key/neo4j.key"
-      NEO4J_dbms_ssl_policy_client__policy_public__certificate: "/var/lib/neo4j/https/certificates/cert/neo4j.cert"
+      NEO4J_dbms_ssl_policy_default_base__directory: "/var/lib/neo4j/https/certificates/"
+      NEO4J_dbms_ssl_policy_default_private__key: "/var/lib/neo4j/https/certificates/key/neo4j.key"
+      NEO4J_dbms_ssl_policy_default_public__certificate: "/var/lib/neo4j/https/certificates/cert/neo4j.cert"
     volumes:
        - neo4j-data:/data
     secrets:
