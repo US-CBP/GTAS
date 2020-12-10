@@ -52,9 +52,8 @@ public class RoleServiceImpl implements RoleService {
 	public Set<Role> getValidRoles(Set<RoleData> roleDataSet) {
 		Set<Role> validRoles = new HashSet<Role>();
 		Iterable<Role> allRoles = roleRepository.findAll();
-		Set<Role> rawRoles = roleServiceUtil.mapEntityCollectionFromRoleDataSet(roleDataSet);
 
-		for (Role raw : rawRoles) {
+		for (RoleData raw : roleDataSet) {
 			Role validRole = StreamSupport.stream(allRoles.spliterator(), false)
 					.filter(r -> (r.getRoleDescription().equals(raw.getRoleDescription()))).findFirst().get();
 
