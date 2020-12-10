@@ -5,6 +5,8 @@
  */
 package gov.gtas.model;
 
+import org.hibernate.annotations.Immutable;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+@Immutable
 @Entity
 @Table(name = "role")
 public class Role implements Serializable {

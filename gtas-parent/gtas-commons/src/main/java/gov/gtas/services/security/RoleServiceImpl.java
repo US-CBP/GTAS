@@ -49,13 +49,29 @@ public class RoleServiceImpl implements RoleService {
 		return roles;
 	}
 
+	/*
+	Return a set of matching roles from the DB containing either the admin role or a collection
+	of non-admin roles.
+	 */
 	public Set<Role> getValidRoles(Set<RoleData> roleDataSet) {
 		Set<Role> validRoles = new HashSet<Role>();
 		Iterable<Role> allRoles = roleRepository.findAll();
+		Role admin = StreamSupport.stream(allRoles.spliterator(), false)
+				.filter(r -> (r.getRoleDescription().equals("Admin"))).findFirst().get();
 
+		// admin role
+		for (RoleData rd : roleDataSet) {
+			if (rd.getRoleDescription().equals(admin.getRoleDescription())) {
+				validRoles.add(admin);
+				return validRoles;
+			}
+		}
+
+		// non-admin roles
 		for (RoleData raw : roleDataSet) {
+			String rawDescription = raw.getRoleDescription();
 			Role validRole = StreamSupport.stream(allRoles.spliterator(), false)
-					.filter(r -> (r.getRoleDescription().equals(raw.getRoleDescription()))).findFirst().get();
+					.filter(r -> r.getRoleDescription().equals(rawDescription)).findFirst().orElse(null);
 
 			if (validRole != null) validRoles.add(validRole);
 		}

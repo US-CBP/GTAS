@@ -32,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 import static org.junit.Assert.*;
 
@@ -216,6 +218,146 @@ public class UserServiceIT {
 
 		// Assert
 		assertEquals(expectedUserU.getRoles(), actualUserU.getRoles());
+	}
+
+
+	@Test
+	@Transactional
+	public void testUpdateUserWithFakeRoles() {
+		Set<RoleData> rolesToSave = new HashSet<RoleData>();
+		RoleData validRole = roles.stream().filter(r -> r.getRoleId() == 2).findFirst().get();
+		RoleData invalidRole = new RoleData(300, "XXXX");
+		rolesToSave.add(validRole);
+		rolesToSave.add(invalidRole);
+		String userId = "fakeroles";
+
+
+		UserData expectedUser = new UserData(userId, "password", "test", "99", 1, rolesToSave, "fake@email.what", false, false, false, "1111111111");
+		UserData actualUser = null;
+
+		try {
+			userService.create(expectedUser);
+		} catch (Exception e) {
+			logger.error("error!", e);
+		}
+
+		try {
+			actualUser = userService.findById(userId);
+		} catch (Exception e) {
+			logger.error("error!", e);
+		}
+
+		// one role was saved
+		assertEquals(actualUser.getRoles().stream().filter(r -> r != null).count(), 1);
+
+		// role save was the valid role
+		assertEquals(validRole, (actualUser.getRoles()).stream().filter(role -> role != null).findFirst().get());
+	}
+
+
+	@Test
+	@Transactional
+	public void testUpdateUserPassword() {
+		String userId = "passwordonly";
+		String password = "TeStPa$$w0rd";
+		Set<RoleData> rolesToSave = new HashSet<RoleData>();
+		RoleData validRole = roles.stream().filter(r -> r.getRoleId() == 2).findFirst().get();
+		rolesToSave.add(validRole);
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		String updatedPassword = passwordEncoder.encode("UpD@tedPa55W0rd");
+
+		UserData expectedUser = new UserData(userId, password, "test", "99", 1, rolesToSave, "fake@email.what", false, false, false, "1111111111");
+		UserData actualUser = null;
+
+		try {
+			userService.create(expectedUser);
+		} catch (Exception e) {
+			logger.error("error!", e);
+		}
+
+		try {
+			actualUser = userService.updatePassword(userId, updatedPassword);
+		} catch (Exception e) {
+			logger.error("error!", e);
+		}
+
+		//password is updated
+		assertEquals(actualUser.getPassword(), updatedPassword);
+		//everything else stays the same
+		assertEquals(actualUser.getFirstName(), expectedUser.getFirstName());
+		assertEquals(actualUser.getLastName(), expectedUser.getLastName());
+		assertEquals(actualUser.getEmail(), expectedUser.getEmail());
+		assertEquals(actualUser.getRoles(), expectedUser.getRoles());
+		assertEquals(actualUser.getPhoneNumber(), expectedUser.getPhoneNumber());
+		assertEquals(actualUser.getActive(), expectedUser.getActive());
+		assertEquals(actualUser.getArchived(), expectedUser.getArchived());
+		assertEquals(actualUser.getEmailEnabled(), expectedUser.getEmailEnabled());
+		assertEquals(actualUser.getHighPriorityEmail(), expectedUser.getHighPriorityEmail());
+	}
+
+
+	@Test
+	@Transactional
+	public void testAdminRoleIsAssignedAloneOnCreate() {
+		String userId = "adminroleonly";
+		String password = "sdfsdf";
+		Set<RoleData> rolesToSave = roles.stream().filter(r -> r.getRoleId() < 4).collect(Collectors.toSet());
+		RoleData admin = roles.stream().filter(r -> r.getRoleId() == 1).findFirst().get();
+
+		UserData expectedUser = new UserData(userId, password, "test", "99", 1, rolesToSave, "fake@email.what", false, false, false, "1111111111");
+		UserData actualUser = null;
+
+		try {
+			actualUser = userService.create(expectedUser);
+		} catch (Exception e) {
+			logger.error("error!", e);
+		}
+
+		// one role was saved
+		assertEquals(actualUser.getRoles().stream().filter(r -> r != null).count(), 1);
+
+		// saved role is admin
+		assertEquals(actualUser.getRoles().stream().filter(r -> r != null).findFirst().get(), admin);
+
+	}
+
+
+	@Test
+	@Transactional
+	public void testAdminRoleIsAssignedAloneOnUpdate() {
+		String userId = "adminroleonly";
+		String password = "sdfsdf";
+		RoleData admin = roles.stream().filter(r -> r.getRoleId() == 1).findFirst().get();
+		RoleData nonadmin = roles.stream().filter(r -> r.getRoleId() == 2).findFirst().get();
+		Set<RoleData> rolesToSave = new HashSet<RoleData>();
+
+		// add nonadmin role
+		rolesToSave.add(nonadmin);
+		UserData expectedUser = new UserData(userId, password, "test", "99", 1, rolesToSave, "fake@email.what", false, false, false, "1111111111");
+		UserData actualUser = null;
+
+
+		try {
+			userService.create(expectedUser);
+		} catch (Exception e) {
+			logger.error("error!", e);
+		}
+
+		// add admin role and update user
+		rolesToSave.add(admin);
+		UserData updatedUser = new UserData(userId, password, "test", "99", 1, rolesToSave, "fake@email.what", false, false, false, "1111111111");
+		try {
+			actualUser = userService.updateByAdmin(updatedUser);
+		} catch (Exception e) {
+			logger.error("error!", e);
+		}
+
+		// one role was saved
+		assertEquals(actualUser.getRoles().stream().filter(r -> r != null).count(), 1);
+
+		// saved role is admin
+		assertEquals(actualUser.getRoles().stream().filter(r -> r != null).findFirst().get(), admin);
+
 	}
 
 }
