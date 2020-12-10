@@ -140,7 +140,7 @@ services:
   neo4j:
     labels:
       kompose.image-pull-policy: "Always" 
-      kompose.service.type: "None"
+      kompose.service.type: "headless"
     deploy:
       placement:
         constraints:
