@@ -64,6 +64,9 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 				continue;
 			}
 			CaseVo caseVo = new CaseVo();
+			int highPrioHitCount = 0;
+			int medPrioHitCount = 0;
+			int lowPrioHitCount = 0;
 			Date countDownTo = passenger.getFlight().getFlightCountDownView().getCountDownTimer();
 			CountDownCalculator countDownCalculator = new CountDownCalculator();
 			CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownTo, 30, 30);
@@ -92,6 +95,17 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 					}
 					hitDetailsTitles.add(severity + " | " + hd.getHitMaker().getHitCategory().getName() + " | " + title
 							+ "(" + hd.getHitEnum().getDisplayName() + ")");
+					switch(severity){
+						case "Top":
+							highPrioHitCount++;
+							break;
+						case "High":
+							medPrioHitCount++;
+							break;
+						case "Normal":
+							lowPrioHitCount++;
+							break;
+					}
 					for (HitViewStatus hvs : hd.getHitViewStatus()) {
 						if (userGroups.contains(hvs.getUserGroup())) {
 							hvsEnums.add(hvs.getHitViewStatusEnum());
@@ -134,6 +148,9 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			caseVo.setFlightETDDate(passenger.getFlight().getMutableFlightDetails().getEtd());
 			caseVo.setFlightOrigin(passenger.getFlight().getOrigin());
 			caseVo.setFlightDestination(passenger.getFlight().getDestination());
+			caseVo.setHighPrioHitCount(highPrioHitCount);
+			caseVo.setMedPrioHitCount(medPrioHitCount);
+			caseVo.setLowPrioHitCount(lowPrioHitCount);
 			if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
 				caseVo.maskPII();
 			}
