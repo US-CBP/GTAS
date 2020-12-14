@@ -91,6 +91,8 @@ public interface UserService {
 
 	Set<UserGroup> fetchUserGroups(final String userId);
 
+	UserData updatePassword(String userId, String password);
+
 	boolean isAdminUser(String userId);
 
 	boolean treatAsOneDay(String userId);

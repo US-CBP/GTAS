@@ -9,9 +9,7 @@ INSERT INTO `role` VALUES ('4', 'Manage Watch List');
 INSERT INTO `role` VALUES ('5', 'Manage Rules');
 INSERT INTO `role` VALUES ('6', 'SysAdmin');
 INSERT INTO `role` VALUES ('7', 'Manage Hits');
-INSERT INTO `role` VALUES ('8', 'Manage Cases');
-INSERT INTO `role` VALUES ('9', 'View Flights');
-
+INSERT INTO `role` VALUES ('8', 'View Flights');
 
 -- ----------------------------
 -- Users
@@ -26,6 +24,7 @@ INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_em
 
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('ADMIN', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS', 5);
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS', 8);
 
 -- ----------------------------
 -- Records of flight_direction
@@ -34,7 +33,7 @@ INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS', 5);
 INSERT INTO `flight_direction` VALUES (1,'I', 'Inbound');
 INSERT INTO `flight_direction` VALUES (2,'O', 'Outbound');
 INSERT INTO `flight_direction` VALUES (3,'C', 'Continuance');
-INSERT INTO `flight_direction` VALUES (4,'A', 'Any');
+INSERT INTO `flight_direction` VALUES (4,'A', 'Any'); 
 
 -- ----------------------------
 -- Records of app_configuration
@@ -85,9 +84,9 @@ INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 3);
 INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 4);
 INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 5);
 
-INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type, archived) VALUES (1, null, null, null, null, 'GENERAL_PASSENGER', false);
-INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type, archived) VALUES (2, null, null, null, null, 'DELETED', false);
-INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type) VALUES (3, null, null, null, null, 'LOOKOUT', false);
+INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type, archived) VALUES (1, null, null, null, null, 'General', false);
+INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type, archived) VALUES (2, null, null, null, null, 'Deleted', false);
+INSERT INTO gtas.note_type (id, created_at, created_by, updated_at, updated_by, nt_type, archived) VALUES (3, null, null, null, null, 'Lookout', false);
 
 -- ----------------------------
 -- Manual Hit HitMaker Population

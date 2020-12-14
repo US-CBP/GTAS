@@ -165,7 +165,7 @@ public class UserController {
 		if (userData.getPassword() != null && !userData.getPassword().isEmpty()) {
 			if (validator.isValid(userData.getPassword(), userData.getUserId())) {
 				rUserData = userService.updateByAdmin(userData);
-				logger.info("The User Information is updated sucessfully for " + userData.getUserId());
+				logger.info("The User Information is updated successfully for " + userData.getUserId());
 				return new JsonServiceResponse(Status.SUCCESS, validator.getErrMessage(), rUserData);
 			} else {
 				logger.error("The User Information is not updated due to errors for " + userData.getUserId() + " "
@@ -176,7 +176,7 @@ public class UserController {
 
 		else {
 			rUserData = userService.updateByAdmin(userData);
-			logger.info("The User Information is updated sucessfully for " + userData.getUserId());
+			logger.info("The User Information is updated successfully for " + userData.getUserId());
 			return new JsonServiceResponse(Status.SUCCESS, validator.getErrMessage(), rUserData);
 		}
 	}
@@ -241,7 +241,6 @@ public class UserController {
 			return new JsonServiceResponse(Status.FAILURE, errorMessage);
 		}
 
-		UserData user = userService.findById(dto.getUsername());
 		Validator validator = this.new Validator();
 
 		if (!dto.getPassword().equals(dto.getPasswordConfirm())) {
@@ -251,8 +250,7 @@ public class UserController {
 			return new JsonServiceResponse(Status.FAILURE, validator.getErrMessage(), dto);
 		}
 
-		user.setPassword(dto.getPassword());
-		userService.update(user);
+		userService.updatePassword(dto.getUsername(), dto.getPassword());
 
 		return new JsonServiceResponse(Status.SUCCESS, "Your password has been reset!");
 
@@ -332,8 +330,7 @@ public class UserController {
 		}
 
 		// change password
-		user.setPassword(newPassword);
-		userService.update(user);
+		userService.updatePassword(user.getUserId(), newPassword);
 
 		return new JsonServiceResponse(Status.SUCCESS, user.getUserId() + "'s password has successfully been changed!");
 	}
