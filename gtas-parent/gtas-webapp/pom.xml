@@ -255,25 +255,6 @@
                     <skip>${maven.exec.skip}</skip>
                 </configuration>
                 <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-						<phase>generate-resources</phase>
-						<configuration>
-                            <nodeVersion>v8.11.1</nodeVersion>
-                        </configuration>
-                    </execution>
-					<execution>
-						<id>npm install</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<configuration>
-							 <arguments>install</arguments>
-						</configuration>
-					</execution>
                 </executions>
             </plugin>
             <plugin>

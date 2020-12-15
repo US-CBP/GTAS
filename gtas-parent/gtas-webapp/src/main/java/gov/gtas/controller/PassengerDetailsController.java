@@ -5,21 +5,18 @@
  */
 package gov.gtas.controller;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
 import gov.gtas.common.PassengerDetailService;
 import gov.gtas.enumtype.HitTypeEnum;
+import gov.gtas.enumtype.Status;
+import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.*;
+import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.BookingDetailRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.*;
 import gov.gtas.services.dto.PassengerNoteSetDto;
+import gov.gtas.services.matcher.MatchingService;
+import gov.gtas.services.matching.PaxWatchlistLinkVo;
 import gov.gtas.util.PaxDetailVoUtil;
 import gov.gtas.vo.HitDetailVo;
 import gov.gtas.vo.NoteTypeVo;
@@ -36,14 +33,14 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import gov.gtas.enumtype.Status;
-import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.json.KeyValue;
-import gov.gtas.repository.ApisMessageRepository;
-import gov.gtas.services.matcher.MatchingService;
-import gov.gtas.services.matching.PaxWatchlistLinkVo;
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 @Controller
 public class PassengerDetailsController {

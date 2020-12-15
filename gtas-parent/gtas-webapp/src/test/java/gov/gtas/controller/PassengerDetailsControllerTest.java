@@ -18,11 +18,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PassengerDetailsControllerTest {

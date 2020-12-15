@@ -5,10 +5,6 @@
  */
 package gov.gtas.common;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +20,8 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+
+import java.util.Locale;
 
 @Configuration
 @ComponentScan("gov.gtas")

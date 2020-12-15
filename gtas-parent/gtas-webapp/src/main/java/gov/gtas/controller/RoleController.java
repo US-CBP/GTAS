@@ -5,15 +5,14 @@
  */
 package gov.gtas.controller;
 
-import java.util.Set;
-
+import gov.gtas.services.security.RoleData;
+import gov.gtas.services.security.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import gov.gtas.services.security.RoleData;
-import gov.gtas.services.security.RoleService;
+import java.util.Set;
 
 @RestController
 public class RoleController {

@@ -6,37 +6,32 @@
 package gov.gtas.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.gtas.model.dto.ViewUpdateDTo;
-import gov.gtas.services.PriorityVettingListService;
-import gov.gtas.services.dto.CaseCommentRequestDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
 import gov.gtas.model.Attachment;
+import gov.gtas.model.dto.ViewUpdateDTo;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.AttachmentRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.HitCategoryService;
+import gov.gtas.services.PriorityVettingListService;
+import gov.gtas.services.dto.CaseCommentRequestDto;
 import gov.gtas.services.dto.PriorityVettingListDTO;
 import gov.gtas.services.dto.PriorityVettingListRequest;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 
 @RestController
 public class PriorityVettingListController {

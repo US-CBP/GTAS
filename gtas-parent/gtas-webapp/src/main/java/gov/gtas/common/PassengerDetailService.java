@@ -2,22 +2,11 @@ package gov.gtas.common;
 
 import gov.gtas.aop.annotations.PassengerAuditFirstArgPaxIdAsString;
 import gov.gtas.enumtype.MessageType;
-import gov.gtas.model.ApisMessage;
-import gov.gtas.model.Bag;
-import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.PassengerDetails;
-import gov.gtas.model.Pnr;
-import gov.gtas.model.Seat;
+import gov.gtas.model.*;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.AuditRecordRepository;
 import gov.gtas.repository.BagRepository;
-import gov.gtas.services.ApisService;
-import gov.gtas.services.FlightService;
-import gov.gtas.services.PassengerService;
-import gov.gtas.services.PnrService;
-import gov.gtas.services.SeatService;
+import gov.gtas.services.*;
 import gov.gtas.services.search.FlightPassengerVo;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.PaxDetailVoUtil;
@@ -26,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 

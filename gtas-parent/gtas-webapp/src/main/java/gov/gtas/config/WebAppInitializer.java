@@ -7,7 +7,6 @@ package gov.gtas.config;
 
 import gov.gtas.config.servlet.ServletContextConfig;
 import gov.gtas.security.AppSecurityConfig;
-
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 /**
