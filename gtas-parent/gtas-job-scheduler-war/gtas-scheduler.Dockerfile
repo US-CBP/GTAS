@@ -21,5 +21,5 @@ RUN apt-get -y update && apt-get -y install wget
 RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
 RUN tar -C /usr/local/bin -xvzf dockerize-linux-amd64-v0.6.1.tar.gz
 
-RUN mkdir /temp-conf && cp -a /usr/local/tomcat/conf/. /temp-conf
-ENTRYPOINT cp -a /temp-conf/. /usr/local/tomcat/conf && mkdir -p /usr/local/gtas-data/processed /usr/local/gtas-data/error /usr/local/gtas-data/input /usr/local/gtas-data/working && catalina.sh run
+#RUN mkdir /temp-conf && cp -a /usr/local/tomcat/conf/. /temp-conf
+ENTRYPOINT mkdir -p /usr/local/gtas-data/processed /usr/local/gtas-data/error /usr/local/gtas-data/input /usr/local/gtas-data/working && catalina.sh run
