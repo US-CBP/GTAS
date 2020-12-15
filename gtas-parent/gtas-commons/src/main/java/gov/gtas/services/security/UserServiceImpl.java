@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import gov.gtas.services.security.RoleService;
 
 import freemarker.template.TemplateException;
 import gov.gtas.constant.CommonErrorConstants;
@@ -67,7 +68,10 @@ public class UserServiceImpl implements UserService {
 	
 	@Resource
 	private PasswordResetTokenRepository passwordResetTokenRepository;
-	
+
+	@Resource
+	private RoleService roleService;
+
 	@Value("${user.group.default}")
 	private Long defaultUserGroupId;
 	
@@ -84,16 +88,10 @@ public class UserServiceImpl implements UserService {
 		User userEntity = userServiceUtil.mapUserEntityFromUserData(userData);
 		userEntity.setPassword((new BCryptPasswordEncoder()).encode(userEntity.getPassword()));
 		userEntity.setArchived(false); //Default do not archive new users.
-		if (userData.getRoles() != null) {
-			//check if Admin role is passed
-			Set<Role> roleCollection = roleServiceUtil.getAdminRoleIfExists(userData.getRoles());
-			
-			if (roleCollection.isEmpty()) {
-				roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(userData.getRoles());
-			}
-			 
+
+		Set<Role> roleCollection = roleService.getValidRoles(userData.getRoles());
+
 			userEntity.setRoles(roleCollection);
-		}
 		User newUserEntity = userRepository.save(userEntity);
 		UserGroup defaultUserGroup = userGroupRepository.findById(defaultUserGroupId)
 				.orElseThrow(RuntimeException::new);
@@ -117,6 +115,7 @@ public class UserServiceImpl implements UserService {
 		return userServiceUtil.getUserDataListFromEntityCollection(usersCollection);
 	}
 
+	@Deprecated
 	@Override
 	@Transactional
 	public UserData update(UserData data) {
@@ -135,13 +134,12 @@ public class UserServiceImpl implements UserService {
 			entity.setArchived(mappedEnity.getArchived());
 			entity.setActive(mappedEnity.getActive());
 			entity.setPhoneNumber(mappedEnity.getPhoneNumber());
-			if (data.getRoles() != null && !data.getRoles().isEmpty()) {			
-				Set<Role> oRoles = entity.getRoles();
-				oRoles.clear();
+			if (data.getRoles() != null && !data.getRoles().isEmpty()) {
+				Set<Role> oRoles = new HashSet<Role>();
 				Set<Role> roleCollection = roleServiceUtil.getAdminRoleIfExists(data.getRoles());
 				
 				if (roleCollection.isEmpty()) {
-					 roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(data.getRoles());
+					 roleCollection = roleService.getValidRoles(data.getRoles());
 				}
 				
 				oRoles.addAll(roleCollection);
@@ -152,6 +150,17 @@ public class UserServiceImpl implements UserService {
 			return userServiceUtil.mapUserDataFromEntity(savedEntity);
 		}
 		return null;
+	}
+
+		/* Update the user password only. */
+	@Transactional
+	public UserData updatePassword(String userId, String password) {
+		User existingUser = fetchUser(userId.toUpperCase());
+
+			existingUser.setPassword(getEncodedPassword(password));
+
+			User savedEntity = userRepository.save(existingUser);
+			return userServiceUtil.mapUserDataFromEntity(savedEntity);
 	}
 
 	@Override
@@ -197,7 +206,7 @@ public class UserServiceImpl implements UserService {
 	 *
 	 * @param userId
 	 *            the ID of the user to fetch.
-	 * @return true if the user has Admin role flase otherwise
+	 * @return true if the user has Admin role false otherwise
 	 */
 
 	public boolean isAdminUser(String userId) {
@@ -222,52 +231,34 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	/*
+		Update all user data except the password. The password is handled by a separate function
+	 */
 	@Override
+	@Transactional
 	public UserData updateByAdmin(UserData data) {
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		User entity = userRepository.findOne(data.getUserId());
+		User entity = fetchUser(data.getUserId());	//returns error if null
 
-		User mappedEnity = userServiceUtil.mapUserEntityFromUserData(data);
-		if (entity != null) {
-			entity.setFirstName(mappedEnity.getFirstName());
-			entity.setLastName(mappedEnity.getLastName());
-			entity.setEmail(mappedEnity.getEmail());
-			entity.setEmailEnabled(mappedEnity.getEmailEnabled());
-			entity.setHighPriorityHitsEmailNotification(mappedEnity.getHighPriorityHitsEmailNotification());
-			entity.setArchived(mappedEnity.getArchived());
-			entity.setPhoneNumber(mappedEnity.getPhoneNumber());
-			
-			if (data.getPassword() != null && !data.getPassword().isEmpty()) {
-				if (!BCRYPT_PATTERN.matcher(mappedEnity.getPassword()).matches()) {
-					entity.setPassword(passwordEncoder.encode(mappedEnity.getPassword()));
-				} else {
-					entity.setPassword(mappedEnity.getPassword());
-				}
-			}
+		User mappedEntity = userServiceUtil.mapUserEntityFromUserData(data);
 
-			entity.setActive(mappedEnity.getActive());
-			if (data.getRoles() != null) {// && !data.getRoles().isEmpty()) {
-				if (!data.getRoles().isEmpty()) {
-					Set<Role> oRoles = entity.getRoles();
-					oRoles.clear();
-					Set<Role> roleCollection = roleServiceUtil.getAdminRoleIfExists(data.getRoles());
-					if (roleCollection.isEmpty()) {
-						roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(data.getRoles());
-					}
-					
-					oRoles.addAll(roleCollection);
-					entity.setRoles(oRoles);
-				} else {
-					entity.setRoles(new HashSet<Role>());
-				}
-			}
+		entity.setFirstName(mappedEntity.getFirstName());
+		entity.setLastName(mappedEntity.getLastName());
+		entity.setEmail(mappedEntity.getEmail());
+		entity.setEmailEnabled(mappedEntity.getEmailEnabled());
+		entity.setHighPriorityHitsEmailNotification(mappedEntity.getHighPriorityHitsEmailNotification());
+		entity.setArchived(mappedEntity.getArchived());
+		entity.setPhoneNumber(mappedEntity.getPhoneNumber());
+		entity.setActive(mappedEntity.getActive());
 
-			User savedEntity = userRepository.save(entity);
-			logger.debug("Updated by Admin successfully in " + this.getClass().getName());
-
-			return userServiceUtil.mapUserDataFromEntity(savedEntity);
+		if (data.getRoles() != null && !data.getRoles().isEmpty()) {
+			Set<Role> validatedRoles = roleService.getValidRoles(data.getRoles());
+			entity.setRoles(validatedRoles);
 		}
-		return null;
+
+		User savedEntity = userRepository.save(entity);
+		logger.debug("Updated by Admin successfully in " + this.getClass().getName());
+
+		return userServiceUtil.mapUserDataFromEntity(savedEntity);
 	}
 
 	@Override
@@ -305,6 +296,17 @@ public class UserServiceImpl implements UserService {
 		
 		return isValidToken(prt);
 		
+	}
+
+	private String getEncodedPassword(String password) {
+		if (password == null) return null;
+
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+		if (!BCRYPT_PATTERN.matcher(password).matches()) {
+			return passwordEncoder.encode(password);
+		}
+		return password;
 	}
 	
 	private Date calculateExpiryDate() {
