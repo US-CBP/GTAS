@@ -182,6 +182,9 @@ private UserService userService;
     return carrierService.findAll();
   }
 
+  @RequestMapping(method = RequestMethod.GET, value ="/api/carrier/nonarchived")
+  public List<CarrierVo> getAllNonArchivedCarrier() {return carrierService.findAllNonArchived();}
+
   @RequestMapping(method = RequestMethod.GET, value = "/api/carrierLookup")
   public List<CarrierLookupVo> getCarrierLookup() {
     return carrierService.getCarrierLookup();
@@ -217,6 +220,9 @@ private UserService userService;
   public List<CountryVo> getAllCountry() {
     return countryService.findAll();
   }
+
+  @RequestMapping(method = RequestMethod.GET, value ="/api/country/nonarchived")
+  public List<CountryVo> getAllNonArchivedCountry() {return countryService.findAllNonArchived();}
 
   @RequestMapping(method = RequestMethod.GET, value = "/api/countryLookup")
   public List<CountryLookupVo> getCountryLookup() {
@@ -254,6 +260,9 @@ private UserService userService;
     return airportService.findAll();
   }
 
+  @RequestMapping(method = RequestMethod.GET, value ="/api/airport/nonarchived")
+  public List<AirportVo> getAllNonArchivedAirport() {return airportService.findAllNonArchived();}
+
   @RequestMapping(method = RequestMethod.GET, value = "/api/airportLookup")
   public List<AirportLookupVo> getAirportLookup() {
     return airportService.getAirportLookup();
@@ -289,6 +298,9 @@ private UserService userService;
   public List<CreditCardTypeVo> getAllCreditCardType() {
     return cctypeService.findAll();
   }
+
+  @RequestMapping(method = RequestMethod.GET, value ="/api/cctype/nonarchived")
+  public List<CreditCardTypeVo> getAllNonArchivedCreditCardType() {return cctypeService.findAllNonArchived();}
 
   @RequestMapping(method = RequestMethod.POST, value = "/api/cctype")
   public CreditCardTypeVo createCreditCardType(@RequestBody @Valid CreditCardTypeVo cctype) {

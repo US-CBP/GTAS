@@ -32,6 +32,9 @@ public interface CreditCardTypeService {
 
   public CreditCardTypeVo findById(Long id);
 
+  @PreAuthorize(PRIVILEGE_ADMIN)
+  public List<CreditCardTypeVo> findAllNonArchived();
+
 //  public CreditCardTypeVo getCreditCardTypeByCode(String code);
 
 }

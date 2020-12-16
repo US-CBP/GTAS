@@ -28,15 +28,19 @@ public class Carrier extends BaseEntity {
 	@Column(length = 3)
 	private String icao;
 
+	@Column(name = "archived")
+	private Boolean archived;
+
 	public Carrier() {
 	}
 
-	public Carrier(Long id, Long originId, String name, String iata, String icao) {
+	public Carrier(Long id, Long originId, String name, String iata, String icao, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.name = name;
 		this.iata = iata;
 		this.icao = icao;
+		this.archived = archived;
 	}
 
 	public Long getOriginId() {
@@ -70,6 +74,10 @@ public class Carrier extends BaseEntity {
 	public void setIcao(String data) {
 		this.icao = data;
 	}
+
+	public Boolean getArchived() { return archived; }
+
+	public void setArchived(Boolean archived) { this.archived = archived; }
 
 	@Override
 	public int hashCode() {

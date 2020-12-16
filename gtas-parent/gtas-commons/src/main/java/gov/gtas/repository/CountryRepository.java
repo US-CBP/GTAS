@@ -27,4 +27,6 @@ public interface CountryRepository extends CrudRepository<Country, Long> {
 		return findById(countryId).orElse(null);
 	}
 
+	@Query("Select c From Country c Where c.archived = false OR c.archived IS NULL")
+    List<Country> findAllNonArchived();
 }

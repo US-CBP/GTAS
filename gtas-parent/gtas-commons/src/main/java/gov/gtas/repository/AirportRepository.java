@@ -25,4 +25,6 @@ public interface AirportRepository extends CrudRepository<Airport, Long> {
 		return findById(id).orElse(null);
 	}
 
+	@Query("Select a From Airport a Where a.archived = false OR a.archived IS NULL")
+    List<Airport> findAllNonArchived();
 }

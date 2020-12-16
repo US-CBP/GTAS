@@ -35,16 +35,20 @@ public class Country extends BaseEntity {
 	@OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
 	private Set<CountryAndOrganization> countryGroupSet;
 
+	@Column(name = "archived")
+	private Boolean archived;
+
 	public Country() {
 	}
 
-	public Country(Long id, Long originId, String iso2, String iso3, String name, String isoNumeric) {
+	public Country(Long id, Long originId, String iso2, String iso3, String name, String isoNumeric, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.iso2 = iso2;
 		this.iso3 = iso3;
 		this.name = name;
 		this.isoNumeric = isoNumeric;
+		this.archived = archived;
 	}
 
 
@@ -117,4 +121,8 @@ public class Country extends BaseEntity {
 	public void setCountryGroupSet(Set<CountryAndOrganization> countryGroupSet) {
 		this.countryGroupSet = countryGroupSet;
 	}
+
+	public Boolean getArchived() { return archived; }
+
+	public void setArchived(Boolean archived) { this.archived = archived; }
 }

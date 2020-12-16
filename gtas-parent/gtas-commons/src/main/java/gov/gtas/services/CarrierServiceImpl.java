@@ -39,12 +39,11 @@ public class CarrierServiceImpl implements CarrierService {
     CarrierVo carrierVo = this.findById(id);
 
     if (carrierVo != null) {
-      carrierRespository.delete(buildCarrier(carrierVo));
-
-      return carrierVo;
+      //carrierRespository.delete(buildCarrier(carrierVo));
+      carrierVo = archive(carrierVo);
     }
 
-    return null;
+    return carrierVo;
   }
 
   @Override
@@ -69,6 +68,17 @@ public class CarrierServiceImpl implements CarrierService {
     Carrier savedCarrier = carrierRespository.save(buildCarrier(carrierVo));
 
     return buildCarrierVo(savedCarrier);
+  }
+
+  @Override
+  public List<CarrierVo> findAllNonArchived() {
+    List<Carrier> allNonArchivedCarriers = carrierRespository.findAllNonArchived();
+    List<CarrierVo> allNonArchivedCarrierVos = new ArrayList<>();
+
+    for (Carrier carrier : allNonArchivedCarriers) {
+      allNonArchivedCarrierVos.add(buildCarrierVo(carrier));
+    }
+    return allNonArchivedCarrierVos;
   }
 
   @Override
@@ -134,14 +144,24 @@ public class CarrierServiceImpl implements CarrierService {
     return null;
   }
 
+  private CarrierVo archive(CarrierVo cvo){
+    if (cvo != null) {
+      Carrier c = buildCarrier(cvo);
+      c.setArchived(true);
+      carrierRespository.save(c);
+    }
+
+    return cvo;
+  }
+
   private Carrier buildCarrier(CarrierVo carrierVo) {
     return new Carrier(carrierVo.getId(), carrierVo.getOriginId(), carrierVo.getName(), carrierVo.getIata(),
-        carrierVo.getIcao());
+        carrierVo.getIcao(), carrierVo.getArchived());
   }
 
   private CarrierVo buildCarrierVo(Carrier carrier) {
     return new CarrierVo(carrier.getId(), carrier.getOriginId(), carrier.getName(), carrier.getIata(),
-        carrier.getIcao());
+        carrier.getIcao(), carrier.getArchived());
   }
 
 }

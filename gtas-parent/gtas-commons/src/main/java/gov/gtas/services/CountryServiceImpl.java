@@ -40,7 +40,8 @@ public class CountryServiceImpl implements CountryService {
     CountryVo countryVo = this.findById(id);
 
     if (countryVo != null) {
-      countryRepository.delete(buildCountry(countryVo));
+      //countryRepository.delete(buildCountry(countryVo));
+      countryVo = archive(countryVo);
     }
 
     return countryVo;
@@ -109,6 +110,18 @@ public class CountryServiceImpl implements CountryService {
   }
 
   @Override
+  public List<CountryVo> findAllNonArchived() {
+    List<Country> allNonArchivedCountries = countryRepository.findAllNonArchived();
+    List<CountryVo> allNonArchivedCountryVos = new ArrayList<>();
+
+    for (Country country : allNonArchivedCountries) {
+      allNonArchivedCountryVos.add(buildCountryVo(country));
+    }
+
+    return allNonArchivedCountryVos;
+  }
+
+  @Override
   @Transactional
   @Cacheable(value = "countryCache", key = "#country")
   public CountryVo getCountryByTwoLetterCode(String country) {
@@ -134,14 +147,24 @@ public class CountryServiceImpl implements CountryService {
     return null;
   }
 
+  private CountryVo archive(CountryVo cvo){
+    if (cvo != null) {
+      Country c = buildCountry(cvo);
+      c.setArchived(true);
+      countryRepository.save(c);
+    }
+
+    return cvo;
+  }
+
   private CountryVo buildCountryVo(Country country) {
     return new CountryVo(country.getId(), country.getOriginId(), country.getIso2(), country.getIso3(),
-        country.getName(), country.getIsoNumeric());
+        country.getName(), country.getIsoNumeric(), country.getArchived());
   }
 
   private Country buildCountry(CountryVo countryVo) {
     return new Country(countryVo.getId(), countryVo.getOriginId(), countryVo.getIso2(), countryVo.getIso3(),
-        countryVo.getName(), countryVo.getIsoNumeric());
+        countryVo.getName(), countryVo.getIsoNumeric(), countryVo.getArchived());
   }
 
 }

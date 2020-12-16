@@ -38,12 +38,11 @@ public class CreditCardTypeServiceImpl implements CreditCardTypeService {
     CreditCardTypeVo CreditCardTypeVo = this.findById(id);
 
     if (CreditCardTypeVo != null) {
-      cctypeRespository.delete(buildCreditCardType(CreditCardTypeVo));
-
-      return CreditCardTypeVo;
+      //cctypeRespository.delete(buildCreditCardType(CreditCardTypeVo));
+      CreditCardTypeVo = archive(CreditCardTypeVo);
     }
 
-    return null;
+    return CreditCardTypeVo;
   }
 
   @Override
@@ -82,6 +81,18 @@ public class CreditCardTypeServiceImpl implements CreditCardTypeService {
   }
 
   @Override
+  public List<CreditCardTypeVo> findAllNonArchived() {
+    List<CreditCardType> allNonArchivedCreditCardTypes = cctypeRespository.findAllNonArchived();
+    List<CreditCardTypeVo> allNonArchivedCreditCardTypeVos = new ArrayList<>();
+
+    for (CreditCardType cctype : allNonArchivedCreditCardTypes) {
+      allNonArchivedCreditCardTypeVos.add(buildCreditCardTypeVo(cctype));
+    }
+
+    return allNonArchivedCreditCardTypeVos;
+  }
+
+  @Override
   @Transactional
   public CreditCardTypeVo restore(CreditCardTypeVo cctypeVo) {
     CreditCardType restoredCreditCardType = cctypeRepoCust.restore(buildCreditCardType(cctypeVo));
@@ -93,6 +104,16 @@ public class CreditCardTypeServiceImpl implements CreditCardTypeService {
   @Transactional
   public int restoreAll() {
     return cctypeRepoCust.restoreAll();
+  }
+
+  private CreditCardTypeVo archive(CreditCardTypeVo cctvo){
+    if (cctvo != null) {
+      CreditCardType cct =  buildCreditCardType(cctvo);
+      cct.setArchived(true);
+      cctypeRespository.save(cct);
+    }
+
+    return cctvo;
   }
 
 //  @Override
@@ -108,11 +129,11 @@ public class CreditCardTypeServiceImpl implements CreditCardTypeService {
 //  }
 
   private CreditCardType buildCreditCardType(CreditCardTypeVo cctypeVo) {
-    return new CreditCardType(cctypeVo.getId(), cctypeVo.getOriginId(), cctypeVo.getCode(), cctypeVo.getDescription());
+    return new CreditCardType(cctypeVo.getId(), cctypeVo.getOriginId(), cctypeVo.getCode(), cctypeVo.getDescription(), cctypeVo.getArchived());
   }
 
   private CreditCardTypeVo buildCreditCardTypeVo(CreditCardType cctype) {
-    return new CreditCardTypeVo(cctype.getId(), cctype.getOriginId(), cctype.getCode(), cctype.getDescription());
+    return new CreditCardTypeVo(cctype.getId(), cctype.getOriginId(), cctype.getCode(), cctype.getDescription(), cctype.getArchived());
   }
 
 }

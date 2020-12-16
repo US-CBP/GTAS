@@ -25,4 +25,6 @@ public interface CarrierRepository extends CrudRepository<Carrier, Long> {
 		return findById(carrierId).orElse(null);
 	}
 
+	@Query("Select c from Carrier c Where c.archived = false OR c.archived IS NULL")
+    List<Carrier> findAllNonArchived();
 }

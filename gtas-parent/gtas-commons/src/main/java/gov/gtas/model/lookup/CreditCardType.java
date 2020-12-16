@@ -26,14 +26,17 @@ public class CreditCardType extends BaseEntity {
 
 	private String description;
 
+	private Boolean archived;
+
 	public CreditCardType() {
 	}
 
-	public CreditCardType(Long id, Long originId, String code, String description) {
+	public CreditCardType(Long id, Long originId, String code, String description, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.code = code;
 		this.description = description;
+		this.archived = archived;
 	}
 
 	public Long getId() { return id; }
@@ -55,6 +58,9 @@ public class CreditCardType extends BaseEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public Boolean getArchived() { return archived; }
+	public void setArchived(Boolean archived) { this.archived = archived; }
 
 	@Override
 	public int hashCode() {

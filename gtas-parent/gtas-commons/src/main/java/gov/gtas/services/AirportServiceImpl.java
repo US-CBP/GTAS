@@ -40,7 +40,8 @@ public class AirportServiceImpl implements AirportService {
     AirportVo airportVo = this.findById(id);
 
     if (airportVo != null) {
-      airportRepo.delete(buildAirport(airportVo));
+      //airportRepo.delete(buildAirport(airportVo));
+      airportVo = archive(airportVo);
     }
 
     return airportVo;
@@ -109,6 +110,18 @@ public class AirportServiceImpl implements AirportService {
   }
 
   @Override
+  public List<AirportVo> findAllNonArchived() {
+    List<Airport> allNonArchivedAirports = airportRepo.findAllNonArchived();
+    List<AirportVo> allNonArchivedAirportVos = new ArrayList<>();
+
+    for(Airport a: allNonArchivedAirports){
+      allNonArchivedAirportVos.add(buildAirportVo(a));
+    }
+
+    return allNonArchivedAirportVos;
+  }
+
+  @Override
   @Transactional
   @Cacheable(value = "airportCache", key = "#airportCode")
   public AirportVo getAirportByThreeLetterCode(String airportCode) {
@@ -134,16 +147,26 @@ public class AirportServiceImpl implements AirportService {
     return null;
   }
 
+  private AirportVo archive(AirportVo avo){
+    if (avo != null) {
+      Airport a = buildAirport(avo);
+      a.setArchived(true);
+      airportRepo.save(a);
+    }
+
+    return avo;
+  }
+
   static AirportVo buildAirportVo(Airport airport) {
     return new AirportVo(airport.getId(), airport.getOriginId(), airport.getName(), airport.getIata(),
         airport.getIcao(), airport.getCountry(), airport.getCity(), airport.getLatitude(), airport.getLongitude(),
-        airport.getUtcOffset(), airport.getTimezone());
+        airport.getUtcOffset(), airport.getTimezone(), airport.getArchived());
   }
 
   public static Airport buildAirport(AirportVo airportVo) {
     return new Airport(airportVo.getId(), airportVo.getOriginId(), airportVo.getName(), airportVo.getIata(),
         airportVo.getIcao(), airportVo.getCountry(), airportVo.getCity(), airportVo.getLatitude(),
-        airportVo.getLongitude(), airportVo.getUtcOffset(), airportVo.getTimezone());
+        airportVo.getLongitude(), airportVo.getUtcOffset(), airportVo.getTimezone(), airportVo.getArchived());
   }
 
 }

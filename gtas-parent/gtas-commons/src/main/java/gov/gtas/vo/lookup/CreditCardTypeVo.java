@@ -7,12 +7,14 @@ public class CreditCardTypeVo implements Serializable  {
 	private Long originId;
 	private String code;
 	private String description;
+	private Boolean archived;
 
-	public CreditCardTypeVo(Long id, Long originId, String code, String description) {
+	public CreditCardTypeVo(Long id, Long originId, String code, String description, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.code = code;
 		this.description = description;
+		this.archived = archived;
 	}
 
 	public CreditCardTypeVo() {
@@ -41,4 +43,8 @@ public class CreditCardTypeVo implements Serializable  {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public Boolean getArchived() { return archived; }
+
+	public void setArchived(Boolean archived) { this.archived = archived; }
 }

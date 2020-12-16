@@ -32,6 +32,9 @@ public interface AirportService {
   @PreAuthorize(PRIVILEGE_ADMIN)
   public int restoreAll();
 
+  @PreAuthorize(PRIVILEGE_ADMIN)
+  public List<AirportVo> findAllNonArchived();
+
   public AirportVo findById(Long id);
 
   public List<AirportLookupVo> getAirportLookup();

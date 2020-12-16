@@ -33,6 +33,9 @@ public interface CountryService {
   @PreAuthorize(PRIVILEGE_ADMIN)
   public int restoreAll();
 
+  @PreAuthorize(PRIVILEGE_ADMIN)
+  public List<CountryVo> findAllNonArchived();
+
   public List<CountryLookupVo> getCountryLookup();
 
   public CountryVo getCountryByTwoLetterCode(String country);

@@ -43,13 +43,16 @@ public class Airport extends BaseEntity {
 	@Column(name = "utc_offset")
 	private Integer utcOffset;
 
+	@Column(name = "archived")
+	private Boolean archived;
+
 	private String timezone;
 
 	public Airport() {
 	}
 
 	public Airport(Long id, Long originId, String name, String iata, String icao, String country, String city,
-			BigDecimal latitude, BigDecimal longitude, Integer utcOffset, String timezone) {
+			BigDecimal latitude, BigDecimal longitude, Integer utcOffset, String timezone, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.name = name;
@@ -61,6 +64,7 @@ public class Airport extends BaseEntity {
 		this.longitude = longitude;
 		this.utcOffset = utcOffset;
 		this.timezone = timezone;
+		this.archived = archived;
 	}
 
 	public Long getOriginId() {
@@ -142,6 +146,10 @@ public class Airport extends BaseEntity {
 	public void setTimezone(String data) {
 		timezone = data;
 	}
+
+	public Boolean getArchived() { return archived; }
+
+	public void setArchived(Boolean archived) { this.archived = archived; }
 
 	@Override
 	public int hashCode() {

@@ -30,6 +30,9 @@ public interface CarrierService {
   @PreAuthorize(PRIVILEGE_ADMIN)
   public CarrierVo update(CarrierVo carrier);
 
+  @PreAuthorize(PRIVILEGE_ADMIN)
+  public List<CarrierVo> findAllNonArchived();
+
   public CarrierVo findById(Long id);
 
   public List<CarrierLookupVo> getCarrierLookup();

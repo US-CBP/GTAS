@@ -9,13 +9,15 @@ public class CarrierVo implements Serializable {
 	private String name;
 	private String iata;
 	private String icao;
+	private Boolean archived;
 
-	public CarrierVo(Long id, Long originId, String name, String iata, String icao) {
+	public CarrierVo(Long id, Long originId, String name, String iata, String icao, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.name = name;
 		this.iata = iata;
 		this.icao = icao;
+		this.archived = archived;
 	}
 
 	public CarrierVo() {
@@ -60,5 +62,9 @@ public class CarrierVo implements Serializable {
 	public void setIcao(String data) {
 		this.icao = data;
 	}
+
+	public Boolean getArchived() { return archived; }
+
+	public void setArchived(Boolean archived) { this.archived = archived; }
 
 }
