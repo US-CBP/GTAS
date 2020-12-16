@@ -7,9 +7,8 @@ INSERT INTO `role` VALUES ('2', 'Manage Queries');
 INSERT INTO `role` VALUES ('3', 'View Passenger');
 INSERT INTO `role` VALUES ('4', 'Manage Watch List');
 INSERT INTO `role` VALUES ('5', 'Manage Rules');
-INSERT INTO `role` VALUES ('6', 'SysAdmin');
-INSERT INTO `role` VALUES ('7', 'Manage Hits');
-INSERT INTO `role` VALUES ('8', 'View Flights');
+INSERT INTO `role` VALUES ('6', 'Manage Hits');
+INSERT INTO `role` VALUES ('7', 'View Flights');
 
 -- ----------------------------
 -- Users
@@ -22,9 +21,9 @@ INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_em
 -- Records of user_role
 -- ----------------------------
 
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('ADMIN', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS', 5);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS', 8);
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('ADMIN', (select role_id from role where role_description = 'Admin'));
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS',  (select role_id from role where role_description = 'View Flights'));
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS',  (select role_id from role where role_description = 'View Passenger'));
 
 -- ----------------------------
 -- Records of flight_direction

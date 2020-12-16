@@ -161,6 +161,7 @@ public class Airport extends BaseEntityAudit {
 		return Objects.hash(this.iata, this.icao);
 	}
 
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

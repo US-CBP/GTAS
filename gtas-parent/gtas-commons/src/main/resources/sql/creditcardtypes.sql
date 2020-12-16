@@ -8,8 +8,8 @@ insert into credit_card_type(code, description) values ("TP", "UATP");
 insert into credit_card_type(code, description) values ("UP", "UnionPay");
 insert into credit_card_type(code, description) values ("VI", "Visa");
 
- -- POPULATE COUNTRYRESTORE TABLE AS EXACT DUPLICATE --
+ -- POPULATE CREDITCARDTYPERESTORE TABLE AS EXACT DUPLICATE --
 insert into credit_card_type_restore(id, code, description) select id, code, description from credit_card_type;
 
--- SET ORIGINID ON THE INITIAL RECORDS IN THE COUNTRY TABLE ONLY
+-- SET ORIGINID ON THE INITIAL RECORDS IN THE CREDITCARDTYPE TABLE ONLY
 update credit_card_type set originId = id;
