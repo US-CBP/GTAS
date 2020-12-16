@@ -5,20 +5,19 @@
  */
 package gov.gtas.model.lookup;
 
-import gov.gtas.model.BaseEntity;
+import gov.gtas.model.BaseEntityAudit;
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Cacheable
 @Entity
-@Table(name = "credit_card_type", indexes = { @Index(columnList = "code", name = "cctype_code_index") })
-public class CreditCardType extends BaseEntity {
+@Table(name = "credit_card_type", indexes = { @Index(columnList = "code,updated_at", name = "cctype_code_index") })
+public class CreditCardType extends BaseEntityAudit {
 	private Long originId;
 
 	@Column(length = 2)
@@ -26,14 +25,21 @@ public class CreditCardType extends BaseEntity {
 
 	private String description;
 
+	private Boolean archived;
+
 	public CreditCardType() {
 	}
 
-	public CreditCardType(Long id, Long originId, String code, String description) {
+	public CreditCardType(Long id, Long originId, String code, String description, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.code = code;
 		this.description = description;
+		this.archived = archived;
+	}
+
+	public CreditCardType(Long id, Long originId, String code, String description) {
+		this(id, originId, code, description, false);
 	}
 
 	public Long getId() { return id; }
@@ -54,6 +60,11 @@ public class CreditCardType extends BaseEntity {
 	public String getDescription() { return description; }
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Boolean getArchived() { return archived; }
+	public void setArchived(Boolean archived) {
+		this.archived= archived;
 	}
 
 	@Override

@@ -5,7 +5,7 @@
  */
 package gov.gtas.model.lookup;
 
-import gov.gtas.model.BaseEntity;
+import gov.gtas.model.BaseEntityAudit;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,8 +16,8 @@ import org.springframework.cache.annotation.Cacheable;
 
 @Cacheable
 @Entity
-@Table(name = "carrier", indexes = { @Index(columnList = "iata", name = "carrier_iata_index") })
-public class Carrier extends BaseEntity {
+@Table(name = "carrier", indexes = { @Index(columnList = "iata,updated_at", name = "carrier_iata_index") })
+public class Carrier extends BaseEntityAudit {
 
 	private Long originId;
 	private String name;
@@ -28,15 +28,23 @@ public class Carrier extends BaseEntity {
 	@Column(length = 3)
 	private String icao;
 
+	@Column(name = "archived")
+	private Boolean archived;
+
 	public Carrier() {
 	}
 
-	public Carrier(Long id, Long originId, String name, String iata, String icao) {
+	public Carrier(Long id, Long originId, String name, String iata, String icao, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.name = name;
 		this.iata = iata;
 		this.icao = icao;
+		this.archived = archived;
+	}
+
+	public Carrier(Long id, Long originId, String name, String iata, String icao) {
+		this(id, originId, name, iata, icao, false);
 	}
 
 	public Long getOriginId() {
@@ -70,6 +78,10 @@ public class Carrier extends BaseEntity {
 	public void setIcao(String data) {
 		this.icao = data;
 	}
+
+	public Boolean isArchived() { return archived; }
+
+	public void setArchived(Boolean archived) { this.archived = archived; }
 
 	@Override
 	public int hashCode() {

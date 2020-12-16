@@ -13,7 +13,9 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.springframework.cache.annotation.Cacheable;
+import org.hibernate.annotations.Immutable;
 
+@Immutable
 @Cacheable
 @Entity
 @Table(name = "carrier_restore", indexes = { @Index(columnList = "iata", name = "carrierRestore_iata_index") })
