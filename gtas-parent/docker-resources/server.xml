@@ -105,8 +105,8 @@
                secretRequired="false"
                SSLProtocol="TLSv1+TLSv1.1+TLSv1.2"
                certificateVerification="none"
-               SSLCertificateFile="conf/wcogtas.org.crt" 
-               SSLCertificateKeyFile="conf/wcogtas.org.key"
+               SSLCertificateFile="conf/cert/wcogtas.org.crt"
+               SSLCertificateKeyFile="conf/key/wcogtas.org.key"
                certificateKeyPassword="Pa$$word1" />
     
 <!--     <Connector port="8443" protocol="org.apache.coyote.http11.Http11AprProtocol"

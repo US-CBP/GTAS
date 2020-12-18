@@ -40,6 +40,16 @@ services:
      - webapp-neo4j-user
      - webapp-neo4j-password
      - elastic-bootstrap-password
+     - source: webapp-cert
+       target: /usr/local/tomcat/conf/cert/wcogtas.org.crt
+     - source: webapp-key
+       target: /usr/local/tomcat/conf/key/wcogtas.org.key
+     - source: elastic-cert
+       target: /usr/local/tomcat/conf/elastic/cert/elasticsearch-node1.crt
+     - source: elastic-key
+       target: /usr/local/tomcat/conf/elastic/key/elasticsearch-node1.key
+     - source: elastic-ca
+       target: /usr/local/tomcat/conf/elastic/ca/elastic-ca.crt
     volumes:
       - m2:/root/.m2
       - scheduler-logs:/scheduler-logs
