@@ -6,7 +6,7 @@ COPY ./ /gtas-parent/
 COPY ./docker-resources/hibernate.properties /gtas-parent/gtas-commons/src/main/resources/hibernate.properties
 
 WORKDIR /gtas-parent
-RUN mvn clean install -Dmaven.test.skip=true
+RUN mvn clean install
 RUN cd / && rm -rf /gtas-parent
 
 RUN mkdir /temp-dos
