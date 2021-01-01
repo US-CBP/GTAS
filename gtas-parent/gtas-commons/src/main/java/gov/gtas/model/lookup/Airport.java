@@ -7,6 +7,7 @@ package gov.gtas.model.lookup;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,9 +44,9 @@ public class Airport extends BaseEntityAudit {
 	@Column(name = "utc_offset")
 	private Integer utcOffset;
 
-	private String timezone;
-
 	private Boolean archived;
+
+	private String timezone;
 
 	public Airport() {
 	}
@@ -64,6 +65,7 @@ public class Airport extends BaseEntityAudit {
 		this.utcOffset = utcOffset;
 		this.timezone = timezone;
 		this.archived = archived;
+		this.setUpdatedAt(new Date());
 	}
 
 	public Airport(Long id, Long originId, String name, String iata, String icao, String country, String city,
@@ -152,6 +154,7 @@ public class Airport extends BaseEntityAudit {
 	}
 
 	public Boolean getArchived() { return archived; }
+
 	public void setArchived(Boolean data) {
 		this.archived= data;
 	}

@@ -7,6 +7,7 @@ package gov.gtas.model.lookup;
 
 import gov.gtas.model.BaseEntityAudit;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
@@ -48,6 +49,7 @@ public class Country extends BaseEntityAudit {
 		this.name = name;
 		this.isoNumeric = isoNumeric;
 		this.archived = archived;
+		this.setUpdatedAt(new Date());
 	}
 
 	public Country(Long id, Long originId, String iso2, String iso3, String name, String isoNumeric) {
@@ -95,6 +97,7 @@ public class Country extends BaseEntityAudit {
 	}
 
 	public Boolean getArchived() { return archived; }
+
 	public void setArchived(Boolean archived) {
 		this.archived= archived;
 	}

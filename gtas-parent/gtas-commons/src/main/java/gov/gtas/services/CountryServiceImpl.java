@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -40,7 +41,7 @@ public class CountryServiceImpl implements CountryService {
     CountryVo countryVo = this.findById(id);
 
     if (countryVo != null) {
-      countryRepository.delete(buildCountry(countryVo));
+      countryVo = archive(countryVo);
     }
 
     return countryVo;
@@ -50,6 +51,20 @@ public class CountryServiceImpl implements CountryService {
   @Transactional
   public List<CountryVo> findAll() {
     List<Country> allCountries = (List<Country>) countryRepository.findAll();
+
+    List<CountryVo> allCountryVos = new ArrayList<>();
+
+    for (Country country : allCountries) {
+      allCountryVos.add(buildCountryVo(country));
+    }
+
+    return allCountryVos;
+
+  }
+
+  @Transactional
+  public List<CountryVo> findAllUpdated(Date dt) {
+    List<Country> allCountries = (List<Country>) countryRepository.findAllUpdated(dt);
 
     List<CountryVo> allCountryVos = new ArrayList<>();
 
@@ -134,14 +149,24 @@ public class CountryServiceImpl implements CountryService {
     return null;
   }
 
+  private CountryVo archive(CountryVo cvo){
+    if (cvo != null) {
+      Country c = buildCountry(cvo);
+      c.setArchived(true);
+      countryRepository.save(c);
+    }
+
+    return cvo;
+  }
+
   private CountryVo buildCountryVo(Country country) {
     return new CountryVo(country.getId(), country.getOriginId(), country.getIso2(), country.getIso3(),
-        country.getName(), country.getIsoNumeric());
+        country.getName(), country.getIsoNumeric(), country.getArchived());
   }
 
   private Country buildCountry(CountryVo countryVo) {
     return new Country(countryVo.getId(), countryVo.getOriginId(), countryVo.getIso2(), countryVo.getIso3(),
-        countryVo.getName(), countryVo.getIsoNumeric());
+        countryVo.getName(), countryVo.getIsoNumeric(), countryVo.getArchived());
   }
 
 }

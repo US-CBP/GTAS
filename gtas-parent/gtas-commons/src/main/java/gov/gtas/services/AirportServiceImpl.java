@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -40,7 +41,7 @@ public class AirportServiceImpl implements AirportService {
     AirportVo airportVo = this.findById(id);
 
     if (airportVo != null) {
-      airportRepo.delete(buildAirport(airportVo));
+      airportVo = archive(airportVo);
     }
 
     return airportVo;
@@ -58,6 +59,20 @@ public class AirportServiceImpl implements AirportService {
     }
 
     return allAirportVos;
+  }
+
+  @Transactional
+  public List<AirportVo> findAllUpdated(Date dt) {
+    List<Airport> allAirports = (List<Airport>) airportRepo.findAllUpdated(dt);
+
+    List<AirportVo> allAirportVos = new ArrayList<>();
+
+    for (Airport airport: allAirports) {
+      allAirportVos.add(buildAirportVo(airport));
+    }
+
+    return allAirportVos;
+
   }
 
   @Override
@@ -134,16 +149,26 @@ public class AirportServiceImpl implements AirportService {
     return null;
   }
 
+  private AirportVo archive(AirportVo avo){
+    if (avo != null) {
+      Airport a = buildAirport(avo);
+      a.setArchived(true);
+      airportRepo.save(a);
+    }
+
+    return avo;
+  }
+
   static AirportVo buildAirportVo(Airport airport) {
     return new AirportVo(airport.getId(), airport.getOriginId(), airport.getName(), airport.getIata(),
         airport.getIcao(), airport.getCountry(), airport.getCity(), airport.getLatitude(), airport.getLongitude(),
-        airport.getUtcOffset(), airport.getTimezone());
+        airport.getUtcOffset(), airport.getTimezone(), airport.getArchived());
   }
 
   public static Airport buildAirport(AirportVo airportVo) {
     return new Airport(airportVo.getId(), airportVo.getOriginId(), airportVo.getName(), airportVo.getIata(),
         airportVo.getIcao(), airportVo.getCountry(), airportVo.getCity(), airportVo.getLatitude(),
-        airportVo.getLongitude(), airportVo.getUtcOffset(), airportVo.getTimezone());
+        airportVo.getLongitude(), airportVo.getUtcOffset(), airportVo.getTimezone(), airportVo.getArchived());
   }
 
 }

@@ -14,6 +14,8 @@ import javax.persistence.Table;
 
 import org.springframework.cache.annotation.Cacheable;
 
+import java.util.Date;
+
 @Cacheable
 @Entity
 @Table(name = "carrier", indexes = { @Index(columnList = "iata,updated_at", name = "carrier_iata_index") })
@@ -41,6 +43,7 @@ public class Carrier extends BaseEntityAudit {
 		this.iata = iata;
 		this.icao = icao;
 		this.archived = archived;
+		this.setUpdatedAt(new Date());
 	}
 
 	public Carrier(Long id, Long originId, String name, String iata, String icao) {

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -35,15 +36,13 @@ public class CreditCardTypeServiceImpl implements CreditCardTypeService {
   @Override
   @Transactional
   public CreditCardTypeVo delete(Long id) {
-    CreditCardTypeVo CreditCardTypeVo = this.findById(id);
+    CreditCardTypeVo cctype = this.findById(id);
 
-    if (CreditCardTypeVo != null) {
-      cctypeRespository.delete(buildCreditCardType(CreditCardTypeVo));
-
-      return CreditCardTypeVo;
+    if (cctype != null) {
+      cctype = archive(cctype);
     }
 
-    return null;
+    return cctype;
   }
 
   @Override
@@ -61,6 +60,19 @@ public class CreditCardTypeServiceImpl implements CreditCardTypeService {
     return allCreditCardTypeVos;
   }
 
+  @Transactional
+  public List<CreditCardTypeVo> findAllUpdated(Date dt) {
+    List<CreditCardType> allCreditCardTypes = (List<CreditCardType>) cctypeRespository.findAllUpdated(dt);
+
+    List<CreditCardTypeVo> allCreditCardTypeVos = new ArrayList<>();
+
+    for (CreditCardType cctype: allCreditCardTypes) {
+      allCreditCardTypeVos.add(buildCreditCardTypeVo(cctype));
+    }
+
+    return allCreditCardTypeVos;
+
+  }
   @Override
   @Transactional
   public CreditCardTypeVo update(CreditCardTypeVo cctypeVo) {
@@ -89,30 +101,28 @@ public class CreditCardTypeServiceImpl implements CreditCardTypeService {
     return buildCreditCardTypeVo(restoredCreditCardType);
   }
 
+  private CreditCardTypeVo archive(CreditCardTypeVo cctvo){
+    if (cctvo != null) {
+      CreditCardType cct =  buildCreditCardType(cctvo);
+      cct.setArchived(true);
+      cctypeRespository.save(cct);
+    }
+
+    return cctvo;
+  }
+
   @Override
   @Transactional
   public int restoreAll() {
     return cctypeRepoCust.restoreAll();
   }
 
-//  @Override
-//  @Transactional
-//  public CreditCardTypeVo getCreditCardTypeByCode(String cctypeCode) {
-//    List<CreditCardType> cctypes = cctypeRespository.getCreditCardTypeByCode(cctypeCode);
-//
-//    if (cctypes != null && cctypes.size() > 0) {
-//      return buildCreditCardTypeVo(cctypes.get(0));
-//    }
-//
-//    return null;
-//  }
-
   private CreditCardType buildCreditCardType(CreditCardTypeVo cctypeVo) {
-    return new CreditCardType(cctypeVo.getId(), cctypeVo.getOriginId(), cctypeVo.getCode(), cctypeVo.getDescription());
+    return new CreditCardType(cctypeVo.getId(), cctypeVo.getOriginId(), cctypeVo.getCode(), cctypeVo.getDescription(), cctypeVo.getArchived());
   }
 
   private CreditCardTypeVo buildCreditCardTypeVo(CreditCardType cctype) {
-    return new CreditCardTypeVo(cctype.getId(), cctype.getOriginId(), cctype.getCode(), cctype.getDescription());
+    return new CreditCardTypeVo(cctype.getId(), cctype.getOriginId(), cctype.getCode(), cctype.getDescription(), cctype.getArchived());
   }
 
 }

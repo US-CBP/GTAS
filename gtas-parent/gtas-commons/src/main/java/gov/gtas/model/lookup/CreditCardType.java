@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import java.util.Date;
 import java.util.Objects;
 
 @Cacheable
@@ -36,6 +37,7 @@ public class CreditCardType extends BaseEntityAudit {
 		this.code = code;
 		this.description = description;
 		this.archived = archived;
+		this.setUpdatedAt(new Date());
 	}
 
 	public CreditCardType(Long id, Long originId, String code, String description) {

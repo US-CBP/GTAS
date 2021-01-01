@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.Query;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -25,8 +26,7 @@ public class AirportRepositoryImpl implements AirportRepositoryCustom {
 
 	@Override
 	public Airport restore(Airport origAirport) {
-		if (origAirport.getOriginId() == null)
-			return origAirport;
+		if (origAirport.getOriginId() == null) return null;
 
 		String sqlString = " SELECT c FROM AirportRestore c WHERE c.id = :originid";
 		TypedQuery<AirportRestore> query = em.createQuery(sqlString, AirportRestore.class);
@@ -38,34 +38,20 @@ public class AirportRepositoryImpl implements AirportRepositoryCustom {
 
 			return repo.save(restored);
 		}
-		/// else throw warning there was no matching data found.
-		/// record is either user-created or there's an issue with the AirportRestore
-		/// data.
-		return origAirport;
+		return null;
 	}
 
+	/* Restore the original airports to their initial unedited values. Does not affect user-created airports */
 	@Override
 	public int restoreAll() {
-		String sqlString = " SELECT c FROM AirportRestore c";
-		TypedQuery<AirportRestore> query = em.createQuery(sqlString, AirportRestore.class);
-		List<AirportRestore> crs = query.getResultList();
-
-		Query deleteQuery = em.createNativeQuery(" DELETE FROM Airport ");
-		int numDeleted = deleteQuery.executeUpdate();
+		String sqlString = " SELECT a FROM Airport a where a.originId > 0";
+		TypedQuery<Airport> query = em.createQuery(sqlString, Airport.class);
+		List<Airport> origAirports = query.getResultList();
 
 		int numRestored = 0;
 
-		for (AirportRestore cr : crs) {
-			try {
-				Airport restored = setFields(cr, new Airport());
-				restored.setOriginId(cr.getId());
-				numRestored++;
-
-				repo.save(restored);
-			} catch (Exception ex) {
-				// Log.
-				// return recs not updated?
-			}
+		for (Airport orig: origAirports) {
+			if (restore(orig) != null) numRestored++;
 		}
 		return numRestored;
 	}
@@ -80,7 +66,8 @@ public class AirportRepositoryImpl implements AirportRepositoryCustom {
 		restored.setLongitude(cr.getLongitude());
 		restored.setUtcOffset(cr.getUtcOffset());
 		restored.setTimezone(cr.getTimezone());
-
+		restored.setUpdatedAt(new Date());
+		restored.setArchived(false);
 		return restored;
 	}
 
