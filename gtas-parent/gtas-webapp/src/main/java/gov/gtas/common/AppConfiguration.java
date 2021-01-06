@@ -67,7 +67,7 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**").allowedOrigins(uiAddress).allowedMethods("GET", "POST", "OPTIONS", "PUT")
 				.allowedHeaders("Content-Type", "X-Requested-With", "accept", "Access-Control-Request-Method",
-						"Access-Control-Request-Headers", "X-Auth-Token", "X-login-ajax-call")
+						"Access-Control-Request-Headers", "X-Auth-Token", "X-login-ajax-call", "Api-Proxy-Route-To")
 				.exposedHeaders("Access-Control-Allow-Credentials", "Access-Control-Allow-Origin")
 				.allowedMethods("GET","PUT","POST","DELETE","PATCH","OPTIONS")
 				.allowCredentials(true).maxAge(3600);
