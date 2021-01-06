@@ -77,6 +77,10 @@ public interface PnrRepository extends MessageRepository<Pnr> {
 	List<Object[]> getCreditCardByIds(@Param("pnrIds") Set<Long> pnrIds);
 
 	@Transactional
+	@Query(" SELECT pnr.id, ss from Pnr pnr join pnr.savedSegments ss where pnr.id in :pnrIds ")
+	List<Object[]> getSegmentsByPnr(@Param("pnrIds") Set<Long> pnrIds);
+
+	@Transactional
 	@Query(" SELECT pnr.id, email from Pnr pnr join pnr.emails email where pnr.id in :pnrIds ")
 	List<Object[]> getEmailByPnrIds(@Param("pnrIds") Set<Long> pnrIds);
 

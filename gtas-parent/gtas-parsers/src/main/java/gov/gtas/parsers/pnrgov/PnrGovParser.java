@@ -5,9 +5,8 @@
  */
 package gov.gtas.parsers.pnrgov;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import gov.gtas.parsers.pnrgov.enums.PhoneCodes;
 import gov.gtas.parsers.pnrgov.enums.ProcessingIndicatorCode;
@@ -30,9 +29,17 @@ import gov.gtas.parsers.util.ParseUtils;
 public final class PnrGovParser extends EdifactParser<PnrVo> {
 
 	private PassengerVo currentPassenger = null;
+	private Set<String> regexSegmentNames = new HashSet<>();
+	private List<Pattern> patternRegexOnSegments = new ArrayList<>();
 
 	public PnrGovParser() {
 		this.parsedMessage = new PnrVo();
+	}
+
+	public PnrGovParser( List<String> regexSegmentNames, List<Pattern> patternRegexOnSegments ) {
+		this.parsedMessage = new PnrVo();
+		this.regexSegmentNames = new HashSet<>(regexSegmentNames);
+		this.patternRegexOnSegments = patternRegexOnSegments;
 	}
 
 	@Override
@@ -74,6 +81,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			if (ssr == null) {
 				break;
 			}
+			checkAndSaveInterestingSegments("SSR", ssr.getText());
 		}
 
 		DAT_G1 dat = getConditionalSegment(DAT_G1.class, "DAT");
@@ -90,6 +98,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			if (ift == null) {
 				break;
 			}
+			checkAndSaveInterestingSegments("IFT", ift.getText());
 			processIft(ift);
 		}
 
@@ -102,6 +111,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			if (add == null) {
 				break;
 			}
+			checkAndSaveInterestingSegments("ADD", add.getText());
 			processAddress(add);
 		}
 
@@ -112,6 +122,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 				break;
 			}
 			processExcessBaggage(ebd);
+			checkAndSaveInterestingSegments("EBD", ebd.getText());
 		}
 
 		for (;;) {
@@ -158,6 +169,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			if (abi == null) {
 				break;
 			}
+			checkAndSaveInterestingSegments("ABI", abi.getText());
 			processGroup10_History(abi);
 		}
 
@@ -208,6 +220,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			if (ift == null) {
 				break;
 			}
+			checkAndSaveInterestingSegments("IFT", ift.getText());
 			processIft(ift);
 		}
 
@@ -219,6 +232,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			if (far == null) {
 				break;
 			}
+			checkAndSaveInterestingSegments("FAR", far.getText());
 		}
 
 		// SSR’s in GR.2 apply to the specific passenger.
@@ -229,6 +243,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			if (ssr == null) {
 				break;
 			}
+			checkAndSaveInterestingSegments("SSR", ssr.getText());
 			String code = ssr.getTypeOfRequest();
 			if (SSR.DOCS.equals(code)) {
 				if (StringUtils.isNotBlank(ssr.getFreeText())) {
@@ -364,6 +379,8 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 				break;
 			}
 			processIft(ift);
+			checkAndSaveInterestingSegments("IFT", ift.getText());
+
 		}
 
 		FOP fop = getConditionalSegment(FOP.class);
@@ -542,6 +559,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			if (ift == null) {
 				break;
 			}
+			checkAndSaveInterestingSegments("IFT", ift.getText());
 			processIft(ift);
 		}
 
@@ -555,10 +573,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 	}
 
 	private String trimLeadingZeros(String input) {
-		if (input == null || input.charAt(0) != '0') {
+		if (input == null || input.isEmpty() || input.charAt(0) != '0') {
 			return input;
 		}
-
 		return (trimLeadingZeros(input.substring(1)));
 	}
 
@@ -578,6 +595,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			if (lts == null) {
 				break;
 			}
+			checkAndSaveInterestingSegments("LTS", lts.getText());
 			if (lts.isAgency()) {
 				processAgencyInfo(lts.getTheText());
 			} else if (lts.isPhone()) {
@@ -832,15 +850,25 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			if (sac == null) {
 				break;
 			}
+			checkAndSaveInterestingSegments("SAC", sac.getText());
 			processGroup11_HistoryCredit(sac);
 		}
 	}
 
 	private void processGroup11_HistoryCredit(SAC sac) throws ParseException {
 		getConditionalSegment(TIF.class);
-		getConditionalSegment(SSR.class);
-		getConditionalSegment(IFT.class);
-		getConditionalSegment(TBD.class);
+		SSR ssr =  getConditionalSegment(SSR.class);
+		if (ssr != null && ssr.getText() != null) {
+			checkAndSaveInterestingSegments("SSR", ssr.getText());
+		}
+		IFT ift  = getConditionalSegment(IFT.class);
+		if (ift != null && ift.getText() != null) {
+			checkAndSaveInterestingSegments("IFT", ift.getText());
+		}
+		TBD tbd = getConditionalSegment(TBD.class);
+		if (tbd != null && tbd.getText() != null) {
+			checkAndSaveInterestingSegments("TBD", sac.getText());
+		}
 		for (;;) {
 			TVL tvl = getConditionalSegment(TVL.class);
 			if (tvl == null) {
@@ -858,6 +886,10 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 	private void processExcessBaggage(EBD ebd) {
 		if (ebd != null) {
 			Integer n = ParseUtils.returnNumberOrNull(ebd.getNumberInExcess());
+
+			if (ebd.getText() != null) {
+				checkAndSaveInterestingSegments("EBD", ebd.getText());
+			}
 
 			if (n != null) {
 				parsedMessage.setTotal_bag_count(parsedMessage.getBagCount() + n);
@@ -882,6 +914,17 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 
 			}
 
+		}
+	}
+
+	private void checkAndSaveInterestingSegments(String segmentName, String segmentText) {
+		if (this.regexSegmentNames.contains(segmentName) && segmentText != null) {
+			for (Pattern p : this.patternRegexOnSegments) {
+				if (p.matcher(segmentText).find()) {
+					SavedSegmentVo ssv = new SavedSegmentVo(segmentName, segmentText, p.pattern());
+					this.parsedMessage.getSavedSegments().add(ssv);
+				}
+			}
 		}
 	}
 

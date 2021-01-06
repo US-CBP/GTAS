@@ -10,6 +10,7 @@ import gov.gtas.enumtype.TripTypeEnum;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -64,11 +65,22 @@ public class PnrMessageService extends MessageLoaderService {
 	@Value("${additional.processing.enabled.passenger}")
 	private Boolean additionalProcessing;
 
+	private List<String> regexSegmentNames;
+
+	private List<Pattern> patternOnSegment;
+
 
 	@Autowired
-	public PnrMessageService(PnrRepository msgDao, LoaderUtils utils,
-							 LookUpRepository lookupRepo, FlightPaxRepository flightPaxRepository, BagRepository bagRepository,
-							 BookingBagRepository bookingBagRepository, TamrAdapter tamrAdapter, OmniAdapter omniAdapter) {
+	public PnrMessageService(PnrRepository msgDao,
+							 LoaderUtils utils,
+							 LookUpRepository lookupRepo,
+							 FlightPaxRepository flightPaxRepository,
+							 BagRepository bagRepository,
+							 BookingBagRepository bookingBagRepository,
+							 TamrAdapter tamrAdapter,
+							 OmniAdapter omniAdapter,
+							 @Value("#{'${segments.extraparse}'.split(',')}") List<String> regexSegmentNames,
+							 @Value("#{'${segments.regex}'.split(',')}") List<String> regexOnSegments) {
 		this.msgDao = msgDao;
 		this.utils = utils;
 		this.lookupRepo = lookupRepo;
@@ -77,6 +89,15 @@ public class PnrMessageService extends MessageLoaderService {
 		this.bookingBagRepository = bookingBagRepository;
 		this.tamrAdapter = tamrAdapter;
 		this.omniAdapter = omniAdapter;
+		this.regexSegmentNames = regexSegmentNames;
+		this.patternOnSegment = new ArrayList<>();
+		for (String regex : regexOnSegments) {
+			if (StringUtils.isNotBlank(regex)) {
+				Pattern p = Pattern.compile(regex);
+				this.patternOnSegment.add(p);
+			}
+		}
+
 	}
 
 	@Override
@@ -97,7 +118,7 @@ public class PnrMessageService extends MessageLoaderService {
 		MessageStatus messageStatus;
 		MessageVo vo = null;
 		try {
-			EdifactParser<PnrVo> parser = new PnrGovParser();
+			EdifactParser<PnrVo> parser = new PnrGovParser(this.regexSegmentNames, this.patternOnSegment);
 			vo = parser.parse(msgDto.getRawMsg());
 			loaderRepo.checkHashCode(vo.getHashCode());
 			pnr.setRaw(LobUtils.createClob(vo.getRaw()));
@@ -143,6 +164,7 @@ public class PnrMessageService extends MessageLoaderService {
 			PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(primeFlight,
 					vo.getPassengers(), pnr.getPassengers(), pnr.getBookingDetails(), pnr);
 			loaderRepo.processPnr(pnr, vo);
+			addSegments(pnr, vo);
 			int createdPassengers = loaderRepo.createPassengers(passengerInformationDTO.getNewPax(),
 				 pnr.getPassengers(), primeFlight, pnr.getBookingDetails());
 			loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
@@ -194,6 +216,17 @@ public class PnrMessageService extends MessageLoaderService {
 		}
 		messageInformation.setMessageStatus(msgDto.getMessageStatus());
 		return messageInformation;
+	}
+
+	private void addSegments(Pnr pnr, PnrVo vo) {
+		for (SavedSegmentVo ssVo : vo.getSavedSegments() ) {
+			String segmentName = ssVo.getSegmentName();
+			String segmentText = ssVo.getSegmentText();
+			String regex = ssVo.getRegex();
+			SavedSegment ss = new SavedSegment(segmentName, segmentText, regex);
+			ss.setPnr(pnr);
+			pnr.getSavedSegments().add(ss);
+		}
 	}
 
 	@Transactional

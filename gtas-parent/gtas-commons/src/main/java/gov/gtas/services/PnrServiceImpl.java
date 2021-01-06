@@ -385,7 +385,16 @@ public class PnrServiceImpl implements PnrService {
 		}
 		return phoneMap;
 	}
-
+	public Map<Long, Set<SavedSegment>> createSegmentMap(Set<Long> pnrIds) {
+		Map<Long, Set<SavedSegment>> segmentMap = new HashMap<>();
+		List<Object[]> segmentList = pnrRepository.getSegmentsByPnr(pnrIds);
+		for (Object[] answerKey : segmentList) {
+			Long pnrId = (Long) answerKey[0];
+			SavedSegment savedSegment = (SavedSegment) answerKey[1];
+			processObject(savedSegment, segmentMap, pnrId);
+		}
+		return segmentMap;
+	}
 	public Map<Long, Set<Address>> createAddressMap(Set<Long> pnrIds) {
 		Map<Long, Set<Address>> addressMap = new HashMap<>();
 		List<Object[]> addressList = pnrRepository.getAddressesByPnr(pnrIds);
@@ -416,6 +425,8 @@ public class PnrServiceImpl implements PnrService {
 		}
 		return objectMap;
 	}
+
+
 
 	public Set<Pnr> pnrMessageWithFlightInfo(Set<Long> pids,Set<Long> messageIds, Long flightId) {
 		return pnrRepository.pnrMessageWithFlightInfo(pids, messageIds, flightId);

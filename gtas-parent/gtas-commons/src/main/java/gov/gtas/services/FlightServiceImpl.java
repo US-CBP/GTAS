@@ -100,6 +100,9 @@ public class FlightServiceImpl implements FlightService {
 
 			if (f.getFlightHitsFuzzy() != null) {
 				fuzzyHits = f.getFlightHitsFuzzy().getHitCount();
+				if (fuzzyHits == null) {
+					fuzzyHits = 0;
+				}
 				vo.setFuzzyHitCount(fuzzyHits);
 			}
 			if (f.getFlightHitsGraph() != null) {

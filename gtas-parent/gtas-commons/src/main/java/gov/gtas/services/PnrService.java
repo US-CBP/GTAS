@@ -42,6 +42,5 @@ public interface PnrService {
 	Map<Long, Set<Agency>> createTravelAgencyMap(Set<Long> pnrIds);
 	Map<Long, Set<Passenger>> getPassengersOnPnr(Set<Long> pids, Set<Long> hitApisIds);
 	Set<Pnr> pnrMessageWithFlightInfo(Set<Long> pids,Set<Long> messageIds, Long flightId);
-
-
-	}
+    Map<Long, Set<SavedSegment>> createSegmentMap(Set<Long> pnrIds);
+}

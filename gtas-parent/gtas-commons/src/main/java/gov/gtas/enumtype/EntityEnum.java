@@ -47,6 +47,8 @@ public enum EntityEnum {
 
 	FLIGHT_PAX("FLIGHT PAX", "FlightPax", "flightpax", ".flightPaxList"),
 
+	SAVED_SEGMENT("SAVED_SEGMENT", "SavedSegment", "savedSegment", ".savedSegments"),
+
 	SEAT("SEAT", "Seat", "seat", ".seatAssignments"),
 
 	DATA_RETENTION_STATUS("DATA RETENTION STATUS", "DataRetentionStatus", "drs", ".dataRetentionStatus"),

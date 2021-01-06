@@ -200,28 +200,27 @@ public class GtasLoaderImpl implements GtasLoader {
 		pnr.setPhones(null);
 		pnr.setDwellTimes(null);
 		pnr.setPaymentForms(null);
-		String stacktrace = ErrorUtils.getStacktrace(e);
-		pnr.setError(stacktrace);
+		pnr.setError(e.toString());
 		if (e instanceof DuplicateHashCodeException) {
 			logger.info(e.getMessage());
 			pnr.getStatus().setMessageStatusEnum(MessageStatusEnum.DUPLICATE_MESSAGE);
 		} else {
 			pnr.getStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
-			logger.error(stacktrace);
+			logger.error("Error in gtas Loader", e);
 		}
 	}
 
 
 	public static void handleException(Exception e, ApisMessage apisMessage) {
 		String stacktrace = ErrorUtils.getStacktrace(e);
-		apisMessage.setError(stacktrace);
+		apisMessage.setError(e.toString());
 		apisMessage.setHashCode(null);
 		if (e instanceof DuplicateHashCodeException) {
 			logger.info(e.getMessage());
 			apisMessage.getStatus().setMessageStatusEnum(MessageStatusEnum.DUPLICATE_MESSAGE);
 		} else {
 			apisMessage.getStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
-			logger.error(stacktrace);
+			logger.error("Error in GTASLOADER: ", e);
 		}
 	}
 

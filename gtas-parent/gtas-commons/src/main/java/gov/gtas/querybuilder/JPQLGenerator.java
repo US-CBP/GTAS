@@ -544,6 +544,10 @@ public class JPQLGenerator {
 			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.PHONE.getEntityReference()
 					+ " " + EntityEnum.PHONE.getAlias();
 			break;
+		case Constants.SAVED_SEGMENT:
+			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.SAVED_SEGMENT.getEntityReference()
+					+ " " + EntityEnum.SAVED_SEGMENT.getAlias();
+			break;
 		case Constants.PNR:
 			if (queryType == EntityEnum.FLIGHT) {
 				joinCondition = Constants.LEFT_JOIN + EntityEnum.FLIGHT.getAlias() + EntityEnum.PNR.getEntityReference()
@@ -575,11 +579,16 @@ public class JPQLGenerator {
 		if (entity != null && !entity.isEmpty()) {
 
 			for (EntityEnum entityEnum : entity) {
-				if (entityEnum == EntityEnum.ADDRESS || entityEnum == EntityEnum.CREDIT_CARD
-						|| entityEnum == EntityEnum.EMAIL || entityEnum == EntityEnum.FREQUENT_FLYER
-						|| entityEnum == EntityEnum.PHONE || entityEnum == EntityEnum.PNR
-						|| entityEnum == EntityEnum.TRAVEL_AGENCY || entityEnum == EntityEnum.DWELL_TIME
-						|| entityEnum == EntityEnum.FORM_OF_PAYMENT) {
+				if (entityEnum == EntityEnum.ADDRESS
+						|| entityEnum == EntityEnum.CREDIT_CARD
+						|| entityEnum == EntityEnum.EMAIL
+						|| entityEnum == EntityEnum.FREQUENT_FLYER
+						|| entityEnum == EntityEnum.PHONE
+						|| entityEnum == EntityEnum.PNR
+						|| entityEnum == EntityEnum.TRAVEL_AGENCY
+						|| entityEnum == EntityEnum.DWELL_TIME
+						|| entityEnum == EntityEnum.FORM_OF_PAYMENT
+						|| entityEnum == EntityEnum.SAVED_SEGMENT) {
 					return true;
 				}
 			}

@@ -101,7 +101,7 @@ public abstract class EdifactParser<T extends MessageVo> {
 	}
 
 	private void parseTrailer() throws ParseException {
-		getMandatorySegment(UNT.class);
+		getConditionalSegment(UNT.class);
 		getConditionalSegment(UNE.class);
 		getMandatorySegment(UNZ.class);
 	}
@@ -166,6 +166,7 @@ public abstract class EdifactParser<T extends MessageVo> {
 			Segment s = iter.next();
 			if (expectedName.equals(s.getName())) {
 				S rv = segmentFactory.build(s, clazz);
+				rv.setText(s.getText());
 				return rv;
 			} else {
 				if (mandatory) {

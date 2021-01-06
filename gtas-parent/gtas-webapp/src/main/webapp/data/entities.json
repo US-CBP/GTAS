@@ -1391,7 +1391,44 @@
       }
     ]
   },
-   "DwellTime": {
+  "SavedSegment": {
+    "label": "SAVED_SEGMENT",
+    "columns": [
+      {
+        "id": "SavedSegment.segmentName",
+        "label": "Segment Name",
+        "type": "string",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "IN",
+          "NOT_IN"
+        ]
+      },
+      {
+        "id": "SavedSegment.regex",
+        "label": "Regex",
+        "type": "string",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "CONTAINS",
+          "NOT_CONTAINS"
+        ]
+      },
+      {
+        "id": "SavedSegment.rawSegment",
+        "label": "Raw Segment",
+        "type": "string",
+        "operators": [
+          "CONTAINS",
+          "NOT_CONTAINS"
+        ]
+      }
+    ]
+  },
+
+  "DwellTime": {
     "label": "DWELL TIME",
     "columns": [
       {
