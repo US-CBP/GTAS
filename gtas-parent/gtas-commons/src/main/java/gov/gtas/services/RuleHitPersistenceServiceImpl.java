@@ -260,27 +260,27 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		Set<FlightHitsManual> flightHitsManuals = new HashSet<>();
 		Set<FlightPriorityCount> flightPriorityCounts = new HashSet<>();
 		for (Long flightId : flights) {
-			Integer ruleHits = Optional.ofNullable(hitsSummaryRepository.totalRuleHitCount(flightId)).orElse(0);
+			Integer ruleHits = hitsSummaryRepository.totalRuleHitCount(flightId);
 			FlightHitsRule ruleFlightHits = new FlightHitsRule(flightId, ruleHits);
 			flightHitsRules.add(ruleFlightHits);
 
-			Integer watchlistHit = Optional.ofNullable(hitsSummaryRepository.totalWatchlistHitCount(flightId)).orElse(0);
+			Integer watchlistHit = hitsSummaryRepository.totalWatchlistHitCount(flightId);
 			FlightHitsWatchlist watchlistHitCount = new FlightHitsWatchlist(flightId, watchlistHit);
 			flightHitsWatchlists.add(watchlistHitCount);
 
-			Integer graphWatchlistHit = Optional.ofNullable(hitsSummaryRepository.totalGraphHitCount(flightId)).orElse(0);
+			Integer graphWatchlistHit = hitsSummaryRepository.totalGraphHitCount(flightId);
 			FlightHitsGraph flightHitsGraph = new FlightHitsGraph(flightId, graphWatchlistHit);
 			flightHitsGraphs.add(flightHitsGraph);
 
-			Integer partialHitCount = Optional.ofNullable(hitsSummaryRepository.totalPartialHitCount(flightId)).orElse(0);
+			Integer partialHitCount = hitsSummaryRepository.totalPartialHitCount(flightId);
 			FlightHitsFuzzy flightHitsFuzzy = new FlightHitsFuzzy(flightId, partialHitCount);
 			flightHitsFuzzies.add(flightHitsFuzzy);
 
-			Integer externalHitCount = Optional.ofNullable(hitsSummaryRepository.totalExternalHitCount(flightId)).orElse(0);
+			Integer externalHitCount = hitsSummaryRepository.totalExternalHitCount(flightId);
 			FlightHitsExternal flightHitsExternal = new FlightHitsExternal(flightId, externalHitCount);
 			flightHitsExternals.add(flightHitsExternal);
 
-			Integer manualHitCount = Optional.ofNullable(hitsSummaryRepository.totalManualHitCount(flightId)).orElse(0);
+			Integer manualHitCount = hitsSummaryRepository.totalManualHitCount(flightId);
 			FlightHitsManual flightHitsManual = new FlightHitsManual(flightId, manualHitCount);
 			flightHitsManuals.add(flightHitsManual);
 
