@@ -25,6 +25,7 @@ import static gov.gtas.rule.builder.util.ConditionBuilderUtils.handleMultipleObj
 public class PnrRuleConditionBuilder {
 	private List<AddressConditionBuilder> addressConditionBuilder = new ArrayList<>();
 	private List<PhoneConditionBuilder> phoneConditionBuilder = new ArrayList<>();
+	private List<SegmentConditionBuilder> segmentConditionBuilder = new ArrayList<>();
 	private List<EmailConditionBuilder> emailConditionBuilder = new ArrayList<>();
 	private List<CreditCardConditionBuilder> creditCardConditionBuilder = new ArrayList<>();
 	private List<FrequentFlyerConditionBuilder> frequentFlyerConditionBuilder = new ArrayList<>();
@@ -89,6 +90,12 @@ public class PnrRuleConditionBuilder {
 				ecb.setGroupNumber(groupNumber);
 				conditionBuilderMap.put(uuid, ecb);
 				phoneConditionBuilder.add((PhoneConditionBuilder) ecb);
+				break;
+			case SAVED_SEGMENT:
+				groupNumber = conditionBuilderMap.size() + 1;
+				ecb = getEntityConditionBuilder(entityEnum, groupNumber);
+				conditionBuilderMap.put(uuid, ecb);
+				segmentConditionBuilder.add((SegmentConditionBuilder) ecb);	ecb.setGroupNumber(groupNumber);
 				break;
 			case EMAIL:
 				groupNumber = conditionBuilderMap.size() + 1;
@@ -156,6 +163,9 @@ public class PnrRuleConditionBuilder {
 		case FORM_OF_PAYMENT:
 			ecb = new PaymentFormConditionBuilder(drlVariableName);
 			break;
+		case SAVED_SEGMENT:
+			ecb = new SegmentConditionBuilder(drlVariableName);
+			break;
 		case PNR:
 		case FLIGHT_PAX:
 		case HITS:
@@ -189,6 +199,12 @@ public class PnrRuleConditionBuilder {
 		if (!phoneConditionBuilder.isEmpty()) {
 			for (PhoneConditionBuilder pcb : phoneConditionBuilder) {
 				addLinkCondition(linkStringBuilder, pcb.getLinkVariableName(), PnrPhoneLink.class.getSimpleName(),
+						pnrVarName);
+			}
+		}
+		if (!segmentConditionBuilder.isEmpty()) {
+			for (SegmentConditionBuilder sbc : segmentConditionBuilder) {
+				addLinkCondition(linkStringBuilder, sbc.getLinkVariableName(), PnrSegmentLink.class.getSimpleName(),
 						pnrVarName);
 			}
 		}
@@ -282,6 +298,9 @@ public class PnrRuleConditionBuilder {
 		for (PhoneConditionBuilder pCb : phoneConditionBuilder) {
 			parentStringBuilder.append(pCb.build());
 		}
+		for (SegmentConditionBuilder scb : segmentConditionBuilder) {
+			parentStringBuilder.append(scb.build());
+		}
 		for (EmailConditionBuilder eCb : emailConditionBuilder) {
 			parentStringBuilder.append(eCb.build());
 		}
@@ -316,6 +335,7 @@ public class PnrRuleConditionBuilder {
 	public void reset() {
 		addressConditionBuilder = new ArrayList<>();
 		phoneConditionBuilder = new ArrayList<>();
+		segmentConditionBuilder = new ArrayList<>();
 		emailConditionBuilder = new ArrayList<>();
 		creditCardConditionBuilder = new ArrayList<>();
 		travelAgencyConditionBuilder = new ArrayList<>();
@@ -353,6 +373,7 @@ public class PnrRuleConditionBuilder {
 			case CREDIT_CARD:
 			case TRAVEL_AGENCY:
 			case DWELL_TIME:
+			case SAVED_SEGMENT:
 			case FREQUENT_FLYER:
 				conditionBuilderMap.get(trm.getUuid()).addCondition(opCode, trm.getField(), attributeType,
 						trm.getValue());
@@ -390,6 +411,7 @@ public class PnrRuleConditionBuilder {
 	private void handleMultiVariableObjects() {
 		handleMultipleObjectTypeOnSameRule(addressConditionBuilder);
 		handleMultipleObjectTypeOnSameRule(phoneConditionBuilder);
+		handleMultipleObjectTypeOnSameRule(segmentConditionBuilder);
 		handleMultipleObjectTypeOnSameRule(emailConditionBuilder);
 		handleMultipleObjectTypeOnSameRule(creditCardConditionBuilder);
 		handleMultipleObjectTypeOnSameRule(frequentFlyerConditionBuilder);
@@ -414,5 +436,13 @@ public class PnrRuleConditionBuilder {
 
 	public String getSeatVarName() {
 		return pnrSeatConditionBuilder.getDrlVariableName();
+	}
+
+	public List<SegmentConditionBuilder> getSegmentConditionBuilder() {
+		return segmentConditionBuilder;
+	}
+
+	public void setSegmentConditionBuilder(List<SegmentConditionBuilder> segmentConditionBuilder) {
+		this.segmentConditionBuilder = segmentConditionBuilder;
 	}
 }

@@ -34,7 +34,7 @@ public class DrlRuleFileBuilder {
 			PassengerTripDetails.class, Document.class, Pnr.class, Address.class, Phone.class, Email.class,
 			FrequentFlyer.class, CreditCard.class, BookingDetail.class, Agency.class, DwellTime.class, FlightPax.class,
 			Bag.class, PnrAddressLink.class, PnrCreditCardLink.class, PnrEmailLink.class, PnrFrequentFlyerLink.class,
-			PnrBookingLink.class, PnrPassengerLink.class, PnrPhoneLink.class, PnrTravelAgencyLink.class,
+			PnrBookingLink.class, PnrPassengerLink.class, PnrSegmentLink.class, SavedSegment.class, PnrPhoneLink.class, PnrTravelAgencyLink.class,
 			PnrDwellTimeLink.class, Seat.class, PaymentForm.class, MutableFlightDetails.class,
 			PnrFormOfPaymentLink.class, FlightPassengerLink.class };
 

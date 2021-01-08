@@ -333,6 +333,7 @@ public class RuleConditionBuilder {
 			case ADDRESS:
 			case BOOKING_DETAIL:
 			case CREDIT_CARD:
+			case SAVED_SEGMENT:
 				pnrRuleConditionBuilder.addRuleCondition(attributeType, opCode, trm);
 				break;
 			case HITS:

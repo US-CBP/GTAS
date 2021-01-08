@@ -21,10 +21,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -238,4 +236,28 @@ public class PnrGovParserTest implements ParserTestHelper {
 		PnrVo vo = this.parser.parse(pnrExample);
 		assertNotNull(vo);
 	}
+
+    @Test
+    public void additionalFields() throws IOException, URISyntaxException, ParseException {
+        List<String> fields = new ArrayList<>();
+        fields.add("IFT");
+        List<Pattern> patterns = new ArrayList<>();
+        patterns.add(Pattern.compile("[\\s\\S]*"));
+        PnrGovParser pnrGovParser = new PnrGovParser(fields, patterns);
+        String pnrExample = getMessageText(PNR_META_CHARACTERS);
+        PnrVo vo = pnrGovParser.parse(pnrExample);
+        assertEquals(4, vo.getSavedSegments().size());
+    }
+
+    @Test
+    public void additionalFieldsRegexed() throws IOException, URISyntaxException, ParseException {
+        List<String> fields = new ArrayList<>();
+        fields.add("IFT");
+        List<Pattern> patterns = new ArrayList<>();
+        patterns.add(Pattern.compile("AA 1A-IP"));
+        PnrGovParser pnrGovParser = new PnrGovParser(fields, patterns);
+        String pnrExample = getMessageText(PNR_META_CHARACTERS);
+        PnrVo vo = pnrGovParser.parse(pnrExample);
+        assertEquals(1, vo.getSavedSegments().size());
+    }
 }

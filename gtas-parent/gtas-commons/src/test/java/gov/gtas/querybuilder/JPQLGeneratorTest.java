@@ -226,6 +226,43 @@ public class JPQLGeneratorTest {
 		Assert.assertEquals(expectedQuery, query);
 	}
 
+
+	@Test
+	public void testContainsSegmentClause() throws InvalidQueryRepositoryException {
+		String expectedQuery = "select distinct p.id, p, " +
+				"p.flight from Passenger p " +
+				"left join p.flight f  " +
+				"left join p.pnrs pnr " +
+				"left join pnr.savedSegments savedSegment " +
+				"where (savedSegment.rawMessage LIKE ?1)" +
+				" and (((p.dataRetentionStatus.maskedAPIS = false" +
+				" and p.dataRetentionStatus.hasApisMessage = true)" +
+				" or (p.dataRetentionStatus.maskedPNR = false" +
+				" and p.dataRetentionStatus.hasPnrMessage = true))" +
+				" and ((p.dataRetentionStatus.deletedAPIS = false" +
+				" and p.dataRetentionStatus.hasApisMessage = true)" +
+				" or (p.dataRetentionStatus.deletedPNR = false" +
+				" and p.dataRetentionStatus.hasPnrMessage = true)))";
+
+		QueryObject mockQueryObject  = new QueryObject();
+		QueryTerm mockQueryTerm = new QueryTerm();
+
+		mockQueryTerm.setUuid(null);
+		mockQueryTerm.setType("string");
+		mockQueryTerm.setEntity("SavedSegment");
+		mockQueryTerm.setOperator("contains");
+		mockQueryTerm.setValue(new String[]{"FOO"});
+		mockQueryTerm.setField("rawMessage");
+
+		List<QueryEntity> mockQTList = new ArrayList<>();
+		mockQTList.add(mockQueryTerm);
+
+		mockQueryObject.setCondition("AND");
+		mockQueryObject.setRules(mockQTList);
+
+		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		Assert.assertEquals(expectedQuery, query);
+	}
 	@Test
 	public void testNotInWhereClauseForDocument() throws InvalidQueryRepositoryException {
 		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p " +

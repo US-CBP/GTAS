@@ -475,7 +475,11 @@ public class PnrUtils {
 	public static List<DocumentVo> convertDocVoFromDoco(List<SSRDoco> ssrDocos) {
 		List<DocumentVo> docList = new ArrayList<DocumentVo>();
 		for (SSRDoco ssrDoco : ssrDocos) {
-			docList.add(new DocumentVo(ssrDoco));
+			try {
+				docList.add(new DocumentVo(ssrDoco));
+			} catch (Exception e ){
+				logger.error("Unable to make an SSRDoc!");
+			}
 		}
 		return docList;
 	}
