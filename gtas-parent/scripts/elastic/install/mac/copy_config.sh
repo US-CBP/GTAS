@@ -13,4 +13,4 @@ echo $ES_INSTALL_LOCATION/logstash/config
 yes | cp -rf ../../config/logstash/* $ES_INSTALL_LOCATION/logstash/config
 yes | cp -rf ../../config/logstash/mac/* $ES_INSTALL_LOCATION/logstash/config
 
-yes | cp -f ../../../../../gtas-parent/gtas-webapp/target/gtas/WEB-INF/lib/mariadb-java-client-2.3.0.jar $ES_INSTALL_LOCATION/logstash/config
+wget https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar -P  $ES_INSTALL_LOCATION/logstash/logstash-core/lib/jars
