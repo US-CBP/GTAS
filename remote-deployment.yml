@@ -20,7 +20,7 @@ services:
       SSL_TRUST_HOST: ""
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
-      PROXY_IP: ""
+      UI_ADDRESS: ""
     volumes:
       - type: bind
         source: /mnt/gtas-java-jre
@@ -43,7 +43,7 @@ services:
       SSL_TRUST_HOST: ""
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
-      PROXY_IP: ""
+      UI_ADDRESS: ""
     volumes:
       - type: bind
       #   source: /mnt/gtas-java-jre

@@ -19,13 +19,13 @@ services:
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
       JAVA_OPTS: "-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=UTC"
-      EMAIL_SENDER_USERNAME: ""
-      EMAIL_SENDER_PASSWORD: ""
-      EMAIL_SENDER_HOST: ""
+      EMAIL_SENDER_USERNAME: ${EMAIL_SENDER_USERNAME}
+      EMAIL_SENDER_PASSWORD: ${EMAIL_SENDER_PASSWORD}
+      EMAIL_SENDER_HOST: ${EMAIL_SENDER_HOST}
       SSL_TRUST_HOST: ""
-      AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
-      MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
-      PROXY_IP: ${PROXY_HOST}
+      AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "true"
+      MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "true"
+      UI_ADDRESS: ${PROXY_HOST}
       BOOTSTRAP_PATH: "/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password"
       MYSQL_USER_PATH: "/run/secrets/mysql-webapp-user/mysql-webapp-user"
       MYSQL_PASSWORD_PATH: "/run/secrets/mysql-webapp-password/mysql-webapp-password"
@@ -57,7 +57,7 @@ services:
       SSL_TRUST_HOST: ""
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
-      PROXY_IP: ${PROXY_HOST}
+      UI_ADDRESS: ${PROXY_HOST}
       MYSQL_USER_PATH: "/run/secrets/mysql-processor-user/mysql-processor-user"
       MYSQL_PASSWORD_PATH: "/run/secrets/mysql-processor-password/mysql-processor-password"
       NEO4J_USER_PATH: "/run/secrets/webapp-neo4j-user/webapp-neo4j-user"

@@ -11,7 +11,7 @@ services:
       ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
       ADDITIONAL_PROCESSING_RAW: "false"
       ADDITIONAL_PROCESSING_RULES: "false"
-      PROXY_IP: localhost
+      UI_ADDRESS: localhost
   activemq:
     ports:
       - 61616:61616
@@ -27,7 +27,7 @@ services:
       ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
       ADDITIONAL_PROCESSING_RAW: "false"
       ADDITIONAL_PROCESSING_RULES: "false"
-      PROXY_IP: localhost
+      UI_ADDRESS: localhost
     volumes:
       - type: bind
         source: ./gtas-data
