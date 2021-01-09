@@ -109,6 +109,9 @@ jobs:
       - name: Generate Kubernetes deployment configuration file
         shell: bash
         env:
+          EMAIL_SENDER_USERNAME: ${{ secrets.EMAIL_SENDER_USERNAME }}
+          EMAIL_SENDER_PASSWORD: ${{ secrets.EMAIL_SENDER_PASSWORD }}
+          EMAIL_SENDER_HOST: ${{ EMAIL_SENDER_HOST }}
           NEO4J_HOST: ${{ secrets.NEO4J_HOST }}
           NEO4J_BOLT: ${{ secrets.NEO4J_BOLT }}
           MARIADB_HOST: ${{ secrets.MARIADB_HOST }}
