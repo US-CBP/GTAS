@@ -176,9 +176,9 @@ private UserService userService;
     return carrierService.findAll();
   }
 
-  @RequestMapping(method = RequestMethod.GET, value = "/api/carrierupdated/{lastFetch}")
-  public List<CarrierVo> getCarrierUpdated(@PathVariable String lastFetch) throws ParseException {
-    Date latest = DateCalendarUtils.parseJsonDate(lastFetch);
+  @RequestMapping(method = RequestMethod.GET, value = "/api/carrierupdated/{lastFetch:.+}")
+  public List<CarrierVo> getCarrierUpdated(@PathVariable("lastFetch") String lastFetch) throws ParseException {
+    Date latest = DateCalendarUtils.parseJsonDateTimeUTCFromISO(lastFetch);
     return carrierService.findAllUpdated(latest);
   }
 
@@ -218,9 +218,10 @@ private UserService userService;
     return countryService.findAll();
   }
 
-  @RequestMapping(method = RequestMethod.GET, value = "/api/countryupdated/{lastFetch}")
-  public List<CountryVo> getCountryUpdated(@PathVariable String lastFetch) throws ParseException {
-    Date latest = DateCalendarUtils.parseJsonDate(lastFetch);
+  @RequestMapping(method = RequestMethod.GET, value = "/api/countryupdated/{lastFetch:.+}")
+  public List<CountryVo> getCountryUpdated(@PathVariable("lastFetch") String lastFetch) throws ParseException {
+    Date latest = DateCalendarUtils.parseJsonDateTimeUTCFromISO(lastFetch);
+
     return countryService.findAllUpdated(latest);
   }
 
@@ -260,9 +261,9 @@ private UserService userService;
     return airportService.findAll();
   }
 
-  @RequestMapping(method = RequestMethod.GET, value = "/api/airportupdated/{lastFetch}")
-  public List<AirportVo> getAirportUpdated(@PathVariable String lastFetch) throws ParseException {
-    Date latest = DateCalendarUtils.parseJsonDate(lastFetch);
+  @RequestMapping(method = RequestMethod.GET, value = "/api/airportupdated/{lastFetch:.+}")
+  public List<AirportVo> getAirportUpdated(@PathVariable("lastFetch") String lastFetch) throws ParseException {
+    Date latest = DateCalendarUtils.parseJsonDateTimeUTCFromISO(lastFetch);
     return airportService.findAllUpdated(latest);
   }
 
@@ -302,9 +303,9 @@ private UserService userService;
     return cctypeService.findAll();
   }
 
-  @RequestMapping(method = RequestMethod.GET, value = "/api/cctypeupdated/{lastFetch}")
-  public List<CreditCardTypeVo> getCreditCardTypeUpdated(@PathVariable String lastFetch) throws ParseException {
-    Date latest = DateCalendarUtils.parseJsonDate(lastFetch);
+  @RequestMapping(method = RequestMethod.GET, value = "/api/cctypeupdated/{lastFetch:.+}")
+  public List<CreditCardTypeVo> getCreditCardTypeUpdated(@PathVariable("lastFetch") String lastFetch) throws ParseException {
+    Date latest = DateCalendarUtils.parseJsonDateTimeUTCFromISO(lastFetch);
     return cctypeService.findAllUpdated(latest);
   }
 

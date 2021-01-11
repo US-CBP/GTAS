@@ -105,6 +105,7 @@ public class CreditCardTypeServiceImpl implements CreditCardTypeService {
     if (cctvo != null) {
       CreditCardType cct =  buildCreditCardType(cctvo);
       cct.setArchived(true);
+      cct.setUpdatedAt(new Date());
       cctypeRespository.save(cct);
     }
 

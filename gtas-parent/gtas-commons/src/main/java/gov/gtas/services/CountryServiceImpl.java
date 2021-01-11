@@ -64,6 +64,7 @@ public class CountryServiceImpl implements CountryService {
 
   @Transactional
   public List<CountryVo> findAllUpdated(Date dt) {
+
     List<Country> allCountries = (List<Country>) countryRepository.findAllUpdated(dt);
 
     List<CountryVo> allCountryVos = new ArrayList<>();
@@ -153,6 +154,8 @@ public class CountryServiceImpl implements CountryService {
     if (cvo != null) {
       Country c = buildCountry(cvo);
       c.setArchived(true);
+      c.setUpdatedAt(new Date());
+
       countryRepository.save(c);
     }
 

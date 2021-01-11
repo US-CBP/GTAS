@@ -24,7 +24,7 @@ public class CountryVo implements Serializable {
 	public CountryVo() {
 	}
 
-	public CountryVo(Long id, Long originId, String iso2, String iso3, String name, String isoNumeric, Boolean archvied) {
+	public CountryVo(Long id, Long originId, String iso2, String iso3, String name, String isoNumeric, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.iso2 = iso2;

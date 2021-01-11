@@ -153,6 +153,7 @@ public class AirportServiceImpl implements AirportService {
     if (avo != null) {
       Airport a = buildAirport(avo);
       a.setArchived(true);
+      a.setUpdatedAt(new Date());
       airportRepo.save(a);
     }
 

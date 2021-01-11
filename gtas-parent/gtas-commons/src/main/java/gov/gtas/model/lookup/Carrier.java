@@ -82,7 +82,7 @@ public class Carrier extends BaseEntityAudit {
 		this.icao = data;
 	}
 
-	public Boolean isArchived() { return archived; }
+	public Boolean getArchived() { return archived; }
 
 	public void setArchived(Boolean archived) { this.archived = archived; }
 

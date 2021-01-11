@@ -151,6 +151,7 @@ public class CarrierServiceImpl implements CarrierService {
     if (cvo != null) {
       Carrier c = buildCarrier(cvo);
       c.setArchived(true);
+      c.setUpdatedAt(new Date());
       carrierRespository.save(c);
     }
 
@@ -159,12 +160,12 @@ public class CarrierServiceImpl implements CarrierService {
 
   private Carrier buildCarrier(CarrierVo carrierVo) {
     return new Carrier(carrierVo.getId(), carrierVo.getOriginId(), carrierVo.getName(), carrierVo.getIata(),
-        carrierVo.getIcao());
+        carrierVo.getIcao(), carrierVo.getArchived());
   }
 
   private CarrierVo buildCarrierVo(Carrier carrier) {
     return new CarrierVo(carrier.getId(), carrier.getOriginId(), carrier.getName(), carrier.getIata(),
-        carrier.getIcao());
+        carrier.getIcao(), carrier.getArchived());
   }
 
 }
