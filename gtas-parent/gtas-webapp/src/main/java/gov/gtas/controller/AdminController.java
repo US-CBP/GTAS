@@ -126,6 +126,11 @@ private UserService userService;
     return fileService.getLogTypeList();
   }
 
+  @RequestMapping(method = RequestMethod.GET, value ="/api/noteType")
+  public List<NoteTypeVo> getAllNoteTypes(){
+    return noteTypeService.getAllNoteTypes();
+  }
+
   @ResponseBody
   @ResponseStatus(HttpStatus.OK)
   @PostMapping(value = "/api/noteType", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)

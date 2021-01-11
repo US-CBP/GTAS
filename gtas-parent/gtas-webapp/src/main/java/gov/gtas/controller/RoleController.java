@@ -20,7 +20,7 @@ public class RoleController {
 	@Autowired
 	RoleService roleService;
 
-	@RequestMapping(method = RequestMethod.GET, value = "/roles/")
+	@RequestMapping(method = RequestMethod.GET, value = "/roles")
 	public Set<RoleData> getAllRoles() {
 
 		return roleService.findAll();
