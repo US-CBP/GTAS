@@ -153,9 +153,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 		/* Update the user password only. */
-	@Transactional
 	public UserData updatePassword(String userId, String password) {
-		User existingUser = fetchUser(userId.toUpperCase());
+		User existingUser = userRepository.findOne(userId.toUpperCase());
 
 			existingUser.setPassword(getEncodedPassword(password));
 
@@ -235,9 +234,8 @@ public class UserServiceImpl implements UserService {
 		Update all user data except the password. The password is handled by a separate function
 	 */
 	@Override
-	@Transactional
 	public UserData updateByAdmin(UserData data) {
-		User entity = fetchUser(data.getUserId());	//returns error if null
+		User entity = userRepository.findOne(data.getUserId());	//returns error if null
 
 		User mappedEntity = userServiceUtil.mapUserEntityFromUserData(data);
 
