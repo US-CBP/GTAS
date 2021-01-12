@@ -43,6 +43,7 @@ public class RuleEngineRequestBuilder {
 	private Set<Long> flightIdSet;
 	private Set<Long> addressIdSet;
 	private Set<Long> phoneIdSet;
+	private Set<Long> segmentIdSet;
 	private Set<Long> emailIdSet;
 	private Set<Long> creditCardIdSet;
 	private Set<Long> frequentFlyerIdSet;
@@ -52,6 +53,7 @@ public class RuleEngineRequestBuilder {
 	private Set<Long> bookingDetailIdSet;
 	private Set<PnrAddressLink> addressLinks;
 	private Set<PnrPhoneLink> phoneLinks;
+	private Set<PnrSegmentLink> segmentLinks;
 	private Set<PnrEmailLink> emailLinks;
 	private Set<PnrCreditCardLink> creditCardLinks;
 	private Set<PnrFrequentFlyerLink> frequentFlyerLinks;
@@ -101,6 +103,8 @@ public class RuleEngineRequestBuilder {
 		this.frequentFlyerIdSet = new HashSet<>();
 		this.passengerLinkSet = new HashSet<>();
 		this.phoneIdSet = new HashSet<>();
+		this.segmentIdSet = new HashSet<>();
+		this.segmentLinks = new HashSet<>();
 		this.travelAgencyIdSet = new HashSet<>();
 		this.passengerFlightSet = new HashSet<>();
 		this.flightPassengerLinks = new HashSet<>();
@@ -142,6 +146,8 @@ public class RuleEngineRequestBuilder {
 		this.frequentFlyerIdSet = new HashSet<>();
 		this.passengerLinkSet = new HashSet<>();
 		this.phoneIdSet = new HashSet<>();
+		this.segmentIdSet = new HashSet<>();
+		this.segmentLinks = new HashSet<>();
 		this.travelAgencyIdSet = new HashSet<>();
 		this.passengerFlightSet = new HashSet<>();
 		this.flightPassengerLinks = new HashSet<>();
@@ -230,6 +236,7 @@ public class RuleEngineRequestBuilder {
 		Map<Long, Set<Address>> addressObjects = pnrService.createAddressMap(pnrIds);
 		Map<Long, Set<Phone>> phoneObjects = pnrService.createPhoneMap(pnrIds);
 		Map<Long, Set<Email>> emailsObjects = pnrService.createEmailMap(pnrIds);
+		Map<Long, Set<SavedSegment>> segmentObjects  = pnrService.createSegmentMap(pnrIds);
 		Map<Long, Set<CreditCard>> creditCardObjects = pnrService.createCreditCardMap(pnrIds);
 		Map<Long, Set<BookingDetail>> bookingDetailObjects = pnrService.createBookingDetailMap(pnrIds);
 		Map<Long, Set<FrequentFlyer>> frequentFlyerObjects = pnrService.createFrequentFlyersMap(pnrIds);
@@ -322,6 +329,7 @@ public class RuleEngineRequestBuilder {
 			addBookingDetailObjects(pnrId, bookingDetailObjects.get(pnrId));
 			addCreditCardObjects(pnrId, creditCardObjects.get(pnrId));
 			addEmailObjects(pnrId, emailsObjects.get(pnrId));
+			addSegmentLinkObjects(pnrId, segmentObjects.get(pnrId));
 			addPhoneObjects(pnrId, phoneObjects.get(pnrId));
 			addTravelAgencyObjects(pnrId, travelAgency.get(pnrId));
 			addDwellTimeObjects(pnrId, dwellMap.get(pnrId));
@@ -468,6 +476,26 @@ public class RuleEngineRequestBuilder {
 			if (!phoneLinks.contains(pnrPhoneLink)) {
 				requestObjectList.add(pnrPhoneLink);
 				phoneLinks.add(pnrPhoneLink);
+			}
+		}
+	}
+
+
+	private void addSegmentLinkObjects(Long pnrId, Set<SavedSegment> savedSegments) {
+		if (savedSegments == null || savedSegments.isEmpty()) {
+			logger.debug("No saved segments.");
+			return;
+		}
+		for (SavedSegment ss : savedSegments) {
+			Long id = ss.getId();
+			if (!this.segmentIdSet.contains(id)) {
+				requestObjectList.add(ss);
+				this.segmentIdSet.add(id);
+			}
+			PnrSegmentLink pnrSegmentLink = new PnrSegmentLink(pnrId, ss.getId());
+			if (!segmentLinks.contains(pnrSegmentLink)) {
+				requestObjectList.add(pnrSegmentLink);
+				segmentLinks.add(pnrSegmentLink);
 			}
 		}
 	}

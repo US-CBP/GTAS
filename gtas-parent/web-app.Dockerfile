@@ -6,7 +6,7 @@ COPY ./ /gtas-parent/
 COPY ./docker-resources/hibernate.properties /gtas-parent/gtas-commons/src/main/resources/hibernate.properties
 
 WORKDIR /gtas-parent
-RUN mvn clean install -Dmaven.test.skip=true
+RUN mvn clean install
 RUN cd / && rm -rf /gtas-parent
 
 RUN mkdir /temp-dos
@@ -16,7 +16,7 @@ RUN dos2unix /temp-dos/setenv.sh
 
 FROM tomcat:9-jdk8-adoptopenjdk-openj9 as tomcat
 
-RUN mkdir -p /usr/local/tomcat/webapps/gtas /logs/apache-tomcat-web /logs/apache-tomcat /temp
+RUN mkdir -p /usr/local/tomcat/webapps/gtas /logs/apache-tomcat-web /logs/apache-tomcat /temp /usr/local/tomcat/conf/cert /usr/local/tomcat/conf/key
 
 COPY --from=build-stage /root/.m2/repository/gov/gtas/gtas-webapp/1.0.0-BUILD-SNAPSHOT/gtas-webapp-1.0.0-BUILD-SNAPSHOT.war /usr/local/tomcat/webapps/gtas.war
 COPY --from=build-stage /temp-dos/setenv.sh /usr/local/tomcat/bin/setenv.sh
@@ -32,4 +32,4 @@ WORKDIR /usr/local/tomcat/webapps/gtas
 RUN  jar -xvf /usr/local/tomcat/webapps/gtas.war
 
 WORKDIR /usr/local/tomcat/bin
-ENTRYPOINT mkdir -p /scheduler-logs/temp /temp && cp -R /temp-cert/* /usr/local/tomcat/conf/ && dockerize -wait tcp://${DB_HOST}:3306 -timeout 1000s logrotate /logrotate.conf && catalina.sh run
+ENTRYPOINT mkdir -p /scheduler-logs/temp /temp && dockerize -wait tcp://${DB_HOST}:3306 -timeout 1000s logrotate /logrotate.conf && catalina.sh run

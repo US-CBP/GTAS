@@ -29,6 +29,7 @@ public final class Constants {
 	public static final String HITS = "HITSSUMMARY";
 	public static final String PASSENGER = "PASSENGER";
 	public static final String PHONE = "PHONE";
+	public static final String SAVED_SEGMENT = "SAVEDSEGMENT";
 	public static final String PNR = "PNR";
 	public static final String AGENCY = "AGENCY";
 	public static final String DWELLTIME = "DWELLTIME";

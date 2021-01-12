@@ -3,7 +3,7 @@ FROM adoptopenjdk/maven-openjdk8 as scheduler-builder
 
 COPY ./gtas-parent/ /gtas-parent
 WORKDIR /gtas-parent
-RUN mvn clean install -Dmaven.test.skip=true --projects gtas-job-scheduler-war -am
+RUN mvn clean install --projects gtas-job-scheduler-war -am
 
 RUN apt-get -y update && apt-get -y install dos2unix
 RUN mkdir /temp-dos

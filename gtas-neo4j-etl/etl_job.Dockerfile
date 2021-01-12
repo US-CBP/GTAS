@@ -2,7 +2,7 @@ FROM adoptopenjdk/maven-openjdk8 as scheduler-builder
 
 COPY ./gtas-neo4j-scheduler /etl-project
 WORKDIR /etl-project
-RUN mvn clean install -Dskip.unit.tests=true
+RUN mvn clean install -Dskip.unit.tests=false
 
 
 

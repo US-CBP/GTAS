@@ -162,6 +162,9 @@ public class QueryValidationUtils {
 				case Constants.PHONE:
 					validField = validateField(PhoneMapping.values(), field);
 					break;
+				case Constants.SAVED_SEGMENT:
+					validField = validateField(SavedSegmentMapping.values(), field);
+					break;
 				case Constants.PNR:
 					validField = validateField(PNRMapping.values(), field);
 					break;

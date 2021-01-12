@@ -11,7 +11,7 @@ services:
       ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
       ADDITIONAL_PROCESSING_RAW: "false"
       ADDITIONAL_PROCESSING_RULES: "false"
-      PROXY_IP: localhost
+      UI_ADDRESS: localhost
   activemq:
     ports:
       - 61616:61616
@@ -27,7 +27,7 @@ services:
       ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
       ADDITIONAL_PROCESSING_RAW: "false"
       ADDITIONAL_PROCESSING_RULES: "false"
-      PROXY_IP: localhost
+      UI_ADDRESS: localhost
     volumes:
       - type: bind
         source: ./gtas-data
@@ -35,6 +35,7 @@ services:
         consistency: consistent
   neo4j:
     environment:
+      NEO4J_AUTH: "neo4j/admin"
       NEO4J_dbms_connector_bolt_advertised__address: localhost:7687
       NEO4J_dbms_connectors_default__advertised__address: localhost
 secrets:

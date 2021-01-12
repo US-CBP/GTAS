@@ -5,11 +5,9 @@
  */
 package gov.gtas.parsers.vo;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import gov.gtas.model.SavedSegment;
 import gov.gtas.parsers.pnrgov.segment.TVL_L0;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,6 +34,7 @@ public class PnrVo extends MessageVo implements Validatable {
 	private String formOfPayment;
 	private TVL_L0 primeFlight;
 	private Integer daysBookedBeforeTravel;
+	private final Set<SavedSegmentVo> savedSegments = new HashSet<>();
 
 	private List<PassengerVo> passengers = new ArrayList<>();
 	private List<BagMeasurementsVo> bagMeasurements = new ArrayList<>();
@@ -49,6 +48,11 @@ public class PnrVo extends MessageVo implements Validatable {
 	private List<PaymentFormVo> FormOfPayments = new ArrayList<>();
 	private Date reservationCreateDate;
 	private Boolean headPool = Boolean.FALSE;
+
+
+	public Set<SavedSegmentVo> getSavedSegments() {
+		return savedSegments;
+	}
 
 	public double getTotal_bag_weight() {
 		return total_bag_weight;
