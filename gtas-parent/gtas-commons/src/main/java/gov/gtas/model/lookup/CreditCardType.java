@@ -17,7 +17,7 @@ import java.util.Objects;
 
 @Cacheable
 @Entity
-@Table(name = "credit_card_type", indexes = { @Index(columnList = "code,updated_at", name = "cctype_code_index") })
+@Table(name = "credit_card_type", indexes = { @Index(columnList = "code", name = "cctype_code_index"), @Index(columnList = "updated_at", name = "cctype_updated_at_index") })
 public class CreditCardType extends BaseEntityAudit {
 	private Long originId;
 

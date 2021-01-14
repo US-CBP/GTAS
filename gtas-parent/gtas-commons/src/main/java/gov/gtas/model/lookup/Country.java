@@ -19,7 +19,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 @Cacheable
 @Entity
-@Table(name = "country", indexes = { @Index(columnList = "iso3,updated_at", name = "country_iso3_index") })
+@Table(name = "country", indexes = { @Index(columnList = "iso3", name = "country_iso3_index"), @Index(columnList = "updated_at", name = "country_updated_at_index") })
 public class Country extends BaseEntityAudit {
 
 	private Long originId;

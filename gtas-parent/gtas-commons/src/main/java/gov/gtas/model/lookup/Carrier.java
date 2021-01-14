@@ -18,7 +18,7 @@ import java.util.Date;
 
 @Cacheable
 @Entity
-@Table(name = "carrier", indexes = { @Index(columnList = "iata,updated_at", name = "carrier_iata_index") })
+@Table(name = "carrier", indexes = { @Index(columnList = "iata", name = "carrier_iata_index"), @Index(columnList = "updated_at", name = "carrier_updated_at_index") })
 public class Carrier extends BaseEntityAudit {
 
 	private Long originId;

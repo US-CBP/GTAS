@@ -20,7 +20,7 @@ import gov.gtas.model.BaseEntityAudit;
 
 @Cacheable
 @Entity
-@Table(name = "airport", indexes = { @Index(columnList = "iata,updated_at", name = "airport_iata_index") })
+@Table(name = "airport", indexes = { @Index(columnList = "iata", name = "airport_iata_index"), @Index(columnList = "updated_at", name = "airport_updated_at_index") })
 public class Airport extends BaseEntityAudit {
 
 	private Long originId;
