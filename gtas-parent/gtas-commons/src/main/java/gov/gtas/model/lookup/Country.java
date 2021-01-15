@@ -5,8 +5,9 @@
  */
 package gov.gtas.model.lookup;
 
-import gov.gtas.model.BaseEntity;
+import gov.gtas.model.BaseEntityAudit;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,8 +19,8 @@ import org.springframework.cache.annotation.Cacheable;
 
 @Cacheable
 @Entity
-@Table(name = "country", indexes = { @Index(columnList = "iso3", name = "country_iso3_index") })
-public class Country extends BaseEntity {
+@Table(name = "country", indexes = { @Index(columnList = "iso3", name = "country_iso3_index"), @Index(columnList = "updated_at", name = "country_updated_at_index") })
+public class Country extends BaseEntityAudit {
 
 	private Long originId;
 	@Column(length = 2)
@@ -35,18 +36,25 @@ public class Country extends BaseEntity {
 	@OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
 	private Set<CountryAndOrganization> countryGroupSet;
 
+	private Boolean archived;
+
 	public Country() {
 	}
 
-	public Country(Long id, Long originId, String iso2, String iso3, String name, String isoNumeric) {
+	public Country(Long id, Long originId, String iso2, String iso3, String name, String isoNumeric, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.iso2 = iso2;
 		this.iso3 = iso3;
 		this.name = name;
 		this.isoNumeric = isoNumeric;
+		this.archived = archived;
+		this.setUpdatedAt(new Date());
 	}
 
+	public Country(Long id, Long originId, String iso2, String iso3, String name, String isoNumeric) {
+		this(id, originId, iso2, iso3, name, isoNumeric, false);
+	}
 
 	public Long getOriginId() {
 		return originId;
@@ -86,6 +94,12 @@ public class Country extends BaseEntity {
 
 	public void setIsoNumeric(String data) {
 		this.isoNumeric = data;
+	}
+
+	public Boolean getArchived() { return archived; }
+
+	public void setArchived(Boolean archived) {
+		this.archived= archived;
 	}
 
 	@Override

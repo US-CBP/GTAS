@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -25,8 +26,7 @@ public class CreditCardTypeRepositoryImpl implements CreditCardTypeRepositoryCus
 
 	@Override
 	public CreditCardType restore(CreditCardType currentEdited) {
-		if (currentEdited.getOriginId() == null)
-			return currentEdited;
+		if (currentEdited.getOriginId() == null) return null;
 
 		String sqlString = " SELECT c FROM CreditCardTypeRestore c WHERE c.id = :originid";
 		TypedQuery<CreditCardTypeRestore> query = em.createQuery(sqlString, CreditCardTypeRestore.class);
@@ -37,39 +37,25 @@ public class CreditCardTypeRepositoryImpl implements CreditCardTypeRepositoryCus
 			CreditCardType restored = currentEdited;
 			restored.setCode(unedited.getCode());
 			restored.setDescription(unedited.getDescription());
+			restored.setUpdatedAt(new Date());
+			restored.setArchived(false);
 
 			return repo.save(restored);
 		}
-		/// else throw warning there was no matching data found.
-		/// record is either user-created or there's an issue with the CreditCardTypeRestore
-		/// data.
-		return currentEdited;
+		return null;
 	}
 
+	/* Restore the original cctypes to their initial unedited values. Does not affect user-created cctypes */
 	@Override
 	public int restoreAll() {
-		String sqlString = " SELECT c FROM CreditCardTypeRestore c";
-		TypedQuery<CreditCardTypeRestore> query = em.createQuery(sqlString, CreditCardTypeRestore.class);
-		List<CreditCardTypeRestore> cctr = query.getResultList();
-
-		Query deleteQuery = em.createNativeQuery(" DELETE FROM credit_card_type ");
-		int numDeleted = deleteQuery.executeUpdate();
+		String sqlString = " SELECT c FROM CreditCardType c WHERE c.originId > 0";
+		TypedQuery<CreditCardType> query = em.createQuery(sqlString, CreditCardType.class);
+		List<CreditCardType> originalCctypes = query.getResultList();
 
 		int numRestored = 0;
 
-		for (CreditCardTypeRestore unedited : cctr) {
-			try {
-				CreditCardType cctype = new CreditCardType();
-				cctype.setOriginId(unedited.getId());
-				cctype.setCode(unedited.getCode());
-				cctype.setDescription(unedited.getDescription());
-
-				repo.save(cctype);
-				numRestored++;
-			} catch (Exception ex) {
-				// Log.
-				// return recs not updated?
-			}
+		for (CreditCardType orig : originalCctypes) {
+			if (restore(orig) != null) numRestored++;
 		}
 		return numRestored;
 	}

@@ -7,24 +7,22 @@ INSERT INTO `role` VALUES ('2', 'Manage Queries');
 INSERT INTO `role` VALUES ('3', 'View Passenger');
 INSERT INTO `role` VALUES ('4', 'Manage Watch List');
 INSERT INTO `role` VALUES ('5', 'Manage Rules');
-INSERT INTO `role` VALUES ('6', 'SysAdmin');
-INSERT INTO `role` VALUES ('7', 'Manage Hits');
-INSERT INTO `role` VALUES ('8', 'View Flights');
+INSERT INTO `role` VALUES ('6', 'Manage Hits');
+INSERT INTO `role` VALUES ('7', 'View Flights');
 
 -- ----------------------------
 -- Users
 -- ----------------------------
 -- password is 'password'
-INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, archived, last_name, password) VALUES ('GTAS', 1, 'Email', 'GTAS', false, false, false, 'Application User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, archived, last_name, password) VALUES ('ADMIN', 1, 'Email', 'Admin', false, false, false, 'Admin User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
+INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, archived, last_name, password) VALUES ('GTAS', 1, 'fake@fake.fake', 'GTAS', false, false, false, 'Application User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
+INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, archived, last_name, password) VALUES ('ADMIN', 1, 'fake@fake.fake', 'Admin', false, false, false, 'Admin User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 
 -- ----------------------------
 -- Records of user_role
 -- ----------------------------
-
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('ADMIN', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS', 5);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS', 8);
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('ADMIN', (select role_id from role where role_description = 'Admin'));
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS',  (select role_id from role where role_description = 'View Flights'));
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('GTAS',  (select role_id from role where role_description = 'View Passenger'));
 
 -- ----------------------------
 -- Records of flight_direction

@@ -5,15 +5,14 @@
  */
 package gov.gtas.validator;
 
-import java.util.Set;
-
+import gov.gtas.services.security.RoleData;
+import gov.gtas.services.security.UserData;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import gov.gtas.services.security.RoleData;
-import gov.gtas.services.security.UserData;
+import java.util.Set;
 
 @Component
 public class UserDataValidator implements Validator {

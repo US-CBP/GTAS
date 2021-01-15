@@ -5,11 +5,10 @@
  */
 package gov.gtas.common;
 
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+
 import java.util.Locale;
 import java.util.Properties;
-
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.stereotype.Component;
 
 public class GtasResourceBundleMessageSource extends ReloadableResourceBundleMessageSource {
 

@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import java.util.Date;
 import java.util.List;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 
@@ -26,6 +27,8 @@ public interface CarrierService {
   public int restoreAll();
 
   public List<CarrierVo> findAll();
+
+  public List<CarrierVo> findAllUpdated(Date dt);
 
   @PreAuthorize(PRIVILEGE_ADMIN)
   public CarrierVo update(CarrierVo carrier);

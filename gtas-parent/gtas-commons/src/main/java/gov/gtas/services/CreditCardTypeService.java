@@ -8,6 +8,7 @@ package gov.gtas.services;
 import gov.gtas.vo.lookup.CreditCardTypeVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.util.Date;
 import java.util.List;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
@@ -26,6 +27,8 @@ public interface CreditCardTypeService {
   public int restoreAll();
 
   public List<CreditCardTypeVo> findAll();
+
+  public List<CreditCardTypeVo> findAllUpdated(Date dt);
 
   @PreAuthorize(PRIVILEGE_ADMIN)
   public CreditCardTypeVo update(CreditCardTypeVo cctype);

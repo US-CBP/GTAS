@@ -1,7 +1,7 @@
 package gov.gtas.controller;
 
-import static org.mockito.MockitoAnnotations.initMocks;
-
+import gov.gtas.services.EventReportService;
+import gov.gtas.services.dto.PaxDetailPdfDocResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,8 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import gov.gtas.services.EventReportService;
-import gov.gtas.services.dto.PaxDetailPdfDocResponse;
+
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EventReportControllerTest {

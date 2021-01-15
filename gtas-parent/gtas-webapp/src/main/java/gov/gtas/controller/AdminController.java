@@ -21,13 +21,7 @@ import gov.gtas.services.dto.ApplicationStatisticsDTO;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.vo.*;
-import gov.gtas.vo.lookup.AirportVo;
-import gov.gtas.vo.lookup.AirportLookupVo;
-import gov.gtas.vo.lookup.CarrierVo;
-import gov.gtas.vo.lookup.CarrierLookupVo;
-import gov.gtas.vo.lookup.CountryVo;
-import gov.gtas.vo.lookup.CountryLookupVo;
-import gov.gtas.vo.lookup.CreditCardTypeVo;
+import gov.gtas.vo.lookup.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,6 +126,11 @@ private UserService userService;
     return fileService.getLogTypeList();
   }
 
+  @RequestMapping(method = RequestMethod.GET, value ="/api/noteType")
+  public List<NoteTypeVo> getAllNoteTypes(){
+    return noteTypeService.getAllNoteTypes();
+  }
+
   @ResponseBody
   @ResponseStatus(HttpStatus.OK)
   @PostMapping(value = "/api/noteType", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -182,6 +181,12 @@ private UserService userService;
     return carrierService.findAll();
   }
 
+  @RequestMapping(method = RequestMethod.GET, value = "/api/carrierupdated/{lastFetch:.+}")
+  public List<CarrierVo> getCarrierUpdated(@PathVariable("lastFetch") String lastFetch) throws ParseException {
+    Date latest = DateCalendarUtils.parseJsonDateTimeUTCFromISO(lastFetch);
+    return carrierService.findAllUpdated(latest);
+  }
+
   @RequestMapping(method = RequestMethod.GET, value = "/api/carrierLookup")
   public List<CarrierLookupVo> getCarrierLookup() {
     return carrierService.getCarrierLookup();
@@ -216,6 +221,13 @@ private UserService userService;
   @RequestMapping(method = RequestMethod.GET, value = "/api/country")
   public List<CountryVo> getAllCountry() {
     return countryService.findAll();
+  }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/api/countryupdated/{lastFetch:.+}")
+  public List<CountryVo> getCountryUpdated(@PathVariable("lastFetch") String lastFetch) throws ParseException {
+    Date latest = DateCalendarUtils.parseJsonDateTimeUTCFromISO(lastFetch);
+
+    return countryService.findAllUpdated(latest);
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/api/countryLookup")
@@ -254,6 +266,12 @@ private UserService userService;
     return airportService.findAll();
   }
 
+  @RequestMapping(method = RequestMethod.GET, value = "/api/airportupdated/{lastFetch:.+}")
+  public List<AirportVo> getAirportUpdated(@PathVariable("lastFetch") String lastFetch) throws ParseException {
+    Date latest = DateCalendarUtils.parseJsonDateTimeUTCFromISO(lastFetch);
+    return airportService.findAllUpdated(latest);
+  }
+
   @RequestMapping(method = RequestMethod.GET, value = "/api/airportLookup")
   public List<AirportLookupVo> getAirportLookup() {
     return airportService.getAirportLookup();
@@ -288,6 +306,12 @@ private UserService userService;
   @RequestMapping(method = RequestMethod.GET, value = "/api/cctype")
   public List<CreditCardTypeVo> getAllCreditCardType() {
     return cctypeService.findAll();
+  }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/api/cctypeupdated/{lastFetch:.+}")
+  public List<CreditCardTypeVo> getCreditCardTypeUpdated(@PathVariable("lastFetch") String lastFetch) throws ParseException {
+    Date latest = DateCalendarUtils.parseJsonDateTimeUTCFromISO(lastFetch);
+    return cctypeService.findAllUpdated(latest);
   }
 
   @RequestMapping(method = RequestMethod.POST, value = "/api/cctype")

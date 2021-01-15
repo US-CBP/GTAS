@@ -6,13 +6,9 @@
 package gov.gtas.controller.util;
 
 import gov.gtas.enumtype.ConditionEnum;
-import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.enumtype.CriteriaOperatorEnum;
-import gov.gtas.model.udr.json.MetaData;
-import gov.gtas.model.udr.json.QueryEntity;
-import gov.gtas.model.udr.json.QueryObject;
-import gov.gtas.model.udr.json.QueryTerm;
-import gov.gtas.model.udr.json.UdrSpecification;
+import gov.gtas.enumtype.EntityEnum;
+import gov.gtas.model.udr.json.*;
 import gov.gtas.querybuilder.mappings.PassengerMapping;
 import gov.gtas.util.DateCalendarUtils;
 

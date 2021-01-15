@@ -40,9 +40,8 @@ public class RoleServiceImpl implements RoleService {
 
 		Iterable<Role> roleEntityCollection = roleRepository.findAll();
 
-		// filter out the SysAdmin role; it should not be a choice on the front end.
 		List<Role> filteredRoleList = StreamSupport.stream(roleEntityCollection.spliterator(), false)
-				.filter(r -> (r.getRoleId() != 6)).collect(Collectors.toList());
+    .collect(Collectors.toList());
 
 		Set<RoleData> roles = roleServiceUtil.getRoleDataSetFromEntityCollection(filteredRoleList);
 

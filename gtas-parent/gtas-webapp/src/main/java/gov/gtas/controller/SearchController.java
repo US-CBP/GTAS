@@ -5,14 +5,6 @@
  */
 package gov.gtas.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import gov.gtas.constants.Constants;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
@@ -22,6 +14,13 @@ import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.AdhocQueryDto;
 import gov.gtas.services.dto.LinkAnalysisDto;
 import gov.gtas.services.search.SearchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(Constants.SEARCH_SERVICE)

@@ -1,19 +1,18 @@
 /* All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).*/
 package gov.gtas.controller;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import gov.gtas.model.MessageStatus;
+import gov.gtas.repository.HitViewStatusRepository;
+import gov.gtas.repository.UserRepository;
+import gov.gtas.vo.ErrorMessageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import gov.gtas.model.MessageStatus;
-import gov.gtas.repository.HitViewStatusRepository;
-import gov.gtas.repository.UserRepository;
-import gov.gtas.vo.ErrorMessageVo;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 public class NotificationController {

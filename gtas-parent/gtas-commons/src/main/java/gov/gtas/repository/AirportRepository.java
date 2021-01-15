@@ -7,6 +7,7 @@ package gov.gtas.repository;
 
 import gov.gtas.model.lookup.Airport;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -24,5 +25,8 @@ public interface AirportRepository extends CrudRepository<Airport, Long> {
 	default Airport findOne(Long id) {
 		return findById(id).orElse(null);
 	}
+
+	@Query("SELECT a FROM Airport a WHERE a.updatedAt >= :updated_at")
+	public List<Airport> findAllUpdated(@Param("updated_at") Date updated_at);
 
 }

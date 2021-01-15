@@ -5,33 +5,23 @@
  */
 package gov.gtas.controller;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import javax.servlet.http.HttpServletRequest;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.gtas.services.FlightService;
+import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.*;
 import gov.gtas.vo.passenger.FlightGridVo;
 import gov.gtas.vo.passenger.FlightPaxVo;
 import gov.gtas.vo.passenger.FlightVo;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import gov.gtas.services.FlightService;
-import gov.gtas.services.PassengerService;
-import gov.gtas.services.dto.FlightsPageDto;
-import gov.gtas.services.dto.FlightsRequestDto;
-import gov.gtas.services.dto.PassengersPageDto;
-import gov.gtas.services.dto.PassengersRequestDto;
-
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Set;
-import java.util.Date;
-import java.time.LocalDateTime;
 
 @RestController
 public class FlightPassengerController {
