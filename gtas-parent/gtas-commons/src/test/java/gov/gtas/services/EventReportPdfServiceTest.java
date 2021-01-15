@@ -94,7 +94,10 @@ public class EventReportPdfServiceTest {
 		getNoteVoHashSet(noteVoList);
 
 		paxDetailPdfDocRequest.setEventNotesSet(noteVoList);
+		
+		Map<String,String> translationValues = new HashMap<String,String>();
 
+		paxDetailPdfDocRequest.setTranslationValues(translationValues);
 		paxDetailPdfDocRequest.setEventHistoricalNotesSet(noteVoList);
 		PaxDetailPdfDocResponse pdPDFDocR = eventReportPdfService.createPaxDetailReport(paxDetailPdfDocRequest);
 		Assert.assertNotNull(pdPDFDocR);
@@ -287,6 +290,24 @@ public class EventReportPdfServiceTest {
 			String []name2 = cellText2.split(",");
 			Assert.assertEquals(name2.length,2);
 		
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	@Test
+	public void setLanguageTranslationValuesTest() {
+		
+		try {
+			PaxDetailPdfDocRequest paxDetailPdfDocRequest = new PaxDetailPdfDocRequest();
+			Map<String,String> languageTransValues = new HashMap<String,String>();
+			languageTransValues.put("en001", "Hello");
+			paxDetailPdfDocRequest.setTranslationValues(languageTransValues);
+			Assert.assertNotNull(paxDetailPdfDocRequest.getTranslationValues());
+			Assert.assertEquals("Hello", paxDetailPdfDocRequest.getTranslationValues().get("en001") );
 		
 		} catch (Exception e) {
 			e.printStackTrace();
