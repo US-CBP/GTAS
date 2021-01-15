@@ -5,6 +5,7 @@
  */
 package gov.gtas.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import gov.gtas.model.lookup.Carrier;
@@ -27,8 +28,7 @@ public class CarrierRepositoryImpl implements CarrierRepositoryCustom {
 
 	@Override
 	public Carrier restore(Carrier currentEdited) {
-		if (currentEdited.getOriginId() == null)
-			return currentEdited;
+		if (currentEdited.getOriginId() == null) return null;
 
 		String sqlString = " SELECT c FROM CarrierRestore c WHERE c.id = :originid";
 		TypedQuery<CarrierRestore> query = em.createQuery(sqlString, CarrierRestore.class);
@@ -36,46 +36,36 @@ public class CarrierRepositoryImpl implements CarrierRepositoryCustom {
 		CarrierRestore unedited = query.getSingleResult();
 
 		if (unedited != null) {
-			Carrier restored = currentEdited;
-			restored.setIcao(unedited.getIcao());
-			restored.setIata(unedited.getIata());
-			restored.setName(unedited.getName());
+			Carrier restored = setFields(unedited, currentEdited);
 
 			return repo.save(restored);
 		}
-		/// else throw warning there was no matching data found.
-		/// record is either user-created or there's an issue with the CarrierRestore
-		/// data.
-		return currentEdited;
+		return null;
 	}
 
+	/* Restore the original carriers to their initial unedited values. Does not affect user-created carriers */
 	@Override
 	public int restoreAll() {
-		String sqlString = " SELECT c FROM CarrierRestore c";
-		TypedQuery<CarrierRestore> query = em.createQuery(sqlString, CarrierRestore.class);
-		List<CarrierRestore> crs = query.getResultList();
-
-		Query deleteQuery = em.createNativeQuery(" DELETE FROM Carrier ");
-		int numDeleted = deleteQuery.executeUpdate();
+		String sqlString = " SELECT c FROM Carrier c where c.originId > 0";
+		TypedQuery<Carrier> query = em.createQuery(sqlString, Carrier.class);
+		List<Carrier> originalCarriers = query.getResultList();
 
 		int numRestored = 0;
 
-		for (CarrierRestore unedited : crs) {
-			try {
-				Carrier carrier = new Carrier();
-				carrier.setOriginId(unedited.getId());
-				carrier.setIcao(unedited.getIcao());
-				carrier.setIata(unedited.getIata());
-				carrier.setName(unedited.getName());
-
-				repo.save(carrier);
-				numRestored++;
-			} catch (Exception ex) {
-				// Log.
-				// return recs not updated?
-			}
+		for (Carrier orig : originalCarriers) {
+			if (restore(orig) != null) numRestored++;
 		}
 		return numRestored;
+	}
+
+	private Carrier setFields(CarrierRestore cr, Carrier restored) {
+		restored.setIcao(cr.getIcao());
+		restored.setIata(cr.getIata());
+		restored.setName(cr.getName());
+		restored.setUpdatedAt(new Date());
+		restored.setArchived(false);
+
+		return restored;
 	}
 
 }

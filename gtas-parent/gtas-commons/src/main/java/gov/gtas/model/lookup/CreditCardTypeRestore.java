@@ -12,7 +12,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import org.hibernate.annotations.Immutable;
 
+@Immutable
 @Cacheable
 @Entity
 @Table(name = "credit_card_type_restore")
@@ -26,11 +28,11 @@ public class CreditCardTypeRestore extends BaseEntity {
 	private String description;
 
 	public String getCode() {
-		return code;
+		return this.code;
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
 	@Override

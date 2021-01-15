@@ -5,16 +5,16 @@
  */
 package gov.gtas.error;
 
-import static gov.gtas.constant.DomainModelConstants.UDR_UNIQUE_CONSTRAINT_NAME;
-import static gov.gtas.constant.JsonResponseConstants.ATTR_ERROR_ID;
 import gov.gtas.constants.ErrorConstants;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.json.JsonServiceResponse.ServiceResponseDetailAttribute;
 import gov.gtas.services.ErrorPersistenceService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaSystemException;
+
+import static gov.gtas.constant.DomainModelConstants.UDR_UNIQUE_CONSTRAINT_NAME;
+import static gov.gtas.constant.JsonResponseConstants.ATTR_ERROR_ID;
 
 public class GlobalErrorHandlerHelper {
 	/*

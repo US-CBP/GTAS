@@ -5,10 +5,9 @@
  */
 package gov.gtas.security;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gov.gtas.services.security.LoginService;
+import gov.gtas.services.security.UserData;
+import gov.gtas.services.security.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import gov.gtas.services.security.UserData;
-import gov.gtas.services.security.UserService;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

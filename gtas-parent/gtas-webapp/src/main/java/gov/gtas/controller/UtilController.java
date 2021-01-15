@@ -6,9 +6,12 @@
 
 package gov.gtas.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-
+import gov.gtas.common.UserLocationSetting;
+import gov.gtas.common.UserLocationStatus;
+import gov.gtas.constants.Constants;
+import gov.gtas.security.service.GtasSecurityUtils;
+import gov.gtas.services.security.UserService;
+import gov.gtas.vo.passenger.FlightSearchVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import gov.gtas.common.UserLocationSetting;
-import gov.gtas.common.UserLocationStatus;
-import gov.gtas.constants.Constants;
-import gov.gtas.security.service.GtasSecurityUtils;
-import gov.gtas.services.security.UserService;
-import gov.gtas.vo.passenger.FlightSearchVo;
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 @RestController
 public class UtilController {

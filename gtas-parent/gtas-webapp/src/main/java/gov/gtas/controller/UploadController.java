@@ -9,7 +9,8 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.Attachment;
 import gov.gtas.model.Passenger;
-import gov.gtas.repository.*;
+import gov.gtas.repository.AttachmentRepository;
+import gov.gtas.repository.PassengerRepository;
 import gov.gtas.vo.passenger.AttachmentVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.sql.rowset.serial.SerialException;
-
-import java.io.*;
+import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class UploadController {
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	public @ResponseBody JsonServiceResponse uploadAttachments(@RequestParam("file") Set<MultipartFile> files,
 			@RequestParam("paxId") String paxId, @RequestParam("descriptions") List<String> descriptions)
-			throws IOException, SerialException, SQLException {
+			throws IOException, SQLException {
 		String failureFileNames = "";
 		int failureCount = 0;
 
@@ -70,7 +69,7 @@ public class UploadController {
 				failureCount++;
 			}
 			descriptionArrayCounter++;
-		};
+		}
 		if(failureCount == 0) {
 			return new JsonServiceResponse(Status.SUCCESS, "Successfully uploaded all files");
 		} else {
@@ -80,7 +79,7 @@ public class UploadController {
 	}
 
 	private void storeAttachmentToPassenger(MultipartFile file, String desc, String paxId)
-			throws IOException, SerialException, SQLException {
+			throws IOException, SQLException {
 		if (!file.isEmpty()) {
 			// Build attachment to be added to pax
 			Attachment attachment = new Attachment();
@@ -188,6 +187,6 @@ public class UploadController {
 			attVoList.add(attVo);
 		}
 		return attVoList;
-	};
+	}
 
 }

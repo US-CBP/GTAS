@@ -5,12 +5,10 @@
  */
 package gov.gtas.validator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashSet;
-import java.util.Set;
-
+import gov.gtas.common.WebAppConfig;
+import gov.gtas.controller.config.TestMvcRestServiceWebConfig;
+import gov.gtas.services.security.RoleData;
+import gov.gtas.services.security.UserData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,10 +18,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 
-import gov.gtas.common.WebAppConfig;
-import gov.gtas.controller.config.TestMvcRestServiceWebConfig;
-import gov.gtas.services.security.RoleData;
-import gov.gtas.services.security.UserData;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TestMvcRestServiceWebConfig.class, WebAppConfig.class })

@@ -9,6 +9,7 @@ import gov.gtas.vo.lookup.AirportVo;
 import gov.gtas.vo.lookup.AirportLookupVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.util.Date;
 import java.util.List;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
@@ -22,6 +23,8 @@ public interface AirportService {
   public AirportVo delete(Long id);
 
   public List<AirportVo> findAll();
+
+  public List<AirportVo> findAllUpdated(Date dt);
 
   @PreAuthorize(PRIVILEGE_ADMIN)
   public AirportVo update(AirportVo port);

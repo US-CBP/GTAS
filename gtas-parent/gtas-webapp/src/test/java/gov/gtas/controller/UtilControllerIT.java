@@ -1,12 +1,10 @@
 package gov.gtas.controller;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import gov.gtas.common.UserLocationSetting;
+import gov.gtas.common.UserLocationStatus;
+import gov.gtas.common.WebAppConfig;
+import gov.gtas.controller.config.TestMvcRestServiceWebConfig;
+import gov.gtas.services.security.UserService;
 import org.hamcrest.core.IsNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,11 +23,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import gov.gtas.common.UserLocationSetting;
-import gov.gtas.common.UserLocationStatus;
-import gov.gtas.common.WebAppConfig;
-import gov.gtas.controller.config.TestMvcRestServiceWebConfig;
-import gov.gtas.services.security.UserService;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TestMvcRestServiceWebConfig.class, WebAppConfig.class })

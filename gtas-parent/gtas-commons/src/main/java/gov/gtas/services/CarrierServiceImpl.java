@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -39,12 +40,10 @@ public class CarrierServiceImpl implements CarrierService {
     CarrierVo carrierVo = this.findById(id);
 
     if (carrierVo != null) {
-      carrierRespository.delete(buildCarrier(carrierVo));
-
-      return carrierVo;
+      carrierVo = archive(carrierVo);
     }
 
-    return null;
+    return carrierVo;
   }
 
   @Override
@@ -60,6 +59,20 @@ public class CarrierServiceImpl implements CarrierService {
     }
 
     return allCarrierVos;
+  }
+
+  @Transactional
+  public List<CarrierVo> findAllUpdated(Date dt) {
+    List<Carrier> allCarriers = (List<Carrier>) carrierRespository.findAllUpdated(dt);
+
+    List<CarrierVo> allCarrierVos = new ArrayList<>();
+
+    for (Carrier carrier : allCarriers) {
+      allCarrierVos.add(buildCarrierVo(carrier));
+    }
+
+    return allCarrierVos;
+
   }
 
   @Override
@@ -134,14 +147,25 @@ public class CarrierServiceImpl implements CarrierService {
     return null;
   }
 
+  private CarrierVo archive(CarrierVo cvo){
+    if (cvo != null) {
+      Carrier c = buildCarrier(cvo);
+      c.setArchived(true);
+      c.setUpdatedAt(new Date());
+      carrierRespository.save(c);
+    }
+
+    return cvo;
+  }
+
   private Carrier buildCarrier(CarrierVo carrierVo) {
     return new Carrier(carrierVo.getId(), carrierVo.getOriginId(), carrierVo.getName(), carrierVo.getIata(),
-        carrierVo.getIcao());
+        carrierVo.getIcao(), carrierVo.getArchived());
   }
 
   private CarrierVo buildCarrierVo(Carrier carrier) {
     return new CarrierVo(carrier.getId(), carrier.getOriginId(), carrier.getName(), carrier.getIata(),
-        carrier.getIcao());
+        carrier.getIcao(), carrier.getArchived());
   }
 
 }

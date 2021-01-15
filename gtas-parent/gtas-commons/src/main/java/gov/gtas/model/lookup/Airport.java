@@ -7,6 +7,7 @@ package gov.gtas.model.lookup;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,12 +16,12 @@ import javax.persistence.Table;
 
 import org.springframework.cache.annotation.Cacheable;
 
-import gov.gtas.model.BaseEntity;
+import gov.gtas.model.BaseEntityAudit;
 
 @Cacheable
 @Entity
-@Table(name = "airport", indexes = { @Index(columnList = "iata", name = "airport_iata_index") })
-public class Airport extends BaseEntity {
+@Table(name = "airport", indexes = { @Index(columnList = "iata", name = "airport_iata_index"), @Index(columnList = "updated_at", name = "airport_updated_at_index") })
+public class Airport extends BaseEntityAudit {
 
 	private Long originId;
 	private String name;
@@ -43,13 +44,15 @@ public class Airport extends BaseEntity {
 	@Column(name = "utc_offset")
 	private Integer utcOffset;
 
+	private Boolean archived;
+
 	private String timezone;
 
 	public Airport() {
 	}
 
 	public Airport(Long id, Long originId, String name, String iata, String icao, String country, String city,
-			BigDecimal latitude, BigDecimal longitude, Integer utcOffset, String timezone) {
+								 BigDecimal latitude, BigDecimal longitude, Integer utcOffset, String timezone, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.name = name;
@@ -61,6 +64,13 @@ public class Airport extends BaseEntity {
 		this.longitude = longitude;
 		this.utcOffset = utcOffset;
 		this.timezone = timezone;
+		this.archived = archived;
+		this.setUpdatedAt(new Date());
+	}
+
+	public Airport(Long id, Long originId, String name, String iata, String icao, String country, String city,
+			BigDecimal latitude, BigDecimal longitude, Integer utcOffset, String timezone) {
+		this(id, originId, name, iata, icao, country, city, latitude, longitude, utcOffset, timezone, false);
 	}
 
 	public Long getOriginId() {
@@ -143,10 +153,17 @@ public class Airport extends BaseEntity {
 		timezone = data;
 	}
 
+	public Boolean getArchived() { return archived; }
+
+	public void setArchived(Boolean data) {
+		this.archived= data;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.iata, this.icao);
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {

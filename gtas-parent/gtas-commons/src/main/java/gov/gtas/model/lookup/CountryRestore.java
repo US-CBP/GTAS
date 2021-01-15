@@ -15,7 +15,9 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.springframework.cache.annotation.Cacheable;
+import org.hibernate.annotations.Immutable;
 
+@Immutable
 @Cacheable
 @Entity
 @Table(name = "country_restore", indexes = { @Index(columnList = "iso3", name = "countryRestore_iso3_index") })
@@ -35,7 +37,7 @@ public class CountryRestore extends BaseEntity {
 	private String isoNumeric;
 
 	public String getIso2() {
-		return iso2;
+		return this.iso2;
 	}
 
 	public String getIso3() {

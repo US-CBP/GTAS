@@ -8,6 +8,7 @@ package gov.gtas.repository;
 import gov.gtas.model.lookup.Country;
 
 import java.util.List;
+import java.util.Date;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -26,5 +27,8 @@ public interface CountryRepository extends CrudRepository<Country, Long> {
 	default Country findOne(Long countryId) {
 		return findById(countryId).orElse(null);
 	}
+
+	@Query("SELECT c FROM Country c WHERE c.updatedAt >= :updated_at")
+	public List<Country> findAllUpdated(@Param("updated_at") Date updated_at);
 
 }

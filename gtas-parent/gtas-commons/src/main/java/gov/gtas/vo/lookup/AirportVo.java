@@ -1,3 +1,8 @@
+/*
+ * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+ *
+ * Please see LICENSE.txt for details.
+ */
 package gov.gtas.vo.lookup;
 
 import java.io.Serializable;
@@ -16,9 +21,10 @@ public class AirportVo  implements Serializable  {
 	private BigDecimal longitude;
 	private Integer utcOffset;
 	private String timezone;
+	private Boolean archived;
 
 	public AirportVo(Long id, Long originId, String name, String iata, String icao, String country, String city,
-			BigDecimal latitude, BigDecimal longitude, Integer utcOffset, String timezone) {
+			BigDecimal latitude, BigDecimal longitude, Integer utcOffset, String timezone, Boolean archived) {
 		this.id = id;
 		this.originId = originId;
 		this.name = name;
@@ -30,6 +36,12 @@ public class AirportVo  implements Serializable  {
 		this.longitude = longitude;
 		this.utcOffset = utcOffset;
 		this.timezone = timezone;
+		this.archived = archived;
+	}
+
+	public AirportVo(Long id, Long originId, String name, String iata, String icao, String country, String city,
+								 BigDecimal latitude, BigDecimal longitude, Integer utcOffset, String timezone) {
+		this(id, originId, name, iata, icao, country, city, latitude, longitude, utcOffset, timezone, false);
 	}
 
 	public AirportVo() {
@@ -122,5 +134,9 @@ public class AirportVo  implements Serializable  {
 	public void setTimezone(String data) {
 		timezone = data;
 	}
+
+	public Boolean getArchived() { return archived; }
+
+	public void setArchived(Boolean archived) { this.archived = archived; }
 
 }

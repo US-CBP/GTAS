@@ -5,7 +5,6 @@
  */
 package gov.gtas.controller;
 
-import static gov.gtas.constant.GtasSecurityConstants.UNAUTHORIZED_ERROR_CODE;
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.constants.Constants;
 import gov.gtas.enumtype.Status;
@@ -22,23 +21,16 @@ import gov.gtas.services.HitCategoryService;
 import gov.gtas.svc.RuleManagementService;
 import gov.gtas.svc.UdrService;
 import gov.gtas.util.DateCalendarUtils;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+
+import static gov.gtas.constant.GtasSecurityConstants.UNAUTHORIZED_ERROR_CODE;
 
 /**
  * The REST service end-point controller for creating and managing user Defined

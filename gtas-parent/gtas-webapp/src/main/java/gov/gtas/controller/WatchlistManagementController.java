@@ -14,9 +14,9 @@ import gov.gtas.constants.Constants;
 import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.Status;
 import gov.gtas.error.CommonServiceException;
+import gov.gtas.json.BasicApiResponse;
 import gov.gtas.json.JsonLookupData;
 import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.json.BasicApiResponse;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
@@ -33,9 +33,6 @@ import gov.gtas.services.security.UserService;
 import gov.gtas.svc.RuleManagementService;
 import gov.gtas.svc.WatchlistService;
 import gov.gtas.util.SampleDataGenerator;
-
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +41,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

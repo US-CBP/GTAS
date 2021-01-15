@@ -5,23 +5,19 @@
  */
 package gov.gtas.controller;
 
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
+import dtos.PasswordChangeDTO;
+import dtos.PasswordResetDto;
+import gov.gtas.email.dto.UserEmailDTO;
+import gov.gtas.enumtype.Status;
+import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.User;
+import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.security.RoleData;
-import org.passay.CharacterRule;
-import org.passay.EnglishCharacterData;
-import org.passay.LengthRule;
-import org.passay.PasswordData;
-import org.passay.PasswordValidator;
-import org.passay.RuleResult;
-import org.passay.UsernameRule;
-import org.passay.WhitespaceRule;
+import gov.gtas.services.security.UserData;
+import gov.gtas.services.security.UserDisplayData;
+import gov.gtas.services.security.UserService;
+import gov.gtas.validator.UserDataValidator;
+import org.passay.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +27,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import dtos.PasswordChangeDTO;
-import dtos.PasswordResetDto;
-import gov.gtas.email.dto.UserEmailDTO;
-import gov.gtas.enumtype.Status;
-import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.model.User;
-import gov.gtas.security.service.GtasSecurityUtils;
-import gov.gtas.services.security.UserData;
-import gov.gtas.services.security.UserDisplayData;
-import gov.gtas.services.security.UserService;
-import gov.gtas.validator.UserDataValidator;
+import javax.validation.Valid;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
@@ -291,9 +282,9 @@ public class UserController {
 			return new JsonServiceResponse(Status.SUCCESS_WITH_WARNING, "Failed To Delete User, Archived User Instead");
 		}
 		return new JsonServiceResponse(Status.SUCCESS, "Successfully Deleted User", paxId);
-	};
+	}
 
-	@ResponseStatus(HttpStatus.OK)
+  @ResponseStatus(HttpStatus.OK)
 	@GetMapping("/user")
 	public UserData user(Principal principal) {
 		return userService.findById(principal.getName());

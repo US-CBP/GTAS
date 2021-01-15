@@ -5,21 +5,20 @@
  */
 package gov.gtas.controller;
 
-import gov.gtas.model.*;
-import gov.gtas.model.lookup.HitCategory;
+import gov.gtas.model.HitDetail;
+import gov.gtas.model.User;
 import gov.gtas.repository.UserRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.HitDetailService;
 import gov.gtas.util.PaxDetailVoUtil;
 import gov.gtas.vo.HitDetailVo;
-
-import java.util.*;
-
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+
+import javax.transaction.Transactional;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @RestController
 public class HitsSummaryController {
@@ -52,9 +51,9 @@ public class HitsSummaryController {
 		User user = userRepository.userAndGroups(userId).orElseThrow(RuntimeException::new);
 		Set<HitDetail> hitDetailSet = hitsDetailsService.getByPassengerId(Long.parseLong(passengerId));
 		return getHitDetailsMapped(hitDetailSet, user);
-	};
+	}
 
-	@Transactional
+  @Transactional
 	public LinkedHashSet<HitDetailVo> getHitDetailsMapped(Set<HitDetail> passengerHitDetails, User user) {
 		LinkedHashSet<HitDetailVo> hitDetailVoList = new LinkedHashSet<>();
 		for (HitDetail htd : passengerHitDetails) {

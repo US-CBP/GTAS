@@ -7,14 +7,15 @@ package gov.gtas.repository;
 
 import gov.gtas.model.lookup.Country;
 import gov.gtas.model.lookup.CountryRestore;
+import gov.gtas.vo.lookup.CountryVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.Query;
 import java.util.List;
+import java.util.Date;
 
 @Repository
 public class CountryRepositoryImpl implements CountryRepositoryCustom {
@@ -25,8 +26,7 @@ public class CountryRepositoryImpl implements CountryRepositoryCustom {
 
 	@Override
 	public Country restore(Country origCountry) {
-		if (origCountry.getOriginId() == null)
-			return origCountry;
+		if (origCountry.getOriginId() == null) return null;
 
 		String sqlString = " SELECT c FROM CountryRestore c WHERE c.id = :originid";
 		TypedQuery<CountryRestore> query = em.createQuery(sqlString, CountryRestore.class);
@@ -34,47 +34,37 @@ public class CountryRepositoryImpl implements CountryRepositoryCustom {
 		CountryRestore cr = query.getSingleResult();
 
 		if (cr != null) {
-			origCountry.setIso2(cr.getIso2());
-			origCountry.setIso3(cr.getIso3());
-			origCountry.setIsoNumeric(cr.getIsoNumeric());
-			origCountry.setName(cr.getName());
+			Country restored = setFields(cr, origCountry);
 
-			return repo.save(origCountry);
+			return repo.save(restored);
 		}
-		/// else throw warning there was no matching data found.
-		/// record is either user-created or there's an issue with the CountryRestore
-		/// data.
-		return origCountry;
+		return null;
 	}
 
+	/* Restore the original countries to their initial unedited values. Does not affect user-created countries */
 	@Override
 	public int restoreAll() {
-		String sqlString = " SELECT c FROM CountryRestore c";
-		TypedQuery<CountryRestore> query = em.createQuery(sqlString, CountryRestore.class);
-		List<CountryRestore> crs = query.getResultList();
-
-		Query deleteQuery = em.createNativeQuery(" DELETE FROM Country ");
-		int numDeleted = deleteQuery.executeUpdate();
+		String sqlString = " SELECT c FROM Country c WHERE c.originId > 0";
+		TypedQuery<Country> query = em.createQuery(sqlString, Country.class);
+		List<Country> originalCountries = query.getResultList();
 
 		int numRestored = 0;
 
-		for (CountryRestore cr : crs) {
-			try {
-				Country country = new Country();
-				country.setOriginId(cr.getId());
-				country.setIso2(cr.getIso2());
-				country.setIso3(cr.getIso3());
-				country.setIsoNumeric(cr.getIsoNumeric());
-				country.setName(cr.getName());
-
-				numRestored++;
-				repo.save(country);
-			} catch (Exception ex) {
-				// Log.
-				// return recs not updated?
-			}
+		for (Country orig : originalCountries) {
+			if (restore(orig) != null) numRestored++;
 		}
 		return numRestored;
+	}
+
+	private Country setFields(CountryRestore cr, Country restored) {
+		restored.setIso2(cr.getIso2());
+		restored.setIso3(cr.getIso3());
+		restored.setIsoNumeric(cr.getIsoNumeric());
+		restored.setName(cr.getName());
+		restored.setUpdatedAt(new Date());
+		restored.setArchived(false);
+
+		return restored;
 	}
 
 }

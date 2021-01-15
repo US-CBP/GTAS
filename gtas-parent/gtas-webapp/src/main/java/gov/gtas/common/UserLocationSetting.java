@@ -1,19 +1,17 @@
 package gov.gtas.common;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import gov.gtas.constants.Constants;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.UserLocationService;
 import gov.gtas.vo.passenger.UserLocationVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Component
 public class UserLocationSetting {
