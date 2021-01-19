@@ -1,0 +1,1 @@
+drop table if exists pnr_saved_segment;
