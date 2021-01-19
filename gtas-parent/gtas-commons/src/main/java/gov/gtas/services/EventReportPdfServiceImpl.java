@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -154,6 +155,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		Image image;
 		PDPageContentStream coverPageContentStream = this.getDefaultContentStream(coverPage);
 		reportCoverTable = createReportCoverlTable(document, coverPage);
+		Map<String,String> translationValues =paxDetailPdfDocRequest.getTranslationValues();
 
 		try {
 			bufferedImage = ImageIO.read(getClass().getResourceAsStream("../../../image/gtas_logo.png"));
@@ -169,7 +171,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		Row<PDPage> headerRow = reportCoverTable.createRow(this.COVER_HEADER_ROW_HEIGHT);
 		Cell<PDPage> cell = this.createEmptyWhiteCell(headerRow, TITLE_COLUMN_WIDTH_1);
 		cell = this.createCell(headerRow, TITLE_COLUMN_WIDTH_2, this.BOLD_TIMES_ROMAN, DEFAULT_LABEL_FONT_SIZE,
-				new LineStyle(Color.LIGHT_GRAY, 0), Color.WHITE, this.DEFAULT_LABEL_BACKGROUND_COLOR, REPORT_NAME);
+				new LineStyle(Color.LIGHT_GRAY, 0), Color.WHITE, this.DEFAULT_LABEL_BACKGROUND_COLOR, translationValues.get(REPORT_NAME));
 		cell.setAlign(HorizontalAlignment.CENTER);
 		cell = this.createEmptyWhiteCell(headerRow, TITLE_COLUMN_WIDTH_3);
 		reportCoverTable.addHeaderRow(headerRow);
@@ -180,7 +182,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		// Passenger Name row
 		Row<PDPage> row = this.getRow(reportCoverTable);
 		this.createEmptyWhiteCell(row, FIRST_COLUMN_WIDTH);
-		this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, COVER_PAGE_TABLE_COLUMN_LABEL_NAME);
+		this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, translationValues.get(COVER_PAGE_TABLE_COLUMN_LABEL_NAME));
 		if(passengerVo.getMiddleName()!=null && !passengerVo.getMiddleName().isEmpty())
 		{
 			this.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
@@ -196,28 +198,28 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		// Flight row
 		row = this.getRow(reportCoverTable);
 		this.createEmptyWhiteCell(row, FIRST_COLUMN_WIDTH);
-		this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, COVER_PAGE_TABLE_COLUMN_LABEL_FLIGHT);
+		this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, translationValues.get(COVER_PAGE_TABLE_COLUMN_LABEL_FLIGHT));
 		cell = this.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
 				passengerVo.getCarrier() + passengerVo.getFlightNumber());
 		this.createEmptyWhiteCell(row, FOUR_COLUMN_WIDTH);
 		// Flight Origin
 		row = this.getRow(reportCoverTable);
 		this.createEmptyWhiteCell(row, FIRST_COLUMN_WIDTH);
-		cell = this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, COVER_PAGE_TABLE_COLUMN_LABEL_ORIGIN);
+		cell = this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, translationValues.get(COVER_PAGE_TABLE_COLUMN_LABEL_ORIGIN));
 		this.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
 				passengerVo.getFlightOrigin() + "     " + passengerVo.getFlightETD());
 		this.createEmptyWhiteCell(row, FOUR_COLUMN_WIDTH);
 		// Flight Destination
 		row = this.getRow(reportCoverTable);
 		this.createEmptyWhiteCell(row, FIRST_COLUMN_WIDTH);
-		cell = this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, COVER_PAGE_TABLE_COLUMN_LABEL_DESTINATION);
+		cell = this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, translationValues.get(COVER_PAGE_TABLE_COLUMN_LABEL_DESTINATION));
 		this.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH,
 				passengerVo.getFlightDestination() + "     " + passengerVo.getFlightETA());
 		this.createEmptyWhiteCell(row, FOUR_COLUMN_WIDTH);
 		// Report Date
 		row = this.getRow(reportCoverTable);
 		this.createEmptyWhiteCell(row, FIRST_COLUMN_WIDTH);
-		cell = this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, COVER_PAGE_TABLE_COLUMN_LABEL_REPORT_DATE);
+		cell = this.createReportCoverLabelCell(row, SECOND_COLUMN_WIDTH, translationValues.get(COVER_PAGE_TABLE_COLUMN_LABEL_REPORT_DATE));
 		cell.setBottomBorderStyle(new LineStyle(this.DEFAULT_GRAY_ROW_COLOR, 1));
 		cell = this.createValueCellWithRighBottomtBorder(row, THIRD_COLUMN_WIDTH, reportDate);
 		this.createEmptyWhiteCell(row, FOUR_COLUMN_WIDTH);
@@ -240,7 +242,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		final float PASSENGER_DETAIL_HEADER_COLUMN_2_WIDTH = 40;
 		final float PASSENGER_DETAIL_HEADER_COLUMN_3_WIDTH = 35;
 		final float PASSENGER_DETAIL_HEADER_COLUMN_HEIGHT = 12;
-
+	
 		String alert = paxDetailPdfDocRequest.getAlert();
 		PassengerVo passengerVo = paxDetailPdfDocRequest.getPassengerVo();
 		String eventId = passengerVo.getPaxId();
@@ -248,7 +250,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		// Main Header Row
 		Row<PDPage> headerRow = table.createRow(PASSENGER_DETAIL_HEADER_COLUMN_HEIGHT);
 		Cell<PDPage> cell = headerRow.createCell(PASSENGER_DETAIL_HEADER_COLUMN_1_WIDTH,
-				PASSENGER_DETAIL_HEADER_TEXT + ":");
+				paxDetailPdfDocRequest.getTranslationValues().get(PASSENGER_DETAIL_HEADER_TEXT) + ":");
 		this.setPassengerDetailHeaderLabelProperties(cell);
 
 		cell = headerRow.createCell(PASSENGER_DETAIL_HEADER_COLUMN_2_WIDTH, eventId);
@@ -278,7 +280,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 
 		// severity
 		headerRow = table.createRow(PASSENGER_DETAIL_HEADER_COLUMN_HEIGHT);
-		cell = headerRow.createCell(PASSENGER_DETAIL_HEADER_COLUMN_1_WIDTH, PASSENGER_DETAIL_HEADER_TEXT_2 + ":");
+		cell = headerRow.createCell(PASSENGER_DETAIL_HEADER_COLUMN_1_WIDTH, paxDetailPdfDocRequest.getTranslationValues().get(PASSENGER_DETAIL_HEADER_TEXT_2) + ":");
 		this.setPassengerDetailHeaderLabelProperties(cell);
 
 		cell = headerRow.createCell(PASSENGER_DETAIL_HEADER_COLUMN_2_WIDTH,
@@ -316,15 +318,15 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 			passengerVo = new PassengerVo();
 		}
 		Row<PDPage> borderRow = this.getRow(passengerDetailDataTable);
-		this.createPassengerTopBorderCell(borderRow, FIRST_COLUMN_WIDTH + SECOND_COLUMN_WIDTH, PASSENGER_TITLE);
+		this.createPassengerTopBorderCell(borderRow, FIRST_COLUMN_WIDTH + SECOND_COLUMN_WIDTH, paxDetailPdfDocRequest.getTranslationValues().get(PASSENGER_TITLE));
 		this.createFieldValueCell(borderRow, COLUMN_SEPARATOR_WIDTH, "");
 		Cell<PDPage> tripCell = this.createTopBorderCell(borderRow, THIRD_COLUMN_WIDTH + FOURTH_COLUMN_WIDTH);
 		tripCell.setAlign(HorizontalAlignment.CENTER);
-		tripCell.setText(TRIP_TITLE);
+		tripCell.setText(paxDetailPdfDocRequest.getTranslationValues().get(TRIP_TITLE));
 
 		Row<PDPage> row = this.getRow(passengerDetailDataTable);
 		Cell<PDPage> cell = this.creatPassengerVerticalColumnLabelCell(row, FIRST_COLUMN_WIDTH,
-				PASSENGER_TABLE_COLUMN_LABEL_NAME);
+				paxDetailPdfDocRequest.getTranslationValues().get(PASSENGER_TABLE_COLUMN_LABEL_NAME));
 		cell.setRightBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR, 0));
 		
 		if(passengerVo.getMiddleName()!=null && !passengerVo.getMiddleName().isEmpty())
@@ -339,30 +341,30 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		}
 	
 		this.createFieldValueCell(row, COLUMN_SEPARATOR_WIDTH, "");
-		cell = this.creatVerticalColumnLabelCell(row, THIRD_COLUMN_WIDTH, TRIP_TABLE_COLUMN_LABEL_FLIGHT_NUMBER);
+		cell = this.creatVerticalColumnLabelCell(row, THIRD_COLUMN_WIDTH, paxDetailPdfDocRequest.getTranslationValues().get(TRIP_TABLE_COLUMN_LABEL_FLIGHT_NUMBER));
 		cell.setRightBorderStyle(new LineStyle(DEFAULT_LABEL_BACKGROUND_COLOR, 0));
 		cell = this.createFirstVerticalColumnValueCell(row, FOURTH_COLUMN_WIDTH, passengerVo.getFlightNumber());
 
 		row = this.getRow(passengerDetailDataTable);
-		this.creatPassengerVerticalColumnLabelCell(row, FIRST_COLUMN_WIDTH, PASSENGER_TABLE_COLUMN_LABEL_DOB);
+		this.creatPassengerVerticalColumnLabelCell(row, FIRST_COLUMN_WIDTH, paxDetailPdfDocRequest.getTranslationValues().get(PASSENGER_TABLE_COLUMN_LABEL_DOB));
 		this.createPassengerColumnValueCell(row, SECOND_COLUMN_WIDTH,
 				reportDateFormatter(passengerVo.getDob()));
 		this.createFieldValueCell(row, COLUMN_SEPARATOR_WIDTH, "");
-		this.creatVerticalColumnLabelCell(row, THIRD_COLUMN_WIDTH, TRIP_TABLE_COLUMN_LABEL_CARRIER);
+		this.creatVerticalColumnLabelCell(row, THIRD_COLUMN_WIDTH, paxDetailPdfDocRequest.getTranslationValues().get(TRIP_TABLE_COLUMN_LABEL_CARRIER));
 		cell = this.createVerticalColumnValueCell(row, FOURTH_COLUMN_WIDTH, passengerVo.getCarrier());
 
 		row = this.getRow(passengerDetailDataTable);
-		this.creatPassengerVerticalColumnLabelCell(row, FIRST_COLUMN_WIDTH, PASSENGER_TABLE_COLUMN_LABEL_GENDER);
+		this.creatPassengerVerticalColumnLabelCell(row, FIRST_COLUMN_WIDTH, paxDetailPdfDocRequest.getTranslationValues().get(PASSENGER_TABLE_COLUMN_LABEL_GENDER));
 		this.createPassengerColumnValueCell(row, SECOND_COLUMN_WIDTH, passengerVo.getGender());
 		this.createFieldValueCell(row, COLUMN_SEPARATOR_WIDTH, "");
-		this.creatVerticalColumnLabelCell(row, THIRD_COLUMN_WIDTH, TRIP_TABLE_COLUMN_LABEL_ORIG_AIRPORT);
+		this.creatVerticalColumnLabelCell(row, THIRD_COLUMN_WIDTH, paxDetailPdfDocRequest.getTranslationValues().get(TRIP_TABLE_COLUMN_LABEL_ORIG_AIRPORT));
 		this.createVerticalColumnValueCell(row, FOURTH_COLUMN_WIDTH, passengerVo.getFlightOrigin());
 
 		row = this.getRow(passengerDetailDataTable);
-		this.creatPassengerVerticalColumnLabelCell(row, FIRST_COLUMN_WIDTH, PASSENGERP_TABLE_COLUMN_LABEL_NATIONALITY);
+		this.creatPassengerVerticalColumnLabelCell(row, FIRST_COLUMN_WIDTH, paxDetailPdfDocRequest.getTranslationValues().get(PASSENGERP_TABLE_COLUMN_LABEL_NATIONALITY));
 		this.createPassengerColumnValueCell(row, SECOND_COLUMN_WIDTH, passengerVo.getNationality());
 		this.createFieldValueCell(row, COLUMN_SEPARATOR_WIDTH, "");
-		this.creatVerticalColumnLabelCell(row, THIRD_COLUMN_WIDTH, TRIP_TABLE_COLUMN_LABEL_DEST_AIRPORT);
+		this.creatVerticalColumnLabelCell(row, THIRD_COLUMN_WIDTH, paxDetailPdfDocRequest.getTranslationValues().get(TRIP_TABLE_COLUMN_LABEL_DEST_AIRPORT));
 		cell = this.createVerticalColumnValueCell(row, FOURTH_COLUMN_WIDTH, passengerVo.getFlightDestination());
 
 		row = this.getRow(passengerDetailDataTable);
@@ -372,7 +374,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		cell.setBottomBorderStyle(new LineStyle(this.DEFAULT_GRAY_ROW_COLOR, 1));
 		cell.setRightBorderStyle(new LineStyle(this.DEFAULT_GRAY_ROW_COLOR, 1));
 		this.createFieldValueCell(row, COLUMN_SEPARATOR_WIDTH, "");
-		cell = this.creatVerticalColumnLabelCell(row, THIRD_COLUMN_WIDTH, TRIP_TABLE_COLUMN_LABEL_TRIP_TYPE);
+		cell = this.creatVerticalColumnLabelCell(row, THIRD_COLUMN_WIDTH, paxDetailPdfDocRequest.getTranslationValues().get(TRIP_TABLE_COLUMN_LABEL_TRIP_TYPE));
 		cell.setBottomBorderStyle(new LineStyle(DEFAULT_GRAY_ROW_COLOR, 0));
 		this.createLastVerticalColumnValueCell(row, FOURTH_COLUMN_WIDTH, paxDetailPdfDocRequest.getTripType());
 
@@ -394,14 +396,14 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		List<DocumentVo> documentList = paxDetailPdfDocRequest.getPassengerVo().getDocuments();
 
 		documentTable = createDocumentsTable(document, passengerDetailPage);
-		this.addHorizontalReportSectionHeader(documentTable, DOCUMENTS_TITLE);
+		this.addHorizontalReportSectionHeader(documentTable, paxDetailPdfDocRequest.getTranslationValues().get(DOCUMENTS_TITLE));
 		// Document headers
 		Row<PDPage> documentHeaderRow = this.getRow(documentTable);
-		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_1, DOC_TABLE_COLUMN_LABEL_DOC_NUM);
-		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_2, DOC_TABLE_COLUMN_LABEL_TYPE);
-		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_3, DOC_TABLE_COLUMN_LABEL_ISS_CTRY);
-		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_4, DOC_TABLE_COLUMN_LABEL_EXP_DATE);
-		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_5, DOC_TABLE_COLUMN_LABEL_SOURCE);
+		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_1, paxDetailPdfDocRequest.getTranslationValues().get(DOC_TABLE_COLUMN_LABEL_DOC_NUM));
+		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_2, paxDetailPdfDocRequest.getTranslationValues().get(DOC_TABLE_COLUMN_LABEL_TYPE));
+		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_3, paxDetailPdfDocRequest.getTranslationValues().get(DOC_TABLE_COLUMN_LABEL_ISS_CTRY));
+		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_4, paxDetailPdfDocRequest.getTranslationValues().get(DOC_TABLE_COLUMN_LABEL_EXP_DATE));
+		this.createHorizontalColumnLabelCell(documentHeaderRow, DOCUMENT_COLUMN_5, paxDetailPdfDocRequest.getTranslationValues().get(DOC_TABLE_COLUMN_LABEL_SOURCE));
 
 		// Document data
 		Row<PDPage> documentDataRow;
@@ -435,13 +437,13 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		LinkedHashSet<HitDetailVo> hitDetailVoList = paxDetailPdfDocRequest.getHitDetailVoList();
 
 		eventHitTable = createEventHitTable(document, passengerDetailPage);
-		this.addHorizontalReportSectionHeader(eventHitTable, EVENT_HIT_INFORMATION_TITLE);
+		this.addHorizontalReportSectionHeader(eventHitTable, paxDetailPdfDocRequest.getTranslationValues().get(EVENT_HIT_INFORMATION_TITLE));
 		// Event Hit Information headers
 		Row<PDPage> eventHitRow = this.getRow(eventHitTable);
-		this.createHorizontalColumnLabelCell(eventHitRow, EVENT_HIT_INFO_COLUMN_1, HIT_TABLE_COLUMN_LABEL_HIT_SEVERITY);
-		this.createHorizontalColumnLabelCell(eventHitRow, EVENT_HIT_INFO_COLUMN_2, HIT_TABLE_COLUMN_LABEL_HIT_CATEGORY);
-		this.createHorizontalColumnLabelCell(eventHitRow, EVENT_HIT_INFO_COLUMN_3, HIT_TABLE_COLUMN_LABEL_HIT_TITLE);
-		this.createHorizontalColumnLabelCell(eventHitRow, EVENT_HIT_INFO_COLUMN_4, HIT_TABLE_COLUMN_LABEL_HIT_STATUS);
+		this.createHorizontalColumnLabelCell(eventHitRow, EVENT_HIT_INFO_COLUMN_1, paxDetailPdfDocRequest.getTranslationValues().get(HIT_TABLE_COLUMN_LABEL_HIT_SEVERITY));
+		this.createHorizontalColumnLabelCell(eventHitRow, EVENT_HIT_INFO_COLUMN_2, paxDetailPdfDocRequest.getTranslationValues().get(HIT_TABLE_COLUMN_LABEL_HIT_CATEGORY));
+		this.createHorizontalColumnLabelCell(eventHitRow, EVENT_HIT_INFO_COLUMN_3, paxDetailPdfDocRequest.getTranslationValues().get(HIT_TABLE_COLUMN_LABEL_HIT_TITLE));
+		this.createHorizontalColumnLabelCell(eventHitRow, EVENT_HIT_INFO_COLUMN_4, paxDetailPdfDocRequest.getTranslationValues().get(HIT_TABLE_COLUMN_LABEL_HIT_STATUS));
 		// Event Hit Information data
 		if (hitDetailVoList != null && !hitDetailVoList.isEmpty()) {
 			Row<PDPage> eventHitDataRow;
@@ -468,13 +470,13 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		final float HIT_HISTORY_COLUMN_3 = 25;
 		final float HIT_HISTORY_COLUMN_4 = 25;
 		hitHistoryTable = createHitHistoryTable(document, passengerDetailPage);
-		this.addHorizontalReportSectionHeader(hitHistoryTable, HIT_HISTORY_TITLE);
+		this.addHorizontalReportSectionHeader(hitHistoryTable, paxDetailPdfDocRequest.getTranslationValues().get(HIT_HISTORY_TITLE));
 		Row<PDPage> hitHistoryRow = this.getRow(hitHistoryTable);
 		// Hit History Header
-		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_1, "Category:");
-		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_2, "Document Number");
-		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_3, "Conditions");
-		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_4, "Flight Date");
+		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_1,paxDetailPdfDocRequest.getTranslationValues().get(HIT_HISTORY_TABLE_COLUMN_LABEL_CATEGORY));
+		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_2, paxDetailPdfDocRequest.getTranslationValues().get(HIT_HISTORY_TABLE_COLUMN_LABEL_DOC_NUM));
+		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_3, paxDetailPdfDocRequest.getTranslationValues().get(HIT_HISTORY_TABLE_COLUMN_LABEL_CONDITIONS));
+		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_4, paxDetailPdfDocRequest.getTranslationValues().get(HIT_HISTORY_TABLE_COLUMN_LABEL_FLIGHT_DATE));
 
 		List<HitDetailVo> hitDetailHistoryList = paxDetailPdfDocRequest.getHitDetailHistoryVoList();
 
@@ -510,14 +512,14 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		final float HIT_HISTORY_COLUMN_5 = 10;
 		this.cotravelerTable = this.createCotravelerTable(document, passengerDetailPage);
 
-		this.addHorizontalReportSectionHeader(this.cotravelerTable, COTRAVELER_TITLE);
+		this.addHorizontalReportSectionHeader(this.cotravelerTable, paxDetailPdfDocRequest.getTranslationValues().get(COTRAVELER_TITLE));
 		Row<PDPage> hitHistoryRow = this.getRow(this.cotravelerTable);
 		// Co-traveler Table Header
-		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_1, COTRAVELERS_TABLE_COLUMN_LABEL_FIRST_NAME);
-		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_2, COTRAVELERS_TABLE_COLUMN_MIDDLE_NAME);
-		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_3, COTRAVELERS_TABLE_COLUMN_LAST_NAME);
-		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_4, COTRAVELERS_TABLE_COLUMN_GENDER);
-		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_5, COTRAVELERS_TABLE_COLUMN_AGE);
+		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_1, paxDetailPdfDocRequest.getTranslationValues().get(COTRAVELERS_TABLE_COLUMN_LABEL_FIRST_NAME));
+		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_2, paxDetailPdfDocRequest.getTranslationValues().get(COTRAVELERS_TABLE_COLUMN_MIDDLE_NAME));
+		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_3, paxDetailPdfDocRequest.getTranslationValues().get(COTRAVELERS_TABLE_COLUMN_LAST_NAME));
+		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_4, paxDetailPdfDocRequest.getTranslationValues().get(COTRAVELERS_TABLE_COLUMN_GENDER));
+		this.createHorizontalColumnLabelCell(hitHistoryRow, HIT_HISTORY_COLUMN_5, paxDetailPdfDocRequest.getTranslationValues().get(COTRAVELERS_TABLE_COLUMN_AGE));
 
 		PassengerVo passengerVo = paxDetailPdfDocRequest.getPassengerVo();
 		if (passengerVo != null && passengerVo.getPnrVo() != null) {
@@ -563,13 +565,13 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		final float CREDITCARD_COLUMN_4 = 25;
 
 		this.creditCardTable = createCreditCardTable(document, thirdPage);
-		this.addHorizontalReportSectionHeader(this.creditCardTable, CREDIT_CARD_TITLE);
+		this.addHorizontalReportSectionHeader(this.creditCardTable, paxDetailPdfDocRequest.getTranslationValues().get(CREDIT_CARD_TITLE));
 		// Credit Card headers
 		Row<PDPage> creditCardHeaderRow = this.getRow(this.creditCardTable);
-		this.createHorizontalColumnLabelCell(creditCardHeaderRow, CREDITCARD_COLUMN_1, CREDIT_CARD_TABLE_COLUMN_HOLDER);
-		this.createHorizontalColumnLabelCell(creditCardHeaderRow, CREDITCARD_COLUMN_2, CREDIT_CARD_TABLE_COLUMN_TYPE);
-		this.createHorizontalColumnLabelCell(creditCardHeaderRow, CREDITCARD_COLUMN_3, CREDIT_CARD_TABLE_COLUMN_NUMBER);
-		this.createHorizontalColumnLabelCell(creditCardHeaderRow, CREDITCARD_COLUMN_4, CREDIT_CARD_TABLE_COLUMN_EXP_DATE);
+		this.createHorizontalColumnLabelCell(creditCardHeaderRow, CREDITCARD_COLUMN_1, paxDetailPdfDocRequest.getTranslationValues().get(CREDIT_CARD_TABLE_COLUMN_HOLDER));
+		this.createHorizontalColumnLabelCell(creditCardHeaderRow, CREDITCARD_COLUMN_2, paxDetailPdfDocRequest.getTranslationValues().get(CREDIT_CARD_TABLE_COLUMN_TYPE));
+		this.createHorizontalColumnLabelCell(creditCardHeaderRow, CREDITCARD_COLUMN_3, paxDetailPdfDocRequest.getTranslationValues().get(CREDIT_CARD_TABLE_COLUMN_NUMBER));
+		this.createHorizontalColumnLabelCell(creditCardHeaderRow, CREDITCARD_COLUMN_4, paxDetailPdfDocRequest.getTranslationValues().get(CREDIT_CARD_TABLE_COLUMN_EXP_DATE));
 
 		PassengerVo passengerVo = paxDetailPdfDocRequest.getPassengerVo();
 		if (passengerVo != null && passengerVo.getPnrVo() != null) {
@@ -623,7 +625,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 
 		this.emailTable = createEmailTable(document, thirdPage);
 		Row<PDPage> emailtHeaderRow = this.getRow(this.emailTable);
-		this.createSingleRowLabelCell(emailtHeaderRow, EMAIL_COLUMN_1, EMAIL_TITLE);
+		this.createSingleRowLabelCell(emailtHeaderRow, EMAIL_COLUMN_1, paxDetailPdfDocRequest.getTranslationValues().get(EMAIL_TITLE));
 		this.createSingleRowValueCell(emailtHeaderRow, EMAIL_COLUMN_2, emailAddresses.toLowerCase());
 
 		this.emailTable.draw();
@@ -655,7 +657,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		}
 
 		Row<PDPage> phoneHeaderRow = this.getRow(this.phoneTable);
-		this.createSingleRowLabelCell(phoneHeaderRow, PHONE_COLUMN_1, PHONE_TITLE);
+		this.createSingleRowLabelCell(phoneHeaderRow, PHONE_COLUMN_1, paxDetailPdfDocRequest.getTranslationValues().get(PHONE_TITLE));
 		this.createSingleRowValueCell(phoneHeaderRow, PHONE_COLUMN_2, phoneNumbers);
 
 		this.phoneTable.draw();
@@ -670,14 +672,14 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		final float FLIGHT_HISTORY_COLUMN_5 = 26;
 
 		this.flightHistoryTable = createFlightHistoryTable(document, passengerDetailPage);
-		this.addHorizontalReportSectionHeader(this.flightHistoryTable, FLIGHT_HISTORY_TITLE);
+		this.addHorizontalReportSectionHeader(this.flightHistoryTable, paxDetailPdfDocRequest.getTranslationValues().get(FLIGHT_HISTORY_TITLE));
 		Row<PDPage> flightHistoryHeaderRow = this.getRow(this.flightHistoryTable);
 		// flight History Header
-		this.createHorizontalColumnLabelCell(flightHistoryHeaderRow, FLIGHT_HISTORY_COLUMN_1, FLIGHT_HISTORY_TABLE_COLUMN_FLIGHT);
-		this.createHorizontalColumnLabelCell(flightHistoryHeaderRow, FLIGHT_HISTORY_COLUMN_2,FLIGHT_HISTORY_TABLE_COLUMN_ORIGIN);
-		this.createHorizontalColumnLabelCell(flightHistoryHeaderRow, FLIGHT_HISTORY_COLUMN_3, FLIGHT_HISTORY_TABLE_COLUMN_DEPARTURE_TIME);
-		this.createHorizontalColumnLabelCell(flightHistoryHeaderRow, FLIGHT_HISTORY_COLUMN_4, FLIGHT_HISTORY_TABLE_COLUMN_DESTINATION);
-		this.createHorizontalColumnLabelCell(flightHistoryHeaderRow, FLIGHT_HISTORY_COLUMN_5, FLIGHT_HISTORY_TABLE_COLUMN_ARRIVAL_TIME);
+		this.createHorizontalColumnLabelCell(flightHistoryHeaderRow, FLIGHT_HISTORY_COLUMN_1, paxDetailPdfDocRequest.getTranslationValues().get(FLIGHT_HISTORY_TABLE_COLUMN_FLIGHT));
+		this.createHorizontalColumnLabelCell(flightHistoryHeaderRow, FLIGHT_HISTORY_COLUMN_2,paxDetailPdfDocRequest.getTranslationValues().get(FLIGHT_HISTORY_TABLE_COLUMN_ORIGIN));
+		this.createHorizontalColumnLabelCell(flightHistoryHeaderRow, FLIGHT_HISTORY_COLUMN_3, paxDetailPdfDocRequest.getTranslationValues().get(FLIGHT_HISTORY_TABLE_COLUMN_DEPARTURE_TIME));
+		this.createHorizontalColumnLabelCell(flightHistoryHeaderRow, FLIGHT_HISTORY_COLUMN_4, paxDetailPdfDocRequest.getTranslationValues().get(FLIGHT_HISTORY_TABLE_COLUMN_DESTINATION));
+		this.createHorizontalColumnLabelCell(flightHistoryHeaderRow, FLIGHT_HISTORY_COLUMN_5, paxDetailPdfDocRequest.getTranslationValues().get(FLIGHT_HISTORY_TABLE_COLUMN_ARRIVAL_TIME));
 
 		List<FlightVoForFlightHistory> flightHistoryVoList = paxDetailPdfDocRequest.getFlightHistoryVoList();
 		Row<PDPage> flightHistoryDataRow;
@@ -717,7 +719,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		final float EVENT_NOTES_CONTENT_SECTION_SIZE = 100;
 
 		this.eventNotesTable = createEventNotesTable(document, passengerDetailPage);
-		this.addHorizontalReportSectionHeader(this.eventNotesTable, EVENT_NOTES_TITLE);
+		this.addHorizontalReportSectionHeader(this.eventNotesTable, paxDetailPdfDocRequest.getTranslationValues().get(EVENT_NOTES_TITLE));
 		Row<PDPage> eventNotesHeaderRow;
 		Row<PDPage> eventNotesContentRow;
 		LinkedHashSet<NoteVo> noteLinkedSet = paxDetailPdfDocRequest.getEventNotesSet();
@@ -726,16 +728,16 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 
 			eventNotesHeaderRow = this.getRow(this.eventNotesTable);
 
-			this.createFirstNoteColumnLabelCell(eventNotesHeaderRow, EVENT_NOTES_COLUMN_1, EVENT_NOTES_TABLE_COLUMN_NOTE_TYPES);
+			this.createFirstNoteColumnLabelCell(eventNotesHeaderRow, EVENT_NOTES_COLUMN_1, paxDetailPdfDocRequest.getTranslationValues().get(EVENT_NOTES_TABLE_COLUMN_NOTE_TYPES));
 			this.createLastNoteColumnValueCell(eventNotesHeaderRow, EVENT_NOTES_COLUMN_2,
 					this.getNoteTypeAsString(noteVo.getNoteTypeVoSet()));
 
 			eventNotesHeaderRow = this.getRow(this.eventNotesTable);
-			this.createFirstNoteColumnLabelCell(eventNotesHeaderRow, EVENT_NOTES_COLUMN_3, EVENT_NOTES_TABLE_COLUMN_CREATED_BY);
+			this.createFirstNoteColumnLabelCell(eventNotesHeaderRow, EVENT_NOTES_COLUMN_3, paxDetailPdfDocRequest.getTranslationValues().get(EVENT_NOTES_TABLE_COLUMN_CREATED_BY));
 			this.createLastNoteColumnValueCell(eventNotesHeaderRow, EVENT_NOTES_COLUMN_4, noteVo.getCreatedBy());
 
 			eventNotesHeaderRow = this.getRow(this.eventNotesTable);
-			this.createFirstNoteColumnLabelCell(eventNotesHeaderRow, EVENT_NOTES_COLUMN_5, EVENT_NOTES_TABLE_COLUMN_CREATED_ON);
+			this.createFirstNoteColumnLabelCell(eventNotesHeaderRow, EVENT_NOTES_COLUMN_5, paxDetailPdfDocRequest.getTranslationValues().get(EVENT_NOTES_TABLE_COLUMN_CREATED_ON));
 			this.createLastNoteColumnValueCell(eventNotesHeaderRow, EVENT_NOTES_COLUMN_6,
 					reportDateTimeFormatter(noteVo.getCreatedAt()));
 
@@ -761,7 +763,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 		final float EVENT_NOTES_CONTENT_SECTION_SIZE = 100;
 
 		this.eventNoteHistoryTable = createEventNoteHistoryTable(document, passengerDetailPage);
-		this.addHorizontalReportSectionHeader(this.eventNoteHistoryTable, EVENT_NOTE_HISTORY_TITLE);
+		this.addHorizontalReportSectionHeader(this.eventNoteHistoryTable, paxDetailPdfDocRequest.getTranslationValues().get(EVENT_NOTE_HISTORY_TITLE));
 		Row<PDPage> eventNoteHistoryHeaderRow;
 		Row<PDPage> eventNoteHistoryContentRow;
 		LinkedHashSet<NoteVo> noteLinkedSet = paxDetailPdfDocRequest.getEventHistoricalNotesSet();
@@ -770,16 +772,16 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 
 			eventNoteHistoryHeaderRow = this.getRow(this.eventNoteHistoryTable);
 
-			this.createFirstNoteColumnLabelCell(eventNoteHistoryHeaderRow, EVENT_NOTES_COLUMN_1, EVENT_NOTES_TABLE_COLUMN_NOTE_TYPES);
+			this.createFirstNoteColumnLabelCell(eventNoteHistoryHeaderRow, EVENT_NOTES_COLUMN_1, paxDetailPdfDocRequest.getTranslationValues().get(EVENT_NOTES_TABLE_COLUMN_NOTE_HISTORY_TYPES));
 			this.createLastNoteColumnValueCell(eventNoteHistoryHeaderRow, EVENT_NOTES_COLUMN_2,
 					this.getNoteTypeAsString(noteVo.getNoteTypeVoSet()));
 
 			eventNoteHistoryHeaderRow = this.getRow(this.eventNoteHistoryTable);
-			this.createFirstNoteColumnLabelCell(eventNoteHistoryHeaderRow, EVENT_NOTES_COLUMN_3, EVENT_NOTES_TABLE_COLUMN_CREATED_BY);
+			this.createFirstNoteColumnLabelCell(eventNoteHistoryHeaderRow, EVENT_NOTES_COLUMN_3, paxDetailPdfDocRequest.getTranslationValues().get(EVENT_NOTES_TABLE_COLUMN_NOTE_HISTORY_CREATED_BY));
 			this.createLastNoteColumnValueCell(eventNoteHistoryHeaderRow, EVENT_NOTES_COLUMN_4, noteVo.getCreatedBy());
 
 			eventNoteHistoryHeaderRow = this.getRow(this.eventNoteHistoryTable);
-			this.createFirstNoteColumnLabelCell(eventNoteHistoryHeaderRow, EVENT_NOTES_COLUMN_5, EVENT_NOTES_TABLE_COLUMN_CREATED_ON);
+			this.createFirstNoteColumnLabelCell(eventNoteHistoryHeaderRow, EVENT_NOTES_COLUMN_5, paxDetailPdfDocRequest.getTranslationValues().get(EVENT_NOTES_TABLE_COLUMN_NOTE_HISTORY_CREATED_ON));
 			this.createLastNoteColumnValueCell(eventNoteHistoryHeaderRow, EVENT_NOTES_COLUMN_6,
 					reportDateTimeFormatter(noteVo.getCreatedAt()));
 
@@ -803,7 +805,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 			if(pnrVo!=null && pnrVo.getRaw()!=null)
 			{
 				this.rawPnrTable = createRawPnrTable(document, passengerDetailPage);
-				this.addHorizontalReportSectionHeader(this.rawPnrTable, RAW_PNR_TITLE);
+				this.addHorizontalReportSectionHeader(this.rawPnrTable, paxDetailPdfDocRequest.getTranslationValues().get(RAW_PNR_TITLE));
 				Row<PDPage> rawPnrContentRow;
 				String pnrString = pnrVo.getRaw();
 				String[] pnrStringArray = pnrString.split("\\n");

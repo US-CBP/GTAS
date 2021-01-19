@@ -35,28 +35,47 @@ public class EventReportServiceImpl implements EventReportService {
 	private HitDetailService hitDetailService;
 
 	private PassengerNoteService passengerNoteService;
+	
+	private TranslationService translationService;
 
 	private EventReportPdfService<PaxDetailPdfDocRequest, PaxDetailPdfDocResponse> passengerEventReportService;
 
 	public EventReportServiceImpl(FlightService flightService, PnrService pnrService,
 			PassengerService passengerService, HitDetailService hitDetailService,
 			EventReportPdfService<PaxDetailPdfDocRequest, PaxDetailPdfDocResponse> passengerEventReportService,
-			PassengerNoteService passengerNoteService) {
+			PassengerNoteService passengerNoteService, TranslationService translationService) {
 		this.flightService = flightService;
 		this.pnrService = pnrService;
 		this.passengerService = passengerService;
 		this.passengerEventReportService = passengerEventReportService;
 		this.hitDetailService = hitDetailService;
 		this.passengerNoteService = passengerNoteService;
+		this.translationService = translationService;
 
 	}
 
-	public PaxDetailPdfDocResponse createPassengerEventReport(Long paxId, Long flightId) {
+	public PaxDetailPdfDocResponse createPassengerEventReport(Long paxId, Long flightId, String laguage) {
 
 		PaxDetailPdfDocRequest paxDetailPdfDocRequest = new PaxDetailPdfDocRequest();
 		PaxDetailPdfDocResponse paxDetailPdfDocResponse = new PaxDetailPdfDocResponse();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
 		PassengerVo passengerVo = new PassengerVo();
+		
+		
+		try {
+			
+		Map<String, String> translationValuesMap = translationService.getTranslationValuesByLang(laguage);
+		
+		if(translationValuesMap==null || translationValuesMap.isEmpty())
+		{
+			logger.error("ERROR! The Language translation values for Passenger Event Report  were not found in the database.");
+		}
+		else
+			
+		{
+			paxDetailPdfDocRequest.setTranslationValues(translationValuesMap);
+		}
+		
 		Flight flight = flightService.findById(flightId);
 
 		Passenger passenger = passengerService.findByIdWithFlightAndDocumentsAndMessageDetails(paxId);
@@ -127,12 +146,11 @@ public class EventReportServiceImpl implements EventReportService {
 			// Historical Notes
 			setNoteHistory(paxDetailPdfDocRequest, paxId);
 
-			try {
+		
 				paxDetailPdfDocResponse = passengerEventReportService.createPaxDetailReport(paxDetailPdfDocRequest);
-			} catch (Exception exception) {
-				logger.error("An error has occurred when creating pdf requests", exception);
-			}
-
+		}
+		} catch (Exception exception) {
+			logger.error("An error has occurred when creating pdf requests", exception);
 		}
 
 		return paxDetailPdfDocResponse;

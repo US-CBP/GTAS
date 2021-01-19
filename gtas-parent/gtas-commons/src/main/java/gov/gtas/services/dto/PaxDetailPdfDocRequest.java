@@ -2,6 +2,7 @@ package gov.gtas.services.dto;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
 import gov.gtas.vo.HitDetailVo;
 import gov.gtas.vo.NoteVo;
@@ -24,11 +25,14 @@ public class PaxDetailPdfDocRequest extends PdfDocumentRequest{
 	
 	private LinkedHashSet<NoteVo> eventHistoricalNotesSet;
 	
+	private Map<String,String> translationValues;
+	
 	private String highestSeverity;
 	
 	private String alert;
 	
 	private String tripType;
+	
     
 	public PassengerVo getPassengerVo() {
 		return passengerVo;
@@ -78,6 +82,14 @@ public class PaxDetailPdfDocRequest extends PdfDocumentRequest{
 
 	public void setEventHistoricalNotesSet(LinkedHashSet<NoteVo> eventHistoricalNotesSet) {
 		this.eventHistoricalNotesSet = eventHistoricalNotesSet;
+	}
+	
+	public Map<String, String> getTranslationValues() {
+		return translationValues;
+	}
+
+	public void setTranslationValues(Map<String, String> translationValues) {
+		this.translationValues = translationValues;
 	}
 
 	public String getHighestSeverity() {
