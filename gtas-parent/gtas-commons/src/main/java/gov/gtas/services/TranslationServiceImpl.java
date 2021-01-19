@@ -90,7 +90,7 @@ public class TranslationServiceImpl implements TranslationService {
 @Override
 public Map<String, String> getTranslationValuesByLang(String language) throws IOException {
 	 List<Translation> translationList = translationRespository.getTranslationsByLang(language);
-	 Map<String,String> translationMap = new HashMap<String,String>();
+	 Map<String,String> translationMap = new HashMap<>();
 	 if(translationList!=null && !translationList.isEmpty())
 	 {
 		 for(Translation translation: translationList)

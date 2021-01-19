@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import gov.gtas.model.Translation;
 import gov.gtas.repository.TranslationRepository;
@@ -26,6 +28,8 @@ public class TranslationServiceTest {
 	
 	@Mock
 	TranslationRepository translationRespository;
+	
+	private static final Logger logger = LoggerFactory.getLogger(TranslationServiceTest.class);
 	
 	
 	@Before
@@ -56,7 +60,7 @@ public class TranslationServiceTest {
 			Assert.assertNotNull(translationList);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 	}

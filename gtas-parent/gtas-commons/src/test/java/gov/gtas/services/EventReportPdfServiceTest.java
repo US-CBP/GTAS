@@ -15,6 +15,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import be.quodlibet.boxable.BaseTable;
 import be.quodlibet.boxable.Cell;
@@ -26,6 +28,8 @@ import java.util.*;
 @RunWith(MockitoJUnitRunner.class)
 public class EventReportPdfServiceTest {
 
+	private static final Logger logger = LoggerFactory.getLogger(EventReportPdfServiceTest.class);
+	
 	@InjectMocks
 	EventReportPdfServiceImpl eventReportPdfService;
 
@@ -133,7 +137,7 @@ public class EventReportPdfServiceTest {
 			// check that the cover page exists
 			Assert.assertEquals(1,document.getNumberOfPages());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 	}

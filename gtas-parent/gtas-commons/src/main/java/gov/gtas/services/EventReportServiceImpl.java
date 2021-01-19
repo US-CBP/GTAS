@@ -68,7 +68,7 @@ public class EventReportServiceImpl implements EventReportService {
 		
 		if(translationValuesMap==null || translationValuesMap.isEmpty())
 		{
-			throw new Exception("Error: The Language translation values for Passenger Event Report  were not found in the database.");
+			logger.error("ERROR! The Language translation values for Passenger Event Report  were not found in the database.");
 		}
 		else
 			

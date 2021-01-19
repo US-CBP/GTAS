@@ -29,12 +29,11 @@ public class EventReportController {
 	public @ResponseBody byte[] getPaxDetailReportByPaxId(
 			@RequestParam(value = "flightId", required = true) String flightId,
 			@RequestParam(value = "paxId", required = true) String paxId,
-			@RequestParam(value = "language", required = false) String language)throws IOException {
+			@RequestParam(value = "language", required = false) String language) {
 
 		PaxDetailPdfDocResponse paxDetailPdfDocResponse = new PaxDetailPdfDocResponse();
 		try {
-			logger.info("Generating Event Report for : Flight Id: " + flightId + ", PassengerId: " + paxId + "  "
-					+ this.getClass().getName());
+			logger.info("Generating Event Report for : Flight Id: {}, PassengerId: {} {}",flightId, paxId, this.getClass().getName());
 			Long pax_id = Long.parseLong(paxId);
 			Long flight_id = Long.parseLong(flightId);
 			
@@ -43,7 +42,7 @@ public class EventReportController {
 			{
 				selectedLanguage = DEFAULT_LANGUAGE;
 			}
-			logger.info("The language setting for the Passenger Event Report is " + selectedLanguage);
+			logger.info("The language setting for the Passenger Event Report is {}" , selectedLanguage);
 			paxDetailPdfDocResponse = passengerEventReportService.createPassengerEventReport(pax_id, flight_id,selectedLanguage);
 		} catch (NumberFormatException e) {
 			logger.error("The Flight Id or Passenger Id is not a number", e);
