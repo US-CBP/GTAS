@@ -31,10 +31,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import gov.gtas.services.security.RoleService;
 
+import gov.gtas.services.GtasEmailService;
+import gov.gtas.services.dto.EmailDTO;
+import gov.gtas.services.security.RoleService;
+import javassist.NotFoundException;
 import freemarker.template.TemplateException;
 import gov.gtas.constant.CommonErrorConstants;
+import gov.gtas.email.EmailTemplateLoader;
 import gov.gtas.email.ResetPasswordEmailService;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.PasswordResetToken;
@@ -71,6 +75,12 @@ public class UserServiceImpl implements UserService {
 
 	@Resource
 	private RoleService roleService;
+	
+	@Autowired
+    private GtasEmailService emailService;
+	
+	@Autowired
+    private EmailTemplateLoader emailTemplateLoader;
 
 	@Value("${user.group.default}")
 	private Long defaultUserGroupId;
@@ -153,8 +163,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 		/* Update the user password only. */
+	@Transactional
 	public UserData updatePassword(String userId, String password) {
-		User existingUser = userRepository.findOne(userId.toUpperCase());
+		User existingUser = fetchUser(userId.toUpperCase());
 
 			existingUser.setPassword(getEncodedPassword(password));
 
@@ -234,8 +245,9 @@ public class UserServiceImpl implements UserService {
 		Update all user data except the password. The password is handled by a separate function
 	 */
 	@Override
+	@Transactional
 	public UserData updateByAdmin(UserData data) {
-		User entity = userRepository.findOne(data.getUserId());	//returns error if null
+		User entity = fetchUser(data.getUserId());	//returns error if null
 
 		User mappedEntity = userServiceUtil.mapUserEntityFromUserData(data);
 
@@ -289,6 +301,28 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
+	public void forgotUsername(String userEmail) throws NotFoundException, MessagingException, IOException, TemplateException {
+		
+		String userId = userRepository.findUserByEmail(userEmail);
+		
+		if (userId == null) {
+			String message = "The provided email (" + userEmail + ") is not on the system!";
+			throw new NotFoundException(message);
+		}
+		
+		 EmailDTO emailDTO = new EmailDTO();
+		 String emailBody = emailTemplateLoader.forgotUsernameEmailHtmlString(userId);
+		 
+		 emailDTO.setSubject("Recover User Id");
+	     emailDTO.setTo(new String[] {userEmail});
+	     emailDTO.setBody(emailBody);
+		
+	     emailService.sendHTMLEmail(emailDTO);
+	}
+
+	
+	@Override
+	@Transactional
 	public boolean isValidToken(String token) {
 		PasswordResetToken prt = passwordResetTokenRepository.findByTokenValue(token).orElse(null);
 		
@@ -330,6 +364,7 @@ public class UserServiceImpl implements UserService {
 		return token;
 	}
 
+	
 	
 	
 

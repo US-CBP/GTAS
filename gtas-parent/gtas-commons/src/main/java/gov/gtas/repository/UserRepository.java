@@ -28,4 +28,7 @@ public interface UserRepository extends CrudRepository<User, String> {
 
 	@Query("select u from User u where u.archived = false  OR u.archived IS NULL")
 	Iterable<User> getNonArchivedUsers();
+
+	@Query("select u.userId from User u where u.email = :userEmail")
+	String findUserByEmail(@Param("userEmail") String userEmail);
 }

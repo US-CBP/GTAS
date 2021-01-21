@@ -24,6 +24,7 @@ public class EmailTemplateLoader {
 	 private static final String HIGH_PROFILE_NOTIFICATION_FTL = "highProfileHitNotification.ftl";
 	 private static final String ACCOUNT_LOCKED_RESET_PWORD_FTL = "accountLockedResetPassword.ftl";
 	 private static final String FORGOT_PASSWORD_TEMPLATE = "forgotPassword.ftl";
+	 private static final String FORGOT_USERNAME_TEMPLATE = "forgotUsername.ftl";
 
 	    
 
@@ -86,6 +87,13 @@ public class EmailTemplateLoader {
 		return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 		
 		
+	}
+	
+	public String forgotUsernameEmailHtmlString(String userId) throws IOException, TemplateException {
+		Template template = configuration.getTemplate(FORGOT_USERNAME_TEMPLATE);
+		Map<String, Object> model = new HashMap<>();
+		model.put("userId", userId);
+		return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 	}
 	
 
