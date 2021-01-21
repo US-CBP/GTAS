@@ -17,6 +17,9 @@ import org.springframework.cache.annotation.Cacheable;
 
 import gov.gtas.model.BaseEntity;
 
+import org.hibernate.annotations.Immutable;
+
+@Immutable
 @Cacheable
 @Entity
 @Table(name = "airport_restore", indexes = { @Index(columnList = "iata", name = "airportRestore_iata_index") })

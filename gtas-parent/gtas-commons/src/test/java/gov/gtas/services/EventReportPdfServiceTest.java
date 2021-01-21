@@ -15,6 +15,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import be.quodlibet.boxable.BaseTable;
 import be.quodlibet.boxable.Cell;
@@ -26,6 +28,8 @@ import java.util.*;
 @RunWith(MockitoJUnitRunner.class)
 public class EventReportPdfServiceTest {
 
+	private static final Logger logger = LoggerFactory.getLogger(EventReportPdfServiceTest.class);
+	
 	@InjectMocks
 	EventReportPdfServiceImpl eventReportPdfService;
 
@@ -94,7 +98,10 @@ public class EventReportPdfServiceTest {
 		getNoteVoHashSet(noteVoList);
 
 		paxDetailPdfDocRequest.setEventNotesSet(noteVoList);
+		
+		Map<String,String> translationValues = new HashMap<String,String>();
 
+		paxDetailPdfDocRequest.setTranslationValues(translationValues);
 		paxDetailPdfDocRequest.setEventHistoricalNotesSet(noteVoList);
 		PaxDetailPdfDocResponse pdPDFDocR = eventReportPdfService.createPaxDetailReport(paxDetailPdfDocRequest);
 		Assert.assertNotNull(pdPDFDocR);
@@ -130,7 +137,7 @@ public class EventReportPdfServiceTest {
 			// check that the cover page exists
 			Assert.assertEquals(1,document.getNumberOfPages());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 	}
@@ -287,6 +294,24 @@ public class EventReportPdfServiceTest {
 			String []name2 = cellText2.split(",");
 			Assert.assertEquals(name2.length,2);
 		
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	@Test
+	public void setLanguageTranslationValuesTest() {
+		
+		try {
+			PaxDetailPdfDocRequest paxDetailPdfDocRequest = new PaxDetailPdfDocRequest();
+			Map<String,String> languageTransValues = new HashMap<String,String>();
+			languageTransValues.put("en001", "Hello");
+			paxDetailPdfDocRequest.setTranslationValues(languageTransValues);
+			Assert.assertNotNull(paxDetailPdfDocRequest.getTranslationValues());
+			Assert.assertEquals("Hello", paxDetailPdfDocRequest.getTranslationValues().get("en001") );
 		
 		} catch (Exception e) {
 			e.printStackTrace();

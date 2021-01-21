@@ -5,18 +5,22 @@
  */
 package gov.gtas.services;
 
-import gov.gtas.model.Translation;
-import gov.gtas.repository.TranslationRepository;
-import gov.gtas.vo.TranslationVo;
-import org.springframework.stereotype.Service;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.IOException;
+import org.springframework.stereotype.Service;
+
+import gov.gtas.model.Translation;
+import gov.gtas.repository.TranslationRepository;
+import gov.gtas.vo.TranslationVo;
 
 @Service
 public class TranslationServiceImpl implements TranslationService {
@@ -82,5 +86,19 @@ public class TranslationServiceImpl implements TranslationService {
   private Translation buildTranslation(TranslationVo translationVo) {
     return new Translation(translationVo.getId(), translationVo.getCode(), translationVo.getLanguage(), translationVo.getTranslation());
   }
+
+@Override
+public Map<String, String> getTranslationValuesByLang(String language) throws IOException {
+	 List<Translation> translationList = translationRespository.getTranslationsByLang(language);
+	 Map<String,String> translationMap = new HashMap<>();
+	 if(translationList!=null && !translationList.isEmpty())
+	 {
+		 for(Translation translation: translationList)
+		 {
+			 translationMap.put(translation.getCode(), translation.getTranslation());
+		 }
+	 }
+	return translationMap;
+}
 
 }

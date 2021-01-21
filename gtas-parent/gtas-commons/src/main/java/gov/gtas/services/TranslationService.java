@@ -5,11 +5,14 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.model.Translation;
 import gov.gtas.vo.TranslationVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 
@@ -30,6 +33,8 @@ public interface TranslationService {
   // public TranslationVo findById(Long id);
 
   List<TranslationVo> getTranslationsByLang(String language) throws IOException;
+  
+  Map<String,String> getTranslationValuesByLang(String language) throws IOException;
 
   @PreAuthorize(PRIVILEGE_ADMIN)
   TranslationVo getTranslationByCodeandLang(String code, String language) throws IOException;

@@ -8,12 +8,11 @@
 
 package gov.gtas.controller;
 
-import java.sql.SQLException;
-import java.util.*;
-
 import gov.gtas.model.*;
 
 import javax.sql.rowset.serial.SerialClob;
+import java.sql.SQLException;
+import java.util.*;
 
 public class TestData {
 

@@ -5,21 +5,16 @@
  */
 package gov.gtas.controller;
 
-import java.io.IOException;
-import java.util.Objects;
-
+import gov.gtas.services.EventReportService;
+import gov.gtas.services.dto.PaxDetailPdfDocResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import gov.gtas.services.EventReportService;
-import gov.gtas.services.dto.PaxDetailPdfDocResponse;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Controller
 public class EventReportController {
@@ -27,20 +22,28 @@ public class EventReportController {
 	private static final Logger logger = LoggerFactory.getLogger(EventReportController.class);
 
 	private EventReportService passengerEventReportService;
+	private static final String DEFAULT_LANGUAGE = "en";
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/paxdetailreport", method = RequestMethod.GET)
 	public @ResponseBody byte[] getPaxDetailReportByPaxId(
 			@RequestParam(value = "flightId", required = true) String flightId,
-			@RequestParam(value = "paxId", required = true) String paxId) throws IOException {
+			@RequestParam(value = "paxId", required = true) String paxId,
+			@RequestParam(value = "language", required = false) String language) {
 
 		PaxDetailPdfDocResponse paxDetailPdfDocResponse = new PaxDetailPdfDocResponse();
 		try {
-			logger.info("Generating Event Report for : Flight Id: " + flightId + ", PassengerId: " + paxId + "  "
-					+ this.getClass().getName());
+			logger.info("Generating Event Report for : Flight Id: {}, PassengerId: {} {}",flightId, paxId, this.getClass().getName());
 			Long pax_id = Long.parseLong(paxId);
 			Long flight_id = Long.parseLong(flightId);
-			paxDetailPdfDocResponse = passengerEventReportService.createPassengerEventReport(pax_id, flight_id);
+			
+			String selectedLanguage = language;
+			if(selectedLanguage==null || selectedLanguage.isEmpty())
+			{
+				selectedLanguage = DEFAULT_LANGUAGE;
+			}
+			logger.info("The language setting for the Passenger Event Report is {}" , selectedLanguage);
+			paxDetailPdfDocResponse = passengerEventReportService.createPassengerEventReport(pax_id, flight_id,selectedLanguage);
 		} catch (NumberFormatException e) {
 			logger.error("The Flight Id or Passenger Id is not a number", e);
 		} catch (Exception e) {

@@ -8,9 +8,8 @@
 
 package gov.gtas.controller;
 
-import java.util.Base64;
-import java.util.Base64.Encoder;
-
+import gov.gtas.enumtype.Status;
+import gov.gtas.json.JsonServiceResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,8 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gov.gtas.enumtype.Status;
-import gov.gtas.json.JsonServiceResponse;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 
 @RestController
 public class ConfigurationController {

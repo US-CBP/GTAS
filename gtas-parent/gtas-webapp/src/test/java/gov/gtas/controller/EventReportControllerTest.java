@@ -1,7 +1,7 @@
 package gov.gtas.controller;
 
-import static org.mockito.MockitoAnnotations.initMocks;
-
+import gov.gtas.services.EventReportService;
+import gov.gtas.services.dto.PaxDetailPdfDocResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,8 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import gov.gtas.services.EventReportService;
-import gov.gtas.services.dto.PaxDetailPdfDocResponse;
+
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EventReportControllerTest {
@@ -29,8 +29,9 @@ public class EventReportControllerTest {
 		paxDetailPdfDocResponse.setFileByteArray(new byte[1]);
 		long paxId = 1L, flightId =2L;
 		long paxId2= 10L, flightId2= 20L;
-		Mockito.when(eventReportService.createPassengerEventReport(paxId, flightId)).thenReturn(paxDetailPdfDocResponse);
-		Mockito.when(eventReportService.createPassengerEventReport(paxId2, flightId2)).thenReturn(new PaxDetailPdfDocResponse());
+		String language = "en";
+		Mockito.when(eventReportService.createPassengerEventReport(paxId, flightId, language)).thenReturn(paxDetailPdfDocResponse);
+		Mockito.when(eventReportService.createPassengerEventReport(paxId2, flightId2,language)).thenReturn(new PaxDetailPdfDocResponse());
 	
 	}
 
@@ -39,8 +40,9 @@ public class EventReportControllerTest {
 		
 		String paxIdStr = "1";
 		String flightIdStr = "2";
+		String language = "en";
 		try {
-			byte[] resultByte = eventReportController.getPaxDetailReportByPaxId(flightIdStr,paxIdStr);
+			byte[] resultByte = eventReportController.getPaxDetailReportByPaxId(flightIdStr,paxIdStr, language);
 			Assert.assertEquals(1,resultByte.length);
 		}
 		catch(Exception e)
@@ -55,8 +57,9 @@ public class EventReportControllerTest {
 		
 		String paxIdStr = "10";
 		String flightIdStr = "20";
+		String language = "en";
 		try {
-			byte[] resultByte = eventReportController.getPaxDetailReportByPaxId(flightIdStr,paxIdStr);
+			byte[] resultByte = eventReportController.getPaxDetailReportByPaxId(flightIdStr,paxIdStr,language);
 			Assert.assertNull(resultByte);
 		}
 		catch(Exception e)

@@ -5,16 +5,15 @@
  */
 package gov.gtas.controller;
 
-import gov.gtas.model.Translation;
 import gov.gtas.services.TranslationService;
 import gov.gtas.vo.TranslationVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 

@@ -8,6 +8,7 @@ package gov.gtas.repository;
 import gov.gtas.model.lookup.Carrier;
 
 import java.util.List;
+import java.util.Date;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -24,5 +25,8 @@ public interface CarrierRepository extends CrudRepository<Carrier, Long> {
 	default Carrier findOne(Long carrierId) {
 		return findById(carrierId).orElse(null);
 	}
+
+	@Query("SELECT c FROM Carrier c WHERE c.updatedAt >= :updated_at")
+	public List<Carrier> findAllUpdated(@Param("updated_at") Date updated_at);
 
 }

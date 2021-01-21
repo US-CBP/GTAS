@@ -4,7 +4,7 @@ import gov.gtas.services.dto.PaxDetailPdfDocResponse;
 
 public interface EventReportService {
 	
-	public PaxDetailPdfDocResponse createPassengerEventReport(Long paxId, Long flightId);
+	public PaxDetailPdfDocResponse createPassengerEventReport(Long paxId, Long flightId, String language);
 	
 	
 	

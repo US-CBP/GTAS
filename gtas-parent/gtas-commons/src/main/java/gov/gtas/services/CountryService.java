@@ -9,6 +9,7 @@ import gov.gtas.vo.lookup.CountryVo;
 import gov.gtas.vo.lookup.CountryLookupVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.util.Date;
 import java.util.List;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
@@ -21,6 +22,8 @@ public interface CountryService {
   public CountryVo delete(Long id);
 
   public List<CountryVo> findAll();
+
+  public List<CountryVo> findAllUpdated(Date dt);
 
   @PreAuthorize(PRIVILEGE_ADMIN)
   public CountryVo update(CountryVo country);
