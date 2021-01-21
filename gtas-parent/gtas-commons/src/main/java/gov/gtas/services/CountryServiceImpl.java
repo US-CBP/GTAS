@@ -48,7 +48,6 @@ public class CountryServiceImpl implements CountryService {
   }
 
   @Override
-  @Transactional
   public List<CountryVo> findAll() {
     List<Country> allCountries = (List<Country>) countryRepository.findAll();
 
@@ -62,7 +61,6 @@ public class CountryServiceImpl implements CountryService {
 
   }
 
-  @Transactional
   public List<CountryVo> findAllUpdated(Date dt) {
 
     List<Country> allCountries = (List<Country>) countryRepository.findAllUpdated(dt);
@@ -78,7 +76,7 @@ public class CountryServiceImpl implements CountryService {
   }
 
   @Override
-  @Transactional
+  @Deprecated
   public List<CountryLookupVo> getCountryLookup() {
     List<Country> allCountries = (List<Country>) countryRepository.findAll();
     List<CountryLookupVo> allCountryVos = new ArrayList<>();
@@ -99,7 +97,6 @@ public class CountryServiceImpl implements CountryService {
   }
 
   @Override
-  @Transactional
   public CountryVo findById(Long id) {
     Country country = countryRepository.findById(id).orElse(null);
 
@@ -125,7 +122,6 @@ public class CountryServiceImpl implements CountryService {
   }
 
   @Override
-  @Transactional
   @Cacheable(value = "countryCache", key = "#country")
   public CountryVo getCountryByTwoLetterCode(String country) {
     List<Country> countries = countryRepository.getCountryByTwoLetterCode(country);
@@ -138,7 +134,6 @@ public class CountryServiceImpl implements CountryService {
   }
 
   @Override
-  @Transactional
   @Cacheable(value = "countryCache", key = "#country")
   public CountryVo getCountryByThreeLetterCode(String country) {
     List<Country> countries = countryRepository.getCountryByThreeLetterCode(country);

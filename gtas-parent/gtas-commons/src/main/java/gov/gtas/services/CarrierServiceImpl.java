@@ -47,7 +47,6 @@ public class CarrierServiceImpl implements CarrierService {
   }
 
   @Override
-  @Transactional
   public List<CarrierVo> findAll() {
 
     List<Carrier> allCarriers = (List<Carrier>) carrierRespository.findAll();
@@ -61,7 +60,6 @@ public class CarrierServiceImpl implements CarrierService {
     return allCarrierVos;
   }
 
-  @Transactional
   public List<CarrierVo> findAllUpdated(Date dt) {
     List<Carrier> allCarriers = (List<Carrier>) carrierRespository.findAllUpdated(dt);
 
@@ -85,7 +83,6 @@ public class CarrierServiceImpl implements CarrierService {
   }
 
   @Override
-  @Transactional
   public CarrierVo findById(Long id) {
     Carrier carrier = carrierRespository.findById(id).orElse(null);
 
@@ -97,7 +94,7 @@ public class CarrierServiceImpl implements CarrierService {
   }
 
   @Override
-  @Transactional
+  @Deprecated
   public List<CarrierLookupVo> getCarrierLookup() {
     List<Carrier> carriers = (List<Carrier>) carrierRespository.findAll();
     List<CarrierLookupVo> allCarrierVos = new ArrayList<>();
@@ -124,7 +121,6 @@ public class CarrierServiceImpl implements CarrierService {
   }
 
   @Override
-  @Transactional
   public CarrierVo getCarrierByTwoLetterCode(String carrierCode) {
     List<Carrier> carriers = carrierRespository.getCarrierByTwoLetterCode(carrierCode);
 
@@ -136,7 +132,6 @@ public class CarrierServiceImpl implements CarrierService {
   }
 
   @Override
-  @Transactional
   public CarrierVo getCarrierByThreeLetterCode(String carrierCode) {
     List<Carrier> carriers = carrierRespository.getCarrierByThreeLetterCode(carrierCode);
 
