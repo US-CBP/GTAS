@@ -32,14 +32,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import gov.gtas.services.GtasEmailService;
-import gov.gtas.services.dto.EmailDTO;
+import gov.gtas.services.email.UserEmailService;
 import gov.gtas.services.security.RoleService;
 import javassist.NotFoundException;
 import freemarker.template.TemplateException;
 import gov.gtas.constant.CommonErrorConstants;
-import gov.gtas.email.EmailTemplateLoader;
-import gov.gtas.email.ResetPasswordEmailService;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.PasswordResetToken;
 import gov.gtas.model.Role;
@@ -68,7 +65,7 @@ public class UserServiceImpl implements UserService {
 	private RoleServiceUtil roleServiceUtil;
 	
 	@Resource
-    private ResetPasswordEmailService resetPasswordEmailService;
+    private UserEmailService userEmailService;
 	
 	@Resource
 	private PasswordResetTokenRepository passwordResetTokenRepository;
@@ -76,12 +73,6 @@ public class UserServiceImpl implements UserService {
 	@Resource
 	private RoleService roleService;
 	
-	@Autowired
-    private GtasEmailService emailService;
-	
-	@Autowired
-    private EmailTemplateLoader emailTemplateLoader;
-
 	@Value("${user.group.default}")
 	private Long defaultUserGroupId;
 	
@@ -165,7 +156,7 @@ public class UserServiceImpl implements UserService {
 		/* Update the user password only. */
 	@Transactional
 	public UserData updatePassword(String userId, String password) {
-		User existingUser = fetchUser(userId.toUpperCase());
+		User existingUser = userRepository.findOne(userId.toUpperCase());
 
 			existingUser.setPassword(getEncodedPassword(password));
 
@@ -247,7 +238,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public UserData updateByAdmin(UserData data) {
-		User entity = fetchUser(data.getUserId());	//returns error if null
+		User entity = userRepository.findOne(data.getUserId());	//returns error if null
 
 		User mappedEntity = userServiceUtil.mapUserEntityFromUserData(data);
 
@@ -291,7 +282,7 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(user);//update reset password
 		
 		try {
-			resetPasswordEmailService.sendPasswordResetEmail(user.getUserId(), user.getEmail(), user.getPasswordResetToken());
+			userEmailService.sendPasswordResetEmail(user.getUserId(), user.getEmail(), user.getPasswordResetToken());
 		} catch (IOException | TemplateException | MessagingException | URISyntaxException e) {
 			
 			logger.info(e.getMessage());
@@ -310,14 +301,8 @@ public class UserServiceImpl implements UserService {
 			throw new NotFoundException(message);
 		}
 		
-		 EmailDTO emailDTO = new EmailDTO();
-		 String emailBody = emailTemplateLoader.forgotUsernameEmailHtmlString(userId);
-		 
-		 emailDTO.setSubject("Recover User Id");
-	     emailDTO.setTo(new String[] {userEmail});
-	     emailDTO.setBody(emailBody);
+		userEmailService.sedUsername(userEmail, userId);
 		
-	     emailService.sendHTMLEmail(emailDTO);
 	}
 
 	

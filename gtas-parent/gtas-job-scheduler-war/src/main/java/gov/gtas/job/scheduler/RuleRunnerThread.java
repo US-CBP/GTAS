@@ -13,7 +13,6 @@ import static gov.gtas.repository.AppConfigurationRepository.FUZZY_MATCHING;
 import java.util.*;
 import java.util.concurrent.Callable;
 
-import gov.gtas.email.HitEmailNotificationService;
 import gov.gtas.services.AdditionalProcessingService;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.MessageStatus;
@@ -23,6 +22,8 @@ import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.ErrorPersistenceService;
 import gov.gtas.services.NotificatonService;
 import gov.gtas.services.RuleHitPersistenceService;
+import gov.gtas.services.email.HitEmailNotificationService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

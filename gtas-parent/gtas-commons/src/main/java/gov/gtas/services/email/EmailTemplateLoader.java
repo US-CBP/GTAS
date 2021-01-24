@@ -1,4 +1,4 @@
-package gov.gtas.email;
+package gov.gtas.services.email;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

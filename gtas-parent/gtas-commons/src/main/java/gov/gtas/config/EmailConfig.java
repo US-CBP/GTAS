@@ -2,7 +2,8 @@ package gov.gtas.config;
 
 import freemarker.template.Configuration;
 import freemarker.template.Version;
-import gov.gtas.email.EmailTemplateLoader;
+import gov.gtas.services.email.EmailTemplateLoader;
+
 import org.springframework.context.annotation.Bean;
 
 @org.springframework.context.annotation.Configuration
