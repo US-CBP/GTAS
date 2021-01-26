@@ -31,11 +31,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import gov.gtas.services.security.RoleService;
 
+import gov.gtas.services.email.UserEmailService;
+import gov.gtas.services.security.RoleService;
+import javassist.NotFoundException;
 import freemarker.template.TemplateException;
 import gov.gtas.constant.CommonErrorConstants;
-import gov.gtas.email.ResetPasswordEmailService;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.PasswordResetToken;
 import gov.gtas.model.Role;
@@ -64,14 +65,14 @@ public class UserServiceImpl implements UserService {
 	private RoleServiceUtil roleServiceUtil;
 	
 	@Resource
-    private ResetPasswordEmailService resetPasswordEmailService;
+    private UserEmailService userEmailService;
 	
 	@Resource
 	private PasswordResetTokenRepository passwordResetTokenRepository;
 
 	@Resource
 	private RoleService roleService;
-
+	
 	@Value("${user.group.default}")
 	private Long defaultUserGroupId;
 	
@@ -153,6 +154,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 		/* Update the user password only. */
+	@Transactional
 	public UserData updatePassword(String userId, String password) {
 		User existingUser = userRepository.findOne(userId.toUpperCase());
 
@@ -234,6 +236,7 @@ public class UserServiceImpl implements UserService {
 		Update all user data except the password. The password is handled by a separate function
 	 */
 	@Override
+	@Transactional
 	public UserData updateByAdmin(UserData data) {
 		User entity = userRepository.findOne(data.getUserId());	//returns error if null
 
@@ -279,13 +282,29 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(user);//update reset password
 		
 		try {
-			resetPasswordEmailService.sendPasswordResetEmail(user.getUserId(), user.getEmail(), user.getPasswordResetToken());
+			userEmailService.sendPasswordResetEmail(user.getUserId(), user.getEmail(), user.getPasswordResetToken());
 		} catch (IOException | TemplateException | MessagingException | URISyntaxException e) {
 			
 			logger.info(e.getMessage());
 		}
 		
 	}
+	
+	@Override
+	@Transactional
+	public void forgotUsername(String userEmail) throws NotFoundException, MessagingException, IOException, TemplateException {
+		
+		String userId = userRepository.findUserByEmail(userEmail);
+		
+		if (userId == null) {
+			String message = "The provided email (" + userEmail + ") is not on the system!";
+			throw new NotFoundException(message);
+		}
+		
+		userEmailService.sedUsername(userEmail, userId);
+		
+	}
+
 	
 	@Override
 	@Transactional
@@ -330,6 +349,7 @@ public class UserServiceImpl implements UserService {
 		return token;
 	}
 
+	
 	
 	
 

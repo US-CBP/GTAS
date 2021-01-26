@@ -1,4 +1,4 @@
-package gov.gtas.email;
+package gov.gtas.services.email;
 
 import freemarker.template.TemplateException;
 import gov.gtas.model.PasswordResetToken;
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 @Service
-public class ResetPasswordEmailService {
+public class UserEmailService {
 
     private static final String RESET_EMAIL_SUBJECT = "Unlock Instructions";
 
@@ -56,5 +56,17 @@ public class ResetPasswordEmailService {
 
         emailService.sendHTMLEmail(emailDTO);
     }
+
+	public void sedUsername(String userEmail, String userId) throws IOException, TemplateException, MessagingException {
+		EmailDTO emailDTO = new EmailDTO();
+		 String emailBody = emailTemplateLoader.forgotUsernameEmailHtmlString(userId);
+		 
+		 emailDTO.setSubject("Recover User Id");
+	     emailDTO.setTo(new String[] {userEmail});
+	     emailDTO.setBody(emailBody);
+		
+	     emailService.sendHTMLEmail(emailDTO);
+		
+	}
     
 }

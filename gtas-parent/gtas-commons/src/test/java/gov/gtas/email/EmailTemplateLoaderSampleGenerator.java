@@ -4,6 +4,8 @@ import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.email.dto.CategoryDTO;
 import gov.gtas.email.dto.DocumentDTO;
 import gov.gtas.email.dto.HitEmailDTO;
+import gov.gtas.services.email.EmailTemplateLoader;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

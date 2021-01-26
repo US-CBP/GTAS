@@ -13,9 +13,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
-import gov.gtas.email.HitEmailNotificationService;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.lookup.HitCategory;
+import gov.gtas.services.email.HitEmailNotificationService;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

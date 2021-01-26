@@ -17,7 +17,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import freemarker.template.TemplateException;
-import gov.gtas.email.EmailTemplateLoader;
 import gov.gtas.enumtype.SignupRequestStatus;
 import gov.gtas.model.SignupRequest;
 import gov.gtas.repository.SignupLocationRepository;
@@ -26,6 +25,7 @@ import gov.gtas.repository.UserRepository;
 import gov.gtas.search.SearchSpecificationBuilder;
 import gov.gtas.services.dto.EmailDTO;
 import gov.gtas.services.dto.SignupRequestDTO;
+import gov.gtas.services.email.EmailTemplateLoader;
 import gov.gtas.services.security.UserData;
 import gov.gtas.services.security.UserServiceUtil;
 import gov.gtas.services.security.*;

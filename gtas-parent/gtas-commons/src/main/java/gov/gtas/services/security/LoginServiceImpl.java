@@ -1,10 +1,11 @@
 package gov.gtas.services.security;
 
 import gov.gtas.constant.CommonErrorConstants;
-import gov.gtas.email.ResetPasswordEmailService;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.User;
 import gov.gtas.repository.UserRepository;
+import gov.gtas.services.email.UserEmailService;
+
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,7 +22,7 @@ public class LoginServiceImpl implements LoginService {
     private UserService userService;
 
     @Resource
-    private ResetPasswordEmailService resetPasswordEmailService;
+    private UserEmailService userEmailService;
 
     @Override
     @Transactional
@@ -61,7 +62,7 @@ public class LoginServiceImpl implements LoginService {
         String resetToken = UUID.randomUUID().toString();
         user.setResetToken(resetToken);
         try {
-            resetPasswordEmailService.sendAccountLockedResetEmail(user.getEmail(), resetToken);
+        	userEmailService.sendAccountLockedResetEmail(user.getEmail(), resetToken);
         } catch(Exception e) {
             throw new RuntimeException(e);
         }

@@ -10,11 +10,18 @@ import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 import gov.gtas.constant.GtasSecurityConstants;
 import gov.gtas.model.User;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import javax.mail.MessagingException;
+
 import gov.gtas.model.UserGroup;
+import javassist.NotFoundException;
+
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import freemarker.template.TemplateException;
 
 /**
  * The Interface UserService.
@@ -102,5 +109,7 @@ public interface UserService {
 	void forgotPassword(User user);
 
 	boolean isValidToken(String token);
+
+	void forgotUsername(String userEmail) throws NotFoundException, MessagingException, IOException, TemplateException;
 
 }

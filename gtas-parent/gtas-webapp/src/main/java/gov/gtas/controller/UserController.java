@@ -209,6 +209,21 @@ public class UserController {
 
 	}
 
+	@RequestMapping(method = RequestMethod.POST, value = "/forgot-username")
+	public JsonServiceResponse forgotUsername (@RequestParam String userEmail) {
+		try {
+			userService.forgotUsername(userEmail);
+
+			return new JsonServiceResponse(Status.SUCCESS,
+					"Your username has been sent to your email");
+
+		} catch (Exception e) {
+			return new JsonServiceResponse(Status.FAILURE,
+					"The provided email (" + userEmail + ") is not on the system!");
+
+		}
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/reset-password")
 	public JsonServiceResponse isValidToken(@RequestParam String token) {
 		boolean isValidToken = userService.isValidToken(token);

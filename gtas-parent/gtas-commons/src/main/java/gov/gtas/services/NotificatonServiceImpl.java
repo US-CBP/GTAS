@@ -15,9 +15,10 @@ import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 
 import freemarker.template.TemplateException;
-import gov.gtas.email.HitEmailNotificationService;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.services.dto.EmailDTO;
+import gov.gtas.services.email.HitEmailNotificationService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

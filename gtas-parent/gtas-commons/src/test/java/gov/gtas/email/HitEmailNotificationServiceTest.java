@@ -15,6 +15,9 @@ import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.EmailDTO;
+import gov.gtas.services.email.EmailTemplateLoader;
+import gov.gtas.services.email.HitEmailNotificationService;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
