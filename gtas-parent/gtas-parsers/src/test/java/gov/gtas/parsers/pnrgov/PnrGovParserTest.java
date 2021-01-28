@@ -44,6 +44,7 @@ public class PnrGovParserTest implements ParserTestHelper {
     private static final String PNR_NO_ORG_MSG = "/pnr-messages/pnrNoOrgMsg.txt";
 	private static final String PNR_META_CHARACTERS = "/pnr-messages/danglingMetaCharacter.txt";
     private static final String PNR_WITH_PREFIXES_AND_BOOKING_DETAIL_BAGS = "/pnr-messages/pnrWithPrefixesAndBookingDetailBags.txt";
+    private static final String PNR_WITH_IFT = "/pnr-messages/pnrWithIFTSegment.txt";
     private EdifactParser<PnrVo> parser;
 
     @Before
@@ -259,5 +260,18 @@ public class PnrGovParserTest implements ParserTestHelper {
         String pnrExample = getMessageText(PNR_META_CHARACTERS);
         PnrVo vo = pnrGovParser.parse(pnrExample);
         assertEquals(1, vo.getSavedSegments().size());
+    }
+
+    @Test
+    public void iftPnrTest() throws IOException, URISyntaxException, ParseException {
+        List<String> fields = new ArrayList<>();
+        fields.add("IFT");
+        List<Pattern> patterns = new ArrayList<>();
+        patterns.add(Pattern.compile(".*[0-9]{4}[ ]{2}AVE.*"));
+        PnrGovParser pnrGovParser = new PnrGovParser(fields, patterns);
+        String pnrExample = getMessageText(PNR_WITH_IFT);
+        PnrVo vo = pnrGovParser.parse(pnrExample);
+        assertEquals(1, vo.getSavedSegments().size());
+        assertEquals("IFT-4:43-ABRAHAM MIMPSON-3304  AVENUE*", vo.getSavedSegments().iterator().next().getSegmentText());
     }
 }

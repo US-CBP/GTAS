@@ -420,6 +420,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 
 		IFT ift = getConditionalSegment(IFT.class);
 		if (ift != null) {
+			checkAndSaveInterestingSegments("IFT", ift.getText());
 			if (CollectionUtils.isNotEmpty(newCreditCards) && ift.isSponsorInfo()) {
 				List<String> msgs = ift.getMessages();
 				if (CollectionUtils.isNotEmpty(msgs)) {
