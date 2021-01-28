@@ -48,7 +48,6 @@ public class AirportServiceImpl implements AirportService {
   }
 
   @Override
-  @Transactional
   public List<AirportVo> findAll() {
     List<Airport> allAirports = (List<Airport>) airportRepo.findAll();
 
@@ -61,7 +60,6 @@ public class AirportServiceImpl implements AirportService {
     return allAirportVos;
   }
 
-  @Transactional
   public List<AirportVo> findAllUpdated(Date dt) {
     List<Airport> allAirports = (List<Airport>) airportRepo.findAllUpdated(dt);
 
@@ -76,7 +74,7 @@ public class AirportServiceImpl implements AirportService {
   }
 
   @Override
-  @Transactional
+  @Deprecated
   public List<AirportLookupVo> getAirportLookup() {
     List<Airport> allAirports = (List<Airport>) airportRepo.findAll();
 
@@ -98,7 +96,6 @@ public class AirportServiceImpl implements AirportService {
   }
 
   @Override
-  @Transactional
   public AirportVo findById(Long id) {
     Airport airport = airportRepo.findOne(id);
 
@@ -124,7 +121,6 @@ public class AirportServiceImpl implements AirportService {
   }
 
   @Override
-  @Transactional
   @Cacheable(value = "airportCache", key = "#airportCode")
   public AirportVo getAirportByThreeLetterCode(String airportCode) {
     List<Airport> airports = airportRepo.getAirportByThreeLetterCode(airportCode);
@@ -137,7 +133,6 @@ public class AirportServiceImpl implements AirportService {
   }
 
   @Override
-  @Transactional
   @Cacheable(value = "airportCache", key = "#airportCode")
   public AirportVo getAirportByFourLetterCode(String airportCode) {
     List<Airport> airports = airportRepo.getAirportByFourLetterCode(airportCode);

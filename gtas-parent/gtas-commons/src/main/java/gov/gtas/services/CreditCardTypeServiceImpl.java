@@ -46,7 +46,6 @@ public class CreditCardTypeServiceImpl implements CreditCardTypeService {
   }
 
   @Override
-  @Transactional
   public List<CreditCardTypeVo> findAll() {
 
     List<CreditCardType> allCreditCardTypes = (List<CreditCardType>) cctypeRespository.findAll();
@@ -60,7 +59,6 @@ public class CreditCardTypeServiceImpl implements CreditCardTypeService {
     return allCreditCardTypeVos;
   }
 
-  @Transactional
   public List<CreditCardTypeVo> findAllUpdated(Date dt) {
     List<CreditCardType> allCreditCardTypes = (List<CreditCardType>) cctypeRespository.findAllUpdated(dt);
 
@@ -82,7 +80,6 @@ public class CreditCardTypeServiceImpl implements CreditCardTypeService {
   }
 
   @Override
-  @Transactional
   public CreditCardTypeVo findById(Long id) {
     CreditCardType cctype = cctypeRespository.findById(id).orElse(null);
 
