@@ -55,7 +55,7 @@ public class EventReportServiceImpl implements EventReportService {
 
 		PaxDetailPdfDocRequest paxDetailPdfDocRequest = new PaxDetailPdfDocRequest();
 		PaxDetailPdfDocResponse paxDetailPdfDocResponse = new PaxDetailPdfDocResponse();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		PassengerVo passengerVo = new PassengerVo();
 		Flight flight = flightService.findById(flightId);
 
