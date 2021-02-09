@@ -63,6 +63,9 @@ public class HitEmailNotificationService {
     @Value("${login.page.url}")
     private String urlToLoginPage;
 
+    @Value("${hit.priority.filter}")
+    private Boolean hitPriorityFilter;
+
     @Transactional
     public List<EmailDTO> generateAutomatedHighPriorityHitEmailDTOs(Set<Passenger> passengers) throws IOException, TemplateException {
         List<EmailDTO> emailDTOs = new ArrayList<>();
@@ -103,7 +106,11 @@ public class HitEmailNotificationService {
 		if (dob != null) {
 			LocalDateTime localDateTimeDOB = Instant.ofEpochMilli(dob.getTime()).atZone(ZoneOffset.UTC)
 					.toLocalDateTime();
-			if (!(localDateTimeDOB.getDayOfMonth() == 1 && localDateTimeDOB.getMonth() == Month.JANUARY)) {
+			if (!hitPriorityFilter) {
+                hasHighPriorityHitCategory = passenger.getHitDetails().stream()
+                        .anyMatch(hitDetail -> priorityHitCategory
+                                .equals(hitDetail.getHitMaker().getHitCategory().getId()));
+            } else if (!(localDateTimeDOB.getDayOfMonth() == 1 && localDateTimeDOB.getMonth() == Month.JANUARY)) {
 				hasHighPriorityHitCategory = passenger.getHitDetails().stream()
 						.filter(hd -> HitTypeEnum.PARTIAL_WATCHLIST != hd.getHitEnum())
 						.anyMatch(hitDetail -> priorityHitCategory
