@@ -21,7 +21,7 @@ services:
         target: /wcogtas.org.key
 
   web-app:
-    image: wcogtas/web-app:1.0.14p
+    image: wcogtas/web-app:1.14.1p
     container_name: web-app
     build: 
       context: ./gtas-parent
@@ -60,7 +60,7 @@ services:
       - scheduler-logs:/scheduler-logs
 
   gtas-scheduler:
-    image: wcogtas/gtas-scheduler:1.0.14p
+    image: wcogtas/gtas-scheduler:1.14.1p
     container_name: gtas-scheduler
     build: 
       context: .
