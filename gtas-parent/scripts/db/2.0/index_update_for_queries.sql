@@ -28,5 +28,8 @@ create index passenger_query
 create index phone_number_index
     on phone (number, flight_id);
 
+    
+create index passenger_status 
+	on data_retention_status (drs_passenger_id,drs_masked_pnr,drs_masked_apis,drs_has_pnr_message,drs_has_apis_message,drs_deleted_PNR,drs_deleted_apis);
 
 

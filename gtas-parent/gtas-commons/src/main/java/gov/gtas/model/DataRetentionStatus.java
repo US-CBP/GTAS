@@ -4,10 +4,24 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "data_retention_status")
+@Table(name = "data_retention_status", indexes = {
+		@Index(name = "passenger_status", columnList = "drs_passenger_id, "
+													 + "drs_masked_pnr, "
+													 + "drs_masked_apis, "
+													 + "drs_has_pnr_message, "
+													 + "drs_has_apis_message, "
+													 + "drs_deleted_PNR, "
+													 + "drs_deleted_apis ")
+})
 public class DataRetentionStatus extends BaseEntityAudit {
 
-    @SuppressWarnings("unused")
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2837202729224451833L;
+
+
+	@SuppressWarnings("unused")
     public DataRetentionStatus() {
     }
 
