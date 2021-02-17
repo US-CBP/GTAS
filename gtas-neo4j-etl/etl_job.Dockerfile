@@ -9,9 +9,9 @@ RUN mvn clean install -Dskip.unit.tests=false
 FROM alpine as pentaho-extractor
 
 ENV PDI_VERSION=8.2.0.3-519 
-
+RUN apk update && apk add wget
 RUN mkdir /opt/pentaho
-RUN /usr/bin/wget https://s3.amazonaws.com/kettle-neo4j/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip \
+RUN wget https://s3.amazonaws.com/kettle-neo4j/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip \
     -O /tmp/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip
 RUN /usr/bin/unzip -q /tmp/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip -d  /opt/pentaho
 RUN rm /tmp/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip
@@ -52,6 +52,7 @@ COPY ./gtas-neo4j-etl/pdi-conf/ /root
 # etl job configs 
 COPY ./gtas-neo4j-etl/job ${GTAS_NEO4J_ETL_HOME}/job
 COPY ./gtas-neo4j-etl/config ${GTAS_NEO4J_ETL_HOME}/config
+COPY ./gtas-report-etl/config ${GTAS_REPORT_ETL_HOME}/config
 
 WORKDIR ${GTAS_NEO4J_ETL_HOME}/
 
@@ -73,8 +74,7 @@ WORKDIR ${GTAS_REPORT_ETL_HOME}/
 
 RUN apk add dos2unix
 RUN dos2unix config/application.properties
-RUN dos2unix config/gtas-neo4j-config.properties
-RUN dos2unix config/run-record.properties
+RUN dos2unix config/gtas-report-config.properties
 RUN dos2unix job/index/index.properties
 RUN dos2unix job/template/template.properties
 RUN dos2unix job/workpad/workpad.properties
