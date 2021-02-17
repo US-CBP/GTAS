@@ -13,6 +13,7 @@ public class SeatVo implements PIIObject {
 	private String flightNumber;
 	private String firstName;
 	private String lastName;
+	private String middleName;
 
 	private Long flightId;
 	private Long paxId;
@@ -35,7 +36,7 @@ public class SeatVo implements PIIObject {
 	 * @param hasHits
 	 * @param coTravellers
 	 */
-	public SeatVo(String seatNumber, Long flightId, Long paxId, String firstName, String lastName, String middleInitial,
+	public SeatVo(String seatNumber, Long flightId, Long paxId, String firstName, String lastName, String middleName, String middleInitial,
 			boolean hasHits, String[] coTravellers, String refNumber, Boolean apis) {
 		super();
 		this.number = seatNumber;
@@ -43,6 +44,7 @@ public class SeatVo implements PIIObject {
 		this.paxId = paxId;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.middleName = middleName;
 		this.middleInitial = middleInitial;
 		this.hasHits = hasHits;
 		this.coTravellers = coTravellers;
@@ -132,6 +134,13 @@ public class SeatVo implements PIIObject {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	public String getMiddleName() {
+		return middleName;
+	}
+
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
 	}
 
 	public String getRefNumber() {

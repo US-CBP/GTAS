@@ -285,6 +285,7 @@ public class FlightServiceImpl implements FlightService {
 				vo.setPaxId(passenger.getId());
 				vo.setFirstName(passenger.getPassengerDetails().getFirstName());
 				vo.setLastName(passenger.getPassengerDetails().getLastName());
+				vo.setMiddleName(passenger.getPassengerDetails().getMiddleName());
 				vo.setMiddleInitial(passenger.getPassengerDetails().getMiddleName());
 				vo.setFlightNumber(flight.getFlightNumber());
 				vo.setRefNumber(passenger.getPassengerTripDetails().getReservationReferenceNumber());
@@ -308,7 +309,7 @@ public class FlightServiceImpl implements FlightService {
 				parentSeatVo.setCoTravellers(new String[0]);
 			} else {
 				parentSeatVo.setCoTravellers(seatVos.stream().filter(isCoTravelerSeat(parentSeatVo))
-						.collect(Collectors.toList()).stream().map(SeatVo::getNumber).toArray(String[]::new));
+						.collect(Collectors.toList()).stream().map(SeatVo::getNumber).distinct().toArray(String[]::new));
 			}
 		});
 
