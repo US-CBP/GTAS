@@ -12,7 +12,11 @@ import gov.gtas.model.udr.json.QueryObject;
 import gov.gtas.model.udr.json.QueryTerm;
 import gov.gtas.querybuilder.constants.Constants;
 import gov.gtas.querybuilder.exceptions.InvalidQueryRepositoryException;
+import gov.gtas.querybuilder.model.QueryRequestWithMetaData;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,11 +30,24 @@ import org.slf4j.LoggerFactory;
  * This class parses the QueryEntity and generates a JPQL Statement
  */
 public class JPQLGenerator {
+	
+	private static final String NOT_BETWEEN = "NOT_BETWEEN";
+	private static final String BETWEEN = "BETWEEN";
+	private static final String NOT_EQUAL = "NOT_EQUAL";
+	private static final String EQUAL = "EQUAL";
+	private static final String LESS = "LESS";
+	private static final String GREATER_OR_EQUAL = "GREATER_OR_EQUAL";
+	private static final String GREATER = "GREATER";
+	private static final String LESS_OR_EQUAL = "LESS_OR_EQUAL";
 	private static final Logger logger = LoggerFactory.getLogger(JPQLGenerator.class);
 
-	public static String generateQuery(QueryEntity queryEntity, EntityEnum queryType)
+	private JPQLGenerator() {};
+	
+	public static String generateQuery(QueryRequestWithMetaData queryRequest, EntityEnum queryType)
 			throws InvalidQueryRepositoryException {
+		QueryEntity queryEntity = queryRequest.getQuery();
 		String query = "";
+		
 		if (queryEntity != null && queryType != null) {
 			String queryPrefix;
 			List<EntityEnum> joinEntities = new ArrayList<>();
@@ -42,24 +59,28 @@ public class JPQLGenerator {
 			MutableInt level = new MutableInt();
 			logger.debug("Parsing QueryObject...");
 			QueryObject queryObject = (QueryObject) queryEntity;
-
+			
+			convertAgeToDob(queryObject, queryRequest.getUtcMinuteOffset());
+			
 			generateWhereCondition(queryEntity, queryType, joinEntities, where, seatCondition, positionalParameter,
 					level, paymentFormCondition);
+			
+			logger.debug("Set join to outer or left join depending on query having only 'AND' conditions");
+			String joinType = " " + queryRequest.getJoinCondition() + " ";
 
 			if (queryType == EntityEnum.FLIGHT) {
+				
+				
+				//  force inner join as these all must be present.
 				queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.FLIGHT.getAlias() + " " + Constants.FROM
 						+ " " + EntityEnum.FLIGHT.getEntityName() + " " + EntityEnum.FLIGHT.getAlias() +
-						Constants.LEFT_JOIN + EntityEnum.FLIGHT.getAlias() + ".passengers " + EntityEnum.PASSENGER.getAlias();
+						Constants.JOIN + EntityEnum.FLIGHT.getAlias() + ".passengers " + EntityEnum.PASSENGER.getAlias() +
+						" join p.dataRetentionStatus drsps ";
 
 				if (seatCondition.isTrue()) {
 					joinEntities.add(EntityEnum.PASSENGER);
 				}
 
-				/*
-				 * if (paymentFormCondition.isTrue()) { // PNR doesn't need to be added in the
-				 * same way if paymentForm is a requirement //
-				 * joinEntities.remove(EntityEnum.PNR); }
-				 */
 				if (!joinEntities.isEmpty()) {
 					// remove Flight from the List because it is already
 					// part of the queryPrefix statement
@@ -72,36 +93,34 @@ public class JPQLGenerator {
 							joinEntities.add(0, EntityEnum.PNR);
 						}
 					}
-					join = generateJoinCondition(joinEntities, queryType);
+					join = generateJoinCondition(joinEntities, queryType, joinType);
 				}
 
 				boolean hasFormOfPayment = hasField(queryObject, Constants.FORM_OF_PAYMENT);
 
 				if (hasFormOfPayment) {
-					join += " join " + EntityEnum.PNR.getAlias() + ".flights pnfl ";
+					join += joinType + EntityEnum.PNR.getAlias() + ".flights pnfl ";
 				}
 
 				if (seatCondition.isTrue()) {
-					join += " left join p.seatAssignments s ";
+					join += joinType + " p.seatAssignments s ";
 				}
 				if (paymentFormCondition.isTrue()) {
 					// joins to pnr -> paymentForms through flight
-					join += " left join pnr.paymentForms pf ";
+					join += joinType + " pnr.paymentForms pf ";
 
 				}
 
 				query = queryPrefix + join + " " + Constants.WHERE + " " + where;
-			} else if (queryType == EntityEnum.PASSENGER) {
-				where.append(" and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))");
+			}
+			else if (queryType == EntityEnum.PASSENGER) {
+				where.append(" and (((drsps.maskedAPIS = false and drsps.hasApisMessage = true) or (drsps.maskedPNR = false and drsps.hasPnrMessage = true)) and ((drsps.deletedAPIS = false and drsps.hasApisMessage = true) or (drsps.deletedPNR = false and drsps.hasPnrMessage = true)))");
 
 				queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.PASSENGER.getAlias() + Constants.ID + ", "
 						+ EntityEnum.PASSENGER.getAlias() + ", p.flight " + Constants.FROM + " "
 						+ EntityEnum.PASSENGER.getEntityName() + " " + EntityEnum.PASSENGER.getAlias()
-						+ " left join p.flight f ";
-
-				// if (paymentFormCondition.isTrue()) {
-				// // joinEntities.remove(EntityEnum.PNR);
-				// }
+						+ " join p.flight f "
+						+ " join p.dataRetentionStatus drsps  ";
 
 				if (!joinEntities.isEmpty()) {
 
@@ -117,21 +136,21 @@ public class JPQLGenerator {
 						joinEntities.add(0, EntityEnum.PNR);
 					}
 
-					join = generateJoinCondition(joinEntities, queryType);
+					join = generateJoinCondition(joinEntities, queryType, joinType);
 				}
 
 				boolean hasFormOfPayment = hasField(queryObject, Constants.FORM_OF_PAYMENT);
 
 				if (hasFormOfPayment) {
-					join += " join " + EntityEnum.PNR.getAlias() + ".flights pnfl ";
+					join +=  joinType + EntityEnum.PNR.getAlias() + ".flights pnfl ";
 				}
 
 				if (seatCondition.isTrue()) {
-					join += " left join p.seatAssignments s ";
+					join += joinType + " p.seatAssignments s ";
 				}
 
 				if (paymentFormCondition.isTrue()) {
-					join += " left join pnr.paymentForms pf ";
+					join +=  joinType + " pnr.paymentForms pf ";
 				}
 
 				query = queryPrefix + join + " " + Constants.WHERE + " " + where;
@@ -140,6 +159,93 @@ public class JPQLGenerator {
 		}
 
 		return query;
+	}
+
+	private static void convertAgeToDob(QueryObject queryObject, int utcMinuteOffset) {
+		for (QueryEntity qe : queryObject.getRules()) {
+			if (qe instanceof QueryTerm) {
+				QueryTerm qt = (QueryTerm) qe;
+				if (qt.getEntity().equalsIgnoreCase(EntityEnum.PASSENGER.getEntityName()) &&
+					qt.getField().equalsIgnoreCase("passengerDetails.age")) {
+				
+					String replacementField = "passengerDetails.dob";			
+					String replacementType = "date";
+					qt.setField(replacementField);
+					qt.setType(replacementType);
+				
+					//Handle UTC offsets.
+					LocalDateTime localDatetime = LocalDateTime.now();
+					localDatetime = localDatetime.minusMinutes(utcMinuteOffset);
+					
+					LocalDate localDate = localDatetime.toLocalDate(); 
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					switch (qt.getOperator()) {
+						case LESS:
+							// Because dates are stored as the "greatest date" being the date in the future, 
+							// and greatest age are stored as "greatest date" in the past, these must be swapped.
+							qt.setOperator(GREATER);
+							int lessAge = Integer.parseInt(qt.getValue()[0]);
+							LocalDate lessTime = localDate.minusYears(lessAge + 1);
+							String[] lessReplacementValue = new String[] {lessTime.format(formatter)};
+							qt.setValue(lessReplacementValue);	
+							break;
+						case LESS_OR_EQUAL:
+							// Because dates are stored as the "greatest date" being the date in the future, 
+							// and greatest age are stored as "greatest date" in the past, these must be swapped.
+							qt.setOperator(GREATER_OR_EQUAL);
+							int lessEqualAge = Integer.parseInt(qt.getValue()[0]);
+							LocalDate lessEqualTime = localDate.minusYears(lessEqualAge + 1);
+							String[] lessEqualReplacementValue = new String[] {lessEqualTime.format(formatter)};
+							qt.setValue(lessEqualReplacementValue);							
+							break;						
+						case GREATER_OR_EQUAL:
+							// Because dates are stored as the "greatest date" being the date in the future, 
+							// and greatest age are stored as "greatest date" in the past, these must be swapped.
+							qt.setOperator(LESS_OR_EQUAL);
+							int greaterOrEqualAge = Integer.parseInt(qt.getValue()[0]);
+							LocalDate greaterOrEqualTime = localDate.minusYears(greaterOrEqualAge);
+							String[] greaterOrEqualVal = new String[] {greaterOrEqualTime.format(formatter)};
+							qt.setValue(greaterOrEqualVal);
+							break;
+						case GREATER:
+							// Because dates are stored as the "greatest date" being the date in the future, 
+							// and greatest age are stored as "greatest date" in the past, these must be swapped.
+							qt.setOperator(LESS);
+							int greaterAge = Integer.parseInt(qt.getValue()[0]);
+							LocalDate greaterTime = localDate.minusYears(greaterAge);
+							String[] greaterValue = new String[] {greaterTime.format(formatter)};
+							qt.setValue(greaterValue);						
+							break;				
+						case EQUAL:
+							int equalAge = Integer.parseInt(qt.getValue()[0]);
+							LocalDate equalAgeStart = localDate.minusYears(equalAge + 1);
+							LocalDate equalAgeFinish = localDate.minusYears(equalAge);
+							// Because Age can represent any date within a year equality is updated to 
+							// matching any birthday within a year of the date.
+							qt.setOperator(BETWEEN);
+							String[] replacementValueEqual = new String[] {equalAgeStart.format(formatter), equalAgeFinish.format(formatter)};
+							qt.setValue(replacementValueEqual);
+							break;
+						case NOT_EQUAL:
+							int notEqualAge = Integer.parseInt(qt.getValue()[0]);
+							LocalDate notEqualAgeStart = localDate.minusYears(notEqualAge + 1);
+							LocalDate notEqualAgeFinish = localDate.minusYears(notEqualAge);
+							// Because Age can represent any date within a year equality is updated to 
+							// matching any birthday within a year of the date.
+							qt.setOperator(NOT_BETWEEN);
+							String[] replacementValueNotEqual = new String[] {notEqualAgeStart.format(formatter), notEqualAgeFinish.format(formatter)};
+							qt.setValue(replacementValueNotEqual);
+							break;
+						default: 
+							String message = "No conversion from age to date for query operator of " + qt.getOperator();
+							logger.info(message);
+							break;	
+					}
+				}
+			} else if (qe instanceof QueryObject) {
+				convertAgeToDob(queryObject,utcMinuteOffset);
+			}
+		}
 	}
 
 	/**
@@ -356,7 +462,7 @@ public class JPQLGenerator {
 					where.append("not in" + (" (?") + positionalParameter + ") ");
 					where.append(Constants.AND + " " + whereClauseBridgeEntityAlias + ".id not in (");
 					where.append(Constants.SELECT + " " + whereClauseBridgeEntityAlias +".id from " + whereClauseBridgeEntity + " " + whereClauseBridgeEntityAlias);
-					where.append(Constants.LEFT_JOIN + whereClauseBridgeEntityAlias + entityEnum.getEntityReference() + " " + entityEnum.getAlias() + " ");
+					where.append(Constants.JOIN + whereClauseBridgeEntityAlias + entityEnum.getEntityReference() + " " + entityEnum.getAlias() + " ");
 					where.append(Constants.WHERE + " " + entityEnum.getAlias() + "." + field + " " + "in" + " (?" + positionalParameter + "))");
 
 				} else {
@@ -457,7 +563,7 @@ public class JPQLGenerator {
 
 	}
 
-	private static String generateJoinCondition(List<EntityEnum> entity, EntityEnum queryType)
+	private static String generateJoinCondition(List<EntityEnum> entity, EntityEnum queryType, String joinType)
 			throws InvalidQueryRepositoryException {
 		StringBuilder joinCondition = new StringBuilder();
 
@@ -466,71 +572,71 @@ public class JPQLGenerator {
 		}
 
 		for (EntityEnum entityEnum : entity) {
-			joinCondition.append(getJoinCondition(entityEnum, queryType));
+			joinCondition.append(getJoinCondition(entityEnum, queryType, joinType));
 		}
 
 		return joinCondition.toString();
 	}
 
-	public static String getJoinCondition(EntityEnum entity, EntityEnum queryType)
+	private static String getJoinCondition(EntityEnum entity, EntityEnum queryType, String joinType)
 			throws InvalidQueryRepositoryException {
 
 		String joinCondition = "";
 
 		switch (entity.getEntityName().toUpperCase()) {
 		case Constants.ADDRESS:
-			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.ADDRESS.getEntityReference()
+			joinCondition = joinType + EntityEnum.PNR.getAlias() + EntityEnum.ADDRESS.getEntityReference()
 					+ " " + EntityEnum.ADDRESS.getAlias();
 			break;
 		case Constants.AGENCY:
-			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias()
+			joinCondition = joinType + EntityEnum.PNR.getAlias()
 					+ EntityEnum.TRAVEL_AGENCY.getEntityReference() + " " + EntityEnum.TRAVEL_AGENCY.getAlias();
 			break;
 		case Constants.DWELLTIME:
-			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.DWELL_TIME.getEntityReference()
+			joinCondition = joinType + EntityEnum.PNR.getAlias() + EntityEnum.DWELL_TIME.getEntityReference()
 					+ " " + EntityEnum.DWELL_TIME.getAlias();
 			break;
 		case Constants.PAYMENTFORM:
-			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias()
+			joinCondition = joinType + EntityEnum.PNR.getAlias()
 					+ EntityEnum.FORM_OF_PAYMENT.getEntityReference() + " " + EntityEnum.FORM_OF_PAYMENT.getAlias();
 			break;
 		case Constants.CREDITCARD:
-			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias()
+			joinCondition = joinType + EntityEnum.PNR.getAlias()
 					+ EntityEnum.CREDIT_CARD.getEntityReference() + " " + EntityEnum.CREDIT_CARD.getAlias();
 			break;
 		case Constants.DOCUMENT:
 			if (queryType == EntityEnum.FLIGHT) {
-				joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias()
+				joinCondition = joinType + EntityEnum.PASSENGER.getAlias()
 						+ EntityEnum.DOCUMENT.getEntityReference() + " " + EntityEnum.DOCUMENT.getAlias();
 			} else if (queryType == EntityEnum.PASSENGER) {
-				joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias()
+				joinCondition = joinType + EntityEnum.PASSENGER.getAlias()
 						+ EntityEnum.DOCUMENT.getEntityReference() + " " + EntityEnum.DOCUMENT.getAlias();
 			}
 			break;
 		case Constants.SEAT:
-				joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias()
+				joinCondition = joinType + EntityEnum.PASSENGER.getAlias()
 						+ EntityEnum.SEAT.getEntityReference() + " " + EntityEnum.SEAT.getAlias();
 		    break;
 		case Constants.EMAIL:
-			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.EMAIL.getEntityReference()
+			joinCondition = joinType + EntityEnum.PNR.getAlias() + EntityEnum.EMAIL.getEntityReference()
 					+ " " + EntityEnum.EMAIL.getAlias();
 			break;
 		case Constants.FLIGHT:
-			joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.FLIGHT.getEntityReference()
+			joinCondition = joinType + EntityEnum.PASSENGER.getAlias() + EntityEnum.FLIGHT.getEntityReference()
 					+ " " + EntityEnum.FLIGHT.getAlias();
 			break;
 		case Constants.BOOKINGDETAIL:
 
 			if (queryType == EntityEnum.FLIGHT) {
-				joinCondition = Constants.LEFT_JOIN + EntityEnum.PASSENGER.getAlias()
+				joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias()
 						+ EntityEnum.BOOKING_DETAIL.getEntityReference() + " " + EntityEnum.BOOKING_DETAIL.getAlias();
 			} else if (queryType == EntityEnum.PASSENGER) {
-				joinCondition = Constants.LEFT_JOIN + EntityEnum.PASSENGER.getAlias()
+				joinCondition = joinType + EntityEnum.PASSENGER.getAlias()
 						+ EntityEnum.BOOKING_DETAIL.getEntityReference() + " " + EntityEnum.BOOKING_DETAIL.getAlias();
 			}
 			break;
 		case Constants.FREQUENTFLYER:
-			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias()
+			joinCondition = joinType + EntityEnum.PNR.getAlias()
 					+ EntityEnum.FREQUENT_FLYER.getEntityReference() + " " + EntityEnum.FREQUENT_FLYER.getAlias();
 			break;
 		case Constants.HITS:
@@ -541,30 +647,30 @@ public class JPQLGenerator {
 					+ " " + EntityEnum.PASSENGER.getAlias();
 			break;
 		case Constants.PHONE:
-			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.PHONE.getEntityReference()
+			joinCondition = joinType + EntityEnum.PNR.getAlias() + EntityEnum.PHONE.getEntityReference()
 					+ " " + EntityEnum.PHONE.getAlias();
 			break;
 		case Constants.SAVED_SEGMENT:
-			joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.SAVED_SEGMENT.getEntityReference()
+			joinCondition = joinType + EntityEnum.PNR.getAlias() + EntityEnum.SAVED_SEGMENT.getEntityReference()
 					+ " " + EntityEnum.SAVED_SEGMENT.getAlias();
 			break;
 		case Constants.PNR:
 			if (queryType == EntityEnum.FLIGHT) {
-				joinCondition = Constants.LEFT_JOIN + EntityEnum.FLIGHT.getAlias() + EntityEnum.PNR.getEntityReference()
+				joinCondition = joinType + EntityEnum.FLIGHT.getAlias() + EntityEnum.PNR.getEntityReference()
 						+ " " + EntityEnum.PNR.getAlias();
 			} else if (queryType == EntityEnum.PASSENGER) {
-				joinCondition = Constants.LEFT_JOIN + EntityEnum.PASSENGER.getAlias()
+				joinCondition = joinType + EntityEnum.PASSENGER.getAlias()
 						+ EntityEnum.PNR.getEntityReference() + " " + EntityEnum.PNR.getAlias();
 			}
 			break;
 		case Constants.BAG:
 			// TO-DO: Revisit This For Flight Queries, currently both Bag and Fpax only work
 			// with passenger queries
-			joinCondition = Constants.LEFT_JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.BAG.getEntityReference()
+			joinCondition = joinType + EntityEnum.PASSENGER.getAlias() + EntityEnum.BAG.getEntityReference()
 					+ " " + EntityEnum.BAG.getAlias();
 			break;
 		case Constants.FLIGHTPAX:
-			joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias()
+			joinCondition = joinType + EntityEnum.PASSENGER.getAlias()
 					+ EntityEnum.FLIGHT_PAX.getEntityReference() + " " + EntityEnum.FLIGHT_PAX.getAlias();
 			break;
 		default:
@@ -605,7 +711,6 @@ public class JPQLGenerator {
 		List<QueryEntity> rules = queryObject.getRules();
 		if (rules != null) {
 			for (QueryEntity rule : rules) {
-
 				queryEntity = rule;
 				if (queryEntity instanceof QueryTerm) {
 					QueryTerm queryTerm = (QueryTerm) queryEntity;

@@ -13,7 +13,9 @@ import java.util.UUID;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "email")
+@Table(name = "email", indexes = {
+		@Index(name="domain_address_index", columnList = "domain, address")
+})
 public class Email extends BaseEntityAudit implements PIIObject{
 	private static final long serialVersionUID = 1L;
 

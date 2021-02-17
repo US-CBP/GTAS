@@ -9,8 +9,11 @@ import gov.gtas.model.udr.json.QueryEntity;
 import gov.gtas.model.udr.json.QueryObject;
 import gov.gtas.model.udr.json.QueryTerm;
 import gov.gtas.querybuilder.model.QueryRequest;
+import gov.gtas.querybuilder.model.QueryRequestWithMetaData;
+
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -43,76 +46,27 @@ public class JPQLGeneratorTest {
 		entityEnumBag = EntityEnum.BAG;
 		entityAgency = EntityEnum.TRAVEL_AGENCY;
 	}
-
-	@Test
-	public void testJoinPnrAddress() throws InvalidQueryRepositoryException {
-
-		String joinCondition = JPQLGenerator.getJoinCondition(entityEnumAddress, queryTypePassenger);
-		Assert.assertEquals(" left join pnr.addresses a", joinCondition);
-
-	}
-
-	@Test
-	public void testJoinPnrEmail() throws InvalidQueryRepositoryException {
-
-		String joinCondition = JPQLGenerator.getJoinCondition(entityEnumEmail, queryTypePassenger);
-		Assert.assertEquals(" left join pnr.emails e", joinCondition);
-
-	}
-
-	@Test
-	public void testJoinPnrDwellTime() throws InvalidQueryRepositoryException {
-
-		String joinCondition = JPQLGenerator.getJoinCondition(entityEnumDwellTime, queryTypePassenger);
-		Assert.assertEquals(" left join pnr.dwellTimes dwell", joinCondition);
-
-	}
-
-	@Test
-	public void testJoinPnrFrequentFlyer() throws InvalidQueryRepositoryException {
-
-		String joinCondition = JPQLGenerator.getJoinCondition(entityEnumFrequentFlyer, queryTypePassenger);
-		Assert.assertEquals(" left join pnr.frequentFlyers ff", joinCondition);
-
-	}
-
-	@Test
-	public void testJoinPassengerBag() throws InvalidQueryRepositoryException {
-
-		String joinCondition = JPQLGenerator.getJoinCondition(entityEnumBag, queryTypePassenger);
-		Assert.assertEquals(" left join p.bags bag", joinCondition);
-
-	}
-
-	@Test
-	public void testJoinTravelAgency() throws InvalidQueryRepositoryException {
-
-		String joinCondition = JPQLGenerator.getJoinCondition(entityAgency, queryTypePassenger);
-		Assert.assertEquals(" left join pnr.agencies ag", joinCondition);
-
-	}
-
-	@Test
-	public void testApisFlightCoTravelers() throws InvalidQueryRepositoryException {
-
-		String joinCondition = JPQLGenerator.getJoinCondition(queryTypePassenger, queryTypePassenger);
-		Assert.assertEquals(" join f.passengers p", joinCondition);
-
-	}
-
+	
 	@Test
 	public void testNotInWhereClauseForEmail() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight " +
-				"from Passenger p left join p.flight f  left join p.pnrs pnr " +
-				"left join pnr.emails e where (e.domain not in (?1) and pnr.id " +
-				"not in (select pnr.id from Pnr pnr left join pnr.emails e where e.domain" +
-				" in (?1))) and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true))" +
-				" and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true)" +
-				" or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
+		String expectedQuery = "select distinct p.id, p, p.flight from "
+				+ "Passenger p "
+				+ "join p.flight f  "
+				+ "join p.dataRetentionStatus drsps    "
+				+ "join  p.pnrs pnr  "
+				+ "join  pnr.emails e "
+				+ "where (e.domain not in (?1) "
+				+ "and pnr.id "
+				+ "not in (select pnr.id from Pnr pnr join pnr.emails e where e.domain in (?1))) "
+				+ "and (((drsps.maskedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.maskedPNR = false and drsps.hasPnrMessage = true))"
+				+ " and "
+				+ "((drsps.deletedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.deletedPNR = false and drsps.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
+		
 
 		mockQueryTerm.setUuid(null);
 		mockQueryTerm.setType("string");
@@ -126,21 +80,30 @@ public class JPQLGeneratorTest {
 
 		mockQueryObject.setCondition("AND");
 		mockQueryObject.setRules(mockQTList);
+		
+		QueryRequest qeRequest = new QueryRequest();
+		qeRequest.setUtcMinuteOffset(0);
+		qeRequest.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(qeRequest);
 
-		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		String query = JPQLGenerator.generateQuery(qrwm, EntityEnum.PASSENGER);
 		Assert.assertEquals(expectedQuery, query);
 	}
 
 	@Test
 	public void testInWhereClauseForEmail() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p " +
-				"left join p.flight f  left join p.pnrs pnr left join pnr.emails e " +
-				"where (e.domain in ?1) and (((p.dataRetentionStatus.maskedAPIS = false " +
-				"and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) " +
-				"and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.deletedPNR = false " +
-				"and p.dataRetentionStatus.hasPnrMessage = true)))";
+		String expectedQuery = "select distinct p.id, p, p.flight from "
+				+ "Passenger p "
+				+ "join p.flight f  "
+				+ "join p.dataRetentionStatus drsps    "
+				+ "join  p.pnrs pnr  "
+				+ "join  pnr.emails e "
+				+ "where (e.domain in ?1) "
+				+ "and (((drsps.maskedAPIS = false "
+				+ "and drsps.hasApisMessage = true) "
+				+ "or (drsps.maskedPNR = false and drsps.hasPnrMessage = true)) "
+				+ "and ((drsps.deletedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.deletedPNR = false and drsps.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -157,23 +120,26 @@ public class JPQLGeneratorTest {
 
 		mockQueryObject.setCondition("AND");
 		mockQueryObject.setRules(mockQTList);
+		QueryRequest qeRequest = new QueryRequest();
+		qeRequest.setUtcMinuteOffset(0);
+		qeRequest.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(qeRequest);
 
-		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		String query = JPQLGenerator.generateQuery(qrwm, EntityEnum.PASSENGER);
 		Assert.assertEquals(expectedQuery, query);
 	}
 
 	@Test
 	public void testNotEqualsWhereClauseForEmail() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p " +
-				"left join p.flight f  left join p.pnrs pnr " +
-				"left join pnr.emails e " +
-				"where (e.domain not in (?1) and pnr.id not in " +
-				"(select pnr.id from Pnr pnr left join pnr.emails e where e.domain in " +
-				"(?1))) and " +
-				"(((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) " +
-				"and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p "
+				+ "join p.flight f  join p.dataRetentionStatus drsps    "
+				+ "join  p.pnrs pnr  join  pnr.emails e "
+				+ "where (e.domain not in (?1) and "
+				+ "pnr.id not in (select pnr.id from Pnr pnr join pnr.emails e where e.domain in (?1))) "
+				+ "and (((drsps.maskedAPIS = false and drsps.hasApisMessage = true)"
+				+ " or (drsps.maskedPNR = false and drsps.hasPnrMessage = true)) "
+				+ "and ((drsps.deletedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.deletedPNR = false and drsps.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -191,20 +157,24 @@ public class JPQLGeneratorTest {
 		mockQueryObject.setCondition("AND");
 		mockQueryObject.setRules(mockQTList);
 
-		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		QueryRequest qeRequest = new QueryRequest();
+		qeRequest.setUtcMinuteOffset(0);
+		qeRequest.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(qeRequest);
+
+		String query = JPQLGenerator.generateQuery(qrwm, EntityEnum.PASSENGER);
 		Assert.assertEquals(expectedQuery, query);
 	}
 
 	@Test
 	public void testEqualsWhereClauseForEmail() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p " +
-				"left join p.flight f  " +
-				"left join p.pnrs pnr " +
-				"left join pnr.emails e where (e.domain = ?1) and " +
-				"(((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true))" +
-				" and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true)" +
-				" or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p "
+				+ "join p.flight f  join p.dataRetentionStatus drsps    "
+				+ "join  p.pnrs pnr  join  pnr.emails e where (e.domain = ?1) "
+				+ "and (((drsps.maskedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.maskedPNR = false and drsps.hasPnrMessage = true)) "
+				+ "and ((drsps.deletedAPIS = false and drsps.hasApisMessage = true)"
+				+ " or (drsps.deletedPNR = false and drsps.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -222,27 +192,28 @@ public class JPQLGeneratorTest {
 		mockQueryObject.setCondition("AND");
 		mockQueryObject.setRules(mockQTList);
 
-		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		QueryRequest qeRequest = new QueryRequest();
+		qeRequest.setUtcMinuteOffset(0);
+		qeRequest.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(qeRequest);
+
+		String query = JPQLGenerator.generateQuery(qrwm, EntityEnum.PASSENGER);
 		Assert.assertEquals(expectedQuery, query);
 	}
 
 
 	@Test
 	public void testContainsSegmentClause() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, " +
-				"p.flight from Passenger p " +
-				"left join p.flight f  " +
-				"left join p.pnrs pnr " +
-				"left join pnr.savedSegments savedSegment " +
-				"where (savedSegment.rawMessage LIKE ?1)" +
-				" and (((p.dataRetentionStatus.maskedAPIS = false" +
-				" and p.dataRetentionStatus.hasApisMessage = true)" +
-				" or (p.dataRetentionStatus.maskedPNR = false" +
-				" and p.dataRetentionStatus.hasPnrMessage = true))" +
-				" and ((p.dataRetentionStatus.deletedAPIS = false" +
-				" and p.dataRetentionStatus.hasApisMessage = true)" +
-				" or (p.dataRetentionStatus.deletedPNR = false" +
-				" and p.dataRetentionStatus.hasPnrMessage = true)))";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p "
+				+ "join p.flight f  "
+				+ "join p.dataRetentionStatus drsps    "
+				+ "join  p.pnrs pnr  "
+				+ "join  pnr.savedSegments savedSegment "
+				+ "where (savedSegment.rawMessage LIKE ?1) "
+				+ "and (((drsps.maskedAPIS = false and drsps.hasApisMessage = true)"
+				+ " or (drsps.maskedPNR = false and drsps.hasPnrMessage = true)) "
+				+ "and ((drsps.deletedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.deletedPNR = false and drsps.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -260,20 +231,26 @@ public class JPQLGeneratorTest {
 		mockQueryObject.setCondition("AND");
 		mockQueryObject.setRules(mockQTList);
 
-		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		QueryRequest qeRequest = new QueryRequest();
+		qeRequest.setUtcMinuteOffset(0);
+		qeRequest.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(qeRequest);
+
+		String query = JPQLGenerator.generateQuery(qrwm, EntityEnum.PASSENGER);
 		Assert.assertEquals(expectedQuery, query);
 	}
 	@Test
 	public void testNotInWhereClauseForDocument() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p " +
-				"left join p.flight f  " +
-				"join p.documents d " +
-				"where (d.type not in (?1) " +
-				"and p.id not in (select p.id from Passenger p left join p.documents d where d.type in (?1))) " +
-				"and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) " +
-				"and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p "
+				+ "join p.flight f  "
+				+ "join p.dataRetentionStatus drsps    "
+				+ "join  p.documents d "
+				+ "where (d.type not in (?1) "
+				+ "and p.id not in (select p.id from Passenger p join p.documents d where d.type in (?1))) "
+				+ "and (((drsps.maskedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.maskedPNR = false and drsps.hasPnrMessage = true)) "
+				+ "and ((drsps.deletedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.deletedPNR = false and drsps.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -291,18 +268,27 @@ public class JPQLGeneratorTest {
 		mockQueryObject.setCondition("AND");
 		mockQueryObject.setRules(mockQTList);
 
-		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		QueryRequest qeRequest = new QueryRequest();
+		qeRequest.setUtcMinuteOffset(0);
+		qeRequest.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(qeRequest);
+
+		String query = JPQLGenerator.generateQuery(qrwm, EntityEnum.PASSENGER);
 		Assert.assertEquals(expectedQuery, query);
 	}
 
 	@Test
 	public void testInWhereClauseForDocument() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p " +
-				"left join p.flight f  join p.documents d where (d.type in ?1) " +
-				"and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true)" +
-				" or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true))" +
-				" and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p "
+				+ "join p.flight f  "
+				+ "join p.dataRetentionStatus drsps    "
+				+ "join  p.documents d "
+				+ "where (d.type in ?1) "
+				+ "and (((drsps.maskedAPIS = false "
+				+ "and drsps.hasApisMessage = true) "
+				+ "or (drsps.maskedPNR = false and drsps.hasPnrMessage = true)) "
+				+ "and ((drsps.deletedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.deletedPNR = false and drsps.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -320,21 +306,26 @@ public class JPQLGeneratorTest {
 		mockQueryObject.setCondition("AND");
 		mockQueryObject.setRules(mockQTList);
 
-		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		QueryRequest qeRequest = new QueryRequest();
+		qeRequest.setUtcMinuteOffset(0);
+		qeRequest.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(qeRequest);
+
+		String query = JPQLGenerator.generateQuery(qrwm, EntityEnum.PASSENGER);
 		Assert.assertEquals(expectedQuery, query);
 	}
 
 	@Test
 	public void testNotEqualsWhereClauseForDocument() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, " +
-				"p.flight from Passenger p " +
-				"left join p.flight f  join p.documents d " +
-				"where (d.type not in (?1) " +
-				"and p.id not in (select p.id from Passenger p left join p.documents d where d.type in (?1))) " +
-				"and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) " +
-				"and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p "
+				+ "join p.flight f  "
+				+ "join p.dataRetentionStatus drsps    "
+				+ "join  p.documents d "
+				+ "where (d.type not in (?1) "
+				+ "and p.id not in (select p.id from Passenger p join p.documents d where d.type in (?1))) "
+				+ "and (((drsps.maskedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.maskedPNR = false and drsps.hasPnrMessage = true)) "
+				+ "and ((drsps.deletedAPIS = false and drsps.hasApisMessage = true) or (drsps.deletedPNR = false and drsps.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -352,20 +343,25 @@ public class JPQLGeneratorTest {
 		mockQueryObject.setCondition("AND");
 		mockQueryObject.setRules(mockQTList);
 
-		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		QueryRequest qeRequest = new QueryRequest();
+		qeRequest.setUtcMinuteOffset(0);
+		qeRequest.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(qeRequest);
+
+		String query = JPQLGenerator.generateQuery(qrwm, EntityEnum.PASSENGER);
 		Assert.assertEquals(expectedQuery, query);
 	}
 
 	@Test
 	public void testEqualsWhereClauseForDocument() throws InvalidQueryRepositoryException {
-		String expectedQuery = "select distinct p.id, p, " +
-				"p.flight from Passenger p " +
-				"left join p.flight f  join p.documents d " +
-				"where (d.type = ?1) " +
-				"and (((p.dataRetentionStatus.maskedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.maskedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)) " +
-				"and ((p.dataRetentionStatus.deletedAPIS = false and p.dataRetentionStatus.hasApisMessage = true) " +
-				"or (p.dataRetentionStatus.deletedPNR = false and p.dataRetentionStatus.hasPnrMessage = true)))";
+		String expectedQuery = "select distinct p.id, p, p.flight from Passenger p "
+				+ "join p.flight f  "
+				+ "join p.dataRetentionStatus drsps    "
+				+ "join  p.documents d where (d.type = ?1) "
+				+ "and (((drsps.maskedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.maskedPNR = false and drsps.hasPnrMessage = true)) "
+				+ "and ((drsps.deletedAPIS = false and drsps.hasApisMessage = true) "
+				+ "or (drsps.deletedPNR = false and drsps.hasPnrMessage = true)))";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -383,7 +379,12 @@ public class JPQLGeneratorTest {
 		mockQueryObject.setCondition("AND");
 		mockQueryObject.setRules(mockQTList);
 
-		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.PASSENGER);
+		QueryRequest qeRequest = new QueryRequest();
+		qeRequest.setUtcMinuteOffset(0);
+		qeRequest.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(qeRequest);
+
+		String query = JPQLGenerator.generateQuery(qrwm, EntityEnum.PASSENGER);
 		Assert.assertEquals(expectedQuery, query);
 	}
 
@@ -391,9 +392,9 @@ public class JPQLGeneratorTest {
 	public void testGenericQueryPrefixForFlight() throws InvalidQueryRepositoryException {
 		//This does not test any specific clauses or entities. This is to test the leading query prefix to insure it properly uses the passenger as the junction
 
-		String expectedQuery = "select distinct f from Flight f left join f.passengers p join p.documents d where (d.type in ?1)";
-		String expectedQuery2 = "select distinct f from Flight f left join f.passengers p left join f.pnrs pnr left join pnr.emails e where (e.domain in ?1)";
-		String expectedQuery3 = "select distinct f from Flight f left join f.passengers p left join f.pnrs pnr left join pnr.creditCards cc where (cc.type in ?1)";
+		String expectedQuery  = "select distinct f from Flight f join f.passengers p join p.dataRetentionStatus drsps   join  p.documents d where (d.type in ?1)";
+		String expectedQuery2 = "select distinct f from Flight f join f.passengers p join p.dataRetentionStatus drsps   join  f.pnrs pnr  join  pnr.emails e where (e.domain in ?1)";
+		String expectedQuery3 = "select distinct f from Flight f join f.passengers p join p.dataRetentionStatus drsps   join  f.pnrs pnr  join  pnr.creditCards cc where (cc.type in ?1)";
 
 		QueryObject mockQueryObject  = new QueryObject();
 		QueryTerm mockQueryTerm = new QueryTerm();
@@ -411,21 +412,35 @@ public class JPQLGeneratorTest {
 		mockQueryObject.setCondition("AND");
 		mockQueryObject.setRules(mockQTList);
 
-		String query = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.FLIGHT);
+		QueryRequest qeRequest = new QueryRequest();
+		qeRequest.setUtcMinuteOffset(0);
+		qeRequest.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(qeRequest);
+
+		String query = JPQLGenerator.generateQuery(qrwm, EntityEnum.FLIGHT);
 		Assert.assertEquals(expectedQuery, query);
 
 		mockQueryTerm.setEntity("Email");
 		mockQueryTerm.setValue(new String[]{"HOTMAIL.COM"});
 		mockQueryTerm.setField("domain");
 
-		String query2 = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.FLIGHT);
+		QueryRequest qeRequest2 = new QueryRequest();
+		qeRequest2.setUtcMinuteOffset(0);
+		qeRequest2.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm2 = QueryRequestWithMetaData.generate(qeRequest);
+
+		String query2 = JPQLGenerator.generateQuery(qrwm2, EntityEnum.FLIGHT);
 		Assert.assertEquals(expectedQuery2, query2);
 
 		mockQueryTerm.setEntity("Creditcard");
 		mockQueryTerm.setValue(new String[]{"VI"});
 		mockQueryTerm.setField("type");
+		QueryRequest qeRequest3 = new QueryRequest();
+		qeRequest3.setUtcMinuteOffset(0);
+		qeRequest3.setQuery(mockQueryObject);
+		QueryRequestWithMetaData qrwm3 = QueryRequestWithMetaData.generate(qeRequest);
 
-		String query3 = JPQLGenerator.generateQuery(mockQueryObject, EntityEnum.FLIGHT);
+		String query3 = JPQLGenerator.generateQuery(qrwm3, EntityEnum.FLIGHT);
 		Assert.assertEquals(expectedQuery3, query3);
 	}
 
