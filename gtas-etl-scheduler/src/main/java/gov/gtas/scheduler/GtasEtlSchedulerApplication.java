@@ -9,10 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@ComponentScan(basePackages = "gov.gtas")
 @EnableScheduling
+@EnableConfigurationProperties
 public class GtasEtlSchedulerApplication {
 
 	private static final Logger log = LoggerFactory.getLogger(GtasEtlSchedulerApplication.class);
@@ -20,8 +24,7 @@ public class GtasEtlSchedulerApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(GtasEtlSchedulerApplication.class, args);
-
-		log.info(" THE GTAS ETL SCHEDULER IS STARTING...... ");
+		log.info("* * * GTAS SCHEDULER * * *");
 
 	}
 }

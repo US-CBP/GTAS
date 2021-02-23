@@ -10,11 +10,14 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import gov.gtas.scheduler.thread.RunnableTask;
+import gov.gtas.configuration.Neo4jEtlConfig;
+import gov.gtas.configuration.ReportEtlConfig;
+import gov.gtas.scheduler.thread.ReportEtlRunnableTask;
+import gov.gtas.scheduler.thread.Neo4jEtlRunnableTask;
 
 @Component
 public class EtlScheduledTasks {
@@ -22,36 +25,61 @@ public class EtlScheduledTasks {
 	private static final Logger log = LoggerFactory.getLogger(EtlScheduledTasks.class);
 
 	@Autowired
-	private SyncTaskExecutor syncTaskExecutor;
+	private SimpleAsyncTaskExecutor simpleAsyncTaskExecutor;
 
 	@Autowired
-	private RunnableTask runnableTask;
+	private Neo4jEtlRunnableTask runnableTask;
 
 	@Autowired
-	AppConfig appConfig;
+	private ReportEtlRunnableTask reportEtlRunnableTask;
 
-	@Scheduled(fixedDelayString = "${execInterval}000")
+	@Autowired
+	Neo4jEtlConfig neo4jEtlConfig;
+
+	@Autowired
+	ReportEtlConfig reportEtlConfig;
+
+	/*
+	 * @Autowired ReportAppConfig reportAppConfig;
+	 */
+
+	@Scheduled(fixedDelayString = "${neo4j.execInterval}000")
 	public void startEtl() {
 
-		String startInfo = "Starting the thread to execute the " + appConfig.getEtlName();
-		log.info(startInfo);
-		syncTaskExecutor.execute(runnableTask);
+		simpleAsyncTaskExecutor.execute(runnableTask);
+		simpleAsyncTaskExecutor.execute(reportEtlRunnableTask);
 
 	}
 
 	@PostConstruct
 	public void logProperties() {
+		log.info("----------------------------------");
+		log.info("--------COMMON SCHEDULER PROPERTIES FROM scheduler.properties FILE -----");
+		log.info("- opSystem: 		" + neo4jEtlConfig.getOpSystem());
+		log.info("- pdiDir: 		" + neo4jEtlConfig.getPdiDir());
 
-		log.info("--------SCHEDULER PROPERTIES FROM PROPERTIES FILE -----");
-		log.info("- etlName: 	" + appConfig.getEtlName());
-		log.info("- execInterval: 	" + appConfig.getExecInterval());
-		log.info("- opSystem: 		" + appConfig.getOpSystem());
-		log.info("- pdiDir: 		" + appConfig.getPdiDir());
-		log.info("- jobDir: 		" + appConfig.getJobDir());
-		log.info("- logLevel: 		" + appConfig.getLogLevel());
-		log.info("- logDir: 		" + appConfig.getLogDir());
-		log.info("- configFilePropertyName: 		" + appConfig.getConfigFilePropertyName());
-		log.info("- configFile: 		" + appConfig.getConfigFile());
+		log.info("\n");
+		log.info("--------NEO4J ETL SCHEDULER PROPERTIES FROM scheduler.properties FILE -----");
+		log.info("- enableEtl: 			" + neo4jEtlConfig.getEnableEtl());
+		log.info("- etlName: 			" + neo4jEtlConfig.getEtlName());
+		log.info("- jobDir: 			" + neo4jEtlConfig.getJobDir());
+		log.info("- logDir: 			" + neo4jEtlConfig.getLogDir());
+		log.info("- execInterval: 		" + neo4jEtlConfig.getExecInterval());
+		log.info("- logLevel: 			" + neo4jEtlConfig.getLogLevel());
+		log.info("- configFilePropertyName: " + neo4jEtlConfig.getConfigFilePropertyName());
+		log.info("- configFile: 		" + neo4jEtlConfig.getConfigFile());
+		log.info("\n");
+
+		log.info("--------REPORT ETL SCHEDULER PROPERTIES FROM scheduler.properties FILE  -----");
+		log.info("- enableEtl: 		" + reportEtlConfig.getEnableEtl());
+		log.info("- etlName: 		" + reportEtlConfig.getEtlName());
+		log.info("- etlName: 		" + reportEtlConfig.getJobDir());
+		log.info("- logDir: 		" + reportEtlConfig.getLogDir());
+		log.info("- execInterval: 	" + reportEtlConfig.getExecInterval());
+		log.info("- logLevel: 		" + reportEtlConfig.getLogLevel());
+		log.info("- configFilePropertyName: " + neo4jEtlConfig.getConfigFilePropertyName());
+		log.info("- configFile: 	" + neo4jEtlConfig.getConfigFile());
+		log.info("\n");
 		log.info("----------------------------------");
 
 	}

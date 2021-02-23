@@ -1,39 +1,42 @@
-package gov.gtas.scheduler;
+/*
+ * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+ * 
+ * Please see LICENSE.txt for details.
+ */
+package gov.gtas.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
-@Component
-public class AppConfig {
+@Configuration
+@PropertySource("file:config/run/scheduler.properties")
+@ConfigurationProperties(prefix = "report")
+public class ReportEtlConfig extends EtlConfig {
 
+	private Boolean enableEtl;
 
-
-	@Value("${etlName}")
 	private String etlName;
-	
-	@Value("${execInterval}")
+
 	private String execInterval;
 
-	@Value("${opSystem}")
-	private String opSystem;
-
-	@Value("${pdiDir}")
-	private String pdiDir;
-
-	@Value("${jobDir}")
 	private String jobDir;
 
-	@Value("${logLevel}")
 	private String logLevel;
 
-	@Value("${logDir}")
 	private String logDir;
 
-	@Value("${configFilePropertyName}")
 	private String configFilePropertyName;
 
-	@Value("${configFile}")
 	private String configFile;
+
+	public Boolean getEnableEtl() {
+		return enableEtl;
+	}
+
+	public void setEnableEtl(Boolean enableEtl) {
+		this.enableEtl = enableEtl;
+	}
 
 	public String getEtlName() {
 		return etlName;
@@ -42,21 +45,13 @@ public class AppConfig {
 	public void setEtlName(String etlName) {
 		this.etlName = etlName;
 	}
-	
-	public String getOpSystem() {
-		return opSystem;
+
+	public String getExecInterval() {
+		return execInterval;
 	}
 
-	public void setOpSystem(String opSystem) {
-		this.opSystem = opSystem;
-	}
-
-	public String getPdiDir() {
-		return pdiDir;
-	}
-
-	public void setPdiDir(String pdiDir) {
-		this.pdiDir = pdiDir;
+	public void setExecInterval(String execInterval) {
+		this.execInterval = execInterval;
 	}
 
 	public String getJobDir() {
@@ -81,14 +76,6 @@ public class AppConfig {
 
 	public void setLogDir(String logDir) {
 		this.logDir = logDir;
-	}
-
-	public String getExecInterval() {
-		return execInterval;
-	}
-
-	public void setExecInterval(String execInterval) {
-		this.execInterval = execInterval;
 	}
 
 	public String getConfigFilePropertyName() {

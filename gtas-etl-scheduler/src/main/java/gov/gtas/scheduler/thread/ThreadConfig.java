@@ -8,14 +8,14 @@ package gov.gtas.scheduler.thread;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 @Configuration
 public class ThreadConfig {
 
 	@Bean
-	public SyncTaskExecutor threadPoolTaskExecutor() {
-		SyncTaskExecutor executor = new SyncTaskExecutor();
+	public SimpleAsyncTaskExecutor threadPoolTaskExecutor() {
+		SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
 
 		return executor;
 	}
