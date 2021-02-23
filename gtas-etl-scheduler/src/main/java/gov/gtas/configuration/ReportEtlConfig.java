@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("file:config/run/scheduler.properties")
+@PropertySource("file:config/scheduler/scheduler.properties")
 @ConfigurationProperties(prefix = "report")
 public class ReportEtlConfig extends EtlConfig {
 
