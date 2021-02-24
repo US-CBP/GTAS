@@ -22,7 +22,7 @@ app.service("caseModel",  function (caseDispositionService) {
         GRAPH_RULE: true,
         MANUAL: true,
         EXTERNAL_RULE: true,
-        PARTIAL_WATCHLIST: false
+        PARTIAL_WATCHLIST: true
     },
     ruleCatFilter,
     startDate = new Date(),
