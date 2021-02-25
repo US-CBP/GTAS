@@ -12,7 +12,10 @@ import java.util.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "document")
+@Table(name = "document", 
+indexes = {
+		@Index(name="doc_num_index", columnList = "document_number")
+})
 public class Document extends BaseEntity implements PIIObject {
 	private static final long serialVersionUID = 1L;
 

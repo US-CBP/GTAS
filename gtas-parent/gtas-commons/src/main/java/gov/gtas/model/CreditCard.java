@@ -10,6 +10,7 @@ import java.util.*;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -19,7 +20,10 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "credit_card")
+@Table(name = "credit_card", 
+indexes= {
+		@Index(name="type_number_index",columnList = "card_type, number")
+})
 public class CreditCard extends BaseEntityAudit implements PIIObject{
 	private static final long serialVersionUID = 1L;
 

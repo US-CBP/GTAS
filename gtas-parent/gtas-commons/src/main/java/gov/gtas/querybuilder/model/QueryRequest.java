@@ -13,6 +13,7 @@ public class QueryRequest {
 	private int pageSize;
 	private SortOptionsDto sort;
 	private QueryObject query;
+	private int utcMinuteOffset;
 
 	public int getPageNumber() {
 		return pageNumber;
@@ -32,7 +33,7 @@ public class QueryRequest {
 
 	public SortOptionsDto getSort() {
 		return sort;
-	}
+	} 
 
 	public void setSort(SortOptionsDto sort) {
 		this.sort = sort;
@@ -45,4 +46,13 @@ public class QueryRequest {
 	public void setQuery(QueryObject query) {
 		this.query = query;
 	}
+
+	public int getUtcMinuteOffset() {
+		return utcMinuteOffset;
+	}
+
+	public void setUtcMinuteOffset(int utcMinuteOffset) {
+		this.utcMinuteOffset = utcMinuteOffset;
+	}
+
 }

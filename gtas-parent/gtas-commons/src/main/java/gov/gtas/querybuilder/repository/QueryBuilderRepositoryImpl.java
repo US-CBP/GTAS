@@ -20,6 +20,7 @@ import gov.gtas.querybuilder.exceptions.InvalidUserRepositoryException;
 import gov.gtas.querybuilder.exceptions.QueryAlreadyExistsRepositoryException;
 import gov.gtas.querybuilder.exceptions.QueryDoesNotExistRepositoryException;
 import gov.gtas.querybuilder.model.QueryRequest;
+import gov.gtas.querybuilder.model.QueryRequestWithMetaData;
 import gov.gtas.querybuilder.model.UserQuery;
 import gov.gtas.querybuilder.validation.util.QueryValidationUtils;
 import gov.gtas.querybuilder.vo.FlightQueryVo;
@@ -214,7 +215,9 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
 		FlightQueryVo vo = new FlightQueryVo();
 
 		try {
-			String jpqlQuery = JPQLGenerator.generateQuery(queryRequest.getQuery(), EntityEnum.FLIGHT);
+
+			QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(queryRequest);
+			String jpqlQuery = JPQLGenerator.generateQuery(qrwm, EntityEnum.FLIGHT);
 			TypedQuery<Flight> query = entityManager.createQuery(jpqlQuery, Flight.class);
 			MutableInt positionalParameter = new MutableInt();
 			setJPQLParameters(query, queryRequest.getQuery(), positionalParameter);
@@ -230,29 +233,6 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
 			vo.setTotalFlights(flights.size());
 			vo.setQueryLimitReached(flights.size() >= maxQueryResults);
 
-			// } else {
-			// // get total number of flights
-			// logger.debug("Pagination, Getting total number of flights...");
-			// vo.setTotalFlights(query.getResultList().size());
-			// logger.debug("done");
-			//
-			// // paginate results
-			// query = entityManager.createQuery(jpqlQuery, Flight.class);
-			// positionalParameter = new MutableInt();
-			// setJPQLParameters(query, queryRequest.getQuery(), positionalParameter);
-			//
-			// int pageNumber = queryRequest.getPageNumber();
-			// int pageSize = queryRequest.getPageSize();
-			// int firstResultIndex = (pageNumber - 1) * pageSize;
-			//
-			// logger.debug("Getting " + pageSize + " flights per page with this query: " +
-			// jpqlQuery);
-			// logger.debug("Getting " + pageSize + " flights per page");
-			// query.setFirstResult(firstResultIndex);
-			// query.setMaxResults(pageSize);
-			// vo.setFlights(query.getResultList());
-			// }
-
 			logger.info("Total number of Flights: " + vo.getTotalFlights());
 		} catch (InvalidQueryRepositoryException | ParseException e) {
 			throw new InvalidQueryRepositoryException(e.getMessage(), queryRequest.getQuery());
@@ -267,7 +247,8 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
 		PassengerQueryVo vo = new PassengerQueryVo();
 
 		try {
-			String jpqlQuery = JPQLGenerator.generateQuery(queryRequest.getQuery(), EntityEnum.PASSENGER);
+			QueryRequestWithMetaData qrwm = QueryRequestWithMetaData.generate(queryRequest);
+			String jpqlQuery = JPQLGenerator.generateQuery(qrwm, EntityEnum.PASSENGER);
 
 			TypedQuery<Object[]> query = entityManager.createQuery(jpqlQuery, Object[].class);
 			MutableInt positionalParameter = new MutableInt();
@@ -283,27 +264,6 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
 			vo.setResult(result);
 			vo.setTotalPassengers(result.size());
 			vo.setQueryLimitReached(result.size() >= maxQueryResults);
-			// }
-			// else {
-			// // get total number of passengers
-			// vo.setTotalPassengers(query.getResultList().size());
-			//
-			// // pagination
-			// query = entityManager.createQuery(jpqlQuery, Object[].class);
-			// positionalParameter = new MutableInt();
-			// setJPQLParameters(query, queryRequest.getQuery(), positionalParameter);
-			//
-			// int pageNumber = queryRequest.getPageNumber();
-			// int pageSize = queryRequest.getPageSize();
-			// int firstResultIndex = (pageNumber - 1) * pageSize;
-			//
-			// logger.info("Getting " + pageSize + " passengers with this query: " +
-			// jpqlQuery);
-			// query.setFirstResult(firstResultIndex);
-			// query.setMaxResults(pageSize);
-			// vo.setResult(query.getResultList());
-			// }
-
 			logger.info("Total number of Passengers: " + vo.getTotalPassengers());
 		} catch (InvalidQueryRepositoryException | ParseException e) {
 			throw new InvalidQueryRepositoryException(e.getMessage(), queryRequest.getQuery());
@@ -449,9 +409,9 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
 							}
 						}
 						query.setParameter(positionalParameter.intValue(), vals);
-					} else if (entityEnum.toString().equalsIgnoreCase(EntityEnum.EMAIL.toString()) ||
-								entityEnum.toString().equalsIgnoreCase(EntityEnum.DOCUMENT.toString()) ||
-								entityEnum.toString().equalsIgnoreCase(EntityEnum.CREDIT_CARD.toString())) {
+					} else if (entityEnum.toString().equalsIgnoreCase(EntityEnum.EMAIL.toString())
+							|| entityEnum.toString().equalsIgnoreCase(EntityEnum.DOCUMENT.toString())
+							|| entityEnum.toString().equalsIgnoreCase(EntityEnum.CREDIT_CARD.toString())) {
 						List<String> vals = new ArrayList<>();
 						if (values != null) {
 							for (String val : values)

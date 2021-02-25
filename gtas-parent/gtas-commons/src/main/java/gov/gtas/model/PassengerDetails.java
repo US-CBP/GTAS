@@ -11,10 +11,14 @@ import gov.gtas.summary.PassengerSummary;
 import java.util.Date;
 import javax.persistence.*;
 
+
 @Entity
-@Table(name = "passenger_details")
+@Table(name = "passenger_details", indexes = {
+		@Index(name = "passenger_query", columnList= "dob, pd_gender, pd_last_name, pd_first_name")
+		})
 public class PassengerDetails extends BaseEntityAudit implements PIIObject {
 
+	private static final long serialVersionUID = -4889788644523605904L;
 	private static final String DELETED = "DELETED";
 	private static final String MASKED = "MASKED";
 

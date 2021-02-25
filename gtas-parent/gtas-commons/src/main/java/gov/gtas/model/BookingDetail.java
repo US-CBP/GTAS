@@ -8,7 +8,10 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "booking_detail")
+@Table(name = "booking_detail", indexes = {
+		@Index(name = "booking_detail_destination_index", columnList= "destination"),
+		@Index(name = "booking_detail_origin_index", columnList= "origin")
+		})
 public class BookingDetail extends BaseEntityAudit {
 
 	@Size(min = 4, max = 4)
