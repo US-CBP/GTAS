@@ -45,10 +45,10 @@ services:
       MYSQL_PASSWORD_PATH: '/run/secrets/mysql-etl-password'
       MYSQL_REPORT_USER_PATH: '/run/secrets/mysql-report-etl-user'
       MYSQL_REPORT_USER_PASSWORD_PATH: '/run/secrets/mysql-report-etl-password'
-      ELASTICSEARCH_USER_PATH: '/run/secrets/elasticsearch-kibana-user'
-      ELASTICSEARCH_USER_PASSWORD_PATH: '/run/secrets/elastic-password'
-      KIBANA_USER_PATH: '/run/secrets/kibana-elasticsearch-user'
-      KIBANA_USER_PASSWORD_PATH: '/run/secrets/kibana-elasticsearch-password'
+      ELASTICSEARCH_USER_PATH: '/run/secrets/elasticsearch-user'
+      ELASTICSEARCH_USER_PASSWORD_PATH: '/run/secrets/elasticsearch-password'
+      KIBANA_USER_PATH: '/run/secrets/kibana-user'
+      KIBANA_USER_PASSWORD_PATH: '/run/secrets/kibana-password'
 #  elk-setup:
 #    environment:
 #      LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password'
