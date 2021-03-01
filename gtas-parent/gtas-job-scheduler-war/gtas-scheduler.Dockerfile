@@ -22,4 +22,4 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize
 RUN tar -C /usr/local/bin -xvzf dockerize-linux-amd64-v0.6.1.tar.gz
 
 
-ENTRYPOINT mkdir -p /usr/local/gtas-data/processed /usr/local/gtas-data/error /usr/local/gtas-data/input /usr/local/gtas-data/working && dockerize -wait tcp://${DB_HOST}:3306 -timeout 1000s catalina.sh run
+ENTRYPOINT mkdir -p /usr/local/gtas-data/processed /usr/local/gtas-data/error /usr/local/gtas-data/input /usr/local/gtas-data/working && dockerize -wait tcp://${DB_HOST}:3306 -wait tcp://${NEO4J_HOST}:7687 -timeout 1000s catalina.sh run
