@@ -376,6 +376,11 @@
       <filename>${EXT_ETL_CONFIG_FILE}</filename>
       <file_variable_type>ROOT_JOB</file_variable_type>
       <fields>
+        <field>
+          <variable_name>Dtrust_all_cert</variable_name>
+          <variable_value>true</variable_value>
+          <variable_type>JVM</variable_type>
+        </field>
       </fields>
       <parallel>N</parallel>
       <draw>Y</draw>
