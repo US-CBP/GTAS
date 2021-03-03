@@ -48,6 +48,7 @@ services:
       ELASTICSEARCH_USER_PATH: '/run/secrets/elasticsearch-user'
       ELASTICSEARCH_USER_PASSWORD_PATH: '/run/secrets/elasticsearch-password'
       KIBANA_USER_PATH: '/run/secrets/kibana-user'
+      KIBANA_CERT_PATH: '/run/secrets/kibana-crt'
       KIBANA_USER_PASSWORD_PATH: '/run/secrets/kibana-password'
 #  elk-setup:
 #    environment:

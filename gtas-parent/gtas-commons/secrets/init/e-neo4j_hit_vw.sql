@@ -1,12 +1,12 @@
-
-CREATE OR REPLACE VIEW neo4j_hit_vw AS
-SELECT
-    hs.id as gtas_hit_summary_id,
-    hd.created_date as hit_summary_create_date,
-    hd.hit_type as hit_type,
-    hs.hs_rule_count as rule_hit_count,
-    hs.hs_wl_count as wl_hit_count,
-    hd.id as gtas_hit_detail_id,
+DROP VIEW IF EXISTS neo4j_hit_vw;
+CREATE VIEW neo4j_hit_vw AS
+(SELECT
+  hs.id as gtas_hit_summary_id,
+  hd.created_date as hit_summary_create_date,
+  hd.hit_type as hit_type,
+  hs.hs_rule_count as rule_hit_count,
+  hs.hs_wl_count as wl_hit_count,
+  hd.id as gtas_hit_detail_id,
 	hd.description,
 	hd.title,
 	hd.cond_text,
@@ -42,9 +42,12 @@ INNER JOIN gtas.hit_detail hd ON hd.passenger = p.id
 WHERE mst.ms_status = 'ANALYZED'
 AND f.id_tag IS NOT NULL
 AND pit.idTag IS NOT NULL
+Limit 25000
+)
 
-UNION
+UNION ALL
 
+(
 SELECT
     hs.id as gtas_hit_summary_id,
     hd.created_date as hit_summary_create_date,
@@ -87,4 +90,6 @@ SELECT
 WHERE mst.ms_status = 'ANALYZED'
 AND f.id_tag IS NOT NULL
 AND pit.idTag IS NOT NULL
-ORDER BY gtas_message_id,flight_id,gtas_passenger_id, gtas_hit_detail_id
+Limit 25000
+)
+ORDER BY gtas_message_id,flight_id,gtas_passenger_id, gtas_hit_detail_id ASC Limit 50000

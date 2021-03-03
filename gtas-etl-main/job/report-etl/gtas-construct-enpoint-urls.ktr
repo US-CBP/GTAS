@@ -1155,7 +1155,7 @@
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>elastticsearch_hostname</name>
+        <name>elasticsearch_hostname</name>
         <variable>${EXT_VAR_ELSEARCH_HOST_NAME}</variable>
         <type>String</type>
         <format/>
@@ -1296,7 +1296,7 @@
         <replace_string>HOST_NAME</replace_string>
         <replace_by_string/>
         <set_empty_string>N</set_empty_string>
-        <replace_field_by_string>elastticsearch_hostname</replace_field_by_string>
+        <replace_field_by_string>kibana_hostname</replace_field_by_string>
         <whole_word>no</whole_word>
         <case_sensitive>no</case_sensitive>
         <is_unicode>no</is_unicode>
@@ -1413,7 +1413,7 @@
         <replace_string>HOST_NAME</replace_string>
         <replace_by_string/>
         <set_empty_string>N</set_empty_string>
-        <replace_field_by_string>elastticsearch_hostname</replace_field_by_string>
+        <replace_field_by_string>elasticsearch_hostname</replace_field_by_string>
         <whole_word>no</whole_word>
         <case_sensitive>no</case_sensitive>
         <is_unicode>no</is_unicode>

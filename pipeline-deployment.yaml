@@ -167,6 +167,7 @@ services:
       NEO4J_PASSWORD_PATH: '/run/secrets/etl-neo4j-password/etl-neo4j-password'
       MYSQL_USER_PATH: '/run/secrets/mysql-etl-user/mysql-etl-user'
       MYSQL_PASSWORD_PATH: '/run/secrets/mysql-etl-password/mysql-etl-password'
+      KIBANA_CERT_PATH: '/run/secrets/kibana-crt/kibana-crt'
 networks:
   gtas_webapp-network:
     attachable: true

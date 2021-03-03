@@ -104,6 +104,8 @@ services:
      - mysql-logstash-user
      - mysql-logstash-password
      - mysql-root-password
+     - mysql-report-etl-user
+     - mysql-report-etl-password
     ports:
       - 3306:3306
     networks:
@@ -117,15 +119,24 @@ services:
     image: wcogtas/neo4j-etl-job:dev
     build:
       context: .
-      dockerfile: ./gtas-neo4j-etl/etl_job.Dockerfile
+      dockerfile: ./gtas-etl-main/etl_job.Dockerfile
     environment:
       NEO4J_HOSTNAME: neo4j
+      ELSEARCH_HOST_NAME: elasticsearch
+      KIBANA_HOST_NAME: kibana
     restart: unless-stopped
     secrets:
       - mysql-etl-user
       - mysql-etl-password
       - etl-neo4j-user
       - etl-neo4j-password
+      - mysql-report-etl-user
+      - mysql-report-etl-password
+      - elasticsearch-user
+      - elasticsearch-password
+      - kibana-user
+      - kibana-password
+      - kibana-crt
     networks: 
       - gtas-webapp-network
     depends_on: 
@@ -284,8 +295,19 @@ services:
 #    networks:
 #      - gtas-webapp-network
 
-
 secrets:
+  mysql-report-etl-user:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_report_etl_user.txt
+  mysql-report-etl-password:
+    file: ./gtas-parent/gtas-commons/secrets/mysql_report_etl_password.txt
+  elasticsearch-user:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch_user
+  elasticsearch-password:
+    file: ./gtas-parent/gtas-commons/secrets/elasticsearch_password
+  kibana-user:
+    file: ./gtas-parent/gtas-commons/secrets/kibana_user.txt
+  kibana-password:
+    file: ./gtas-parent/gtas-commons/secrets/kibana_password.txt
   elastic-ca:
     file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
   elastic-key:

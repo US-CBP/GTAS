@@ -44,10 +44,10 @@ COPY --from=scheduler-builder /root/.m2/repository/gov/gtas/gtas-etl-scheduler/1
 
 # Install pentaho
 COPY --from=pentaho-extractor /opt/pentaho/ /opt/pentaho/
-COPY ./gtas-etl/driver/mariadb-java-client-2.2.1.jar /opt/pentaho/data-integration/lib/
+COPY ./gtas-etl-main/drivers/mariadb-java-client-2.2.1.jar /opt/pentaho/data-integration/lib/
 
 # copy .pnetaho to user's home directory 
-COPY ./gtas-etl/pdi-conf/ /root
+COPY ./gtas-etl-main/pdi-conf/ /root
 
 # etl job configs 
 COPY ./gtas-etl-main/job/neo4j-etl ${NEO4J_ETL_HOME}
@@ -69,24 +69,32 @@ RUN dos2unix job/report-etl/template/template.properties
 RUN dos2unix job/report-etl/workpad/workpad.properties
 
 
+
 ENTRYPOINT export NEO4J_USER_NAME=$(cat ${NEO4J_USER_PATH}) NEO4J_PASSWORD=$(cat ${NEO4J_PASSWORD_PATH}) && \
     export GTAS_DB_USER_NAME=$(cat ${MYSQL_USER_PATH}) GTAS_DB_PASSWORD=$(cat ${MYSQL_PASSWORD_PATH}) && \
-    export GTAS_DB_REPORT_USER_NAME=$(cat ${ MYSQL_REPORT_USER_PATH}) GTAS_DB_REPORT_USER_PASSWORD=$(cat ${MYSQL_REPORT_USER_PASSWORD_PATH}) && \
+    export GTAS_DB_REPORT_USER_NAME=$(cat ${MYSQL_REPORT_USER_PATH}) GTAS_DB_REPORT_USER_PASSWORD=$(cat ${MYSQL_REPORT_USER_PASSWORD_PATH}) && \
     export ELASTICSEARCH_USER_NAME=$(cat ${ELASTICSEARCH_USER_PATH}) ELASTICSEARCH_USER_PASSWORD=$(cat ${ELASTICSEARCH_USER_PASSWORD_PATH}) && \
     export KIBANA_USER_NAME=$(cat ${KIBANA_USER_PATH}) KIBANA_USER_PASSWORD=$(cat ${KIBANA_USER_PASSWORD_PATH}) && \
+    $JAVA_HOME/bin/keytool -importcert -alias "elasticCA" -file "$(echo ${KIBANA_CERT_PATH})" -storepass "changeit" -v -noprompt || true && \
     sed -i.bak "/\(EXT_VAR_GTAS_DB_USER_NAME.*=\).*/ s//\1${GTAS_DB_USER_NAME}/" $NEO4J_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_GTAS_DB_PASSWORD.*=\).*/ s//\1${GTAS_DB_PASSWORD}/" $NEO4J_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_NEO4J_DB_USER_NAME.*=\).*/ s//\1${NEO4J_USER_NAME}/" $NEO4J_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_NEO4J_DB_PASSWORD.*=\).*/ s//\1${NEO4J_PASSWORD}/" $NEO4J_ETL_CONFIG_FILE && \
-    sed -i.bak "/\(EXT_VAR_GTAS_DB_HOST_NAME.*=\).*/ s//\1${DB_HOSTNAME}/" $NEO4J_ETL_CONFIG_FILEE && \
+    sed -i.bak "/\(EXT_VAR_GTAS_DB_HOST_NAME.*=\).*/ s//\1${DB_HOSTNAME}/" $NEO4J_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_NEO4J_DB_HOST_NAME.*=\).*/ s//\1${NEO4J_HOSTNAME}/" $NEO4J_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_DELETE_OLD_DATA.*=\).*/ s//\1${ENABLE_DATA_RETENTION_POLICY}/" $NEO4J_ETL_CONFIG_FILE && \
   	sed -i.bak "/\(EXT_VAR_GTAS_DB_USER_NAME.*=\).*/ s//\1${GTAS_DB_REPORT_USER_NAME}/" $REPORT_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_GTAS_DB_PASSWORD.*=\).*/ s//\1${GTAS_DB_REPORT_USER_PASSWORD}/" $REPORT_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_ELSEARCH_USERNAME.*=\).*/ s//\1${ELASTICSEARCH_USER_NAME}/" $REPORT_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_ELSEARCH_PASSWORD.*=\).*/ s//\1${ELASTICSEARCH_USER_PASSWORD}/" $REPORT_ETL_CONFIG_FILE && \
+    sed -i.bak "/\(EXT_VAR_GTAS_DB_HOST_NAME.*=\).*/ s//\1${DB_HOSTNAME}/" $REPORT_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_KIBANA_USERNAME.*=\).*/ s//\1${KIBANA_USER_NAME}/" $REPORT_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_KIBANA_PASSWORD.*=\).*/ s//\1${KIBANA_USER_PASSWORD}/" $REPORT_ETL_CONFIG_FILE && \
+    sed -i.bak "/\(EXT_VAR_ELSEARCH_HOST_NAME.*=\).*/ s//\1${EXT_VAR_ELSEARCH_HOST_NAME}/" $REPORT_ETL_CONFIG_FILE && \
+    sed -i.bak "/\(EXT_VAR_KIBANA_HOST_NAME.*=\).*/ s//\1${KIBANA_HOST_NAME}/" $REPORT_ETL_CONFIG_FILE && \
+    sed -i.bak "/\(EXT_VAR_ELSEARCH_HOST_NAME.*=\).*/ s//\1${ELSEARCH_HOST_NAME}/" $REPORT_ETL_CONFIG_FILE && \
+    sed -i.bak "/\(EXT_VAR_JAVA_TRUST_STORE.*=\).*/ s//\1${JAVA_TRUST_STORE}/" $REPORT_ETL_CONFIG_FILE && \
+    sed -i.bak "/\(EXT_VAR_JAVA_TRUST_STORE_PASSWORD.*=\).*/ s//\1${JAVA_TRUST_STORE_PASSWORD}/" $REPORT_ETL_CONFIG_FILE && \
     rm ${GTAS_ETL_HOME}/config/neo4j-etl/*.bak && \
     rm ${GTAS_ETL_HOME}/config/report-etl/*.bak && \
     java -jar /gtas-etl/gtas-etl-scheduler-1.jar
