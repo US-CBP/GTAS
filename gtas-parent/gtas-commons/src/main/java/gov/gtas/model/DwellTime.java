@@ -17,10 +17,17 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @Table(name = "dwell_time")
 public class DwellTime implements Serializable {
+	
+	@Transient
+	public static Logger logger = LoggerFactory.getLogger(DwellTime.class);
 
 	private static final long serialVersionUID = 1L;
 
@@ -35,11 +42,14 @@ public class DwellTime implements Serializable {
 		// java.lang.NullPointerException issue #307 code fix
 		if (this.departureTime != null && this.arrivalTime != null) {
 			long diff = this.departureTime.getTime() - this.arrivalTime.getTime();
-			if (diff > 0) {
+			if (diff < 0) {
+				logger.warn("Arrival Time of incoming flight AFTER departure time of outgoing flight. Likely bad data!");
+			}
 				int minutes = (int) TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
 				DecimalFormat df = new DecimalFormat("#.##");
 				this.dwellTime = Double.valueOf(df.format((double) minutes / 60));
-			}
+		} else {
+			logger.warn("Unable to calculate dwell time, etd or eta missing from arriving or departing flight!");
 		}
 	}
 
