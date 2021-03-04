@@ -494,11 +494,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Update - message_flight_idx_flag</from>
-      <to>Write to log 2</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Add constants</from>
       <to>Update - message_flight_idx_flag</to>
       <enabled>Y</enabled>
@@ -511,6 +506,21 @@
     <hop>
       <from>Detect empty stream</from>
       <to>Write to log</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Update - message_flight_idx_flag</from>
+      <to>Identify Last Row</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Identify Last Row</from>
+      <to>Filter rows - Is last row</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows - Is last row</from>
+      <to>Write to log - Last Row</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -762,7 +772,7 @@
     </GUI>
   </step>
   <step>
-    <name>Write to log 2</name>
+    <name>Write to log - Last Row</name>
     <type>WriteToLog</type>
     <description/>
     <distribute>Y</distribute>
@@ -776,9 +786,50 @@
     <displayHeader>Y</displayHeader>
     <limitRows>N</limitRows>
     <limitRowsNumber>0</limitRowsNumber>
-    <logmessage>** INFO: Successfully updated message_flight_idx_flag</logmessage>
+    <logmessage>** 
+
+INFO: Successfully updated message_flight_idx_flag  
+
+The last update row is:
+
+***</logmessage>
     <fields>
-      </fields>
+      <field>
+        <name>id</name>
+      </field>
+      <field>
+        <name>message_flight_idx_flag_value</name>
+      </field>
+      <field>
+        <name>lastRow</name>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>560</xloc>
+      <yloc>112</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Identify Last Row</name>
+    <type>DetectLastRow</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <resultfieldname>lastRow</resultfieldname>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -789,7 +840,51 @@
     </remotesteps>
     <GUI>
       <xloc>176</xloc>
-      <yloc>112</yloc>
+      <yloc>128</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows - Is last row</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Write to log - Last Row</send_true_to>
+    <send_false_to/>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>lastRow</leftvalue>
+        <function>=</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>Boolean</type>
+          <text>Y</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask/>
+        </value>
+      </condition>
+    </compare>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>336</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
