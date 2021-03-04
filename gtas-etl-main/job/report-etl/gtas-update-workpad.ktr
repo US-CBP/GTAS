@@ -1854,7 +1854,7 @@ Read Canvas Workpad file, extract its UUID, delete the existing Canvas Workpad f
     <urlField>kibana_workpad_import_url</urlField>
     <bodyField>binary-workpad</bodyField>
     <httpLogin>${EXT_VAR_KIBANA_USERNAME}</httpLogin>
-    <httpPassword>Encrypted 43343155f6d6ecfb0df597b79a17f944ebb8bbcd</httpPassword>
+    <httpPassword>${EXT_VAR_KIBANA_PASSWORD}</httpPassword>
     <proxyHost/>
     <proxyPort/>
     <preemptive>Y</preemptive>
