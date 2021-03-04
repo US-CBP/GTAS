@@ -36,6 +36,12 @@ public class CommonErrorConstants {
 	 */
 	public static final String INVALID_USER_ID_ERROR_CODE = "INVALID_USER_ID";
 
+	
+	/*
+	 * This is the error code indicating that the user indicated by a supplied
+	 * userId already exist and can not be created. The user is most likely archived.
+	 */
+	public static final String USER_ALREADY_EXIST = "USER_ALREADY_EXIST";
 	/*
 	 * This error code indicates that an input JSON field has an incorrect format.
 	 */
@@ -79,6 +85,12 @@ public class CommonErrorConstants {
 	 * userId cannot be found.
 	 */
 	public static final String INVALID_USER_ID_ERROR_MESSAGE = "The user id '%s' does not represent a valid user.";
+
+	/*
+	 * This is the error message indicating that the user indicated by a supplied
+	 * userId exist and can not be created.
+	 */
+	public static final String USER_ALREADY_EXIST_ERROR_MESSAGE = "The user id '%s' already exist in GTAS as active/inactive/archived and can not be created.";
 
 	/*
 	 * This error message indicates that an input JSON field has an incorrect
