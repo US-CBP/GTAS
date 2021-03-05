@@ -132,11 +132,9 @@ services:
       - etl-neo4j-password
       - mysql-report-etl-user
       - mysql-report-etl-password
-      - elasticsearch-user
-      - elasticsearch-password
-      - kibana-user
-      - kibana-password
-      - kibana-crt
+      - pentaho-to-elasticsearch-user
+      - pentaho-to-elasticsearch-password
+      - elastic-ca
     networks: 
       - gtas-webapp-network
     depends_on: 
@@ -196,7 +194,9 @@ services:
         cp /keystore/kibana.keystore /usr/share/kibana/data/kibana.keystore
         /usr/local/bin/kibana-docker
     networks:
-      - gtas-webapp-network
+      gtas-webapp-network:
+        aliases:
+          - kibana.local
     depends_on:
       - elasticsearch
 
@@ -213,6 +213,7 @@ services:
     environment:
       BOOTSTRAP_PATH: '/bootstrap/elastic-bootstrap-password'
       KIBANA_PASSWORD_PATH: '/kibana/elasticsearch-kibana-password'
+      PENTAHO_PASSWORD_PATH: '/kibana/pentaho-to-elasticsearch-password'
       ELASTIC_PATH: '/elastic/elastic-password'
     command:
       - bash
@@ -221,12 +222,15 @@ services:
         wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
         tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
         nohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$$(cat $${BOOTSTRAP_PATH})@localhost:9200/_security/user/kibana/_password" -d "{\"password\": \"$$(cat $${KIBANA_PASSWORD_PATH})\"}" &
+        nohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPOST "https://elastic:$$(cat $${BOOTSTRAP_PATH})@localhost:9200/_security/user/pentaho_to_elastic" -d "{\"roles\" : [ \"superuser\" ],  \"password\": \"$$(cat $${PENTAHO_PASSWORD_PATH})\"}" &
         nohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$$(cat $${BOOTSTRAP_PATH})@localhost:9200/_security/user/logstash_system/_password" -d "{\"password\": \"$$(cat $${ELASTIC_PATH})\"}" &
         nohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$$(cat $${BOOTSTRAP_PATH})@localhost:9200/case" -d '{ "settings" : { "index" : { } }}' &
         /usr/local/bin/docker-entrypoint.sh
     secrets:
       - source: elastic-keystore
         target: /keystore/elasticsearch.keystore
+      - source: pentaho-to-elasticsearch-password
+        target: /kibana/pentaho-to-elasticsearch-password
       - source: elastic-bootstrap-password
         target: /bootstrap/elastic-bootstrap-password
       - source: elastic-password
@@ -252,6 +256,7 @@ services:
       dockerfile: ./install/docker/logstash/logstash.Dockerfile
     environment:
       ELASTIC_HOST: 'https://elasticsearch'
+      XPACK_MONITORING_ENABLED: 'false'
       XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
       LOGSTASH_KEYSTORE_PASS: 'admin123'
     command:
@@ -300,20 +305,16 @@ secrets:
     file: ./gtas-parent/gtas-commons/secrets/mysql_report_etl_user.txt
   mysql-report-etl-password:
     file: ./gtas-parent/gtas-commons/secrets/mysql_report_etl_password.txt
-  elasticsearch-user:
-    file: ./gtas-parent/gtas-commons/secrets/elasticsearch_user
-  elasticsearch-password:
-    file: ./gtas-parent/gtas-commons/secrets/elasticsearch_password
-  kibana-user:
-    file: ./gtas-parent/gtas-commons/secrets/kibana_user.txt
-  kibana-password:
-    file: ./gtas-parent/gtas-commons/secrets/kibana_password.txt
+  pentaho-to-elasticsearch-user:
+    file: ./gtas-parent/gtas-commons/secrets/pentaho_to_elasticsearch_user
+  pentaho-to-elasticsearch-password:
+    file: ./gtas-parent/gtas-commons/secrets/pentaho_to_elasticsearch_password
   elastic-ca:
-    file: ./gtas-parent/gtas-commons/certs/elastic-ca.crt
+    file: ./gtas-parent/gtas-commons/certs/ca.crt
   elastic-key:
-    file: ./gtas-parent/gtas-commons/certs/elasticsearch-node1.key
+    file: ./gtas-parent/gtas-commons/certs/node1.key
   elastic-cert:
-    file: ./gtas-parent/gtas-commons/certs/elasticsearch-node1.crt
+    file: ./gtas-parent/gtas-commons/certs/node1.crt
   elastic-keystore:
     file: ./gtas-parent/gtas-commons/secrets/elasticsearch.keystore
   elastic-bootstrap-password:

@@ -69,13 +69,12 @@ RUN dos2unix job/report-etl/template/template.properties
 RUN dos2unix job/report-etl/workpad/workpad.properties
 
 
-
 ENTRYPOINT export NEO4J_USER_NAME=$(cat ${NEO4J_USER_PATH}) NEO4J_PASSWORD=$(cat ${NEO4J_PASSWORD_PATH}) && \
     export GTAS_DB_USER_NAME=$(cat ${MYSQL_USER_PATH}) GTAS_DB_PASSWORD=$(cat ${MYSQL_PASSWORD_PATH}) && \
     export GTAS_DB_REPORT_USER_NAME=$(cat ${MYSQL_REPORT_USER_PATH}) GTAS_DB_REPORT_USER_PASSWORD=$(cat ${MYSQL_REPORT_USER_PASSWORD_PATH}) && \
     export ELASTICSEARCH_USER_NAME=$(cat ${ELASTICSEARCH_USER_PATH}) ELASTICSEARCH_USER_PASSWORD=$(cat ${ELASTICSEARCH_USER_PASSWORD_PATH}) && \
-    export KIBANA_USER_NAME=$(cat ${KIBANA_USER_PATH}) KIBANA_USER_PASSWORD=$(cat ${KIBANA_USER_PASSWORD_PATH}) && \
-    $JAVA_HOME/bin/keytool -importcert -alias "elasticCA" -file "$(echo ${KIBANA_CERT_PATH})" -storepass "changeit" -v -noprompt || true && \
+    export KIBANA_USER_NAME=$(cat ${ELASTICSEARCH_USER_PATH}) KIBANA_USER_PASSWORD=$(cat ${ELASTICSEARCH_USER_PASSWORD_PATH}) && \
+    $JAVA_HOME/bin/keytool -importcert -alias "elasticCA" -file "$(echo ${ELASTIC_CERT_PATH})" -keystore /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts -storepass "changeit" -v -noprompt || true && \
     sed -i.bak "/\(EXT_VAR_GTAS_DB_USER_NAME.*=\).*/ s//\1${GTAS_DB_USER_NAME}/" $NEO4J_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_GTAS_DB_PASSWORD.*=\).*/ s//\1${GTAS_DB_PASSWORD}/" $NEO4J_ETL_CONFIG_FILE && \
     sed -i.bak "/\(EXT_VAR_NEO4J_DB_USER_NAME.*=\).*/ s//\1${NEO4J_USER_NAME}/" $NEO4J_ETL_CONFIG_FILE && \

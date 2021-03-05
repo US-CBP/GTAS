@@ -21,6 +21,7 @@ ENV xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/con
 ENV xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/elasticsearch-node1.key
 ENV xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/elasticsearch-node1.crt
 ENV xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/elastic-ca.crt
+ENV xpack.http.ssl.verification_mode=certificate
 
 ENV xpack.graph.enabled=false
 ENV xpack.ml.enabled=false
