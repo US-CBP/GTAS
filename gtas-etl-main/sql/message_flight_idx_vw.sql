@@ -11,7 +11,6 @@ f.flight_number as flight_number,
 f.full_flight_number as full_flight_number, 
 f.carrier as carrier, 
 f.direction as direction, 
-(select CONCAT(iata,'-',name) from airport where iata = f.destination) AS full_destination,
 (CASE
 	WHEN f.direction = 'I' THEN f.destination
 	WHEN f.direction = 'O' THEN f.origin
@@ -58,8 +57,10 @@ CAST(HOUR(CASE
 END) AS UNSIGNED INTEGER)  AS flight_hour,
 
 f.origin as origin, 
+(select CONCAT(iata,'-',name) from airport where iata = f.origin) AS full_origin,
 f.origin_country as origin_country, 
-f.destination as destination, 
+f.destination as destination,
+(select CONCAT(iata,'-',name) from airport where iata = f.destination) AS full_destination,
 f.destination_country as destination_country,
  mfd.full_utc_etd_timestamp as full_utc_etd_timestamp,
  mfd.full_utc_eta_timestamp as full_utc_eta_timestamp, 
@@ -114,7 +115,6 @@ f.flight_number as flight_number,
 f.full_flight_number as full_flight_number, 
 f.carrier as carrier, 
 f.direction as direction,
-(select CONCAT(iata,'-',name) from airport where iata = f.destination) AS full_destination,
 (CASE
 	WHEN f.direction = 'I' THEN f.destination
 	WHEN f.direction = 'O' THEN f.origin
@@ -160,8 +160,10 @@ CAST(HOUR(CASE
 END) AS UNSIGNED  INTEGER)  AS flight_hour,
 
 f.origin as origin, 
+(select CONCAT(iata,'-',name) from airport where iata = f.origin) AS full_origin,
 f.origin_country as origin_country, 
 f.destination as destination, 
+(select CONCAT(iata,'-',name) from airport where iata = f.destination) AS full_destination,
 f.destination_country as destination_country, 
 mfd.full_utc_etd_timestamp as full_utc_etd_timestamp, 
 mfd.full_utc_eta_timestamp as full_utc_eta_timestamp,
@@ -200,7 +202,7 @@ WHERE mst.ms_status NOT IN ('RECEIVED','PARSED','FAILED_PARSING','FAILED_LOADING
 AND mst.message_flight_idx_flag IS NULL
 AND (f.direction = 'I' OR f.direction = 'O')
 ORDER BY msg.id, f.id
-LIMIT 25000
+LIMIT 10000
 )
 ORDER BY id ASC
-Limit 30000 
+Limit 15000 
