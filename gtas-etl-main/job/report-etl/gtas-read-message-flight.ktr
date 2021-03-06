@@ -685,8 +685,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>656</xloc>
-      <yloc>400</yloc>
+      <xloc>592</xloc>
+      <yloc>576</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -711,7 +711,7 @@
     </remotesteps>
     <GUI>
       <xloc>304</xloc>
-      <yloc>400</yloc>
+      <yloc>576</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -952,10 +952,6 @@
         <element>direction</element>
       </field>
       <field>
-        <name>full_destination</name>
-        <element>full_destination</element>
-      </field>
-      <field>
         <name>airport</name>
         <element>airport</element>
       </field>
@@ -996,6 +992,10 @@
         <element>origin</element>
       </field>
       <field>
+        <name>full_origin</name>
+        <element>full_origin</element>
+      </field>
+      <field>
         <name>origin_country</name>
         <element>origin_country</element>
       </field>
@@ -1004,8 +1004,16 @@
         <element>destination</element>
       </field>
       <field>
+        <name>full_destination</name>
+        <element>full_destination</element>
+      </field>
+      <field>
         <name>destination_country</name>
         <element>destination_country</element>
+      </field>
+      <field>
+        <name>route</name>
+        <element>route</element>
       </field>
       <field>
         <name>full_utc_etd_timestamp</name>
@@ -1340,8 +1348,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>816</xloc>
-      <yloc>400</yloc>
+      <xloc>720</xloc>
+      <yloc>576</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1377,7 +1385,7 @@ FROM message_flight_idx_vw
     </remotesteps>
     <GUI>
       <xloc>144</xloc>
-      <yloc>528</yloc>
+      <yloc>720</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1618,8 +1626,8 @@ NO DATA  IN THE STREAM
       </output>
     </remotesteps>
     <GUI>
-      <xloc>480</xloc>
-      <yloc>400</yloc>
+      <xloc>448</xloc>
+      <yloc>576</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

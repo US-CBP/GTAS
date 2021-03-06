@@ -120,16 +120,6 @@
 							}
 						},
 						
-						"full_destination" : {
-							"type": "text",
-							"fields": {
-								"keyword": {
-									"type": "keyword",
-									"ignore_above": 256
-								}
-							}
-						},
-						
 						"airport" : {
 							"type": "text",
 							"fields": {
@@ -229,7 +219,15 @@
 								}
 							}
 						},
-						
+						"full_origin" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
 						"origin_country" : {
 							"type": "text",
 							"fields": {
@@ -249,7 +247,15 @@
 								}
 							}
 						},
-						
+						"full_destination" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
 						"destination_country" : {
 							"type": "text",
 							"fields": {
@@ -259,7 +265,15 @@
 								}
 							}
 						},
-						
+						"route" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
 						"full_utc_etd_timestamp" : {
 							"type": "date",
 							"fields": {

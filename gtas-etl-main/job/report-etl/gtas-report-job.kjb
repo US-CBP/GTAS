@@ -430,8 +430,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>592</xloc>
-      <yloc>400</yloc>
+      <xloc>544</xloc>
+      <yloc>672</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -442,8 +442,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>800</xloc>
-      <yloc>400</yloc>
+      <xloc>736</xloc>
+      <yloc>672</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -555,7 +555,7 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>336</xloc>
+      <xloc>384</xloc>
       <yloc>224</yloc>
       <attributes_kjc/>
     </entry>
@@ -592,7 +592,29 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>592</xloc>
+      <xloc>608</xloc>
+      <yloc>352</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Dummy - before job</name>
+      <description/>
+      <type>SPECIAL</type>
+      <attributes/>
+      <start>N</start>
+      <dummy>Y</dummy>
+      <repeat>N</repeat>
+      <schedulerType>0</schedulerType>
+      <intervalSeconds>0</intervalSeconds>
+      <intervalMinutes>60</intervalMinutes>
+      <hour>12</hour>
+      <minutes>0</minutes>
+      <weekDay>1</weekDay>
+      <DayOfMonth>1</DayOfMonth>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>608</xloc>
       <yloc>176</yloc>
       <attributes_kjc/>
     </entry>
@@ -752,15 +774,6 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Set variables - index properties</from>
-      <to>Job - message-flight-idx</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
       <from>Job - message-flight-idx</from>
       <to>Abort job </to>
       <from_nr>0</from_nr>
@@ -777,6 +790,24 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Set variables - index properties</from>
+      <to>Dummy - before job</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy - before job</from>
+      <to>Job - message-flight-idx</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
     </hop>
   </hops>
   <notepads>
