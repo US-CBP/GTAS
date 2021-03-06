@@ -382,28 +382,6 @@
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Dummy</name>
-      <description/>
-      <type>SPECIAL</type>
-      <attributes/>
-      <start>N</start>
-      <dummy>Y</dummy>
-      <repeat>N</repeat>
-      <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
-      <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>976</xloc>
-      <yloc>176</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
       <name>Transformation - index data</name>
       <description/>
       <type>TRANS</type>
@@ -437,7 +415,7 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>640</xloc>
+      <xloc>624</xloc>
       <yloc>272</yloc>
       <attributes_kjc/>
     </entry>
@@ -550,8 +528,8 @@ An Error has occurred when pushing template file to elasttic search</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>704</xloc>
-      <yloc>416</yloc>
+      <xloc>752</xloc>
+      <yloc>448</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -609,8 +587,8 @@ An Error has occurred when pushing template file to elasttic search</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>704</xloc>
-      <yloc>528</yloc>
+      <xloc>752</xloc>
+      <yloc>608</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -666,8 +644,8 @@ An Error has occurred when pushing template file to elasttic search</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>976</xloc>
-      <yloc>416</yloc>
+      <xloc>1088</xloc>
+      <yloc>272</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -704,8 +682,8 @@ An Error has occurred when pushing template file to elasttic search</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>976</xloc>
-      <yloc>528</yloc>
+      <xloc>1088</xloc>
+      <yloc>608</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -784,20 +762,34 @@ An Error has occurred when pushing template file to elasttic search</logmessage>
       <yloc>272</yloc>
       <attributes_kjc/>
     </entry>
+    <entry>
+      <name>Write to log - no data warn</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>
+
+########  NO DATA WARNING ########
+
+There is no data in the stream.If this is the very first run of this ETL job, then the index will not be created in Elasticsearch.
+Therfore all the uploaded workpads that read data from this index will show an error message until data
+flows into Elasticsearch and the index is created.
+
+####################################</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>NO DATA WARNING</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>768</xloc>
+      <yloc>176</yloc>
+      <attributes_kjc/>
+    </entry>
   </entries>
   <hops>
     <hop>
       <from>Transformation - read-message-flight</from>
       <to>Evaluation - no data?</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Evaluation - no data?</from>
-      <to>Dummy</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -959,15 +951,6 @@ An Error has occurred when pushing template file to elasttic search</logmessage>
     </hop>
     <hop>
       <from>Transformation-update message_flag</from>
-      <to>Dummy</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation-update message_flag</from>
       <to>Abort job</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -1012,13 +995,31 @@ An Error has occurred when pushing template file to elasttic search</logmessage>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Dummy</from>
+      <from>Transformation-update message_flag</from>
       <to>Transformation-get workpad files</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log - no data warn</from>
+      <to>Transformation-get workpad files</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
       <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Evaluation - no data?</from>
+      <to>Write to log - no data warn</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
     </hop>
   </hops>
   <notepads>

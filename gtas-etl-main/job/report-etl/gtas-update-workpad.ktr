@@ -1961,7 +1961,7 @@ Read Canvas Workpad file, extract its UUID, delete the existing Canvas Workpad f
     <displayHeader>Y</displayHeader>
     <limitRows>N</limitRows>
     <limitRowsNumber>0</limitRowsNumber>
-    <logmessage>** INFO: THE FOLLOWING WORKPAD WAS UPLOADED SUCCESSFULLY
+    <logmessage>** INFO: THE FOLLOWING WORKPADS WERE UPLOADED SUCCESSFULLY
 
 ** INFO. Updating property values</logmessage>
     <fields>
