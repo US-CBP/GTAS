@@ -13,6 +13,13 @@ commands="CREATE USER '${NEW_USER}'@'%' IDENTIFIED BY '${NEW_DB_PASSWORD}';GRANT
 echo "${commands}" | /usr/bin/mysql --user="root" --password=${MYSQL_ROOT_PASSWORD}
 
 
+NEW_USER=$(cat /run/secrets/mysql-report-etl-user)
+NEW_DB_PASSWORD=$(cat /run/secrets/mysql-report-etl-password)
+commands="CREATE USER '${NEW_USER}'@'%' IDENTIFIED BY '${NEW_DB_PASSWORD}';GRANT ALL privileges ON *.* TO '${NEW_USER}'@'%' IDENTIFIED BY '${NEW_DB_PASSWORD}';FLUSH PRIVILEGES;"
+
+echo "${commands}" | /usr/bin/mysql --user="root" --password=${MYSQL_ROOT_PASSWORD}
+
+
 NEW_USER=$(cat /run/secrets/mysql-processor-user)
 NEW_DB_PASSWORD=$(cat /run/secrets/mysql-processor-password)
 commands="CREATE USER '${NEW_USER}'@'%' IDENTIFIED BY '${NEW_DB_PASSWORD}';GRANT ALL privileges ON *.* TO '${NEW_USER}'@'%' IDENTIFIED BY '${NEW_DB_PASSWORD}';FLUSH PRIVILEGES;"
