@@ -168,6 +168,8 @@ services:
       MYSQL_USER_PATH: '/run/secrets/mysql-etl-user/mysql-etl-user'
       MYSQL_PASSWORD_PATH: '/run/secrets/mysql-etl-password/mysql-etl-password'
       ELASTIC_CERT_PATH: '/run/secrets/elastic-ca/elastic-ca'
+      MYSQL_REPORT_USER_PATH: '/run/secrets/mysql-etl-user/mysql-etl-user'
+      MYSQL_REPORT_USER_PASSWORD_PATH: '/run/secrets/mysql-etl-password/mysql-etl-password'
       ELASTICSEARCH_USER_PATH: '/run/secrets/pentaho-to-elasticsearch-user/pentaho-to-elasticsearch-user'
       ELASTICSEARCH_USER_PASSWORD_PATH: '/run/secrets/pentaho-to-elasticsearch-password/pentaho-to-elasticsearch-password'
 networks:
