@@ -78,6 +78,9 @@ public class PassengerTripDetails extends BaseEntityAudit {
 
 	@Column(name = "hours_before_takeoff")
 	private Integer hoursBeforeTakeOff;
+	
+	@Column(name = "days_out_of_country")
+	private Double daysOutOfCountry;
 
 	@Transient
 	private String totalBagWeight;
@@ -248,5 +251,13 @@ public class PassengerTripDetails extends BaseEntityAudit {
 
 	public void setCoTravelerCount(Integer coTravelerCount) {
 		this.coTravelerCount = coTravelerCount;
+	}
+
+	public Double getDaysOutOfCountry() {
+		return daysOutOfCountry;
+	}
+
+	public void setDaysOutOfCountry(Double daysOutOfCountry) {
+		this.daysOutOfCountry = daysOutOfCountry;
 	}
 }

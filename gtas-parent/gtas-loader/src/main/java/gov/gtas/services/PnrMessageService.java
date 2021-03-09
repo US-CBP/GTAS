@@ -187,6 +187,7 @@ public class PnrMessageService extends MessageLoaderService {
 			pnr.setPassengerCount(pnr.getPassengers().size());
 			TripTypeEnum tripType = loaderRepo.calculateTripType(pnr.getFlightLegs(), pnr.getDwellTimes());
 			pnr.setTripType(tripType.toString());
+			calculateTimeOutOfCountry(pnr, primeFlight);
 			if (tamrEnabled) {
 				List<TamrPassenger> tamrPassengers = tamrAdapter
 						.convertPassengers(pnr.getFlights().iterator().next(), pnr.getPassengers());
@@ -216,6 +217,91 @@ public class PnrMessageService extends MessageLoaderService {
 		}
 		messageInformation.setMessageStatus(msgDto.getMessageStatus());
 		return messageInformation;
+	}
+
+	private void calculateTimeOutOfCountry(Pnr pnr, Flight primeFlight) {
+
+		List<FlightLeg> flistFlightLegs = pnr.getFlightLegs();
+		if (pnr.getFlightLegs().size() < 2) {
+			return;
+		}
+		// All following logic to determine time out of country depends on the flight legs being in order.
+		flistFlightLegs.sort(Comparator.comparing(FlightLeg::getLegNumber));
+		// find index of prime flight.
+		int flightIndex = -1;
+		for (int i = 0; i < flistFlightLegs.size(); i++) {
+			if (flistFlightLegs.get(i).getFlight() != null) {
+				flightIndex = i;
+				break;
+			}
+		}
+		// Set the time out of country using different logic if flight is in-bound or out-bound.
+		Double timeOutOfCountryInDays = null;
+		String homeCountry = lookupRepo.getAppConfigOption(AppConfigurationRepository.HOME_COUNTRY);
+
+		if ("I".equalsIgnoreCase(primeFlight.getDirection())) {
+			// This will take the first booking in-bound to the home country after an out-bound prime flight
+			timeOutOfCountryInDays = getInboundTimeOutOfCountry(primeFlight, flistFlightLegs, flightIndex, homeCountry);
+		} else if ("O".equalsIgnoreCase(primeFlight.getDirection())) {
+			// This will take the first flight in-bound to the home country after an out-bound booking detail
+			timeOutOfCountryInDays = getOutboundTimeOutOfCountry(primeFlight, flistFlightLegs, flightIndex, homeCountry);
+		}
+		// If a time was able to be calculated update the passenger trip details to reflect how many days a 
+		// traveler is out of the country
+		if (timeOutOfCountryInDays != null) {
+			for (Passenger p : pnr.getPassengers()) {
+				PassengerTripDetails ptd = p.getPassengerTripDetails();
+				ptd.setDaysOutOfCountry(timeOutOfCountryInDays);
+			}
+		}
+	}
+
+	// Iterate through flight legs starting at the first flight leaving the home country 
+	// and ending with the incoming prime flight to see if a time out of country can be determined
+	private Double getOutboundTimeOutOfCountry(Flight primeFlight, List<FlightLeg> flistFlightLegs, int flightIndex, String homeCountry) {
+		Double timeOutOfCountryInDays = null;
+		
+		for (int i = flightIndex; i < flistFlightLegs.size(); i++) {
+			BookingDetail bd = flistFlightLegs.get(i).getBookingDetail();
+			
+			if (flistFlightLegs.get(i).getFlight() == null 
+					&& bd != null
+					&& homeCountry.equalsIgnoreCase(bd.getDestinationCountry())) {
+				Date entryDate = bd.getEta();
+				Date exitDate = primeFlight.getMutableFlightDetails().getEtd();
+				timeOutOfCountryInDays = differenceInDays(exitDate, entryDate);
+				break;
+			}
+		}
+		return timeOutOfCountryInDays;
+	}
+
+	// Iterate through flight legs starting at the first booking detail leaving the home country 
+	// and ending with the incoming prime flight to see if a time out of country can be determined
+	private Double getInboundTimeOutOfCountry(Flight primeFlight, List<FlightLeg> flistFlightLegs, int flightIndex, String homeCountry) {
+		Double timeOutOfCountryInDays = null;
+
+		for (int i = 0; i < flightIndex; i++) {
+			BookingDetail bd = flistFlightLegs.get(i).getBookingDetail();
+			if (flistFlightLegs.get(i).getFlight() == null 
+					&& bd != null
+					&& homeCountry.equalsIgnoreCase(bd.getOriginCountry())) {
+				Date entryDate = primeFlight.getMutableFlightDetails().getEta();
+				Date exitDate = bd.getEtd();
+				timeOutOfCountryInDays = differenceInDays(entryDate, exitDate);
+			}
+		}
+		return timeOutOfCountryInDays;
+	}
+
+
+	private Double differenceInDays(Date firstDate, Date secondDate) {
+		double timeOutOfCountryInDays;
+		long diff = secondDate.getTime() - firstDate.getTime();
+		int hours = (int) TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS);
+		DecimalFormat df = new DecimalFormat("#.##");
+		timeOutOfCountryInDays = Double.valueOf(df.format((double) hours / 24));
+		return timeOutOfCountryInDays;
 	}
 
 	private void addSegments(Pnr pnr, PnrVo vo) {

@@ -1,0 +1,1 @@
+alter table passenger_trip_details drop column `days_out_of_country`;
