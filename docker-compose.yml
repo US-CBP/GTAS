@@ -213,7 +213,7 @@ services:
     environment:
       BOOTSTRAP_PATH: '/bootstrap/elastic-bootstrap-password'
       KIBANA_PASSWORD_PATH: '/kibana/elasticsearch-kibana-password'
-      PENTAHO_PASSWORD_PATH: '/kibana/pentaho-to-elasticsearch-password'
+      PENTAHO_PASSWORD_PATH: '/pentaho/pentaho-to-elasticsearch-password'
       ELASTIC_PATH: '/elastic/elastic-password'
     command:
       - bash
@@ -230,7 +230,7 @@ services:
       - source: elastic-keystore
         target: /keystore/elasticsearch.keystore
       - source: pentaho-to-elasticsearch-password
-        target: /kibana/pentaho-to-elasticsearch-password
+        target: /pentaho/pentaho-to-elasticsearch-password
       - source: elastic-bootstrap-password
         target: /bootstrap/elastic-bootstrap-password
       - source: elastic-password
