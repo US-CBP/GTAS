@@ -43,6 +43,11 @@ services:
       NEO4J_PASSWORD_PATH: '/run/secrets/etl-neo4j-password'
       MYSQL_USER_PATH: '/run/secrets/mysql-etl-user'
       MYSQL_PASSWORD_PATH: '/run/secrets/mysql-etl-password'
+      MYSQL_REPORT_USER_PATH: '/run/secrets/mysql-report-etl-user'
+      MYSQL_REPORT_USER_PASSWORD_PATH: '/run/secrets/mysql-report-etl-password'
+      ELASTICSEARCH_USER_PATH: '/run/secrets/pentaho-to-elasticsearch-user'
+      ELASTICSEARCH_USER_PASSWORD_PATH: '/run/secrets/pentaho-to-elasticsearch-password'
+      ELASTIC_CERT_PATH: '/run/secrets/elastic-ca'
 #  elk-setup:
 #    environment:
 #      LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password'
