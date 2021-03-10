@@ -63,19 +63,19 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private RoleServiceUtil roleServiceUtil;
-	
+
 	@Resource
-    private UserEmailService userEmailService;
-	
+	private UserEmailService userEmailService;
+
 	@Resource
 	private PasswordResetTokenRepository passwordResetTokenRepository;
 
 	@Resource
 	private RoleService roleService;
-	
+
 	@Value("${user.group.default}")
 	private Long defaultUserGroupId;
-	
+
 	@Value("${reset.password.token.expiry.minutes}")
 	private int expiryTimeInMinutes;
 
@@ -86,13 +86,19 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public UserData create(UserData userData) {
+
+		if (userRepository.findById(userData.getUserId()).isPresent()) {
+			throw ErrorHandlerFactory.getErrorHandler().createException(CommonErrorConstants.USER_ALREADY_EXIST,
+					userData.getUserId());
+		}
+
 		User userEntity = userServiceUtil.mapUserEntityFromUserData(userData);
 		userEntity.setPassword((new BCryptPasswordEncoder()).encode(userEntity.getPassword()));
-		userEntity.setArchived(false); //Default do not archive new users.
+		userEntity.setArchived(false); // Default do not archive new users.
 
 		Set<Role> roleCollection = roleService.getValidRoles(userData.getRoles());
 
-			userEntity.setRoles(roleCollection);
+		userEntity.setRoles(roleCollection);
 		User newUserEntity = userRepository.save(userEntity);
 		UserGroup defaultUserGroup = userGroupRepository.findById(defaultUserGroupId)
 				.orElseThrow(RuntimeException::new);
@@ -138,11 +144,11 @@ public class UserServiceImpl implements UserService {
 			if (data.getRoles() != null && !data.getRoles().isEmpty()) {
 				Set<Role> oRoles = new HashSet<Role>();
 				Set<Role> roleCollection = roleServiceUtil.getAdminRoleIfExists(data.getRoles());
-				
+
 				if (roleCollection.isEmpty()) {
-					 roleCollection = roleService.getValidRoles(data.getRoles());
+					roleCollection = roleService.getValidRoles(data.getRoles());
 				}
-				
+
 				oRoles.addAll(roleCollection);
 				entity.setRoles(oRoles);
 			}
@@ -153,15 +159,15 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
-		/* Update the user password only. */
+	/* Update the user password only. */
 	@Transactional
 	public UserData updatePassword(String userId, String password) {
 		User existingUser = userRepository.findOne(userId.toUpperCase());
 
-			existingUser.setPassword(getEncodedPassword(password));
+		existingUser.setPassword(getEncodedPassword(password));
 
-			User savedEntity = userRepository.save(existingUser);
-			return userServiceUtil.mapUserDataFromEntity(savedEntity);
+		User savedEntity = userRepository.save(existingUser);
+		return userServiceUtil.mapUserDataFromEntity(savedEntity);
 	}
 
 	@Override
@@ -181,8 +187,7 @@ public class UserServiceImpl implements UserService {
 	 * Fetches the user object and throws an unchecked exception if the user cannot
 	 * be found.
 	 * 
-	 * @param userId
-	 *            the ID of the user to fetch.
+	 * @param userId the ID of the user to fetch.
 	 * @return the user fetched from the DB.
 	 */
 	@Override
@@ -205,8 +210,7 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * Returns true if the user has an Admin Role
 	 *
-	 * @param userId
-	 *            the ID of the user to fetch.
+	 * @param userId the ID of the user to fetch.
 	 * @return true if the user has Admin role false otherwise
 	 */
 
@@ -233,12 +237,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/*
-		Update all user data except the password. The password is handled by a separate function
+	 * Update all user data except the password. The password is handled by a
+	 * separate function
 	 */
 	@Override
 	@Transactional
 	public UserData updateByAdmin(UserData data) {
-		User entity = userRepository.findOne(data.getUserId());	//returns error if null
+		User entity = userRepository.findOne(data.getUserId()); // returns error if null
 
 		User mappedEntity = userServiceUtil.mapUserEntityFromUserData(data);
 
@@ -274,49 +279,50 @@ public class UserServiceImpl implements UserService {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		return encoder.matches(newPassword, savedPassword);
 	}
-	
+
 	@Override
 	@Transactional
 	public void forgotPassword(User user) {
 		user.setPasswordResetToken(generatePasswordResetToken());
-		userRepository.save(user);//update reset password
-		
+		userRepository.save(user);// update reset password
+
 		try {
 			userEmailService.sendPasswordResetEmail(user.getUserId(), user.getEmail(), user.getPasswordResetToken());
 		} catch (IOException | TemplateException | MessagingException | URISyntaxException e) {
-			
+
 			logger.info(e.getMessage());
 		}
-		
+
 	}
-	
+
 	@Override
 	@Transactional
-	public void forgotUsername(String userEmail) throws NotFoundException, MessagingException, IOException, TemplateException {
-		
+	public void forgotUsername(String userEmail)
+			throws NotFoundException, MessagingException, IOException, TemplateException {
+
 		String userId = userRepository.findUserByEmail(userEmail);
-		
+
 		if (userId == null) {
 			String message = "The provided email (" + userEmail + ") is not on the system!";
 			throw new NotFoundException(message);
 		}
-		
+
 		userEmailService.sedUsername(userEmail, userId);
-		
+
 	}
 
-	
 	@Override
 	@Transactional
 	public boolean isValidToken(String token) {
 		PasswordResetToken prt = passwordResetTokenRepository.findByTokenValue(token).orElse(null);
-		
+
 		return isValidToken(prt);
-		
+
 	}
 
 	private String getEncodedPassword(String password) {
-		if (password == null) return null;
+		if (password == null)
+			return null;
 
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -325,34 +331,28 @@ public class UserServiceImpl implements UserService {
 		}
 		return password;
 	}
-	
+
 	private Date calculateExpiryDate() {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(new Date().getTime());
-        cal.add(Calendar.MINUTE, expiryTimeInMinutes);
-        return new Date(cal.getTime().getTime());
-    }
-	
+		final Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(new Date().getTime());
+		cal.add(Calendar.MINUTE, expiryTimeInMinutes);
+		return new Date(cal.getTime().getTime());
+	}
+
 	private boolean isValidToken(PasswordResetToken prt) {
 		Date now = new Date();
 		return prt != null && prt.getExpiryData().after(now);
 	}
-	
+
 	private PasswordResetToken generatePasswordResetToken() {
 		PasswordResetToken token = new PasswordResetToken();
 		String tokenValue = UUID.randomUUID().toString();
 		Date tokenExpiryDate = calculateExpiryDate();
-		
+
 		token.setToken(tokenValue);
 		token.setExpiryData(tokenExpiryDate);
-		
+
 		return token;
 	}
-
-	
-	
-	
-
-	
 
 }
