@@ -16,6 +16,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.Set;
 
@@ -29,4 +30,21 @@ public interface HitViewStatusRepository extends CrudRepository<HitViewStatus, L
     		+ "and f.mutableFlightDetails.etd > :etdDate and f.mutableFlightDetails.eta < :etaDate " +
             "and not hvs.hitDetail.hitType = 'PWL' ")
     int getHitViewCountWithNewStatus(@Param("userGroups") Set<UserGroup> userGroups, @Param("etdDate")Date etdDate, @Param("etaDate") Date etaDate);
+
+    @Transactional
+    @Query("select hvs from HitViewStatus hvs " +
+            "left join fetch hvs.passenger p " +
+            "left join fetch p.flight f " +
+            "left join fetch p.passengerDetails pds " +
+            "left join fetch p.documents doc " +
+            "left join fetch f.mutableFlightDetails mf " +
+            "left join fetch p.hitDetails hd " +
+            "left join fetch hd.hitMaker hm "
+    + " where hvs.userGroup in :userGroups "
+    + " AND NOT hvs.hitViewStatusEnum = 'REVIEWED' "
+    + " AND NOT hvs.hitDetail.hitType = 'PWL' "
+    + " AND (mf.etd BETWEEN :startDate AND :endDate "
+    + " OR mf.eta BETWEEN :startDate AND :endDate)")
+    Set<HitViewStatus> findAllWithNotClosedAndWithinRange(@Param("userGroups") Set<UserGroup> userGroups,
+                                                           @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }

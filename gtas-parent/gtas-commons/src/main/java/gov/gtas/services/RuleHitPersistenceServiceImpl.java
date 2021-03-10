@@ -10,6 +10,7 @@ package gov.gtas.services;
 
 import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
+import gov.gtas.enumtype.POEStatusEnum;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
 import gov.gtas.services.jms.OmniLocalGtasSender;
@@ -213,7 +214,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 					for (HitDetail hd : hitDetailsToPersist) {
 						for (UserGroup ug : hitMakerMappedByPrimaryKey.get(hd.getHitMakerId())) {
 							HitViewStatus hitViewStatus = new HitViewStatus(hd, ug, HitViewStatusEnum.NEW,
-									hd.getPassenger());
+									hd.getPassenger(), POEStatusEnum.ACTIVE);
 							hd.getHitViewStatus().add(hitViewStatus);
 						}
 					}

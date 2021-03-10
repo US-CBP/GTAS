@@ -10,6 +10,7 @@ package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.enumtype.HitViewStatusEnum;
+import gov.gtas.enumtype.POEStatusEnum;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -22,11 +23,13 @@ public class HitViewStatus extends BaseEntityAudit {
 	HitViewStatus() {
 	}
 
-	public HitViewStatus(HitDetail hitDetail, UserGroup userGroup, HitViewStatusEnum hvse, Passenger passenger) {
+	public HitViewStatus(HitDetail hitDetail, UserGroup userGroup, HitViewStatusEnum hvse, Passenger passenger,
+						 POEStatusEnum poeStatusEnum) {
 		this.hitDetail = hitDetail;
 		this.userGroup = userGroup;
 		this.hitViewStatusEnum = hvse;
 		this.passenger = passenger;
+		this.poeStatusEnum = poeStatusEnum;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -47,6 +50,10 @@ public class HitViewStatus extends BaseEntityAudit {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "hv_status", nullable = false)
 	private HitViewStatusEnum hitViewStatusEnum;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "poe_status", nullable = false)
+	private POEStatusEnum poeStatusEnum;
 
 	public HitDetail getHitDetail() {
 		return hitDetail;
@@ -71,6 +78,10 @@ public class HitViewStatus extends BaseEntityAudit {
 	public void setHitViewStatusEnum(HitViewStatusEnum hitViewStatusEnum) {
 		this.hitViewStatusEnum = hitViewStatusEnum;
 	}
+
+	public POEStatusEnum getPoeStatusEnum() { return poeStatusEnum; }
+
+	public void setPoeStatusEnum(POEStatusEnum poeStatusEnum) { this.poeStatusEnum = poeStatusEnum; }
 
 	@Override
 	public boolean equals(Object o) {
