@@ -194,9 +194,7 @@ services:
         cp /keystore/kibana.keystore /usr/share/kibana/data/kibana.keystore
         /usr/local/bin/kibana-docker
     networks:
-      gtas-webapp-network:
-        aliases:
-          - kibana.local
+      - gtas-webapp-network
     depends_on:
       - elasticsearch
 
