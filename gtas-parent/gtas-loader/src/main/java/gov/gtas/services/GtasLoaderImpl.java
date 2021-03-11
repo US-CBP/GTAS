@@ -379,7 +379,9 @@ public class GtasLoaderImpl implements GtasLoader {
 		if (CollectionUtils.isEmpty(legs)) {
 			return;
 		}
-
+		
+		//order flight legs from first to last to create dwell times.
+		legs.sort(Comparator.comparing(FlightLeg::getLegNumber));
 		for (int i = 0; i < legs.size(); i++) {
 			if (i + 1 < legs.size()) { // If the 'next' leg actually exists
 				// 4 different combinations of flights and booking details n^2, where n = 2.
@@ -532,8 +534,18 @@ public class GtasLoaderImpl implements GtasLoader {
 					primeFlightCarrier, primeFlightNumber));
 			flights.add(flightVo);
 		}
-
+		
+		for (FlightVo fvo : flights) {
+			String originAirport = fvo.getOrigin();
+			String destinationAirport = fvo.getDestination();
+			Date utcETADate = gtasLocalToUTCService.convertFromAirportCode(destinationAirport, fvo.getLocalEtaDate());
+			fvo.setUtcEtaDate(utcETADate);
+			Date utcETDDate = gtasLocalToUTCService.convertFromAirportCode(originAirport, fvo.getLocalEtdDate());
+			fvo.setUtcEtdDate(utcETDDate);
+		}
+		
 		utils.sortFlightsByDate(flights);
+		
 		Flight primeFlight = null;
 		for (int i = 0; i < flights.size(); i++) {
 			FlightVo fvo = flights.get(i);
@@ -571,13 +583,8 @@ public class GtasLoaderImpl implements GtasLoader {
 					// or tvl level 0 etd timestamp for PNR if this is the case.
 					mfd.setLocalEtdDate(primeFlightTimeStamp);
 				}
-				String originAirport = currentFlight.getOrigin();
-				String destinationAirport = currentFlight.getDestination();
-				Date utcETADate = gtasLocalToUTCService.convertFromAirportCode(destinationAirport,
-						fvo.getLocalEtaDate());
-				Date utcETDDate = gtasLocalToUTCService.convertFromAirportCode(originAirport, fvo.getLocalEtdDate());
-				mfd.setEta(utcETADate);
-				mfd.setEtd(utcETDDate);
+				mfd.setEta(fvo.getUtcEtaDate());
+				mfd.setEtd(fvo.getUtcEtdDate());
 				mfd = mutableFlightDetailsRepository.save(mfd);
 				currentFlight.setMutableFlightDetails(mfd);
 				primeFlight = currentFlight;
