@@ -172,6 +172,8 @@ services:
       MYSQL_REPORT_USER_PASSWORD_PATH: '/run/secrets/mysql-etl-password/mysql-etl-password'
       ELASTICSEARCH_USER_PATH: '/run/secrets/pentaho-to-elasticsearch-user/pentaho-to-elasticsearch-user'
       ELASTICSEARCH_USER_PASSWORD_PATH: '/run/secrets/pentaho-to-elasticsearch-password/pentaho-to-elasticsearch-password'
+    volumes:
+      - cacerts:/usr/lib/jvm/java-1.8-openjdk/jre/lib/security
 networks:
   gtas_webapp-network:
     attachable: true
