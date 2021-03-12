@@ -99,7 +99,6 @@ INNER JOIN  gtas.flight_passenger_count fpc ON fpc.fp_flight_id = f.id AND f.id_
 WHERE mst.ms_status NOT IN ('RECEIVED','PARSED','FAILED_PARSING','FAILED_LOADING','FAILED_PRE_PARSE')
 AND mst.message_flight_idx_flag IS NULL
 AND (f.direction = 'I' OR f.direction = 'O')
-ORDER BY msg.id, f.id
 LIMIT 5000
 )
 
@@ -203,7 +202,6 @@ INNER JOIN  gtas.flight_passenger_count fpc ON fpc.fp_flight_id = f.id AND f.id_
 WHERE mst.ms_status NOT IN ('RECEIVED','PARSED','FAILED_PARSING','FAILED_LOADING','FAILED_PRE_PARSE')
 AND mst.message_flight_idx_flag IS NULL
 AND (f.direction = 'I' OR f.direction = 'O')
-ORDER BY msg.id, f.id
 LIMIT 10000
 )
 ORDER BY id ASC
