@@ -6,18 +6,25 @@
 package gov.gtas.job.scheduler;
 
 import gov.gtas.constant.RuleConstants;
+import gov.gtas.constant.WatchlistConstants;
 import gov.gtas.job.config.JobSchedulerConfig;
 import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.model.udr.KnowledgeBase;
+import gov.gtas.model.udr.UdrRule;
+import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.KnowledgeBaseRepository;
 import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
+import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.rule.KIEAndLastUpdate;
 import gov.gtas.rule.RuleUtils;
+import gov.gtas.rule.builder.DrlRuleFileBuilder;
+import gov.gtas.services.udr.RulePersistenceService;
+import gov.gtas.svc.RuleManagementService;
 import gov.gtas.svc.UdrService;
 import gov.gtas.svc.WatchlistService;
 import org.kie.api.KieBase;
@@ -28,6 +35,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -109,26 +117,35 @@ public class RuleRunnerScheduler {
 
 		AppConfiguration recompileRulesAndWatchlist = appConfigurationRepository.findByOption(RECOMPILE_RULES);
 		if (!isBlank(recompileRulesAndWatchlist.getOption()) && Boolean.parseBoolean(recompileRulesAndWatchlist.getValue())) {
-			logger.info("RECOMPILING KBS!");
-			watchlistService.activateAllWatchlists();
-			udrService.recompileRules(RuleConstants.UDR_KNOWLEDGE_BASE_NAME, "RULE_SCHEDULER");
+			logger.info("RECOMPILING WL KB!");
+			updateWatchlistKb();
+			logger.info("RECOMPILING RULE KB!");
+			updateRuleKb();
+			logger.info("RECOMPILING FINISHED!");
 			recompileRulesAndWatchlist.setValue("false");
 			appConfigurationRepository.save(recompileRulesAndWatchlist);
 		}
 
 		Iterable<KnowledgeBase> kbs = knowledgeBaseRepository.findAll();
-		for (KnowledgeBase kb : kbs ) {
+		for (KnowledgeBase kb : kbs) {
 			if (rules.containsKey(kb.getKbName())) {
 				KIEAndLastUpdate kau = rules.get(kb.getKbName());
 				if (kau.getUpdated().before(kb.getCreationDt())) {
-					logger.info("updating rule runner kie for " + kb.getKbName());
-					addOrUpdateNameAndKie(kb);
-					logger.info("Done updating rule runner kie for " + kb.getKbName());
+					if (WatchlistConstants.WL_KNOWLEDGE_BASE_NAME.equalsIgnoreCase(kb.getKbName())) {
+						logger.info("Updating Watchlist KB");
+						updateWatchlistKb();
+					} else if (RuleConstants.UDR_KNOWLEDGE_BASE_NAME.equalsIgnoreCase(kb.getKbName())) {
+						logger.info("Updated UDR KB");
+						updateRuleKb();					}
 				}
 			} else {
-				logger.info("making new rule kie for " + kb.getKbName());
-				addOrUpdateNameAndKie(kb);
-				logger.info("Done creating rule kie for " + kb.getKbName());
+				if (WatchlistConstants.WL_KNOWLEDGE_BASE_NAME.equalsIgnoreCase(kb.getKbName())) {
+					logger.info("Creating new WL KB");
+					updateWatchlistKb();
+				} else if (RuleConstants.UDR_KNOWLEDGE_BASE_NAME.equalsIgnoreCase(kb.getKbName())) {
+					logger.info("Creating new UDR KB");
+					updateRuleKb();					
+				}
 			}
 		}
 
@@ -238,12 +255,27 @@ public class RuleRunnerScheduler {
 		}
 	}
 
+	private void updateWatchlistKb() throws IOException {
+		KnowledgeBase wlKb = watchlistService.createAKnowledgeBase(WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
+		if (wlKb != null) {
+			addOrUpdateNameAndKie(wlKb);
+		}
+	}
+
+	private void updateRuleKb() throws IOException {
+		KnowledgeBase udrKnowledgeBase = udrService.recompileRules(RuleConstants.UDR_KNOWLEDGE_BASE_NAME, "RULE_SCHEDULER");
+		if (udrKnowledgeBase != null) {
+			addOrUpdateNameAndKie(udrKnowledgeBase);
+		}
+	}
+
+	
 	private void addOrUpdateNameAndKie(KnowledgeBase kb) throws IOException {
-		KieBase kieBase = RuleUtils.createKieBaseFromDrlString(new String(kb.getRulesBlob()));
-		Date updatedDate = kb.getCreationDt();
-		KIEAndLastUpdate KIEAndLastUpdate = new KIEAndLastUpdate();
-		KIEAndLastUpdate.setKieBase(kieBase);
-		KIEAndLastUpdate.setUpdated(updatedDate);
-		rules.put(kb.getKbName(), KIEAndLastUpdate);
+		 		KieBase kieBase = RuleUtils.createKieBaseFromDrlString(new String(kb.getRulesBlob()));
+		 		Date updatedDate = kb.getCreationDt();
+		 		KIEAndLastUpdate KIEAndLastUpdate = new KIEAndLastUpdate();
+		 		KIEAndLastUpdate.setKieBase(kieBase);
+		 		KIEAndLastUpdate.setUpdated(updatedDate);
+		 		rules.put(kb.getKbName(), KIEAndLastUpdate);
 	}
 }

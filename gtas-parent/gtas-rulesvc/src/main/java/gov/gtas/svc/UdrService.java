@@ -7,6 +7,7 @@ package gov.gtas.svc;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES;
 import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.udr.json.JsonUdrListElement;
 import gov.gtas.model.udr.json.UdrSpecification;
 
@@ -111,5 +112,5 @@ public interface UdrService {
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
 	JsonServiceResponse deleteUdr(String userId, Long id);
 
-	public void recompileRules(final String kbName, String userId);
+	public KnowledgeBase recompileRules(final String kbName, String userId);
 }

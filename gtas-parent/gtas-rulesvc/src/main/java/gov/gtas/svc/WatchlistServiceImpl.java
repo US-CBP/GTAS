@@ -115,12 +115,20 @@ public class WatchlistServiceImpl implements WatchlistService {
 	@Override
 	@Transactional
 	public JsonServiceResponse activateAllWatchlists(String knowledgeBaseName) {
+		KnowledgeBase kb = createAKnowledgeBase(knowledgeBaseName);
+		return WatchlistServiceJsonResponseHelper.createKnowledBaseResponse(kb, null);
+	}
+
+	
+	@Transactional
+	@Override
+	public KnowledgeBase createAKnowledgeBase(String knowledgeBaseName) {
 		Iterable<WatchlistItem> items = watchlistPersistenceService.findAllWatchlistItems();
 		if (StringUtils.isEmpty(knowledgeBaseName)) {
 			knowledgeBaseName = WatchlistConstants.WL_KNOWLEDGE_BASE_NAME;
 		}
 		KnowledgeBase kb = ruleManagementService.createKnowledgeBaseFromWatchlistItems(knowledgeBaseName, items);
-		return WatchlistServiceJsonResponseHelper.createKnowledBaseResponse(kb, null);
+		return kb;
 	}
 
 	@Override

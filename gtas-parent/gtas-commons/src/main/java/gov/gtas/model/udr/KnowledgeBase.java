@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
@@ -42,14 +43,10 @@ public class KnowledgeBase extends BaseEntity {
 	@Column(name = "KB_NAME", nullable = false, length = 20)
 	private String kbName;
 
-	@Lob
-	@Basic(fetch = FetchType.EAGER)
-	@Column(name = "KB_BLOB", nullable = false, length = 2000000)
+	@Transient
 	private byte[] kbBlob;
 
-	@Lob
-	@Basic(fetch = FetchType.EAGER)
-	@Column(name = "RL_BLOB", nullable = false, length = 1000000)
+	@Transient
 	private byte[] rulesBlob;
 
 	@Temporal(TemporalType.TIMESTAMP)

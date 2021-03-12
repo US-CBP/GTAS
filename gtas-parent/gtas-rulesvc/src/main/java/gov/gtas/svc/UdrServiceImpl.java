@@ -277,12 +277,13 @@ public class UdrServiceImpl implements UdrService {
 	 * @param kbName
 	 * @param userId
 	 */
-	public void recompileRules(final String kbName, String userId) {
+	public KnowledgeBase recompileRules(final String kbName, String userId) {
 		List<UdrRule> ruleList = rulePersistenceService.findAll();
+		KnowledgeBase kb = null;
 		if (!CollectionUtils.isEmpty(ruleList)) {
-			ruleManagementService.createKnowledgeBaseFromUdrRules(kbName, ruleList, userId);
+			kb = ruleManagementService.createKnowledgeBaseFromUdrRules(kbName, ruleList, userId);
 		} else {
-			KnowledgeBase kb = rulePersistenceService.findUdrKnowledgeBase(kbName);
+			kb = rulePersistenceService.findUdrKnowledgeBase(kbName);
 			if (kb != null) {
 				List<Rule> rules = rulePersistenceService.findRulesByKnowledgeBaseId(kb.getId());
 				if (CollectionUtils.isEmpty(rules)) {
@@ -291,6 +292,7 @@ public class UdrServiceImpl implements UdrService {
 				}
 			}
 		}
+		return kb;
 	}
 
 	private User fetchRuleAuthor(final String userId, final String authorUserId) {

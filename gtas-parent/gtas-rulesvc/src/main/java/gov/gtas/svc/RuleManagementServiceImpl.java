@@ -95,7 +95,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 	}
 
 	@Override
-	@Transactional()
+	@Transactional
 	public KnowledgeBase createKnowledgeBaseFromUdrRules(String kbName, Collection<UdrRule> rules, String userId) {
 		if (!CollectionUtils.isEmpty(rules)) {
 			DrlRuleFileBuilder ruleFileBuilder = new DrlRuleFileBuilder();
