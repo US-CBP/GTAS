@@ -98,7 +98,7 @@ jobs:
           platforms: linux/amd64
           push: true
           context: .
-          file: ./gtas-neo4j-etl/neo4j.Dockerfile
+          file: ./gtas-etl-main/neo4j.Dockerfile
           tags: wcogtas/neo4j:dev
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
