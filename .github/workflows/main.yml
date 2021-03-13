@@ -148,3 +148,16 @@ jobs:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
           args: apply -f deploy.yaml
+      - name: Generate Alias JSON
+        uses: Consensys/kubernetes-action@master
+        env:
+          GET_IP: kubectl get services -o JSON | jq -r '.items[] | select(.metadata.name==\"kibana\") | .spec.clusterIP'
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          args: get deployment etl-job -o json | jq -r '.spec.template.spec.hostAliases += [{"ip":"'$(eval $GET_IP)'","hostnames":["kibana.local"]}] ' > alias.json
+      - name: Place alias in container
+        uses: Consensys/kubernetes-action@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          args: apply -f alias.json
