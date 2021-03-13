@@ -106,9 +106,18 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      - name: Generate Alias JSON
+        uses: Consensys/kubernetes-action@master
+        id: alias_json
+        env:
+          GET_IP: kubectl get services -o JSON | jq -r '.items[] | select(.metadata.name==\"kibana\") | .spec.clusterIP'
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          args: get deployment etl-job -o json
       - name: Generate Kubernetes deployment configuration file
         shell: bash
         env:
+          ALIAS_JSON: ${{join(steps.alias_json.outputs.*, '\n')}}
           EMAIL_SENDER_USERNAME: ${{ secrets.EMAIL_SENDER_USERNAME }}
           EMAIL_SENDER_PASSWORD: ${{ secrets.EMAIL_SENDER_PASSWORD }}
           EMAIL_SENDER_HOST: ${{ secrets.EMAIL_SENDER_HOST }}
@@ -129,6 +138,7 @@ jobs:
           echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql_processor_password.txt
           echo $MARIADB_USER > ./gtas-parent/gtas-commons/secrets/mysql_webapp_user.txt
           echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
+          echo $ALIAS_JSON | jq -r '.spec.template.spec.hostAliases += [{"ip":"'$(eval $GET_IP)'","hostnames":["kibana.local"]}] '> ./alias.json
 
           sudo apt-get -y update
           sudo apt-get install -y curl
@@ -148,13 +158,6 @@ jobs:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
           args: apply -f deploy.yaml
-      - name: Generate Alias JSON
-        uses: Consensys/kubernetes-action@master
-        env:
-          GET_IP: kubectl get services -o JSON | jq -r '.items[] | select(.metadata.name==\"kibana\") | .spec.clusterIP'
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        with:
-          args: get deployment etl-job -o json | jq -r '.spec.template.spec.hostAliases += [{"ip":"'$(eval $GET_IP)'","hostnames":["kibana.local"]}] ' > alias.json
       - name: Place alias in container
         uses: Consensys/kubernetes-action@master
         env:
