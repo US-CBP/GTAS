@@ -147,7 +147,7 @@ jobs:
           echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
 
           IP="echo $SERVICES_JSON | jq -r '.items[] | select(.metadata.name==\"kibana\") | .spec.clusterIP'"
-          echo $ALIAS_JSON | jq -r '.spec.template.spec.hostAliases += [{"ip":"'$(eval $IP)'","hostnames":["kibana.local"]}] '> ./alias.json
+          echo $ALIAS_JSON | jq -r '.spec.template.spec.hostAliases += [{"ip":"127.0.0.1","hostnames":["kibana.local"]}] '> ./alias.json
 
           sudo apt-get -y update
           sudo apt-get install -y curl
