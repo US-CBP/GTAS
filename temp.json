@@ -1,0 +1,2681 @@
+{
+  "kind": "List",
+  "apiVersion": "v1",
+  "metadata": {},
+  "items": [
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "activemq",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "activemq"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "61616",
+            "port": 61616,
+            "targetPort": 61616
+          },
+          {
+            "name": "8161",
+            "port": 8161,
+            "targetPort": 8161
+          }
+        ],
+        "selector": {
+          "io.kompose.service": "activemq"
+        },
+        "type": "LoadBalancer"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "elasticsearch",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "elasticsearch"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "9300",
+            "port": 9300,
+            "targetPort": 9300
+          },
+          {
+            "name": "9200",
+            "port": 9200,
+            "targetPort": 9200
+          }
+        ],
+        "selector": {
+          "io.kompose.service": "elasticsearch"
+        },
+        "type": "LoadBalancer"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "gtas-scheduler",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "gtas-scheduler"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "8080",
+            "port": 8080,
+            "targetPort": 8080
+          }
+        ],
+        "selector": {
+          "io.kompose.service": "gtas-scheduler"
+        },
+        "type": "LoadBalancer"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "http-proxy",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "http-proxy"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "443",
+            "port": 443,
+            "targetPort": 443
+          },
+          {
+            "name": "80",
+            "port": 80,
+            "targetPort": 80
+          }
+        ],
+        "selector": {
+          "io.kompose.service": "http-proxy"
+        },
+        "type": "LoadBalancer"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "kibana",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "kibana"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "5601",
+            "port": 5601,
+            "targetPort": 5601
+          }
+        ],
+        "selector": {
+          "io.kompose.service": "kibana"
+        },
+        "type": "LoadBalancer"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mariadb",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mariadb"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "3306",
+            "port": 3306,
+            "targetPort": 3306
+          }
+        ],
+        "selector": {
+          "io.kompose.service": "mariadb"
+        },
+        "type": "LoadBalancer"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "neo4j",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "neo4j"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "7474",
+            "port": 7474,
+            "targetPort": 7474
+          },
+          {
+            "name": "7473",
+            "port": 7473,
+            "targetPort": 7473
+          },
+          {
+            "name": "7687",
+            "port": 7687,
+            "targetPort": 7687
+          }
+        ],
+        "selector": {
+          "io.kompose.service": "neo4j"
+        },
+        "type": "LoadBalancer"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "web-app",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "web-app"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "8080",
+            "port": 8080,
+            "targetPort": 8080
+          },
+          {
+            "name": "8443",
+            "port": 8443,
+            "targetPort": 8443
+          }
+        ],
+        "selector": {
+          "io.kompose.service": "web-app"
+        },
+        "type": "LoadBalancer"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-root-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-root-password"
+        }
+      },
+      "data": {
+        "mysql-root-password": "YWRtaW4="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "neo4j-crt",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "neo4j-crt"
+        }
+      },
+      "data": {
+        "neo4j-crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMrRENDQWVDZ0F3SUJBZ0lVSngvOHpHbUNzemNSR2Y4T3NQTXhFVVdBYVpVd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0dqRVlNQllHQTFVRUF4TVBaM1JoY3k1elpXeG1jMmxuYm1Wa01CNFhEVEl3TVRFeE1qQXdNemcwTTFvWApEVE13TVRFeE1EQXdNemcwTTFvd0dqRVlNQllHQTFVRUF4TVBaM1JoY3k1elpXeG1jMmxuYm1Wa01JSUJJakFOCkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZiZHFSVlhFTVBnc2RvbHRLaS9Sd28wWU1FUGsKUzJKMW93dHQ2S0RaSGh5ZEhBamxQb3BsQThMWkMzQVZIaUVjMnp0RjdNdU56RjdXQmw2d1lzdGlvMGgrdDl3eAppRVIzMklZNjhqNWo0aXVTWVNvZzUvQXdpVzRmV2l2eUpySTIrNHVmZHgvOE01ZkwzY0xDMm94TEZGRHhFZjFRCnNsWFliYlBKOU12aHJCSFVrc1ViVTNLcHFwT3V2Vld0SEI2Rk9ucU1xd2lXcmZpT0F0YWozV2x3VEpkRE80QWcKbCsreE9DdmNwUEJZdC92K2I1NEluV2hLMmFUL2JySUJ4SGJ3M1Z1WTU1dHJwM0VnVzhORGtmTHFSRTlKTkV5LwpRanMzYUNpcjdhR0QyWkVBK2Rlb3NsN0xrYWsyTDA0eG9vWVp4Q0MwODV1QWRqTlE2UEx1S2c5NEd3SURBUUFCCm96WXdOREFkQmdOVkhSRUVGakFVZ2hKaExuTndaV04wY205amJHOTFaQzVqYjIwd0V3WURWUjBsQkF3d0NnWUkKS3dZQkJRVUhBd0V3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUdRSmp4QzY1VUpVaHdWK3dtOVMvTm5tYVV5QwoySzZDQnBOTFBqMXFhR1NuRHd4c3B0V2NOQ2FYZURrcVNaRU1SMEs4aHpndjBXdm9DdGNsa0o1QW5XNjkwOTFCCkNVaEozb1BwV2tTMmpQc1lGRVpnL3ZKSHVMREtlaGMyTmxrQVdoc2QwY1loMTRDSE9RVVdKSmh6QlRCNHFhb3UKdHQ4WDVXL2xnanRzQnZxWm5kcnUzMG40bGtlbWFLSkFLa3ZOaE9CQTBya2hFdVp4QXJqclNKaFMxY21CRGFmVQpkWFNPMTF5bk03MWFTLzkwTUtnbDRaWW9KRDlSTDlDc3RkdmFUQjZDNXVtRW9BUlhXMXVEV0c0bVNUR0ZyWVFnClB0WklpU1JEYm15RDBaaDV2cURubzJHaXpaeHF6d3krN0dXeFZyVWdBQVJSN1p5elVLZTJUUmtJMjEwPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "webapp-neo4j-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "webapp-neo4j-password"
+        }
+      },
+      "data": {
+        "webapp-neo4j-password": "YWRtaW4="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-logstash-user",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-logstash-user"
+        }
+      },
+      "data": {
+        "mysql-logstash-user": "bG9nc3Rhc2g="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "kibana-keystore",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "kibana-keystore"
+        }
+      },
+      "data": {
+        "kibana-keystore": "MTo4eHcwanVjUzlUNDNGLzJaUnRkRStvRWkzWGtHeGltVTF0d0pkdkJqQ1RzQm11RDNoaEsxVnVtMHNBeVVXWjlmQUtFVEx6OVdPSGxnTCtxRXJvUW1NM2lXQS90S25jQUFhUU5oOHcrTnVHdWlMVm02MHpmRTlvRWpubkp2Z010dStCL1J2Mk5UQVgxMzltbVdNTFJqblpsVXpaQXZSbU5DQjB0eXhYY3V2U2lkZnFvTXk4V2E5b1Fnbzh1dUMwc3VNdW05RExZNS82R3dub2tPeW4rSmlISzM2UT09"
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "elastic-key",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "elastic-key"
+        }
+      },
+      "data": {
+        "elastic-key": "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb2dJQkFBS0NBUUVBalloZDNCL3R6UldUWlVaMUdraTkraEJPc1M5MTNIS2pTY21Ibnd0cHEvZ2w1V2RnCkswMGh1T2dTS1VBNGNXR1plMTlRSXB1OUJzeTJsM1BpZ05RaEtqNXd5cDNLQ0ZOOE1zOUNycEg5SXN3VzJQTU0KSmpIb1dOSkRLWUxySXgvU3JYeVV4SENnSzZHY1Rkemg0M0VQd3VTaTZFVGV5V1ZyRzVrSjhPSDZyMUFSeU0yaApkOExjUnM0Q2FJNkdaNFVxZHE0bTFzbkxGMktORTU5QnVnUDZwQTZUUnpxV0ZTNlhMNE5xdnlkbHFUZUdQVUwrCmRLSFNPYTNNMnN3YU02bThYUldaY2pBQ0JyLzNleDVzWktkbThmWkYxRk0yOG04ZmhETVZKbXBLOHFTbXlFUDkKR2lwNGdNSEtFSFRmNUs2eW1tTmlGYUt4QjcrNDFLMlV5YjBQVVFJREFRQUJBb0lCQUhwRmR5RDJqSkNDdFVYbgpLcis4WERPdTV1ejRIWkNIa1QzcjF6aTF1V01TREZzMWhjV2k2eUU5aklNS3NqaHhveEVNZE1TUld5cUdyTEFICk00VXN2a0lxazNMWUFuUlMrNWRCcTAvNVc0RTJZLzZsYXJlTW9qZ3Azay84aEh0aHdMYVVURW14S3c3R25hdysKeVArZTY0anAwVHRzVkRRVlpBVUJuNjcwNjRlTUViYVNWOFFtRHJvdVNiSGJFOTZ1YlIwYitpendEamFnM1R5eAozRFdCMG5XbjAydEpYVENnSEFNUjZUeDIwZ1ZLdnRSbkZQZTMyUVNFdVZnVUluYUcvQW83cVN5RU1PaXJxKzZSClVpcTVuVWdlOUhlNFJWR2ZnUHBMWFFxVkdZZmgzdXNEY1NDU1pXNWNldXYxRnIrNWMrT2k4MVVxaS9nUSt4TDMKMVk5QmFta0NnWUVBeHlxQ2dRSGtiZTU0Uk4wQmh4YnExWGJWR08xejZSdHBVd01sLy9DQ2h1NVN3RGYzMGl6YwpQRmZXM1NSWUhCc1lCcUFHRDFyMXRlZGF1MzAvOW41NG9Yd2IyVnVDaG9qbCs3WVNrK214L2FGZzRLb2VOOXFMCjB0MzRRTzJFTjZlWW9qQmhkT05CU0hKQnhlcTdXUmd5NG5RQk40TDNDMzF0dzZOUHViT012a2NDZ1lFQXRldWUKMCsxQmt6K3JmdzZTZW9sa1ZqczZqUUh1ZXF4YWd6NG5mRXh3cEI2b3Rpdkp3Z2JQSENzeU12dUdaZWVYZEVLTgoreEhXVzBKMjBNLzdETmdMMkZOTzhFdmMzdUZHL3E0MDlncTNsODVzL1BWcENObnJ6bVFhKzNwNmRtSHdDUHYyCmV2NVVveW1PcTFDK0ZNREg4SGNFUWo5RVV4VTU3eXVldzdib0dhY0NnWUFJWitUbUtQeEpIMzEzK3BQcjdhMnYKb0xwUnVRUGhYTVRQT2h6S2RvNHJ2N2RDWVpwV0JvcXRDVkFLT1ZSMnF6WVNZWUtmOTBqVGlwWXJ2NWVKZ2NENQpuOUZWRlNXbkkvUUE4YWhMRWR2dlJuWmVSUS9OYjYzakVuYzkxa2gwU09DS1I5eDFJSHBLNG5lZ01NNERicUFICktybzZhNDZkcjRlSWNFWVhJbHJZVlFLQmdBNEVtL2FFbjdyeSt3b05XMmdwMGh0NjhPWVFzZ210NGtPZXRIZzEKZzdDQjFFcEZVWVNyOWFXY0JvQTdOWDRBdklEdTUvWGl4L3U4UVYrUnh5eVVNVVY0RmVzYVRXaTNQenM4dlVRQQpTMmxkTkxUQlRGaXNRaWxqT1ZrTGRRaE9QNnJSajRxbXNtcm9OdUFvbHAwT3hkbFhzbkpRWWJsdE4wdWd0dGtwCjdQU2RBb0dBTzYwVCt4Sm5mQ0pUWlpiVEV1Rnp5UkVIcjNSb3cwdmFPVHBjM1lOYjdaelQ3NGsrNitTK2I1VVAKOHJvK3prcHpkUVFLcXFlSzNWQis0VU44aUZLOCtWc09XU05qWWZNMUwwRUhJM3FhZlVjTGt6eVJDRndlTEpxKwpOK0VUc3JSODN1alcvM0ZvQmFscWFYSE5jNVpyYjNHZEZ2MnhZS0prK1FiZEk1YTJQNDg9Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg=="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "webapp-neo4j-user",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "webapp-neo4j-user"
+        }
+      },
+      "data": {
+        "webapp-neo4j-user": "bmVvNGo="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-etl-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-etl-password"
+        }
+      },
+      "data": {
+        "mysql-etl-password": "YWRtaW4="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "pentaho-to-elasticsearch-user",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "pentaho-to-elasticsearch-user"
+        }
+      },
+      "data": {
+        "pentaho-to-elasticsearch-user": "cGVudGFob190b19lbGFzdGlj"
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "elastic-keystore",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "elastic-keystore"
+        }
+      },
+      "data": {
+        "elastic-keystore": "P9dsFxZlbGFzdGljc2VhcmNoLmtleXN0b3JlAAAABAAAAACzAAAAQLBKkq4KddXYIzLy51z/YPy8gGeLnP9o5uF9J9oDo9zWgFwXnxK1nyWbx1xppHK/4SDzogFL81Kd+6bdX4rmdUUAAAAMPGImmOW1Y4UQD/mRAAAAW08I69yDj/FJL4w8IgGGDlgOhIOKRZhLly2XB0fpz+oJe+QFpJgwSoEwiga8Kt5G1LmfAc10n5IJD4xk0uM669BeRQQzbgnNimzuWgY+PS+c8As/gQ1HE7wgfwzAKJPoAAAAAAAAAACL/kWB"
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "elasticsearch-kibana-user",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "elasticsearch-kibana-user"
+        }
+      },
+      "data": {
+        "elasticsearch-kibana-user": "a2liYW5hZWxhc3RpY3VzZXI="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-healthcheck-user",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-healthcheck-user"
+        }
+      },
+      "data": {
+        "mysql-healthcheck-user": "aGVhbHRoY2hlY2sK"
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-webapp-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-webapp-password"
+        }
+      },
+      "data": {
+        "mysql-webapp-password": "YWRtaW4="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "webapp-key",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "webapp-key"
+        }
+      },
+      "data": {
+        "webapp-key": "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2d0lCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktrd2dnU2xBZ0VBQW9JQkFRQzl0MnBGVmNRdytDeDIKaVcwcUw5SENqUmd3UStSTFluV2pDMjNvb05rZUhKMGNDT1UraW1VRHd0a0xjQlVlSVJ6Yk8wWHN5NDNNWHRZRwpYckJpeTJLalNINjMzREdJUkhmWWhqcnlQbVBpSzVKaEtpRG44RENKYmg5YUsvSW1zamI3aTU5M0gvd3psOHZkCndzTGFqRXNVVVBFUi9WQ3lWZGh0czhuMHkrR3NFZFNTeFJ0VGNxbXFrNjY5VmEwY0hvVTZlb3lyQ0phdCtJNEMKMXFQZGFYQk1sME03Z0NDWDc3RTRLOXlrOEZpMysvNXZuZ2lkYUVyWnBQOXVzZ0hFZHZEZFc1am5tMnVuY1NCYgp3ME9SOHVwRVQwazBUTDlDT3pkb0tLdnRvWVBaa1FENTE2aXlYc3VScVRZdlRqR2loaG5FSUxUem00QjJNMURvCjh1NHFEM2diQWdNQkFBRUNnZ0VCQUtjK2Y5S3JydzYwV1E0T1RFdjZaK0lvWEFDQWVVcnplMXpHZ0plbzVINGwKSDJOTmZEcEw2bzBNUWlaUklteXpLQ3NqNzVxMlAwVEEvZEFUdlU3Nm1QUDB2ckQ2emplZ2xENHU1dHdTb0I4TAo1amo5MkpCZkw0cVhwOC9vR2NwL0pQVlB1cjViVmd0dGIrMEkrcG1MUDh5akprR0RuSlg2RTVkeC9VRnVVbjFLCm5EYUJYb28vMU9KemR6OXNmRE96NVREdkNXU3FwTHkvQmhJRThNR0QvYlN0d2xubWNWN2hkWXkvWUZZNGlNSkIKZnFpTFptTTlSQk95b0V6U1pJS1BkL2dBQ1E0WDRPK2NxdkNPZzdxNHhUWlRzbXQ4NjVCRU0wT3prZ1pmRHErRgpReTRUMTZGcHZUMERVWW9VbnhaR1F6MlNrczNJMkhaQmE5bEpWZ0RjbnhFQ2dZRUE4elpEamlGbVhTM2RCT0JCCkZMTkpyeG12SU0zOWhEWFRGZTlNNmpEbDBvZkZUT0VuT0JKRHVsem1zSUpnUVdvT1JxL3VqcmhKLy9HNHM5VXQKVGNReWhqcjU4RUgwbGsxM2hrQS9weXUrUGoxbzVPdEhqNnMzcENBbDlGcXdZNzgrQzkrOFFoUzBFSDhsUWlPagp4Mk8yNmNjRG9WS01UR3NJNDhqVnBuS3MwNlVDZ1lFQXg3RVVRQnNLVTR5TWI5Ymd6b25aNlJTYnNvZ0MxVUNrCjI3NXl4TnNaVmh0Vm85U1VONEVjNlBvL2dUUkt4cXhoUWcwQjFpZmFBMVRLZ1Fwckx1V01UYjhEMUxNNWJRNHkKWVE1OVBPQzdMbmF1eFJBc05jTDBFWldxYUVSa1krbkhFTmZreEdYckNrNGc0WmpvenRwZWRHRGdFWFRTUFZ5WApaUGdiQTd2eVVMOENnWUVBMkk0dXBMVlVvZzhlUnlNdWo3SDhIKzhzb25jSUR0cW1NMWU2RXFTclhrUUtCNlJLCitZQTUwZ3k2VTl3aXZOd2tEZ2pFejB1RWlHTEE1VThoWWFjYW5hNlJzYjNvZkpSSm9yNCtieWxoNGFWb2FyeWMKSVc2QXdxRGxhcWY5ZXpOam1jc0RvNHN2c2Fpa2tqbU5zUkkyWWY0VVcyWlhDZ3djQkVabEJpb0JmUWtDZ1lCLwo2RUxxVk9lbVlHNUw3TDBPVG1vUHk2MTNDM3VWRU5VSUU5TDdtTU4vemY1cTgrMEVLR1ZXTFlTanc5VHBzTnlUCkxEV3k4TS9LTm5PSGVCN3phUUVYZzNSMnQxM2ZKcXJLVkRlUDJQck1aaVRJQVBYd2NiRlgyaC9PclpBSUYyUDAKdS9UQ2YrMnZLaUFSb0pudWRSenZPbVlMaUdKcC8zYlJxOEhTQUg3VGpRS0JnUUNNNFU4RTZ2Ky9Ma1JmRDFOegpxcEVhbnhseVRhZjUrTE5wSHdjQWQyTU1raGlrNFJVSzAxOXQrc1ZvSkRHcERzeXRnWVl1UHRmb2w2b3UrRVEwCmgva3U1dWUyMkhDbmJYMWpscjhGVzVVZUZjWXpxVnVyUmliQURGWmxZeEdOVUdhbC8yZm8xTXdoT3E1bzdLeHcKMUhEVkJ3TVA4RUJEaklrTGtxeTFWK1hENGc9PQotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tCg=="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "webapp-cert",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "webapp-cert"
+        }
+      },
+      "data": {
+        "webapp-cert": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMrRENDQWVDZ0F3SUJBZ0lVSngvOHpHbUNzemNSR2Y4T3NQTXhFVVdBYVpVd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0dqRVlNQllHQTFVRUF4TVBaM1JoY3k1elpXeG1jMmxuYm1Wa01CNFhEVEl3TVRFeE1qQXdNemcwTTFvWApEVE13TVRFeE1EQXdNemcwTTFvd0dqRVlNQllHQTFVRUF4TVBaM1JoY3k1elpXeG1jMmxuYm1Wa01JSUJJakFOCkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZiZHFSVlhFTVBnc2RvbHRLaS9Sd28wWU1FUGsKUzJKMW93dHQ2S0RaSGh5ZEhBamxQb3BsQThMWkMzQVZIaUVjMnp0RjdNdU56RjdXQmw2d1lzdGlvMGgrdDl3eAppRVIzMklZNjhqNWo0aXVTWVNvZzUvQXdpVzRmV2l2eUpySTIrNHVmZHgvOE01ZkwzY0xDMm94TEZGRHhFZjFRCnNsWFliYlBKOU12aHJCSFVrc1ViVTNLcHFwT3V2Vld0SEI2Rk9ucU1xd2lXcmZpT0F0YWozV2x3VEpkRE80QWcKbCsreE9DdmNwUEJZdC92K2I1NEluV2hLMmFUL2JySUJ4SGJ3M1Z1WTU1dHJwM0VnVzhORGtmTHFSRTlKTkV5LwpRanMzYUNpcjdhR0QyWkVBK2Rlb3NsN0xrYWsyTDA0eG9vWVp4Q0MwODV1QWRqTlE2UEx1S2c5NEd3SURBUUFCCm96WXdOREFkQmdOVkhSRUVGakFVZ2hKaExuTndaV04wY205amJHOTFaQzVqYjIwd0V3WURWUjBsQkF3d0NnWUkKS3dZQkJRVUhBd0V3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUdRSmp4QzY1VUpVaHdWK3dtOVMvTm5tYVV5QwoySzZDQnBOTFBqMXFhR1NuRHd4c3B0V2NOQ2FYZURrcVNaRU1SMEs4aHpndjBXdm9DdGNsa0o1QW5XNjkwOTFCCkNVaEozb1BwV2tTMmpQc1lGRVpnL3ZKSHVMREtlaGMyTmxrQVdoc2QwY1loMTRDSE9RVVdKSmh6QlRCNHFhb3UKdHQ4WDVXL2xnanRzQnZxWm5kcnUzMG40bGtlbWFLSkFLa3ZOaE9CQTBya2hFdVp4QXJqclNKaFMxY21CRGFmVQpkWFNPMTF5bk03MWFTLzkwTUtnbDRaWW9KRDlSTDlDc3RkdmFUQjZDNXVtRW9BUlhXMXVEV0c0bVNUR0ZyWVFnClB0WklpU1JEYm15RDBaaDV2cURubzJHaXpaeHF6d3krN0dXeFZyVWdBQVJSN1p5elVLZTJUUmtJMjEwPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg=="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "elastic-cert",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "elastic-cert"
+        }
+      },
+      "data": {
+        "elastic-cert": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUR0akNDQXA2Z0F3SUJBZ0lWQUpSbFFLREJjVUVUUFNqbFVQT1VpM0JKczFHSU1BMEdDU3FHU0liM0RRRUIKQ3dVQU1EUXhNakF3QmdOVkJBTVRLVVZzWVhOMGFXTWdRMlZ5ZEdsbWFXTmhkR1VnVkc5dmJDQkJkWFJ2WjJWdQpaWEpoZEdWa0lFTkJNQjRYRFRJeE1ETXdOREF6TURnME9Wb1hEVEkwTURNd016QXpNRGcwT1Zvd0VERU9NQXdHCkExVUVBeE1GYm05a1pURXdnZ0VpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFDTmlGM2MKSCszTkZaTmxSblVhU0wzNkVFNnhMM1hjY3FOSnlZZWZDMm1yK0NYbFoyQXJUU0c0NkJJcFFEaHhZWmw3WDFBaQptNzBHekxhWGMrS0ExQ0VxUG5ES25jb0lVM3d5ejBLdWtmMGl6QmJZOHd3bU1laFkwa01wZ3Vzakg5S3RmSlRFCmNLQXJvWnhOM09IamNRL0M1S0xvUk43SlpXc2JtUW53NGZxdlVCSEl6YUYzd3R4R3pnSm9qb1puaFNwMnJpYlcKeWNzWFlvMFRuMEc2QS9xa0RwTkhPcFlWTHBjdmcycS9KMldwTjRZOVF2NTBvZEk1cmN6YXpCb3pxYnhkRlpseQpNQUlHdi9kN0hteGtwMmJ4OWtYVVV6YnlieCtFTXhVbWFrcnlwS2JJUS8wYUtuaUF3Y29RZE4va3JyS2FZMklWCm9yRUh2N2pVclpUSnZROVJBZ01CQUFHamdlSXdnZDh3SFFZRFZSME9CQllFRkFRcmV3T3J3YzNSOFFHMlZ3Si8KMjFpcEYwS1VNQjhHQTFVZEl3UVlNQmFBRk84WnE2UldLTjZmUFVsa21HMExyeWw5NVFkL01JR1JCZ05WSFJFRQpnWWt3Z1lhQ0JTb3VaMjkyZ2dsM2QzY3VLaTVuYjNhQ0NXeHZZMkZzYUc5emRJSUpkM2QzTGlvdWIzSm5nZ1VxCkxtMXBiSUlGS2k1dmNtZUNCU291WTI5dGdnVXFMbTVsZElJSmQzZDNMaW91Yldsc2dnaHNiMmR6ZEdGemFJSUoKZDNkM0xpb3VZMjl0Z2dacmFXSmhibUdDQ1hkM2R5NHFMbTVsZElJTlpXeGhjM1JwWTNObFlYSmphREFKQmdOVgpIUk1FQWpBQU1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQTkrNEh2ZjVySEtadUwzVy9CTlFSa3lYeUJBVlZKCk1HL1JMaklHNHJuM3R3NlVoSDd5aFFCc3BUVGlNbUlmb04vNzVWSDF2dnJuUGpwY0t6RVhabzk3a0xsT0tyV08KbHg1MkpYTkNOMFlvL0kySUxpdE1Ua2xTUTYwSTN1MkVjMmg4d1JZT2lYbGxrWU9xcjdiV3ZCVjdDWitCNTJTbQpwVEM5cWZoQXNwS3V0VTJiVG9QUE44Q3ZGbEFiYnNOQXBtRS9BMUpkaFV3cWZhLzJHaThCRWxKMzI4WUppMUhaClBZdklFTXNyb1ljczA0NTZ0S0d6YlVzdHRYU1ZCajlwTWRlWU42WVJJM1lhSGtycDBtZzYzbDQxNHdySTNxL2EKcVRUQjVNRHdkb1ZiLzBORld0Ky93ZmJKdnlicWFWcXlyY3RMcU1UbTNMTFU4aG55M0tBUEpVM2kKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "elasticsearch-kibana-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "elasticsearch-kibana-password"
+        }
+      },
+      "data": {
+        "elasticsearch-kibana-password": "YWRtaW4xMjM="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "etl-neo4j-user",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "etl-neo4j-user"
+        }
+      },
+      "data": {
+        "etl-neo4j-user": "bmVvNGo="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-webapp-user",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-webapp-user"
+        }
+      },
+      "data": {
+        "mysql-webapp-user": "d2ViYXBw"
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "elastic-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "elastic-password"
+        }
+      },
+      "data": {
+        "elastic-password": "YWRtaW4xMjM="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-processor-user",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-processor-user"
+        }
+      },
+      "data": {
+        "mysql-processor-user": "cHJvY2Vzc29y"
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-logstash-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-logstash-password"
+        }
+      },
+      "data": {
+        "mysql-logstash-password": "YWRtaW4="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "elastic-bootstrap-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "elastic-bootstrap-password"
+        }
+      },
+      "data": {
+        "elastic-bootstrap-password": "YWRtaW4xMjM="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "pentaho-to-elasticsearch-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "pentaho-to-elasticsearch-password"
+        }
+      },
+      "data": {
+        "pentaho-to-elasticsearch-password": "QzQxV0hOQzNnUmVTUW43VFVKdHc="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "etl-neo4j-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "etl-neo4j-password"
+        }
+      },
+      "data": {
+        "etl-neo4j-password": "YWRtaW4="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-processor-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-processor-password"
+        }
+      },
+      "data": {
+        "mysql-processor-password": "YWRtaW4="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-etl-user",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-etl-user"
+        }
+      },
+      "data": {
+        "mysql-etl-user": "ZXRs"
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "neo4j-key",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "neo4j-key"
+        }
+      },
+      "data": {
+        "neo4j-key": "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2d0lCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktrd2dnU2xBZ0VBQW9JQkFRQzl0MnBGVmNRdytDeDIKaVcwcUw5SENqUmd3UStSTFluV2pDMjNvb05rZUhKMGNDT1UraW1VRHd0a0xjQlVlSVJ6Yk8wWHN5NDNNWHRZRwpYckJpeTJLalNINjMzREdJUkhmWWhqcnlQbVBpSzVKaEtpRG44RENKYmg5YUsvSW1zamI3aTU5M0gvd3psOHZkCndzTGFqRXNVVVBFUi9WQ3lWZGh0czhuMHkrR3NFZFNTeFJ0VGNxbXFrNjY5VmEwY0hvVTZlb3lyQ0phdCtJNEMKMXFQZGFYQk1sME03Z0NDWDc3RTRLOXlrOEZpMysvNXZuZ2lkYUVyWnBQOXVzZ0hFZHZEZFc1am5tMnVuY1NCYgp3ME9SOHVwRVQwazBUTDlDT3pkb0tLdnRvWVBaa1FENTE2aXlYc3VScVRZdlRqR2loaG5FSUxUem00QjJNMURvCjh1NHFEM2diQWdNQkFBRUNnZ0VCQUtjK2Y5S3JydzYwV1E0T1RFdjZaK0lvWEFDQWVVcnplMXpHZ0plbzVINGwKSDJOTmZEcEw2bzBNUWlaUklteXpLQ3NqNzVxMlAwVEEvZEFUdlU3Nm1QUDB2ckQ2emplZ2xENHU1dHdTb0I4TAo1amo5MkpCZkw0cVhwOC9vR2NwL0pQVlB1cjViVmd0dGIrMEkrcG1MUDh5akprR0RuSlg2RTVkeC9VRnVVbjFLCm5EYUJYb28vMU9KemR6OXNmRE96NVREdkNXU3FwTHkvQmhJRThNR0QvYlN0d2xubWNWN2hkWXkvWUZZNGlNSkIKZnFpTFptTTlSQk95b0V6U1pJS1BkL2dBQ1E0WDRPK2NxdkNPZzdxNHhUWlRzbXQ4NjVCRU0wT3prZ1pmRHErRgpReTRUMTZGcHZUMERVWW9VbnhaR1F6MlNrczNJMkhaQmE5bEpWZ0RjbnhFQ2dZRUE4elpEamlGbVhTM2RCT0JCCkZMTkpyeG12SU0zOWhEWFRGZTlNNmpEbDBvZkZUT0VuT0JKRHVsem1zSUpnUVdvT1JxL3VqcmhKLy9HNHM5VXQKVGNReWhqcjU4RUgwbGsxM2hrQS9weXUrUGoxbzVPdEhqNnMzcENBbDlGcXdZNzgrQzkrOFFoUzBFSDhsUWlPagp4Mk8yNmNjRG9WS01UR3NJNDhqVnBuS3MwNlVDZ1lFQXg3RVVRQnNLVTR5TWI5Ymd6b25aNlJTYnNvZ0MxVUNrCjI3NXl4TnNaVmh0Vm85U1VONEVjNlBvL2dUUkt4cXhoUWcwQjFpZmFBMVRLZ1Fwckx1V01UYjhEMUxNNWJRNHkKWVE1OVBPQzdMbmF1eFJBc05jTDBFWldxYUVSa1krbkhFTmZreEdYckNrNGc0WmpvenRwZWRHRGdFWFRTUFZ5WApaUGdiQTd2eVVMOENnWUVBMkk0dXBMVlVvZzhlUnlNdWo3SDhIKzhzb25jSUR0cW1NMWU2RXFTclhrUUtCNlJLCitZQTUwZ3k2VTl3aXZOd2tEZ2pFejB1RWlHTEE1VThoWWFjYW5hNlJzYjNvZkpSSm9yNCtieWxoNGFWb2FyeWMKSVc2QXdxRGxhcWY5ZXpOam1jc0RvNHN2c2Fpa2tqbU5zUkkyWWY0VVcyWlhDZ3djQkVabEJpb0JmUWtDZ1lCLwo2RUxxVk9lbVlHNUw3TDBPVG1vUHk2MTNDM3VWRU5VSUU5TDdtTU4vemY1cTgrMEVLR1ZXTFlTanc5VHBzTnlUCkxEV3k4TS9LTm5PSGVCN3phUUVYZzNSMnQxM2ZKcXJLVkRlUDJQck1aaVRJQVBYd2NiRlgyaC9PclpBSUYyUDAKdS9UQ2YrMnZLaUFSb0pudWRSenZPbVlMaUdKcC8zYlJxOEhTQUg3VGpRS0JnUUNNNFU4RTZ2Ky9Ma1JmRDFOegpxcEVhbnhseVRhZjUrTE5wSHdjQWQyTU1raGlrNFJVSzAxOXQrc1ZvSkRHcERzeXRnWVl1UHRmb2w2b3UrRVEwCmgva3U1dWUyMkhDbmJYMWpscjhGVzVVZUZjWXpxVnVyUmliQURGWmxZeEdOVUdhbC8yZm8xTXdoT3E1bzdLeHcKMUhEVkJ3TVA4RUJEaklrTGtxeTFWK1hENGc9PQotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tCg=="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-healthcheck-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-healthcheck-password"
+        }
+      },
+      "data": {
+        "mysql-healthcheck-password": "YWRtaW4="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "logstash-keystore",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "logstash-keystore"
+        }
+      },
+      "data": {
+        "logstash-keystore": "MIIEYgIBAzCCBBsGCSqGSIb3DQEHAaCCBAwEggQIMIIEBDCCBAAGCSqGSIb3DQEHAaCCA/EEggPtMIID6TCB/wYLKoZIhvcNAQwKAQWgcjBwBgsqhkiG9w0BDAoBAqBhBF8wXTApBgoqhkiG9w0BDAEDMBsEFKu2Z2IlJrfhl6EIOzPUMJF9ke3MAgMAw1AEMMh1E+t1sQ4MuD49MBlDGlCioBqaziaArsW/YgNUSvI5OinkJTRldtr6AK/K9HfodTF8MFcGCSqGSIb3DQEJFDFKHkgAdQByAG4AOgBsAG8AZwBzAHQAYQBzAGgAOgBzAGUAYwByAGUAdAA6AHYAMQA6AGsAZQB5AHMAdABvAHIAZQAuAHMAZQBlAGQwIQYJKoZIhvcNAQkVMRQEElRpbWUgMTYwNTY2NTk2ODY3NTCB9QYLKoZIhvcNAQwKAQWgajBoBgsqhkiG9w0BDAoBAqBZBFcwVTApBgoqhkiG9w0BDAEDMBsEFGEbJ8C2cXGtEGYaMoMKbOxkxtbbAgMAw1AEKD/wS1q3IX+/xb/hr4Gc0qZWFOJMASsz0rrm9vjNhGrIOCAh7juCEKkxejBVBgkqhkiG9w0BCRQxSB5GAHUAcgBuADoAbABvAGcAcwB0AGEAcwBoADoAcwBlAGMAcgBlAHQAOgB2ADEAOgBtAGEAcgBpAGEAZABiAF8AdQBzAGUAcjAhBgkqhkiG9w0BCRUxFAQSVGltZSAxNjA1NjY1OTgxMjA5MIH2BgsqhkiG9w0BDAoBBaBiMGAGCyqGSIb3DQEMCgECoFEETzBNMCkGCiqGSIb3DQEMAQMwGwQUVTRDtK45M4a/kDLjE0aXc9w6sI8CAwDDUAQgHshyflPv+/p4rY/DknIeIvOSoaIjBE7EwvPbLmAtBL0xgYIwXQYJKoZIhvcNAQkUMVAeTgB1AHIAbgA6AGwAbwBnAHMAdABhAHMAaAA6AHMAZQBjAHIAZQB0ADoAdgAxADoAbQBhAHIAaQBhAGQAYgBfAHAAYQBzAHMAdwBvAHIAZDAhBgkqhkiG9w0BCRUxFAQSVGltZSAxNjA1NjY1OTkzNTQ3MIHzBgsqhkiG9w0BDAoBBaBqMGgGCyqGSIb3DQEMCgECoFkEVzBVMCkGCiqGSIb3DQEMAQMwGwQUyfq/YTVTmUx8v0v6Aj/jPRyvIikCAwDDUAQo9Rehz+umNRVD09QM1ZZmRJrqP8Pj8XK8Do9mKoRyZgNF5/TaJhzVKjF4MFMGCSqGSIb3DQEJFDFGHkQAdQByAG4AOgBsAG8AZwBzAHQAYQBzAGgAOgBzAGUAYwByAGUAdAA6AHYAMQA6AGUAcwBfAHAAYQBzAHMAdwBvAHIAZDAhBgkqhkiG9w0BCRUxFAQSVGltZSAxNjA1NjY2MDA1NDY2MD4wITAJBgUrDgMCGgUABBRLulSIKVMUi3PYl90RYygbUdGOqgQUnaV+xCEyKJ+3ZoFV5pnSIu75KdwCAwGGoA=="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-report-etl-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-report-etl-password"
+        }
+      },
+      "data": {
+        "mysql-report-etl-password": "YWRtaW4="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "elastic-ca",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "elastic-ca"
+        }
+      },
+      "data": {
+        "elastic-ca": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURTakNDQWpLZ0F3SUJBZ0lWQUkwWFI4aHh3ZkhlMXZGN2pHWlgvbG8yRm1WZk1BMEdDU3FHU0liM0RRRUIKQ3dVQU1EUXhNakF3QmdOVkJBTVRLVVZzWVhOMGFXTWdRMlZ5ZEdsbWFXTmhkR1VnVkc5dmJDQkJkWFJ2WjJWdQpaWEpoZEdWa0lFTkJNQjRYRFRJeE1ETXdOREF6TURnME9Wb1hEVEkwTURNd016QXpNRGcwT1Zvd05ERXlNREFHCkExVUVBeE1wUld4aGMzUnBZeUJEWlhKMGFXWnBZMkYwWlNCVWIyOXNJRUYxZEc5blpXNWxjbUYwWldRZ1EwRXcKZ2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRQ3hXS1Y2OGdoQU82WkhJb1dhRHlLeQpEUHJFcFVHcEFLbDBEb2tCMXEvVXdPbldGcWFjV2twTS96TFA1dk5xWWpzM1BLZjJFT1Y5Q3Zpd2loV1ZxdDZICnc0aGNpakNKZGJTZEFKVDdJdmY1cWtTZ1BNMktMOVUxY21KQzVRekd1TWNaTWhEVlRLbSs2aE5nbWpuU3Y1eHQKb0l2M2FkREUwNnZGUXFUaEsyOEFCbVRvOVdBcEtZRll1MFpvNnlqUzgvOTk1YVlqZFg2MEowK3UwOWFqaEFEZApsYVFSYkdpcEpMMHVLbFRPNlA5WE9NOGhXNEplODVwV09nSzZUclgvWmdNeGN1Y0lSei90c2M3Q2daK01zMHZoCm1rc3JqT3JIdXZvQUNQZndHdUJEbEdrOWt6WDF6VjQzazdsMFRHYzF4MEc0ZC9VVlpPZkZ6QkVTaFlxczVpdDMKQWdNQkFBR2pVekJSTUIwR0ExVWREZ1FXQkJUdkdhdWtWaWplbnoxSlpKaHRDNjhwZmVVSGZ6QWZCZ05WSFNNRQpHREFXZ0JUdkdhdWtWaWplbnoxSlpKaHRDNjhwZmVVSGZ6QVBCZ05WSFJNQkFmOEVCVEFEQVFIL01BMEdDU3FHClNJYjNEUUVCQ3dVQUE0SUJBUUJNbktpbTdVUGRVa2hnQTBycGFnWk9Lb3RiSmY3Z21Wa0NFNzBNWURuOVl0OWIKc2hmdnBrZVIrTmkvS2xSSjlGVkVKaTUxdE5SYnJueXBsSEtOWmp3d3haWitzWlJJTzhGZEFBNU1SQlJwVURKNApYYzIyT0Z6WVBTVXhQdGtlS2RIU20wLzZVVGV1cmtJWWZxQjRuNDBDNmMvdWxBQmJrWlZ1TDBPVSt6Q2thZDlMCmJpeDNjV0VaQWlrYVlNRE9xSGRGeHpZdS9DMkZUaFo4S2JrSDVoTGROaTlLNVArR1NXOTR6b0hsQWxrdnZPTFYKV0t5ajFZZnhBU0lDc3g2RHVoWktpY3VlbTU0bE8ydUMyS0JQVGJDNHl5WkdtaS9MRXluZXlYcTF5U3lFMXhhdwp3Z3l3c3NmS0p0VEYyclA0V1BycENNZVZ4ZmtsMFZEOTFndGhMWjY4Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "mysql-report-etl-user",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mysql-report-etl-user"
+        }
+      },
+      "data": {
+        "mysql-report-etl-user": "cmVwb3J0"
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Secret",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "logstash-keystore-password",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "logstash-keystore-password"
+        }
+      },
+      "data": {
+        "logstash-keystore-password": "YWRtaW4xMjM="
+      },
+      "type": "Opaque"
+    },
+    {
+      "kind": "Deployment",
+      "apiVersion": "apps/v1",
+      "metadata": {
+        "name": "activemq",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "activemq"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "matchLabels": {
+            "io.kompose.service": "activemq"
+          }
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "io.kompose.network/gtas-webapp-network": "true",
+              "io.kompose.service": "activemq"
+            },
+            "annotations": {
+              "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+              "kompose.image-pull-policy": "Always",
+              "kompose.service.type": "LoadBalancer",
+              "kompose.version": "1.22.0 (HEAD)"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "activemq",
+                "image": "rmohr/activemq:5.15.9",
+                "ports": [
+                  {
+                    "containerPort": 61616
+                  },
+                  {
+                    "containerPort": 8161
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "ACTIVEMQ_OPTS",
+                    "value": "-Xms2g -Xmx8g"
+                  }
+                ],
+                "resources": {},
+                "imagePullPolicy": "Always"
+              }
+            ],
+            "restartPolicy": "Always",
+            "nodeSelector": {
+              "role": "backend"
+            }
+          }
+        },
+        "strategy": {}
+      },
+      "status": {}
+    },
+    {
+      "kind": "NetworkPolicy",
+      "apiVersion": "networking.k8s.io/v1",
+      "metadata": {
+        "name": "gtas-webapp-network",
+        "creationTimestamp": null
+      },
+      "spec": {
+        "podSelector": {
+          "matchLabels": {
+            "io.kompose.network/gtas-webapp-network": "true"
+          }
+        },
+        "ingress": [
+          {
+            "from": [
+              {
+                "podSelector": {
+                  "matchLabels": {
+                    "io.kompose.network/gtas-webapp-network": "true"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "kind": "Deployment",
+      "apiVersion": "apps/v1",
+      "metadata": {
+        "name": "elasticsearch",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "elasticsearch"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "matchLabels": {
+            "io.kompose.service": "elasticsearch"
+          }
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "io.kompose.network/gtas-webapp-network": "true",
+              "io.kompose.service": "elasticsearch"
+            },
+            "annotations": {
+              "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+              "kompose.image-pull-policy": "Always",
+              "kompose.service.type": "LoadBalancer",
+              "kompose.version": "1.22.0 (HEAD)"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "elastic-keystore",
+                "secret": {
+                  "secretName": "elastic-keystore",
+                  "items": [
+                    {
+                      "key": "elastic-keystore",
+                      "path": "elasticsearch.keystore"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "pentaho-to-elasticsearch-password",
+                "secret": {
+                  "secretName": "pentaho-to-elasticsearch-password",
+                  "items": [
+                    {
+                      "key": "pentaho-to-elasticsearch-password",
+                      "path": "pentaho-to-elasticsearch-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elastic-bootstrap-password",
+                "secret": {
+                  "secretName": "elastic-bootstrap-password",
+                  "items": [
+                    {
+                      "key": "elastic-bootstrap-password",
+                      "path": "elastic-bootstrap-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elastic-password",
+                "secret": {
+                  "secretName": "elastic-password",
+                  "items": [
+                    {
+                      "key": "elastic-password",
+                      "path": "elastic-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elasticsearch-kibana-password",
+                "secret": {
+                  "secretName": "elasticsearch-kibana-password",
+                  "items": [
+                    {
+                      "key": "elasticsearch-kibana-password",
+                      "path": "elasticsearch-kibana-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elastic-ca",
+                "secret": {
+                  "secretName": "elastic-ca",
+                  "items": [
+                    {
+                      "key": "elastic-ca",
+                      "path": "elastic-ca.crt"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elastic-cert",
+                "secret": {
+                  "secretName": "elastic-cert",
+                  "items": [
+                    {
+                      "key": "elastic-cert",
+                      "path": "elasticsearch-node1.crt"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elastic-key",
+                "secret": {
+                  "secretName": "elastic-key",
+                  "items": [
+                    {
+                      "key": "elastic-key",
+                      "path": "elasticsearch-node1.key"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "es-data",
+                "persistentVolumeClaim": {
+                  "claimName": "es-data"
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "elasticsearch",
+                "image": "wcogtas/elasticsearch:dev",
+                "args": [
+                  "bash",
+                  "-c",
+                  "wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz\ntar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz\nnohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPUT \"https://elastic:$(cat ${BOOTSTRAP_PATH})@localhost:9200/_security/user/kibana/_password\" -d \"{\\\"password\\\": \\\"$(cat ${KIBANA_PASSWORD_PATH})\\\"}\" &\nnohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPOST \"https://elastic:$(cat ${BOOTSTRAP_PATH})@localhost:9200/_security/user/pentaho_to_elastic\" -d \"{\\\"roles\\\" : [ \\\"superuser\\\" ],  \\\"password\\\": \\\"$(cat ${PENTAHO_PASSWORD_PATH})\\\"}\" &\nnohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPUT \"https://elastic:$(cat ${BOOTSTRAP_PATH})@localhost:9200/_security/user/logstash_system/_password\" -d \"{\\\"password\\\": \\\"$(cat ${ELASTIC_PATH})\\\"}\" &\nnohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPUT \"https://elastic:$(cat ${BOOTSTRAP_PATH})@localhost:9200/case\" -d '{ \"settings\" : { \"index\" : { } }}' &\n/usr/local/bin/docker-entrypoint.sh\n"
+                ],
+                "ports": [
+                  {
+                    "containerPort": 9300
+                  },
+                  {
+                    "containerPort": 9200
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "BOOTSTRAP_PATH",
+                    "value": "/bootstrap/elastic-bootstrap-password"
+                  },
+                  {
+                    "name": "ELASTIC_PATH",
+                    "value": "/elastic/elastic-password"
+                  },
+                  {
+                    "name": "KIBANA_PASSWORD_PATH",
+                    "value": "/kibana/elasticsearch-kibana-password"
+                  },
+                  {
+                    "name": "PENTAHO_PASSWORD_PATH",
+                    "value": "/pentaho/pentaho-to-elasticsearch-password"
+                  }
+                ],
+                "resources": {},
+                "volumeMounts": [
+                  {
+                    "name": "elastic-keystore",
+                    "mountPath": "/keystore"
+                  },
+                  {
+                    "name": "pentaho-to-elasticsearch-password",
+                    "mountPath": "/pentaho"
+                  },
+                  {
+                    "name": "elastic-bootstrap-password",
+                    "mountPath": "/bootstrap"
+                  },
+                  {
+                    "name": "elastic-password",
+                    "mountPath": "/elastic"
+                  },
+                  {
+                    "name": "elasticsearch-kibana-password",
+                    "mountPath": "/kibana"
+                  },
+                  {
+                    "name": "elastic-ca",
+                    "mountPath": "/usr/share/elasticsearch/ca"
+                  },
+                  {
+                    "name": "elastic-cert",
+                    "mountPath": "/usr/share/elasticsearch/crt"
+                  },
+                  {
+                    "name": "elastic-key",
+                    "mountPath": "/usr/share/elasticsearch/key"
+                  },
+                  {
+                    "name": "es-data",
+                    "mountPath": "/usr/share/elasticsearch/data"
+                  }
+                ],
+                "imagePullPolicy": "Always"
+              }
+            ],
+            "restartPolicy": "Always",
+            "nodeSelector": {
+              "role": "backend"
+            }
+          }
+        },
+        "strategy": {
+          "type": "Recreate"
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "es-data",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "es-data"
+        }
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "200Gi"
+          }
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "cacerts",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "cacerts"
+        }
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "100Mi"
+          }
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "Deployment",
+      "apiVersion": "apps/v1",
+      "metadata": {
+        "name": "gtas-scheduler",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "gtas-scheduler"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "matchLabels": {
+            "io.kompose.service": "gtas-scheduler"
+          }
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "io.kompose.network/gtas-webapp-network": "true",
+              "io.kompose.service": "gtas-scheduler"
+            },
+            "annotations": {
+              "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+              "kompose.image-pull-policy": "Always",
+              "kompose.service.type": "LoadBalancer",
+              "kompose.version": "1.22.0 (HEAD)"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "mysql-processor-user",
+                "secret": {
+                  "secretName": "mysql-processor-user",
+                  "items": [
+                    {
+                      "key": "mysql-processor-user",
+                      "path": "mysql-processor-user"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-processor-password",
+                "secret": {
+                  "secretName": "mysql-processor-password",
+                  "items": [
+                    {
+                      "key": "mysql-processor-password",
+                      "path": "mysql-processor-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "webapp-neo4j-user",
+                "secret": {
+                  "secretName": "webapp-neo4j-user",
+                  "items": [
+                    {
+                      "key": "webapp-neo4j-user",
+                      "path": "webapp-neo4j-user"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "webapp-neo4j-password",
+                "secret": {
+                  "secretName": "webapp-neo4j-password",
+                  "items": [
+                    {
+                      "key": "webapp-neo4j-password",
+                      "path": "webapp-neo4j-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "scheduler-logs",
+                "persistentVolumeClaim": {
+                  "claimName": "scheduler-logs"
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "gtas-scheduler",
+                "image": "wcogtas/gtas-scheduler:dev",
+                "ports": [
+                  {
+                    "containerPort": 8080
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "ACTIVEMQ_HOST",
+                    "value": "activemq"
+                  },
+                  {
+                    "name": "ADDITIONAL_PROCESSING_RAW",
+                    "value": "true"
+                  },
+                  {
+                    "name": "ADDITIONAL_PROCESSING_RULES",
+                    "value": "true"
+                  },
+                  {
+                    "name": "ADDITIONAL_PROCESSING_THIRD_PARTY",
+                    "value": "false"
+                  },
+                  {
+                    "name": "AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED",
+                    "value": "false"
+                  },
+                  {
+                    "name": "DB_HOST"
+                  },
+                  {
+                    "name": "EMAIL_SENDER_HOST"
+                  },
+                  {
+                    "name": "EMAIL_SENDER_PASSWORD"
+                  },
+                  {
+                    "name": "EMAIL_SENDER_USERNAME"
+                  },
+                  {
+                    "name": "JAVA_OPTS",
+                    "value": "-Xms57g -Xmx57g -Duser.timezone=UTC -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
+                  },
+                  {
+                    "name": "JAVA_TOOL_OPTIONS",
+                    "value": "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
+                  },
+                  {
+                    "name": "KIBANA_HOST",
+                    "value": "kibana"
+                  },
+                  {
+                    "name": "MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED",
+                    "value": "false"
+                  },
+                  {
+                    "name": "MYSQL_PASSWORD_PATH",
+                    "value": "/run/secrets/mysql-processor-password/mysql-processor-password"
+                  },
+                  {
+                    "name": "MYSQL_USER_PATH",
+                    "value": "/run/secrets/mysql-processor-user/mysql-processor-user"
+                  },
+                  {
+                    "name": "NEO4J_HOST",
+                    "value": "neo4j"
+                  },
+                  {
+                    "name": "NEO4J_PASSWORD_PATH",
+                    "value": "/run/secrets/webapp-neo4j-password/webapp-neo4j-password"
+                  },
+                  {
+                    "name": "NEO4J_USER_PATH",
+                    "value": "/run/secrets/webapp-neo4j-user/webapp-neo4j-user"
+                  },
+                  {
+                    "name": "SSL_TRUST_HOST"
+                  },
+                  {
+                    "name": "UI_ADDRESS"
+                  }
+                ],
+                "resources": {},
+                "volumeMounts": [
+                  {
+                    "name": "mysql-processor-user",
+                    "mountPath": "/run/secrets/mysql-processor-user"
+                  },
+                  {
+                    "name": "mysql-processor-password",
+                    "mountPath": "/run/secrets/mysql-processor-password"
+                  },
+                  {
+                    "name": "webapp-neo4j-user",
+                    "mountPath": "/run/secrets/webapp-neo4j-user"
+                  },
+                  {
+                    "name": "webapp-neo4j-password",
+                    "mountPath": "/run/secrets/webapp-neo4j-password"
+                  },
+                  {
+                    "name": "scheduler-logs",
+                    "mountPath": "/usr/local/tomcat/logs"
+                  }
+                ],
+                "imagePullPolicy": "Always"
+              }
+            ],
+            "restartPolicy": "Always",
+            "nodeSelector": {
+              "role": "backend"
+            }
+          }
+        },
+        "strategy": {
+          "type": "Recreate"
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "scheduler-logs",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "scheduler-logs"
+        }
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "100Mi"
+          }
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "Deployment",
+      "apiVersion": "apps/v1",
+      "metadata": {
+        "name": "http-proxy",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "http-proxy"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "matchLabels": {
+            "io.kompose.service": "http-proxy"
+          }
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "io.kompose.network/gtas-webapp-network": "true",
+              "io.kompose.service": "http-proxy"
+            },
+            "annotations": {
+              "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+              "kompose.image-pull-policy": "Always",
+              "kompose.service.type": "LoadBalancer",
+              "kompose.version": "1.22.0 (HEAD)"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "elastic-bootstrap-password",
+                "secret": {
+                  "secretName": "elastic-bootstrap-password",
+                  "items": [
+                    {
+                      "key": "elastic-bootstrap-password",
+                      "path": "elastic-bootstrap-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "certs",
+                "persistentVolumeClaim": {
+                  "claimName": "certs"
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "http-proxy",
+                "image": "wcogtas/http-proxy:dev",
+                "ports": [
+                  {
+                    "containerPort": 443
+                  },
+                  {
+                    "containerPort": 80
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "BOOTSTRAP_PATH",
+                    "value": "/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password"
+                  }
+                ],
+                "resources": {},
+                "volumeMounts": [
+                  {
+                    "name": "elastic-bootstrap-password",
+                    "mountPath": "/run/secrets/elastic-bootstrap-password"
+                  },
+                  {
+                    "name": "certs",
+                    "mountPath": "/temp-cert"
+                  }
+                ],
+                "imagePullPolicy": "Always"
+              }
+            ],
+            "restartPolicy": "Always",
+            "nodeSelector": {
+              "role": "backend"
+            }
+          }
+        },
+        "strategy": {
+          "type": "Recreate"
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "certs",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "certs"
+        }
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "100Mi"
+          }
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "Deployment",
+      "apiVersion": "apps/v1",
+      "metadata": {
+        "name": "kibana",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "kibana"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "matchLabels": {
+            "io.kompose.service": "kibana"
+          }
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "io.kompose.network/gtas-webapp-network": "true",
+              "io.kompose.service": "kibana"
+            },
+            "annotations": {
+              "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+              "kompose.image-pull-policy": "Always",
+              "kompose.service.type": "LoadBalancer",
+              "kompose.version": "1.22.0 (HEAD)"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "kibana-keystore",
+                "secret": {
+                  "secretName": "kibana-keystore",
+                  "items": [
+                    {
+                      "key": "kibana-keystore",
+                      "path": "kibana.keystore"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elastic-bootstrap-password",
+                "secret": {
+                  "secretName": "elastic-bootstrap-password",
+                  "items": [
+                    {
+                      "key": "elastic-bootstrap-password",
+                      "path": "elastic-bootstrap-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "certs",
+                "persistentVolumeClaim": {
+                  "claimName": "certs"
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "kibana",
+                "image": "wcogtas/kibana:dev",
+                "args": [
+                  "bash",
+                  "-c",
+                  "until [ $(curl -k -s -o /dev/null -w \"%{http_code}\" -u kibana:$(cat /bootstrap-password/elastic-bootstrap-password) https://elasticsearch:9200/) == 200 ]; do sleep 10 && echo \"Waiting for elasticsearch...\"; done\nnohup bash /usr/share/kibana/wait-for-url &\ndockerize -wait tcp://elasticsearch:9200 -timeout 1000s\ncp /keystore/kibana.keystore /usr/share/kibana/data/kibana.keystore\n/usr/local/bin/kibana-docker\n"
+                ],
+                "ports": [
+                  {
+                    "containerPort": 5601
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "ELASTICSEARCH_HOSTS",
+                    "value": "https://elasticsearch:9200"
+                  }
+                ],
+                "resources": {},
+                "volumeMounts": [
+                  {
+                    "name": "kibana-keystore",
+                    "mountPath": "/keystore"
+                  },
+                  {
+                    "name": "elastic-bootstrap-password",
+                    "mountPath": "/bootstrap-password"
+                  },
+                  {
+                    "name": "certs",
+                    "mountPath": "/etc/kibana/config/"
+                  }
+                ],
+                "imagePullPolicy": "Always"
+              }
+            ],
+            "restartPolicy": "Always",
+            "nodeSelector": {
+              "role": "backend"
+            }
+          }
+        },
+        "strategy": {
+          "type": "Recreate"
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "Deployment",
+      "apiVersion": "apps/v1",
+      "metadata": {
+        "name": "logstash",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "logstash"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "matchLabels": {
+            "io.kompose.service": "logstash"
+          }
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "io.kompose.network/gtas-webapp-network": "true",
+              "io.kompose.service": "logstash"
+            },
+            "annotations": {
+              "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+              "kompose.image-pull-policy": "Always",
+              "kompose.service.type": "LoadBalancer",
+              "kompose.version": "1.22.0 (HEAD)"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "elastic-ca",
+                "secret": {
+                  "secretName": "elastic-ca",
+                  "items": [
+                    {
+                      "key": "elastic-ca",
+                      "path": "elastic-ca"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "logstash-keystore",
+                "secret": {
+                  "secretName": "logstash-keystore",
+                  "items": [
+                    {
+                      "key": "logstash-keystore",
+                      "path": "logstash.keystore"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elastic-bootstrap-password",
+                "secret": {
+                  "secretName": "elastic-bootstrap-password",
+                  "items": [
+                    {
+                      "key": "elastic-bootstrap-password",
+                      "path": "elastic-bootstrap-password"
+                    }
+                  ]
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "logstash",
+                "image": "wcogtas/logstash:dev",
+                "args": [
+                  "bash",
+                  "-c",
+                  "until [ $(curl -k -s -o /dev/null -w \"%{http_code}\" -u kibana:$(cat /bootstrap-password/elastic-bootstrap-password) https://elasticsearch:9200/) == 200 ]; do sleep 10 && echo \"Waiting for elasticsearch...\"; done\n/usr/local/bin/docker-entrypoint\n"
+                ],
+                "env": [
+                  {
+                    "name": "ELASTIC_HOST",
+                    "value": "https://elasticsearch"
+                  },
+                  {
+                    "name": "LOGSTASH_KEYSTORE_PASS",
+                    "value": "admin123"
+                  },
+                  {
+                    "name": "MARIADB_HOST"
+                  },
+                  {
+                    "name": "XPACK_MONITORING_ELASTICSEARCH_HOSTS",
+                    "value": "elasticsearch"
+                  },
+                  {
+                    "name": "XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY",
+                    "value": "/run/secrets/elastic-ca/elastic-ca"
+                  },
+                  {
+                    "name": "XPACK_MONITORING_ENABLED",
+                    "value": "false"
+                  }
+                ],
+                "resources": {},
+                "volumeMounts": [
+                  {
+                    "name": "elastic-ca",
+                    "mountPath": "/run/secrets/elastic-ca"
+                  },
+                  {
+                    "name": "logstash-keystore",
+                    "mountPath": "/keystore"
+                  },
+                  {
+                    "name": "elastic-bootstrap-password",
+                    "mountPath": "/bootstrap-password"
+                  }
+                ],
+                "imagePullPolicy": "Always"
+              }
+            ],
+            "restartPolicy": "Always",
+            "nodeSelector": {
+              "role": "backend"
+            }
+          }
+        },
+        "strategy": {}
+      },
+      "status": {}
+    },
+    {
+      "kind": "Deployment",
+      "apiVersion": "apps/v1",
+      "metadata": {
+        "name": "mariadb",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "mariadb"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "matchLabels": {
+            "io.kompose.service": "mariadb"
+          }
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "io.kompose.network/gtas-webapp-network": "true",
+              "io.kompose.service": "mariadb"
+            },
+            "annotations": {
+              "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+              "kompose.image-pull-policy": "Always",
+              "kompose.service.type": "LoadBalancer",
+              "kompose.version": "1.22.0 (HEAD)"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "mysql-etl-user",
+                "secret": {
+                  "secretName": "mysql-etl-user",
+                  "items": [
+                    {
+                      "key": "mysql-etl-user",
+                      "path": "mysql-etl-user"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-etl-password",
+                "secret": {
+                  "secretName": "mysql-etl-password",
+                  "items": [
+                    {
+                      "key": "mysql-etl-password",
+                      "path": "mysql-etl-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-processor-user",
+                "secret": {
+                  "secretName": "mysql-processor-user",
+                  "items": [
+                    {
+                      "key": "mysql-processor-user",
+                      "path": "mysql-processor-user"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-processor-password",
+                "secret": {
+                  "secretName": "mysql-processor-password",
+                  "items": [
+                    {
+                      "key": "mysql-processor-password",
+                      "path": "mysql-processor-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-webapp-user",
+                "secret": {
+                  "secretName": "mysql-webapp-user",
+                  "items": [
+                    {
+                      "key": "mysql-webapp-user",
+                      "path": "mysql-webapp-user"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-webapp-password",
+                "secret": {
+                  "secretName": "mysql-webapp-password",
+                  "items": [
+                    {
+                      "key": "mysql-webapp-password",
+                      "path": "mysql-webapp-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-healthcheck-user",
+                "secret": {
+                  "secretName": "mysql-healthcheck-user",
+                  "items": [
+                    {
+                      "key": "mysql-healthcheck-user",
+                      "path": "mysql-healthcheck-user"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-healthcheck-password",
+                "secret": {
+                  "secretName": "mysql-healthcheck-password",
+                  "items": [
+                    {
+                      "key": "mysql-healthcheck-password",
+                      "path": "mysql-healthcheck-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-logstash-user",
+                "secret": {
+                  "secretName": "mysql-logstash-user",
+                  "items": [
+                    {
+                      "key": "mysql-logstash-user",
+                      "path": "mysql-logstash-user"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-logstash-password",
+                "secret": {
+                  "secretName": "mysql-logstash-password",
+                  "items": [
+                    {
+                      "key": "mysql-logstash-password",
+                      "path": "mysql-logstash-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-root-password",
+                "secret": {
+                  "secretName": "mysql-root-password",
+                  "items": [
+                    {
+                      "key": "mysql-root-password",
+                      "path": "mysql-root-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-report-etl-user",
+                "secret": {
+                  "secretName": "mysql-report-etl-user",
+                  "items": [
+                    {
+                      "key": "mysql-report-etl-user",
+                      "path": "mysql-report-etl-user"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-report-etl-password",
+                "secret": {
+                  "secretName": "mysql-report-etl-password",
+                  "items": [
+                    {
+                      "key": "mysql-report-etl-password",
+                      "path": "mysql-report-etl-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "db-data",
+                "persistentVolumeClaim": {
+                  "claimName": "db-data"
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "mariadb",
+                "image": "wcogtas/mariadb:dev",
+                "ports": [
+                  {
+                    "containerPort": 3306
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "MYSQL_ROOT_PASSWORD_FILE",
+                    "value": "/run/secrets/mysql-root-password"
+                  }
+                ],
+                "resources": {},
+                "volumeMounts": [
+                  {
+                    "name": "mysql-etl-user",
+                    "mountPath": "/run/secrets/mysql-etl-user"
+                  },
+                  {
+                    "name": "mysql-etl-password",
+                    "mountPath": "/run/secrets/mysql-etl-password"
+                  },
+                  {
+                    "name": "mysql-processor-user",
+                    "mountPath": "/run/secrets/mysql-processor-user"
+                  },
+                  {
+                    "name": "mysql-processor-password",
+                    "mountPath": "/run/secrets/mysql-processor-password"
+                  },
+                  {
+                    "name": "mysql-webapp-user",
+                    "mountPath": "/run/secrets/mysql-webapp-user"
+                  },
+                  {
+                    "name": "mysql-webapp-password",
+                    "mountPath": "/run/secrets/mysql-webapp-password"
+                  },
+                  {
+                    "name": "mysql-healthcheck-user",
+                    "mountPath": "/run/secrets/mysql-healthcheck-user"
+                  },
+                  {
+                    "name": "mysql-healthcheck-password",
+                    "mountPath": "/run/secrets/mysql-healthcheck-password"
+                  },
+                  {
+                    "name": "mysql-logstash-user",
+                    "mountPath": "/run/secrets/mysql-logstash-user"
+                  },
+                  {
+                    "name": "mysql-logstash-password",
+                    "mountPath": "/run/secrets/mysql-logstash-password"
+                  },
+                  {
+                    "name": "mysql-root-password",
+                    "mountPath": "/run/secrets/mysql-root-password"
+                  },
+                  {
+                    "name": "mysql-report-etl-user",
+                    "mountPath": "/run/secrets/mysql-report-etl-user"
+                  },
+                  {
+                    "name": "mysql-report-etl-password",
+                    "mountPath": "/run/secrets/mysql-report-etl-password"
+                  },
+                  {
+                    "name": "db-data",
+                    "mountPath": "/var/lib/mysql"
+                  }
+                ],
+                "imagePullPolicy": "Always"
+              }
+            ],
+            "restartPolicy": "Always",
+            "nodeSelector": {
+              "role": "not-deployed"
+            }
+          }
+        },
+        "strategy": {
+          "type": "Recreate"
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "db-data",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "db-data"
+        }
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "100Mi"
+          }
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "Deployment",
+      "apiVersion": "apps/v1",
+      "metadata": {
+        "name": "neo4j",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "neo4j"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "matchLabels": {
+            "io.kompose.service": "neo4j"
+          }
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "io.kompose.network/gtas-webapp-network": "true",
+              "io.kompose.service": "neo4j"
+            },
+            "annotations": {
+              "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+              "kompose.image-pull-policy": "Always",
+              "kompose.service.type": "LoadBalancer",
+              "kompose.version": "1.22.0 (HEAD)"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "neo4j-key",
+                "secret": {
+                  "secretName": "neo4j-key",
+                  "items": [
+                    {
+                      "key": "neo4j-key",
+                      "path": "neo4j.key"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "neo4j-crt",
+                "secret": {
+                  "secretName": "neo4j-crt",
+                  "items": [
+                    {
+                      "key": "neo4j-crt",
+                      "path": "neo4j.cert"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "neo4j-data",
+                "persistentVolumeClaim": {
+                  "claimName": "neo4j-data"
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "neo4j",
+                "image": "wcogtas/neo4j:dev",
+                "ports": [
+                  {
+                    "containerPort": 7474
+                  },
+                  {
+                    "containerPort": 7473
+                  },
+                  {
+                    "containerPort": 7687
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "NEO4J_AUTH",
+                    "value": "neo4j/admin"
+                  },
+                  {
+                    "name": "NEO4J_bolt_ssl__policy",
+                    "value": "default"
+                  },
+                  {
+                    "name": "NEO4J_dbms_connector_bolt_advertised__address"
+                  },
+                  {
+                    "name": "NEO4J_dbms_connector_bolt_thread__pool__max__size",
+                    "value": "2500"
+                  },
+                  {
+                    "name": "NEO4J_dbms_connectors_default__advertised__address"
+                  },
+                  {
+                    "name": "NEO4J_dbms_directories_certificates",
+                    "value": "/var/lib/neo4j/https/certificates"
+                  },
+                  {
+                    "name": "NEO4J_dbms_memory_heap_initial__size",
+                    "value": "5G"
+                  },
+                  {
+                    "name": "NEO4J_dbms_memory_heap_max__size",
+                    "value": "5G"
+                  },
+                  {
+                    "name": "NEO4J_dbms_ssl_policy_default_allow__key__generation",
+                    "value": "false"
+                  },
+                  {
+                    "name": "NEO4J_dbms_ssl_policy_default_base__directory",
+                    "value": "/var/lib/neo4j/https/certificates/"
+                  },
+                  {
+                    "name": "NEO4J_dbms_ssl_policy_default_client__auth",
+                    "value": "NONE"
+                  },
+                  {
+                    "name": "NEO4J_dbms_ssl_policy_default_private__key",
+                    "value": "/var/lib/neo4j/https/certificates/key/neo4j.key"
+                  },
+                  {
+                    "name": "NEO4J_dbms_ssl_policy_default_public__certificate",
+                    "value": "/var/lib/neo4j/https/certificates/cert/neo4j.cert"
+                  },
+                  {
+                    "name": "NEO4J_https_ssl__policy",
+                    "value": "default"
+                  }
+                ],
+                "resources": {},
+                "volumeMounts": [
+                  {
+                    "name": "neo4j-key",
+                    "mountPath": "/var/lib/neo4j/https/certificates/key"
+                  },
+                  {
+                    "name": "neo4j-crt",
+                    "mountPath": "/var/lib/neo4j/https/certificates/cert"
+                  },
+                  {
+                    "name": "neo4j-data",
+                    "mountPath": "/data"
+                  }
+                ],
+                "imagePullPolicy": "Always"
+              }
+            ],
+            "restartPolicy": "Always",
+            "nodeSelector": {
+              "role": "frontend"
+            }
+          }
+        },
+        "strategy": {
+          "type": "Recreate"
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "neo4j-data",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "neo4j-data"
+        }
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "200Gi"
+          }
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "Deployment",
+      "apiVersion": "apps/v1",
+      "metadata": {
+        "name": "web-app",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "web-app"
+        },
+        "annotations": {
+          "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+          "kompose.image-pull-policy": "Always",
+          "kompose.service.type": "LoadBalancer",
+          "kompose.version": "1.22.0 (HEAD)"
+        }
+      },
+      "spec": {
+        "replicas": 1,
+        "selector": {
+          "matchLabels": {
+            "io.kompose.service": "web-app"
+          }
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "io.kompose.network/gtas-webapp-network": "true",
+              "io.kompose.service": "web-app"
+            },
+            "annotations": {
+              "kompose.cmd": "kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json",
+              "kompose.image-pull-policy": "Always",
+              "kompose.service.type": "LoadBalancer",
+              "kompose.version": "1.22.0 (HEAD)"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "mysql-webapp-user",
+                "secret": {
+                  "secretName": "mysql-webapp-user",
+                  "items": [
+                    {
+                      "key": "mysql-webapp-user",
+                      "path": "mysql-webapp-user"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "mysql-webapp-password",
+                "secret": {
+                  "secretName": "mysql-webapp-password",
+                  "items": [
+                    {
+                      "key": "mysql-webapp-password",
+                      "path": "mysql-webapp-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "webapp-neo4j-user",
+                "secret": {
+                  "secretName": "webapp-neo4j-user",
+                  "items": [
+                    {
+                      "key": "webapp-neo4j-user",
+                      "path": "webapp-neo4j-user"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "webapp-neo4j-password",
+                "secret": {
+                  "secretName": "webapp-neo4j-password",
+                  "items": [
+                    {
+                      "key": "webapp-neo4j-password",
+                      "path": "webapp-neo4j-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elastic-bootstrap-password",
+                "secret": {
+                  "secretName": "elastic-bootstrap-password",
+                  "items": [
+                    {
+                      "key": "elastic-bootstrap-password",
+                      "path": "elastic-bootstrap-password"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "webapp-cert",
+                "secret": {
+                  "secretName": "webapp-cert",
+                  "items": [
+                    {
+                      "key": "webapp-cert",
+                      "path": "wcogtas.org.crt"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "webapp-key",
+                "secret": {
+                  "secretName": "webapp-key",
+                  "items": [
+                    {
+                      "key": "webapp-key",
+                      "path": "wcogtas.org.key"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elastic-cert",
+                "secret": {
+                  "secretName": "elastic-cert",
+                  "items": [
+                    {
+                      "key": "elastic-cert",
+                      "path": "elasticsearch-node1.crt"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elastic-key",
+                "secret": {
+                  "secretName": "elastic-key",
+                  "items": [
+                    {
+                      "key": "elastic-key",
+                      "path": "elasticsearch-node1.key"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "elastic-ca",
+                "secret": {
+                  "secretName": "elastic-ca",
+                  "items": [
+                    {
+                      "key": "elastic-ca",
+                      "path": "elastic-ca.crt"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "certs",
+                "persistentVolumeClaim": {
+                  "claimName": "certs"
+                }
+              },
+              {
+                "name": "m2",
+                "persistentVolumeClaim": {
+                  "claimName": "m2"
+                }
+              },
+              {
+                "name": "scheduler-logs",
+                "persistentVolumeClaim": {
+                  "claimName": "scheduler-logs"
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "web-app",
+                "image": "wcogtas/webapp:dev",
+                "ports": [
+                  {
+                    "containerPort": 8080
+                  },
+                  {
+                    "containerPort": 8443
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "ACTIVEMQ_HOST",
+                    "value": "activemq"
+                  },
+                  {
+                    "name": "ADDITIONAL_PROCESSING_RAW",
+                    "value": "true"
+                  },
+                  {
+                    "name": "ADDITIONAL_PROCESSING_RULES",
+                    "value": "true"
+                  },
+                  {
+                    "name": "ADDITIONAL_PROCESSING_THIRD_PARTY",
+                    "value": "false"
+                  },
+                  {
+                    "name": "AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED",
+                    "value": "true"
+                  },
+                  {
+                    "name": "BOOTSTRAP_PATH",
+                    "value": "/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password"
+                  },
+                  {
+                    "name": "DB_HOST"
+                  },
+                  {
+                    "name": "ELASTICSEARCH",
+                    "value": "elasticsearch"
+                  },
+                  {
+                    "name": "EMAIL_SENDER_HOST"
+                  },
+                  {
+                    "name": "EMAIL_SENDER_PASSWORD"
+                  },
+                  {
+                    "name": "EMAIL_SENDER_USERNAME"
+                  },
+                  {
+                    "name": "JAVA_OPTS",
+                    "value": "-Xms4g -Xmx8g -XX:MaxPermSize=16g -Duser.timezone=UTC"
+                  },
+                  {
+                    "name": "JAVA_TOOL_OPTIONS",
+                    "value": "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
+                  },
+                  {
+                    "name": "KIBANA_HOST",
+                    "value": "kibana"
+                  },
+                  {
+                    "name": "MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED",
+                    "value": "true"
+                  },
+                  {
+                    "name": "MYSQL_PASSWORD_PATH",
+                    "value": "/run/secrets/mysql-webapp-password/mysql-webapp-password"
+                  },
+                  {
+                    "name": "MYSQL_USER_PATH",
+                    "value": "/run/secrets/mysql-webapp-user/mysql-webapp-user"
+                  },
+                  {
+                    "name": "NEO4J_HOST",
+                    "value": "neo4j"
+                  },
+                  {
+                    "name": "NEO4J_PASSWORD_PATH",
+                    "value": "/run/secrets/webapp-neo4j-password/webapp-neo4j-password"
+                  },
+                  {
+                    "name": "NEO4J_USER_PATH",
+                    "value": "/run/secrets/webapp-neo4j-user/webapp-neo4j-user"
+                  },
+                  {
+                    "name": "PROXY_HOST",
+                    "value": "httpproxy"
+                  },
+                  {
+                    "name": "SSL_TRUST_HOST"
+                  },
+                  {
+                    "name": "UI_ADDRESS"
+                  }
+                ],
+                "resources": {},
+                "volumeMounts": [
+                  {
+                    "name": "mysql-webapp-user",
+                    "mountPath": "/run/secrets/mysql-webapp-user"
+                  },
+                  {
+                    "name": "mysql-webapp-password",
+                    "mountPath": "/run/secrets/mysql-webapp-password"
+                  },
+                  {
+                    "name": "webapp-neo4j-user",
+                    "mountPath": "/run/secrets/webapp-neo4j-user"
+                  },
+                  {
+                    "name": "webapp-neo4j-password",
+                    "mountPath": "/run/secrets/webapp-neo4j-password"
+                  },
+                  {
+                    "name": "elastic-bootstrap-password",
+                    "mountPath": "/run/secrets/elastic-bootstrap-password"
+                  },
+                  {
+                    "name": "webapp-cert",
+                    "mountPath": "/usr/local/tomcat/conf/cert"
+                  },
+                  {
+                    "name": "webapp-key",
+                    "mountPath": "/usr/local/tomcat/conf/key"
+                  },
+                  {
+                    "name": "elastic-cert",
+                    "mountPath": "/usr/local/tomcat/conf/elastic/cert"
+                  },
+                  {
+                    "name": "elastic-key",
+                    "mountPath": "/usr/local/tomcat/conf/elastic/key"
+                  },
+                  {
+                    "name": "elastic-ca",
+                    "mountPath": "/usr/local/tomcat/conf/elastic/ca"
+                  },
+                  {
+                    "name": "certs",
+                    "mountPath": "/temp-cert"
+                  },
+                  {
+                    "name": "m2",
+                    "mountPath": "/root/.m2"
+                  },
+                  {
+                    "name": "scheduler-logs",
+                    "mountPath": "/scheduler-logs"
+                  }
+                ],
+                "imagePullPolicy": "Always"
+              }
+            ],
+            "restartPolicy": "Always",
+            "nodeSelector": {
+              "role": "backend"
+            }
+          }
+        },
+        "strategy": {
+          "type": "Recreate"
+        }
+      },
+      "status": {}
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "m2",
+        "creationTimestamp": null,
+        "labels": {
+          "io.kompose.service": "m2"
+        }
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "100Mi"
+          }
+        }
+      },
+      "status": {}
+    }
+  ]
+}
