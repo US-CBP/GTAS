@@ -106,13 +106,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Generate Alias JSON
-        uses: Consensys/kubernetes-action@master
-        id: alias_json
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        with:
-          args: get deployment etl-job -o json
       - name: Generate Services JSON
         uses: Consensys/kubernetes-action@master
         id: services_json
@@ -123,7 +116,6 @@ jobs:
       - name: Generate Kubernetes deployment configuration file
         shell: bash
         env:
-          ALIAS_JSON: ${{join(steps.alias_json.outputs.*, '\n')}}
           SERVICES_JSON: ${{join(steps.services_json.outputs.*, '\n')}}
           EMAIL_SENDER_USERNAME: ${{ secrets.EMAIL_SENDER_USERNAME }}
           EMAIL_SENDER_PASSWORD: ${{ secrets.EMAIL_SENDER_PASSWORD }}
@@ -146,15 +138,17 @@ jobs:
           echo $MARIADB_USER > ./gtas-parent/gtas-commons/secrets/mysql_webapp_user.txt
           echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
 
-          IP="echo $SERVICES_JSON | jq -r '.items[] | select(.metadata.name==\"kibana\") | .spec.clusterIP'"
-          echo $ALIAS_JSON | jq -r '.spec.template.spec.hostAliases += [{"ip":"127.0.0.1","hostnames":["kibana.local"]}] '> ./alias.json
 
           sudo apt-get -y update
           sudo apt-get install -y curl
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.22.0/kompose-linux-amd64 -o kompose
           chmod +x kompose
           sudo mv ./kompose /usr/local/bin/kompose
-          kompose -f pipeline-deployment.yaml -f docker-compose.yml convert --out deploy.yaml
+          kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json
+
+          IP="echo $SERVICES_JSON | jq -r '.items[] | select(.metadata.name==\"kibana\") | .spec.clusterIP'"
+          cat deploy.json | jq -r '.items[] | select(.kind=="Deployment" and .metadata.name=="etl-job") | .spec.template.spec.hostAliases += [{"ip":"'$(eval $IP)'","hostnames":["kibana.local"]}] '> alias.json
+          jq --slurpfile repl alias.json '.manipulate=[.items[] | if .kind=="Deployment" and .metadata.name=="etl-job" then .=$repl[0] else . end]' deploy.json > combined-deploy.json
       - name: Clean resources
         uses: Consensys/kubernetes-action@master
         env:
@@ -166,10 +160,4 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: apply -f deploy.yaml
-      - name: Place alias in container
-        uses: Consensys/kubernetes-action@master
-        env:
-          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        with:
-          args: apply -f alias.json
+          args: apply -f combined-deploy.json
