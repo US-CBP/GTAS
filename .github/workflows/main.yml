@@ -146,14 +146,19 @@ jobs:
           sudo mv ./kompose /usr/local/bin/kompose
           kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json
 
+          chrle=${#SERVICES_JSON}
+          echo "Network Service Data Length:"
+          echo $chrle
 
-          if [[ $(eval $IP) =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "success"
-          else
-            echo "fail"
-          fi
 
           IP="echo $SERVICES_JSON | jq -r '.items[] | select(.metadata.name==\"kibana\") | .spec.clusterIP'"
+
+          tes=$(eval $IP)
+          chrlen=${#tes}
+
+          echo "IP length:"
+          echo $chrlen
+
           cat deploy.json | jq -r '.items[] | select(.kind=="Deployment" and .metadata.name=="etl-job") | .spec.template.spec.hostAliases += [{"ip":"'$(eval $IP)'","hostnames":["kibana.local"]}] '> alias.json
           jq --slurpfile repl alias.json '.manipulate=[.items[] | if .kind=="Deployment" and .metadata.name=="etl-job" then .=$repl[0] else . end]' deploy.json > combined-deploy.json
       - name: Clean resources
