@@ -77,14 +77,6 @@ jobs:
           file: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
           tags: wcogtas/logstash:dev
       - uses: docker/build-push-action@v2
-        name: Build and push ELK setup image
-        with:
-          platforms: linux/amd64
-          push: true
-          context: ./gtas-parent/scripts/elastic
-          file: ./gtas-parent/scripts/elastic/install/docker/elk-setup/elk-setup.Dockerfile
-          tags: wcogtas/elk-setup:dev
-      - uses: docker/build-push-action@v2
         name: Build and push Neo4J ETL job image
         with:
           platforms: linux/amd64

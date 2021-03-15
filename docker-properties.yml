@@ -49,11 +49,3 @@ services:
       ELASTICSEARCH_USER_PATH: '/run/secrets/pentaho-to-elasticsearch-user'
       ELASTICSEARCH_USER_PASSWORD_PATH: '/run/secrets/pentaho-to-elasticsearch-password'
       ELASTIC_CERT_PATH: '/run/secrets/elastic-ca'
-#  elk-setup:
-#    environment:
-#      LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password'
-#      MYSQL_USER_PATH: '/run/secrets/mysql-logstash-user'
-#      MYSQL_PASSWORD_PATH: '/run/secrets/mysql-logstash-password'
-#      KIBANA_PASSWORD_PATH: '/run/secrets/elasticsearch-kibana-password'
-#      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
-#      ELASTIC_PATH: '/run/secrets/elastic-password'

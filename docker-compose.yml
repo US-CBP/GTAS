@@ -275,29 +275,6 @@ services:
       - gtas-webapp-network
     depends_on:
       - elasticsearch
-#  elk-setup:
-#    image: wcogtas/elk-setup:dev
-#    container_name: elk-setup
-#    build:
-#      context: ./gtas-parent/scripts/elastic
-#      dockerfile: ./install/docker/elk-setup/elk-setup.Dockerfile
-#    environment:
-#      KIBANA_HOST: 'kibana'
-#      ELASTICSEARCH_HOST: 'elasticsearch'
-#    volumes:
-##      - logstash-conf:/logstash-conf
-#      - kibana-conf:/kibana-conf
-#      - elasticsearch-conf:/elasticsearch-conf
-#    secrets:
-#      - logstash-keystore-password
-#      - mysql-logstash-user
-#      - mysql-logstash-password
-#      - elastic-password
-#      - elasticsearch-kibana-user
-#      - elasticsearch-kibana-password
-#      - elastic-bootstrap-password
-#    networks:
-#      - gtas-webapp-network
 
 secrets:
   mysql-report-etl-user:
