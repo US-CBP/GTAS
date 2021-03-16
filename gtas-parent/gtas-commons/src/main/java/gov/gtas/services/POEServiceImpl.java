@@ -18,7 +18,7 @@ import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.HitViewStatusRepository;
 import gov.gtas.repository.POELaneRepository;
 import gov.gtas.repository.PassengerRepository;
-import gov.gtas.services.dto.POETileDTO;
+import gov.gtas.services.dto.LookoutStatusDTO;
 import gov.gtas.services.dto.POETileServiceRequest;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.passenger.DocumentVo;
@@ -47,8 +47,8 @@ public class POEServiceImpl implements POEService {
     private UserService userService;
 
     @Override
-    public Set<POETileDTO> getAllTiles(String userId, POETileServiceRequest request) {
-        Set<POETileDTO> tiles = new HashSet<POETileDTO>();
+    public Set<LookoutStatusDTO> getAllTiles(String userId, POETileServiceRequest request) {
+        Set<LookoutStatusDTO> tiles = new HashSet<LookoutStatusDTO>();
        Set<HitViewStatus> hvs = hitViewStatusRepository.findAllWithNotClosedAndWithinRange(userService.fetchUserGroups(userId),request.getEtaStart(), request.getEtaEnd());
        for(HitViewStatus hv : hvs ){
           tiles.add(createPOETileDTO(hv)); //TODO: distinct passenger on query with a lot more configuration in the service layer for duplicates handling
@@ -66,7 +66,7 @@ public class POEServiceImpl implements POEService {
 
     @Override
     @Transactional
-    public JsonServiceResponse updateStatus(POETileDTO poeTileDTO) {
+    public JsonServiceResponse updateStatus(LookoutStatusDTO poeTileDTO) {
         Passenger p = passengerRepository.findById(poeTileDTO.getPaxId()).orElseThrow(RuntimeException::new);
         Set<HitViewStatus> hvs = hitViewStatusRepository.findAllByPassenger(p);
         for(HitViewStatus hv : hvs){
@@ -76,7 +76,7 @@ public class POEServiceImpl implements POEService {
         return new JsonServiceResponse(Status.SUCCESS, "success"); //TODO: More robust
     }
 
-    private POETileDTO createPOETileDTO(HitViewStatus hvs){
+    private LookoutStatusDTO createPOETileDTO(HitViewStatus hvs){
         Long paxId = hvs.getPassenger().getId();
         String paxFirstName = hvs.getPassenger().getPassengerDetails().getFirstName();
         String paxLastName = hvs.getPassenger().getPassengerDetails().getLastName();
@@ -87,7 +87,7 @@ public class POEServiceImpl implements POEService {
         Date flightCountdownTime = hvs.getPassenger().getFlight().getFlightCountDownView().getCountDownTimer();
         POEStatusEnum status = hvs.getPoeStatusEnum();
 
-        POETileDTO tile = new POETileDTO(paxId, paxFirstName, paxLastName, docVo,
+        LookoutStatusDTO tile = new LookoutStatusDTO(paxId, paxFirstName, paxLastName, docVo,
                 hitCategory.getName(), flightCountdownTime, status.name());
 
         return tile;

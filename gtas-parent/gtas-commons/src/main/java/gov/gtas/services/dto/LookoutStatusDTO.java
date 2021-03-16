@@ -6,16 +6,12 @@
 package gov.gtas.services.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import gov.gtas.enumtype.POEStatusEnum;
-import gov.gtas.model.Document;
-import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.vo.passenger.DocumentVo;
 
 import java.util.Date;
 import java.util.Objects;
-import java.util.Set;
 
-public class POETileDTO {
+public class LookoutStatusDTO {
 
     private Long paxId; //For updating POEStatus on the back end
     private String paxFirstName;
@@ -25,9 +21,9 @@ public class POETileDTO {
     private Date flightCountdownTime;
     private String poeStatus; //Ties tile to lane
 
-    public POETileDTO(@JsonProperty("paxId") Long paxId, @JsonProperty("paxFirstName") String paxFirstName, @JsonProperty("paxLastName") String paxLastName,
-                      @JsonProperty("document") DocumentVo document, @JsonProperty("hitCategory") String hitCategory,
-                      @JsonProperty("flightCountdownTime") Date flightCountdownTime, @JsonProperty("poeStatus") String poeStatus) {
+    public LookoutStatusDTO(@JsonProperty("paxId") Long paxId, @JsonProperty("paxFirstName") String paxFirstName, @JsonProperty("paxLastName") String paxLastName,
+                            @JsonProperty("document") DocumentVo document, @JsonProperty("hitCategory") String hitCategory,
+                            @JsonProperty("flightCountdownTime") Date flightCountdownTime, @JsonProperty("poeStatus") String poeStatus) {
         this.paxId = paxId;
         this.paxFirstName = paxFirstName;
         this.paxLastName = paxLastName;
@@ -67,7 +63,7 @@ public class POETileDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        POETileDTO that = (POETileDTO) o;
+        LookoutStatusDTO that = (LookoutStatusDTO) o;
         return paxId.equals(that.paxId);
     }
 

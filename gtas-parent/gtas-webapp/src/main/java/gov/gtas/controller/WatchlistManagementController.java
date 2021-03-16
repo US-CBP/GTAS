@@ -130,6 +130,7 @@ public class WatchlistManagementController {
 		HitSeverityEnum hitSeverityEnum = HitSeverityEnum.fromString(wlCategory.getSeverity())
 				.orElseThrow(RuntimeException::new);
 		hitCategory.setSeverity(hitSeverityEnum);
+		hitCategory.setPromoteToLookout(wlCategory.isPromoteToLookout());
 		hitCategoryService.create(hitCategory);
 
 		// This is to make sure that manual hit generation functions on new category
@@ -154,6 +155,7 @@ public class WatchlistManagementController {
 			}
 			tmpHc.setDescription(wlCategory.getDescription());
 			tmpHc.setName(wlCategory.getLabel());
+			tmpHc.setPromoteToLookout(wlCategory.isPromoteToLookout());
 			return hitCategoryService.updateHitCategory(tmpHc);
 		}
 		return new JsonServiceResponse(Status.FAILURE, "Invalid hit category update", wlCategory);

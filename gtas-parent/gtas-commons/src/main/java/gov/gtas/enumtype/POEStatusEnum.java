@@ -27,7 +27,9 @@ public enum POEStatusEnum {
 
     REFERRED("Referrred"),
 
-    DIDNOTBOARD("Did Not Board");
+    DIDNOTBOARD("Did Not Board"),
+
+    INACTIVE("Inactive");
 
     private String POEStatus;
 

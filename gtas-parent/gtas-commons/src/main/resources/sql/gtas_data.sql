@@ -67,11 +67,11 @@ INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Noti
 INSERT INTO app_configuration (description, opt, val) VALUES ('Recompile Rules', 'RECOMPILE_RULES', 'false');
 
 
-insert into hit_category(id, category, description, severity, archived) values(1, 'General', 'General category', 2, false);
-insert into hit_category(id, category, description, severity, archived) values(2, 'Terrorism', 'Terrorism related entities',0, false);
-insert into hit_category(id, category, description, severity, archived) values(3, 'World Health', 'Health Alert related',1, false);
-insert into hit_category(id, category, description, severity, archived) values(4, 'Federal Law Enforcement', 'Federal watch category',0, false);
-insert into hit_category(id, category, description, severity, archived) values(5, 'Local Law Enforcement', 'Local watch category',0, false);
+insert into hit_category(id, category, description, severity, archived, promote_to_lookout) values(1, 'General', 'General category', 2, false, false);
+insert into hit_category(id, category, description, severity, archived, promote_to_lookout) values(2, 'Terrorism', 'Terrorism related entities',0, false, false);
+insert into hit_category(id, category, description, severity, archived, promote_to_lookout) values(3, 'World Health', 'Health Alert related',1, false, false);
+insert into hit_category(id, category, description, severity, archived, promote_to_lookout) values(4, 'Federal Law Enforcement', 'Federal watch category',0, false, false);
+insert into hit_category(id, category, description, severity, archived, promote_to_lookout) values(5, 'Local Law Enforcement', 'Local watch category',0, false, false);
 
 INSERT INTO gtas.user_group (id, created_at, created_by, updated_at, updated_by, ug_name) VALUES (1, null, null, null, null, 'default');
 INSERT INTO gtas.ug_user_join (ug_id, user_id) VALUES (1, 'ADMIN');

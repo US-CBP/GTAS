@@ -205,16 +205,22 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 					}
 				}
 				if (!hitDetailsToPersist.isEmpty()) {
-
 					Map<Long, Set<UserGroup>> hitMakerMappedByPrimaryKey = new HashMap<>();
+					Map<Long, Boolean> hitMakerIdMappedToLookoutStatus = new HashMap<>();
 					for (HitMaker hitMaker : hitMakersSet) {
 						hitMakerMappedByPrimaryKey.put(hitMaker.getId(), hitMaker.getHitCategory().getUserGroups());
+						hitMakerIdMappedToLookoutStatus.put(hitMaker.getId(), hitMaker.getHitCategory().isPromoteToLookout());
 					}
 
 					for (HitDetail hd : hitDetailsToPersist) {
+						POEStatusEnum poeStatus = POEStatusEnum.INACTIVE;
+						if(hitMakerIdMappedToLookoutStatus.get(hd.getHitMakerId())) { //If ANY category is worthy of promoting, ALL hit view statuses are set active
+							poeStatus = POEStatusEnum.ACTIVE;
+						}
 						for (UserGroup ug : hitMakerMappedByPrimaryKey.get(hd.getHitMakerId())) {
+
 							HitViewStatus hitViewStatus = new HitViewStatus(hd, ug, HitViewStatusEnum.NEW,
-									hd.getPassenger(), POEStatusEnum.ACTIVE);
+									hd.getPassenger(), poeStatus);
 							hd.getHitViewStatus().add(hitViewStatus);
 						}
 					}

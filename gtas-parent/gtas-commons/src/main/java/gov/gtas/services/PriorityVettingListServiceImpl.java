@@ -72,6 +72,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownTo, 30, 30);
 			ArrayList<String> hitDetailsTitles = new ArrayList<>();
 			List<HitViewStatusEnum> hvsEnums = new ArrayList<>();
+			String lookoutStatus = new String();
 
 			List<HitDetail> hitDetailsList = new ArrayList<>(passenger.getHitDetails());
 			hitDetailsList.sort((hd1, hd2) -> {
@@ -109,6 +110,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 					for (HitViewStatus hvs : hd.getHitViewStatus()) {
 						if (userGroups.contains(hvs.getUserGroup())) {
 							hvsEnums.add(hvs.getHitViewStatusEnum());
+							lookoutStatus=hvs.getPoeStatusEnum().name(); // All lookout status' for a given user group should be the same.
 						}
 					}
 				}
@@ -127,6 +129,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			caseVo.setDocument(docNum);
 			caseVo.setDocType(docType);
 			hvsEnums.sort(Comparator.naturalOrder());
+			caseVo.setlookoutStatus(lookoutStatus);
 			caseVo.setStatus(hvsEnums.get(0).toString());
 			caseVo.setGender(passenger.getPassengerDetails().getGender());
 			caseVo.setHitNames(hitDetailsTitles);
