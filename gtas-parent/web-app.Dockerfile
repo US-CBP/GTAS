@@ -29,7 +29,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize
 RUN tar -C /usr/local/bin -xzf dockerize-linux-amd64-v0.6.1.tar.gz
 
 WORKDIR /usr/local/tomcat/webapps/gtas
-RUN  jar -xvf /usr/local/tomcat/webapps/gtas.war
+#RUN  jar -xvf /usr/local/tomcat/webapps/gtas.war
 
 WORKDIR /usr/local/tomcat/bin
 ENTRYPOINT mkdir -p /scheduler-logs/temp /temp && dockerize -wait tcp://${DB_HOST}:3306 -wait tcp://${NEO4J_HOST}:7687 -timeout 1000s logrotate /logrotate.conf && catalina.sh run
