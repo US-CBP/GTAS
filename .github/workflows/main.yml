@@ -24,7 +24,7 @@ jobs:
         with:
           context: ./gtas-parent
           push: true
-          platforms: linux/amd64
+          platforms: linux/amd64, ppc64le
           file: ./gtas-parent/web-app.Dockerfile
           tags: wcogtas/webapp:dev
       - uses: docker/build-push-action@v2
