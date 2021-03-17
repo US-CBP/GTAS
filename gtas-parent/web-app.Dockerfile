@@ -1,6 +1,6 @@
 FROM adoptopenjdk/maven-openjdk8 as build-stage
 
-RUN apt-get -y update && apt-get -y install nodejs git dos2unix
+RUN apt-get -y update && apt-get -y install nodejs git dos2unix unzip
 
 COPY ./ /gtas-parent/
 COPY ./docker-resources/hibernate.properties /gtas-parent/gtas-commons/src/main/resources/hibernate.properties
@@ -29,8 +29,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize
 RUN tar -C /usr/local/bin -xzf dockerize-linux-amd64-v0.6.1.tar.gz
 
 WORKDIR /usr/local/tomcat/webapps/gtas
-#RUN  jar -xvf /usr/local/tomcat/webapps/gtas.war
-RUN chmod 777 /usr/local/tomcat/webapps/gtas.war
+RUN unzip -xvf /usr/local/tomcat/webapps/gtas.war
 
 WORKDIR /usr/local/tomcat/bin
 ENTRYPOINT mkdir -p /scheduler-logs/temp /temp && dockerize -wait tcp://${DB_HOST}:3306 -wait tcp://${NEO4J_HOST}:7687 -timeout 1000s logrotate /logrotate.conf && catalina.sh run
