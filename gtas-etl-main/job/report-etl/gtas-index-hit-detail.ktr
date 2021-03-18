@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>gtas-index-message-flight</name>
+    <name>gtas-index-hit-detail</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -697,18 +697,6 @@
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
       </field>
-      <field>
-        <name>MESSAGE_FLIGHT_IDX_FLAG_TRUE</name>
-        <type>Boolean</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -921,20 +909,8 @@
     <fields>
       <field>
         <name>report_input_file</name>
-        <variable>${Internal.Entry.Current.Directory}/${EXT_VAR_MESSAGE_FLIGHT_INDEX_TEMP_FILE}</variable>
+        <variable>${Internal.Entry.Current.Directory}/${EXT_VAR_HIT_DETAIL_INDEX_TEMP_FILE}</variable>
         <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>message_flight_idx_last_rec_id</name>
-        <variable>${MESSAGE_FLIGHT_IDX_LAST_REC_ID}</variable>
-        <type>Integer</type>
         <format/>
         <currency/>
         <decimal/>
@@ -990,7 +966,7 @@
     </remotesteps>
     <GUI>
       <xloc>176</xloc>
-      <yloc>752</yloc>
+      <yloc>736</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1220,7 +1196,7 @@
     <displayHeader>Y</displayHeader>
     <limitRows>N</limitRows>
     <limitRowsNumber>0</limitRowsNumber>
-    <logmessage>The temporary message-report-input file exists!</logmessage>
+    <logmessage>The temporary hit detail input file exists!</logmessage>
     <fields>
       <field>
         <name>report_input_file</name>
