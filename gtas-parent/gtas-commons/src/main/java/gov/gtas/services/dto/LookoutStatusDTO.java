@@ -19,18 +19,23 @@ public class LookoutStatusDTO {
     private DocumentVo document;
     private String  hitCategory; //Reason
     private Date flightCountdownTime;
-    private String poeStatus; //Ties tile to lane
+    private String status; //Ties tile to lane
+    private String direction; //flight direction inbound/outbound
+    private boolean isApis; //if apis only information
 
     public LookoutStatusDTO(@JsonProperty("paxId") Long paxId, @JsonProperty("paxFirstName") String paxFirstName, @JsonProperty("paxLastName") String paxLastName,
                             @JsonProperty("document") DocumentVo document, @JsonProperty("hitCategory") String hitCategory,
-                            @JsonProperty("flightCountdownTime") Date flightCountdownTime, @JsonProperty("poeStatus") String poeStatus) {
+                            @JsonProperty("flightCountdownTime") Date flightCountdownTime, @JsonProperty("poeStatus") String status,
+                            @JsonProperty("direction") String direction, @JsonProperty("isApis") boolean isApis ) {
         this.paxId = paxId;
         this.paxFirstName = paxFirstName;
         this.paxLastName = paxLastName;
         this.document = document;
         this.hitCategory = hitCategory;
         this.flightCountdownTime = flightCountdownTime;
-        this.poeStatus = poeStatus;
+        this.status = status;
+        this.direction = direction;
+        this.isApis = isApis;
     }
 
     public Long getPaxId() {
@@ -55,9 +60,13 @@ public class LookoutStatusDTO {
         return flightCountdownTime;
     }
 
-    public String getPoeStatus() {
-        return poeStatus;
+    public String getStatus() {
+        return status;
     }
+
+    public String getDirection() { return direction; }
+
+    public boolean isApis() { return isApis; }
 
     @Override
     public boolean equals(Object o) {

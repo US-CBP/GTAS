@@ -4,7 +4,7 @@ import freemarker.template.TemplateException;
 import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
-import gov.gtas.enumtype.POEStatusEnum;
+import gov.gtas.enumtype.LookoutStatusEnum;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightCountDownView;
@@ -81,7 +81,7 @@ public class SampleEmailSender {
         hitCategory.setUserGroups(Collections.singleton(userGroup));
         passenger.setHitDetails(Collections.singleton(hitDetail));
 
-        HitViewStatus hitViewStatus = new HitViewStatus(hitDetail, userGroup, HitViewStatusEnum.NEW, passenger, POEStatusEnum.ACTIVE);
+        HitViewStatus hitViewStatus = new HitViewStatus(hitDetail, userGroup, HitViewStatusEnum.NEW, passenger, LookoutStatusEnum.ACTIVE);
         hitDetail.setHitViewStatus(Collections.singleton(hitViewStatus));
 
         Document document = new Document();

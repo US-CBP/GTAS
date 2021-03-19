@@ -6,7 +6,6 @@
 package gov.gtas.vo.passenger;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import gov.gtas.enumtype.POEStatusEnum;
 import gov.gtas.model.PIIObject;
 
 import java.util.ArrayList;

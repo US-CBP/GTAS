@@ -5,16 +5,16 @@
  */
 package gov.gtas.model;
 
-import gov.gtas.enumtype.POEStatusEnum;
+import gov.gtas.enumtype.LookoutStatusEnum;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name="poe_lane")
-public class POELane extends BaseEntityAudit{
+@Table(name="lookout_lane")
+public class LookoutLane extends BaseEntityAudit{
     private static final long serialVersionUID = 1L;
 
-    public POELane(){
+    public LookoutLane(){
 
     }
     @Column(name = "display_name")
@@ -24,9 +24,11 @@ public class POELane extends BaseEntityAudit{
     private int ord;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "poe_status" )
-    private POEStatusEnum poeStatusEnum;
+    @Column(name = "lookout_status" )
+    private LookoutStatusEnum status;
 
+    @Column(name = "archived")
+    private boolean archived;
 
     public String getDisplayName() {
         return displayName;
@@ -40,11 +42,15 @@ public class POELane extends BaseEntityAudit{
 
     public void setOrd(int ord) { this.ord = ord; }
 
-    public POEStatusEnum getPoeStatusEnum() {
-        return poeStatusEnum;
+    public LookoutStatusEnum getStatus() {
+        return status;
     }
 
-    public void setPoeStatusEnum(POEStatusEnum poeStatusEnum) {
-        this.poeStatusEnum = poeStatusEnum;
+    public void setStatus(LookoutStatusEnum status) {
+        this.status = status;
     }
+
+    public boolean isArchived() { return archived; }
+
+    public void setArchived(boolean archived) { this.archived = archived; }
 }

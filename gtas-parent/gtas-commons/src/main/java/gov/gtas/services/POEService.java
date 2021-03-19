@@ -9,7 +9,8 @@ package gov.gtas.services;
 
 import gov.gtas.constant.GtasSecurityConstants;
 import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.model.POELane;
+import gov.gtas.model.LookoutLane;
+import gov.gtas.services.dto.LookoutLaneDTO;
 import gov.gtas.services.dto.LookoutStatusDTO;
 import gov.gtas.services.dto.POETileServiceRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,8 +23,17 @@ public interface POEService {
     Set<LookoutStatusDTO> getAllTiles(String userId, POETileServiceRequest req); //Evolve parameters to send
 
     @PreAuthorize(GtasSecurityConstants.PRIVILEGE_ADMIN)
-    List<POELane> getAllLanes();
+    List<LookoutLane> getAllLanes();
 
     @PreAuthorize(GtasSecurityConstants.PRIVILEGE_ADMIN)
-    JsonServiceResponse updateStatus(LookoutStatusDTO poeTileDTO);
+    JsonServiceResponse updateStatus(LookoutStatusDTO tileDTO);
+
+    @PreAuthorize(GtasSecurityConstants.PRIVILEGE_ADMIN)
+    JsonServiceResponse createNewLane(LookoutLaneDTO laneDTO);
+
+    @PreAuthorize((GtasSecurityConstants.PRIVILEGE_ADMIN))
+    JsonServiceResponse updateLane(LookoutLaneDTO laneDTO);
+
+    @PreAuthorize((GtasSecurityConstants.PRIVILEGE_ADMIN))
+    JsonServiceResponse deleteLane(String laneId);
 }

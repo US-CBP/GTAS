@@ -8,9 +8,8 @@
 
 package gov.gtas.services;
 
-import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
-import gov.gtas.enumtype.POEStatusEnum;
+import gov.gtas.enumtype.LookoutStatusEnum;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
 import gov.gtas.services.jms.OmniLocalGtasSender;
@@ -213,9 +212,9 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 					}
 
 					for (HitDetail hd : hitDetailsToPersist) {
-						POEStatusEnum poeStatus = POEStatusEnum.INACTIVE;
+						LookoutStatusEnum poeStatus = LookoutStatusEnum.INACTIVE;
 						if(hitMakerIdMappedToLookoutStatus.get(hd.getHitMakerId())) { //If ANY category is worthy of promoting, ALL hit view statuses are set active
-							poeStatus = POEStatusEnum.ACTIVE;
+							poeStatus = LookoutStatusEnum.ACTIVE;
 						}
 						for (UserGroup ug : hitMakerMappedByPrimaryKey.get(hd.getHitMakerId())) {
 

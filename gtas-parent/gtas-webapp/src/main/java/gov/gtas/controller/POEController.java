@@ -7,9 +7,10 @@ package gov.gtas.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.model.POELane;
+import gov.gtas.model.LookoutLane;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.POEService;
+import gov.gtas.services.dto.LookoutLaneDTO;
 import gov.gtas.services.dto.LookoutStatusDTO;
 import gov.gtas.services.dto.POETileServiceRequest;
 import org.slf4j.Logger;
@@ -40,9 +41,28 @@ public class POEController {
 
     // GET ALL LANES
     @RequestMapping(method = RequestMethod.GET, value = "/api/POE/lanes")
-    public List<POELane> getAllLanes() {
+    public List<LookoutLane> getAllLanes() {
         return poeService.getAllLanes();
     }
+
+    // CREATE A NEW LANE
+    @RequestMapping(method = RequestMethod.POST, value = "/api/POE/lanes", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public JsonServiceResponse createNewLane(@RequestBody LookoutLaneDTO poeLane) {
+        return poeService.createNewLane(poeLane);
+    }
+
+    // UPDATE AN EXISTING LANE
+    @RequestMapping(method = RequestMethod.PUT, value = "/api/POE/lanes", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public JsonServiceResponse updateLane(@RequestBody LookoutLaneDTO poeLane) {
+        return poeService.updateLane(poeLane);
+    }
+
+    // DELETE AN EXISTING LANE
+    @RequestMapping(method = RequestMethod.DELETE, value = "/api/POE/lanes/{id}")
+    public JsonServiceResponse createNewLane(@PathVariable(value = "id") String laneId) {
+        return poeService.deleteLane(laneId);
+    }
+
 
     // GET ALL TILES
     @RequestMapping(method = RequestMethod.GET, value = "/api/POE/tiles", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)

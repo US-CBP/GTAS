@@ -10,7 +10,7 @@ package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.enumtype.HitViewStatusEnum;
-import gov.gtas.enumtype.POEStatusEnum;
+import gov.gtas.enumtype.LookoutStatusEnum;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -24,12 +24,12 @@ public class HitViewStatus extends BaseEntityAudit {
 	}
 
 	public HitViewStatus(HitDetail hitDetail, UserGroup userGroup, HitViewStatusEnum hvse, Passenger passenger,
-						 POEStatusEnum poeStatusEnum) {
+						 LookoutStatusEnum lookoutStatusEnum) {
 		this.hitDetail = hitDetail;
 		this.userGroup = userGroup;
 		this.hitViewStatusEnum = hvse;
 		this.passenger = passenger;
-		this.poeStatusEnum = poeStatusEnum;
+		this.lookoutStatusEnum = lookoutStatusEnum;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -52,8 +52,8 @@ public class HitViewStatus extends BaseEntityAudit {
 	private HitViewStatusEnum hitViewStatusEnum;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "poe_status", nullable = false)
-	private POEStatusEnum poeStatusEnum;
+	@Column(name = "lookout_status", nullable = false)
+	private LookoutStatusEnum lookoutStatusEnum;
 
 	public HitDetail getHitDetail() {
 		return hitDetail;
@@ -79,9 +79,9 @@ public class HitViewStatus extends BaseEntityAudit {
 		this.hitViewStatusEnum = hitViewStatusEnum;
 	}
 
-	public POEStatusEnum getPoeStatusEnum() { return poeStatusEnum; }
+	public LookoutStatusEnum getLookoutStatusEnum() { return lookoutStatusEnum; }
 
-	public void setPoeStatusEnum(POEStatusEnum poeStatusEnum) { this.poeStatusEnum = poeStatusEnum; }
+	public void setLookoutStatusEnum(LookoutStatusEnum lookoutStatusEnum) { this.lookoutStatusEnum = lookoutStatusEnum; }
 
 	@Override
 	public boolean equals(Object o) {

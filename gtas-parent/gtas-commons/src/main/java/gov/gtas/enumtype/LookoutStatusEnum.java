@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 
-public enum POEStatusEnum {
+public enum LookoutStatusEnum {
 
     ACTIVE("Active"),
 
@@ -29,18 +29,20 @@ public enum POEStatusEnum {
 
     DIDNOTBOARD("Did Not Board"),
 
-    INACTIVE("Inactive");
+    INACTIVE("Inactive"),
+
+    UNCATEGORIZED("Uncategorized");
 
     private String POEStatus;
 
-    POEStatusEnum(String POEStatus){
+    LookoutStatusEnum(String POEStatus){
         this.POEStatus = POEStatus;
     }
 
-    private static final Map<String, POEStatusEnum> stringToEnum = Stream.of(values())
+    private static final Map<String, LookoutStatusEnum> stringToEnum = Stream.of(values())
             .collect(toMap(o -> o.toString().toUpperCase(), e -> e));
 
-    public static Optional<POEStatusEnum> fromString(String entityName) {
+    public static Optional<LookoutStatusEnum> fromString(String entityName) {
         return Optional.ofNullable(stringToEnum.get(entityName.toUpperCase()));
     }
 

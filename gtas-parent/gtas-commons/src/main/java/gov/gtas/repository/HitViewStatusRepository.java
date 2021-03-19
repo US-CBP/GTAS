@@ -35,6 +35,7 @@ public interface HitViewStatusRepository extends CrudRepository<HitViewStatus, L
     @Query("select hvs from HitViewStatus hvs " +
             "left join fetch hvs.passenger p " +
             "left join fetch p.flight f " +
+            "left join fetch p.pnrs " +
             "left join fetch p.passengerDetails pds " +
             "left join fetch p.documents doc " +
             "left join fetch f.mutableFlightDetails mf " +

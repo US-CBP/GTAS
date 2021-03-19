@@ -5,8 +5,13 @@
  */
 package gov.gtas.repository;
 
-import gov.gtas.model.POELane;
+import gov.gtas.model.LookoutLane;
+import gov.gtas.model.User;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-public interface POELaneRepository extends CrudRepository<POELane, Long> {
+public interface POELaneRepository extends CrudRepository<LookoutLane, Long> {
+
+    @Query("select l from LookoutLane l where l.archived = false  OR l.archived IS NULL")
+    Iterable<LookoutLane> getNonArchivedLanes();
 }
