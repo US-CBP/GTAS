@@ -5,7 +5,9 @@ ENV NEO4J_dbms_active__database=gtas_db \
     NEO4J_dbms_connector_https_listen__address=:7473 \
     NEO4J_dbms_connector_https_enabled=true \
     NEO4J_dbms_logs_query_allocation__logging__enabled=true \
-    NEO4J_dbms_logs_query_enabled=true
+    NEO4J_dbms_logs_query_enabled=true \
+    NEO4J_dbms_security_procedures_unrestricted=apoc.,algo. \
+    NEO4J_dbms_security_procedures_whitelist=apoc.,algo.
 
 RUN mkdir -p /var/lib/neo4j/https/certificates/revoked /var/lib/neo4j/https/certificates/trusted
 
