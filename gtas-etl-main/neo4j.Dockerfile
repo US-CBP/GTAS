@@ -9,7 +9,7 @@ ENV NEO4J_dbms_active__database=gtas_db \
 
 RUN mkdir -p /var/lib/neo4j/https/certificates/revoked /var/lib/neo4j/https/certificates/trusted
 
-ENTRYPOINT export JAVA_TOOL_OPTIONS="-XX:NativeMemoryTracking=detail -XX:+PrintNMTStatistics -XX:+UnlockDiagnosticVMOptions" && \
+ENTRYPOINT export JAVA_TOOL_OPTIONS="-XX:NativeMemoryTracking=detail -XX:+UnlockDiagnosticVMOptions -XX:+PrintNMTStatistics" && \
     cp -f /var/lib/neo4j/https/certificates/key/neo4j.key /var/lib/neo4j/https/certificates/neo4j.key && \
     cp -f /var/lib/neo4j/https/certificates/cert/neo4j.cert /var/lib/neo4j/https/certificates/neo4j.cert && \
     /docker-entrypoint.sh neo4j
