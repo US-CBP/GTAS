@@ -6,6 +6,10 @@ ENV NEO4J_dbms_active__database=gtas_db \
     NEO4J_dbms_connector_https_enabled=true \
     NEO4J_dbms_logs_query_allocation__logging__enabled=true \
     NEO4J_dbms_logs_query_enabled=true \
+    NEO4J_apoc_export_file_enabled=true \
+    NEO4J_apoc_import_file_enabled=true \
+    NEO4J_apoc_import_file_use__neo4j__config=true \
+    NEO4JLABS_PLUGINS=\[\"apoc\"\] \
     NEO4J_dbms_security_procedures_unrestricted=apoc.,algo. \
     NEO4J_dbms_security_procedures_whitelist=apoc.,algo.
 
