@@ -44,12 +44,18 @@ public class EtlScheduledTasks {
 	 */
 
 	@Scheduled(fixedDelayString = "${neo4j.execInterval}000")
-	public void startEtl() {
-
+	public void startNeo4jEtl() {
+		
 		simpleAsyncTaskExecutor.execute(runnableTask);
+	}
+	
+	@Scheduled(fixedDelayString = "${report.execInterval}000")
+	public void startReportEtl() {
+
 		simpleAsyncTaskExecutor.execute(reportEtlRunnableTask);
 
 	}
+
 
 	@PostConstruct
 	public void logProperties() {

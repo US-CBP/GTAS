@@ -24,12 +24,12 @@ COPY ./docker-resources/default.application.properties /usr/local/tomcat/conf/ap
 COPY ./docker-resources/logrotate.conf /
 COPY ./docker-resources/server.xml /usr/local/tomcat/conf/
 
-RUN apt-get -y update && apt-get install -y logrotate wget
+RUN apt-get -y update && apt-get install -y logrotate wget unzip
 RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
 RUN tar -C /usr/local/bin -xzf dockerize-linux-amd64-v0.6.1.tar.gz
 
 WORKDIR /usr/local/tomcat/webapps/gtas
-RUN  jar -xvf /usr/local/tomcat/webapps/gtas.war
+RUN rm -rf /usr/local/tomcat/webapps/gtas && unzip -xvf /usr/local/tomcat/webapps/gtas.war
 
 WORKDIR /usr/local/tomcat/bin
-ENTRYPOINT mkdir -p /scheduler-logs/temp /temp && dockerize -wait tcp://${DB_HOST}:3306 -timeout 1000s logrotate /logrotate.conf && catalina.sh run
+ENTRYPOINT mkdir -p /scheduler-logs/temp /temp && dockerize -wait tcp://${DB_HOST}:3306 -wait tcp://${NEO4J_HOST}:7687 -timeout 1000s logrotate /logrotate.conf && catalina.sh run

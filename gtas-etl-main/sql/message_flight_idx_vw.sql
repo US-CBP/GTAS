@@ -95,11 +95,10 @@ INNER JOIN gtas.apis_message apm ON msg.id = apm.id
 INNER JOIN gtas.apis_message_flight amf ON apm.id = amf.apis_message_id 
 INNER JOIN gtas.flight f ON amf.flight_id= f.id 
 INNER JOIN gtas.mutable_flight_details mfd ON f.id = mfd.flight_id 
-INNER JOIN  gtas.flight_passenger_count fpc ON fpc.fp_flight_id = f.id AND f.id_tag IS NOT NULL 
+INNER JOIN  gtas.flight_passenger_count fpc ON fpc.fp_flight_id = f.id 
 WHERE mst.ms_status NOT IN ('RECEIVED','PARSED','FAILED_PARSING','FAILED_LOADING','FAILED_PRE_PARSE')
 AND mst.message_flight_idx_flag IS NULL
 AND (f.direction = 'I' OR f.direction = 'O')
-ORDER BY msg.id, f.id
 LIMIT 5000
 )
 
@@ -199,11 +198,10 @@ INNER JOIN gtas.pnr pnr ON msg.id = pnr.id
 INNER JOIN gtas.pnr_flight pfl ON pnr.id = pfl.pnr_id 
 INNER JOIN gtas.flight f ON pfl.flight_id = f.id 
 INNER JOIN gtas.mutable_flight_details mfd ON f.id = mfd.flight_id 
-INNER JOIN  gtas.flight_passenger_count fpc ON fpc.fp_flight_id = f.id AND f.id_tag IS NOT NULL 
+INNER JOIN  gtas.flight_passenger_count fpc ON fpc.fp_flight_id = f.id
 WHERE mst.ms_status NOT IN ('RECEIVED','PARSED','FAILED_PARSING','FAILED_LOADING','FAILED_PRE_PARSE')
 AND mst.message_flight_idx_flag IS NULL
 AND (f.direction = 'I' OR f.direction = 'O')
-ORDER BY msg.id, f.id
 LIMIT 10000
 )
 ORDER BY id ASC

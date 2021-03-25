@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>gtas-read-message-flight</name>
+    <name>gtas-read-hit_detail</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -530,23 +530,8 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Text file output -temp file</from>
-      <to>Identify last row in a stream</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Identify last row in a stream</from>
       <to>Filter rows</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Filter rows</from>
-      <to>Dummy (do nothing)</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Dummy (do nothing)</from>
-      <to>Properties output</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -565,7 +550,7 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Dummy (do nothing)</from>
+      <from>Dummy - after last row</from>
       <to>Set variables</to>
       <enabled>Y</enabled>
     </hop>
@@ -580,28 +565,73 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Table input</from>
-      <to>Add constants</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Add constants</from>
       <to>Select values</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values</from>
-      <to>Text file output</to>
+      <from>Filter rows</from>
+      <to>Dummy (do nothing) - not-last-rec</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Text file output</from>
+      <from>Dummy - after last row</from>
+      <to>Properties output</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values</from>
       <to>JSON output</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
+      <from>Table input</from>
+      <to>Dummy - after reading data</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy - after reading data</from>
+      <to>Add constants</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy - after reading data</from>
+      <to>Identify last row in a stream</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants 2</from>
+      <to>Select values - format id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values - format id</from>
+      <to>Dummy - after last row</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
       <from>Filter rows</from>
-      <to>Dummy (do nothing) - not-last-row</to>
+      <to>Dummy-last-hit-detail-idx-row</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy-last-hit-detail-idx-row</from>
+      <to>Add constants 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy-last-hit-detail-idx-row</from>
+      <to>Add constants 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants 3</from>
+      <to>Get system info</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get system info</from>
+      <to>Update-hit-detail-read-time</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -636,7 +666,7 @@
         <currency/>
         <decimal/>
         <group/>
-        <nullif>MESSAGE_FLIGHT_IDX_LAST_REC_ID</nullif>
+        <nullif>HIT_DETAIL_IDX_LAST_REC_ID</nullif>
         <length>-1</length>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
@@ -652,7 +682,7 @@
     </remotesteps>
     <GUI>
       <xloc>144</xloc>
-      <yloc>400</yloc>
+      <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -721,7 +751,7 @@
     </GUI>
   </step>
   <step>
-    <name>Dummy (do nothing)</name>
+    <name>Dummy - after last row</name>
     <type>Dummy</type>
     <description/>
     <distribute>N</distribute>
@@ -740,8 +770,33 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1232</xloc>
-      <yloc>416</yloc>
+      <xloc>1056</xloc>
+      <yloc>368</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (do nothing) - not-last-rec</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>496</xloc>
+      <yloc>480</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -756,8 +811,8 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Dummy (do nothing)</send_true_to>
-    <send_false_to>Dummy (do nothing) - not-last-row</send_false_to>
+    <send_true_to>Dummy-last-hit-detail-idx-row</send_true_to>
+    <send_false_to>Dummy (do nothing) - not-last-rec</send_false_to>
     <compare>
       <condition>
         <negated>N</negated>
@@ -784,8 +839,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1232</xloc>
-      <yloc>304</yloc>
+      <xloc>416</xloc>
+      <yloc>368</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -810,8 +865,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1232</xloc>
-      <yloc>192</yloc>
+      <xloc>288</xloc>
+      <yloc>368</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -880,7 +935,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>448</xloc>
+      <xloc>592</xloc>
       <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
@@ -921,16 +976,24 @@
         <element>id</element>
       </field>
       <field>
-        <name>message_type</name>
-        <element>message_type</element>
+        <name>last_name</name>
+        <element>last_name</element>
       </field>
       <field>
-        <name>message_create_dtm</name>
-        <element>message_create_dtm</element>
+        <name>first_name</name>
+        <element>first_name</element>
       </field>
       <field>
-        <name>transmission_date</name>
-        <element>transmission_date</element>
+        <name>middle_name</name>
+        <element>middle_name</element>
+      </field>
+      <field>
+        <name>hit_type</name>
+        <element>hit_type</element>
+      </field>
+      <field>
+        <name>title</name>
+        <element>title</element>
       </field>
       <field>
         <name>flight_id_tag</name>
@@ -941,16 +1004,60 @@
         <element>flight_id</element>
       </field>
       <field>
-        <name>flight_number</name>
-        <element>flight_number</element>
+        <name>flight_date</name>
+        <element>flight_date</element>
       </field>
       <field>
-        <name>full_flight_number</name>
-        <element>full_flight_number</element>
+        <name>flight_timestamp</name>
+        <element>flight_timestamp</element>
       </field>
       <field>
-        <name>carrier</name>
-        <element>carrier</element>
+        <name>flight_year</name>
+        <element>flight_year</element>
+      </field>
+      <field>
+        <name>flight_week</name>
+        <element>flight_week</element>
+      </field>
+      <field>
+        <name>flight_hour</name>
+        <element>flight_hour</element>
+      </field>
+      <field>
+        <name>hit_source_type</name>
+        <element>hit_source_type</element>
+      </field>
+      <field>
+        <name>hit_status</name>
+        <element>hit_status</element>
+      </field>
+      <field>
+        <name>hit_author</name>
+        <element>hit_author</element>
+      </field>
+      <field>
+        <name>hit_updated_date</name>
+        <element>hit_updated_date</element>
+      </field>
+      <field>
+        <name>hit_updated_timestamp</name>
+        <element>hit_updated_timestamp</element>
+      </field>
+      <field>
+        <name>hit_category</name>
+        <element>hit_category</element>
+      </field>
+      <field>
+        <name>hit_category_desc</name>
+        <element>hit_category_desc</element>
+      </field>
+      <field>
+        <name>hit_category_severity</name>
+        <element>hit_category_severity</element>
+      </field>
+      <field>
+        <name>user_group</name>
+        <element>user_group</element>
       </field>
       <field>
         <name>direction</name>
@@ -965,88 +1072,28 @@
         <element>direction_desc</element>
       </field>
       <field>
-        <name>flight_date</name>
-        <element>flight_date</element>
+        <name>carrier</name>
+        <element>carrier</element>
       </field>
       <field>
-        <name>flight_year</name>
-        <element>flight_year</element>
-      </field>
-      <field>
-        <name>flight_month</name>
-        <element>flight_month</element>
-      </field>
-      <field>
-        <name>flight_month_name</name>
-        <element>flight_month_name</element>
-      </field>
-      <field>
-        <name>flight_week</name>
-        <element>flight_week</element>
-      </field>
-      <field>
-        <name>flight_day</name>
-        <element>flight_day</element>
-      </field>
-      <field>
-        <name>flight_hour</name>
-        <element>flight_hour</element>
+        <name>flight_number</name>
+        <element>flight_number</element>
       </field>
       <field>
         <name>origin</name>
         <element>origin</element>
       </field>
       <field>
-        <name>full_origin</name>
-        <element>full_origin</element>
-      </field>
-      <field>
-        <name>origin_country</name>
-        <element>origin_country</element>
-      </field>
-      <field>
         <name>destination</name>
         <element>destination</element>
       </field>
       <field>
-        <name>full_destination</name>
-        <element>full_destination</element>
+        <name>eta_timestamp</name>
+        <element>eta_timestamp</element>
       </field>
       <field>
-        <name>destination_country</name>
-        <element>destination_country</element>
-      </field>
-      <field>
-        <name>route</name>
-        <element>route</element>
-      </field>
-      <field>
-        <name>full_utc_etd_timestamp</name>
-        <element>full_utc_etd_timestamp</element>
-      </field>
-      <field>
-        <name>full_utc_eta_timestamp</name>
-        <element>full_utc_eta_timestamp</element>
-      </field>
-      <field>
-        <name>inbound_passenger_count</name>
-        <element>inbound_passenger_count</element>
-      </field>
-      <field>
-        <name>outbound_passenger_count</name>
-        <element>outbound_passenger_count</element>
-      </field>
-      <field>
-        <name>passenger_count</name>
-        <element>passenger_count</element>
-      </field>
-      <field>
-        <name>msg_trans_comp_hrs</name>
-        <element>msg_trans_comp_hrs</element>
-      </field>
-      <field>
-        <name>msg_trans_comp_mins</name>
-        <element>msg_trans_comp_mins</element>
+        <name>etd_timestamp</name>
+        <element>etd_timestamp</element>
       </field>
     </fields>
     <attributes/>
@@ -1058,7 +1105,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>288</xloc>
+      <xloc>464</xloc>
       <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1074,13 +1121,13 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <keyfield>LAST_RECORD_PROP_NAME</keyfield>
+    <keyfield>LAST_RECORD_ID</keyfield>
     <valuefield>id</valuefield>
     <comment>Id of the last record</comment>
     <fileNameInField>N</fileNameInField>
     <fileNameField/>
     <file>
-      <name>${Internal.Entry.Current.Directory}/${EXT_VAR_LAST_RECORD_FILE}</name>
+      <name>${Internal.Entry.Current.Directory}/${EXT_VAR_HIT_DETAIL_INDEX_ID_TEMP}</name>
       <extention/>
       <split>N</split>
       <haspartno>N</haspartno>
@@ -1088,7 +1135,7 @@
       <add_time>N</add_time>
       <create_parent_folder>N</create_parent_folder>
       <addtoresult>N</addtoresult>
-      <append>Y</append>
+      <append>N</append>
     </file>
     <attributes/>
     <cluster_schema/>
@@ -1099,8 +1146,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1136</xloc>
-      <yloc>480</yloc>
+      <xloc>1200</xloc>
+      <yloc>368</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1138,7 +1185,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>624</xloc>
+      <xloc>704</xloc>
       <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1174,8 +1221,8 @@
         <storage_type/>
       </meta>
       <meta>
-        <name>full_utc_eta_timestamp</name>
-        <rename>full_utc_eta_timestamp</rename>
+        <name>flight_timestamp</name>
+        <rename>flight_timestamp</rename>
         <type>Date</type>
         <length>-2</length>
         <precision>-2</precision>
@@ -1191,8 +1238,25 @@
         <storage_type/>
       </meta>
       <meta>
-        <name>full_utc_etd_timestamp</name>
-        <rename>full_utc_etd_timestamp</rename>
+        <name>hit_updated_date</name>
+        <rename>hit_updated_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>hit_updated_timestamp</name>
+        <rename>hit_updated_timestamp</rename>
         <type>Date</type>
         <length>-2</length>
         <precision>-2</precision>
@@ -1208,8 +1272,8 @@
         <storage_type/>
       </meta>
       <meta>
-        <name>transmission_date</name>
-        <rename>transmission_date</rename>
+        <name>eta_timestamp</name>
+        <rename>eta_timestamp</rename>
         <type>Date</type>
         <length>-2</length>
         <precision>-2</precision>
@@ -1225,8 +1289,8 @@
         <storage_type/>
       </meta>
       <meta>
-        <name>message_create_dtm</name>
-        <rename>message_create_dtm</rename>
+        <name>etd_timestamp</name>
+        <rename>etd_timestamp</rename>
         <type>Date</type>
         <length>-2</length>
         <precision>-2</precision>
@@ -1236,23 +1300,6 @@
         <date_format_timezone/>
         <lenient_string_to_number>false</lenient_string_to_number>
         <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-      <meta>
-        <name>full_destination</name>
-        <rename>full_destination</rename>
-        <type>String</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask/>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding>UTF-8</encoding>
         <decimal_symbol/>
         <grouping_symbol/>
         <currency_symbol/>
@@ -1285,8 +1332,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>144</xloc>
-      <yloc>304</yloc>
+      <xloc>336</xloc>
+      <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1304,7 +1351,7 @@
     <fields>
       <field>
         <field_name>id</field_name>
-        <variable_name>MESSAGE_FLIGHT_IDX_LAST_REC_ID</variable_name>
+        <variable_name>HIT_DETAIL_IDX_LAST_REC_ID</variable_name>
         <variable_type>ROOT_JOB</variable_type>
         <default_value/>
       </field>
@@ -1319,8 +1366,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1328</xloc>
-      <yloc>480</yloc>
+      <xloc>1232</xloc>
+      <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1372,7 +1419,7 @@
     <connection>gtas-db</connection>
     <sql>SELECT
  *
-FROM message_flight_idx_vw
+FROM hit_detail_idx_vw
 
 </sql>
     <limit>0</limit>
@@ -1390,76 +1437,7 @@ FROM message_flight_idx_vw
     </remotesteps>
     <GUI>
       <xloc>144</xloc>
-      <yloc>720</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Text file output</name>
-    <type>TextFileOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <separator/>
-    <enclosure/>
-    <enclosure_forced>N</enclosure_forced>
-    <enclosure_fix_disabled>N</enclosure_fix_disabled>
-    <header>N</header>
-    <footer>N</footer>
-    <format>UNIX</format>
-    <compression>None</compression>
-    <encoding/>
-    <endedLine/>
-    <fileNameInField>N</fileNameInField>
-    <fileNameField/>
-    <create_parent_folder>Y</create_parent_folder>
-    <file>
-      <name>${Internal.Entry.Current.Directory}/${EXT_VAR_MESSAGE_FLIGHT_INDEX_ID_TEMP}</name>
-      <servlet_output>N</servlet_output>
-      <do_not_open_new_file_init>N</do_not_open_new_file_init>
-      <extention/>
-      <append>Y</append>
-      <split>N</split>
-      <haspartno>N</haspartno>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <SpecifyFormat>N</SpecifyFormat>
-      <date_time_format/>
-      <add_to_result_filenames>Y</add_to_result_filenames>
-      <pad>N</pad>
-      <fast_dump>N</fast_dump>
-      <splitevery/>
-    </file>
-    <fields>
-      <field>
-        <name>id</name>
-        <type>Integer</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>none</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>144</xloc>
-      <yloc>192</yloc>
+      <yloc>704</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1488,7 +1466,7 @@ FROM message_flight_idx_vw
     <fileNameField/>
     <create_parent_folder>Y</create_parent_folder>
     <file>
-      <name>${Internal.Entry.Current.Directory}/${EXT_VAR_MESSAGE_FLIGHT_INDEX_TEMP_FILE}</name>
+      <name>${Internal.Entry.Current.Directory}/${EXT_VAR_HIT_DETAIL_INDEX_TEMP_FILE}</name>
       <servlet_output>N</servlet_output>
       <do_not_open_new_file_init>N</do_not_open_new_file_init>
       <extention/>
@@ -1560,7 +1538,7 @@ FROM message_flight_idx_vw
       </output>
     </remotesteps>
     <GUI>
-      <xloc>832</xloc>
+      <xloc>864</xloc>
       <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1595,8 +1573,8 @@ FROM message_flight_idx_vw
       </output>
     </remotesteps>
     <GUI>
-      <xloc>976</xloc>
-      <yloc>480</yloc>
+      <xloc>1312</xloc>
+      <yloc>368</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1637,10 +1615,10 @@ NO DATA  IN THE STREAM
     </GUI>
   </step>
   <step>
-    <name>Dummy (do nothing) - not-last-row</name>
+    <name>Dummy - after reading data</name>
     <type>Dummy</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -1656,8 +1634,232 @@ NO DATA  IN THE STREAM
       </output>
     </remotesteps>
     <GUI>
-      <xloc>944</xloc>
-      <yloc>304</yloc>
+      <xloc>144</xloc>
+      <yloc>480</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Add constants 2</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>LAST_RECORD_ID</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>last_record_id</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>768</xloc>
+      <yloc>368</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values - format id</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>id</name>
+        <rename>id</rename>
+        <type>Integer</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>#</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>912</xloc>
+      <yloc>368</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy-last-hit-detail-idx-row</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>576</xloc>
+      <yloc>368</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Update-hit-detail-read-time</name>
+    <type>Update</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>gtas-db</connection>
+    <skip_lookup>N</skip_lookup>
+    <commit>100</commit>
+    <use_batch>N</use_batch>
+    <error_ignored>N</error_ignored>
+    <ignore_flag_field/>
+    <lookup>
+      <schema/>
+      <table>${EXT_VAR_GTAS_REPORT_VIEW_CONTROLLER_TABLE_NAME}</table>
+      <key>
+        <name>CONROLLER_ID</name>
+        <field>ID</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>hit_detail_idx_last_read_time</name>
+        <rename>CURRENT_TIMESTAMP</rename>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>976</xloc>
+      <yloc>496</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Add constants 3</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>CONROLLER_ID</name>
+        <type>Number</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>1</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>672</xloc>
+      <yloc>432</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Get system info</name>
+    <type>SystemInfo</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>CURRENT_TIMESTAMP</name>
+        <type>system date (variable)</type>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>800</xloc>
+      <yloc>496</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
