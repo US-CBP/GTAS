@@ -1073,6 +1073,7 @@ public class EventReportPdfServiceImpl extends EventReportPdfTemplateService
 
 			str = str.replaceAll("\\n", "");
 			str = str.replaceAll("\\r", "");
+			str = str.replaceAll("\\t", "");
 			return str;
 
 		}
