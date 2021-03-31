@@ -23,6 +23,7 @@ import gov.gtas.services.dto.LookoutStatusDTO;
 import gov.gtas.services.dto.POETileServiceRequest;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.passenger.DocumentVo;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,8 +52,15 @@ public class POEServiceImpl implements POEService {
     public Set<LookoutStatusDTO> getAllTiles(String userId, POETileServiceRequest request) {
         Set<LookoutStatusDTO> tiles = new HashSet<LookoutStatusDTO>();
        Set<HitViewStatus> hvs = hitViewStatusRepository.findAllWithNotClosedAndWithinRange(userService.fetchUserGroups(userId),request.getEtaStart(), request.getEtaEnd());
+       Set<HitViewStatus> hvsToBeUpdated = new HashSet<HitViewStatus>();
        for(HitViewStatus hv : hvs ){
+           if(isMissedOrInvalid(hv)){
+               hvsToBeUpdated.add(hv);
+           }
           tiles.add(createLookoutTileDTO(hv)); //TODO: distinct passenger on query with a lot more configuration in the service layer for duplicates handling
+       }
+       if(!hvsToBeUpdated.isEmpty()){
+           hitViewStatusRepository.saveAll(hvsToBeUpdated);
        }
         return tiles;
     }
@@ -131,12 +139,12 @@ public class POEServiceImpl implements POEService {
         String paxLastName = hvs.getPassenger().getPassengerDetails().getLastName();
         Set<Document> documents = hvs.getPassenger().getDocuments();
         DocumentVo docVo = new DocumentVo();
-        docVo.fromDocument(documents.iterator().next()); //TODO: first doc only for now
+        docVo = docVo.fromDocument(documents.iterator().next()); //TODO: first doc only for now
         HitCategory hitCategory = hvs.getHitDetail().getHitMaker().getHitCategory();
         Date flightCountdownTime = hvs.getPassenger().getFlight().getFlightCountDownView().getCountDownTimer();
         String direction = hvs.getPassenger().getFlight().getDirection();
         boolean isApis = false;
-        if(hvs.getPassenger().getPnrs().isEmpty()){ //if no PNRs, must be APIS information only
+        if(hvs.getPassenger().getPnrs().isEmpty()) { //if no PNRs, must be APIS information only
             isApis = true;
         }
         LookoutStatusEnum status = hvs.getLookoutStatusEnum();
@@ -145,5 +153,23 @@ public class POEServiceImpl implements POEService {
                 hitCategory.getName(), flightCountdownTime, status.name(), direction, isApis);
 
         return tile;
+    }
+
+    private boolean isMissedOrInvalid(HitViewStatus hvs){
+        if(hvs.getLookoutStatusEnum().name() != LookoutStatusEnum.INACTIVE.name()
+                && hvs.getLookoutStatusEnum().name() != LookoutStatusEnum.MISSED.name() ) {
+            DateTime dateTime = new DateTime().minusDays(1); //TODO: set this to be a timeout variable somewhere
+            Date pastDue = dateTime.toDate();
+            Date alreadyLandedOrLeft = new Date();
+
+            if (hvs.getUpdatedAt() != null && hvs.getUpdatedAt().before(pastDue)) {
+                hvs.setLookoutStatusEnum(LookoutStatusEnum.INACTIVE);
+                return true;
+            } else if (hvs.getPassenger().getFlight().getFlightCountDownView().getCountDownTimer().before(alreadyLandedOrLeft)) {
+                hvs.setLookoutStatusEnum(LookoutStatusEnum.MISSED);
+                return true;
+            }
+        }
+        return false;
     }
 }
