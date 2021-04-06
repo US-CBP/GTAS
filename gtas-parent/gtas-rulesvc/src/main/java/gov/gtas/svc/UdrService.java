@@ -113,4 +113,6 @@ public interface UdrService {
 	JsonServiceResponse deleteUdr(String userId, Long id);
 
 	public KnowledgeBase recompileRules(final String kbName, String userId);
+
+	public void reblanceRules();
 }

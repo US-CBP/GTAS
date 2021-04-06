@@ -18,12 +18,13 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
  * Rule Repository with custom queries.
  */
-public interface UdrRuleRepository extends CrudRepository<UdrRule, Long>, JpaSpecificationExecutor<UdrRule> {
+public interface UdrRuleRepository extends PagingAndSortingRepository<UdrRule, Long>, JpaSpecificationExecutor<UdrRule> {
 	public List<UdrRule> findByDeleted(YesNoEnum deleted);
 
 	@Query("SELECT udr FROM UdrRule udr WHERE udr.deleted = 'N' and udr.author.userId = :authorUserId")
@@ -64,4 +65,7 @@ public interface UdrRuleRepository extends CrudRepository<UdrRule, Long>, JpaSpe
 
 	@Query("select udr.id, count(hd.id) from HitDetail hd, UdrRule udr where hd.hitMakerId = udr.id group by udr.id")
 	List<Object[]> getCounts();
+
+	@Query("select udr from UdrRule udr where udr.knowledgeBase.kbName = :kbName")
+	public List<UdrRule> findAllbyKbName(@Param("kbName") String kbName);
 }

@@ -55,6 +55,9 @@ public interface RulePersistenceService {
 	 * @return list of all non-deleted rules.
 	 */
 	public List<UdrRule> findAll();
+	
+	
+	public List<UdrRule> findAllByKbName(String kbName);
 
 	/**
 	 * Find and return the list of all UDR that have the "delete flag" set to "N".

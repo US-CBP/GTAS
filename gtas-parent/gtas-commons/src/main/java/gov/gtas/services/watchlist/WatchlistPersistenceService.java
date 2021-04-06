@@ -11,6 +11,9 @@ import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 import java.util.List;
 
 import gov.gtas.json.JsonServiceResponse;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import gov.gtas.enumtype.EntityEnum;
@@ -70,7 +73,12 @@ public interface WatchlistPersistenceService {
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	public Iterable<WatchlistItem> findAllWatchlistItems();
+	
+	Iterable<WatchlistItem> findAllWatchlistItemsByKnowledgeBaseName(String kbName);
 
+	
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
+	public Page<WatchlistItem> findAllWatchlistItems(Pageable pageRequest);
 	/**
 	 * Find and return the list of all non-compiled watch lists. (Either the compile
 	 * time stamp is null, or it is before the edit time stamp.)
@@ -133,5 +141,6 @@ public interface WatchlistPersistenceService {
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	public void deleteWatchlistItems(List<Long> watchlistItemIds);
+
 
 }

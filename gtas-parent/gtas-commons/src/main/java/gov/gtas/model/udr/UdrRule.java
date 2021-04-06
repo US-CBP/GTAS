@@ -79,6 +79,19 @@ public class UdrRule extends HitMaker {
 	@ManyToOne
 	@JoinColumn(name = "EDITED_BY", referencedColumnName = "user_id", nullable = false)
 	private User editedBy;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ITM_UDR_REF", referencedColumnName = "ID", nullable = true)
+	private KnowledgeBase knowledgeBase;
+	
+
+	public KnowledgeBase getKnowledgeBase() {
+		return knowledgeBase;
+	}
+
+	public void setKnowledgeBase(KnowledgeBase knowledgeBase) {
+		this.knowledgeBase = knowledgeBase;
+	}
 
 	/**
 	 * Constructor to be used by JPA EntityManager.

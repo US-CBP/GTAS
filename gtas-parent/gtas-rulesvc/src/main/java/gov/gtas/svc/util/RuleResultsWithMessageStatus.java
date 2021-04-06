@@ -7,6 +7,17 @@ import java.util.List;
 public class RuleResultsWithMessageStatus {
 
 	private RuleResults ruleResults;
+	private List<MessageStatus> messageStatusList;
+	private int number;
+	
+	
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
 
 	public List<MessageStatus> getMessageStatusList() {
 		return messageStatusList;
@@ -16,7 +27,6 @@ public class RuleResultsWithMessageStatus {
 		this.messageStatusList = messageStatusList;
 	}
 
-	private List<MessageStatus> messageStatusList;
 
 	public RuleResults getRuleResults() {
 		return ruleResults;

@@ -36,6 +36,7 @@ import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.svc.TargetingService;
+import gov.gtas.svc.util.RuleExecutionContext;
 import gov.gtas.svc.util.RuleResultsWithMessageStatus;
 import gov.gtas.svc.util.TargetingResultUtils;
 
@@ -57,6 +58,8 @@ public class RuleRunnerThread extends RuleThread implements Callable<Boolean> {
 	private final AppConfigurationService appConfigurationService;
 
 	private List<MessageStatus> messageStatuses = new ArrayList<>();
+	
+	private RuleExecutionContext ruleExecutionContext;
 
 
 	private HitEmailNotificationService hitEmailNotificationService;
@@ -81,7 +84,7 @@ public class RuleRunnerThread extends RuleThread implements Callable<Boolean> {
 		RuleHitPersistenceService persistenceService = applicationContext.getBean(RuleHitPersistenceService.class);
 		AdditionalProcessingService additionalProcessingService = applicationContext.getBean(AdditionalProcessingService.class);
 		try {
-			ruleResults = targetingService.analyzeLoadedMessages(messageStatuses, rules);
+			ruleResults = targetingService.analyzeLoadedMessages(ruleExecutionContext, rules);
 			logger.debug("generating hit details");
 			Set<HitDetail> hitDetails = targetingService.generateHitDetails(ruleResults.getRuleResults());
 			logger.debug("About to batch");
@@ -142,5 +145,13 @@ public class RuleRunnerThread extends RuleThread implements Callable<Boolean> {
 	}
 	public void setRules(Map<String, KIEAndLastUpdate> rules) {
 		this.rules = rules;
+	}
+
+	public RuleExecutionContext getRuleExecutionContext() {
+		return ruleExecutionContext;
+	}
+
+	public void setRuleExecutionContext(RuleExecutionContext ruleExecutionContext) {
+		this.ruleExecutionContext = ruleExecutionContext;
 	}
 }

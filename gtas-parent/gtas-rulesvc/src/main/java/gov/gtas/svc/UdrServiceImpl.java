@@ -11,6 +11,7 @@ import static gov.gtas.constant.AuditLogConstants.UDR_LOG_UPDATE_MESSAGE;
 import static gov.gtas.constant.AuditLogConstants.UDR_LOG_UPDATE_META_MESSAGE;
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.constant.RuleConstants;
+import gov.gtas.constant.WatchlistConstants;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.error.ErrorHandlerFactory;
@@ -28,6 +29,8 @@ import gov.gtas.model.udr.json.MetaData;
 import gov.gtas.model.udr.json.QueryObject;
 import gov.gtas.model.udr.json.UdrSpecification;
 import gov.gtas.model.udr.json.util.JsonToDomainObjectConverter;
+import gov.gtas.model.watchlist.WatchlistItem;
+import gov.gtas.repository.KnowledgeBaseRepository;
 import gov.gtas.repository.udr.UdrRuleRepository;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.AuditLogPersistenceService;
@@ -49,6 +52,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -80,10 +86,15 @@ public class UdrServiceImpl implements UdrService {
 	// @RuleCategory changes
 	@Autowired
 	private HitCategoryService hitCategoryService;
+	
+	@Autowired
+	private KnowledgeBaseRepository knowledgeBaseRepository;
 
 	@Value("${hit.general.category}")
 	private Long defaultCategory;
 
+	Integer KB_SIZE = 10000;
+	
 	@Override
 	@Transactional
 	public UdrSpecification fetchUdr(String userId, String title) {
@@ -278,18 +289,18 @@ public class UdrServiceImpl implements UdrService {
 	 * @param userId
 	 */
 	public KnowledgeBase recompileRules(final String kbName, String userId) {
-		List<UdrRule> ruleList = rulePersistenceService.findAll();
+		List<UdrRule> ruleList = rulePersistenceService.findAllByKbName(kbName);
 		KnowledgeBase kb = null;
 		if (!CollectionUtils.isEmpty(ruleList)) {
 			kb = ruleManagementService.createKnowledgeBaseFromUdrRules(kbName, ruleList, userId);
 		} else {
 			kb = rulePersistenceService.findUdrKnowledgeBase(kbName);
 			if (kb != null) {
-				List<Rule> rules = rulePersistenceService.findRulesByKnowledgeBaseId(kb.getId());
-				if (CollectionUtils.isEmpty(rules)) {
-					ruleManagementService.deleteKnowledgeBase(kbName);
-					logger.warn("UdrService - no active rules -> deleting Knowledge Base!");
-				}
+			//	List<Rule> rules = rulePersistenceService.findRulesByKnowledgeBaseId(kb.getId());
+		//		if (CollectionUtils.isEmpty(rules)) {
+				//	ruleManagementService.deleteKnowledgeBase(kbName);
+			//		logger.warn("UdrService - no active rules -> deleting Knowledge Base!");
+			//	}
 			}
 		}
 		return kb;
@@ -487,5 +498,37 @@ public class UdrServiceImpl implements UdrService {
 		ruleCatSet.add(hitCategory);
 		ruleMeta.setRuleCategories(ruleCatSet);
 		ruleToSave.setHitCategory(hitCategory);
+	}
+	
+	@Override
+	public void reblanceRules() {
+	    Pageable pageRequest = PageRequest.of(0, KB_SIZE);
+	    Page<UdrRule> ruleItemPage = udrRuleRepository.findAll(pageRequest);
+	    String base_rule_name = RuleConstants.UDR_KNOWLEDGE_BASE_NAME;
+	    int rlKbNum = 1;
+	    while (!ruleItemPage.isEmpty()) {
+		    String rlKbName =  base_rule_name + "_" + rlKbNum;
+	        KnowledgeBase kb = knowledgeBaseRepository.anewName(rlKbName);
+	        rlKbNum++;
+	        if (kb == null) {
+	        	kb = new KnowledgeBase(rlKbName);
+	    		kb.setCreationDt(new Date());
+				kb = knowledgeBaseRepository.save(kb);
+	        }
+	        
+			kb.setCreationDt(new Date());
+			List<UdrRule> list = new ArrayList<>(ruleItemPage.getContent());
+			kb.getUdrRulesInKb().clear();
+			//kb.getRulesInKB().clear();
+	        for(UdrRule item : list) {
+	        	item.setKnowledgeBase(kb);
+	        	kb.getUdrRulesInKb().add(item);
+	        }
+	        udrRuleRepository.saveAll(list);
+			kb = knowledgeBaseRepository.save(kb);
+	        pageRequest = pageRequest.next(); // get the next page ready
+	        ruleItemPage = udrRuleRepository.findAll(pageRequest);
+			logger.info("Next rule page");
+	    } 
 	}
 }

@@ -221,8 +221,8 @@ public class TargetingResultUtils {
 			try {
 				if (!udrFilteredRules.isEmpty()) {
 					logger.debug("Updating UDR over max hits Flag");
-					RuleMetaRepository ruleMetaRepository = targetingResultServices.getRuleMetaRepository();
-					ruleMetaRepository.flagUdrRule(udrFilteredRules);
+					//RuleMetaRepository ruleMetaRepository = targetingResultServices.getRuleMetaRepository();
+					//ruleMetaRepository.flagUdrRule(udrFilteredRules);
 				}
 			} catch (Exception databaseException) {
 				logger.error("Caught error updating UDR: " + databaseException.getMessage());

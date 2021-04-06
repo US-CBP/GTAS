@@ -7,6 +7,7 @@ package gov.gtas.rule;
 
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceResult;
+import gov.gtas.model.udr.KnowledgeBase;
 
 import java.util.Map;
 

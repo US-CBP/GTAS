@@ -20,6 +20,7 @@ import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.rule.listener.RuleEventListenerUtils;
 import gov.gtas.services.udr.RulePersistenceService;
 import gov.gtas.svc.UdrService;
+import gov.gtas.model.udr.KnowledgeBase;
 
 import java.io.IOException;
 import java.util.*;

@@ -127,4 +127,8 @@ public interface WatchlistService {
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	void deleteWatchlistItems(List<Long> watchlistItemIds);
 
+	void rebalanceAndCreateWatchlist();
+
+	void rebalanceWatchlist();
+
 }
