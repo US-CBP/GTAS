@@ -434,7 +434,7 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>560</xloc>
+      <xloc>688</xloc>
       <yloc>672</yloc>
       <attributes_kjc/>
     </entry>
@@ -446,7 +446,7 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>736</xloc>
+      <xloc>976</xloc>
       <yloc>672</yloc>
       <attributes_kjc/>
     </entry>
@@ -596,8 +596,8 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>704</xloc>
-      <yloc>256</yloc>
+      <xloc>672</xloc>
+      <yloc>368</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -655,8 +655,8 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>928</xloc>
-      <yloc>176</yloc>
+      <xloc>976</xloc>
+      <yloc>368</yloc>
       <attributes_kjc/>
     </entry>
   </entries>
