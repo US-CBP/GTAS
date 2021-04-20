@@ -7,7 +7,6 @@ package gov.gtas.vo;
 
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.User;
-import gov.gtas.util.DateCalendarUtils;
 
 public class AuditRecordVo {
 	private String actionType;
@@ -15,12 +14,7 @@ public class AuditRecordVo {
 	private String message;
 	private String user;
 	private String userName;
-	@Deprecated
-	private String timestamp;
-	private String target;
-	private String actionData;
-	private Long timestampInMilli;
-	
+	private Long timestamp;	
 
 	public AuditRecordVo() {
 	}
@@ -31,18 +25,14 @@ public class AuditRecordVo {
 		this.message = auditRecord.getMessage();
 		final User usr = auditRecord.getUser();
 		this.user = usr.getUserId();
-		this.userName = usr.getFirstName() + " " + usr.getLastName();
-		this.timestamp = DateCalendarUtils.formatRuleEngineDateTime(auditRecord.getTimestamp());
-		this.target = auditRecord.getTarget();
-		this.actionData = auditRecord.getActionData();
 	}
 
-	public Long getTimestampInMilli() {
-		return timestampInMilli;
+	public Long getTimestamp() {
+		return timestamp;
 	}
 
-	public void setTimestampInMilli(Long timestampInMilli) {
-		this.timestampInMilli = timestampInMilli;
+	public void setTimestamp(Long timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	public String getActionType() {
@@ -76,59 +66,6 @@ public class AuditRecordVo {
 	public void setUser(String userId) {
 		this.user = userId;
 	}
-
-	public String getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(String timestamp) {
-		this.timestamp = timestamp;
-	}
-
-	/**
-	 * @return the userName
-	 */
-	public String getUserName() {
-		return userName;
-	}
-
-	/**
-	 * @param userName
-	 *            the userName to set
-	 */
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	/**
-	 * @return the target
-	 */
-	public String getTarget() {
-		return target;
-	}
-
-	/**
-	 * @param target
-	 *            the target to set
-	 */
-	public void setTarget(String target) {
-		this.target = target;
-	}
-
-	/**
-	 * @return the actionData
-	 */
-	public String getActionData() {
-		return actionData;
-	}
-
-	/**
-	 * @param actionData
-	 *            the actionData to set
-	 */
-	public void setActionData(String actionData) {
-		this.actionData = actionData;
-	}
 	
 	public static AuditRecordVo from(AuditRecord auditRecord) {
 		AuditRecordVo vo = new AuditRecordVo();
@@ -138,11 +75,7 @@ public class AuditRecordVo {
 		vo.setStatus(auditRecord.getActionStatus().toString());
 		vo.setMessage(auditRecord.getMessage());
 		vo.setUser(user.getUserId());
-		vo.setUserName(user.getFirstName() + " " + user.getLastName());
-		vo.setTimestamp(DateCalendarUtils.formatRuleEngineDateTime(auditRecord.getTimestamp()));
-		vo.setTimestampInMilli(auditRecord.getTimestamp().getTime());
-		vo.setTarget(auditRecord.getTarget());
-		vo.setActionData(auditRecord.getActionData());
+		vo.setTimestamp(auditRecord.getTimestamp().getTime());
 		
 		return vo;
 	}
