@@ -9,6 +9,7 @@ package gov.gtas.services;
 
 import gov.gtas.constant.GtasSecurityConstants;
 import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.HitViewStatus;
 import gov.gtas.model.LookoutLane;
 import gov.gtas.services.dto.LookoutLaneDTO;
 import gov.gtas.services.dto.LookoutStatusDTO;
@@ -36,4 +37,6 @@ public interface POEService {
 
     @PreAuthorize((GtasSecurityConstants.PRIVILEGE_ADMIN))
     JsonServiceResponse deleteLane(String laneId);
+
+    boolean lookoutIsMissedOrInvalidAndUpdate(HitViewStatus hvs);
 }

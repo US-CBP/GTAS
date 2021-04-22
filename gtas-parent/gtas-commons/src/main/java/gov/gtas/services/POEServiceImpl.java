@@ -48,13 +48,16 @@ public class POEServiceImpl implements POEService {
     @Autowired
     private UserService userService;
 
+    private static final DateTime inactiveWindowVariable = new DateTime().minusDays(1);
+
     @Override
     public Set<LookoutStatusDTO> getAllTiles(String userId, POETileServiceRequest request) {
         Set<LookoutStatusDTO> tiles = new HashSet<LookoutStatusDTO>();
        Set<HitViewStatus> hvs = hitViewStatusRepository.findAllWithNotClosedAndWithinRange(userService.fetchUserGroups(userId),request.getEtaStart(), request.getEtaEnd());
+       //TODO: consider indexes
        Set<HitViewStatus> hvsToBeUpdated = new HashSet<HitViewStatus>();
        for(HitViewStatus hv : hvs ){
-           if(isMissedOrInvalid(hv)){
+           if(lookoutIsMissedOrInvalidAndUpdate(hv)){
                hvsToBeUpdated.add(hv);
            }
           tiles.add(createLookoutTileDTO(hv)); //TODO: distinct passenger on query with a lot more configuration in the service layer for duplicates handling
@@ -155,11 +158,10 @@ public class POEServiceImpl implements POEService {
         return tile;
     }
 
-    private boolean isMissedOrInvalid(HitViewStatus hvs){
-        if(hvs.getLookoutStatusEnum().name() != LookoutStatusEnum.INACTIVE.name()
-                && hvs.getLookoutStatusEnum().name() != LookoutStatusEnum.MISSED.name() ) {
-            DateTime dateTime = new DateTime().minusDays(1); //TODO: set this to be a timeout variable somewhere
-            Date pastDue = dateTime.toDate();
+    public boolean lookoutIsMissedOrInvalidAndUpdate(HitViewStatus hvs){
+        if(!hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.INACTIVE.name())
+                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.MISSED.name()) ) {
+            Date pastDue = inactiveWindowVariable.toDate();
             Date alreadyLandedOrLeft = new Date();
 
             if (hvs.getUpdatedAt() != null && hvs.getUpdatedAt().before(pastDue)) {
