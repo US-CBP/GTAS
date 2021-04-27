@@ -1,0 +1,2 @@
+alter table hit_view_status
+DROP COLUMN lookout_status;
