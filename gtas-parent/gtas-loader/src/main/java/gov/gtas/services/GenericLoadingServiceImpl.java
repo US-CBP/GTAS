@@ -13,6 +13,7 @@ import gov.gtas.util.LobUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 
 @Component
+@ConditionalOnProperty(prefix = "loader", name = "enabled")
 public class GenericLoadingServiceImpl implements GenericLoading {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericLoadingServiceImpl.class);
@@ -282,7 +284,7 @@ public class GenericLoadingServiceImpl implements GenericLoading {
             Optional<Passenger> passengerOptional = loaderServices.findPassengerOnFlight(bcEvent, ps, recordLocatorNumber);
             if (passengerOptional.isPresent()) {
                 Passenger existingPassenger = passengerOptional.get();
-
+                	
                 PassengerDetails passengerDetails = existingPassenger.getPassengerDetails();
                 populatePassengerDetails(ps, passengerDetails);
 
@@ -290,6 +292,7 @@ public class GenericLoadingServiceImpl implements GenericLoading {
                 createPassengerNotes(passengerNotes, ps, existingPassenger);
                 PassengerTripDetails tripDetails = existingPassenger.getPassengerTripDetails();
                 populatePassengerTripInfo(hoursBeforeTakeOff, ps, tripDetails);
+                tripDetails.setMostRecentMessageId(message.getId());
                 LoaderUtils.calculateValidVisaDays(bcEvent, existingPassenger);
                 existingPassenger.getPassengerTripDetails().setHoursBeforeTakeOff(hoursBeforeTakeOff);
                 existingPassenger.getBookingDetails().addAll(bd);
@@ -344,7 +347,7 @@ public class GenericLoadingServiceImpl implements GenericLoading {
         }
         message.getPendingHitDetails().addAll(phdList);
         message.getPassengerNotes().addAll(passengerNotes);
-        return gtasLoader.createPassengers(newPassengers, pax, bcEvent, bd);
+        return gtasLoader.createPassengers(newPassengers, pax, bcEvent, bd, message);
     }
 
     private void createPendingHitDetails(Flight bcEvent, List<PendingHitDetails> phdList, PassengerSummary ps, Passenger existingPassenger) {

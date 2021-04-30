@@ -39,7 +39,7 @@ public class RuleCatServiceImpl implements HitCategoryService {
 	@Autowired
 	private UserGroupRepository userGroupRepository;
 
-	@Value("${user.group.default}")
+	@Value("${user.group.default:1}")
 	private Long defaultUserGroupId;
 
 	@Override

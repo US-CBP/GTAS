@@ -103,12 +103,12 @@ public class HitPersistenceThread extends RuleThread implements Callable<Boolean
 		if (fuzzyMatchingOn) {
 			long fuzzyStart = System.nanoTime();
 			MatchingService matchingService = applicationContext.getBean(MatchingService.class);
-			int fuzzyHits = matchingService.findMatchesBasedOnTimeThreshold(messageStatuses);
+			matchingService.findMatchesBasedOnTimeThreshold(messageStatuses);
 			logger.debug("exiting matching service portion of jobScheduling");
-			if (fuzzyHits > 0) {
-				logger.info("Fuzzy Matching had " + fuzzyHits + " hits and Ran in  "
-						+ (System.nanoTime() - fuzzyStart) / 1000000 + "m/s.");
-			}
+//			if (fuzzyHits > 0) {
+//				logger.info("Fuzzy Matching had " + fuzzyHits + " hits and Ran in  "
+//						+ (System.nanoTime() - fuzzyStart) / 1000000 + "m/s.");
+//			}
 		}
 		if (messageStatuses != null) {
 			targetingService.saveMessageStatuses(messageStatuses);

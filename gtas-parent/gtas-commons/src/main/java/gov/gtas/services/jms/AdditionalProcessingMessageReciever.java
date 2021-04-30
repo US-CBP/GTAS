@@ -8,6 +8,7 @@ import gov.gtas.summary.PassengerPendingDetail;
 import gov.gtas.summary.PassengerPendingHitDetailList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Component
+@ConditionalOnProperty(prefix = "additionalprocessing", name = "enabled")
 public class AdditionalProcessingMessageReciever {
 
     private final PendingHitDetailsService pendingHitDetailsService;

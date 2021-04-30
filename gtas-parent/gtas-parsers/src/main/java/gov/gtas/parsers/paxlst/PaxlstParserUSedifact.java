@@ -7,7 +7,7 @@ package gov.gtas.parsers.paxlst;
 
 import java.util.Date;
 
-import gov.gtas.config.ParserConfig;
+import gov.gtas.parserconfig.ParserConfig;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.paxlst.segment.usedifact.CTA;

@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private RoleServiceUtil roleServiceUtil;
 	
-	@Resource
+	@Autowired(required = false)
     private UserEmailService userEmailService;
 	
 	@Resource
@@ -73,10 +73,10 @@ public class UserServiceImpl implements UserService {
 	@Resource
 	private RoleService roleService;
 	
-	@Value("${user.group.default}")
+	@Value("${user.group.default:1}")
 	private Long defaultUserGroupId;
 	
-	@Value("${reset.password.token.expiry.minutes}")
+	@Value("${reset.password.token.expiry.minutes:30}")
 	private int expiryTimeInMinutes;
 
 	private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
@@ -277,15 +277,14 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	@Transactional
-	public void forgotPassword(User user) {
+	public void forgotPassword(User user) throws IOException, TemplateException, MessagingException, URISyntaxException {
 		user.setPasswordResetToken(generatePasswordResetToken());
 		userRepository.save(user);//update reset password
 		
-		try {
+		if (userEmailService != null) {
 			userEmailService.sendPasswordResetEmail(user.getUserId(), user.getEmail(), user.getPasswordResetToken());
-		} catch (IOException | TemplateException | MessagingException | URISyntaxException e) {
-			
-			logger.info(e.getMessage());
+		} else {
+			logger.error("User service is turned off - hook up email and turn on enable.email.notification.service");
 		}
 		
 	}

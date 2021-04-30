@@ -128,15 +128,15 @@ public class TamrIT extends AbstractTransactionalJUnit4SpringContextTests {
      * to the database.
      */
     private void persistWatchlistHits() {
-        AsyncHitPersistenceThread persistenceThread =
-                new AsyncHitPersistenceThread(
-                        pendingHitDetailRepository, applicationContext);
-        Set<Long> allFlightIds = flightRepository.findAll()
-                .stream()
-                .map((flight) -> flight.getId())
-                .collect(Collectors.toSet());
-        persistenceThread.setFlightIds(allFlightIds);
-        persistenceThread.call();
+//        AsyncHitPersistenceThread persistenceThread =
+//                new AsyncHitPersistenceThread(
+//                        pendingHitDetailRepository, applicationContext);
+//        Set<Long> allFlightIds = flightRepository.findAll()
+//                .stream()
+//                .map((flight) -> flight.getId())
+//                .collect(Collectors.toSet());
+//        persistenceThread.setFlightIds(allFlightIds);
+//        persistenceThread.call();
     }
     
     /**

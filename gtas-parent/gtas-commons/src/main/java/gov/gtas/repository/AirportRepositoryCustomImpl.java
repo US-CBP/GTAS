@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public class AirportRepositoryImpl implements AirportRepositoryCustom {
+public class AirportRepositoryCustomImpl implements AirportRepositoryCustom {
 	@PersistenceContext
 	private EntityManager em;
 	@Autowired

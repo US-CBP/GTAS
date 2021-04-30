@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.model.lookup.Airport;
@@ -37,6 +38,7 @@ import gov.gtas.parsers.pnrgov.PnrUtils;
 import gov.gtas.util.LobUtils;
 
 @Service
+@ConditionalOnProperty(prefix = "loader", name = "enabled")
 public class PnrMessageService extends MessageLoaderService {
 	private static final Logger logger = LoggerFactory.getLogger(PnrMessageService.class);
 
@@ -166,7 +168,7 @@ public class PnrMessageService extends MessageLoaderService {
 			loaderRepo.processPnr(pnr, vo);
 			addSegments(pnr, vo);
 			int createdPassengers = loaderRepo.createPassengers(passengerInformationDTO.getNewPax(),
-				 pnr.getPassengers(), primeFlight, pnr.getBookingDetails());
+				 pnr.getPassengers(), primeFlight, pnr.getBookingDetails(), pnr);
 			loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
 			Set<Bag> bagList = createBagInformation(vo, pnr, primeFlight);
 			WeightCountDto weightCountDto = getBagStatistics(bagList);
@@ -225,7 +227,7 @@ public class PnrMessageService extends MessageLoaderService {
 			String regex = ssVo.getRegex();
 			SavedSegment ss = new SavedSegment(segmentName, segmentText, regex);
 			ss.setPnr(pnr);
-			pnr.getSavedSegments().add(ss);
+			pnr.getSavedSegment().add(ss);
 		}
 	}
 

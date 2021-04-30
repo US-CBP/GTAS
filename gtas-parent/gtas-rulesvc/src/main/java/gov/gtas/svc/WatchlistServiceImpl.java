@@ -61,6 +61,7 @@ public class WatchlistServiceImpl implements WatchlistService {
 	@Autowired
 	KnowledgeBaseRepository knowledgeBaseRepository;
 
+	//TODO: Make dynamic
 	Integer KB_SIZE = 10000;
 
 	@PostConstruct
@@ -156,7 +157,7 @@ public class WatchlistServiceImpl implements WatchlistService {
 		while (!wlItemPage.isEmpty()) {
 			logger.info("Starting wl page");
 			String wlName = base_wl_name + "_" + wlKbNumber;
-			KnowledgeBase kb = knowledgeBaseRepository.anewName(wlName);
+			KnowledgeBase kb = knowledgeBaseRepository.getByName(wlName);
 			wlKbNumber++;
 			if (kb == null) {
 				kb = new KnowledgeBase(wlName);

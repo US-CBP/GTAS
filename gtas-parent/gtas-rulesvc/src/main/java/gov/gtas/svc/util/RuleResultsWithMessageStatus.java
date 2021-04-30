@@ -4,11 +4,13 @@ import gov.gtas.model.MessageStatus;
 
 import java.util.List;
 
+
 public class RuleResultsWithMessageStatus {
 
 	private RuleResults ruleResults;
 	private List<MessageStatus> messageStatusList;
 	private int number;
+	private String queueName;
 	
 	
 	public int getNumber() {
@@ -34,6 +36,14 @@ public class RuleResultsWithMessageStatus {
 
 	public void setRuleResults(RuleResults ruleResults) {
 		this.ruleResults = ruleResults;
+	}
+
+	public String getQueueName() {
+		return queueName;
+	}
+
+	public void setQueueName(String queueName) {
+		this.queueName = queueName;
 	}
 
 }

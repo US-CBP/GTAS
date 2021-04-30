@@ -22,6 +22,7 @@ public class FlightLeg extends BaseEntity implements Comparable<FlightLeg> {
 	private Message message;
 
 	@ManyToOne
+	@JoinColumn(name = "bookingDetail_id")
 	private BookingDetail bookingDetail;
 
 	@Column(name = "leg_number", nullable = false)

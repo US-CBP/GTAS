@@ -21,11 +21,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 @Service
+@ConditionalOnProperty(prefix = "webapp.services", name = "enabled")
 public class FileServiceImpl implements FileService {
 
-	@Value("${logs.dir.root}")
+	@Value("${logs.dir.root:C:\\\\TEST}")
 	private String logPath;
 
 	private static final Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);

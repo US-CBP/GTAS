@@ -90,7 +90,7 @@ public class UdrServiceImpl implements UdrService {
 	@Autowired
 	private KnowledgeBaseRepository knowledgeBaseRepository;
 
-	@Value("${hit.general.category}")
+	@Value("${hit.general.category:1}")
 	private Long defaultCategory;
 
 	Integer KB_SIZE = 10000;
@@ -504,11 +504,11 @@ public class UdrServiceImpl implements UdrService {
 	public void reblanceRules() {
 	    Pageable pageRequest = PageRequest.of(0, KB_SIZE);
 	    Page<UdrRule> ruleItemPage = udrRuleRepository.findAll(pageRequest);
-	    String base_rule_name = RuleConstants.UDR_KNOWLEDGE_BASE_NAME;
+	    String baseRuleName = RuleConstants.UDR_KNOWLEDGE_BASE_NAME;
 	    int rlKbNum = 1;
 	    while (!ruleItemPage.isEmpty()) {
-		    String rlKbName =  base_rule_name + "_" + rlKbNum;
-	        KnowledgeBase kb = knowledgeBaseRepository.anewName(rlKbName);
+		    String rlKbName =  baseRuleName + "_" + rlKbNum;
+	        KnowledgeBase kb = knowledgeBaseRepository.getByName(rlKbName);
 	        rlKbNum++;
 	        if (kb == null) {
 	        	kb = new KnowledgeBase(rlKbName);

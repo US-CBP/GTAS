@@ -20,6 +20,7 @@ import gov.gtas.services.dto.EmailDTO;
 import gov.gtas.vo.passenger.CountDownVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -43,6 +44,7 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toSet;
 
 @Service
+@ConditionalOnProperty(prefix = "enable.email.notification", name = "service")
 public class HitEmailNotificationService {
 
     private static final String AUTOMATED_EMAIL_SUBJECT = "GTAS Automated Email Notification";

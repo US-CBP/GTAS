@@ -29,6 +29,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +37,7 @@ import java.io.File;
 import java.util.Date;
 
 @Component
+@ConditionalOnProperty(prefix = "loader", name = "enabled")
 public class LoaderMessageReceiver {
 	private final LoaderQueueThreadManager queueManager;
 	private final PnrRepository pnrRepository;

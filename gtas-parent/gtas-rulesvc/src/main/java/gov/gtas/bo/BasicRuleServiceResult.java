@@ -21,6 +21,8 @@ public class BasicRuleServiceResult implements RuleServiceResult, Serializable {
 	private List<RuleHitDetail> resultList;
 	private RuleExecutionStatistics executionStatistics;
 
+	public BasicRuleServiceResult() {
+	}
 	/**
 	 * Instantiates a new basic rule service result.
 	 *
@@ -43,5 +45,12 @@ public class BasicRuleServiceResult implements RuleServiceResult, Serializable {
 	public RuleExecutionStatistics getExecutionStatistics() {
 		return this.executionStatistics;
 	}
+	public void setResultList(List<RuleHitDetail> resultList) {
+		this.resultList = resultList;
+	}
+	public void setExecutionStatistics(RuleExecutionStatistics executionStatistics) {
+		this.executionStatistics = executionStatistics;
+	}
+	
 
 }

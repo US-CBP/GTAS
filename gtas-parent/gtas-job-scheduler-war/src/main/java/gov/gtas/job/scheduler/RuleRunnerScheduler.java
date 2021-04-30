@@ -5,19 +5,27 @@
  */
 package gov.gtas.job.scheduler;
 
+import gov.gtas.bo.TargetSummaryVo;
 import gov.gtas.constant.WatchlistConstants;
 import gov.gtas.job.config.JobSchedulerConfig;
+import gov.gtas.model.HitDetail;
 import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
+import gov.gtas.model.PassengerWLTimestamp;
+import gov.gtas.model.PendingHitDetails;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.KnowledgeBaseRepository;
 import gov.gtas.repository.MessageStatusRepository;
+import gov.gtas.repository.PassengerWatchlistRepository;
 import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.rule.KIEAndLastUpdate;
 import gov.gtas.rule.RuleUtils;
+import gov.gtas.services.matcher.MatchingService;
+import gov.gtas.services.matcher.PassengerWatchlistAndHitDetails;
+import gov.gtas.svc.TargetingService;
 import gov.gtas.svc.UdrService;
 import gov.gtas.svc.WatchlistService;
 import gov.gtas.svc.util.HitDetailsWithMessageStatus;
@@ -29,11 +37,22 @@ import org.kie.api.KieBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.hazelcast.hibernate.serialization.Hibernate5CacheEntrySerializerHook;
 
 import java.io.IOException;
 import java.util.*;
@@ -42,6 +61,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static gov.gtas.repository.AppConfigurationRepository.RECOMPILE_RULES;
 import static org.apache.http.util.TextUtils.isBlank;
@@ -59,7 +79,8 @@ public class RuleRunnerScheduler {
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(RuleRunnerScheduler.class);
 	private final ApplicationContext ctx;
-	private ExecutorService exec;
+	private ExecutorService asyncHitPersistenceExecutor;
+	private ExecutorService graphRulesExec;
 	private static final int DEFAULT_THREADS_ON_RULES = 5;
 	private MessageStatusRepository messageStatusRepository;
 	private int maxNumOfThreads = DEFAULT_THREADS_ON_RULES;
@@ -71,18 +92,25 @@ public class RuleRunnerScheduler {
 	private UdrService udrService;
 	private KnowledgeBaseRepository knowledgeBaseRepository;
 	private Map<String, KIEAndLastUpdate> cache = new ConcurrentHashMap<>();
-	private int KB_LIST_SIZE = 9;
+	private JmsTemplate jmsTemplateFile;
+	private List<String> ruleQueues = new ArrayList<>();
+	private Map<String, String> ruleMap = new HashMap<>();
+	private TargetingService targetingService;
+	private PassengerWatchlistRepository passengerWatchlistRepository;
+	private static final ReentrantLock watchlistSavingLock = new ReentrantLock();
+
 	/* The targeting service. */
-/**
-	 5
-162+03.
-* Instantiates a new rule runner scheduler. the targeting service
+	/**
+	 * 
+	 * Instantiates a new rule runner scheduler. the targeting service
 	 */
 	@Autowired
 	public RuleRunnerScheduler(ApplicationContext ctx, MessageStatusRepository messageStatusRepository,
 			JobSchedulerConfig jobSchedulerConfig, PendingHitDetailRepository pendingHitDetailRepository,
 			AppConfigurationRepository appConfigurationRepository, WatchlistService watchlistService,
-			UdrService udrService, KnowledgeBaseRepository knowledgeBaseRepository) {
+			UdrService udrService, KnowledgeBaseRepository knowledgeBaseRepository, JmsTemplate jmsTemplateFile,
+			@Value("#{'${rule.engine.list}'.split(',')}") List<String> ruleList, TargetingService targetingService,
+			PassengerWatchlistRepository passengerWatchlistRepository) {
 		this.watchlistService = watchlistService;
 		this.udrService = udrService;
 		this.messageStatusRepository = messageStatusRepository;
@@ -90,6 +118,17 @@ public class RuleRunnerScheduler {
 		this.pendingHitDetailRepository = pendingHitDetailRepository;
 		this.appConfigurationRepository = appConfigurationRepository;
 		this.knowledgeBaseRepository = knowledgeBaseRepository;
+		this.jmsTemplateFile = jmsTemplateFile;
+		this.ruleQueues = ruleList;
+		this.targetingService = targetingService;
+		this.passengerWatchlistRepository = passengerWatchlistRepository;
+		for (int i = 0; i < ruleList.size(); i++) {
+			if (i == ruleList.size() - 1) {
+				ruleMap.put(ruleList.get(i), "GTAS_FINAL_PROCESS");
+			} else {
+				ruleMap.put(ruleList.get(i), ruleList.get(i + 1));
+			}
+		}
 
 		try {
 			graphDbOn = this.jobSchedulerConfig.getNeo4JRuleEngineEnabled();
@@ -103,16 +142,14 @@ public class RuleRunnerScheduler {
 					"Failed to load application configuration: THREADS_ON_RULES from application properties... Number of threads set to use %1$s",
 					DEFAULT_THREADS_ON_RULES));
 		}
-		this.exec = Executors.newFixedThreadPool(maxNumOfThreads);
+		this.asyncHitPersistenceExecutor = Executors.newFixedThreadPool(maxNumOfThreads);
+		this.graphRulesExec = Executors.newFixedThreadPool(maxNumOfThreads);
+
 		this.ctx = ctx;
 	}
 
-	/**
-	 * rule engine
-	 **/
 	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
-	public void ruleEngine() throws InterruptedException, IOException {
-
+	public void ruleEngineRebalance() throws InterruptedException {
 		AppConfiguration recompileRulesAndWatchlist = appConfigurationRepository.findByOption(RECOMPILE_RULES);
 		if (!isBlank(recompileRulesAndWatchlist.getOption())
 				&& Boolean.parseBoolean(recompileRulesAndWatchlist.getValue())) {
@@ -124,7 +161,10 @@ public class RuleRunnerScheduler {
 			recompileRulesAndWatchlist.setValue("false");
 			appConfigurationRepository.save(recompileRulesAndWatchlist);
 		}
+	}
 
+	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+	public void asyncHitPersister() throws InterruptedException {
 		int flightLimit = this.jobSchedulerConfig.getMaxFlightsPerRuleRun();
 		Set<Number> flightIdsForPendingHits = pendingHitDetailRepository.getFlightsWithPendingHitsByLimit(flightLimit);
 		if (!flightIdsForPendingHits.isEmpty()) {
@@ -138,6 +178,7 @@ public class RuleRunnerScheduler {
 				if (runningTotal >= flightsPerThread) {
 					AsyncHitPersistenceThread worker = ctx.getBean(AsyncHitPersistenceThread.class);
 					worker.setFlightIds(flightIds);
+					flightIds = new HashSet<>();
 					list.add(worker);
 					runningTotal = 0;
 				}
@@ -150,210 +191,48 @@ public class RuleRunnerScheduler {
 				worker.setFlightIds(flightIds);
 				list.add(worker);
 			}
-			exec.invokeAll(list);
+			asyncHitPersistenceExecutor.invokeAll(list);
 		}
+	}
 
+	/**
+	 * rule engine
+	 **/
+	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+	public void ruleEngineMediator() throws IOException {
 		int messageLimit = this.jobSchedulerConfig.getMaxMessagesPerRuleRun();
-		List<MessageStatus> source = messageStatusRepository
-				.getMessagesFromStatus(MessageStatusEnum.LOADED.getName(), messageLimit);
-		int maxPassengers = this.jobSchedulerConfig.getMaxPassengersPerRuleRun();
-		Set<MessageStatus> errors = new HashSet<>();
-		if (!source.isEmpty()) {
-			Map<Long, List<MessageStatus>> messageFlightMap = SchedulerUtils.geFlightMessageMap(source);
-			int runningTotal = 0;
-			List<MessageStatus> ruleThread = new ArrayList<>();
-
-			List<DroolFactGatheringThread> list = new ArrayList<>();
-			// First gather facts for drools
-			int number = 0;
-			for (List<MessageStatus> messageStatuses : messageFlightMap.values()) {
-				for (MessageStatus ms : messageStatuses) {
-					ruleThread.add(ms);
-					Message message = ms.getMessage();
-					if (message.getPassengerCount() != null) {
-						runningTotal += message.getPassengerCount();
-					}
-				}
-				if (runningTotal >= maxPassengers) {
-					DroolFactGatheringThread worker = ctx.getBean(DroolFactGatheringThread.class);
-					// worker.setRules(rules);
-					worker.setMessageStatuses(ruleThread);
-					list.add(worker);
-					worker.setNumber(number);
-					number++;
-					ruleThread = new ArrayList<>();
-					runningTotal = 0;
-				}
-				if (list.size() >= maxNumOfThreads - 1) {
-					break;
-				}
-			}
-			if (runningTotal != 0) {
-				DroolFactGatheringThread worker = ctx.getBean(DroolFactGatheringThread.class);
-				// worker.setRules(rules);
-				worker.setMessageStatuses(ruleThread);
-				worker.setNumber(number);
-				list.add(worker);
-			}
-			source = null; // Alert that source can be GC'd.
-
-			// Invoke fact gathering into rule execution context
-			// After gathering facts execute them against the drools kbs
-			List<Future<RuleExecutionContext>> recList = exec.invokeAll(list);
-			List<RuleExecutionContext> readyList = new ArrayList<>();
-			for (Future<RuleExecutionContext> fre : recList) {
-				try {
-					RuleExecutionContext rec = fre.get();
-					readyList.add(rec);
-				} catch (InterruptedException | ExecutionException e) {
-					logger.error("Error getting rule facts!" + e);
-				}
-			}
-
-			Map<Integer, List<RuleResultsWithMessageStatus>> ruleResultMap = new HashMap<>();
-			Iterable<KnowledgeBase> kbs = knowledgeBaseRepository.findAll();
-			List<List<KnowledgeBase>> kbsForEngine = new ArrayList<>();
-			List<KnowledgeBase> kbList = new ArrayList<>();
-			for (KnowledgeBase kb : kbs) {
-				if (kbList.size() < KB_LIST_SIZE) {
-					kbList.add(kb);
-				} else {
-					kbsForEngine.add(kbList);
-					kbList = new ArrayList<>();
-					kbList.add(kb);
-				}
-			}
-			if (!kbList.isEmpty()) {
-				kbsForEngine.add(kbList);
-			}
-
-			for (List<KnowledgeBase> kbToRunRulesOn : kbsForEngine) {
-				logger.info("In kb list");
-				for (KnowledgeBase ruleKb : kbToRunRulesOn) {
-					List<RuleExecutionThread> droolExecutionThreads = new ArrayList<>();
-					Map<String, KIEAndLastUpdate> rules = new HashedMap<>();
-					if (cache.containsKey(ruleKb.getKbName())) {
-						KIEAndLastUpdate kie = cache.get(ruleKb.getKbName());
-						if (kie.getUpdated().before(ruleKb.getCreationDt())) {
-							KIEAndLastUpdate kieAndLastUpdate = makeKieAndLastUpdate(ruleKb);
-							if (kieAndLastUpdate == null) {
-								continue;
-							}
-							cache.put(ruleKb.getKbName(), kieAndLastUpdate);
-						} else {
-							rules.put(ruleKb.getKbName(), cache.get(ruleKb.getKbName()));
-						}
-					} else {
-						KIEAndLastUpdate kieAndLastUpdate = makeKieAndLastUpdate(ruleKb);
-						if (kieAndLastUpdate == null) {
-							continue;
-						}
-						rules.put(ruleKb.getKbName(), kieAndLastUpdate);
-						if (cache.values().size() < KB_LIST_SIZE) {
-							cache.put(ruleKb.getKbName(), kieAndLastUpdate);
-						}
-					}
-					
-
-					for (RuleExecutionContext rec : readyList) {
-						List<MessageStatus> msList = rec.getSource();
-						collectErrorMessages(errors, msList);
-						if (!rec.getSource().isEmpty()) {
-							RuleExecutionThread worker = ctx.getBean(RuleExecutionThread.class);
-							worker.setRuleExecutionContext(rec);
-							worker.setRules(rules);
-							droolExecutionThreads.add(worker);
-						}
-					}
-
-					List<Future<RuleResultsWithMessageStatus>> rresultFutures = exec.invokeAll(droolExecutionThreads);
-
-					for (Future<RuleResultsWithMessageStatus> frmsFuture : rresultFutures) {
-						try {
-							logger.debug("processing frmsFuture");
-
-							RuleResultsWithMessageStatus rec = frmsFuture.get();
-							logger.debug("got rule results with message status");
-
-							if (ruleResultMap.containsKey(rec.getNumber())) {
-								ruleResultMap.get(rec.getNumber()).add(rec);
-							} else {
-								List<RuleResultsWithMessageStatus> rrList = new ArrayList<>();
-								rrList.add(rec);
-								ruleResultMap.put(rec.getNumber(), rrList);
-							}
-						} catch (InterruptedException | ExecutionException e) {
-							logger.error("Error getting rule facts!" + e);
-						}
-					}
-				}
-			}
-			// TODO: consolidate ruleresultswithmessagestattuses OR make sure they stay
-			// distinct
-			logger.debug("in hd creator ");
-			List<HitDetailCreatorThread> hdCreatorThreads = new ArrayList<>();
-			List<HitDetailsWithMessageStatus> hdwms = new ArrayList<>();
-
-			// Gather up rule results and convert any hit details
-			for (int num : ruleResultMap.keySet()) {
-				//logger.info("in map gathering ");
-
-				List<RuleResultsWithMessageStatus> rlList = ruleResultMap.get(num);
-				for (RuleResultsWithMessageStatus rrwms : rlList) {
-					if (!rrwms.getMessageStatusList().isEmpty()) {
-						collectErrorMessages(errors, rrwms.getMessageStatusList());
-						HitDetailCreatorThread worker = ctx.getBean(HitDetailCreatorThread.class);
-						worker.setRuleResultsWithMessageStatus(rrwms);
-						hdCreatorThreads.add(worker);
-					}
-				}
-				List<Future<HitDetailsWithMessageStatus>> hdwmsListFutures = exec.invokeAll(hdCreatorThreads);
-				List<HitDetailsWithMessageStatus> hd2 = new ArrayList<>();
-				for (Future<HitDetailsWithMessageStatus> hdwmsList : hdwmsListFutures) {
-					try {
-						HitDetailsWithMessageStatus rec = hdwmsList.get();
-						hd2.add(rec);
-					} catch (InterruptedException | ExecutionException e) {
-						logger.error("Error getting rule facts!" + e);
-					}
-				}
-
-				HitDetailsWithMessageStatus hd1 = null;
-				for (HitDetailsWithMessageStatus hdwmsItem : hd2) {
-					if (hd1 == null) {
-						hd1 = hdwmsItem;
-					} else {
-						hd1.getHitDetails().addAll(hdwmsItem.getHitDetails());
-						// the same messages are always apart of the same rule context so it can be
-						// assumed the hd is the same.
-						for (MessageStatus ms : hdwmsItem.getMessageStatuses()) {
-							collectErrorMessages(errors, hdwmsItem.getMessageStatuses());
-						}
-					}
-					for (MessageStatus ms : hd1.getMessageStatuses()) {
-						if (errors.contains(ms)) {
-							ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
-						}
-					}
-				}
-				hdwms.add(hd1);
-			}
-			logger.debug("hd persistent thread ");
-
-			List<HitPersistenceThread> hitPersistenceThreads = new ArrayList<>();
-			for (HitDetailsWithMessageStatus hd : hdwms) {
-				if (!hd.getMessageStatuses().isEmpty()) {
-					HitPersistenceThread worker = ctx.getBean(HitPersistenceThread.class);
-					worker.setHitDetails(hd.getHitDetails());
-					worker.setMessageStatuses(hd.getMessageStatuses());
-					hitPersistenceThreads.add(worker);
-				}
-			}
-			exec.invokeAll(hitPersistenceThreads);
+		List<MessageStatus> source = messageStatusRepository.getMessagesFromStatus(MessageStatusEnum.LOADED.getName(),
+				messageLimit);
+		for (MessageStatus ms : source) {
+			ms.setMessageStatusEnum(MessageStatusEnum.RUNNING_RULES);
 		}
+		Iterable<MessageStatus> savedSource = messageStatusRepository.saveAll(source);
+		List<MessageStatus> msToMapper = prepareMessageStatusToSend(savedSource);
+		ObjectMapper mapper = new ObjectMapper();
+		String json = mapper.writeValueAsString(msToMapper);
+		if (!msToMapper.isEmpty()) {
+			sendFileContent(ruleQueues.get(0), json);
+		}
+	}
 
+	private List<MessageStatus> prepareMessageStatusToSend(Iterable<MessageStatus> savedSource) {
+		List<MessageStatus> msToMapper = new ArrayList<>();
+		for (MessageStatus ms : savedSource) {
+			MessageStatus msSource = new MessageStatus();
+			msSource.setFlightId(ms.getFlightId());
+			msSource.setMessageId(ms.getMessageId());
+			msToMapper.add(msSource);
+		}
+		return msToMapper;
+	}
+	
+	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+	private void graphRuleEngine() throws InterruptedException {
+		int messageLimit = this.jobSchedulerConfig.getMaxMessagesPerRuleRun();
+		int maxPassengers = this.jobSchedulerConfig.getMaxPassengersPerRuleRun();
+		
 		if (graphDbOn) {
-			source = messageStatusRepository.getMessagesFromStatus(MessageStatusEnum.NEO_LOADED.getName(),
+			List<MessageStatus> source = messageStatusRepository.getMessagesFromStatus(MessageStatusEnum.NEO_LOADED.getName(),
 					messageLimit);
 			if (!source.isEmpty()) {
 				Map<Long, List<MessageStatus>> messageFlightMap = SchedulerUtils.geFlightMessageMap(source);
@@ -385,70 +264,97 @@ public class RuleRunnerScheduler {
 					list.add(worker);
 				}
 				source = null; // Alert that source can be GC'd.
-				exec.invokeAll(list);
+				graphRulesExec.invokeAll(list);
 			}
 		}
 	}
 
-	private void collectErrorMessages(Set<MessageStatus> errors, List<MessageStatus> msList) {
-		for (MessageStatus ms : msList) {
-			if (MessageStatusEnum.PARTIAL_ANALYZE == ms.getMessageStatusEnum()) {
-				errors.add(ms);
-			}
-			if (MessageStatusEnum.FAILED_ANALYZING == ms.getMessageStatusEnum()) {
-				if (errors.contains(ms)) {
-					errors.remove(ms);
+	private void sendFileContent(final String queue, final String stringFile) {
+		jmsTemplateFile.send(queue, session -> 
+			session.createObjectMessage(stringFile)
+		);
+	}
+
+	@JmsListener(destination = "GTAS_RULE_ENGINE", concurrency = "10")
+	public void ruleMediator(org.springframework.messaging.Message<?> message, javax.jms.Session session,
+			javax.jms.Message msg) throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		RuleResultsWithMessageStatus rrwms = mapper.readValue((String) message.getPayload(),
+				RuleResultsWithMessageStatus.class);
+		String previousQueue = rrwms.getQueueName();
+		String nextQueue = ruleMap.get(previousQueue);
+		Set<HitDetail> hits = targetingService.generateHitDetails(rrwms.getRuleResults());
+		Set<PendingHitDetails> pendingHits = PendingHitDetails.convertHits(hits);
+		if (!pendingHits.isEmpty()) {
+			pendingHitDetailRepository.saveAll(new ArrayList<>(pendingHits));
+		}
+		List<MessageStatus> msList = rrwms.getMessageStatusList();
+		String json = mapper.writeValueAsString(msList);
+		if (nextQueue.equals("GTAS_FINAL_PROCESS")) {
+			if (!msList.isEmpty()) {
+				Date analyzed = new Date();
+				for (MessageStatus finalMessage : msList) {
+					finalMessage.setAnalyzedTimestamp(analyzed);
 				}
-				errors.add(ms);
+				messageStatusRepository.saveAll(msList);
+			}
+		} else {
+			sendFileContent(nextQueue, json);
+		}
+	}
+
+	@JmsListener(destination = "GTAS_FUZZY_MATCHER", concurrency = "10")
+	public void fuzzyMatching(org.springframework.messaging.Message<?> message, javax.jms.Session session,
+			javax.jms.Message msg) throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		List<MessageStatus> messageStatuses = mapper.readValue((String) message.getPayload(),
+				new TypeReference<List<MessageStatus>>() {
+				});
+		String previousQueue = "GTAS_FUZZY_MATCHER";
+		String nextQueue = ruleMap.get(previousQueue);
+		MatchingService ms = ctx.getBean(MatchingService.class);
+		try {
+			PassengerWatchlistAndHitDetails passengerWatchlistAndHitDetails = ms
+					.findMatchesBasedOnTimeThreshold(messageStatuses);
+			Set<PendingHitDetails> pendingHits = PendingHitDetails
+					.convertHits(passengerWatchlistAndHitDetails.getPartialWatchlistHits());
+			if (!pendingHits.isEmpty()) {
+				pendingHitDetailRepository.saveAll(new ArrayList<>(pendingHits));
+			}
+			saveWatchlistTimestamps(passengerWatchlistAndHitDetails);
+			for (MessageStatus mstat : messageStatuses) {
+				mstat.setMessageStatusEnum(MessageStatusEnum.ANALYZED);
+			}
+		} catch (Exception e) {
+			for (MessageStatus mstat : messageStatuses) {
+				mstat.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
 			}
 		}
-	}
-
-	private void updateWatchlistKb(String kbName) throws IOException {
-		KnowledgeBase wlKb = watchlistService.createAKnowledgeBase(kbName);
-		if (wlKb != null) {
-			addOrUpdateNameAndKie(wlKb, cache);
-		}
-	}
-
-	private void updateRuleKb(String kbName) throws IOException {
-		KnowledgeBase udrKnowledgeBase = udrService.recompileRules(kbName, "RULE_SCHEDULER");
-		if (udrKnowledgeBase != null) {
-			addOrUpdateNameAndKie(udrKnowledgeBase, cache);
-		}
-	}
-
-	private void addOrUpdateNameAndKie(KnowledgeBase kb, Map<String, KIEAndLastUpdate> map) throws IOException {
-		KIEAndLastUpdate kieAndLastUpdate = makeKieAndLastUpdate(kb);
-		map.put(kb.getKbName(), kieAndLastUpdate);
-	}
-
-	private KIEAndLastUpdate makeKieAndLastUpdate(KnowledgeBase kb) throws IOException {
-
-		logger.info("Creating a KB. This can take a long time...");
-		boolean isWatchlist = kb.getKbName().startsWith(WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
-		KIEAndLastUpdate kieAndLastUpdate = new KIEAndLastUpdate();
-
-		KnowledgeBase newKb;
-		if (isWatchlist) {
-			newKb = watchlistService.createAKnowledgeBase(kb.getKbName());
+		if (nextQueue.equals("GTAS_FINAL_PROCESS")) {
+			if (!messageStatuses.isEmpty()) {
+				Date analyzed = new Date();
+				for (MessageStatus finalMessage : messageStatuses) {
+					finalMessage.setAnalyzedTimestamp(analyzed);
+				}
+				messageStatusRepository.saveAll(messageStatuses);
+			}
 		} else {
-			newKb = udrService.recompileRules(kb.getKbName(), "RULE_SCHEDULER");
+			sendFileContent(nextQueue, mapper.writeValueAsString(messageStatuses));
 		}
-		if (newKb != null) {
-		KieBase kieBase = RuleUtils.createKieBaseFromDrlString(new String(newKb.getRulesBlob()));
-		Date updatedDate = kb.getCreationDt();
-		kieAndLastUpdate.setKieBase(kieBase);
-		kieAndLastUpdate.setKbName(kb.getKbName());
-		kieAndLastUpdate.setUpdated(updatedDate);
-		
-		logger.info("KB created!");
-		} else {
-			logger.info("KB has been deleted!");
-			cache.remove(newKb.getKbName());
-			kieAndLastUpdate = null;
-		}
-
-		return kieAndLastUpdate;
 	}
+
+	private void saveWatchlistTimestamps(PassengerWatchlistAndHitDetails passengerWatchlistAndHitDetails) {
+		try {
+			watchlistSavingLock.lock();
+			Set<PassengerWLTimestamp> savingPassengerSet = passengerWatchlistAndHitDetails.getSavingPassengerSet();
+			if (!savingPassengerSet.isEmpty()) {
+				passengerWatchlistRepository.saveAll(savingPassengerSet);
+			}
+		} catch (Exception e) {
+			logger.error("Can't save watchlist timestamp!");
+		} finally {
+			watchlistSavingLock.unlock();
+		}
+	}
+
 }

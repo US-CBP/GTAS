@@ -5,6 +5,7 @@
  */
 package gov.gtas.rule;
 
+import gov.gtas.bo.BasicRuleServiceResult;
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceResult;
 import gov.gtas.model.udr.KnowledgeBase;
@@ -37,6 +38,6 @@ public interface RuleService {
 	 *            The name of the knowledge base to use for executing the request.
 	 * @return the result of the rule engine invocation.
 	 */
-	RuleServiceResult invokeRuleEngine(RuleServiceRequest req, String kbName, Map<String, KIEAndLastUpdate> rules);
+	BasicRuleServiceResult invokeRuleEngine(RuleServiceRequest req, String kbName, Map<String, KIEAndLastUpdate> rules);
 
 }

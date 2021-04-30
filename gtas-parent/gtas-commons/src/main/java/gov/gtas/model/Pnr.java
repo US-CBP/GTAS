@@ -145,8 +145,8 @@ public class Pnr extends Message {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
 	private List<PaymentForm> paymentForms = new ArrayList<>();
 
-	@OneToMany(cascade = CascadeType.ALL)
-	private List<SavedSegment> savedSegments = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
+	private List<SavedSegment> savedSegment = new ArrayList<>();
 
 	@ManyToMany(targetEntity = DwellTime.class, cascade = { CascadeType.ALL })
 	@JoinTable(name = "pnr_dwelltime", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "dwell_id"))
@@ -428,11 +428,11 @@ public class Pnr extends Message {
 		this.passengers = passengers;
 	}
 
-	public List<SavedSegment> getSavedSegments() {
-		return savedSegments;
+	public List<SavedSegment> getSavedSegment() {
+		return savedSegment;
 	}
 
-	public void setSavedSegments(List<SavedSegment> savedSegments) {
-		this.savedSegments = savedSegments;
+	public void setSavedSegment(List<SavedSegment> savedSegments) {
+		this.savedSegment = savedSegments;
 	}
 }

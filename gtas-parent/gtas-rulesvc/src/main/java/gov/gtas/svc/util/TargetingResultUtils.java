@@ -59,7 +59,7 @@ public class TargetingResultUtils {
 	 * Eliminates duplicates and adds flight id, if missing.
 	 *
 	 */
-	public static RuleServiceResult ruleResultPostProcesssing(RuleServiceResult result,
+	public static BasicRuleServiceResult ruleResultPostProcesssing(RuleServiceResult result,
 			TargetingResultServices targetingResultServices) {
 
 		PassengerService passengerService = targetingResultServices.getPassengerService();

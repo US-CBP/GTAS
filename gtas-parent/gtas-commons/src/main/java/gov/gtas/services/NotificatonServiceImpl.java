@@ -21,6 +21,7 @@ import gov.gtas.services.email.HitEmailNotificationService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import com.amazonaws.services.sns.AmazonSNS;
@@ -39,6 +40,7 @@ import gov.gtas.vo.NotificationTextVo;
  */
 @Service
 @Transactional
+@ConditionalOnProperty(prefix = "enable.email.notification", name = "service")
 public class NotificatonServiceImpl implements NotificatonService {
 
 	private final Logger logger = LoggerFactory.getLogger(NotificatonServiceImpl.class);

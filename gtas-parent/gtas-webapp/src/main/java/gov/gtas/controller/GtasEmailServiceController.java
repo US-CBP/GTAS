@@ -6,6 +6,7 @@ import gov.gtas.services.NotificatonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
+@ConditionalOnProperty(prefix = "enable.email.notification", name = "service")
 public class GtasEmailServiceController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GtasEmailServiceController.class);

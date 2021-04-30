@@ -13,6 +13,7 @@ import gov.gtas.services.security.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +28,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
+@ConditionalOnProperty(prefix = "enable.email.notification", name = "service")
 public class SignupController {
 
 	private final Logger logger = LoggerFactory.getLogger(SignupController.class);
 
-	@Autowired
+	@Autowired()
 	private SignupRequestService signupRequestService;
 
 	@Autowired
