@@ -113,7 +113,35 @@ services:
     restart: unless-stopped
     volumes:
       - db-data:/var/lib/mysql
-
+  gtas-rule-runner:
+    container_name: rule-runner
+    image: wcogtas/gtas-rule-runner:dev
+    build:
+      context: .
+      dockerfile: ./gtas-rule-runner/gtas-rule-runner.Dockerfile
+    environment:
+      KB_LIST: UDR Knowledge Base_1,WL_Knowledge_Base_3,WL_Knowledge_Base_2,WL_Knowledge_Base_1
+      INBOUND_QUEUE: RULE_RUNNER_1
+      OUTBOUND_QUEUE: GTAS_RULE_ENGINE
+      MAIRA_URL: jdbc:mysql://mariadb:3306/gtas
+      MARIA_USERNAME: root
+      MARIA_PASSWORD: admin
+      ACTIVE_MQ_HOST: activemq
+    restart: unless-stopped
+    secrets:
+      - mysql-etl-user
+      - mysql-etl-password
+      - etl-neo4j-user
+      - etl-neo4j-password
+      - mysql-report-etl-user
+      - mysql-report-etl-password
+      - pentaho-to-elasticsearch-user
+      - pentaho-to-elasticsearch-password
+      - elastic-ca
+    networks: 
+      - gtas-webapp-network
+    depends_on: 
+      - activemq
   etl-job:
     container_name: etl-job
     image: wcogtas/neo4j-etl-job:dev

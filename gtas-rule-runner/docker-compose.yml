@@ -1,0 +1,17 @@
+version: "2.1"
+services:
+  gtas-rule-runner:
+    image: originalname51/gtas-rule-runner
+    build:
+      context: .
+      dockerfile: dockerfile
+    restart: always
+    environment:
+      KB_LIST: UDR Knowledge Base_1,WL_Knowledge_Base_3,WL_Knowledge_Base_2,WL_Knowledge_Base_1
+      INBOUND_QUEUE: RULE_RUNNER_1
+      OUTBOUND_QUEUE: GTAS_RULE_ENGINE
+      MAIRA_URL: jdbc:mysql://localhost:3306/gtas
+      MARIA_USERNAME: root
+      MARIA_PASSWORD: admin
+      ACTIVE_MQ_HOST: localhost
+    network_mode: host      
