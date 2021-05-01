@@ -33,11 +33,18 @@ public class FlightVo implements Validatable {
 	// THIS IS NOT UTC TIME. LOCAL ETA DATE IS IN WHATEVER LOCAL TIME OF THE AIRPORT
 	// WHERE FLIGHT IS DESTINED TO
 	private Date localEtaDate;
+	
+	// UTC TIME CONVERSIONS HAPPEN IN LOADER *NOT* GTAS PARSER.
+	private Date utcEtdDate;
+
+	// UTC TIME CONVERSIONS HAPPEN IN LOADER *NOT* GTAS PARSER.
+	private Date utcEtaDate;
+	
 	private String marketingFlightNumber;
 	private boolean isCodeShareFlight = false;
 	private boolean isMarketingFlight = false;
 	private String idTag;
-
+	
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;
 	}
@@ -137,7 +144,24 @@ public class FlightVo implements Validatable {
 	public UUID getUuid() {
 		return uuid;
 	}
+	
+	public Date getUtcEtdDate() {
+		return utcEtdDate;
+	}
 
+	public void setUtcEtdDate(Date utcEtdDate) {
+		this.utcEtdDate = utcEtdDate;
+	}
+
+	public Date getUtcEtaDate() {
+		return utcEtaDate;
+	}
+
+	public void setUtcEtaDate(Date utcEtaDate) {
+		this.utcEtaDate = utcEtaDate;
+	}
+
+	//TODO: CheckEqualityToBD
 	public boolean equalsThisBD(BookingDetail bookingDetail) {
 		return flightNumber != null && flightNumber.equals(bookingDetail.getFlightNumber()) && localEtdDate != null
 				&& DateUtils.stripTime(localEtdDate).equals(bookingDetail.getEtdDate()) && origin != null

@@ -414,13 +414,8 @@ public class LoaderUtils {
 	BookingDetail convertFlightVoToBookingDetail(FlightVo fvo) throws ParseException {
 		BookingDetail bD = new BookingDetail();
 		BeanUtils.copyProperties(fvo, bD);
-		String originAirport = bD.getOrigin();
-		String destinationAirport = bD.getDestination();
-		Date utcETDDate = gtasLocalToUTCService.convertFromAirportCode(originAirport, fvo.getLocalEtdDate());
-		Date utcETADate = gtasLocalToUTCService.convertFromAirportCode(destinationAirport, fvo.getLocalEtaDate());
-		bD.setEta(utcETADate);
-		bD.setEtd(utcETDDate);
-
+		bD.setEta(fvo.getUtcEtaDate());
+		bD.setEtd(fvo.getUtcEtdDate());
 		Airport dest = getAirport(fvo.getDestination());
 		String destCountry = null;
 		if (dest != null) {
@@ -460,15 +455,10 @@ public class LoaderUtils {
 	}
 
 	public void setDwellTime(BookingDetail firstBooking, BookingDetail secondBooking, Pnr pnr) {
-		if (firstBooking != null && secondBooking != null
-				&& firstBooking.getDestination().equalsIgnoreCase(secondBooking.getOrigin())
-				&& (firstBooking.getEta() != null && secondBooking.getEtd() != null)) {
-
 			DwellTime d = new DwellTime(firstBooking.getEta(), secondBooking.getEtd(), secondBooking.getOrigin(), pnr);
 			d.setFlyingFrom(firstBooking.getOrigin());
 			d.setFlyingTo(secondBooking.getDestination());
 			pnr.addDwellTime(d);
-		}
 	}
 
 	public void setDwellTime(Flight firstFlight, BookingDetail secondBooking, Pnr pnr) {
@@ -500,7 +490,7 @@ public class LoaderUtils {
 	// The parsed message did not have the flights in proper order for flight leg
 	// generation (needed for dwell time and appropriate display)
 	void sortFlightsByDate(List<FlightVo> flights) {
-		flights.sort(Comparator.comparing(FlightVo::getLocalEtdDate));
+		flights.sort(Comparator.comparing(FlightVo::getUtcEtdDate));
 	}
 
 	/**

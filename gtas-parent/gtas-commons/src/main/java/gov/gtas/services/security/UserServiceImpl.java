@@ -86,13 +86,19 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public UserData create(UserData userData) {
+
+		if (userRepository.findById(userData.getUserId()).isPresent()) {
+			throw ErrorHandlerFactory.getErrorHandler().createException(CommonErrorConstants.USER_ALREADY_EXIST,
+					userData.getUserId());
+		}
+
 		User userEntity = userServiceUtil.mapUserEntityFromUserData(userData);
 		userEntity.setPassword((new BCryptPasswordEncoder()).encode(userEntity.getPassword()));
 		userEntity.setArchived(false); //Default do not archive new users.
 
 		Set<Role> roleCollection = roleService.getValidRoles(userData.getRoles());
 
-			userEntity.setRoles(roleCollection);
+		userEntity.setRoles(roleCollection);
 		User newUserEntity = userRepository.save(userEntity);
 		UserGroup defaultUserGroup = userGroupRepository.findById(defaultUserGroupId)
 				.orElseThrow(RuntimeException::new);

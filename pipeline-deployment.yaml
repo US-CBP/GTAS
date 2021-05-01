@@ -1,8 +1,23 @@
 version: '3.7'
 services:
+  halin:
+    image: mdavidallen/halin
+    container_name: halin
+    stdin_open: true
+    labels:
+      kompose.image-pull-policy: "Always"
+      kompose.service.type: "LoadBalancer"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == backend
+    ports:
+      - 3000:3000
+    networks:
+      - gtas-webapp-network
   http-proxy:
     labels:
-      kompose.image-pull-policy: "Always" 
+      kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -14,7 +29,7 @@ services:
       - certs:/temp-cert
   web-app:
     labels:
-      kompose.image-pull-policy: "Always" 
+      kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
@@ -43,7 +58,7 @@ services:
       - certs:/temp-cert
   gtas-scheduler:
     labels:
-      kompose.image-pull-policy: "Always" 
+      kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     ports:
       - 8080:8080
@@ -72,7 +87,7 @@ services:
 
   activemq:
     labels:
-      kompose.image-pull-policy: "Always" 
+      kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     environment:
       ACTIVEMQ_OPTS: "-Xms2g -Xmx8g"
@@ -85,7 +100,7 @@ services:
           - node.labels.role == backend
   kibana:
     labels:
-      kompose.image-pull-policy: "Always" 
+      kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -95,7 +110,7 @@ services:
       - certs:/etc/kibana/config/
   elasticsearch:
     labels:
-      kompose.image-pull-policy: "Always" 
+      kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -103,7 +118,7 @@ services:
           - node.labels.role == backend
   mariadb:
     labels:
-      kompose.image-pull-policy: "Always" 
+      kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -111,7 +126,7 @@ services:
           - node.labels.role == not-deployed
   logstash:
     labels:
-      kompose.image-pull-policy: "Always" 
+      kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -139,7 +154,7 @@ services:
 #      ELASTIC_PATH: '/run/secrets/elastic-password/elastic-password'
   neo4j:
     labels:
-      kompose.image-pull-policy: "Always" 
+      kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -150,11 +165,11 @@ services:
       NEO4J_dbms_connector_bolt_advertised__address: ${NEO4J_BOLT}
       NEO4J_dbms_connectors_default__advertised__address: ${NEO4J_HOST}
       NEO4J_dbms_connector_bolt_thread__pool__max__size: 2500
-      NEO4J_dbms_memory_heap_initial__size: 5G
-      NEO4J_dbms_memory_heap_max__size: 5G
+      NEO4J_dbms_memory_heap_initial__size: 10G
+      NEO4J_dbms_memory_heap_max__size: 14G
   etl-job:
     labels:
-      kompose.image-pull-policy: "Always" 
+      kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     deploy:
       placement:
@@ -162,6 +177,7 @@ services:
           - node.labels.role == frontend
     environment:
       DB_HOSTNAME: ${MARIADB_HOST}
+      KIBANA_HOST_NAME: 'kibana.local'
       ENABLE_DATA_RETENTION_POLICY: "Y"
       NEO4J_USER_PATH: '/run/secrets/etl-neo4j-user/etl-neo4j-user'
       NEO4J_PASSWORD_PATH: '/run/secrets/etl-neo4j-password/etl-neo4j-password'
@@ -172,6 +188,8 @@ services:
       MYSQL_REPORT_USER_PASSWORD_PATH: '/run/secrets/mysql-etl-password/mysql-etl-password'
       ELASTICSEARCH_USER_PATH: '/run/secrets/pentaho-to-elasticsearch-user/pentaho-to-elasticsearch-user'
       ELASTICSEARCH_USER_PASSWORD_PATH: '/run/secrets/pentaho-to-elasticsearch-password/pentaho-to-elasticsearch-password'
+    volumes:
+      - cacerts:/usr/lib/jvm/java-1.8-openjdk/jre/lib/security
 networks:
-  gtas_webapp-network:
+  gtas-webapp-network:
     attachable: true

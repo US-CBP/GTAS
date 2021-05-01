@@ -24,7 +24,7 @@ jobs:
         with:
           context: ./gtas-parent
           push: true
-          platforms: linux/amd64
+          platforms: linux/amd64, ppc64le
           file: ./gtas-parent/web-app.Dockerfile
           tags: wcogtas/webapp:dev
       - uses: docker/build-push-action@v2
@@ -32,7 +32,7 @@ jobs:
         with:
           context: ./gtas-parent
           push: true
-          platforms: linux/amd64
+          platforms: linux/amd64, ppc64le
           file: ./gtas-parent/mariadb.Dockerfile
           tags: wcogtas/mariadb:dev
       - uses: docker/build-push-action@v2
@@ -48,7 +48,7 @@ jobs:
         with:
           repository: wcogtas/gtas-scheduler
           context: .
-          platforms: linux/amd64
+          platforms: linux/amd64, ppc64le
           push: true
           file: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
           tags: wcogtas/gtas-scheduler:dev
@@ -98,7 +98,7 @@ jobs:
           platforms: linux/amd64
           push: true
           context: .
-          file: ./gtas-neo4j-etl/neo4j.Dockerfile
+          file: ./gtas-etl-main/neo4j.Dockerfile
           tags: wcogtas/neo4j:dev
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -106,9 +106,17 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      - name: Generate Services JSON
+        uses: Consensys/kubernetes-action@master
+        id: services_json
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        with:
+          args: get services -o JSON
       - name: Generate Kubernetes deployment configuration file
         shell: bash
         env:
+          SERVICES_JSON: ${{join(steps.services_json.outputs.*, '\n')}}
           EMAIL_SENDER_USERNAME: ${{ secrets.EMAIL_SENDER_USERNAME }}
           EMAIL_SENDER_PASSWORD: ${{ secrets.EMAIL_SENDER_PASSWORD }}
           EMAIL_SENDER_HOST: ${{ secrets.EMAIL_SENDER_HOST }}
@@ -130,12 +138,19 @@ jobs:
           echo $MARIADB_USER > ./gtas-parent/gtas-commons/secrets/mysql_webapp_user.txt
           echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
 
+
           sudo apt-get -y update
           sudo apt-get install -y curl
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.22.0/kompose-linux-amd64 -o kompose
           chmod +x kompose
           sudo mv ./kompose /usr/local/bin/kompose
-          kompose -f pipeline-deployment.yaml -f docker-compose.yml convert --out deploy.yaml
+          kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json
+
+          IP=$(echo $SERVICES_JSON | jq -r '.items[] | select(.metadata.name=="kibana") | .spec.clusterIP')
+
+          cat deploy.json | jq -r '.items[] | select(.kind=="Deployment" and .metadata.name=="etl-job") | .spec.template.spec.hostAliases += [{"ip":"'$IP'","hostnames":["kibana.local"]}] '> alias.json
+          cat deploy.json | jq -r 'del(.items[] | select(.kind=="Deployment" and .metadata.name=="etl-job"))' > temp.json
+          jq '.items += [input]' temp.json alias.json > combined-deploy.json
       - name: Clean resources
         uses: Consensys/kubernetes-action@master
         env:
@@ -147,4 +162,4 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: apply -f deploy.yaml
+          args: apply -f combined-deploy.json

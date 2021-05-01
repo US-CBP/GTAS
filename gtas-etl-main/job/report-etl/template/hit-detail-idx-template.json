@@ -1,0 +1,306 @@
+{
+    "template": "*hit-detail*",
+    "version": 1,
+    "settings": {
+        "index.refresh_interval": "5s",
+        "number_of_shards": 1
+    },
+    "mappings": {
+        
+          
+				"properties": {
+                     
+					  
+						"@timestamp" : {
+						"type" : "date"
+						},
+					
+						"@version" : {
+							"type" : "text",
+								"fields" : {
+									"keyword" : {
+										"type" : "keyword",
+										"ignore_above" : 256
+								}
+							}
+						},
+						"id" : {
+							"type" : "long"
+						},
+						"messege_id" : {
+							"type" : "long"
+						},							
+						
+						"last_name" : {
+							"type": "text"
+							
+						},
+						
+						"first_name" : {
+							"type": "text"
+							
+						},
+						
+						"middle_name" : {
+							"type": "text"
+							
+						},
+						
+						"hit_type" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+							
+						},
+						"title" : {
+							"type": "text"
+							
+						},	
+						
+						
+						"flight_id_tag": {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						
+						"flight_id" : {
+							"type" : "long"
+						},	
+						
+						"flight_date": {
+							"type": "date",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						
+						"flight_timestamp": {
+							"type": "date",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						
+						"flight_year" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+				
+						},
+						
+						"flight_week" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+				
+						},
+						
+						"flight__hour" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+				
+						},
+						
+					
+						"hit_source_type" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+							
+						},		
+						"hit_status" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						"hit_author" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						"hit_updated_date": {
+							"type": "date"
+							
+						},
+						"hit_updated_timestamp": {
+							"type": "date",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+							
+						},
+						"hit_category" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+	
+						"hit_category_desc" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+							
+						},		
+						"hit_category_severity" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+							
+						},	
+						"user_group" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						"direction" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						"airport" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						"direction_desc" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						
+						"carrier" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						
+					 "flight_number" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						
+						"origin" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						"destination" : {
+							"type": "text",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+						},
+						"eta_timestamp": {
+							"type": "date",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+							
+						},
+						"etd_timestamp": {
+							"type": "date",
+							"fields": {
+								"keyword": {
+									"type": "keyword",
+									"ignore_above": 256
+								}
+							}
+							
+						}
+						
+
+						
+
+            }
+    }
+}

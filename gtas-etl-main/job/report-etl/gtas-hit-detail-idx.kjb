@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <job>
-  <name>gtas-report-job</name>
+  <name>gtas-hit-detail-idx</name>
   <description/>
   <extended_description/>
   <job_version/>
   <job_status>0</job_status>
   <directory>/</directory>
   <created_user>-</created_user>
-  <created_date>2020/11/24 11:07:22.691</created_date>
+  <created_date>2020/12/05 13:39:15.203</created_date>
   <modified_user>-</modified_user>
-  <modified_date>2020/11/24 11:07:22.691</modified_date>
+  <modified_date>2020/12/05 13:39:15.203</modified_date>
   <parameters>
     <parameter>
-      <name>EXT_ETL_CONFIG_FILE</name>
-      <default_value/>
-      <description>Location of config file for ETL job</description>
+      <name>PAR_INDEX_NAME</name>
+      <default_value>${EXT_VAR_HIT_DETAIL_INDEX_NAME}</default_value>
+      <description>Index name</description>
+    </parameter>
+    <parameter>
+      <name>PAR_TEMPLATE_NAME</name>
+      <default_value>${hit-detail-idx-template}</default_value>
+      <description>Template name</description>
+    </parameter>
+    <parameter>
+      <name>PAR_TEMP_FILE_NAME</name>
+      <default_value>${EXT_VAR_HIT_DETAIL_INDEX_ID_TEMP}</default_value>
+      <description>Temp File Name</description>
     </parameter>
   </parameters>
   <slaveservers>
@@ -310,33 +320,390 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>336</xloc>
-      <yloc>784</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Log-report etl - ENTRY</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>===>> The Report ETL started.</logmessage>
-      <loglevel>Minimal</loglevel>
-      <logsubject>REPORT ETL STARTED</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
       <xloc>160</xloc>
-      <yloc>784</yloc>
+      <yloc>640</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>config file check</name>
+      <name>Transformation - read-hit-detail</name>
       <description/>
       <type>TRANS</type>
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>${Internal.Entry.Current.Directory}/gtas-config-file-check.ktr</filename>
+      <filename>${Internal.Entry.Current.Directory}/gtas-read-hit_detail.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <logging_remote_work>N</logging_remote_work>
+      <run_configuration>Pentaho local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>384</xloc>
+      <yloc>176</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Evaluation - no data?</name>
+      <description/>
+      <type>SIMPLE_EVAL</type>
+      <attributes/>
+      <valuetype>variable</valuetype>
+      <fieldname/>
+      <variablename>${INT_VAR_NO_DATA_IN_STREAM}</variablename>
+      <fieldtype>boolean</fieldtype>
+      <mask/>
+      <comparevalue/>
+      <minvalue/>
+      <maxvalue/>
+      <successcondition>equal</successcondition>
+      <successnumbercondition>equal</successnumbercondition>
+      <successbooleancondition>false</successbooleancondition>
+      <successwhenvarset>Y</successwhenvarset>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>592</xloc>
+      <yloc>176</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Transformation - index data</name>
+      <description/>
+      <type>TRANS</type>
+      <attributes/>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/gtas-index-hit-detail.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <logging_remote_work>N</logging_remote_work>
+      <run_configuration>Pentaho local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>624</xloc>
+      <yloc>272</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Transformation-put template</name>
+      <description/>
+      <type>TRANS</type>
+      <attributes/>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/gtas-put-template.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <logging_remote_work>N</logging_remote_work>
+      <run_configuration>Pentaho local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>336</xloc>
+      <yloc>288</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Simple evaluation - update template?</name>
+      <description/>
+      <type>SIMPLE_EVAL</type>
+      <attributes/>
+      <valuetype>variable</valuetype>
+      <fieldname/>
+      <variablename>${PAR_TEMPLATE_NAME}</variablename>
+      <fieldtype>boolean</fieldtype>
+      <mask/>
+      <comparevalue/>
+      <minvalue/>
+      <maxvalue/>
+      <successcondition>equal</successcondition>
+      <successnumbercondition>equal</successnumbercondition>
+      <successbooleancondition>true</successbooleancondition>
+      <successwhenvarset>N</successwhenvarset>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>160</xloc>
+      <yloc>384</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Dummy - after tempalte update</name>
+      <description/>
+      <type>SPECIAL</type>
+      <attributes/>
+      <start>N</start>
+      <dummy>Y</dummy>
+      <repeat>N</repeat>
+      <schedulerType>0</schedulerType>
+      <intervalSeconds>0</intervalSeconds>
+      <intervalMinutes>60</intervalMinutes>
+      <hour>12</hour>
+      <minutes>0</minutes>
+      <weekDay>1</weekDay>
+      <DayOfMonth>1</DayOfMonth>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>160</xloc>
+      <yloc>176</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>log-template error</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>###
+An Error has occurred when pushing template file to elasttic search</logmessage>
+      <loglevel>Error</loglevel>
+      <logsubject>Templae Error</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>496</xloc>
+      <yloc>416</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Abort job</name>
+      <description/>
+      <type>ABORT</type>
+      <attributes/>
+      <message>Aborting message-flight-idx job</message>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>752</xloc>
+      <yloc>448</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>log-entry-log-job-detail</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>**INFO:==>> Entering hit-detail-idx Job **
+
+##### Parameters passed to this job #####
+
+Index Name = ${PAR_INDEX_NAME}
+Template Name = ${PAR_TEMPLATE_NAME}
+
+##### ##### ##### #####</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>hit-detail-idx-job</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>160</xloc>
+      <yloc>544</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>log-update-template-true</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>**INFO:	==>> The flag to update the template for ${PAR_INDEX_NAME} is set to Y (true). See template.properties file.</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>message-flight-idx-template-exist</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>336</xloc>
+      <yloc>384</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>log-update-template-false</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>**INFO:	==>> The flag to update the template for ${PAR_INDEX_NAME} is set to N (false). See template.properties file.</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>###### EVAL FALSE</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>160</xloc>
+      <yloc>288</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Success</name>
+      <description/>
+      <type>SUCCESS</type>
+      <attributes/>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>752</xloc>
+      <yloc>608</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>log-read error</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>### ERROR!
+
+==>> AN ERROR HAS OCCURRED WHEN READING TEMP FILE FOR hit-detail-idx view
+
+######</logmessage>
+      <loglevel>Error</loglevel>
+      <logsubject>message-flight-read-error</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>480</xloc>
+      <yloc>272</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Transformation-get workpad files</name>
+      <description/>
+      <type>TRANS</type>
+      <attributes/>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/gtas-check-workpad-updates.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <logging_remote_work>N</logging_remote_work>
+      <run_configuration>Pentaho local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>1088</xloc>
+      <yloc>272</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Transformation-update workpads</name>
+      <description/>
+      <type>TRANS</type>
+      <attributes/>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/gtas-update-workpad.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>Y</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <logging_remote_work>N</logging_remote_work>
+      <run_configuration>Pentaho local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>1088</xloc>
+      <yloc>608</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Transformation - construct endpoint urls</name>
+      <description/>
+      <type>TRANS</type>
+      <attributes/>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/gtas-construct-enpoint-urls.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -364,315 +731,75 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>160</xloc>
-      <yloc>672</yloc>
+      <yloc>464</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Set variables - main property file</name>
+      <name>Transformation-update last record id</name>
       <description/>
-      <type>SET_VARIABLES</type>
-      <attributes/>
-      <replacevars>N</replacevars>
-      <filename>${EXT_ETL_CONFIG_FILE}</filename>
-      <file_variable_type>ROOT_JOB</file_variable_type>
-      <fields>
-      </fields>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>160</xloc>
-      <yloc>432</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Delete files</name>
-      <description/>
-      <type>DELETE_FILES</type>
-      <attributes/>
-      <arg_from_previous>N</arg_from_previous>
-      <include_subfolders>N</include_subfolders>
-      <fields>
-        <field>
-          <name>${Internal.Entry.Current.Directory}/temp</name>
-          <filemask>.*\.txt$</filemask>
-        </field>
-        <field>
-          <name>${Internal.Entry.Current.Directory}/temp</name>
-          <filemask>.*\.properties$</filemask>
-        </field>
-      </fields>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>160</xloc>
-      <yloc>560</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Set variables - template properties</name>
-      <description/>
-      <type>SET_VARIABLES</type>
-      <attributes/>
-      <replacevars>N</replacevars>
-      <filename>${Internal.Entry.Current.Directory}/${EXT_VAR_ELSEARCH_TEMPLATE_PROPERTIES_FILE}</filename>
-      <file_variable_type>ROOT_JOB</file_variable_type>
-      <fields>
-      </fields>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>160</xloc>
-      <yloc>304</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Abort job </name>
-      <description/>
-      <type>ABORT</type>
-      <attributes/>
-      <message>ABORTING JOB DUE TO ERROR</message>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>688</xloc>
-      <yloc>672</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Success</name>
-      <description/>
-      <type>SUCCESS</type>
-      <attributes/>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>976</xloc>
-      <yloc>672</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>log-gtas-report-config</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>### ERROR!
-
-An error has occurred when reading gtas-report-config.properties file
-
-### </logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>ERROR!-gtas-report-config.properties</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>336</xloc>
-      <yloc>432</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>log-report properties error</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>### ERROR!
-
-AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_REPORT_PROPERTIES_FILE}
-
-###</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>REPORT PROPERTIES FILE ERROR</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>336</xloc>
-      <yloc>304</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>log-error etl config file</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>### ERROR
-
-ETL CONFIG FILE NOT FOUND!
-
-
-###</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>ETL CONFIG FILE NOT FOUND!</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>336</xloc>
-      <yloc>672</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>log-delete error</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>###
-
-AN ERROR HAS OCCURRED WHEN DELETING TEMP FILES
-
-###</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>DELETE FILE-ERROR</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>336</xloc>
-      <yloc>560</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Set variables - index properties</name>
-      <description/>
-      <type>SET_VARIABLES</type>
-      <attributes/>
-      <replacevars>Y</replacevars>
-      <filename>${Internal.Entry.Current.Directory}/${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}</filename>
-      <file_variable_type>ROOT_JOB</file_variable_type>
-      <fields>
-      </fields>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>160</xloc>
-      <yloc>176</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>log-report properties error 2</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>### ERROR!
-
-AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
-
-###</logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>REPORT PROPERTIES FILE ERROR</logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>384</xloc>
-      <yloc>224</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Job - message-flight-idx</name>
-      <description/>
-      <type>JOB</type>
+      <type>TRANS</type>
       <attributes/>
       <specification_method>filename</specification_method>
-      <job_object_id/>
-      <filename>${Internal.Entry.Current.Directory}/gtas-message-flight-idx.kjb</filename>
-      <jobname/>
-      <directory/>
+      <trans_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/gtas-update-hit-detail-idx-flag.ktr</filename>
+      <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
       <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
       <set_logfile>N</set_logfile>
       <logfile/>
       <logext/>
       <add_date>N</add_date>
       <add_time>N</add_time>
-      <loglevel>Nothing</loglevel>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
       <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
       <wait_until_finished>Y</wait_until_finished>
       <follow_abort_remote>N</follow_abort_remote>
-      <expand_remote_job>N</expand_remote_job>
       <create_parent_folder>N</create_parent_folder>
-      <pass_export>N</pass_export>
+      <logging_remote_work>N</logging_remote_work>
       <run_configuration>Pentaho local</run_configuration>
       <parameters>
         <pass_all_parameters>Y</pass_all_parameters>
       </parameters>
-      <set_append_logfile>N</set_append_logfile>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>672</xloc>
-      <yloc>368</yloc>
+      <xloc>848</xloc>
+      <yloc>272</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Dummy - before job</name>
+      <name>Write to log - no data warn</name>
       <description/>
-      <type>SPECIAL</type>
+      <type>WRITE_TO_LOG</type>
       <attributes/>
-      <start>N</start>
-      <dummy>Y</dummy>
-      <repeat>N</repeat>
-      <schedulerType>0</schedulerType>
-      <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>60</intervalMinutes>
-      <hour>12</hour>
-      <minutes>0</minutes>
-      <weekDay>1</weekDay>
-      <DayOfMonth>1</DayOfMonth>
+      <logmessage>
+
+########  NO DATA WARNING ########
+
+There is no data in the stream.If this is the very first run of this ETL job, then the index will not be created in Elasticsearch.
+Therfore all the uploaded workpads that read data from this index will show an error message until data
+flows into Elasticsearch and the index is created.
+
+####################################</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>NO DATA WARNING</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>576</xloc>
+      <xloc>768</xloc>
       <yloc>176</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Job - hit-detail-idx</name>
-      <description/>
-      <type>JOB</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <job_object_id/>
-      <filename>${Internal.Entry.Current.Directory}/gtas-hit-detail-idx.kjb</filename>
-      <jobname/>
-      <directory/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Nothing</loglevel>
-      <slave_server_name/>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <expand_remote_job>N</expand_remote_job>
-      <create_parent_folder>N</create_parent_folder>
-      <pass_export>N</pass_export>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <set_append_logfile>N</set_append_logfile>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>976</xloc>
-      <yloc>368</yloc>
       <attributes_kjc/>
     </entry>
   </entries>
   <hops>
     <hop>
-      <from>Log-report etl - ENTRY</from>
-      <to>config file check</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>config file check</from>
-      <to>Delete files</to>
+      <from>Transformation - read-hit-detail</from>
+      <to>Evaluation - no data?</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -680,8 +807,17 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Delete files</from>
-      <to>Set variables - main property file</to>
+      <from>Evaluation - no data?</from>
+      <to>Transformation - index data</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation-put template</from>
+      <to>Dummy - after tempalte update</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -689,98 +825,35 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Set variables - main property file</from>
-      <to>Set variables - template properties</to>
+      <from>Transformation-put template</from>
+      <to>log-template error</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>log-template error</from>
+      <to>Abort job</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy - after tempalte update</from>
+      <to>Transformation - read-hit-detail</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Abort job </from>
-      <to>Success</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Set variables - main property file</from>
-      <to>log-gtas-report-config</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Set variables - template properties</from>
-      <to>log-report properties error</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>log-report properties error</from>
-      <to>Abort job </to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>log-gtas-report-config</from>
-      <to>Abort job </to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>config file check</from>
-      <to>log-error etl config file</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>log-error etl config file</from>
-      <to>Abort job </to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Delete files</from>
-      <to>log-delete error</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>log-delete error</from>
-      <to>Abort job </to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
       <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Start</from>
-      <to>Log-report etl - ENTRY</to>
+      <to>log-entry-log-job-detail</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -788,8 +861,8 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Set variables - template properties</from>
-      <to>Set variables - index properties</to>
+      <from>Simple evaluation - update template?</from>
+      <to>log-update-template-true</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -797,8 +870,8 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Set variables - index properties</from>
-      <to>log-report properties error 2</to>
+      <from>Simple evaluation - update template?</from>
+      <to>log-update-template-false</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -806,8 +879,8 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>log-report properties error 2</from>
-      <to>Abort job </to>
+      <from>log-update-template-false</from>
+      <to>Dummy - after tempalte update</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -815,8 +888,8 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Job - message-flight-idx</from>
-      <to>Abort job </to>
+      <from>Transformation - index data</from>
+      <to>Abort job</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -824,7 +897,97 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Job - message-flight-idx</from>
+      <from>Abort job</from>
+      <to>Success</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation - read-hit-detail</from>
+      <to>log-read error</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>log-read error</from>
+      <to>Abort job</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>log-update-template-true</from>
+      <to>Transformation-put template</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>log-entry-log-job-detail</from>
+      <to>Transformation - construct endpoint urls</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation - construct endpoint urls</from>
+      <to>Simple evaluation - update template?</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation - index data</from>
+      <to>Transformation-update last record id</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation-update last record id</from>
+      <to>Abort job</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation-get workpad files</from>
+      <to>Abort job</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation-get workpad files</from>
+      <to>Transformation-update workpads</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation-update workpads</from>
       <to>Success</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -833,26 +996,8 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Set variables - index properties</from>
-      <to>Dummy - before job</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Dummy - before job</from>
-      <to>Job - message-flight-idx</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Job - hit-detail-idx</from>
-      <to>Abort job </to>
+      <from>Transformation-update workpads</from>
+      <to>Abort job</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -860,8 +1005,8 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Job - hit-detail-idx</from>
-      <to>Success</to>
+      <from>Transformation-update last record id</from>
+      <to>Transformation-get workpad files</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -869,8 +1014,8 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Job - message-flight-idx</from>
-      <to>Job - hit-detail-idx</to>
+      <from>Write to log - no data warn</from>
+      <to>Transformation-get workpad files</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -878,22 +1023,27 @@ AN ERROR HAS OCCURRED WHEN READING ${EXT_VAR_ELSEARCH_INDEX_PROPERTIES_FILE}
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Dummy - before job</from>
-      <to>Job - hit-detail-idx</to>
+      <from>Evaluation - no data?</from>
+      <to>Write to log - no data warn</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
+      <unconditional>N</unconditional>
     </hop>
   </hops>
   <notepads>
     <notepad>
-      <note>This jobs (the main job) reads property files and calls other jobs to create indices. </note>
-      <xloc>464</xloc>
-      <yloc>64</yloc>
-      <width>438</width>
-      <heigth>26</heigth>
+      <note>Index Name:	message-flight-idx
+
+This job does the following:
+1. Import Index Template the first time or upon requested using a flag
+2. Create Index using bulk import
+3.  Import Canvas Workpads that are based on this Index the first time or upon requested using a flag</note>
+      <xloc>272</xloc>
+      <yloc>32</yloc>
+      <width>541</width>
+      <heigth>105</heigth>
       <fontname>Segoe UI</fontname>
       <fontsize>9</fontsize>
       <fontbold>N</fontbold>
