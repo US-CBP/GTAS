@@ -17,7 +17,7 @@ services:
     ports:
       - 61616:61616
       - 8161:8161
-  rule-runner:
+  gtas-rule-runner:
     environment:
       MAIRA_URL: jdbc:mysql://mariadb:3306/gtas
       DB_HOST: mariadb
