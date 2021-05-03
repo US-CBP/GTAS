@@ -44,7 +44,7 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toSet;
 
 @Service
-@ConditionalOnProperty(prefix = "enable.email.notification", name = "service")
+@ConditionalOnProperty(prefix = "enable.email.notification", name = "enabled")
 public class HitEmailNotificationService {
 
     private static final String AUTOMATED_EMAIL_SUBJECT = "GTAS Automated Email Notification";

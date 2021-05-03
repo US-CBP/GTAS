@@ -40,7 +40,7 @@ import gov.gtas.vo.NotificationTextVo;
  */
 @Service
 @Transactional
-@ConditionalOnProperty(prefix = "enable.email.notification", name = "service")
+@ConditionalOnProperty(prefix = "email.hit.notification", name = "enabled")
 public class NotificatonServiceImpl implements NotificatonService {
 
 	private final Logger logger = LoggerFactory.getLogger(NotificatonServiceImpl.class);
