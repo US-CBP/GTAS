@@ -4,70 +4,18 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.4</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<groupId>gov.gtas</groupId>
+		<artifactId>gtas-parent</artifactId>
+		<version>0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>gov.gtas</groupId>
 	<artifactId>gtas-rule-runner</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rule_app</name>
-	<description>kb runner</description>
+	<name>GTAS-Rule-Runner</name>
+	<description>gtas kb runner</description>
 	<properties>
 		<java.version>1.8</java.version>
 		<main.basedir>${project.basedir}</main.basedir>
 	</properties>
-	<repositories>
-		<repository>
-			<id>local-maven-repository</id>
-			<url>file://${project.basedir}${file.separator}libs</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>jcenter-snapshots</id>
-			<name>jcenter</name>
-			<url>http://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
-		</repository>
-		<repository>
-			<id>maven central</id>
-			<url>https://repo.maven.apache.org/maven2/</url>
-		</repository>
-		<repository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/milestone</url>
-		</repository>
-		<repository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/milestone</url>
-		</pluginRepository>
-
-		<pluginRepository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

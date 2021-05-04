@@ -222,7 +222,8 @@
 		        <module>gtas-webapp</module>
 		        <module>gtas-query-builder</module> 
 		        <module>gtas-job-scheduler-war</module>
-		       <module>gtas-pdi-parser</module>
+		        <module>gtas-pdi-parser</module>
+		        <module>gtas-rule-runner</module>
 		    </modules>
 		</profile>
 		
