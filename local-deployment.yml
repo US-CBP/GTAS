@@ -6,8 +6,8 @@ services:
       EMAIL_SENDER_PASSWORD: "somepassword"
       EMAIL_SENDER_HOST: "some.smtp.somedomain.com"
       SSL_TRUST_HOST: "bogus"
-      AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "true"
-      MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "true"
+      AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
+      MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
       ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
       ADDITIONAL_PROCESSING_RAW: "false"
       ADDITIONAL_PROCESSING_RULES: "false"
@@ -24,6 +24,7 @@ services:
       MARIA_USERNAME: root
       MARIA_PASSWORD: admin
       UI_ADDRESS: localhost
+      ACTIVE_MQ_HOST: activemq
   activemq:
     ports:
       - 61616:61616

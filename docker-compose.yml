@@ -121,7 +121,7 @@ services:
     image: wcogtas/gtas-rule-runner:dev
     build:
       context: .
-      dockerfile: ./gtas-rule-runner/gtas-rule-runner.Dockerfile
+      dockerfile: ./gtas-parent/gtas-rule-runner/gtas-rule-runner.Dockerfile
     environment:
       KB_LIST: UDR Knowledge Base_1,WL_Knowledge_Base_3,WL_Knowledge_Base_2,WL_Knowledge_Base_1
       INBOUND_QUEUE: RULE_RUNNER_1
