@@ -82,4 +82,7 @@ public interface FlightService {
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHTS)
 	List<FlightGridVo> convertFlightToFlightGridVo(List<Flight> flights);
 
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHTS)
+	FlightVo getIndividualFlightInfo(Long flightId);
+
 }

@@ -78,4 +78,10 @@ public class FlightPassengerController {
 		return paxService.getPassengersByCriteria(null, request);
 	}
 
+	@RequestMapping(value = "api/flights/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody FlightVo getSingleFlight(@PathVariable(value = "id") Long flightId, HttpServletRequest hsr) {
+		SecurityContextHolder.setContext((SecurityContext) hsr.getSession().getAttribute("SPRING_SECURITY_CONTEXT"));
+		return flightService.getIndividualFlightInfo(flightId);
+	}
+
 }
