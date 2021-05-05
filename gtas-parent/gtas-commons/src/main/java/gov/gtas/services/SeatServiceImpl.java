@@ -3,8 +3,6 @@ package gov.gtas.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,15 +20,13 @@ public class SeatServiceImpl implements SeatService {
 		this.seatRepository = seatRepository;
 	}
 
-	public String findSeatNumberByFlightIdAndPassengerId(Long flightId, Long paxId) {
+	public List<String> findSeatNumberByFlightIdAndPassengerId(Long flightId, Long paxId) {
 		List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(flightId, paxId);
-		String seatNumber = null;
+		List<String> seatNumber = null;
 		if (CollectionUtils.isNotEmpty(seatList)) {
 			List<String> seats = seatList.stream().map(seat -> seat.getNumber()).distinct()
 					.collect(Collectors.toList());
-			if (seats.size() == 1) {
-				seatNumber = seats.get(0);
-			}
+			seatNumber = seats;
 		}
 
 		return seatNumber;

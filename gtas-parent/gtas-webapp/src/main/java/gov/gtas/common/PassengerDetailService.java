@@ -75,8 +75,8 @@ public class PassengerDetailService {
         vo.setPassengerCount(flight.getFlightPassengerCount().getPassengerCount());
         vo.setDirection(flight.getDirection());
 
-        String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), passenger.getId());
-        vo.setSeat(seatNumber);
+        List<String> seatNumbers = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), passenger.getId());
+        vo.setSeats(seatNumbers);
 
         vo.setPaxId(String.valueOf(passenger.getId()));
         if (passenger.getPassengerIDTag() != null) {
