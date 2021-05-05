@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
@@ -119,6 +120,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public List<UserDisplayData> findAll() {
 		Iterable<User> usersCollection = userRepository.findAll();
+		usersCollection = StreamSupport.stream(usersCollection.spliterator(), false).filter(user -> (!user.getArchived()))::iterator;
 		return userServiceUtil.getUserDataListFromEntityCollection(usersCollection);
 	}
 
