@@ -1,8 +1,11 @@
 package gov.gtas.svc.util;
 
+import gov.gtas.model.HitDetail;
 import gov.gtas.model.MessageStatus;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class RuleResultsWithMessageStatus {
@@ -12,7 +15,18 @@ public class RuleResultsWithMessageStatus {
 	private int number;
 	private String queueName;
 	
+	private Set<HitDetail> hitDetails = new HashSet<>();
 	
+	
+	
+	public Set<HitDetail> getHitDetails() {
+		return hitDetails;
+	}
+
+	public void setHitDetails(Set<HitDetail> hitDetails) {
+		this.hitDetails = hitDetails;
+	}
+
 	public int getNumber() {
 		return number;
 	}

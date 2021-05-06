@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.gtas.constant.WatchlistConstants;
+import gov.gtas.model.HitDetail;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.model.udr.KnowledgeBase;
@@ -80,6 +82,8 @@ public class InboundRules {
 		ruleResults.setQueueName(ruleQueueName);
 		long start = System.nanoTime();
 		try {
+			TargetingService targetingService = applicationContext.getBean(TargetingService.class);
+
 			logger.info("Running rules on inbound message");
 			List<MessageStatus> messageStatuses = om.readValue((String) message.getPayload(),
 					new TypeReference<List<MessageStatus>>() {
@@ -97,7 +101,7 @@ public class InboundRules {
 				List<MessageStatus> source = messageStatusRepository.getMessageFromIds(messageStatusIds);
 				logger.debug("grabbed messages");
 				rec.setSource(source);
-				TargetingService targetingService = applicationContext.getBean(TargetingService.class);
+
 				rec = targetingService.createRuleExecutionContext(source);
 				rec.setSource(messageStatuses);
 			} catch (Exception e) {
@@ -114,7 +118,10 @@ public class InboundRules {
 
 			if (!(rec.getRuleServiceRequest() == null || rec.getRuleServiceRequest().getRequestObjects().isEmpty())) {
 				ruleResults = runRules(ruleResults, messageStatuses, rec);
-			}
+				Set<HitDetail> hitDetailSet = targetingService.generateHitDetails(ruleResults.getRuleResults());
+				ruleResults.setHitDetails(hitDetailSet);
+			}			
+			
 		} catch (Exception e) {
 			logger.info("", e);
 		} finally {
@@ -130,6 +137,7 @@ public class InboundRules {
 			Map<String, KIEAndLastUpdate> rules = new ConcurrentHashMap<>(cache);
 			TargetingService targetingService = applicationContext.getBean(TargetingService.class);
 			ruleResults = targetingService.analyzeLoadedMessages(rec, rules);
+			targetingService.generateHitDetails(ruleResults.getRuleResults());
 			ruleResults.setMessageStatusList(messageStatuses);
 			logger.debug("generating hit details");
 		} catch (Exception e) {

@@ -51,7 +51,6 @@ public class HitDetail extends BaseEntity {
 	@JsonIgnore
 	private HitMaker hitMaker;
 
-	@JsonIgnore
 	@Column(name = "hm_id", columnDefinition = "bigint unsigned", nullable = false)
 	private Long hitMakerId;
 

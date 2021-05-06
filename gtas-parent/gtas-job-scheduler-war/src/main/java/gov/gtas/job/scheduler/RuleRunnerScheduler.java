@@ -283,7 +283,7 @@ public class RuleRunnerScheduler {
 				RuleResultsWithMessageStatus.class);
 		String previousQueue = rrwms.getQueueName();
 		String nextQueue = ruleMap.get(previousQueue);
-		Set<HitDetail> hits = targetingService.generateHitDetails(rrwms.getRuleResults());
+		Set<HitDetail> hits = rrwms.getHitDetails();
 		Set<PendingHitDetails> pendingHits = PendingHitDetails.convertHits(hits);
 		if (!pendingHits.isEmpty()) {
 			pendingHitDetailRepository.saveAll(new ArrayList<>(pendingHits));
@@ -311,36 +311,23 @@ public class RuleRunnerScheduler {
 				new TypeReference<List<MessageStatus>>() {
 				});
 		String previousQueue = "GTAS_FUZZY_MATCHER";
-		String nextQueue = ruleMap.get(previousQueue);
 		MatchingService ms = ctx.getBean(MatchingService.class);
+		RuleResultsWithMessageStatus rrwms = new RuleResultsWithMessageStatus();
+		rrwms.setMessageStatusList(messageStatuses);
+		rrwms.setQueueName(previousQueue);
 		try {
 			PassengerWatchlistAndHitDetails passengerWatchlistAndHitDetails = ms
 					.findMatchesBasedOnTimeThreshold(messageStatuses);
-			Set<PendingHitDetails> pendingHits = PendingHitDetails
-					.convertHits(passengerWatchlistAndHitDetails.getPartialWatchlistHits());
-			if (!pendingHits.isEmpty()) {
-				pendingHitDetailRepository.saveAll(new ArrayList<>(pendingHits));
+			if (!passengerWatchlistAndHitDetails.getPartialWatchlistHits().isEmpty()) {
+				rrwms.setHitDetails(passengerWatchlistAndHitDetails.getPartialWatchlistHits());
 			}
 			saveWatchlistTimestamps(passengerWatchlistAndHitDetails);
-			for (MessageStatus mstat : messageStatuses) {
-				mstat.setMessageStatusEnum(MessageStatusEnum.ANALYZED);
-			}
 		} catch (Exception e) {
 			for (MessageStatus mstat : messageStatuses) {
 				mstat.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
 			}
 		}
-		if (nextQueue.equals("GTAS_FINAL_PROCESS")) {
-			if (!messageStatuses.isEmpty()) {
-				Date analyzed = new Date();
-				for (MessageStatus finalMessage : messageStatuses) {
-					finalMessage.setAnalyzedTimestamp(analyzed);
-				}
-				messageStatusRepository.saveAll(messageStatuses);
-			}
-		} else {
-			sendFileContent(nextQueue, mapper.writeValueAsString(messageStatuses));
-		}
+		sendFileContent("GTAS_RULE_ENGINE", mapper.writeValueAsString(rrwms));
 	}
 
 	private void saveWatchlistTimestamps(PassengerWatchlistAndHitDetails passengerWatchlistAndHitDetails) {

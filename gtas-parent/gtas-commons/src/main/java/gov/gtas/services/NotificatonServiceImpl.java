@@ -21,6 +21,7 @@ import gov.gtas.services.email.HitEmailNotificationService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -40,33 +41,28 @@ import gov.gtas.vo.NotificationTextVo;
  */
 @Service
 @Transactional
-@ConditionalOnProperty(prefix = "email.hit.notification", name = "enabled")
 public class NotificatonServiceImpl implements NotificatonService {
 
 	private final Logger logger = LoggerFactory.getLogger(NotificatonServiceImpl.class);
 
 	// Date format in the subject line and body of the notification email
 	private static final String DOB_FORMAT = "dd-MMM-yy";
-	private final SnsService snsService;
+	@Autowired(required=false)
+	private  SnsService snsService;
 
 	private AmazonSNS amazonSNS;
 
 	private String topicArn;
 	private String topicSubject;
 
-	private final HitCategoryService watchlistCatService;
-	private final GtasEmailService emailService;
-	private final HitEmailNotificationService hitEmailNotificationService;
+	@Autowired(required=false)
+	private  HitCategoryService watchlistCatService;
+	@Autowired(required=false)
+	private  GtasEmailService emailService;
+	@Autowired(required=false)
+	private  HitEmailNotificationService hitEmailNotificationService;
 
-	public NotificatonServiceImpl(SnsService snsService,
-								  HitCategoryService watchlistCatService,
-								  GtasEmailService emailService,
-								  HitEmailNotificationService hitEmailNotificationService) {
-		this.snsService = snsService;
-		this.watchlistCatService = watchlistCatService;
-		this.emailService = emailService;
-		this.hitEmailNotificationService = hitEmailNotificationService;
-	}
+
 
 	/**
 	 * Sends email notification for Interpol Red Notices Watchlist hits
