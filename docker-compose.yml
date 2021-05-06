@@ -83,6 +83,8 @@ services:
     restart: unless-stopped
     networks: 
       - gtas-webapp-network
+    volume:
+      activemq-data:/opt/activemq/data
 
   mariadb: 
     image: wcogtas/mariadb:dev
@@ -369,6 +371,7 @@ secrets:
   neo4j-crt:
     file: ./gtas-parent/gtas-commons/certs/neo4j/neo4j.cert
 volumes:
+  activemq-data:
   db-data:
   m2:
   scheduler-logs:
