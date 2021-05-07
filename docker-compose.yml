@@ -84,7 +84,7 @@ services:
     networks: 
       - gtas-webapp-network
     volumes:
-      activemq-data:/opt/activemq/data
+      - activemq-data:/opt/activemq/data
 
   mariadb: 
     image: wcogtas/mariadb:dev
