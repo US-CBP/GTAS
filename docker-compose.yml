@@ -83,8 +83,8 @@ services:
     restart: unless-stopped
     networks: 
       - gtas-webapp-network
-    volumes:
-      - activemq-data:/opt/activemq/data
+#    volumes:
+#      - activemq-data:/opt/activemq/data
 
   mariadb: 
     image: wcogtas/mariadb:dev
