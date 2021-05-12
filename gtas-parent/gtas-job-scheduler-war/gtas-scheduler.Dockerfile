@@ -17,7 +17,7 @@ COPY --from=scheduler-builder /root/.m2/repository/gov/gtas/gtas-job-scheduler-w
 COPY ./gtas-parent/docker-resources/default.application.properties /usr/local/tomcat/conf/application.properties
 COPY --from=scheduler-builder /temp-dos/setenv-scheduler.sh /usr/local/tomcat/bin/setenv.sh
 
-RUN apt-get -y update && apt-get -y install wget
+RUN yum -y update && yum -y install wget && yum -y install tar && yum install -y gzip
 RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
 RUN tar -C /usr/local/bin -xvzf dockerize-linux-amd64-v0.6.1.tar.gz
 
