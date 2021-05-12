@@ -65,7 +65,7 @@ services:
     environment:
       DB_HOST: ${MARIADB_HOST}
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
-      JAVA_OPTS: "-Xms16g -Xmx24g -Duser.timezone=UTC -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
+      JAVA_OPTS: "-Xms28g -Xmx28g -Duser.timezone=UTC -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
       EMAIL_SENDER_USERNAME: ""
       EMAIL_SENDER_PASSWORD: ""
       EMAIL_SENDER_HOST: ""
