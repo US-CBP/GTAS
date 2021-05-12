@@ -38,5 +38,5 @@ public interface POEService {
     @PreAuthorize((GtasSecurityConstants.PRIVILEGE_ADMIN))
     JsonServiceResponse deleteLane(String laneId);
 
-    boolean lookoutIsMissedOrInvalidAndUpdate(HitViewStatus hvs);
+    boolean lookoutIsMissedOrInactiveAndUpdate(HitViewStatus hvs);
 }

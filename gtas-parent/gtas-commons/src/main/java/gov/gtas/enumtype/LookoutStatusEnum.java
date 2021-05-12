@@ -31,7 +31,9 @@ public enum LookoutStatusEnum {
 
     INACTIVE("Inactive"),
 
-    UNCATEGORIZED("Uncategorized");
+    UNCATEGORIZED("Uncategorized"),
+
+    NOTPROMOTED("Not Promoted");
 
     private String POEStatus;
 

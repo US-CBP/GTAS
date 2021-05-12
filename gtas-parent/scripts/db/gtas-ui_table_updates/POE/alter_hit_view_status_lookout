@@ -1,0 +1,2 @@
+alter table hit_view_status
+    add (lookout_status varchar(50) DEFAULT "NOTPROMOTED" not null)

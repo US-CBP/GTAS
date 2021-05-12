@@ -49,6 +49,7 @@ public class POEServiceImpl implements POEService {
     private UserService userService;
 
     private static final DateTime inactiveWindowVariable = new DateTime().minusDays(1);
+    private static final DateTime fullyUnpromoteVariable = new DateTime().minusWeeks(1);
 
     @Override
     public Set<LookoutStatusDTO> getAllTiles(String userId, POETileServiceRequest request) {
@@ -57,10 +58,10 @@ public class POEServiceImpl implements POEService {
        //TODO: consider indexes
        Set<HitViewStatus> hvsToBeUpdated = new HashSet<HitViewStatus>();
        for(HitViewStatus hv : hvs ){
-           if(lookoutIsMissedOrInvalidAndUpdate(hv)){
+           if(lookoutIsMissedOrInactiveAndUpdate(hv)){
                hvsToBeUpdated.add(hv);
            }
-          tiles.add(createLookoutTileDTO(hv)); //TODO: distinct passenger on query with a lot more configuration in the service layer for duplicates handling
+           tiles.add(createLookoutTileDTO(hv)); //TODO: distinct passenger on query with a lot more configuration in the service layer for duplicates handling
        }
        if(!hvsToBeUpdated.isEmpty()){
            hitViewStatusRepository.saveAll(hvsToBeUpdated);
@@ -158,9 +159,10 @@ public class POEServiceImpl implements POEService {
         return tile;
     }
 
-    public boolean lookoutIsMissedOrInvalidAndUpdate(HitViewStatus hvs){
+    public boolean lookoutIsMissedOrInactiveAndUpdate(HitViewStatus hvs){
         if(!hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.INACTIVE.name())
-                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.MISSED.name()) ) {
+                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.MISSED.name())
+                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.NOTPROMOTED.name())) {
             Date pastDue = inactiveWindowVariable.toDate();
             Date alreadyLandedOrLeft = new Date();
 
@@ -171,6 +173,12 @@ public class POEServiceImpl implements POEService {
                 hvs.setLookoutStatusEnum(LookoutStatusEnum.MISSED);
                 return true;
             }
+        } else if(hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.INACTIVE.name())){ //If after a week inactive, unpromote
+            Date unpromoteDate = fullyUnpromoteVariable.toDate();
+            if(hvs.getUpdatedAt() != null && hvs.getUpdatedAt().before(unpromoteDate)){
+                hvs.setLookoutStatusEnum(LookoutStatusEnum.NOTPROMOTED);
+            }
+            return true;
         }
         return false;
     }

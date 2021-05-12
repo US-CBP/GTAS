@@ -1,0 +1,2 @@
+alter table hit_category
+    add (promote_to_lookout bit(1) DEFAULT 0 not null)

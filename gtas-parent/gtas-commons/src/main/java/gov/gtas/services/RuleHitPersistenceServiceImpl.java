@@ -212,7 +212,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 					}
 
 					for (HitDetail hd : hitDetailsToPersist) {
-						LookoutStatusEnum poeStatus = LookoutStatusEnum.INACTIVE;
+						LookoutStatusEnum poeStatus = LookoutStatusEnum.NOTPROMOTED;
 						if(hitMakerIdMappedToLookoutStatus.get(hd.getHitMakerId())) { //If ANY category is worthy of promoting, ALL hit view statuses are set active
 							poeStatus = LookoutStatusEnum.ACTIVE;
 						}

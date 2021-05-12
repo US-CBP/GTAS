@@ -114,7 +114,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 					for (HitViewStatus hvs : hd.getHitViewStatus()) {
 						if (userGroups.contains(hvs.getUserGroup())) {
 							hvsEnums.add(hvs.getHitViewStatusEnum());
-							if(poeService.lookoutIsMissedOrInvalidAndUpdate(hvs)){
+							if(poeService.lookoutIsMissedOrInactiveAndUpdate(hvs)){
 								hvsToUpdate.add(hvs);
 							}
 							lookoutStatus=hvs.getLookoutStatusEnum().name(); // All lookout status' for a given user group should be the same.
