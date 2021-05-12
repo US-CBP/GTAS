@@ -33,7 +33,7 @@ services:
       kompose.service.type: "LoadBalancer"
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
-      JAVA_OPTS: "-Xms32g -Xmx32g -XX:MaxPermSize=16g -Duser.timezone=UTC"
+      JAVA_OPTS: "-Xms30g -Xmx30g -Duser.timezone=UTC"
       EMAIL_SENDER_USERNAME: ${EMAIL_SENDER_USERNAME}
       EMAIL_SENDER_PASSWORD: ${EMAIL_SENDER_PASSWORD}
       EMAIL_SENDER_HOST: ${EMAIL_SENDER_HOST}
