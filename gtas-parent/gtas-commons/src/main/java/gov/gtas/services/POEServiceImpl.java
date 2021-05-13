@@ -49,7 +49,7 @@ public class POEServiceImpl implements POEService {
     private UserService userService;
 
     private static final DateTime inactiveWindowVariable = new DateTime().minusDays(1);
-    private static final DateTime fullyUnpromoteVariable = new DateTime().minusWeeks(1);
+    private static final DateTime fullyDemoteVariable = new DateTime().minusWeeks(1);
 
     @Override
     public Set<LookoutStatusDTO> getAllTiles(String userId, POETileServiceRequest request) {
@@ -169,16 +169,31 @@ public class POEServiceImpl implements POEService {
             if (hvs.getUpdatedAt() != null && hvs.getUpdatedAt().before(pastDue)) {
                 hvs.setLookoutStatusEnum(LookoutStatusEnum.INACTIVE);
                 return true;
-            } else if (hvs.getPassenger().getFlight().getFlightCountDownView().getCountDownTimer().before(alreadyLandedOrLeft)) {
+            } else if (hvs.getPassenger().getFlight().getFlightCountDownView().getCountDownTimer().before(alreadyLandedOrLeft)
+                    && !updatedAfterDepartureOrArrivalTime(hvs)) {
                 hvs.setLookoutStatusEnum(LookoutStatusEnum.MISSED);
                 return true;
             }
-        } else if(hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.INACTIVE.name())){ //If after a week inactive, unpromote
-            Date unpromoteDate = fullyUnpromoteVariable.toDate();
-            if(hvs.getUpdatedAt() != null && hvs.getUpdatedAt().before(unpromoteDate)){
+        } else if(hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.INACTIVE.name())){ //If after a time inactive, demote
+            Date demoteDate = fullyDemoteVariable.toDate();
+            if(hvs.getUpdatedAt() != null && hvs.getUpdatedAt().before(demoteDate)){
                 hvs.setLookoutStatusEnum(LookoutStatusEnum.NOTPROMOTED);
             }
             return true;
+        }
+        return false;
+    }
+
+    //This will allow us to not reset anything recently updated erroneously to Missed
+    private boolean updatedAfterDepartureOrArrivalTime(HitViewStatus hvs){
+        if(hvs.getPassenger().getFlight().getDirection().equals("I")){
+            if(hvs.getPassenger().getFlight().getMutableFlightDetails().getEta().before(hvs.getUpdatedAt())){
+                return true;
+            }
+        } else if(hvs.getPassenger().getFlight().getDirection().equals("O")){
+            if(hvs.getPassenger().getFlight().getMutableFlightDetails().getEtd().before(hvs.getUpdatedAt())){
+                return true;
+            }
         }
         return false;
     }

@@ -9,6 +9,8 @@ INSERT INTO `role` VALUES ('4', 'Manage Watch List');
 INSERT INTO `role` VALUES ('5', 'Manage Rules');
 INSERT INTO `role` VALUES ('6', 'Manage Hits');
 INSERT INTO `role` VALUES ('7', 'View Flights');
+INSERT INTO `role` VALUES ('8', 'Manage POE Lookout');
+INSERT INTO `role` VALUES ('9', 'View POE Lookout');
 
 -- ----------------------------
 -- Users
@@ -119,3 +121,17 @@ INSERT INTO external_hit (description, id) VALUES ('Local Law Enforcement', 10);
 INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "IAD");
 INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "DCA");
 INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "ADD");
+
+-- ----------------------------
+-- User Location
+-- ----------------------------
+INSERT INTO `lookout_lane` VALUES(1, null, null, null, null, 0, 'Active', 0, 'ACTIVE');
+INSERT INTO `lookout_lane` VALUES(2, null, null, null, null, 0, 'Inactive', 1, 'INACTIVE');
+INSERT INTO `lookout_lane` VALUES(3, null, null, null, null, 0, 'Enroute', 2, 'ENROUTE');
+INSERT INTO `lookout_lane` VALUES(4, null, null, null, null, 0, 'Encountered', 3, 'ENCOUNTERED');
+INSERT INTO `lookout_lane` VALUES(5, null, null, null, null, 0, 'Missed', 4, 'MISSED');
+INSERT INTO `lookout_lane` VALUES(6, null, null, null, null, 0, 'Negative', 5, 'NEGATIVE');
+INSERT INTO `lookout_lane` VALUES(7, null, null, null, null, 0, 'Positive', 6, 'POSITIVE');
+INSERT INTO `lookout_lane` VALUES(8, null, null, null, null, 0, 'Referred', 7, 'REFERRED');
+INSERT INTO `lookout_lane` VALUES(9, null, null, null, null, 0, 'Did Not Board', 8, 'DIDNOTBOARD');
+INSERT INTO `lookout_lane` VALUES(10, null, null, null, null, 0, 'Uncategorized', 9, 'UNCATEGORIZED');

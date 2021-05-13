@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.Set;
 
 public interface POEService {
-    @PreAuthorize(GtasSecurityConstants.PRIVILEGE_ADMIN)
+    @PreAuthorize(GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_LOOKOUT)
     Set<LookoutStatusDTO> getAllTiles(String userId, POETileServiceRequest req); //Evolve parameters to send
 
-    @PreAuthorize(GtasSecurityConstants.PRIVILEGE_ADMIN)
+    @PreAuthorize(GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_LOOKOUT)
     List<LookoutLane> getAllLanes();
 
-    @PreAuthorize(GtasSecurityConstants.PRIVILEGE_ADMIN)
+    @PreAuthorize(GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_LOOKOUT)
     JsonServiceResponse updateStatus(LookoutStatusDTO tileDTO);
 
     @PreAuthorize(GtasSecurityConstants.PRIVILEGE_ADMIN)
