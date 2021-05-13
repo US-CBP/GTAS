@@ -6,7 +6,7 @@ create table lookout_lane
     created_by varchar(20) null,
     updated_at datetime null,
     updated_by varchar(20) null,
-    archived bit null,
+    archived bit DEFAULT 0 not null,
     display_name varchar(255) null,
     ord int null,
     lookout_status varchar(255) null

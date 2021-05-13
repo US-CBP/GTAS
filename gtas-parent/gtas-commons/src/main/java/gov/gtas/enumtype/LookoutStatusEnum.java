@@ -25,7 +25,7 @@ public enum LookoutStatusEnum {
 
     POSITIVE("Positive"),
 
-    REFERRED("Referrred"),
+    REFERRED("Referred"),
 
     DIDNOTBOARD("Did Not Board"),
 
