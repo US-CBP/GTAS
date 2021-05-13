@@ -67,8 +67,8 @@ services:
       KIBANA_HOST: kibana
       NEO4J_HOST: neo4j
       ACTIVEMQ_HOST: activemq
-    volumes:
-      - scheduler-logs:/usr/local/tomcat/logs
+#    volumes:
+#      - scheduler-logs:/usr/local/tomcat/logs
     secrets:
       - mysql-processor-user
       - mysql-processor-password
@@ -85,6 +85,8 @@ services:
     restart: unless-stopped
     networks: 
       - gtas-webapp-network
+#    volumes:
+#      - activemq-data:/opt/activemq/data
 
   mariadb: 
     image: wcogtas/mariadb:dev
@@ -398,6 +400,7 @@ secrets:
   neo4j-crt:
     file: ./gtas-parent/gtas-commons/certs/neo4j/neo4j.cert
 volumes:
+  activemq-data:
   db-data:
   m2:
   scheduler-logs:

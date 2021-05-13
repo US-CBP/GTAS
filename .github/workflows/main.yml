@@ -57,7 +57,7 @@ jobs:
         with:
           repository: wcogtas/gtas-scheduler
           context: .
-          platforms: linux/amd64, ppc64le
+          platforms: linux/amd64
           push: true
           file: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
           tags: wcogtas/gtas-scheduler:dev
