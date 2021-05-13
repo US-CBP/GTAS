@@ -83,7 +83,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
 
   activemq:
     labels:
@@ -97,7 +97,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
   kibana:
     labels:
       kompose.image-pull-policy: "Always"
