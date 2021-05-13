@@ -56,12 +56,12 @@ services:
           - node.labels.role == backend
     volumes:
       - certs:/temp-cert
-  gtas-rule-runner:
+  rule-runner:
     labels:
       kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     environment:
-      MAIRA_URL: ${{  secrets.MARIADB_HOST  }}
+      MARIA_URL: ${{  secrets.MARIADB_HOST  }}
       DB_HOST: ${{  secrets.MARIADB_HOST  }}
       MARIA_USERNAME: ${{  secrets.MARIADB_USER  }}
       MARIA_PASSWORD: ${{  secrets.MARIADB_PASS  }}

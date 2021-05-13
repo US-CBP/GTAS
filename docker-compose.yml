@@ -118,7 +118,7 @@ services:
     volumes:
       - db-data:/var/lib/mysql
  
-  gtas-rule-runner:
+  rule-runner:
     container_name: rule-runner
     image: wcogtas/gtas-rule-runner:dev
     build:

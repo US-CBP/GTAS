@@ -9,7 +9,7 @@ WORKDIR /gtas-parent/gtas-rule-runner
 ENV RUN_ARGUMENTS ' --kb.list=${KB_LIST} \
                     --inbound.queue=${INBOUND_QUEUE} \
                     --outbound.queue=${OUTBOUND_QUEUE} \
-                    --spring.datasource.url=${MAIRA_URL} \
+                    --spring.datasource.url=${MARIA_URL} \
                     --spring.datasource.username=${MARIA_USERNAME} \
                     --spring.datasource.password=${MARIA_PASSWORD} \
                     --activemq.broker.url=tcp://${ACTIVE_MQ_HOST}'
