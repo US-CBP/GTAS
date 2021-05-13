@@ -29,6 +29,8 @@ public enum PassengerDetailsMapping implements IEntityMapping {
 	RESIDENCY_COUNTRY("residencyCountry", "Residency Country", TypeEnum.STRING.getType()),
 
 	PASSENGER_TYPE("passengerType", "Type", TypeEnum.STRING.getType()),
+	
+	DAYS_OUT_OF_COUNTRY("daysOutOfCountry", "Days out of Country", TypeEnum.DOUBLE.getType()),
 
 	TRAVEL_FREQUENCY("travelFrequency", "Travel Frequency", TypeEnum.STRING.getType());
 
