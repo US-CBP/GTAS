@@ -20,6 +20,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - uses: docker/build-push-action@v2
+        name: Build and push GTAS rule runner image
+        with:
+          repository: wcogtas/gtas-rule-runner
+          context: .
+          platforms: linux/amd64, ppc64le
+          push: true
+          file: ./gtas-parent/gtas-rule-runner/gtas-rule-runner.Dockerfile
+          tags: wcogtas/gtas-rule-runner:dev
+      - uses: docker/build-push-action@v2
         name: Build and push GTAS web application image
         with:
           context: ./gtas-parent
