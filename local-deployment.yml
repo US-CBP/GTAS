@@ -21,7 +21,7 @@ services:
       MARIA_PASSWORD: admin
       UI_ADDRESS: localhost
       ACTIVE_MQ_HOST: activemq
-      JVM_ARGS: -Xms4g -Xmx8g
+      JVM_ARGS: -Xms1g -Xmx4g
   activemq:
     ports:
       - 61616:61616
