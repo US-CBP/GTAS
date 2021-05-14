@@ -165,7 +165,7 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: delete deployments --ignore-not-found=true activemq elasticsearch etl-job gtas-scheduler http-proxy kibana logstash mariadb neo4j web-app
+          args: delete deployments --ignore-not-found=true activemq elasticsearch etl-job gtas-scheduler http-proxy kibana logstash mariadb neo4j web-app rule-runner
       - name: Deploy to cluster
         uses: Consensys/kubernetes-action@master
         env:
