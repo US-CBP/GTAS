@@ -8,8 +8,8 @@
 
 package gov.gtas.services;
 
-import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
+import gov.gtas.enumtype.LookoutStatusEnum;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
 import gov.gtas.services.jms.OmniLocalGtasSender;
@@ -208,16 +208,22 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 					}
 				}
 				if (!hitDetailsToPersist.isEmpty()) {
-
 					Map<Long, Set<UserGroup>> hitMakerMappedByPrimaryKey = new HashMap<>();
+					Map<Long, Boolean> hitMakerIdMappedToLookoutStatus = new HashMap<>();
 					for (HitMaker hitMaker : hitMakersSet) {
 						hitMakerMappedByPrimaryKey.put(hitMaker.getId(), hitMaker.getHitCategory().getUserGroups());
+						hitMakerIdMappedToLookoutStatus.put(hitMaker.getId(), hitMaker.getHitCategory().isPromoteToLookout());
 					}
 
 					for (HitDetail hd : hitDetailsToPersist) {
+						LookoutStatusEnum poeStatus = LookoutStatusEnum.NOTPROMOTED;
+						if(hitMakerIdMappedToLookoutStatus.get(hd.getHitMakerId())) { //If ANY category is worthy of promoting, ALL hit view statuses are set active
+							poeStatus = LookoutStatusEnum.ACTIVE;
+						}
 						for (UserGroup ug : hitMakerMappedByPrimaryKey.get(hd.getHitMakerId())) {
+
 							HitViewStatus hitViewStatus = new HitViewStatus(hd, ug, HitViewStatusEnum.NEW,
-									hd.getPassenger());
+									hd.getPassenger(), poeStatus);
 							hd.getHitViewStatus().add(hitViewStatus);
 						}
 					}

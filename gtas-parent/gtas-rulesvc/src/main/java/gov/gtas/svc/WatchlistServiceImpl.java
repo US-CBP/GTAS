@@ -18,6 +18,7 @@ import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistSpec;
 import gov.gtas.model.watchlist.json.validation.WatchlistValidationAdapter;
+import gov.gtas.services.watchlist.WatchlistPersistenceService;
 import gov.gtas.repository.KnowledgeBaseRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
@@ -206,15 +207,14 @@ public class WatchlistServiceImpl implements WatchlistService {
 	public List<JsonLookupData> findWatchlistCategories() {
 		//
 		List<JsonLookupData> result = this.watchlistPersistenceService.findWatchlistCategories().stream()
-				.map(w -> new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString(),
-						w.isArchived()))
+				.map(w -> new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString(), w.isArchived(), w.isPromoteToLookout()))
 				.collect(Collectors.toList());
 
 		return result;
 	}
 
 	@Override
-	public JsonServiceResponse deleteWatchlistCategory(Long categoryId) {
+	public JsonServiceResponse deleteWatchlistCategory(Long categoryId){
 		return this.watchlistPersistenceService.deleteWatchlistCategoryById(categoryId);
 	}
 

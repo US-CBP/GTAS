@@ -37,6 +37,9 @@ public class HitCategory extends BaseEntityAudit {
 	@JsonIgnore
 	private Set<UserGroup> userGroups = new HashSet<>();
 
+	@Column(name="promote_to_lookout")
+	private boolean promoteToLookout;
+
 	@Column(name = "archived")
 	private boolean archived;
 
@@ -98,4 +101,9 @@ public class HitCategory extends BaseEntityAudit {
 	public boolean isArchived() { return archived; }
 
 	public void setArchived(boolean archived) { this.archived = archived; }
+
+	public boolean isPromoteToLookout() { return promoteToLookout; }
+
+	public void setPromoteToLookout(boolean promoteToLookout) { this.promoteToLookout = promoteToLookout; }
+
 }
