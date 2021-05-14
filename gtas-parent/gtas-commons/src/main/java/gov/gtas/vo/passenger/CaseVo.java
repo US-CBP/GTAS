@@ -53,6 +53,11 @@ public class CaseVo implements PIIObject {
 	private int highPrioHitCount;
 	private int medPrioHitCount;
 	private int lowPrioHitCount;
+	private String lookoutStatus;
+
+	public String getlookoutStatus() { return lookoutStatus; }
+
+	public void setlookoutStatus(String lookoutStatus) { this.lookoutStatus = lookoutStatus; }
 
 	public String getCaseOfficerStatus() {
 		return caseOfficerStatus;

@@ -1,0 +1,2 @@
+INSERT INTO `role` VALUES (DEFAULT, 'Manage POE Lookout');
+INSERT INTO `role` VALUES (DEFAULT, 'View POE Lookout');

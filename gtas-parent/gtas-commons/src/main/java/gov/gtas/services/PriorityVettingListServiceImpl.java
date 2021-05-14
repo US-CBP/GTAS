@@ -35,11 +35,14 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 
 	private final HitViewStatusRepository hitViewStatusRepository;
 
+	private final POEService poeService;
+
 	public PriorityVettingListServiceImpl(UserService userService, PassengerRepository passengerRepository,
-			HitViewStatusRepository hitViewStatusRepository) {
+			HitViewStatusRepository hitViewStatusRepository, POEService poeService) {
 		this.userService = userService;
 		this.passengerRepository = passengerRepository;
 		this.hitViewStatusRepository = hitViewStatusRepository;
+		this.poeService = poeService;
 	}
 
 	@Override
@@ -72,6 +75,8 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownTo, 30, 30);
 			ArrayList<String> hitDetailsTitles = new ArrayList<>();
 			List<HitViewStatusEnum> hvsEnums = new ArrayList<>();
+			List<HitViewStatus> hvsToUpdate = new ArrayList<>();
+			String lookoutStatus = new String();
 
 			List<HitDetail> hitDetailsList = new ArrayList<>(passenger.getHitDetails());
 			hitDetailsList.sort((hd1, hd2) -> {
@@ -109,6 +114,10 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 					for (HitViewStatus hvs : hd.getHitViewStatus()) {
 						if (userGroups.contains(hvs.getUserGroup())) {
 							hvsEnums.add(hvs.getHitViewStatusEnum());
+							if(poeService.lookoutIsMissedOrInactiveAndUpdate(hvs)){
+								hvsToUpdate.add(hvs);
+							}
+							lookoutStatus=hvs.getLookoutStatusEnum().name(); // All lookout status' for a given user group should be the same.
 						}
 					}
 				}
@@ -124,9 +133,14 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 				}
 			}
 
+			if(!hvsToUpdate.isEmpty()){ //This collection should be extremely small any time an update is actually required
+				hitViewStatusRepository.saveAll(hvsToUpdate);
+			}
+
 			caseVo.setDocument(docNum);
 			caseVo.setDocType(docType);
 			hvsEnums.sort(Comparator.naturalOrder());
+			caseVo.setlookoutStatus(lookoutStatus);
 			caseVo.setStatus(hvsEnums.get(0).toString());
 			caseVo.setGender(passenger.getPassengerDetails().getGender());
 			caseVo.setHitNames(hitDetailsTitles);

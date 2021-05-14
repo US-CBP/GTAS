@@ -1,0 +1,2 @@
+alter table hit_category
+DROP COLUMN promote_to_lookout;

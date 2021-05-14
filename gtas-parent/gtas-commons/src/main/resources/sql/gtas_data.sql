@@ -9,6 +9,8 @@ INSERT INTO `role` VALUES ('4', 'Manage Watch List');
 INSERT INTO `role` VALUES ('5', 'Manage Rules');
 INSERT INTO `role` VALUES ('6', 'Manage Hits');
 INSERT INTO `role` VALUES ('7', 'View Flights');
+INSERT INTO `role` VALUES ('8', 'Manage POE Lookout');
+INSERT INTO `role` VALUES ('9', 'View POE Lookout');
 
 -- ----------------------------
 -- Users
@@ -67,11 +69,11 @@ INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Noti
 INSERT INTO app_configuration (description, opt, val) VALUES ('Recompile Rules', 'RECOMPILE_RULES', 'false');
 
 
-insert into hit_category(id, category, description, severity, archived) values(1, 'General', 'General category', 2, false);
-insert into hit_category(id, category, description, severity, archived) values(2, 'Terrorism', 'Terrorism related entities',0, false);
-insert into hit_category(id, category, description, severity, archived) values(3, 'World Health', 'Health Alert related',1, false);
-insert into hit_category(id, category, description, severity, archived) values(4, 'Federal Law Enforcement', 'Federal watch category',0, false);
-insert into hit_category(id, category, description, severity, archived) values(5, 'Local Law Enforcement', 'Local watch category',0, false);
+insert into hit_category(id, category, description, severity, archived, promote_to_lookout) values(1, 'General', 'General category', 2, false, false);
+insert into hit_category(id, category, description, severity, archived, promote_to_lookout) values(2, 'Terrorism', 'Terrorism related entities',0, false, false);
+insert into hit_category(id, category, description, severity, archived, promote_to_lookout) values(3, 'World Health', 'Health Alert related',1, false, false);
+insert into hit_category(id, category, description, severity, archived, promote_to_lookout) values(4, 'Federal Law Enforcement', 'Federal watch category',0, false, false);
+insert into hit_category(id, category, description, severity, archived, promote_to_lookout) values(5, 'Local Law Enforcement', 'Local watch category',0, false, false);
 
 INSERT INTO gtas.user_group (id, created_at, created_by, updated_at, updated_by, ug_name) VALUES (1, null, null, null, null, 'default');
 INSERT INTO gtas.ug_user_join (ug_id, user_id) VALUES (1, 'ADMIN');
@@ -119,3 +121,17 @@ INSERT INTO external_hit (description, id) VALUES ('Local Law Enforcement', 10);
 INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "IAD");
 INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "DCA");
 INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "ADD");
+
+-- ----------------------------
+-- User Location
+-- ----------------------------
+INSERT INTO `lookout_lane` VALUES(1, null, null, null, null, 0, 'Active', 0, 'ACTIVE');
+INSERT INTO `lookout_lane` VALUES(2, null, null, null, null, 0, 'Inactive', 1, 'INACTIVE');
+INSERT INTO `lookout_lane` VALUES(3, null, null, null, null, 0, 'Enroute', 2, 'ENROUTE');
+INSERT INTO `lookout_lane` VALUES(4, null, null, null, null, 0, 'Encountered', 3, 'ENCOUNTERED');
+INSERT INTO `lookout_lane` VALUES(5, null, null, null, null, 0, 'Missed', 4, 'MISSED');
+INSERT INTO `lookout_lane` VALUES(6, null, null, null, null, 0, 'Negative', 5, 'NEGATIVE');
+INSERT INTO `lookout_lane` VALUES(7, null, null, null, null, 0, 'Positive', 6, 'POSITIVE');
+INSERT INTO `lookout_lane` VALUES(8, null, null, null, null, 0, 'Referred', 7, 'REFERRED');
+INSERT INTO `lookout_lane` VALUES(9, null, null, null, null, 0, 'Did Not Board', 8, 'DIDNOTBOARD');
+INSERT INTO `lookout_lane` VALUES(10, null, null, null, null, 0, 'Uncategorized', 9, 'UNCATEGORIZED');

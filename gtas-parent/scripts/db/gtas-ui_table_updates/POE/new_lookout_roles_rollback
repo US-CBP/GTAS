@@ -1,0 +1,1 @@
+DELETE FROM role WHERE role_description='Manage POE Lookout' OR role_description='View POE Lookout';

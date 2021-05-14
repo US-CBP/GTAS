@@ -146,7 +146,7 @@ public class WatchlistServiceImpl implements WatchlistService {
 	public List<JsonLookupData> findWatchlistCategories() {
 		//
 		List<JsonLookupData> result = this.watchlistPersistenceService.findWatchlistCategories().stream()
-				.map(w -> new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString(), w.isArchived()))
+				.map(w -> new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString(), w.isArchived(), w.isPromoteToLookout()))
 				.collect(Collectors.toList());
 
 		return result;

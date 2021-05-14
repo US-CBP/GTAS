@@ -72,7 +72,7 @@ public class RuleCatServiceImpl implements HitCategoryService {
 	@Override
 	public List<JsonLookupData> getAllNonArchivedCategories() {
 		List<JsonLookupData> result = hitCategoryRepository.getAllNonArchivedCategories().stream().map(w ->
-				new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString(), w.isArchived()))
+				new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString(), w.isArchived(), w.isPromoteToLookout()))
 				.collect(Collectors.toList());
 		return result;
 	}
