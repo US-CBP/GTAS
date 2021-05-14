@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Watch list Repository with custom queries.
  */
 public interface WatchlistItemRepository
-		extends CrudRepository<WatchlistItem, Long>, JpaSpecificationExecutor<WatchlistItem> {
+		extends PagingAndSortingRepository<WatchlistItem, Long>, JpaSpecificationExecutor<WatchlistItem> {
 	@Query("SELECT wli FROM WatchlistItem wli WHERE wli.watchlist.watchlistName = :watchlistName")
 	public List<WatchlistItem> getItemsByWatchlistName(@Param("watchlistName") String watchlistName);
 
@@ -31,6 +32,9 @@ public interface WatchlistItemRepository
 	@Query("DELETE FROM WatchlistItem wli WHERE wli.watchlist.watchlistName = :watchlistName")
 	public void deleteItemsByWatchlistName(@Param("watchlistName") String watchlistName);
 
+	@Query("SELECT wli from WatchlistItem wli where wli.knowledgeBase.kbName = :kbName")
+	public List<WatchlistItem> findAllWatchlistItemsByKnowledgeBaseName(@Param("kbName") String kbName);
+	
 	default WatchlistItem findOne(Long id) {
 		return findById(id).orElse(null);
 	}

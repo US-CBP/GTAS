@@ -13,7 +13,9 @@ import gov.gtas.enumtype.HitTypeEnum;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -221,4 +223,24 @@ public class PendingHitDetails extends BaseEntityAudit {
     public void setLookout(Boolean lookout) {
         this.lookout = lookout;
     }
+
+	public static Set<PendingHitDetails> convertHits(Set<HitDetail> hits) {
+		Set<PendingHitDetails> phdSet = new HashSet<>();
+		for (HitDetail hd : hits) {
+			PendingHitDetails phd = new PendingHitDetails(hd.getHitEnum());
+			phd.setTitle(hd.getTitle());
+			phd.setFlightId(hd.getFlightId());
+			phd.setHitType(hd.getHitType());
+			phd.setHitEnum(hd.getHitEnum());
+			phd.setPassengerId(hd.getPassengerId());
+			phd.setHitMakerId(hd.getHitMakerId());
+			phd.setDescription(hd.getDescription());
+			phd.setCreatedDate(hd.getCreatedDate());
+			phd.setTitle(hd.getTitle());
+			phd.setRuleConditions(hd.getRuleConditions());
+			phd.setPercentage(hd.getPercentage());
+			phdSet.add(phd);
+		}
+		return phdSet;
+	}
 }

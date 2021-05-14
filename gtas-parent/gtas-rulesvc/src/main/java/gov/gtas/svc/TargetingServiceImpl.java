@@ -5,10 +5,12 @@
  */
 package gov.gtas.svc;
 
+import gov.gtas.bo.BasicRuleServiceResult;
 import gov.gtas.bo.CompositeRuleServiceResult;
+import gov.gtas.model.udr.KnowledgeBase;
+
 import gov.gtas.bo.RuleExecutionStatistics;
 import gov.gtas.constant.RuleConstants;
-import gov.gtas.model.RuleHitDetail;
 import gov.gtas.bo.RuleServiceResult;
 import gov.gtas.constant.RuleServiceConstants;
 import gov.gtas.constant.WatchlistConstants;
@@ -54,9 +56,6 @@ public class TargetingServiceImpl implements TargetingService {
 
 	private final RuleMetaRepository ruleMetaRepository;
 
-	@Value("${hibernate.jdbc.batch_size}")
-	private String batchSize;
-
 	private final PassengerService passengerService;
 
 	private final MessageStatusRepository messageStatusRepository;
@@ -70,8 +69,7 @@ public class TargetingServiceImpl implements TargetingService {
 	/**
 	 * Constructor obtained from the spring context by auto-wiring.
 	 * 
-	 * @param rulesvc
-	 *            the auto-wired rule engine instance. \
+	 * @param rulesvc                       the auto-wired rule engine instance. \
 	 * @param hitsSummaryRepository
 	 * @param flightHitsRuleRepository
 	 * @param flightHitsWatchlistRepository
@@ -104,13 +102,12 @@ public class TargetingServiceImpl implements TargetingService {
 
 	@Override
 	@Transactional
-	public RuleResultsWithMessageStatus analyzeLoadedMessages(List<MessageStatus> source, Map<String, KIEAndLastUpdate> rules) {
-		logger.info("Entering analyzeLoadedMessages()");
-
-		RuleResultsWithMessageStatus ruleResultsWithMessageStatus = new RuleResultsWithMessageStatus();
+	public RuleExecutionContext createRuleExecutionContext(List<MessageStatus> source) {
+		logger.debug("In create rule execution context!");
 		if (source.isEmpty()) {
-			return ruleResultsWithMessageStatus;
+			return new RuleExecutionContext();
 		}
+		logger.info("creating rule execution context");
 		List<Message> target = new ArrayList<>();
 		List<MessageStatus> procssedMessages = new ArrayList<>();
 		for (MessageStatus ms : source) {
@@ -118,19 +115,42 @@ public class TargetingServiceImpl implements TargetingService {
 			target.add(message);
 			procssedMessages.add(ms);
 		}
-		ruleResultsWithMessageStatus.setMessageStatusList(procssedMessages);
 
+		RuleExecutionContext ctx = createPnrApisRequestContext(target);
+		ctx.setSource(procssedMessages);
+		logger.info("Done creating rule execution context!");
+		return ctx;
+	}
+
+	@Override
+	// TODO: Test without transactional tag.
+	// @Transactional
+	public RuleResultsWithMessageStatus analyzeLoadedMessages(RuleExecutionContext ruleExecutionContext,
+			Map<String, KIEAndLastUpdate> rules) {
+		logger.info("Entering analyzeLoadedMessages()");
+
+		RuleResultsWithMessageStatus ruleResultsWithMessageStatus = new RuleResultsWithMessageStatus();
+		if (ruleExecutionContext.getSource().isEmpty()) {
+			return ruleResultsWithMessageStatus;
+		}
+		List<Message> target = new ArrayList<>();
+		List<MessageStatus> procssedMessages = new ArrayList<>();
+		for (MessageStatus ms : ruleExecutionContext.getSource()) {
+			Message message = ms.getMessage();
+			target.add(message);
+			procssedMessages.add(ms);
+		}
+		for (MessageStatus ms : procssedMessages) {
+			ms.setMessageStatusEnum(MessageStatusEnum.ANALYZED);
+		}
+
+		ruleResultsWithMessageStatus.setMessageStatusList(procssedMessages);
 		RuleResults ruleResults = null;
 		try {
 			logger.info("About to execute rules");
-			ruleResults = executeRules(target, rules);
+			ruleResults = executeRules(ruleExecutionContext, rules);
 			logger.info("updating messages status from loaded to analyzed.");
-			for (MessageStatus ms : procssedMessages) {
-				ms.setMessageStatusEnum(MessageStatusEnum.RUNNING_RULES);
-			}
-			messageStatusRepository.saveAll(procssedMessages);
 			ruleResultsWithMessageStatus.setRuleResults(ruleResults);
-			ruleResultsWithMessageStatus.setMessageStatusList(procssedMessages);
 			logger.info("Exiting analyzeLoadedMessages()");
 			return ruleResultsWithMessageStatus;
 		} catch (CommonServiceException cse) {
@@ -141,12 +161,12 @@ public class TargetingServiceImpl implements TargetingService {
 				logger.info("************************");
 				for (MessageStatus ms : procssedMessages) {
 					ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
-					messageStatusRepository.saveAll(procssedMessages);
+					// messageStatusRepository.saveAll(procssedMessages);
 				}
 			} else {
 				for (MessageStatus ms : procssedMessages) {
 					ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
-					messageStatusRepository.saveAll(procssedMessages);
+					// messageStatusRepository.saveAll(procssedMessages);
 				}
 				throw cse;
 			}
@@ -184,42 +204,60 @@ public class TargetingServiceImpl implements TargetingService {
 		return context;
 	}
 
-	private RuleResults executeRules(List<Message> target, Map<String, KIEAndLastUpdate> rules) {
-		logger.debug("Entering executeRules().");
-		RuleExecutionContext ctx = createPnrApisRequestContext(target);
+	private RuleResults executeRules(RuleExecutionContext ctx, Map<String, KIEAndLastUpdate> rules) {
 		logger.debug("Running Rule set.");
 		// default knowledge Base is the UDR KB
-		RuleServiceResult udrResult = ruleService.invokeRuleEngine(ctx.getRuleServiceRequest(), RuleConstants.UDR_KNOWLEDGE_BASE_NAME, rules);
-		logger.debug("Ran Rule set.");
-		if (udrResult != null) {
-			RuleExecutionStatistics res = udrResult.getExecutionStatistics();
-			int totalRulesFired = res.getTotalRulesFired();
-			List<String> ruleFireSequence = res.getRuleFiringSequence();
-			logger.debug("Total UDR rules fired: " + totalRulesFired);
-			logger.debug("\n****************UDR Rule firing sequence***************************\n");
-			for (String str : ruleFireSequence) {
-				logger.debug("UDR Rule fired: " + str);
-			}
-			logger.debug("\n\n**********************************************************************");
-		}
-		RuleServiceResult wlResult = ruleService.invokeRuleEngine(ctx.getRuleServiceRequest(),
-				WatchlistConstants.WL_KNOWLEDGE_BASE_NAME, rules);
+
+		//
 		RuleResults ruleResults = new RuleResults();
-		ruleResults.setUdrResult(udrResult);
-		ruleResults.setWatchListResult(wlResult);
-		logger.debug("Exiting executeRules().");
+		for (KIEAndLastUpdate kb : rules.values()) {
+			if (kb.getKbName().startsWith(RuleConstants.UDR_KNOWLEDGE_BASE_NAME)) {
+				BasicRuleServiceResult udrResult = ruleService.invokeRuleEngine(ctx.getRuleServiceRequest(), kb.getKbName(),
+						rules);
+				logger.debug("Ran Rule set.");
+				logger.info("Running RUles");
+				if (udrResult != null) {
+					//RuleExecutionStatistics res = udrResult.getExecutionStatistics();
+					
+					//int totalRulesFired = res.getTotalRulesFired();
+				//	List<String> ruleFireSequence = res.getRuleFiringSequence();
+				//	res.resetStatistics();
+					if (ruleResults.getUdrResult() != null && udrResult.getResultList() != null) {
+						ruleResults.getUdrResult().getResultList().addAll(udrResult.getResultList());
+					} else {
+						ruleResults.setUdrResult(udrResult);
+					}
+				}
+			} else {
+
+				logger.info("Running WL.....");
+				BasicRuleServiceResult wlResult = ruleService.invokeRuleEngine(ctx.getRuleServiceRequest(), kb.getKbName(),
+						rules);
+				if (wlResult != null) {
+				//	wlResult.getExecutionStatistics().resetStatistics();
+
+					if (ruleResults.getWatchListResult() != null && wlResult.getResultList() != null) {
+						ruleResults.getWatchListResult().getResultList().addAll(wlResult.getResultList());
+					} else {
+						ruleResults.setWatchListResult(wlResult);
+					}
+
+				}
+			}
+			logger.debug("Exiting executeRules().");
+		}
 		return ruleResults;
 	}
 
 	private List<RuleHitDetail> getRuleDetails(RuleResults ruleResults) {
 		TargetingResultServices targetingResultServices = getTargetingResultOptions();
 		if (ruleResults.getUdrResult() != null) {
-			RuleServiceResult udrResult = ruleResults.getUdrResult();
+			BasicRuleServiceResult udrResult = ruleResults.getUdrResult();
 			udrResult = TargetingResultUtils.ruleResultPostProcesssing(udrResult, targetingResultServices);
 			ruleResults.setUdrResult(udrResult);
 		}
 		if (ruleResults.getWatchListResult() != null) {
-			RuleServiceResult watchlistResult = ruleResults.getWatchListResult();
+			BasicRuleServiceResult watchlistResult = ruleResults.getWatchListResult();
 			watchlistResult = TargetingResultUtils.ruleResultPostProcesssing(watchlistResult, targetingResultServices);
 			ruleResults.setWatchListResult(watchlistResult);
 		}
@@ -322,5 +360,12 @@ public class TargetingServiceImpl implements TargetingService {
 			}
 		}
 		return hitDetails;
+	}
+
+	@Override
+	public RuleResultsWithMessageStatus analyzeLoadedMessages(List<MessageStatus> messageStatuses,
+			Map<String, KIEAndLastUpdate> rules) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -8,12 +8,12 @@ package gov.gtas.parsers.paxlst;
 import java.util.Date;
 import java.util.StringJoiner;
 
-import gov.gtas.config.ParserConfig;
 import gov.gtas.parsers.pnrgov.enums.MeasurementQualifier;
 import gov.gtas.parsers.vo.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import gov.gtas.parserconfig.ParserConfig;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.paxlst.segment.unedifact.ATT;

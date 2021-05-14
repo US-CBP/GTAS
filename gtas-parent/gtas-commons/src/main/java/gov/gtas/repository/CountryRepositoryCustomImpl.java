@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Date;
 
 @Repository
-public class CountryRepositoryImpl implements CountryRepositoryCustom {
+public class CountryRepositoryCustomImpl implements CountryRepositoryCustom {
 	@PersistenceContext
 	private EntityManager em;
 	@Autowired

@@ -8,9 +8,9 @@ package gov.gtas.services;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import gov.gtas.config.ParserConfig;
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.Airport;
+import gov.gtas.parserconfig.ParserConfig;
 import gov.gtas.parsers.tamr.TamrAdapter;
 import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.parsers.omni.OmniAdapter;
@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.error.ErrorUtils;
@@ -35,6 +36,7 @@ import gov.gtas.util.LobUtils;
 import javax.transaction.Transactional;
 
 @Service
+@ConditionalOnProperty(prefix = "loader", name = "enabled")
 public class ApisMessageService extends MessageLoaderService {
 	private static final Logger logger = LoggerFactory.getLogger(ApisMessageService.class);
 
@@ -139,7 +141,7 @@ public class ApisMessageService extends MessageLoaderService {
 			PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(primeFlight,
 					m.getPassengers(), apis.getPassengers(), apis.getBookingDetails(), apis);
 
-			int createdPassengers = loaderRepo.createPassengers(passengerInformationDTO.getNewPax(), apis.getPassengers(), primeFlight, apis.getBookingDetails());
+			int createdPassengers = loaderRepo.createPassengers(passengerInformationDTO.getNewPax(), apis.getPassengers(), primeFlight, apis.getBookingDetails(), apis);
 
 			updateApisCoTravelerCount(apis);
 			// MUST be after creation of passengers - otherwise APIS will have empty list of

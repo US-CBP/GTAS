@@ -78,12 +78,35 @@ public class PassengerTripDetails extends BaseEntityAudit {
 
 	@Column(name = "hours_before_takeoff")
 	private Integer hoursBeforeTakeOff;
+	
+	@Column(name="most_recent_message", columnDefinition = "bigint unsigned")
+	private Long mostRecentMessageId;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "most_recent_message", updatable = false, insertable = false)
+	private Message mostRecentMessage;
 
 	@Transient
 	private String totalBagWeight;
 
 	@Transient
 	private String bagNum;
+
+	public Long getMostRecentMessageId() {
+		return mostRecentMessageId;
+	}
+
+	public void setMostRecentMessageId(Long messageId) {
+		this.mostRecentMessageId = messageId;
+	}
+
+	public Message getMostRecentMessage() {
+		return mostRecentMessage;
+	}
+
+	public void setMostRecentMessage(Message mostRecentMessage) {
+		this.mostRecentMessage = mostRecentMessage;
+	}
 
 	public String getPnrReservationReferenceNumber() {
 		return pnrReservationReferenceNumber;

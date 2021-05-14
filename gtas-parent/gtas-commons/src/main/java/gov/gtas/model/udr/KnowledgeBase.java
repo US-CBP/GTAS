@@ -7,8 +7,10 @@ package gov.gtas.model.udr;
 
 import static gov.gtas.constant.DomainModelConstants.KB_UNIQUE_CONSTRAINT_NAME;
 import gov.gtas.model.BaseEntity;
+import gov.gtas.model.watchlist.WatchlistItem;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -20,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
@@ -42,14 +45,10 @@ public class KnowledgeBase extends BaseEntity {
 	@Column(name = "KB_NAME", nullable = false, length = 20)
 	private String kbName;
 
-	@Lob
-	@Basic(fetch = FetchType.EAGER)
-	@Column(name = "KB_BLOB", nullable = false, length = 2000000)
+	@Transient
 	private byte[] kbBlob;
 
-	@Lob
-	@Basic(fetch = FetchType.EAGER)
-	@Column(name = "RL_BLOB", nullable = false, length = 1000000)
+	@Transient
 	private byte[] rulesBlob;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -58,9 +57,25 @@ public class KnowledgeBase extends BaseEntity {
 
 	@OneToMany(mappedBy = "knowledgeBase", fetch = FetchType.LAZY)
 	private Set<Rule> rulesInKB;
+	
+	@OneToMany(mappedBy = "knowledgeBase", fetch = FetchType.LAZY)
+	private Set<WatchlistItem> watchlistItemsInKb = new HashSet<>();
+	
+	@OneToMany(mappedBy = "knowledgeBase", fetch = FetchType.LAZY)
+	private Set<UdrRule> udrRulesInKb = new HashSet<>();
+	
 
 	public KnowledgeBase() {
 
+	}
+
+	
+	public Set<UdrRule> getUdrRulesInKb() {
+		return udrRulesInKb;
+	}
+
+	public void setUdrRulesInKb(Set<UdrRule> udrRulesInKb) {
+		this.udrRulesInKb = udrRulesInKb;
 	}
 
 	public KnowledgeBase(String kbName) {
@@ -139,32 +154,16 @@ public class KnowledgeBase extends BaseEntity {
 		return rulesInKB;
 	}
 
-	@Override
-	public int hashCode() {
-		HashCodeBuilder hashCodeBuilder = new HashCodeBuilder();
-		// hashCodeBuilder.append(version);
-		hashCodeBuilder.append(kbBlob);
-		hashCodeBuilder.append(creationDt);
-		return hashCodeBuilder.toHashCode();
+	public Set<WatchlistItem> getWatchlistItemsInKb() {
+		return watchlistItemsInKb;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof KnowledgeBase)) {
-			return false;
-		}
-		KnowledgeBase other = (KnowledgeBase) obj;
-		EqualsBuilder equalsBuilder = new EqualsBuilder();
-		// equalsBuilder.append(version, other.version);
-		equalsBuilder.append(kbBlob, other.kbBlob);
-		equalsBuilder.append(creationDt, other.creationDt);
-		return equalsBuilder.isEquals();
+	public void setWatchlistItemsInKb(Set<WatchlistItem> watchlistItemsInKb) {
+		this.watchlistItemsInKb = watchlistItemsInKb;
+	}
+
+	public void setRulesInKB(Set<Rule> rulesInKB) {
+		this.rulesInKB = rulesInKB;
 	}
 
 }

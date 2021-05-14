@@ -9,9 +9,15 @@
 package gov.gtas.job.scheduler;
 
 import gov.gtas.model.HitDetail;
+import gov.gtas.model.MessageStatus;
+import gov.gtas.model.Passenger;
 import gov.gtas.model.PendingHitDetails;
 import gov.gtas.repository.PendingHitDetailRepository;
+import gov.gtas.services.AdditionalProcessingService;
+import gov.gtas.services.PassengerService;
 import gov.gtas.services.RuleHitPersistenceService;
+import gov.gtas.svc.util.TargetingResultUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -26,18 +32,23 @@ import java.util.stream.Collectors;
 
 @Component
 @Scope("prototype")
-public class AsyncHitPersistenceThread implements Callable<Boolean> {
+public class AsyncHitPersistenceThread extends RuleThread {
 
 	Logger logger = LoggerFactory.getLogger(AsyncHitPersistenceThread.class);
 
 	private Set<Long> flightIds;
 	private PendingHitDetailRepository pendingHitDetailRepository;
 	private ApplicationContext applicationContext;
+	private PassengerService passengerService;
+	private AdditionalProcessingService additionalProcessingService;
 
 	public AsyncHitPersistenceThread(PendingHitDetailRepository pendingHitDetailRepository,
-			ApplicationContext applicationContext) {
+			ApplicationContext applicationContext, PassengerService passengerService,
+			AdditionalProcessingService additionalProcessingService) {
 		this.pendingHitDetailRepository = pendingHitDetailRepository;
 		this.applicationContext = applicationContext;
+		this.additionalProcessingService = additionalProcessingService;
+		this.passengerService = passengerService;
 	}
 
 	@Override
@@ -52,8 +63,15 @@ public class AsyncHitPersistenceThread implements Callable<Boolean> {
 				.getPendingHitDetailsByFlightIds(flightIds);
 		try {
 			Set<HitDetail> hitDetails = createHitDetails(pendingHitDetails);
-			persistenceService.persistToDatabase(hitDetails);
-
+			List<Set<HitDetail>> batchedHitDetails = TargetingResultUtils.batchResults(hitDetails, 150);
+			List<Long> passengerIds = hitDetails.stream().map(HitDetail::getPassengerId).collect(Collectors.toList());
+			Set<Passenger> passengers = passengerService.findPassengerFromPassengerIds(passengerIds);
+			Set<Long> latestMessages = new HashSet<>();
+			for (Passenger p : passengers) {
+				latestMessages.add(p.getPassengerTripDetails().getMostRecentMessageId());
+			}
+			List<MessageStatus> messageStatusList = persistenceService.getRelevantMessages(latestMessages);
+			processHits(messageStatusList, persistenceService, batchedHitDetails, additionalProcessingService);
 		} catch (Exception e) {
 			success = false;
 			logger.error("Error in rule persistence!", e);

@@ -7,6 +7,8 @@ package gov.gtas.model.watchlist;
 
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.HitMaker;
+import gov.gtas.model.udr.KnowledgeBase;
+
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -34,6 +36,19 @@ public class WatchlistItem extends HitMaker {
 
 	@Column(name = "ITM_RL_DATA", nullable = true, columnDefinition = "TEXT NOT NULL")
 	private String itemRuleData;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ITM_WL_KB", referencedColumnName = "ID", nullable = true)
+	private KnowledgeBase knowledgeBase;
+
+	
+	public KnowledgeBase getKnowledgeBase() {
+		return knowledgeBase;
+	}
+
+	public void setKnowledgeBase(KnowledgeBase knowledgeBase) {
+		this.knowledgeBase = knowledgeBase;
+	}
 
 	/**
 	 * @return the watch list

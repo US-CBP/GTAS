@@ -14,7 +14,9 @@ import java.util.Set;
 
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.MessageStatus;
+import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.rule.KIEAndLastUpdate;
+import gov.gtas.svc.util.RuleExecutionContext;
 import gov.gtas.svc.util.RuleResults;
 import gov.gtas.svc.util.RuleResultsWithMessageStatus;
 
@@ -28,5 +30,11 @@ public interface TargetingService {
 	void saveMessageStatuses(List<MessageStatus> setMessagesToAnalyzed);
 
 	Set<HitDetail> generateHitDetails(RuleResults ruleRunningResult);
+
+	RuleExecutionContext createRuleExecutionContext(List<MessageStatus> source);
+
+	RuleResultsWithMessageStatus analyzeLoadedMessages(RuleExecutionContext ruleExecutionContext,
+			Map<String, KIEAndLastUpdate> rules);
+
 
 }

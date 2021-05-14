@@ -1,20 +1,22 @@
 version: '3.7'
 services:
 
-  http-proxy: 
-    image: wcogtas/http-proxy:dev
-    container_name: http-proxy
-    build:  
-      context: ./gtas-parent
-      dockerfile: docker-resources/proxy.Dockerfile
-    restart: unless-stopped
-    ports:
-      - 443:443
-      - 80:80
-    networks:
-      - gtas-webapp-network
-    secrets:
-      - elastic-bootstrap-password
+#  http-proxy: 
+#    image: wcogtas/http-proxy:dev
+#    container_name: http-proxy
+#    build:  
+#      context: ./gtas-parent
+#      dockerfile: docker-resources/proxy.Dockerfile
+#    restart: unless-stopped
+#    ports:
+#      - 443:443
+#      - 80:80
+#      - 8443:8443
+#      - 8080:8080
+#    networks:
+#      - gtas-webapp-network
+#    secrets:
+#      - elastic-bootstrap-password
 
   web-app:
     image: wcogtas/webapp:dev
@@ -22,9 +24,9 @@ services:
     build: 
       context: ./gtas-parent
       dockerfile: web-app.Dockerfile
-    ports:
-      - 8080:8080
-      - 8443:8443
+#    ports:
+#      - 8080:8080
+#      - 8443:8443
     environment:
       - KIBANA_HOST=kibana
       - NEO4J_HOST=neo4j
@@ -115,7 +117,34 @@ services:
     restart: unless-stopped
     volumes:
       - db-data:/var/lib/mysql
-
+ 
+  rule-runner:
+    container_name: rule-runner
+    image: wcogtas/gtas-rule-runner:dev
+    build:
+      context: .
+      dockerfile: ./gtas-parent/gtas-rule-runner/gtas-rule-runner.Dockerfile
+    environment:
+      KB_LIST: UDR Knowledge Base_1,WL_Knowledge_Base_3,WL_Knowledge_Base_2,WL_Knowledge_Base_1
+      INBOUND_QUEUE: RULE_RUNNER_1
+      OUTBOUND_QUEUE: GTAS_RULE_ENGINE
+      ACTIVE_MQ_HOST: activemq
+    restart: unless-stopped
+    secrets:
+      - mysql-etl-user
+      - mysql-etl-password
+      - etl-neo4j-user
+      - etl-neo4j-password
+      - mysql-report-etl-user
+      - mysql-report-etl-password
+      - pentaho-to-elasticsearch-user
+      - pentaho-to-elasticsearch-password
+      - elastic-ca
+    networks: 
+      - gtas-webapp-network
+    depends_on: 
+      - activemq
+  
   etl-job:
     container_name: etl-job
     image: wcogtas/neo4j-etl-job:dev
@@ -145,7 +174,7 @@ services:
     image: wcogtas/neo4j:dev
     build:
       context: .
-      dockerfile: ./gtas-neo4j-etl/neo4j.Dockerfile
+      dockerfile: ./gtas-etl-main/neo4j.Dockerfile
     restart: unless-stopped
     environment:
       NEO4J_bolt_ssl__policy: "default"

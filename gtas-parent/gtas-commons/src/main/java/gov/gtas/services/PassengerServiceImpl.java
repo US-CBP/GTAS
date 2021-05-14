@@ -67,7 +67,7 @@ public class PassengerServiceImpl implements PassengerService {
 
 	@Value("${tamr.enabled}")
 	boolean tamrEnabled;
-	@Value("${tamr.resolve_passenger_history}")
+	@Value("${tamr.resolve_passenger_history:false}")
 	boolean tamrResolvePassengerHistory;
 
 	@Override

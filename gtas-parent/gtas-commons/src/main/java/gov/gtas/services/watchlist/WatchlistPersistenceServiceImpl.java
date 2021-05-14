@@ -46,6 +46,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -119,6 +122,12 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 	public Iterable<WatchlistItem> findAllWatchlistItems() {
 		return watchlistItemRepository.findAll();
 	}
+	
+	@Override
+	public Page<WatchlistItem> findAllWatchlistItems(Pageable pageRequest) {
+		return watchlistItemRepository.findAll(pageRequest);
+	}
+
 
 	@Override
 	public List<Watchlist> findAllSummary() {
@@ -313,6 +322,12 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 	public void deleteWatchlistItems(List<Long> watchlistItemIds) {
 		Iterable<WatchlistItem> watchlistItemList = watchlistItemRepository.findAllById(watchlistItemIds);
 		this.watchlistItemRepository.deleteAll(watchlistItemList);
+	}
+
+	@Override
+	@Transactional
+	public Iterable<WatchlistItem> findAllWatchlistItemsByKnowledgeBaseName(String kbName) {
+		return this.watchlistItemRepository.findAllWatchlistItemsByKnowledgeBaseName(kbName);
 	}
 
 }

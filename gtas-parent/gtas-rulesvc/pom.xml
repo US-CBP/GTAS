@@ -11,7 +11,7 @@
     <artifactId>gtas-rulesvc</artifactId>
     <version>0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>GTAS rule runner</name>
+    <name>GTAS Rule Services</name>
     <dependencyManagement>
         <dependencies>
             <dependency>

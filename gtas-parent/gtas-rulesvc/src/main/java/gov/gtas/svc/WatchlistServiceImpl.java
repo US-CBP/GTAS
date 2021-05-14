@@ -19,9 +19,15 @@ import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistSpec;
 import gov.gtas.model.watchlist.json.validation.WatchlistValidationAdapter;
 import gov.gtas.services.watchlist.WatchlistPersistenceService;
+import gov.gtas.repository.KnowledgeBaseRepository;
+import gov.gtas.repository.watchlist.WatchlistItemRepository;
+import gov.gtas.repository.watchlist.WatchlistRepository;
+import gov.gtas.services.watchlist.WatchlistPersistenceService;
 import gov.gtas.svc.util.WatchlistBuilder;
 import gov.gtas.svc.util.WatchlistServiceJsonResponseHelper;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +36,12 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -39,10 +50,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class WatchlistServiceImpl implements WatchlistService {
 
+	private final Logger logger = LoggerFactory.getLogger(WatchlistServiceImpl.class);
 	@Autowired
 	private WatchlistPersistenceService watchlistPersistenceService;
 	@Autowired
 	private RuleManagementService ruleManagementService;
+
+	@Autowired
+	private WatchlistItemRepository watchlistItemRepository;
+
+	@Autowired
+	KnowledgeBaseRepository knowledgeBaseRepository;
+
+	//TODO: Make dynamic
+	Integer KB_SIZE = 10000;
 
 	@PostConstruct
 	private void initializeErrorHandler() {
@@ -85,7 +106,7 @@ public class WatchlistServiceImpl implements WatchlistService {
 		return WatchlistServiceJsonResponseHelper.createResponse(true, "Create/Update", wlId, wlName, itemIdList,
 				StringUtils.EMPTY);
 	}
-	
+
 	@Override
 	public void deleteWatchlistItems(List<Long> watchlistItemIds) {
 		if (watchlistItemIds != null && !watchlistItemIds.isEmpty()) {
@@ -115,12 +136,52 @@ public class WatchlistServiceImpl implements WatchlistService {
 	@Override
 	@Transactional
 	public JsonServiceResponse activateAllWatchlists(String knowledgeBaseName) {
-		Iterable<WatchlistItem> items = watchlistPersistenceService.findAllWatchlistItems();
-		if (StringUtils.isEmpty(knowledgeBaseName)) {
-			knowledgeBaseName = WatchlistConstants.WL_KNOWLEDGE_BASE_NAME;
-		}
-		KnowledgeBase kb = ruleManagementService.createKnowledgeBaseFromWatchlistItems(knowledgeBaseName, items);
+		KnowledgeBase kb = createAKnowledgeBase(knowledgeBaseName);
 		return WatchlistServiceJsonResponseHelper.createKnowledBaseResponse(kb, null);
+	}
+
+	@Override
+	public KnowledgeBase createAKnowledgeBase(String knowledgeBaseName) {
+		Iterable<WatchlistItem> items = watchlistPersistenceService
+				.findAllWatchlistItemsByKnowledgeBaseName(knowledgeBaseName);
+		KnowledgeBase kb = ruleManagementService.createKnowledgeBaseFromWatchlistItems(knowledgeBaseName, items);
+		return kb;
+	}
+
+	@Override
+	public void rebalanceWatchlist() {
+		Pageable pageRequest = PageRequest.of(0, KB_SIZE);
+		Page<WatchlistItem> wlItemPage = watchlistPersistenceService.findAllWatchlistItems(pageRequest);
+		String base_wl_name = WatchlistConstants.WL_KNOWLEDGE_BASE_NAME;
+		int wlKbNumber = 1;
+
+		while (!wlItemPage.isEmpty()) {
+			logger.info("Starting wl page");
+			String wlName = base_wl_name + "_" + wlKbNumber;
+			KnowledgeBase kb = knowledgeBaseRepository.getByName(wlName);
+			wlKbNumber++;
+			if (kb == null) {
+				kb = new KnowledgeBase(wlName);
+				kb.setCreationDt(new Date());
+				kb = knowledgeBaseRepository.save(kb);
+			}
+
+			kb.setCreationDt(new Date());
+			List<WatchlistItem> list = new ArrayList<>(wlItemPage.getContent());
+			kb.getWatchlistItemsInKb().clear();
+			for (WatchlistItem item : list) {
+				item.setKnowledgeBase(kb);
+				kb.getWatchlistItemsInKb().add(item);
+			}
+			watchlistItemRepository.saveAll(list);
+			if (!kb.getWatchlistItemsInKb().isEmpty()) {
+				knowledgeBaseRepository.save(kb);
+			}
+			pageRequest = pageRequest.next(); // get the next page ready
+			wlItemPage = watchlistPersistenceService.findAllWatchlistItems(pageRequest);
+			logger.info("Next wl page");
+
+		}
 	}
 
 	@Override
@@ -181,5 +242,10 @@ public class WatchlistServiceImpl implements WatchlistService {
 	public List<WatchlistItem> fetchItemsByWatchlistName(String watchlistName) {
 		// TODO
 		return this.watchlistPersistenceService.findItemsByWatchlistName(watchlistName);
+	}
+
+	@Override
+	public void rebalanceAndCreateWatchlist() {
+		rebalanceWatchlist();
 	}
 }

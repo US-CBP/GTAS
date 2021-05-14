@@ -12,10 +12,20 @@ services:
       ADDITIONAL_PROCESSING_RAW: "false"
       ADDITIONAL_PROCESSING_RULES: "false"
       UI_ADDRESS: localhost
+      DB_HOST: mariadb      
+  rule-runner:
+    environment:
+      MARIA_URL: jdbc:mysql://mariadb:3306/gtas
+      DB_HOST: mariadb
+      MARIA_USERNAME: root
+      MARIA_PASSWORD: admin
+      UI_ADDRESS: localhost
+      ACTIVE_MQ_HOST: activemq
+      JVM_ARGS: -Xms1g -Xmx4g
   activemq:
     ports:
       - 61616:61616
-      - 8161:8161
+      - 8161:8161      
   gtas-scheduler:
     environment:
       EMAIL_SENDER_USERNAME: "some.user@somedomain.com"
@@ -23,7 +33,7 @@ services:
       EMAIL_SENDER_HOST: "some.smtp.somedomain.com"
       SSL_TRUST_HOST: "bogus"
       AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
-      MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
+      MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "true"
       ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
       ADDITIONAL_PROCESSING_RAW: "false"
       ADDITIONAL_PROCESSING_RULES: "false"

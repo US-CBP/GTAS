@@ -9,10 +9,10 @@
 package gov.gtas.svc;
 
 import gov.gtas.model.RuleHitDetail;
-import gov.gtas.config.Neo4JConfig;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.PassengerTypeCode;
+import gov.gtas.neo4jconfig.Neo4JConfig;
 import gov.gtas.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -7,6 +7,7 @@ import gov.gtas.services.dto.EmailDTO;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 @Service
+@ConditionalOnProperty(prefix = "enable.email.notification", name = "service")
 public class UserEmailService {
 
     private static final String RESET_EMAIL_SUBJECT = "Unlock Instructions";

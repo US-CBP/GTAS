@@ -59,6 +59,8 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 	private final FlightPriorityCountRepository flightPriorityCountRepository;
 
 	private final HitMakerRepository hitMakerRepository;
+	
+	private final MessageStatusRepository messageStatusRepository;
 
 	@Value("${omni.enabled}")
 	private Boolean omniEnabled;
@@ -69,7 +71,8 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 	public RuleHitPersistenceServiceImpl(PassengerService passengerService, HitDetailRepository hitDetailRepository,
 										 HitsSummaryRepository hitsSummaryRepository, FlightHitsWatchlistRepository flightHitsWatchlistRepository,
 										 FlightHitsRuleRepository flightHitsRuleRepository, FlightFuzzyHitsRepository flightFuzzyHitsRepository,
-										 FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository, FlightHitsExternalRepository flightHitsExternalRepository, FlightHitsManualRepository flightHitsManualRepository, FlightPriorityCountRepository flightPriorityCountRepository) {
+										 FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository, FlightHitsExternalRepository flightHitsExternalRepository, FlightHitsManualRepository flightHitsManualRepository, 
+										 FlightPriorityCountRepository flightPriorityCountRepository, MessageStatusRepository messageStatusRepository) {
 		this.passengerService = passengerService;
 		this.hitDetailRepository = hitDetailRepository;
 		this.hitsSummaryRepository = hitsSummaryRepository;
@@ -81,6 +84,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		this.flightHitsExternalRepository = flightHitsExternalRepository;
 		this.flightHitsManualRepository = flightHitsManualRepository;
 		this.flightPriorityCountRepository = flightPriorityCountRepository;
+		this.messageStatusRepository = messageStatusRepository;
 	}
 
 	@Transactional
@@ -243,6 +247,16 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		}
 
 		return hitDetailIterable;
+	}
+
+	
+	@Override	
+	public List<MessageStatus> getRelevantMessages(Set<Long> messageIds) {
+		if (messageIds == null || messageIds.isEmpty()) {
+			return new ArrayList<>();
+		} else {
+			return messageStatusRepository.getMessageFromIds(new ArrayList<>(messageIds));
+		}	
 	}
 
 	/*

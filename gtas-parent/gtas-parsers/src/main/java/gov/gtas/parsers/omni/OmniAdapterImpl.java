@@ -17,6 +17,7 @@ import gov.gtas.parsers.omni.model.OmniRawProfile;
 import gov.gtas.services.FlightService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@ConditionalOnProperty(prefix = "loader", name = "enabled")
 public class OmniAdapterImpl implements OmniAdapter {
 
     private FlightService flightService;

@@ -6,10 +6,17 @@ import gov.gtas.model.User;
 import gov.gtas.repository.UserRepository;
 import gov.gtas.services.email.UserEmailService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import freemarker.template.TemplateException;
+
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.UUID;
 
 @Service
@@ -21,7 +28,7 @@ public class LoginServiceImpl implements LoginService {
     @Resource
     private UserService userService;
 
-    @Resource
+    @Autowired(required=false)
     private UserEmailService userEmailService;
 
     @Override
@@ -35,7 +42,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     @Transactional
-    public void addToFailAttempts(final String userId) {
+    public void addToFailAttempts(final String userId) throws IOException, TemplateException, MessagingException, URISyntaxException {
         validateUser(userId);
         User user = userRepository.findOne(userId);
         if(user.getConsecutiveFailedLoginAttempts() == null) {
@@ -58,15 +65,14 @@ public class LoginServiceImpl implements LoginService {
         return user.getConsecutiveFailedLoginAttempts();
     }
 
-    private void sendPasswordResetEmail(User user) {
-        String resetToken = UUID.randomUUID().toString();
-        user.setResetToken(resetToken);
-        try {
-        	userEmailService.sendAccountLockedResetEmail(user.getEmail(), resetToken);
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	private void sendPasswordResetEmail(User user)
+			throws IOException, TemplateException, MessagingException, URISyntaxException {
+		String resetToken = UUID.randomUUID().toString();
+		user.setResetToken(resetToken);
+		if (userEmailService != null) {
+			userEmailService.sendAccountLockedResetEmail(user.getEmail(), resetToken);
+		}
+	}
 
     private void validateUser(final String userId) {
         UserData userData = userService.findById(userId);

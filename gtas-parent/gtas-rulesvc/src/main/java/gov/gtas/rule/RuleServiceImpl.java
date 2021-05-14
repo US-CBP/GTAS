@@ -20,6 +20,7 @@ import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.rule.listener.RuleEventListenerUtils;
 import gov.gtas.services.udr.RulePersistenceService;
 import gov.gtas.svc.UdrService;
+import gov.gtas.model.udr.KnowledgeBase;
 
 import java.io.IOException;
 import java.util.*;
@@ -77,8 +78,8 @@ public class RuleServiceImpl implements RuleService {
 	}
 
 	@Override
-	public RuleServiceResult invokeRuleEngine(RuleServiceRequest req, String kbName, Map<String, KIEAndLastUpdate> rules) {
-		RuleServiceResult ruleServiceResult = null;
+	public BasicRuleServiceResult invokeRuleEngine(RuleServiceRequest req, String kbName, Map<String, KIEAndLastUpdate> rules) {
+		BasicRuleServiceResult ruleServiceResult = null;
 		if (rules.containsKey(kbName)) {
 			KieBase kbase = rules.get(kbName).getKieBase();
 			ruleServiceResult = createSessionAndExecuteRules(kbase, req);
@@ -95,7 +96,7 @@ public class RuleServiceImpl implements RuleService {
 	 *            the request object container.
 	 * @return the rule execution result.
 	 */
-	private RuleServiceResult createSessionAndExecuteRules(KieBase kbase, RuleServiceRequest req) {
+	private BasicRuleServiceResult createSessionAndExecuteRules(KieBase kbase, RuleServiceRequest req) {
 		logger.info("Entering createSessionAndExecuteRules() and creating Stateless session.");
 
 		StatelessKieSession ksession = kbase.newStatelessKieSession();
@@ -105,8 +106,8 @@ public class RuleServiceImpl implements RuleService {
 		 */
 		final RuleExecutionStatistics stats = new RuleExecutionStatistics();
 
-		List<EventListener> listeners = createEventListeners(stats);
-		RuleEventListenerUtils.addEventListenersToKieSEssion(ksession, listeners);
+	//	List<EventListener> listeners = createEventListeners(stats);
+	//	RuleEventListenerUtils.addEventListenersToKieSEssion(ksession, listeners);
 		// ksession.addEventListener(new DebugAgendaEventListener());
 		// ksession.addEventListener(new DebugRuleRuntimeEventListener());
 		logger.debug("About to run rules.");
@@ -117,7 +118,7 @@ public class RuleServiceImpl implements RuleService {
 		Collection<String> keys = globals.getGlobalKeys();
 
 		Iterator<String> iter = keys.iterator();
-		RuleServiceResult res = null;
+		BasicRuleServiceResult res = null;
 
 		logger.debug("Retrieved Rule execution statistics objects.");
 		while (iter.hasNext()) {

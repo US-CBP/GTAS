@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import gov.gtas.config.ParserConfig;
+import gov.gtas.parserconfig.ParserConfig;
 import gov.gtas.parsers.ParserTestHelper;
 import org.junit.Before;
 import org.junit.Test;
