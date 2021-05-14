@@ -12,7 +12,7 @@ ENV RUN_ARGUMENTS ' --kb.list=${KB_LIST} \
                     --spring.datasource.url=jdbc:mysql://${MARIA_URL}:3306/gtas \
                     --spring.datasource.username=${MARIA_USERNAME} \
                     --spring.datasource.password=${MARIA_PASSWORD} \
-                    --spring.activemq.broker-url=tcp://${ACTIVE_MQ_HOST}'
+                    --spring.activemq.broker-url=tcp://${ACTIVE_MQ_HOST}:61616'
 
 
 CMD mvn spring-boot:run -Dspring-boot.run.arguments="$RUN_ARGUMENTS" -Dspring-boot.run.jvmArguments="$JVM_ARGS"

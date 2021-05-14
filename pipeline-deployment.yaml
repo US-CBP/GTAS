@@ -65,7 +65,6 @@ services:
       DB_HOST: ${MARIADB_HOST}
       MARIA_USERNAME: ${MARIADB_USER}
       MARIA_PASSWORD: ${MARIADB_PASS}
-      ACTIVE_MQ_HOST: tcp://activemq:61616
       JVM_ARGS: -Xms8g -Xmx16g
   gtas-scheduler:
     labels:
