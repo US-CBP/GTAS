@@ -61,10 +61,10 @@ services:
       kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
     environment:
-      MARIA_URL: ${secrets.MARIADB_HOST}
-      DB_HOST: ${secrets.MARIADB_HOST}
-      MARIA_USERNAME: ${secrets.MARIADB_USER}
-      MARIA_PASSWORD: ${secrets.MARIADB_PASS}
+      MARIA_URL: $${secrets.MARIADB_HOST}
+      DB_HOST: $${secrets.MARIADB_HOST}
+      MARIA_USERNAME: $${secrets.MARIADB_USER}
+      MARIA_PASSWORD: $${secrets.MARIADB_PASS}
       ACTIVE_MQ_HOST: activemq
       JVM_ARGS: -Xms8g -Xmx16g
   gtas-scheduler:
