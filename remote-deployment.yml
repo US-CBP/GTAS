@@ -61,7 +61,7 @@ services:
         constraints:
           - node.hostname == gtas-messenger-node
     environment:
-      MARIA_URL: jdbc:mysql://mariadb:3306/gtas
+      MARIA_URL: mariadb
       DB_HOST: mariadb
       MARIA_USERNAME: root
       MARIA_PASSWORD: admin
