@@ -8,6 +8,7 @@ package gov.gtas.svc;
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.constant.RuleConstants;
 import gov.gtas.constant.RuleServiceConstants;
+import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.udr.Rule;
@@ -103,7 +104,9 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 			}
 			DrlRuleFileBuilder ruleFileBuilder = new DrlRuleFileBuilder();
 			for (UdrRule udrRule : kb.getUdrRulesInKb()) {
-				ruleFileBuilder.addRule(udrRule);
+				if (udrRule.getMetaData().getEnabled() == YesNoEnum.Y) {
+					ruleFileBuilder.addRule(udrRule);
+				}
 			}
 			String drlRules = ruleFileBuilder.build();
 			return createKnowledgeBaseFromDRLString(kbName, drlRules);
