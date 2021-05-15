@@ -10,7 +10,7 @@ RUN mkdir /temp-dos
 COPY ./gtas-parent/docker-resources/setenv-scheduler.sh /temp-dos/setenv-scheduler.sh
 RUN dos2unix /temp-dos/setenv-scheduler.sh
 
-FROM tomcat:9-jdk8-corretto as tomcat
+FROM tomcat:10-jdk8-adoptopenjdk-openj9 as tomcat
 
 
 COPY --from=scheduler-builder /root/.m2/repository/gov/gtas/gtas-job-scheduler-war/1.0.0-BUILD-SNAPSHOT/gtas-job-scheduler-war-1.0.0-BUILD-SNAPSHOT.war /usr/local/tomcat/webapps/gtas-job-scheduler.war
