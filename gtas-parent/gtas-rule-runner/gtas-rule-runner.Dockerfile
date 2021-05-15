@@ -1,4 +1,4 @@
-FROM adoptopenjdk/maven-openjdk8
+FROM maven/3.8.1-amazoncorretto-8
 
 
 COPY ./gtas-parent/ /gtas-parent

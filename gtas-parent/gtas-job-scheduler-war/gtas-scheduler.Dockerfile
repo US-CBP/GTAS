@@ -1,4 +1,4 @@
-FROM adoptopenjdk/maven-openjdk8 as scheduler-builder
+FROM maven/3.8.1-amazoncorretto-8 as scheduler-builder
 
 
 COPY ./gtas-parent/ /gtas-parent
