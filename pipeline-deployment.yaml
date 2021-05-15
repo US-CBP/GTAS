@@ -53,7 +53,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.role == frontend
+          - node.labels.role == backend
     volumes:
       - certs:/temp-cert
   rule-runner:
