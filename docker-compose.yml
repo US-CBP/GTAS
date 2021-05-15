@@ -11,8 +11,8 @@ services:
     ports:
       - 443:443
       - 80:80
-      - 8443:8443
-      - 8080:8080
+#      - 8443:8443
+#      - 8080:8080
     networks:
       - gtas-webapp-network
     secrets:
@@ -24,9 +24,9 @@ services:
     build: 
       context: ./gtas-parent
       dockerfile: web-app.Dockerfile
-#    ports:
-#      - 8080:8080
-#      - 8443:8443
+    ports:
+      - 8080:8080
+      - 8443:8443
     environment:
       - KIBANA_HOST=kibana
       - NEO4J_HOST=neo4j
