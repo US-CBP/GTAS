@@ -1,22 +1,22 @@
 version: '3.7'
 services:
 
-  http-proxy: 
-    image: wcogtas/http-proxy:dev
-    container_name: http-proxy
-    build:  
-      context: ./gtas-parent
-      dockerfile: docker-resources/proxy.Dockerfile
-    restart: unless-stopped
-    ports:
-      - 443:443
-      - 80:80
-#      - 8443:8443
-#      - 8080:8080
-    networks:
-      - gtas-webapp-network
-    secrets:
-      - elastic-bootstrap-password
+#  http-proxy: 
+#    image: wcogtas/http-proxy:dev
+#    container_name: http-proxy
+#    build:  
+#      context: ./gtas-parent
+#      dockerfile: docker-resources/proxy.Dockerfile
+#    restart: unless-stopped
+#    ports:
+#      - 443:443
+#      - 80:80
+##      - 8443:8443
+##      - 8080:8080
+#    networks:
+#      - gtas-webapp-network
+#    secrets:
+#      - elastic-bootstrap-password
 
   web-app:
     image: wcogtas/webapp:dev
