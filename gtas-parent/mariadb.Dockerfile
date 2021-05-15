@@ -1,4 +1,4 @@
-FROM maven/3.8.1-amazoncorretto-8 as build-db
+FROM adoptopenjdk/maven-openjdk8 as build-db
 
 RUN mkdir /init-scripts/
 COPY ./gtas-commons/secrets/init/ /init-scripts/

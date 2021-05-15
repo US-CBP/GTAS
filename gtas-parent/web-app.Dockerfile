@@ -1,4 +1,4 @@
-FROM maven/3.8.1-amazoncorretto-8 as build-stage
+FROM adoptopenjdk/maven-openjdk8 as build-stage
 
 RUN apt-get -y update && apt-get -y install nodejs git dos2unix
 
