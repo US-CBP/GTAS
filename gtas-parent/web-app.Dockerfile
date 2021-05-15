@@ -14,7 +14,7 @@ COPY ./docker-resources/setenv.sh /temp-dos/setenv.sh
 RUN dos2unix /temp-dos/setenv.sh
 
 
-FROM tomcat:9-jdk8-adoptopenjdk-openj9 as tomcat
+FROM tomcat:10-jdk8-corretto as tomcat
 
 RUN mkdir -p /usr/local/tomcat/webapps/gtas /logs/apache-tomcat-web /logs/apache-tomcat /temp /usr/local/tomcat/conf/cert /usr/local/tomcat/conf/key
 
