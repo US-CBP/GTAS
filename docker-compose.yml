@@ -1,22 +1,22 @@
 version: '3.7'
 services:
 
-#  http-proxy: 
-#    image: wcogtas/http-proxy:dev
-#    container_name: http-proxy
-#    build:  
-#      context: ./gtas-parent
-#      dockerfile: docker-resources/proxy.Dockerfile
-#    restart: unless-stopped
-#    ports:
-#      - 443:443
-#      - 80:80
-##      - 8443:8443
-##      - 8080:8080
-#    networks:
-#      - gtas-webapp-network
-#    secrets:
-#      - elastic-bootstrap-password
+  http-proxy: 
+    image: wcogtas/http-proxy:dev
+    container_name: http-proxy
+    build:  
+      context: ./gtas-parent
+      dockerfile: docker-resources/proxy.Dockerfile
+    restart: unless-stopped
+    ports:
+      - 443:443
+      - 80:80
+      - 8443:8443
+      - 8080:8080
+    networks:
+      - gtas-webapp-network
+    secrets:
+      - elastic-bootstrap-password
 
   web-app:
     image: wcogtas/webapp:dev
@@ -25,8 +25,8 @@ services:
       context: ./gtas-parent
       dockerfile: web-app.Dockerfile
     ports:
-      - 8080:8080
-      - 8443:8443
+#      - 8080:8080
+#      - 8443:8443
     environment:
       - KIBANA_HOST=kibana
       - NEO4J_HOST=neo4j
