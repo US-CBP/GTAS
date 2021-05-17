@@ -123,7 +123,7 @@ INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "DCA");
 INSERT INTO `signup_location` (`active`, `name`) VALUES (1, "ADD");
 
 -- ----------------------------
--- User Location
+-- Lookout Lane
 -- ----------------------------
 INSERT INTO `lookout_lane` VALUES(1, null, null, null, null, 0, 'Active', 0, 'ACTIVE');
 INSERT INTO `lookout_lane` VALUES(2, null, null, null, null, 0, 'Inactive', 1, 'INACTIVE');
