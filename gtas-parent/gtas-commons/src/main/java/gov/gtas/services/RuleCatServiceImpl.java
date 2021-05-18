@@ -39,7 +39,7 @@ public class RuleCatServiceImpl implements HitCategoryService {
 	@Autowired
 	private UserGroupRepository userGroupRepository;
 
-	@Value("${user.group.default}")
+	@Value("${user.group.default:1}")
 	private Long defaultUserGroupId;
 
 	@Override
@@ -72,7 +72,7 @@ public class RuleCatServiceImpl implements HitCategoryService {
 	@Override
 	public List<JsonLookupData> getAllNonArchivedCategories() {
 		List<JsonLookupData> result = hitCategoryRepository.getAllNonArchivedCategories().stream().map(w ->
-				new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString(), w.isArchived()))
+				new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString(), w.isArchived(), w.isPromoteToLookout()))
 				.collect(Collectors.toList());
 		return result;
 	}

@@ -1,12 +1,13 @@
-package gov.gtas.config;
+package gov.gtas.parserconfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 @Component
-@ComponentScan("gov.gtas")
+@ConditionalOnProperty(prefix = "loader", name = "enabled")
 public class ParserConfig {
 
     private Boolean enabled;

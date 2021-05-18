@@ -8,8 +8,8 @@
 
 package gov.gtas.services;
 
-import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
+import gov.gtas.enumtype.LookoutStatusEnum;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
 import gov.gtas.services.jms.OmniLocalGtasSender;
@@ -59,6 +59,8 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 	private final FlightPriorityCountRepository flightPriorityCountRepository;
 
 	private final HitMakerRepository hitMakerRepository;
+	
+	private final MessageStatusRepository messageStatusRepository;
 
 	@Value("${omni.enabled}")
 	private Boolean omniEnabled;
@@ -69,7 +71,8 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 	public RuleHitPersistenceServiceImpl(PassengerService passengerService, HitDetailRepository hitDetailRepository,
 										 HitsSummaryRepository hitsSummaryRepository, FlightHitsWatchlistRepository flightHitsWatchlistRepository,
 										 FlightHitsRuleRepository flightHitsRuleRepository, FlightFuzzyHitsRepository flightFuzzyHitsRepository,
-										 FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository, FlightHitsExternalRepository flightHitsExternalRepository, FlightHitsManualRepository flightHitsManualRepository, FlightPriorityCountRepository flightPriorityCountRepository) {
+										 FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository, FlightHitsExternalRepository flightHitsExternalRepository, FlightHitsManualRepository flightHitsManualRepository, 
+										 FlightPriorityCountRepository flightPriorityCountRepository, MessageStatusRepository messageStatusRepository) {
 		this.passengerService = passengerService;
 		this.hitDetailRepository = hitDetailRepository;
 		this.hitsSummaryRepository = hitsSummaryRepository;
@@ -81,6 +84,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		this.flightHitsExternalRepository = flightHitsExternalRepository;
 		this.flightHitsManualRepository = flightHitsManualRepository;
 		this.flightPriorityCountRepository = flightPriorityCountRepository;
+		this.messageStatusRepository = messageStatusRepository;
 	}
 
 	@Transactional
@@ -204,16 +208,22 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 					}
 				}
 				if (!hitDetailsToPersist.isEmpty()) {
-
 					Map<Long, Set<UserGroup>> hitMakerMappedByPrimaryKey = new HashMap<>();
+					Map<Long, Boolean> hitMakerIdMappedToLookoutStatus = new HashMap<>();
 					for (HitMaker hitMaker : hitMakersSet) {
 						hitMakerMappedByPrimaryKey.put(hitMaker.getId(), hitMaker.getHitCategory().getUserGroups());
+						hitMakerIdMappedToLookoutStatus.put(hitMaker.getId(), hitMaker.getHitCategory().isPromoteToLookout());
 					}
 
 					for (HitDetail hd : hitDetailsToPersist) {
+						LookoutStatusEnum poeStatus = LookoutStatusEnum.NOTPROMOTED;
+						if(hitMakerIdMappedToLookoutStatus.get(hd.getHitMakerId())) { //If ANY category is worthy of promoting, ALL hit view statuses are set active
+							poeStatus = LookoutStatusEnum.ACTIVE;
+						}
 						for (UserGroup ug : hitMakerMappedByPrimaryKey.get(hd.getHitMakerId())) {
+
 							HitViewStatus hitViewStatus = new HitViewStatus(hd, ug, HitViewStatusEnum.NEW,
-									hd.getPassenger());
+									hd.getPassenger(), poeStatus);
 							hd.getHitViewStatus().add(hitViewStatus);
 						}
 					}
@@ -237,6 +247,16 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		}
 
 		return hitDetailIterable;
+	}
+
+	
+	@Override	
+	public List<MessageStatus> getRelevantMessages(Set<Long> messageIds) {
+		if (messageIds == null || messageIds.isEmpty()) {
+			return new ArrayList<>();
+		} else {
+			return messageStatusRepository.getMessageFromIds(new ArrayList<>(messageIds));
+		}	
 	}
 
 	/*

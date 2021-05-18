@@ -12,6 +12,8 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.enumtype.HitTypeEnum;
 
@@ -49,7 +51,6 @@ public class HitDetail extends BaseEntity {
 	@JsonIgnore
 	private HitMaker hitMaker;
 
-	@JsonIgnore
 	@Column(name = "hm_id", columnDefinition = "bigint unsigned", nullable = false)
 	private Long hitMakerId;
 
@@ -226,13 +227,18 @@ public class HitDetail extends BaseEntity {
 
 	public static HitDetail from(RuleHitDetail ruleHitDetail) {
 		HitDetail hitDetail = new HitDetail(ruleHitDetail.getHitType());
+		if (!StringUtils.isBlank(ruleHitDetail.getTitle())) {
+			hitDetail.setTitle(ruleHitDetail.getTitle());
+		} else {
+			hitDetail.setTitle(ruleHitDetail.getHitRule());
+		}
 		hitDetail.setHitType(ruleHitDetail.getHitType().toString());
 		hitDetail.setPassengerId(ruleHitDetail.getPassengerId());
 		hitDetail.setHitMakerId(ruleHitDetail.getHitMakerId());
 		hitDetail.setRuleId(ruleHitDetail.getRuleId());
+		hitDetail.setFlightId(ruleHitDetail.getFlightId());
 		hitDetail.setDescription(ruleHitDetail.getDescription());
 		hitDetail.setCreatedDate(new Date());
-		hitDetail.setTitle(ruleHitDetail.getTitle());
 		if (HitTypeEnum.GRAPH_HIT == ruleHitDetail.getHitType()) {
 			hitDetail.setRuleConditions(ruleHitDetail.getGraphHitDisplay());
 		} else {

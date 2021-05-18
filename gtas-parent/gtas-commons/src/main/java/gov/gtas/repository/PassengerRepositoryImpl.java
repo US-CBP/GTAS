@@ -43,7 +43,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	private EntityManager em;
 
 	//Performance increase by offsetting hit creation date is substantial.
-	@Value("${pvl.hitDetails.createdAtDaysOffset}")
+	@Value("${pvl.hitDetails.createdAtDaysOffset:4}")
 	private Integer pvlHitCreationOffset;
 
 	@SuppressWarnings("DuplicatedCode")

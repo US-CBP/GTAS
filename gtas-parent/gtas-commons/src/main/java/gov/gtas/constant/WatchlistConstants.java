@@ -6,7 +6,7 @@
 package gov.gtas.constant;
 
 public class WatchlistConstants {
-	public static final String WL_KNOWLEDGE_BASE_NAME = "WL Knowledge Base";
+	public static final String WL_KNOWLEDGE_BASE_NAME = "WL_Knowledge_Base";
 	public static final String DELETE_OP_NAME = "delete";
 	//////////////////////////////////////////////////////////////////////////////////
 	// VALIDATION FIELDS and ERROR codes

@@ -6,7 +6,7 @@
  *
  */
 
-package gov.gtas.config;
+package gov.gtas.neo4jconfig;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +16,9 @@ import org.springframework.core.env.Environment;
 import javax.annotation.Resource;
 
 @Configuration
-@ComponentScan("gov.gtas")
-@PropertySource("classpath:default.application.properties")
-@PropertySource(value = "file:${catalina.home}/conf/application.properties", ignoreResourceNotFound = true)
+//@ComponentScan("gov.gtas")
+//@PropertySource("classpath:default.application.properties")
+//@PropertySource(value = "file:${catalina.home}/conf/application.properties", ignoreResourceNotFound = true)
 public class Neo4JConfig {
 
 	@Resource

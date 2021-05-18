@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public interface MessageStatusRepository extends CrudRepository<MessageStatus, Long> {
 	@Query(nativeQuery = true, value = "Select ms.*  " + "from message_status ms "
@@ -31,4 +32,10 @@ public interface MessageStatusRepository extends CrudRepository<MessageStatus, L
 			+ "and m.create_date <= :cutOffTime "
 			+ "order by m.create_date asc  limit :messageLimit")
 	List<MessageStatus> getMessagesToOutProcess(@Param("messageLimit") int messageLimit, @Param("cutOffTime") Date cutOffTime, @Param("statusEnums")List<String> statusEnums);
+	
+	
+	@Query(nativeQuery = true, value = "Select ms.* from message_status ms "
+			+ "left join message m on ms.ms_message_id = m.id where m.id in :ids")
+	List<MessageStatus> getMessageFromIds(@Param("ids") List<Long> ids);
+	
 }

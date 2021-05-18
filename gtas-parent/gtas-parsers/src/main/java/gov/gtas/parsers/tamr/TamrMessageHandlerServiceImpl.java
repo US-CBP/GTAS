@@ -12,6 +12,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,6 +33,7 @@ import gov.gtas.repository.PendingHitDetailRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 
 @Component
+@ConditionalOnProperty(prefix = "tamr", name = "enabled")
 public class TamrMessageHandlerServiceImpl implements TamrMessageHandlerService {
 
     private final Logger logger = LoggerFactory.getLogger(TamrMessageHandlerServiceImpl.class);

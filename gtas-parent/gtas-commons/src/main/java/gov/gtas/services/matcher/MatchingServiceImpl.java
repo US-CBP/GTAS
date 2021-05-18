@@ -181,6 +181,7 @@ public class MatchingServiceImpl implements MatchingService {
 						hitDetail.setRuleId(Long.parseLong(hit.getDerogId()));
 						hitDetail.setRuleConditions(hit.getRuleDescription());
 						hitDetail.setCreatedDate(new Date());
+						hitDetail.setFlightId(passenger.getFlight().getId());
 						hitDetail.setTitle("Partial Name Match");
 						hitDetail.setPercentage(hit.getPercent());
 						hitDetail.setDescription(
@@ -222,12 +223,14 @@ public class MatchingServiceImpl implements MatchingService {
 	 * @return totalMatchCount
 	 */
 	@Transactional
-	public int findMatchesBasedOnTimeThreshold(List<MessageStatus> messageStatuses) {
+	public PassengerWatchlistAndHitDetails findMatchesBasedOnTimeThreshold(List<MessageStatus> messageStatuses) {
 		logger.debug("entering findMatchesBasedOnTimeThreshold()");
 
 		if (messageStatuses.isEmpty()) {
-			return 0;
+			return new PassengerWatchlistAndHitDetails();
 		}
+		Set<PassengerWLTimestamp> savingPassengerSet = new HashSet<>();
+		Set<HitDetail> partialWatchlistHits = new HashSet<>();
 		Set<Passenger> passengers = passengerService.getPassengersForFuzzyMatching(messageStatuses);
 		int totalMatchCount = 0;
 		long startTime = System.nanoTime();
@@ -236,12 +239,9 @@ public class MatchingServiceImpl implements MatchingService {
 		logger.debug("Execution to get initial matching data is = {}ms", (endTime - startTime) / 1000000);
 		// Begin matching for all passengers on all flights retrieved within time frame.
 		if (passengers != null && !passengers.isEmpty()) { // Don't try and match if no flights
-			RuleHitPersistenceService ruleHitPersistenceService = applicationContext
-					.getBean(RuleHitPersistenceService.class);
 			startTime = System.nanoTime();
-			Set<PassengerWLTimestamp> savingPassengerSet = new HashSet<>();
+
 			MatcherParameters matcherParameters = getMatcherParameters();
-			Set<HitDetail> partialWatchlistHits = new HashSet<>();
 			for (Passenger passenger : passengers) {
 				try {
 					Set<HitDetail> passengerHits = performFuzzyMatching(passenger.getFlight(), passenger,
@@ -263,14 +263,14 @@ public class MatchingServiceImpl implements MatchingService {
 							e);
 				}
 			}
-			passengerWatchlistRepository.saveAll(savingPassengerSet);
-			ruleHitPersistenceService.persistToDatabase(partialWatchlistHits);
+			// passengerWatchlistRepository.saveAll(savingPassengerSet);
+			// ruleHitPersistenceService.persistToDatabase(partialWatchlistHits);
 		}
 		endTime = System.nanoTime();
 		int paxTotal = passengers == null ? 0 : passengers.size();
 		logger.debug("Passenger hit count and total run: {} {}", totalMatchCount, paxTotal);
 		logger.info("Execution time for performFuzzyMatching() for loop  = {} ms, {} passengers",
 				(endTime - startTime) / 1000000, paxTotal);
-		return totalMatchCount;
+		return new PassengerWatchlistAndHitDetails(savingPassengerSet, partialWatchlistHits);
 	}
 }

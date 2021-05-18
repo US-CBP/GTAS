@@ -6,11 +6,13 @@
 package gov.gtas.svc.util;
 
 import gov.gtas.bo.TargetSummaryVo;
+import gov.gtas.model.MessageStatus;
 import gov.gtas.bo.RuleExecutionStatistics;
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.svc.request.builder.PassengerFlightTuple;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -22,6 +24,18 @@ public class RuleExecutionContext {
 	private RuleServiceRequest ruleServiceRequest;
 	private Collection<TargetSummaryVo> targetingResult;
 	private RuleExecutionStatistics ruleExecutionStatistics;
+	private List<MessageStatus> source;
+	private int number;
+
+	
+	
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
 
 	/**
 	 * @return the paxFlightTuples
@@ -81,6 +95,14 @@ public class RuleExecutionContext {
 	 */
 	public void setRuleExecutionStatistics(RuleExecutionStatistics ruleExecutionStatistics) {
 		this.ruleExecutionStatistics = ruleExecutionStatistics;
+	}
+
+	public List<MessageStatus> getSource() {
+		return source;
+	}
+
+	public void setSource(List<MessageStatus> source) {
+		this.source = source;
 	}
 
 }

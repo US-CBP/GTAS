@@ -4,9 +4,11 @@
  */
 package gov.gtas.parsers.omni;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 @Service
+@ConditionalOnProperty(prefix = "omni", name = "enabled")
 public interface OmniMessageHandlerService {
 
     /**

@@ -4,30 +4,28 @@ import gov.gtas.model.NoteType;
 import gov.gtas.services.jms.AdditionalProcessingMessageSender;
 import gov.gtas.summary.MessageSummaryList;
 import gov.gtas.summary.PassengerNote;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 
-
 @Component
+@ConditionalOnProperty(prefix = "additionalprocessing", name = "enabled")
 public class PassengerSummaryService {
 
 
-    final
-    AdditionalProcessingService additionalProcessingService;
+	@Autowired(required=false)
+    private AdditionalProcessingService additionalProcessingService;
 
-    final
-    AdditionalProcessingMessageSender additionalProcessingMessageSender;
+    
+    @Autowired(required=false)
+    private AdditionalProcessingMessageSender additionalProcessingMessageSender;
 
     @Value("${additional.processing.queue}")
     private String addProcessQueue;
-
-    public PassengerSummaryService(AdditionalProcessingService additionalProcessingService,
-                                   AdditionalProcessingMessageSender additionalProcessingMessageSender) {
-        this.additionalProcessingService = additionalProcessingService;
-        this.additionalProcessingMessageSender = additionalProcessingMessageSender;
-    }
 
     public void sendMessage(Long passengerId, String note, String noteRtf, NoteType noteType) {
         PassengerNote passengerNote = new PassengerNote();

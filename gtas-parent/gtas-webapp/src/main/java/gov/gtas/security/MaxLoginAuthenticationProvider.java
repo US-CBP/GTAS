@@ -1,6 +1,12 @@
 package gov.gtas.security;
 
 import gov.gtas.services.security.LoginService;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -9,6 +15,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import freemarker.template.TemplateException;
 
 @Service
 public class MaxLoginAuthenticationProvider extends DaoAuthenticationProvider {
@@ -38,8 +46,12 @@ public class MaxLoginAuthenticationProvider extends DaoAuthenticationProvider {
 
             return auth;
         } catch (BadCredentialsException badCredentialsException) {
-            loginService.addToFailAttempts(username);
-
+            try {
+				loginService.addToFailAttempts(username);
+			} catch (IOException | TemplateException | MessagingException | URISyntaxException e) {
+				logger.error(e);
+				//TODO: better error handling
+			}
             throw badCredentialsException;
         }
 

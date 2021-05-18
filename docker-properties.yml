@@ -1,13 +1,13 @@
 version: '3.7'
 services:
-  http-proxy:
-    environment:
-      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
-    secrets:
-      - source: webapp-cert
-        target: /temp-cert/wcogtas.org.crt
-      - source: webapp-key
-        target: /temp-cert/wcogtas.org.key
+#  http-proxy:
+#    environment:
+#      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
+#    secrets:
+#      - source: webapp-cert
+#        target: /temp-cert/wcogtas.org.crt
+#      - source: webapp-key
+#        target: /temp-cert/wcogtas.org.key
   web-app:
     environment:
       DB_HOST: mariadb

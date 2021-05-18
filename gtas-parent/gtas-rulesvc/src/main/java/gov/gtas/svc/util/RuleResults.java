@@ -1,31 +1,34 @@
 package gov.gtas.svc.util;
 
+import gov.gtas.bo.BasicRuleServiceResult;
 import gov.gtas.bo.RuleServiceResult;
 import gov.gtas.bo.TargetSummaryVo;
 
 import java.util.Collection;
 
 public class RuleResults {
+	
+	public RuleResults() {}
 
-	private RuleServiceResult udrResult;
+	private BasicRuleServiceResult udrResult;
 
-	private RuleServiceResult watchListResult;
+	private BasicRuleServiceResult watchListResult;
 
 	private Collection<TargetSummaryVo> targetingResult;
 
-	public RuleServiceResult getUdrResult() {
+	public BasicRuleServiceResult getUdrResult() {
 		return udrResult;
 	}
 
-	public void setUdrResult(RuleServiceResult udrResult) {
+	public void setUdrResult(BasicRuleServiceResult udrResult) {
 		this.udrResult = udrResult;
 	}
 
-	public RuleServiceResult getWatchListResult() {
+	public BasicRuleServiceResult getWatchListResult() {
 		return watchListResult;
 	}
 
-	public void setWatchListResult(RuleServiceResult watchListResult) {
+	public void setWatchListResult(BasicRuleServiceResult watchListResult) {
 		this.watchListResult = watchListResult;
 	}
 

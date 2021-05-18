@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,7 @@ import gov.gtas.services.security.UserServiceUtil;
 import gov.gtas.services.security.*;
 
 @Service
+@ConditionalOnProperty(prefix = "enable.email.notification", name = "service")
 public class SignupRequestServiceImpl implements SignupRequestService {
 
 	private static final Logger logger = LoggerFactory.getLogger(SignupRequestServiceImpl.class);

@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,6 +38,7 @@ import gov.gtas.parsers.tamr.model.TamrPassenger;
 import gov.gtas.services.FlightService;
 
 @Component
+@ConditionalOnProperty(prefix = "loader", name = "enabled")
 public class TamrAdapterImpl implements TamrAdapter {
 
     FlightService flightService;

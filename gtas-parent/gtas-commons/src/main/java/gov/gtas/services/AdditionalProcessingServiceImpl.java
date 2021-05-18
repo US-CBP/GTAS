@@ -8,6 +8,7 @@ import gov.gtas.summary.*;
 import gov.gtas.services.jms.AdditionalProcessingMessageSender;
 import gov.gtas.util.LobUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Scope(scopeName = "prototype")
 @Component
+@ConditionalOnProperty(prefix = "loader", name = "enabled")
 public class AdditionalProcessingServiceImpl implements AdditionalProcessingService {
 
     private final ApisService apisService;
