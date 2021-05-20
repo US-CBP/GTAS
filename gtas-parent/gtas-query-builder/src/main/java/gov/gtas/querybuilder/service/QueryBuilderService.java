@@ -214,8 +214,12 @@ public class QueryBuilderService {
 					Flight flight = (Flight) result[2];
 					PassengerGridItemVo vo = createPassengerGridItemVo(paxDocuments, passenger, flight);
 					
-					String seatNumber = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), passenger.getId());
-					vo.setSeat(seatNumber);
+					List<String> seatNumbers = seatService.findSeatNumberByFlightIdAndPassengerId(flight.getId(), passenger.getId());
+					if(seatNumbers != null && !seatNumbers.isEmpty()) {
+						vo.setSeat(seatNumbers.get(0));
+					} else{
+						vo.setSeat(null);
+					}
 
 					if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()) {
 						vo.maskPII();
