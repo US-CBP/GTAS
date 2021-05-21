@@ -1,4 +1,4 @@
-FROM docker.elastic.co/kibana/kibana:7.2.0
+FROM docker.elastic.co/kibana/kibana:7.12.1
 
 COPY ./install/docker/kibana/config/kibana.yml /usr/share/kibana/config/kibana.yml
 
