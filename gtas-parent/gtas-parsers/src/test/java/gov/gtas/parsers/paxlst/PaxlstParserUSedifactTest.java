@@ -9,11 +9,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import gov.gtas.config.ParserConfig;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import gov.gtas.parserconfig.ParserConfig;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.ApisMessageVo;

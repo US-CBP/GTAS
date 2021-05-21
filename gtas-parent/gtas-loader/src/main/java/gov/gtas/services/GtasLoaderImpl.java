@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -30,6 +31,7 @@ import static gov.gtas.services.LoaderUtils.fromVoAndMessage;
 import static gov.gtas.services.LoaderUtils.getNullPropertyNames;
 
 @Service
+@ConditionalOnProperty(prefix = "loader", name = "enabled")
 public class GtasLoaderImpl implements GtasLoader {
 
 	private static final Logger logger = LoggerFactory.getLogger(GtasLoaderImpl.class);
@@ -723,12 +725,20 @@ public class GtasLoaderImpl implements GtasLoader {
 
 	@Override
 	public int createPassengers(Set<Passenger> newPassengers, Set<Passenger> messagePassengers,
-			Flight primeFlight, Set<BookingDetail> bookingDetails) {
+			Flight primeFlight, Set<BookingDetail> bookingDetails, Message message) {
 
 		Iterable<Passenger> pax = passengerDao.saveAll(newPassengers);
 		for (Passenger p : pax) {
 			messagePassengers.add(p);
 		}
+		
+		for (Passenger p : messagePassengers) {
+			p.getPassengerTripDetails().setPassengerId(p.getId());
+			p.getPassengerTripDetails().setPaxId(p.getId());
+			p.getPassengerTripDetails().setMostRecentMessageId(message.getId());
+			message.getPassengerTripDetails().add(p.getPassengerTripDetails());
+		}
+		
 		for (Passenger p : newPassengers) {
 			try {
 				PassengerIDTag paxIdTag = utils.createPassengerIDTag(p);

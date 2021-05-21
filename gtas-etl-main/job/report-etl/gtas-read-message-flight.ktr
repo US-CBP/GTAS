@@ -599,6 +599,11 @@
       <to>JSON output</to>
       <enabled>Y</enabled>
     </hop>
+    <hop>
+      <from>Filter rows</from>
+      <to>Dummy (do nothing) - not-last-row</to>
+      <enabled>Y</enabled>
+    </hop>
   </order>
   <step>
     <name>Add constants</name>
@@ -752,7 +757,7 @@
       <schema_name/>
     </partitioning>
     <send_true_to>Dummy (do nothing)</send_true_to>
-    <send_false_to>log - No Data</send_false_to>
+    <send_false_to>Dummy (do nothing) - not-last-row</send_false_to>
     <compare>
       <condition>
         <negated>N</negated>
@@ -1575,7 +1580,7 @@ FROM message_flight_idx_vw
     <displayHeader>Y</displayHeader>
     <limitRows>N</limitRows>
     <limitRowsNumber>0</limitRowsNumber>
-    <logmessage>===>> Input file written: ${EXT_VAR_TEMP_DATA_FILE}</logmessage>
+    <logmessage>===>> Input file written: ${EXT_VAR_LAST_RECORD_FILE}</logmessage>
     <fields>
       <field>
         <name>lastRow</name>
@@ -1628,6 +1633,31 @@ NO DATA  IN THE STREAM
     <GUI>
       <xloc>448</xloc>
       <yloc>576</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (do nothing) - not-last-row</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>944</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

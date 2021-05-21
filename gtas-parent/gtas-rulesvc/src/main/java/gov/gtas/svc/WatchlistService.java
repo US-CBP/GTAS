@@ -11,6 +11,7 @@ import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 import gov.gtas.json.JsonLookupData;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.lookup.HitCategory;
+import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistSpec;
 
@@ -79,6 +80,11 @@ public interface WatchlistService {
 	 */
 	JsonServiceResponse activateAllWatchlists(String knowledgeBaseName);
 
+	
+	/**
+	 * Compiles all watch lists into a named knowledge base
+	 */
+	public KnowledgeBase createAKnowledgeBase(String knowledgeBaseName);
 	/**
 	 * Compiles all watch lists into the default knowledge base for watch lists.
 	 * 
@@ -120,5 +126,9 @@ public interface WatchlistService {
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	void deleteWatchlistItems(List<Long> watchlistItemIds);
+
+	void rebalanceAndCreateWatchlist();
+
+	void rebalanceWatchlist();
 
 }

@@ -12,19 +12,25 @@ public class JsonLookupData {
 	private String description;
 	private String severity;
 	private boolean archived;
+	private boolean promoteToLookout;
 
-	public JsonLookupData(Long id, String label, String description, String severity, boolean archived) {
+	public JsonLookupData(Long id, String label, String description, String severity, boolean archived, boolean promoteToLookout) {
 		super();
 		this.id = id;
 		this.label = label;
 		this.description = description;
 		this.severity = severity;
 		this.archived = archived;
+		this.promoteToLookout = promoteToLookout;
 	}
 
 	@SuppressWarnings("unused") // Used to marshal object.
 	public JsonLookupData() {
 	}
+
+	public boolean isPromoteToLookout() { return promoteToLookout; }
+
+	public void setPromoteToLookout(boolean promoteToLookout) { this.promoteToLookout = promoteToLookout; }
 
 	public String getSeverity() {
 		return severity;

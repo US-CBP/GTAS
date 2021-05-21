@@ -21,10 +21,11 @@ public class SignupRequest extends BaseEntityAudit {
 	 */
 	private static final long serialVersionUID = -4089021659160676960L;
 
-	@Column
+	@Column(name="username")
 	private String username;
-	
+	@Column(name="firstName")
 	private String firstName;
+	@Column(name="lastName")
 	private String lastName;
 
 	@Column
@@ -33,7 +34,7 @@ public class SignupRequest extends BaseEntityAudit {
 	@Column
 	private String supervisor;
 	
-	@Column
+	@Column(name="phoneNumber")
 	private String phoneNumber;
 
 	public String getPhoneNumber() {

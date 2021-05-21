@@ -2,16 +2,23 @@ package gov.gtas.model;
 
 import gov.gtas.services.dto.LookoutSendRequest;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity(name="lookout_request")
 public class LookoutRequest extends BaseEntityAudit {
+	@Column(name="passengerId")
     private Long passengerId;
+	@Column(name="flightId")
     private Long flightId;
     private String note;
+	@Column(name="noteRtf")
     private String noteRtf;
+	@Column(name="noteCat")
     private String noteCat;
+	@Column(name="sendRaw")
     private Boolean sendRaw;
+	@Column(name="countryGroupName")
     private String countryGroupName;
 
     public static LookoutRequest from(LookoutSendRequest lsr) {

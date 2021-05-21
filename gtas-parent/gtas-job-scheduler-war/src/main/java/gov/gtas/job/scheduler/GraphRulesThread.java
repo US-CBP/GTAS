@@ -8,14 +8,12 @@
 
 package gov.gtas.job.scheduler;
 
-import gov.gtas.services.AdditionalProcessingService;
 import gov.gtas.model.RuleHitDetail;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
 import gov.gtas.repository.udr.RuleMetaRepository;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.PassengerService;
-import gov.gtas.services.RuleHitPersistenceService;
 import gov.gtas.svc.GraphRulesService;
 import gov.gtas.svc.TargetingResultServices;
 import gov.gtas.svc.util.TargetingResultUtils;
@@ -43,10 +41,8 @@ public class GraphRulesThread  extends RuleThread implements Callable<Boolean> {
 
 	private final PassengerRepository passengerRepository;
 
-	private final ApplicationContext applicationContext;
-
 	private List<MessageStatus> messageStatuses = new ArrayList<>();
-
+	private PendingHitDetailRepository pendingHitDetailRepository;
 	private PassengerService passengerService;
 	private AppConfigurationService appConfigurationService;
 	private RuleMetaRepository ruleMetaRepository;
@@ -54,21 +50,17 @@ public class GraphRulesThread  extends RuleThread implements Callable<Boolean> {
 	public GraphRulesThread(GraphRulesService graphRulesService, MessageStatusRepository messageStatusRepository,
 			ApplicationContext applicationContext, PassengerRepository passengerRepository,
 			PassengerService passengerService, AppConfigurationService appConfigurationService,
-			RuleMetaRepository ruleMetaRepository) {
+			RuleMetaRepository ruleMetaRepository, PendingHitDetailRepository pendingHitDetailRepository) {
 		this.graphRulesService = graphRulesService;
 		this.messageStatusRepository = messageStatusRepository;
 		this.passengerRepository = passengerRepository;
-		this.applicationContext = applicationContext;
 		this.passengerService = passengerService;
 		this.appConfigurationService = appConfigurationService;
 		this.ruleMetaRepository = ruleMetaRepository;
+		this.pendingHitDetailRepository = pendingHitDetailRepository;
 	}
 
 	public Boolean call() {
-		RuleHitPersistenceService ruleHitPersistenceService = applicationContext
-				.getBean(RuleHitPersistenceService.class);
-		AdditionalProcessingService additionalProcessingService = applicationContext
-				.getBean(AdditionalProcessingService.class);
 
 		boolean returnVal = true;
 		long start = System.nanoTime();
@@ -89,14 +81,11 @@ public class GraphRulesThread  extends RuleThread implements Callable<Boolean> {
 			List<RuleHitDetail> filteredList = TargetingResultUtils
 					.filterRuleHitDetails(new ArrayList<>(graphHitDetailSet), targetingResultServices);
 			Set<HitDetail> hitDetails = graphRulesService.generateHitDetails(filteredList);
-
-			int BATCH_SIZE = Integer.parseInt(appConfigurationService
-					.findByOption(AppConfigurationRepository.MAX_RULE_DETAILS_CREATED).getValue());
-
-			List<Set<HitDetail>> batchedTargetingServiceResults = TargetingResultUtils.batchResults(hitDetails,
-					BATCH_SIZE);
-			processHits(processedMessages, ruleHitPersistenceService, batchedTargetingServiceResults, additionalProcessingService);
-			if (!batchedTargetingServiceResults.isEmpty()) {
+			Set<PendingHitDetails> pendingHitDetails = PendingHitDetails.convertHits(hitDetails);
+			if (!pendingHitDetails.isEmpty()) {
+				pendingHitDetailRepository.saveAll(pendingHitDetails);
+			}
+			if (!messageIds.isEmpty()) {
 				logger.info("Graph Database Ran in " + (System.nanoTime() - start) / 1000000 + "m/s.");
 			}
 		} catch (Exception e) {

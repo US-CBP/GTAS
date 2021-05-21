@@ -7,8 +7,20 @@ import java.util.Date;
 public class KIEAndLastUpdate {
 
     Date updated = new Date(0L);
+    
+    private String kbName;
 
-    public KieBase getKieBase() {
+    
+    
+    public String getKbName() {
+		return kbName;
+	}
+
+	public void setKbName(String kbName) {
+		this.kbName = kbName;
+	}
+
+	public KieBase getKieBase() {
         return kieBase;
     }
 

@@ -31,7 +31,7 @@ public interface GtasLoader {
 	void updatePassenger(Passenger existingPassenger, PassengerVo pvo, Message message) throws ParseException;
 
 	int createPassengers(Set<Passenger> newPassengers, Set<Passenger> messagePassengers,
-			Flight primeFlight, Set<BookingDetail> bookingDetails);
+			Flight primeFlight, Set<BookingDetail> bookingDetails, Message message);
 
 	void updateFlightPassengerCount(Flight primeFlight, int createdPassengers);
 

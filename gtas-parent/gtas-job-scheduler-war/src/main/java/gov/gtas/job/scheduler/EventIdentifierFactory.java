@@ -16,6 +16,7 @@ import gov.gtas.summary.EventIdentifier;
 import gov.gtas.summary.MessageSummaryList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ import static gov.gtas.services.GtasLoaderImpl.*;
 import static gov.gtas.services.GtasLoaderImpl.ETD_DATE_NO_TIMESTAMP_AS_LONG;
 
 @Component
+@ConditionalOnProperty(prefix = "loader", name = "enabled")
 public class EventIdentifierFactory {
     private static final Logger logger = LoggerFactory.getLogger(EventIdentifierFactory.class);
 

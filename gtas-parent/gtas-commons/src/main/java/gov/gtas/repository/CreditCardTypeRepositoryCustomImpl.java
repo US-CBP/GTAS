@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public class CreditCardTypeRepositoryImpl implements CreditCardTypeRepositoryCustom {
+public class CreditCardTypeRepositoryCustomImpl implements CreditCardTypeRepositoryCustom {
 	@PersistenceContext
 	private EntityManager em;
 	@Autowired

@@ -11,5 +11,5 @@ public interface MatchingService {
 
 	Set<HitDetail> performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters);
 
-	int findMatchesBasedOnTimeThreshold(List<MessageStatus> messageStatuses);
+	PassengerWatchlistAndHitDetails findMatchesBasedOnTimeThreshold(List<MessageStatus> messageStatuses);
 }

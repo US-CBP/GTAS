@@ -26,6 +26,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -36,6 +37,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@ConditionalOnProperty(prefix = "loader", name = "enabled")
 public class LoaderUtils {
 	private static final Logger logger = LoggerFactory.getLogger(LoaderUtils.class);
 

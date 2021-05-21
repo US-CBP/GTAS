@@ -38,7 +38,7 @@ public class PassengerVo extends BaseVo implements PIIObject {
 	private String embarkCountry;
 	private String debarkCountry;
 	private Boolean deleted = Boolean.FALSE;
-	private String seat = "";
+	private List<String> seats;
 	private String paxId;
 	private String paxIdTag;
 
@@ -359,12 +359,12 @@ public class PassengerVo extends BaseVo implements PIIObject {
 		this.debarkCountry = debarkCountry;
 	}
 
-	public String getSeat() {
-		return seat;
+	public List<String> getSeats() {
+		return seats;
 	}
 
-	public void setSeat(String seat) {
-		this.seat = seat;
+	public void setSeats(List<String> seats) {
+		this.seats = seats;
 	}
 
 	public void setDocuments(List<DocumentVo> documents) {

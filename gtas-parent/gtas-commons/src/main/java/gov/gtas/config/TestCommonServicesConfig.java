@@ -23,12 +23,12 @@ import java.util.Properties;
  * <context:annotation-config/>
  * <bean class="gov.gtas.config.TestCommonServicesConfig"/>
  */
-@Configuration
-@ComponentScan("gov.gtas")
-@PropertySource({ "classpath:default.application.properties"})
-@EnableJpaRepositories("gov.gtas")
-@EnableTransactionManagement
-@Import({ AsyncConfig.class, CommonServicesConfig.class })
+//@Configuration
+//@ComponentScan("gov.gtas")
+//@PropertySource({ "classpath:default.application.properties"})
+//@EnableJpaRepositories("gov.gtas")
+//@EnableTransactionManagement
+//@Import({ AsyncConfig.class, CommonServicesConfig.class })
 public class TestCommonServicesConfig {
 
  /*

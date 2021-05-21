@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -52,6 +53,7 @@ import static gov.gtas.repository.AppConfigurationRepository.MAX_PASSENGER_QUERY
  * configuration management.
  */
 @RestController
+@ConditionalOnProperty(prefix = "webapp.services", name = "enabled")
 public class AdminController {
 
   private static final Logger logger = LoggerFactory.getLogger(AdminController.class);

@@ -8,6 +8,7 @@ package gov.gtas.svc;
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.constant.RuleConstants;
 import gov.gtas.constant.RuleServiceConstants;
+import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.udr.Rule;
@@ -61,9 +62,8 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 			kb.setRulesBlob(drlString.getBytes(RuleConstants.UDR_EXTERNAL_CHARACTER_ENCODING));
 			kb.setKbBlob(kbBlob);
 			if (StringUtils.isEmpty(kbName)) {
-				kb.setKbName(RuleConstants.UDR_KNOWLEDGE_BASE_NAME);
+				logger.error("Watchlist has no name!");
 			}
-			kb = rulePersistenceService.saveKnowledgeBase(kb);
 			return kb;
 		} catch (Exception ioe) {
 			logger.error(ioe.getMessage());
@@ -95,24 +95,27 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 	}
 
 	@Override
-	@Transactional()
+	@Transactional
 	public KnowledgeBase createKnowledgeBaseFromUdrRules(String kbName, Collection<UdrRule> rules, String userId) {
 		if (!CollectionUtils.isEmpty(rules)) {
+			KnowledgeBase kb = rulePersistenceService.findUdrKnowledgeBase(kbName);
+			if (kb == null) {
+				kb = new KnowledgeBase(kbName);
+			}
 			DrlRuleFileBuilder ruleFileBuilder = new DrlRuleFileBuilder();
-			for (UdrRule rule : rules) {
-				ruleFileBuilder.addRule(rule);
+			for (UdrRule udrRule : kb.getUdrRulesInKb()) {
+				if (udrRule.getMetaData().getEnabled() == YesNoEnum.Y) {
+					ruleFileBuilder.addRule(udrRule);
+				}
 			}
 			String drlRules = ruleFileBuilder.build();
-			KnowledgeBase kb = createKnowledgeBaseFromDRLString(kbName, drlRules);
-			linkRulesToKnowledgeBase(kb, rules);
-			return kb;
+			return createKnowledgeBaseFromDRLString(kbName, drlRules);
 		} else {
 			return null;
 		}
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.MANDATORY)
 	public KnowledgeBase createKnowledgeBaseFromWatchlistItems(String kbName, Iterable<WatchlistItem> rules) {
 		if (rules != null) {
 			DrlRuleFileBuilder ruleFileBuilder = new DrlRuleFileBuilder();
@@ -135,12 +138,12 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 				}
 				ruleList.addAll(rule.getEngineRules());
 			}
-			rulePersistenceService.batchUpdate(ruleList);
+			//rulePersistenceService.batchUpdate(ruleList);
 		}
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.MANDATORY)
+	@Transactional()
 	public KnowledgeBase deleteKnowledgeBase(String kbName) {
 		KnowledgeBase kb = rulePersistenceService.findUdrKnowledgeBase(kbName);
 		if (kb != null) {

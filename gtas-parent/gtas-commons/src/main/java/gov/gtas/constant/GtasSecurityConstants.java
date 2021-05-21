@@ -44,6 +44,10 @@ public class GtasSecurityConstants {
 
 	public static final String PRIVILEGES_ADMIN_AND_VIEW_FLIGHTS = "hasAnyAuthority('Admin', 'View Flights')";
 
+	public static final String PRIVILEGES_ADMIN_AND_MANAGE_LOOKOUT = "hasAnyAuthority('Admin', 'Manage POE Lookout')";
+
+	public static final String PRIVILEGES_ADMIN_AND_VIEW_LOOKOUT = "hasAnyAuthority('Admin', 'Manage POE Lookout', 'View POE Lookout')";
+
 	public static final String PRIVILEGES_ADMIN_AND_MANAGE_HITS = "hasAnyAuthority('Admin', 'Manage Hits')";
 
 	// This combo role is generated because of a specific edge case: Manage queries

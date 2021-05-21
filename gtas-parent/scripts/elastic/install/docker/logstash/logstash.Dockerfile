@@ -1,4 +1,4 @@
-FROM docker.elastic.co/logstash/logstash:7.2.0
+FROM docker.elastic.co/logstash/logstash:7.12.1
 
 USER root
 RUN yum install -y wget

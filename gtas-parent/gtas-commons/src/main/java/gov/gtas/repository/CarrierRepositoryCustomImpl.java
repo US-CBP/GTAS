@@ -20,7 +20,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.Query;
 
 @Repository
-public class CarrierRepositoryImpl implements CarrierRepositoryCustom {
+public class CarrierRepositoryCustomImpl implements CarrierRepositoryCustom {
 	@PersistenceContext
 	private EntityManager em;
 	@Autowired

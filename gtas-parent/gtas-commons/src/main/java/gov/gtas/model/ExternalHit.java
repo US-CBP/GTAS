@@ -2,6 +2,7 @@ package gov.gtas.model;
 
 import gov.gtas.enumtype.HitTypeEnum;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -9,8 +10,10 @@ import javax.persistence.Table;
 @Table(name = "external_hit")
 public class ExternalHit extends HitMaker {
 
+	@Column(name = "description")
     private String description;
 
+	@Column(name = "lookout")
     private Boolean lookout;
 
     public ExternalHit() {

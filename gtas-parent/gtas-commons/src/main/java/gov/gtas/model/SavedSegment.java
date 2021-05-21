@@ -7,8 +7,11 @@ import javax.persistence.*;
 @Table(name = "saved_segment")
 public class SavedSegment extends BaseEntityAudit {
 
+	@Column(name="rawSegment")
     private String rawSegment;
+	@Column(name="regex")
     private String regex;
+	@Column(name="segmentName")
     private String segmentName;
 
     @ManyToOne(fetch = FetchType.LAZY)

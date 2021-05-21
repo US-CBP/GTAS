@@ -11,6 +11,7 @@ import gov.gtas.constant.GtasSecurityConstants;
 import gov.gtas.model.User;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 
@@ -106,7 +107,7 @@ public interface UserService {
 
 	boolean matchUserPassword(String savedPassword, String newPassword);
 
-	void forgotPassword(User user);
+	void forgotPassword(User user) throws IOException, TemplateException, MessagingException, URISyntaxException;
 
 	boolean isValidToken(String token);
 

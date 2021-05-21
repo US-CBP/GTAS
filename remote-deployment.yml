@@ -55,6 +55,19 @@ services:
         source: /mnt
         target: /usr/local/gtas-data
         consistency: consistent
+  rule-runner:
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gtas-messenger-node
+    environment:
+      MARIA_URL: mariadb
+      DB_HOST: mariadb
+      MARIA_USERNAME: root
+      MARIA_PASSWORD: admin
+      UI_ADDRESS: ""
+      ACTIVE_MQ_HOST: activemq
+      JVM_ARGS: -Xms4g -Xmx8g
   activemq:
     deploy:
       placement:

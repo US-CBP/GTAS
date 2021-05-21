@@ -1,9 +1,9 @@
 package gov.gtas.services;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +22,29 @@ public class SeatServiceImpl implements SeatService {
 		this.seatRepository = seatRepository;
 	}
 
-	public String findSeatNumberByFlightIdAndPassengerId(Long flightId, Long paxId) {
+	public List<String> findSeatNumberByFlightIdAndPassengerId(Long flightId, Long paxId) {
 		List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(flightId, paxId);
-		String seatNumber = null;
+		List<String> seatNumber = null;
 		if (CollectionUtils.isNotEmpty(seatList)) {
-			List<String> seats = seatList.stream().map(seat -> seat.getNumber()).distinct()
-					.collect(Collectors.toList());
-			if (seats.size() == 1) {
-				seatNumber = seats.get(0);
+			//We check for APIS here as they are a priority return.
+			//If we have APIS seats, we assume these are the most up to date seats.
+			boolean hasApisSeat = false;
+			boolean hasPnrSeat = false;
+			Set<Seat> seatSet = new HashSet<>();
+			for(Seat seat: seatList){
+				if(seat.getApis()) { //If the seat is APIS add it to set
+					hasApisSeat = true;
+					if(hasPnrSeat){ //If the set has PNR seats in it, empty the set and add the APIS instead
+						seatSet.clear(); //This will only logically be done once, if at all.
+					}
+					seatSet.add(seat);
+				} else if(!hasApisSeat) { //Logically implies is not an Apis Seat.
+					hasPnrSeat = true;
+					seatSet.add(seat); //Only possible to add if not ApisSeat
+				}
 			}
+			seatNumber = seatSet.stream().map(Seat::getNumber).distinct()
+					.collect(Collectors.toList());
 		}
 
 		return seatNumber;

@@ -59,6 +59,9 @@ public class Message extends BaseEntity implements MessageFields {
 	@ManyToMany
 	@JoinTable(name = "message_document", joinColumns = @JoinColumn(name = "document_id"), inverseJoinColumns = @JoinColumn(name = "message_id"))
 	private Set<Document> documents = new HashSet<>();
+	
+	@OneToMany(orphanRemoval = true, mappedBy = "mostRecentMessage")
+	private Set<PassengerTripDetails> passengerTripDetails = new HashSet<>();
 
 	@Column(name = "passenger_count")
 	protected Integer passengerCount;
@@ -68,6 +71,14 @@ public class Message extends BaseEntity implements MessageFields {
 
 	@Transient
 	private List<PassengerNote> passengerNotes = new ArrayList<>();
+
+	public Set<PassengerTripDetails> getPassengerTripDetails() {
+		return passengerTripDetails;
+	}
+
+	public void setPassengerTripDetails(Set<PassengerTripDetails> passengerTripDetails) {
+		this.passengerTripDetails = passengerTripDetails;
+	}
 
 	public List<PendingHitDetails> getPendingHitDetails() {
 		return pendingHitDetails;

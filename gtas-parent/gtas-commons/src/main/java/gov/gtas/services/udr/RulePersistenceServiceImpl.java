@@ -225,11 +225,13 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	}
 
 	@Override
+	@Transactional
 	public KnowledgeBase findUdrKnowledgeBase() {
 		return this.findUdrKnowledgeBase(RuleConstants.UDR_KNOWLEDGE_BASE_NAME);
 	}
 
 	@Override
+	@Transactional
 	public KnowledgeBase findUdrKnowledgeBase(String kbName) {
 		return udrRuleRepository.getKnowledgeBaseByName(kbName);
 	}
@@ -265,5 +267,10 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	@Override
 	public EntityManager getEntityManager() {
 		return entityManager;
+	}
+
+	@Override
+	public List<UdrRule> findAllByKbName(String kbName) {
+		return udrRuleRepository.findAllbyKbName(kbName);
 	}
 }

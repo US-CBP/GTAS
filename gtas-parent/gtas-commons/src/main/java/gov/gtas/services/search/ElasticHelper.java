@@ -20,7 +20,6 @@ import java.util.Set;
 
 import javax.annotation.PreDestroy;
 
-import gov.gtas.config.ElasticConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -45,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import gov.gtas.elasticsearchconfig.ElasticConfig;
 import gov.gtas.model.Address;
 import gov.gtas.model.Document;
 import gov.gtas.model.Passenger;

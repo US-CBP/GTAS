@@ -91,6 +91,7 @@ public class User implements Serializable {
 	@Column(name = "archived")
 	private boolean archived;
 
+	@Column(name = "phoneNumber")
 	private String phoneNumber;
 
 	@ManyToMany(targetEntity = UserGroup.class, fetch = FetchType.LAZY)

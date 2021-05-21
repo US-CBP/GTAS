@@ -59,7 +59,7 @@ public class TargetingResultUtils {
 	 * Eliminates duplicates and adds flight id, if missing.
 	 *
 	 */
-	public static RuleServiceResult ruleResultPostProcesssing(RuleServiceResult result,
+	public static BasicRuleServiceResult ruleResultPostProcesssing(RuleServiceResult result,
 			TargetingResultServices targetingResultServices) {
 
 		PassengerService passengerService = targetingResultServices.getPassengerService();
@@ -221,8 +221,8 @@ public class TargetingResultUtils {
 			try {
 				if (!udrFilteredRules.isEmpty()) {
 					logger.debug("Updating UDR over max hits Flag");
-					RuleMetaRepository ruleMetaRepository = targetingResultServices.getRuleMetaRepository();
-					ruleMetaRepository.flagUdrRule(udrFilteredRules);
+					//RuleMetaRepository ruleMetaRepository = targetingResultServices.getRuleMetaRepository();
+					//ruleMetaRepository.flagUdrRule(udrFilteredRules);
 				}
 			} catch (Exception databaseException) {
 				logger.error("Caught error updating UDR: " + databaseException.getMessage());
