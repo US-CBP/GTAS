@@ -37,10 +37,10 @@ public class HitCategory extends BaseEntityAudit {
 	@JsonIgnore
 	private Set<UserGroup> userGroups = new HashSet<>();
 
-	@Column(name="promote_to_lookout")
+	@Column(name="promote_to_lookout", columnDefinition = "bit(1) default false")
 	private boolean promoteToLookout;
 
-	@Column(name = "archived")
+	@Column(name = "archived", columnDefinition = "bit(1) default false")
 	private boolean archived;
 
 	@Override

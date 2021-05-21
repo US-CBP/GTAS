@@ -186,13 +186,15 @@ public class POEServiceImpl implements POEService {
 
     //This will allow us to not reset anything recently updated erroneously to Missed
     private boolean updatedAfterDepartureOrArrivalTime(HitViewStatus hvs){
-        if(hvs.getPassenger().getFlight().getDirection().equals("I")){
-            if(hvs.getPassenger().getFlight().getMutableFlightDetails().getEta().before(hvs.getUpdatedAt())){
-                return true;
-            }
-        } else if(hvs.getPassenger().getFlight().getDirection().equals("O")){
-            if(hvs.getPassenger().getFlight().getMutableFlightDetails().getEtd().before(hvs.getUpdatedAt())){
-                return true;
+        if(hvs.getUpdatedAt() != null ) {
+            if (hvs.getPassenger().getFlight().getDirection().equals("I")) {
+                if (hvs.getPassenger().getFlight().getMutableFlightDetails().getEta().before(hvs.getUpdatedAt())) {
+                    return true;
+                }
+            } else if (hvs.getPassenger().getFlight().getDirection().equals("O")) {
+                if (hvs.getPassenger().getFlight().getMutableFlightDetails().getEtd().before(hvs.getUpdatedAt())) {
+                    return true;
+                }
             }
         }
         return false;
