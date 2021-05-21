@@ -93,11 +93,6 @@ services:
       placement:
         constraints:
           - node.hostname == gtas-elk-node
-  elk-setup:
-    deploy:
-      placement:
-        constraints:
-          - node.hostname == gtas-elk-node
   neo4j:
     deploy:
       placement:

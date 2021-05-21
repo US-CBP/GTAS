@@ -145,23 +145,6 @@ services:
     environment:
       MARIADB_HOST: ${MARIADB_HOST}
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca/elastic-ca
-#  elk-setup:
-#    labels:
-#      kompose.image-pull-policy: "Always"
-#      kompose.service.type: "LoadBalancer"
-#    deploy:
-#      placement:
-#        constraints:
-#          - node.labels.role == backend
-#    volumes:
-#      - certs:/usr/share/elasticsearch/config/certs/elasticsearch/
-#    environment:
-#      LOGSTASH_PASSWORD_PATH: '/run/secrets/logstash-keystore-password/logstash-keystore-password'
-#      MYSQL_USER_PATH: '/run/secrets/mysql-logstash-user/mysql-logstash-user'
-#      MYSQL_PASSWORD_PATH: '/run/secrets/mysql-logstash-password/mysql-logstash-password'
-#      KIBANA_PASSWORD_PATH: '/run/secrets/elasticsearch-kibana-password/elasticsearch-kibana-password'
-#      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
-#      ELASTIC_PATH: '/run/secrets/elastic-password/elastic-password'
   neo4j:
     labels:
       kompose.image-pull-policy: "Always"
