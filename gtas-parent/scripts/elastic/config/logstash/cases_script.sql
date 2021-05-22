@@ -49,3 +49,4 @@ left join `mutable_flight_details` fd
        		  on (td.embarkation is not null and td.embarkation != '' and embark_ar.iata=td.embarkation)
        left join `seat` seat 
               on seat.flight_id=f.ID and seat.passenger_id=p.id
+    where td.ptd_id > :sql_last_value
