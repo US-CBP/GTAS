@@ -91,5 +91,5 @@ select * from (select
 		on (hit_detail.passenger=p.id)
 	left join seat 
 		on (seat.flight_id=f.ID and seat.passenger_id=p.id)
-	 ) flight_pax_generated_table
 	where td.ptd_id > :sql_last_value
+	 ) flight_pax_generated_table
