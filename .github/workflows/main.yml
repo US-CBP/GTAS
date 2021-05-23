@@ -69,14 +69,14 @@ jobs:
 #          context: ./gtas-parent/scripts/elastic
 #          file: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
 #          tags: wcogtas/kibana:dev
-#      - uses: docker/build-push-action@v2
-#        name: Build and push elasticsearch image
-#        with:
-#          push: true
-#          platforms: linux/amd64
-#          context: ./gtas-parent/scripts/elastic
-#          file: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
-#          tags: wcogtas/elasticsearch:dev
+      - uses: docker/build-push-action@v2
+        name: Build and push elasticsearch image
+        with:
+          push: true
+          platforms: linux/amd64
+          context: ./gtas-parent/scripts/elastic
+          file: ./gtas-parent/scripts/elastic/install/docker/elasticsearch/elasticsearch.Dockerfile
+          tags: wcogtas/elasticsearch:dev
       - uses: docker/build-push-action@v2
         name: Build and push logstash image
         with:

@@ -245,6 +245,7 @@ services:
       KIBANA_PASSWORD_PATH: '/kibana/elasticsearch-kibana-password'
       PENTAHO_PASSWORD_PATH: '/pentaho/pentaho-to-elasticsearch-password'
       ELASTIC_PATH: '/elastic/elastic-password'
+      logger.level: "TRACE"
     command:
       - bash
       - -c
