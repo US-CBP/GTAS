@@ -5,10 +5,10 @@
 # When declaring multiple pipelines, each MUST have its own `pipeline.id`.
 #
 
-- pipeline.id: cases
-  pipeline.workers: 1
-  # pipeline.batch.size: 125
-  path.config: "./config/logstash-cases.conf"
+#- pipeline.id: cases
+#  pipeline.workers: 1
+#  # pipeline.batch.size: 125
+#  path.config: "./config/logstash-cases.conf"
 
 - pipeline.id: flightpax
   pipeline.workers: 1
