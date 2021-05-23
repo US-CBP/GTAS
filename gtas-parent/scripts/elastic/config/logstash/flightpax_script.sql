@@ -93,5 +93,5 @@ select * from (select
 	left join seat 
 		on (seat.flight_id=f.ID and seat.passenger_id=p.id)
 -- 	where f.created_at > :sql_last_value
-	order by f.created_at DESC
+-- 	order by f.created_at DESC
 	 ) flight_pax_generated_table
