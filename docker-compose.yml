@@ -289,7 +289,7 @@ services:
       XPACK_MONITORING_ENABLED: 'false'
       XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
       LOGSTASH_KEYSTORE_PASS: 'admin123'
-      LOG_LEVEL: 'TRACE'
+      LOG_LEVEL: 'trace'
     command:
       - bash
       - -c
