@@ -55,4 +55,4 @@ ENV LOGSTASH_LIB=/usr/share/logstash/logstash-core/lib/jars
 
 RUN curl -o  /usr/share/logstash/logstash-core/lib/jars/mariadb-java-client-2.3.0.jar https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar
 
-CMD ["/usr/local/bin/docker-entrypoint"]
+CMD touch /mnt/flightpax_last_run_config && chmod 777 /mnt/flightpax_last_run_config && /usr/local/bin/docker-entrypoint
