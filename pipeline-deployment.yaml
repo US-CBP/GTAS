@@ -122,6 +122,8 @@ services:
     labels:
       kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
+    environment:
+      - "ES_JAVA_OPTS=-Xms8g -Xmx16g"
     deploy:
       placement:
         constraints:
