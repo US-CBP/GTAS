@@ -134,6 +134,24 @@
                                 }
                             }
                         },
+                        "line2": {
+                          "type": "text",
+                          "fields": {
+                            "keyword": {
+                              "type": "keyword",
+                              "ignore_above": 256
+                            }
+                          }
+                        },
+                        "line3": {
+                          "type": "text",
+                          "fields": {
+                            "keyword": {
+                              "type": "keyword",
+                              "ignore_above": 256
+                            }
+                          }
+                        },
                         "postalCode": {
                             "type": "text",
                             "fields": {

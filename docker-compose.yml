@@ -245,6 +245,7 @@ services:
       KIBANA_PASSWORD_PATH: '/kibana/elasticsearch-kibana-password'
       PENTAHO_PASSWORD_PATH: '/pentaho/pentaho-to-elasticsearch-password'
       ELASTIC_PATH: '/elastic/elastic-password'
+      logger.level: "DEBUG"
     command:
       - bash
       - -c
@@ -289,6 +290,7 @@ services:
       XPACK_MONITORING_ENABLED: 'false'
       XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
       LOGSTASH_KEYSTORE_PASS: 'admin123'
+      LOG_LEVEL: 'trace'
     command:
       - bash
       - -c
@@ -296,6 +298,8 @@ services:
         until [ $$(curl -k -s -o /dev/null -w "%{http_code}" -u kibana:$$(cat /bootstrap-password/elastic-bootstrap-password) https://elasticsearch:9200/) == 200 ]; do sleep 10 && echo "Waiting for elasticsearch..."; done
         /usr/local/bin/docker-entrypoint
     restart: unless-stopped
+    volumes:
+      - logstash-config:/mnt
     secrets:
       - elastic-ca
       - source: logstash-keystore
@@ -306,29 +310,6 @@ services:
       - gtas-webapp-network
     depends_on:
       - elasticsearch
-#  elk-setup:
-#    image: wcogtas/elk-setup:dev
-#    container_name: elk-setup
-#    build:
-#      context: ./gtas-parent/scripts/elastic
-#      dockerfile: ./install/docker/elk-setup/elk-setup.Dockerfile
-#    environment:
-#      KIBANA_HOST: 'kibana'
-#      ELASTICSEARCH_HOST: 'elasticsearch'
-#    volumes:
-##      - logstash-conf:/logstash-conf
-#      - kibana-conf:/kibana-conf
-#      - elasticsearch-conf:/elasticsearch-conf
-#    secrets:
-#      - logstash-keystore-password
-#      - mysql-logstash-user
-#      - mysql-logstash-password
-#      - elastic-password
-#      - elasticsearch-kibana-user
-#      - elasticsearch-kibana-password
-#      - elastic-bootstrap-password
-#    networks:
-#      - gtas-webapp-network
 
 secrets:
   mysql-report-etl-user:
@@ -404,6 +385,7 @@ volumes:
   db-data:
   m2:
   scheduler-logs:
+  logstash-config:
   certs:
   neo4j-data:
     labels:

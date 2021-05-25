@@ -2,6 +2,7 @@ select * from (select
 	concat(fp.`passenger_id`,'+',fp.`flight_id`) "id",
 	fd.`full_utc_eta_timestamp`  "flight.eta",
 	fd.`full_utc_etd_timestamp` "flight.etd",
+	f.`created_at` "flight.created_at",
     f.`etd_date` "flight.flight_date",
 	f.`carrier`  "flight.carrier",
 	f.`flight_number` "flight.flight_number",
@@ -91,4 +92,6 @@ select * from (select
 		on (hit_detail.passenger=p.id)
 	left join seat 
 		on (seat.flight_id=f.ID and seat.passenger_id=p.id)
+ 	where p.id >= :sql_last_value and p.id < :sql_last_value + 2000
+ 	order by p.id DESC
 	 ) flight_pax_generated_table

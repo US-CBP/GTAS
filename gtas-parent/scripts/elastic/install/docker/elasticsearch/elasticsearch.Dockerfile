@@ -1,4 +1,4 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+FROM docker.elastic.co/elasticsearch/elasticsearch:7.12.1
 
 RUN yum install -y wget
 RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
