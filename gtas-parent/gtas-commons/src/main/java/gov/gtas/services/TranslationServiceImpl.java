@@ -84,7 +84,7 @@ public class TranslationServiceImpl implements TranslationService {
   }
 
   private Translation buildTranslation(TranslationVo translationVo) {
-    return new Translation(translationVo.getId(), translationVo.getCode(), translationVo.getLanguage(), translationVo.getTranslation());
+    return new Translation(translationVo.getId(), translationVo.getCode(), translationVo.getLanguage(), translationVo.getTranslation(), translationVo.getDefaultText());
   }
 
 @Override
