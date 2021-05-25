@@ -27,6 +27,8 @@ import org.springframework.cache.annotation.Cacheable;
 	private String code;
 	private String language;
 	private String translation;
+
+  @Column(name = "default_text", length = 255)
 	private String defaultText;
 
 	public Translation() {
