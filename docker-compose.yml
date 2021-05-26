@@ -394,7 +394,7 @@ volumes:
   elasticsearch-conf:
   es-data:
     labels:
-      kompose.volume.size: 200Gi
+      kompose.volume.size: 400Gi
 
 networks:
   gtas-webapp-network:
