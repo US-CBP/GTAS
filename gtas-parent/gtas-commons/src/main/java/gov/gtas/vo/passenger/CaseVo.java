@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import gov.gtas.model.PIIObject;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import java.util.Date;
 
@@ -31,7 +30,6 @@ public class CaseVo implements PIIObject {
 	private String document;
 	private String flightNumber;
 	private String status;
-	private String description;
 	private ArrayList<String> hitNames;
 	private String gender;
 	private String docType;

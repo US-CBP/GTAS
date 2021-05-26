@@ -19,7 +19,6 @@ import gov.gtas.services.dto.PriorityVettingListDTO;
 import gov.gtas.services.dto.PriorityVettingListRequest;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.passenger.CaseVo;
-import gov.gtas.vo.passenger.CountDownVo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 
