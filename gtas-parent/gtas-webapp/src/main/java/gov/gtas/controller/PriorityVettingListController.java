@@ -68,49 +68,50 @@ public class PriorityVettingListController {
 	}
 
 	// getOneHistDisp
-	@RequestMapping(method = RequestMethod.POST, value = "/getOneHistDisp", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody PriorityVettingListDTO getOneHistDisp(@RequestBody PriorityVettingListRequest request,
-			HttpServletRequest hsr) {
-		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		return new PriorityVettingListDTO(new ArrayList<>(), 0L);
-	}
+  // @Deprecated
+	// @RequestMapping(method = RequestMethod.POST, value = "/getOneHistDisp", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	// public @ResponseBody PriorityVettingListDTO getOneHistDisp(@RequestBody PriorityVettingListRequest request,
+	// 		HttpServletRequest hsr) {
+	// 	String userId = GtasSecurityUtils.fetchLoggedInUserId();
+	// 	return new PriorityVettingListDTO(new ArrayList<>());
+	// }
 
 	// getHistDispComments
-	@RequestMapping(method = RequestMethod.GET, value = "/getHistDispComments")
-	public Map<String, Object> getHistDispComments(
-			@RequestParam(value = "startDate", required = false) String startDate,
-			@RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
-		HashMap _tempMap = new HashMap();
+	// @RequestMapping(method = RequestMethod.GET, value = "/getHistDispComments")
+	// public Map<String, Object> getHistDispComments(
+	// 		@RequestParam(value = "startDate", required = false) String startDate,
+	// 		@RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
+	// 	HashMap _tempMap = new HashMap();
 
-		return _tempMap;
-	}
+	// 	return _tempMap;
+	// }
 
-	@RequestMapping(method = RequestMethod.GET, value = "/getCurrentServerTime")
-	@ResponseBody
-	public long getCurrentServerTime() {
-		return new Date().getTime();
-	}
+	// @RequestMapping(method = RequestMethod.GET, value = "/getCurrentServerTime")
+	// @ResponseBody
+	// public long getCurrentServerTime() {
+	// 	return new Date().getTime();
+	// }
 
-	@RequestMapping(value = "/getdownload/{id}", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> getDownloadData(@PathVariable long id) {
+	// @RequestMapping(value = "/getdownload/{id}", method = RequestMethod.GET)
+	// public ResponseEntity<byte[]> getDownloadData(@PathVariable long id) {
 
-		ResponseEntity returnEntity = null;
-		try {
-			Attachment attachment = attachmentRepo.findByIntegerId((int) id);
-			byte[] fileData = attachment.getContent().getBytes(1, (int) attachment.getContent().length());
-			HttpHeaders responseHeaders = new HttpHeaders();
-			responseHeaders.set("charset", "utf-8");
-			responseHeaders.setContentType(MediaType.valueOf(attachment.getContentType()));
-			responseHeaders.setContentLength(attachment.getContent().length());
-			responseHeaders.set("Content-disposition", "attachment; filename=" + attachment.getFilename());
-			returnEntity = new ResponseEntity<byte[]>(fileData, responseHeaders, HttpStatus.OK);
-		} catch (Exception ex) {
-			logger.error("Error retrieving file to download : " + ex.getMessage());
+	// 	ResponseEntity returnEntity = null;
+	// 	try {
+	// 		Attachment attachment = attachmentRepo.findByIntegerId((int) id);
+	// 		byte[] fileData = attachment.getContent().getBytes(1, (int) attachment.getContent().length());
+	// 		HttpHeaders responseHeaders = new HttpHeaders();
+	// 		responseHeaders.set("charset", "utf-8");
+	// 		responseHeaders.setContentType(MediaType.valueOf(attachment.getContentType()));
+	// 		responseHeaders.setContentLength(attachment.getContent().length());
+	// 		responseHeaders.set("Content-disposition", "attachment; filename=" + attachment.getFilename());
+	// 		returnEntity = new ResponseEntity<byte[]>(fileData, responseHeaders, HttpStatus.OK);
+	// 	} catch (Exception ex) {
+	// 		logger.error("Error retrieving file to download : " + ex.getMessage());
 
-		}
+	// 	}
 
-		return returnEntity;
-	}
+	// 	return returnEntity;
+	// }
 
 	// getRuleCats
 	@RequestMapping(method = RequestMethod.GET, value = "/getRuleCats")
@@ -128,48 +129,48 @@ public class PriorityVettingListController {
 	}
 
 	// updateHistDisp
-	@RequestMapping(method = RequestMethod.POST, value = "/updateHistDisp")
-	public @ResponseBody boolean updateHistDisp(@RequestBody PriorityVettingListRequest request,
-			HttpServletRequest hsr) {
-		return true;
-	}
+	// @RequestMapping(method = RequestMethod.POST, value = "/updateHistDisp")
+	// public @ResponseBody boolean updateHistDisp(@RequestBody PriorityVettingListRequest request,
+	// 		HttpServletRequest hsr) {
+	// 	return true;
+	// }
 
-	@RequestMapping(method = RequestMethod.POST, value = "/addCaseComment")
-	public @ResponseBody boolean addCaseComment(@RequestBody CaseCommentRequestDto caseCommentRequestDto) {
-		return true;
-	}
+	// @RequestMapping(method = RequestMethod.POST, value = "/addCaseComment")
+	// public @ResponseBody boolean addCaseComment(@RequestBody CaseCommentRequestDto caseCommentRequestDto) {
+	// 	return true;
+	// }
 
 	// updateHistDispAttachments
-	@RequestMapping(method = RequestMethod.POST, value = "/updateHistDispAttachments")
-	public void updateHistDispAttachments(@RequestParam("file") MultipartFile file,
-			@RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
-			@RequestParam("caseId") Long caseId, @RequestParam("hitId") String hitId,
-			@RequestParam("caseComments") String caseComments, @RequestParam("status") String status,
-			@RequestParam("validHit") String validHit, @RequestParam("caseDisposition") String caseDisposition) {
-	}
+	// @RequestMapping(method = RequestMethod.POST, value = "/updateHistDispAttachments")
+	// public void updateHistDispAttachments(@RequestParam("file") MultipartFile file,
+	// 		@RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
+	// 		@RequestParam("caseId") Long caseId, @RequestParam("hitId") String hitId,
+	// 		@RequestParam("caseComments") String caseComments, @RequestParam("status") String status,
+	// 		@RequestParam("validHit") String validHit, @RequestParam("caseDisposition") String caseDisposition) {
+	// }
 
-	@RequestMapping(method = RequestMethod.POST, value = "/createManualCase")
-	public @ResponseBody void createManualCase(@RequestBody PriorityVettingListRequest request,
-			HttpServletRequest hsr) {
-	}
+	// @RequestMapping(method = RequestMethod.POST, value = "/createManualCase")
+	// public @ResponseBody void createManualCase(@RequestBody PriorityVettingListRequest request,
+	// 		HttpServletRequest hsr) {
+	// }
 
 	// updateCase
-	@RequestMapping(method = RequestMethod.POST, value = "/updateCase")
-	public Map<String, Object> updateCase(@RequestParam(value = "startDate", required = false) String startDate,
-			@RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
-		HashMap _tempMap = new HashMap();
+	// @RequestMapping(method = RequestMethod.POST, value = "/updateCase")
+	// public Map<String, Object> updateCase(@RequestParam(value = "startDate", required = false) String startDate,
+	// 		@RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
+	// 	HashMap _tempMap = new HashMap();
 
-		return _tempMap;
-	}
+	// 	return _tempMap;
+	// }
 
-	@RequestMapping(value = "/hitdispositionstatuses", method = RequestMethod.GET)
-	public @ResponseBody List<Object> getHitDispositionStatuses() {
-		return new ArrayList<>();
-	}
+	// @RequestMapping(value = "/hitdispositionstatuses", method = RequestMethod.GET)
+	// public @ResponseBody List<Object> getHitDispositionStatuses() {
+	// 	return new ArrayList<>();
+	// }
 
-	@RequestMapping(value = "/casedisposition", method = RequestMethod.GET)
-	public @ResponseBody List<Object> getCaseDispositionStatuses() {
-		return new ArrayList<>();
-	}
+	// @RequestMapping(value = "/casedisposition", method = RequestMethod.GET)
+	// public @ResponseBody List<Object> getCaseDispositionStatuses() {
+	// 	return new ArrayList<>();
+	// }
 
 }
