@@ -256,7 +256,7 @@ services:
         nohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPOST "https://elastic:$$(cat $${BOOTSTRAP_PATH})@localhost:9200/_security/user/pentaho_to_elastic" -d "{\"roles\" : [ \"superuser\" ],  \"password\": \"$$(cat $${PENTAHO_PASSWORD_PATH})\"}" &
         nohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$$(cat $${BOOTSTRAP_PATH})@localhost:9200/_security/user/logstash_system/_password" -d "{\"password\": \"$$(cat $${ELASTIC_PATH})\"}" &
         nohup dockerize -wait tcp://localhost:9200 -timeout 1000s  curl -k -s -H 'Content-Type:application/json' -XPUT "https://elastic:$$(cat $${BOOTSTRAP_PATH})@localhost:9200/case" -d '{ "settings" : { "index" : { } }}' &
-        chown -r 1000:1000 /usr/share/elasticsearch
+        chown -R 1000:1000 /usr/share/elasticsearch
         echo "test"
         whoami
         cat /etc/passwd
