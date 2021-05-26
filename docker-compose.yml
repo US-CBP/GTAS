@@ -297,6 +297,7 @@ services:
       - -c
       - |
         until [ $$(curl -k -s -o /dev/null -w "%{http_code}" -u kibana:$$(cat /bootstrap-password/elastic-bootstrap-password) https://elasticsearch:9200/) == 200 ]; do sleep 10 && echo "Waiting for elasticsearch..."; done
+        touch /mnt/flightpax_last_run_config && chmod 777 /mnt/flightpax_last_run_config
         /usr/local/bin/docker-entrypoint
     restart: unless-stopped
     volumes:
