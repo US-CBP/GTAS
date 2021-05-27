@@ -43,8 +43,8 @@ public interface HitViewStatusRepository extends CrudRepository<HitViewStatus, L
             "left join fetch hd.hitMaker hm "
     + " where hvs.userGroup in :userGroups "
     + " AND NOT hvs.hitViewStatusEnum = 'REVIEWED' "
-    + " AND NOT hvs.hitDetail.hitType = 'PWL' "
     + " AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED' "
+    + " AND NOT hvs.lookoutStatusEnum = 'DEMOTED' "
     + " AND (mf.etd BETWEEN :startDate AND :endDate "
     + " OR mf.eta BETWEEN :startDate AND :endDate)")
     Set<HitViewStatus> findAllWithNotClosedAndWithinRange(@Param("userGroups") Set<UserGroup> userGroups,
