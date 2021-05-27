@@ -19,7 +19,6 @@ import gov.gtas.services.dto.PriorityVettingListDTO;
 import gov.gtas.services.dto.PriorityVettingListRequest;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.passenger.CaseVo;
-import gov.gtas.vo.passenger.CountDownVo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 
@@ -52,27 +51,19 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		Set<UserGroup> userGroups = userService.fetchUserGroups(userId);
 
 		if (request == null) {
-			return new PriorityVettingListDTO(new ArrayList<>(), 0L);
+			return new PriorityVettingListDTO(new ArrayList<>());
 		}
 
 		Pair<Long, List<Passenger>> immutablePair = passengerRepository.priorityVettingListQuery(request, userGroups,
 				userId);
-		long count = immutablePair.getLeft();
 		List<CaseVo> caseVOS = new ArrayList<>();
 
 		for (Passenger passenger : immutablePair.getRight()) {
 
-			//todo: implement smarter logic that goes beyond default behavior for data masking.
-			if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage()){
-				continue;
-			}
 			CaseVo caseVo = new CaseVo();
 			int highPrioHitCount = 0;
 			int medPrioHitCount = 0;
 			int lowPrioHitCount = 0;
-			Date countDownTo = passenger.getFlight().getFlightCountDownView().getCountDownTimer();
-			CountDownCalculator countDownCalculator = new CountDownCalculator();
-			CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownTo, 30, 30);
 			ArrayList<String> hitDetailsTitles = new ArrayList<>();
 			List<HitViewStatusEnum> hvsEnums = new ArrayList<>();
 			List<HitViewStatus> hvsToUpdate = new ArrayList<>();
@@ -88,18 +79,14 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 				Set<UserGroup> hitUserGroups = hd.getHitMaker().getHitCategory().getUserGroups();
 				String severity = hd.getHitMaker().getHitCategory().getSeverity().toString();
 				if (!Collections.disjoint(hitUserGroups, userGroups)) {
-					String title;
-					if (hd.getTitle().length() > 8) {
-						title = hd.getTitle().substring(0, 8) + "...";
-					} else {
-						title = hd.getTitle();
-					}
+					String title = hd.getTitle();
 
 					if (passenger.getDataRetentionStatus().requiresMaskedPnrAndApisMessage())  {
 						title = "MASKED";
 					}
-					hitDetailsTitles.add(severity + " | " + hd.getHitMaker().getHitCategory().getName() + " | " + title
-							+ "(" + hd.getHitEnum().getDisplayName() + ")");
+
+          hitDetailsTitles.add(severity + " | " + hd.getHitMaker().getHitCategory().getName() + " | " + title
+							+ " | " + hd.getHitEnum().getDisplayName());
 					switch(severity){
 						case "Top":
 							highPrioHitCount++;
@@ -111,6 +98,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 							lowPrioHitCount++;
 							break;
 					}
+
 					for (HitViewStatus hvs : hd.getHitViewStatus()) {
 						if (userGroups.contains(hvs.getUserGroup())) {
 							hvsEnums.add(hvs.getHitViewStatusEnum());
@@ -144,16 +132,10 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			caseVo.setStatus(hvsEnums.get(0).toString());
 			caseVo.setGender(passenger.getPassengerDetails().getGender());
 			caseVo.setHitNames(hitDetailsTitles);
-			caseVo.setCountdownTime(countDownTo);
-			caseVo.setCloseToCountDown(countDownVo.isCloseToCountDown());
 			caseVo.setNationality(passenger.getPassengerDetails().getNationality());
-			caseVo.setCountDownTimeDisplay(countDownVo.getCountDownTimer());
-			caseVo.setCurrentTime(new Date());
 			caseVo.setDob(passenger.getPassengerDetails().getDob());
 			caseVo.setFirstName(passenger.getPassengerDetails().getFirstName());
 			caseVo.setLastName(passenger.getPassengerDetails().getLastName());
-			caseVo.setPaxName(passenger.getPassengerDetails().getFirstName() + " "
-					+ passenger.getPassengerDetails().getLastName());
 			caseVo.setFlightId(passenger.getFlight().getId());
 			caseVo.setPaxId(passenger.getId());
 			caseVo.setFlightNumber(passenger.getFlight().getFullFlightNumber());
@@ -170,7 +152,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			}
 			caseVOS.add(caseVo);
 		}
-		return new PriorityVettingListDTO(caseVOS, count);
+		return new PriorityVettingListDTO(caseVOS);
 	}
 
 	@Override
