@@ -331,6 +331,14 @@ public class FlightServiceImpl implements FlightService {
     List<FlightGridVo> vos = convertFlightToFlightGridVo(flightslist);
     return vos;
   }
+
+  @Override
+  public FlightVo getIndividualFlightInfo(Long flightId){
+		List<Flight> flt = new ArrayList<>();
+		flt.add(flightRespository.findOne(flightId));
+		List<FlightVo> fltVo = convertFlightToFlightVo(flt);
+		return fltVo.get(0);
+  }
   
   @Override
   public List<FlightGridVo> convertFlightToFlightGridVo(List<Flight> flights) {
