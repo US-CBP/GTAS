@@ -136,6 +136,8 @@ public class POEServiceImpl implements POEService {
 
     private LookoutStatusDTO createLookoutTileDTO(HitViewStatus hvs){
         Long paxId = hvs.getPassenger().getId();
+        Long flightId = hvs.getPassenger().getFlight().getId();
+        String flightNumber = hvs.getPassenger().getFlight().getFullFlightNumber();
         String paxFirstName = hvs.getPassenger().getPassengerDetails().getFirstName();
         String paxLastName = hvs.getPassenger().getPassengerDetails().getLastName();
         Set<Document> documents = hvs.getPassenger().getDocuments();
@@ -150,7 +152,7 @@ public class POEServiceImpl implements POEService {
         }
         LookoutStatusEnum status = hvs.getLookoutStatusEnum();
 
-        LookoutStatusDTO tile = new LookoutStatusDTO(paxId, paxFirstName, paxLastName, docVo,
+        LookoutStatusDTO tile = new LookoutStatusDTO(paxId, flightId, flightNumber, paxFirstName, paxLastName, docVo,
                 hitCategory.getName(), flightCountdownTime, status.name(), direction, isApis);
 
         return tile;
