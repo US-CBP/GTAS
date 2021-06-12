@@ -88,7 +88,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
     http.cors()
     .and().authorizeRequests()
-      .antMatchers("/authenticate", "/signup/**/*", "/forgot-password", "/reset-password", "/forgot-username", "/api/translation/**")
+      .antMatchers("/api/authenticate", "/api/preauth/**", "/forgot-password", "/reset-password", "/forgot-username", "/api/translation/**")
       .permitAll().anyRequest().authenticated()
     .and().formLogin().loginProcessingUrl("/authenticate")
       .successHandler((req, res, auth) -> res.setStatus(HttpStatus.NO_CONTENT.value()))
