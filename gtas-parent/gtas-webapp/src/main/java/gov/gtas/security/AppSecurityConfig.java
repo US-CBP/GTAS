@@ -20,6 +20,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
@@ -46,20 +47,20 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private MaxLoginAuthenticationProvider daoAuthenticationProvider;
 
-	public void configure(WebSecurity web) throws Exception {
-		// web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
-		// 		"/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
-		// 		"/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
-		// 		"/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
-		// 		"WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
+	// public void configure(WebSecurity web) throws Exception {
+	// 	// web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
+	// 	// 		"/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
+	// 	// 		"/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
+	// 	// 		"/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
+	// 	// 		"WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
 
-    web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
-    "/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
-    "/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
-    "/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
-    "WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
+  //   web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
+  //   "/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
+  //   "/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
+  //   "/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
+  //   "WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
 
-	}
+	// }
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -77,23 +78,15 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.csrf().disable();
 
-		// http.cors().and().authorizeRequests()
-		// 		.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**",
-		// 				"/reset.html", "/password-reset", "/authenticate" , "/signup.html", "/user/signup/new","/signup/**/*","/user/signup/**/*", "/forgot-password", "/reset-password")
-		// 		.permitAll().anyRequest().authenticated().and().formLogin().loginProcessingUrl("/authenticate")
-		// 		.usernameParameter("username").passwordParameter("password")
-		// 		.successHandler(new AjaxAuthenticationSuccessHandler(savedReqHandler))
-		// 		.failureHandler(new UrlAuthenticationFailureHandler()).loginPage("/login.html").and().logout()
-		// 		.logoutUrl("/logout").logoutSuccessUrl("/login.html").invalidateHttpSession(true).permitAll();
-
     http.cors()
     .and().authorizeRequests()
-      .antMatchers("/api/authenticate", "/api/preauth/**", "/forgot-password", "/reset-password", "/forgot-username", "/api/translation/**")
+      .antMatchers("/api/authenticate", "/api/preauth/**", "/api/translation/**", "/api/logout")
       .permitAll().anyRequest().authenticated()
-    .and().formLogin().loginProcessingUrl("/authenticate")
+    .and().formLogin().loginProcessingUrl("/api/authenticate")
       .successHandler((req, res, auth) -> res.setStatus(HttpStatus.NO_CONTENT.value()))
       .failureHandler(new UrlAuthenticationFailureHandler())
-    .and().logout().logoutUrl("/api/logout").invalidateHttpSession(true).permitAll();  // logout on requests to api/logout
+    .and().logout().logoutUrl("/api/logout").logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
+      .invalidateHttpSession(true).permitAll();
 
 		http.sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
 
