@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -87,11 +88,11 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
     http.cors()
     .and().authorizeRequests()
-      .antMatchers("/authenticate", "/password-reset", "/signup/**/*", "/forgot-password", "/reset-password")
+      .antMatchers("/authenticate", "/signup/**/*", "/forgot-password", "/reset-password", "/forgot-username", "/api/translation/**")
       .permitAll().anyRequest().authenticated()
-    // .and().formLogin().loginProcessingUrl("/authenticate").usernameParameter("username").passwordParameter("password")
-    //   .successHandler(new AjaxAuthenticationSuccessHandler(savedReqHandler))
-    //   .failureHandler(new UrlAuthenticationFailureHandler())
+    .and().formLogin().loginProcessingUrl("/authenticate")
+      .successHandler((req, res, auth) -> res.setStatus(HttpStatus.NO_CONTENT.value()))
+      .failureHandler(new UrlAuthenticationFailureHandler())
     .and().logout().logoutUrl("/api/logout").invalidateHttpSession(true).permitAll();  // logout on requests to api/logout
 
 		http.sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
