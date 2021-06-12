@@ -46,11 +46,17 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	private MaxLoginAuthenticationProvider daoAuthenticationProvider;
 
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
-				"/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
-				"/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
-				"/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
-				"WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
+		// web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
+		// 		"/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
+		// 		"/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
+		// 		"/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
+		// 		"WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
+
+    web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
+    "/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
+    "/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
+    "/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
+    "WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
 
 	}
 
@@ -70,14 +76,23 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.csrf().disable();
 
-		http.cors().and().authorizeRequests()
-				.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**",
-						"/reset.html", "/password-reset", "/authenticate" , "/signup.html", "/user/signup/new","/signup/**/*","/user/signup/**/*", "/forgot-password", "/reset-password")
-				.permitAll().anyRequest().authenticated().and().formLogin().loginProcessingUrl("/authenticate")
-				.usernameParameter("username").passwordParameter("password")
-				.successHandler(new AjaxAuthenticationSuccessHandler(savedReqHandler))
-				.failureHandler(new UrlAuthenticationFailureHandler()).loginPage("/login.html").and().logout()
-				.logoutUrl("/logout").logoutSuccessUrl("/login.html").invalidateHttpSession(true).permitAll();
+		// http.cors().and().authorizeRequests()
+		// 		.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**",
+		// 				"/reset.html", "/password-reset", "/authenticate" , "/signup.html", "/user/signup/new","/signup/**/*","/user/signup/**/*", "/forgot-password", "/reset-password")
+		// 		.permitAll().anyRequest().authenticated().and().formLogin().loginProcessingUrl("/authenticate")
+		// 		.usernameParameter("username").passwordParameter("password")
+		// 		.successHandler(new AjaxAuthenticationSuccessHandler(savedReqHandler))
+		// 		.failureHandler(new UrlAuthenticationFailureHandler()).loginPage("/login.html").and().logout()
+		// 		.logoutUrl("/logout").logoutSuccessUrl("/login.html").invalidateHttpSession(true).permitAll();
+
+    http.cors()
+    .and().authorizeRequests()
+      .antMatchers("/authenticate", "/password-reset", "/signup/**/*", "/forgot-password", "/reset-password")
+      .permitAll().anyRequest().authenticated()
+    // .and().formLogin().loginProcessingUrl("/authenticate").usernameParameter("username").passwordParameter("password")
+    //   .successHandler(new AjaxAuthenticationSuccessHandler(savedReqHandler))
+    //   .failureHandler(new UrlAuthenticationFailureHandler())
+    .and().logout().logoutUrl("/api/logout").invalidateHttpSession(true).permitAll();  // logout on requests to api/logout
 
 		http.sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
 

@@ -199,11 +199,11 @@ public class UserController {
 			userService.forgotPassword(user);
 
 			return new JsonServiceResponse(Status.SUCCESS,
-					"A temporary  password has been sent to your email. Please use your temporary password to access your account!");
+					"A temporary password has been sent to your email");
 
 		} catch (Exception e) {
 			return new JsonServiceResponse(Status.FAILURE,
-					"The provided user ID (" + userId + ") is not on the system!");
+					"The provided user ID (" + userId + ") is not on the system! " + e);
 
 		}
 
@@ -219,7 +219,7 @@ public class UserController {
 
 		} catch (Exception e) {
 			return new JsonServiceResponse(Status.FAILURE,
-					"The provided email (" + userEmail + ") is not on the system!");
+					"The provided email (" + userEmail + ") is not on the system!" + e);
 
 		}
 	}
