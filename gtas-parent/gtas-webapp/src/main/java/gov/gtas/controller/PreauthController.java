@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
@@ -112,7 +113,7 @@ public class PreauthController {
 					logger.error("Sending email notification to admin failed.", e);
 				}
 
-				return new JsonServiceResponse(Status.SUCCESS, "The request has been submited");
+				return new JsonServiceResponse(Status.SUCCESS, "The request has been submitted");
 			}
 		}
 	}
@@ -124,5 +125,11 @@ public class PreauthController {
 
 		return new ResponseEntity<>(physicalLocations, HttpStatus.OK);
 	}
+
+  @GetMapping(value = "api/logout")
+  public JsonServiceResponse logout(HttpSession session) {
+    session.invalidate();
+		return new JsonServiceResponse(Status.SUCCESS, "You have been logged out");
+  }
 }
 
