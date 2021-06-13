@@ -19,7 +19,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
@@ -79,12 +81,16 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 
     http.cors()
-    .and().authorizeRequests()
+    .and()
+			.authorizeRequests()
       .antMatchers("/api/authenticate", "/api/preauth/**", "/api/translation/**", "/api/logout")
       .permitAll().anyRequest().authenticated()
+		.and()
+			.exceptionHandling()
+			.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
     .and().formLogin().loginProcessingUrl("/api/authenticate")
       .successHandler((req, res, auth) -> res.setStatus(HttpStatus.NO_CONTENT.value()))
-      .failureHandler(new UrlAuthenticationFailureHandler())
+      .failureHandler(new SimpleUrlAuthenticationFailureHandler())
     .and().logout().logoutUrl("/api/logout").logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
       .invalidateHttpSession(true).permitAll();
 
