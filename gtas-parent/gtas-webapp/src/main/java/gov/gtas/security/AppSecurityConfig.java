@@ -49,21 +49,6 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private MaxLoginAuthenticationProvider daoAuthenticationProvider;
 
-	// public void configure(WebSecurity web) throws Exception {
-	// 	// web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
-	// 	// 		"/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
-	// 	// 		"/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
-	// 	// 		"/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
-	// 	// 		"WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
-
-  //   web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
-  //   "/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
-  //   "/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
-  //   "/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
-  //   "WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
-
-	// }
-
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(daoAuthenticationProvider).userDetailsService(userDetailsService)
