@@ -1,4 +1,5 @@
     select * from (select
+    message.id "message_id",
 	concat(fp.`passenger_id`,'+',fp.`flight_id`) "id",
 	fd.`full_utc_eta_timestamp`  "flight.eta",
 	fd.`full_utc_etd_timestamp` "flight.etd",
@@ -97,6 +98,7 @@
  	union
 
     select * from (select
+    message.id "message_id",
 	concat(fp.`passenger_id`,'+',fp.`flight_id`) "id",
 	fd.`full_utc_eta_timestamp`  "flight.eta",
 	fd.`full_utc_etd_timestamp` "flight.etd",
