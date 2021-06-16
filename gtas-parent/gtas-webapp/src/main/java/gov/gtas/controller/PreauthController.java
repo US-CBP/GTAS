@@ -14,6 +14,8 @@ import gov.gtas.repository.SignupLocationRepository;
 import gov.gtas.services.SignupRequestService;
 import gov.gtas.services.dto.SignupRequestDTO;
 import gov.gtas.services.security.UserService;
+import gov.gtas.services.TranslationService;
+import gov.gtas.vo.TranslationVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,22 +27,37 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Preauth Controller handles requests that do not require authorization and which are made only from pages
+ * outside the login. All urls beginning with "/api/preauth/" are excluded from spring security (See AppSecurityConfig.java).
+ * 
+ * Only those handlers serving the preauth pages should be placed here, currently:
+ * forgotPassword
+ * forgotUsername
+ * signup
+ * translations (GET only)
+ */
 @RestController
 public class PreauthController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-	@Autowired
+
+  @Autowired
 	private UserService userService;
 
 	@Autowired
 	private SignupLocationRepository signupLocationRepository;
 
-	@Autowired()
+	@Autowired
 	private SignupRequestService signupRequestService;
+
+  @Autowired
+  private TranslationService translationservice;
 
 	@RequestMapping(method = RequestMethod.POST, value = "/api/preauth/forgotpassword")
 	public JsonServiceResponse forgotPassword(@RequestParam String userId) {
@@ -131,5 +148,13 @@ public class PreauthController {
     session.invalidate();
 		return new JsonServiceResponse(Status.SUCCESS, "You have been logged out");
   }
+
+  // Allows translation fetch for the unauthed pages without exposing other translation endpoints
+  @RequestMapping(method = RequestMethod.GET, value = "/api/preauth/translation/{language}")
+  public List<TranslationVo> getTranslationsByLang(@PathVariable String language) throws IOException {
+
+    return translationservice.getTranslationsByLang(language);
+  }
+
 }
 

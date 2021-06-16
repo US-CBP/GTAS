@@ -68,7 +68,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     http.cors()
     .and()
 			.authorizeRequests()
-      .antMatchers("/api/authenticate", "/api/preauth/**", "/api/translation/**", "/api/logout")
+      .antMatchers("/api/authenticate", "/api/preauth/**", "/api/logout")
       .permitAll().anyRequest().authenticated()
 		.and()
 			.exceptionHandling()
