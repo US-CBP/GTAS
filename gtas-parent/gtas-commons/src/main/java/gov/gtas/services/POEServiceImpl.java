@@ -167,7 +167,10 @@ public class POEServiceImpl implements POEService {
         if(!hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.INACTIVE.name())
                 && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.MISSED.name())
                 && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.NOTPROMOTED.name())
-                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.DEMOTED.name())) {
+                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.DEMOTED.name())
+                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.POSITIVE.name())
+                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.NEGATIVE.name())
+                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.DIDNOTBOARD.name())){
             Date pastDue = inactiveWindowVariable.toDate();
             Date alreadyLandedOrLeft = missedFlightBufferVariable.toDate();
 

@@ -24,6 +24,8 @@ public class JsonUdrListElement implements Serializable {
 	private String modifiedBy;
 	private String modifiedOn;
 	private int hitCount;
+	private int posCount;
+	private int negCount;
 	private MetaData summary;
 
 	public JsonUdrListElement(long id, String modifiedBy, Date modifiedOn, MetaData meta) {
@@ -77,4 +79,11 @@ public class JsonUdrListElement implements Serializable {
 		this.hitCount = hitCount;
 	}
 
+	public int getPosCount() { return posCount; }
+
+	public void setPosCount(int posCount) { this.posCount = posCount; }
+
+	public int getNegCount() { return negCount; }
+
+	public void setNegCount(int negCount) { this.negCount = negCount; }
 }
