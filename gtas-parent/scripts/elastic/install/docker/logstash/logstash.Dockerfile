@@ -46,7 +46,7 @@ RUN chown logstash:logstash /usr/share/logstash/config/logstash-flightpax.conf
 RUN chown logstash:logstash /usr/share/logstash/config/logstash-cases.conf
 RUN chown logstash:logstash /usr/share/logstash/config/pipelines.yml
 
-USER logstash
+
 
 
 ENV JAVA_OPTS="-Xms1g -Xmx2g"

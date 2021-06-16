@@ -1,0 +1,1 @@
+ALTER TABLE message ADD INDEX `message_create_date_index` (`create_date`);
