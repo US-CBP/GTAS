@@ -181,15 +181,6 @@
                         }
                     }
                 },
-                "apis": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        }
-                    }
-                },
                 "carrier": {
                     "type": "text",
                     "fields": {
@@ -402,7 +393,7 @@
                     "fields": {
                         "keyword": {
                             "type": "keyword",
-                            "ignore_above": 256
+                            "ignore_ above": 256
                         }
                     }
                 },
@@ -436,7 +427,7 @@
                         }
                     }
                 },
-                "pnr": {
+                "message": {
                     "type": "text",
                     "fields": {
                         "keyword": {

@@ -16,7 +16,7 @@ import java.util.Set;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "message")
+@Table(name = "message", indexes = @Index(name = "message_create_date_index", columnList = "create_date"))
 @Inheritance(strategy = InheritanceType.JOINED)
 //@NamedEntityGraph(name = "messageRetention", attributeNodes = { @NamedAttributeNode("id"),
 //		@NamedAttributeNode(("createDate")) })

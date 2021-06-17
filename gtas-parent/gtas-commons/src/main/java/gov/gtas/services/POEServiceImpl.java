@@ -48,9 +48,6 @@ public class POEServiceImpl implements POEService {
     @Autowired
     private UserService userService;
 
-    private static final DateTime inactiveWindowVariable = new DateTime().minusDays(1);
-    private static final DateTime fullyDemoteVariable = new DateTime().minusWeeks(1);
-
     @Override
     public Set<LookoutStatusDTO> getAllTiles(String userId, POETileServiceRequest request) {
         Set<LookoutStatusDTO> tiles = new HashSet<LookoutStatusDTO>();
@@ -139,6 +136,8 @@ public class POEServiceImpl implements POEService {
 
     private LookoutStatusDTO createLookoutTileDTO(HitViewStatus hvs){
         Long paxId = hvs.getPassenger().getId();
+        Long flightId = hvs.getPassenger().getFlight().getId();
+        String flightNumber = hvs.getPassenger().getFlight().getFullFlightNumber();
         String paxFirstName = hvs.getPassenger().getPassengerDetails().getFirstName();
         String paxLastName = hvs.getPassenger().getPassengerDetails().getLastName();
         Set<Document> documents = hvs.getPassenger().getDocuments();
@@ -153,23 +152,32 @@ public class POEServiceImpl implements POEService {
         }
         LookoutStatusEnum status = hvs.getLookoutStatusEnum();
 
-        LookoutStatusDTO tile = new LookoutStatusDTO(paxId, paxFirstName, paxLastName, docVo,
+        LookoutStatusDTO tile = new LookoutStatusDTO(paxId, flightId, flightNumber, paxFirstName, paxLastName, docVo,
                 hitCategory.getName(), flightCountdownTime, status.name(), direction, isApis);
 
         return tile;
     }
 
     public boolean lookoutIsMissedOrInactiveAndUpdate(HitViewStatus hvs){
+
+        DateTime inactiveWindowVariable = new DateTime().minusDays(1); //24 hour timer
+        DateTime fullyDemoteVariable = new DateTime().minusWeeks(1); //1 week timer
+        DateTime missedFlightBufferVariable = new DateTime().minusHours(12); //12 hour buffer on missed flights
+
         if(!hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.INACTIVE.name())
                 && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.MISSED.name())
-                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.NOTPROMOTED.name())) {
+                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.NOTPROMOTED.name())
+                && !hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.DEMOTED.name())) {
             Date pastDue = inactiveWindowVariable.toDate();
-            Date alreadyLandedOrLeft = new Date();
+            Date alreadyLandedOrLeft = missedFlightBufferVariable.toDate();
 
             if (hvs.getUpdatedAt() != null && hvs.getUpdatedAt().before(pastDue)) {
                 hvs.setLookoutStatusEnum(LookoutStatusEnum.INACTIVE);
                 return true;
-            } else if (hvs.getPassenger().getFlight().getFlightCountDownView().getCountDownTimer().before(alreadyLandedOrLeft)
+            } else if (hvs.getUpdatedAt() == null && hvs.getCreatedAt().before(pastDue)){ //Stagnant creation
+                hvs.setLookoutStatusEnum(LookoutStatusEnum.INACTIVE);
+                return true;
+            }else if (hvs.getPassenger().getFlight().getFlightCountDownView().getCountDownTimer().before(alreadyLandedOrLeft)
                     && !updatedAfterDepartureOrArrivalTime(hvs)) {
                 hvs.setLookoutStatusEnum(LookoutStatusEnum.MISSED);
                 return true;
@@ -177,7 +185,7 @@ public class POEServiceImpl implements POEService {
         } else if(hvs.getLookoutStatusEnum().name().equals(LookoutStatusEnum.INACTIVE.name())){ //If after a time inactive, demote
             Date demoteDate = fullyDemoteVariable.toDate();
             if(hvs.getUpdatedAt() != null && hvs.getUpdatedAt().before(demoteDate)){
-                hvs.setLookoutStatusEnum(LookoutStatusEnum.NOTPROMOTED);
+                hvs.setLookoutStatusEnum(LookoutStatusEnum.DEMOTED);
             }
             return true;
         }

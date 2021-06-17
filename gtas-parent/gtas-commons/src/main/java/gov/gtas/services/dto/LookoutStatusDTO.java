@@ -14,6 +14,8 @@ import java.util.Objects;
 public class LookoutStatusDTO {
 
     private Long paxId; //For updating POEStatus on the back end
+    private Long flightId; // For connecting to paxID page
+    private String flightNumber;
     private String paxFirstName;
     private String paxLastName;
     private DocumentVo document;
@@ -23,7 +25,8 @@ public class LookoutStatusDTO {
     private String direction; //flight direction inbound/outbound
     private boolean isApis; //if apis only information
 
-    public LookoutStatusDTO(@JsonProperty("paxId") Long paxId, @JsonProperty("paxFirstName") String paxFirstName, @JsonProperty("paxLastName") String paxLastName,
+    public LookoutStatusDTO(@JsonProperty("paxId") Long paxId, @JsonProperty("flightId") Long flightId, @JsonProperty("flightNumber") String flightNumber,
+                            @JsonProperty("paxFirstName") String paxFirstName, @JsonProperty("paxLastName") String paxLastName,
                             @JsonProperty("document") DocumentVo document, @JsonProperty("hitCategory") String hitCategory,
                             @JsonProperty("flightCountdownTime") Date flightCountdownTime, @JsonProperty("poeStatus") String status,
                             @JsonProperty("direction") String direction, @JsonProperty("isApis") boolean isApis ) {
@@ -36,6 +39,8 @@ public class LookoutStatusDTO {
         this.status = status;
         this.direction = direction;
         this.isApis = isApis;
+        this.flightNumber = flightNumber;
+        this.flightId = flightId;
     }
 
     public Long getPaxId() {
@@ -67,6 +72,10 @@ public class LookoutStatusDTO {
     public String getDirection() { return direction; }
 
     public boolean isApis() { return isApis; }
+
+    public Long getFlightId() { return flightId; }
+
+    public String getFlightNumber() { return flightNumber; }
 
     @Override
     public boolean equals(Object o) {
