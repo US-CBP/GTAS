@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,7 +19,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
@@ -45,15 +49,6 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private MaxLoginAuthenticationProvider daoAuthenticationProvider;
 
-	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
-				"/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
-				"/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*", "/paxdetailreport/**/*",
-				"/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
-				"WEB-INF/**/*", "/data/**", "/signup.html", "/signupConfirmation.html","/user/signup/new","/signup/**/*");
-
-	}
-
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(daoAuthenticationProvider).userDetailsService(userDetailsService)
@@ -70,14 +65,19 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.csrf().disable();
 
-		http.cors().and().authorizeRequests()
-				.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**",
-						"/reset.html", "/password-reset", "/authenticate" , "/signup.html", "/user/signup/new","/signup/**/*","/user/signup/**/*", "/forgot-password", "/reset-password")
-				.permitAll().anyRequest().authenticated().and().formLogin().loginProcessingUrl("/authenticate")
-				.usernameParameter("username").passwordParameter("password")
-				.successHandler(new AjaxAuthenticationSuccessHandler(savedReqHandler))
-				.failureHandler(new UrlAuthenticationFailureHandler()).loginPage("/login.html").and().logout()
-				.logoutUrl("/logout").logoutSuccessUrl("/login.html").invalidateHttpSession(true).permitAll();
+    http.cors()
+    .and()
+			.authorizeRequests()
+      .antMatchers("/api/authenticate", "/api/preauth/**", "/api/logout")
+      .permitAll().anyRequest().authenticated()
+		.and()
+			.exceptionHandling()
+			.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+    .and().formLogin().loginProcessingUrl("/api/authenticate")
+      .successHandler((req, res, auth) -> res.setStatus(HttpStatus.NO_CONTENT.value()))
+      .failureHandler(new SimpleUrlAuthenticationFailureHandler())
+    .and().logout().logoutUrl("/api/logout").logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
+      .invalidateHttpSession(true).permitAll();
 
 		http.sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
 
