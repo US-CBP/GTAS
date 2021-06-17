@@ -13,6 +13,8 @@ import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.constant.RuleConstants;
 import gov.gtas.constant.WatchlistConstants;
 import gov.gtas.enumtype.AuditActionType;
+import gov.gtas.enumtype.HitTypeEnum;
+import gov.gtas.enumtype.LookoutStatusEnum;
 import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.AuditActionData;
@@ -144,7 +146,9 @@ public class UdrServiceImpl implements UdrService {
 	 * @return summary list.
 	 */
 	private List<JsonUdrListElement> convertSummaryList(List<UdrRule> fetchedRuleList) {
-		Map<Long, Long> udrHitCountMap = createUdrHitCountMap();
+		Map<Long, Long> udrHitCountMap = createUdrHitCountMap(udrRuleRepository.getCounts());
+		Map<Long, Long> udrPositiveCountMap = createUdrHitCountMap(udrRuleRepository.getPosNegPOELookoutCounts(Collections.singleton(LookoutStatusEnum.POSITIVE),Collections.singleton(HitTypeEnum.USER_DEFINED_RULE)));
+		Map<Long, Long> udrNegativeCountMap = createUdrHitCountMap(udrRuleRepository.getPosNegPOELookoutCounts(Collections.singleton(LookoutStatusEnum.NEGATIVE),Collections.singleton(HitTypeEnum.USER_DEFINED_RULE)));
 		List<JsonUdrListElement> ret = new LinkedList<>();
 		if (fetchedRuleList != null && !fetchedRuleList.isEmpty()) {
 			for (UdrRule udrRule : fetchedRuleList) {
@@ -159,8 +163,16 @@ public class UdrServiceImpl implements UdrService {
 				Long udrId = udrRule.getId();
 				JsonUdrListElement item = new JsonUdrListElement(udrId, editedBy, editedOn, meta);
 				Long hitCount = udrHitCountMap.get(udrId);
+				Long posCount = udrPositiveCountMap.get(udrId);
+				Long negCount = udrNegativeCountMap.get(udrId);
 				if (hitCount != null) {
 					item.setHitCount(hitCount.intValue());
+				}
+				if(posCount != null) {
+					item.setPosCount(posCount.intValue());
+				}
+				if(negCount != null){
+					item.setNegCount(negCount.intValue());
 				}
 				ret.add(item);
 
@@ -170,8 +182,7 @@ public class UdrServiceImpl implements UdrService {
 		return ret;
 	}
 
-	private Map<Long, Long> createUdrHitCountMap() {
-		List<Object[]> udrCounts = udrRuleRepository.getCounts();
+	private Map<Long, Long> createUdrHitCountMap(List<Object[]> udrCounts) {
 		Map<Long, Long> hitCountMap = new HashMap<>();
 		if (!CollectionUtils.isEmpty(udrCounts)) {
 			for (Object[] data : udrCounts) {

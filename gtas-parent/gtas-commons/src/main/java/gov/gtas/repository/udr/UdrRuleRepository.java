@@ -5,6 +5,8 @@
  */
 package gov.gtas.repository.udr;
 
+import gov.gtas.enumtype.HitTypeEnum;
+import gov.gtas.enumtype.LookoutStatusEnum;
 import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.udr.KnowledgeBase;
@@ -14,6 +16,7 @@ import gov.gtas.model.HitDetail;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -65,6 +68,13 @@ public interface UdrRuleRepository extends PagingAndSortingRepository<UdrRule, L
 
 	@Query("select udr.id, count(hd.id) from HitDetail hd, UdrRule udr where hd.hitMakerId = udr.id group by udr.id")
 	List<Object[]> getCounts();
+
+	@Query("select hm.id, count(hd.id) from HitDetail hd " +
+			"join hd.hitMaker hm " +
+			"join hd.hitViewStatus hvs where " +
+			"hm.hitTypeEnum in :hitTypes and " +
+			"hvs.lookoutStatusEnum in :lookoutStatus group by hm.id")
+	List<Object[]> getPosNegPOELookoutCounts(@Param("lookoutStatus") Set<LookoutStatusEnum> lookoutStatus, @Param("hitTypes")Set<HitTypeEnum> hitTypes);
 
 	@Query("select udr from UdrRule udr where udr.knowledgeBase.kbName = :kbName")
 	public List<UdrRule> findAllbyKbName(@Param("kbName") String kbName);
