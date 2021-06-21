@@ -139,7 +139,6 @@ jobs:
           echo $MARIADB_USER > ./gtas-parent/gtas-commons/secrets/mysql_webapp_user.txt
           echo $MARIADB_PASS > ./gtas-parent/gtas-commons/secrets/mysql_webapp_password.txt
 
-
           sudo apt-get -y update
           sudo apt-get install -y curl
           curl -L https://github.com/kubernetes/kompose/releases/download/v1.22.0/kompose-linux-amd64 -o kompose
