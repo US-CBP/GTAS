@@ -163,4 +163,4 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          args: apply -f combined-deploy.json
+          args: apply -f deploy.json
