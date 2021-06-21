@@ -15,18 +15,6 @@ services:
       - 3000:3000
     networks:
       - gtas-webapp-network
-  http-proxy:
-    labels:
-      kompose.image-pull-policy: "Always"
-      kompose.service.type: "LoadBalancer"
-    deploy:
-      placement:
-        constraints:
-          - node.labels.role == backend
-    environment:
-      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password/elastic-bootstrap-password'
-    volumes:
-      - certs:/temp-cert
   web-app:
     labels:
       kompose.image-pull-policy: "Always"
