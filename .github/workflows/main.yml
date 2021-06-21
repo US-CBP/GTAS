@@ -147,11 +147,11 @@ jobs:
           sudo mv ./kompose /usr/local/bin/kompose
           kompose -f pipeline-deployment.yaml -f docker-compose.yml convert -j --out deploy.json
 
-          IP=$(echo $SERVICES_JSON | jq -r '.items[] | select(.metadata.name=="kibana") | .spec.clusterIP')
-
-          cat deploy.json | jq -r '.items[] | select(.kind=="Deployment" and .metadata.name=="etl-job") | .spec.template.spec.hostAliases += [{"ip":"'$IP'","hostnames":["kibana.local"]}] '> alias.json
-          cat deploy.json | jq -r 'del(.items[] | select(.kind=="Deployment" and .metadata.name=="etl-job"))' > temp.json
-          jq '.items += [input]' temp.json alias.json > combined-deploy.json
+#          IP=$(echo $SERVICES_JSON | jq -r '.items[] | select(.metadata.name=="kibana") | .spec.clusterIP')
+#
+#          cat deploy.json | jq -r '.items[] | select(.kind=="Deployment" and .metadata.name=="etl-job") | .spec.template.spec.hostAliases += [{"ip":"'$IP'","hostnames":["kibana.local"]}] '> alias.json
+#          cat deploy.json | jq -r 'del(.items[] | select(.kind=="Deployment" and .metadata.name=="etl-job"))' > temp.json
+#          jq '.items += [input]' temp.json alias.json > combined-deploy.json
       - name: Clean resources
         uses: Consensys/kubernetes-action@master
         env:
