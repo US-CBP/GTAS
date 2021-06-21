@@ -220,7 +220,7 @@ services:
       - |
         until [ $$(curl -k -s -o /dev/null -w "%{http_code}" -u kibana:$$(cat /bootstrap-password/elastic-bootstrap-password) https://elasticsearch:9200/) == 200 ]; do sleep 10 && echo "Waiting for elasticsearch..."; done
         nohup bash /usr/share/kibana/wait-for-url &
-        dockerize -wait tcp://elasticsearch:9200 -timeout 1000s
+        dockerize -wait tcp://elasticsearch:9211 -timeout 1000s
         cp /keystore/kibana.keystore /usr/share/kibana/data/kibana.keystore
         /usr/local/bin/kibana-docker
     networks:
@@ -296,7 +296,7 @@ services:
       - bash
       - -c
       - |
-        until [ $$(curl -k -s -o /dev/null -w "%{http_code}" -u kibana:$$(cat /bootstrap-password/elastic-bootstrap-password) https://elasticsearch:9230/) == 708 ]; do sleep 1000 && echo "Waiting for elasticsearch..."; done
+        until [ $$(curl -k -s -o /dev/null -w "%{http_code}" -u kibana:$$(cat /bootstrap-password/elastic-bootstrap-password) https://elasticsearch:9200/) == 200 ]; do sleep 1000 && echo "Waiting for elasticsearch..."; done
         touch /mnt/flightpax_last_run_config && chmod 777 /mnt/flightpax_last_run_config
         /usr/local/bin/docker-entrypoint
     restart: unless-stopped
