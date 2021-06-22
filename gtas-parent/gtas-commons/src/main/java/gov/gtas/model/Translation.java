@@ -28,14 +28,18 @@ import org.springframework.cache.annotation.Cacheable;
 	private String language;
 	private String translation;
 
+  @Column(name = "default_text", length = 255)
+	private String defaultText;
+
 	public Translation() {
 	}
 
-	public Translation(Long id, String code, String language, String translation) {
+	public Translation(Long id, String code, String language, String translation, String defaultText) {
 		this.id = id;
 		this.code = code;
 		this.language = language;
 		this.translation = translation;
+		this.defaultText = defaultText;
 	}
 
 	public Long getId() {
@@ -68,6 +72,14 @@ import org.springframework.cache.annotation.Cacheable;
 
 	public void setTranslation(String translation) {
 		this.translation = translation;
+	}
+
+	public String getDefaultText() {
+		return defaultText;
+	}
+
+	public void setDefaultText(String defaultText) {
+		this.defaultText = defaultText;
 	}
 
 	@Override
