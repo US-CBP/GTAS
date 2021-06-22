@@ -61,14 +61,14 @@ jobs:
 #          push: true
 #          file: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
 #          tags: wcogtas/gtas-scheduler:dev
-#      - uses: docker/build-push-action@v2
-#        name: Build and push kibana image
-#        with:
-#          platforms: linux/amd64
-#          push: true
-#          context: ./gtas-parent/scripts/elastic
-#          file: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
-#          tags: wcogtas/kibana:dev
+      - uses: docker/build-push-action@v2
+        name: Build and push kibana image
+        with:
+          platforms: linux/amd64
+          push: true
+          context: ./gtas-parent/scripts/elastic
+          file: ./gtas-parent/scripts/elastic/install/docker/kibana/kibana.Dockerfile
+          tags: wcogtas/kibana:dev
 #      - uses: docker/build-push-action@v2
 #        name: Build and push elasticsearch image
 #        with:
