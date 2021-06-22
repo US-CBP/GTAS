@@ -3,7 +3,7 @@ set -eux
 
 wait-for-url() {
     timeout -s TERM 10000 bash -c \
-    'while [[ "$(curl -k -s -o /dev/null -L -w ''%{http_code}'' -u kibana:$(cat /bootstrap-password/elastic-bootstrap-password) https://localhost:5601/login)" != "200" ]];\
+    'while [[ "$(curl -k -s -o /dev/null -L -w ''%{http_code}'' -u elastic:$(cat /bootstrap-password/elastic-bootstrap-password) https://localhost:5601/login)" != "200" ]];\
     do echo "Waiting for kibana" && sleep 2;\
     done'
     echo "OK!"
