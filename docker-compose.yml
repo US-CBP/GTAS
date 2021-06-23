@@ -274,6 +274,7 @@ services:
       XPACK_MONITORING_ELASTICSEARCH_HOSTS: 'elasticsearch'
       LOGSTASH_KEYSTORE_PASS: 'admin123'
       LOG_LEVEL: 'debug'
+      PIPELINE_WORKERS: 8
     command:
       - bash
       - -c
