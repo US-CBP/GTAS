@@ -13,6 +13,7 @@ public class TranslationVo {
   private String code;
   private String language;
   private String translation;
+  private String defaultText;
 
   public TranslationVo() {
   }
@@ -22,6 +23,7 @@ public class TranslationVo {
     this.code = translation.getCode();
     this.language = translation.getLanguage();
     this.translation = translation.getTranslation();
+    this.defaultText = translation.getDefaultText();
   }
 
    public Long getId() {
@@ -50,6 +52,13 @@ public class TranslationVo {
   }
   public void setTranslation(String translation) {
     this.translation = translation;
+  }
+
+  public String getDefaultText() {
+    return defaultText;
+  }
+  public void setDefaultText(String defaultText) {
+    this.defaultText = defaultText;
   }
 
 }
