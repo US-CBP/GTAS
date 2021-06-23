@@ -186,4 +186,4 @@
 		on (seat.flight_id=f.ID and seat.passenger_id=p.id)
  	where message.create_date >= (select IFNULL(min_id.val, :sql_last_value) from (select MIN(id) as val from message where create_date < (select create_date from message where id=:sql_last_value) and  create_date > (select create_date from message where id=:sql_last_value) - INTERVAL 3 MINUTE) min_id)
  	and message.id < :sql_last_value  + 200
- 	order by message.id DESC) apis_data order by message_id DESC
+ 	order by message.id DESC) apis_data order by message_id ASC
