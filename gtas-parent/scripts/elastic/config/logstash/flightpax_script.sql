@@ -92,7 +92,7 @@
 	left join seat
 		on (seat.flight_id=f.ID and seat.passenger_id=p.id)
  	where message.id >= (select IFNULL(min_id.val, :sql_last_value) from (select MIN(id) as val from message where create_date < (select create_date from message where id=:sql_last_value) and  create_date > (select create_date from message where id=:sql_last_value) - INTERVAL 3 MINUTE) min_id)
- 	and message.id < :sql_last_value  + 10000) pnr_data
+ 	and message.id < :sql_last_value  + 2500) pnr_data
 
  	union
 
@@ -184,4 +184,4 @@
 	left join seat
 		on (seat.flight_id=f.ID and seat.passenger_id=p.id)
  	where message.id >= (select IFNULL(min_id.val, :sql_last_value) from (select MIN(id) as val from message where create_date < (select create_date from message where id=:sql_last_value) and  create_date > (select create_date from message where id=:sql_last_value) - INTERVAL 3 MINUTE) min_id)
- 	and message.id < :sql_last_value  + 10000) apis_data order by message_id ASC
+ 	and message.id < :sql_last_value  + 2500) apis_data order by message_id ASC
