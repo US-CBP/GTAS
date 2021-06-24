@@ -28,14 +28,14 @@ jobs:
 #          push: true
 #          file: ./gtas-parent/gtas-rule-runner/gtas-rule-runner.Dockerfile
 #          tags: wcogtas/gtas-rule-runner:dev
-#      - uses: docker/build-push-action@v2
-#        name: Build and push GTAS web application image
-#        with:
-#          context: ./gtas-parent
-#          push: true
-#          platforms: linux/amd64, ppc64le
-#          file: ./gtas-parent/web-app.Dockerfile
-#          tags: wcogtas/webapp:dev
+      - uses: docker/build-push-action@v2
+        name: Build and push GTAS web application image
+        with:
+          context: ./gtas-parent
+          push: true
+          platforms: linux/amd64, ppc64le
+          file: ./gtas-parent/web-app.Dockerfile
+          tags: wcogtas/webapp:dev
 #      - uses: docker/build-push-action@v2
 #        name: Build and push mariadb image
 #        with:
@@ -44,14 +44,6 @@ jobs:
 #          platforms: linux/amd64, ppc64le
 #          file: ./gtas-parent/mariadb.Dockerfile
 #          tags: wcogtas/mariadb:dev
-#      - uses: docker/build-push-action@v2
-#        name: Build and push GTAS proxy image
-#        with:
-#          context: ./gtas-parent
-#          push: true
-#          platforms: linux/amd64
-#          file: ./gtas-parent/docker-resources/proxy.Dockerfile
-#          tags: wcogtas/http-proxy:dev
 #      - uses: docker/build-push-action@v2
 #        name: Build and push GTAS scheduler image
 #        with:
