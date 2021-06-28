@@ -18,6 +18,7 @@ import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.PassengerGridItemVo;
 import gov.gtas.vo.passenger.FlightPaxVo;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -239,6 +240,7 @@ public class PassengerServiceImpl implements PassengerService {
 	@Override
 	@Transactional
 	public List<Passenger> getBookingDetailHistoryByPaxID(Long pId) {
+		DateTime dateLimitForRecall = new DateTime().minusYears(1); //1 year recall limit
 		List<Passenger> tamrIdMatches;
 		if (tamrEnabled && tamrResolvePassengerHistory) {
 			tamrIdMatches = bookingDetailRepository.getBookingDetailsByTamrId(pId);
@@ -252,7 +254,7 @@ public class PassengerServiceImpl implements PassengerService {
 			// If there are no tamrId matches, this means the tamrId must be
 			// NULL or Tamr history resolving is disabled. In that case, just
 			// do normal matching.
-			return bookingDetailRepository.getBookingDetailsByPassengerIdTag(pId);
+			return bookingDetailRepository.getBookingDetailsByPassengerIdTag(pId, dateLimitForRecall.toDate());
 		}
 	}
 

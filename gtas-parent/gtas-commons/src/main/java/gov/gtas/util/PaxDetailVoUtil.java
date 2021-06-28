@@ -193,11 +193,6 @@ public class PaxDetailVoUtil {
 
 	public static void populateFlightVoWithFlightDetail(Flight source, FlightVo target) {
 		try {
-
-			target.setFlightNumber(source.getFlightNumber());
-			target.setCarrier(source.getCarrier());
-			target.setEtaDate(source.getMutableFlightDetails().getEtaDate());
-			target.setEtdDate(source.getEtdDate());
 			target.setOriginCountry(source.getOriginCountry());
 			target.setOrigin(source.getOrigin());
 			target.setDestinationCountry(source.getDestinationCountry());
@@ -205,10 +200,6 @@ public class PaxDetailVoUtil {
 			target.setEtd(source.getMutableFlightDetails().getEtd());
 			target.setEta(source.getMutableFlightDetails().getEta());
 			target.setFullFlightNumber(source.getFullFlightNumber());
-			target.setFlightId(source.getId().toString());
-			target.setIdTag(source.getIdTag());
-			target.setPassengerCount(source.getFlightPassengerCount().getPassengerCount());
-			target.setDirection(source.getDirection());
 		} catch (Exception e) {
 			logger.error("error populating flight vo", e);
 		}
