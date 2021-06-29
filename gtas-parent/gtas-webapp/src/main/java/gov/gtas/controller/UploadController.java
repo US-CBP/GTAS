@@ -183,6 +183,8 @@ public class UploadController {
 			attVo.setContentType(a.getContentType());
 			attVo.setDescription(a.getDescription());
 			attVo.setFilename(a.getFilename());
+			attVo.setCreatedAt(a.getCreatedAt());
+			attVo.setFileSize((a.getContent().getBytes(1, (int) a.getContent().length()).length)/1024);
 			// Add to attVoList to be returned to front-end
 			attVoList.add(attVo);
 		}
