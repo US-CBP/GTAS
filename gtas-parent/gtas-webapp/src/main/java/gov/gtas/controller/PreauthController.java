@@ -83,7 +83,7 @@ public class PreauthController {
 					"Your username has been sent to your email");
 		} catch (Exception e) {
 			return new JsonServiceResponse(Status.FAILURE,
-					"The provided email (" + userEmail + ") is not on the system!" + e);
+					"The provided email (" + userEmail + ") is not on the system!");
 		}
 	}
 
