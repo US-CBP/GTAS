@@ -11,6 +11,7 @@ public class AttachmentVo {
 	private byte[] content;
 	private String contentType;
 	private Date createdAt;
+	private String createdBy;
 	private float fileSize;
 
 	public float getFileSize() {
@@ -77,4 +78,7 @@ public class AttachmentVo {
 		this.createdAt = createdAt;
 	}
 
+	public String getCreatedBy() { return createdBy; }
+
+	public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
 }
