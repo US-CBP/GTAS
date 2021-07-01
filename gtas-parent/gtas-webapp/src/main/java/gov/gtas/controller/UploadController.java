@@ -11,6 +11,7 @@ import gov.gtas.model.Attachment;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.AttachmentRepository;
 import gov.gtas.repository.PassengerRepository;
+import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.vo.passenger.AttachmentVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +88,7 @@ public class UploadController {
 			attachment.setDescription(desc);
 			attachment.setFilename(file.getOriginalFilename());
 			attachment.setName(file.getName());
+			attachment.setCreatedBy(GtasSecurityUtils.fetchLoggedInUserId());
 			byte[] bytes = file.getBytes();
 			Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
 			attachment.setContent(blob);
@@ -183,6 +185,9 @@ public class UploadController {
 			attVo.setContentType(a.getContentType());
 			attVo.setDescription(a.getDescription());
 			attVo.setFilename(a.getFilename());
+			attVo.setCreatedAt(a.getCreatedAt());
+			attVo.setCreatedBy(a.getCreatedBy());
+			attVo.setFileSize((a.getContent().getBytes(1, (int) a.getContent().length()).length));
 			// Add to attVoList to be returned to front-end
 			attVoList.add(attVo);
 		}
