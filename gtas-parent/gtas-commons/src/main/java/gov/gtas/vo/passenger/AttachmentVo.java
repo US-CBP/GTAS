@@ -10,7 +10,17 @@ public class AttachmentVo {
 	private String filename;
 	private byte[] content;
 	private String contentType;
-	private Date created;
+	private Date createdAt;
+	private String createdBy;
+	private float fileSize;
+
+	public float getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(float fileSize) {
+		this.fileSize = fileSize;
+	}
 
 	public Long getId() {
 		return id;
@@ -60,12 +70,15 @@ public class AttachmentVo {
 		this.contentType = contentType;
 	}
 
-	public Date getCreated() {
-		return created;
+	public Date getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
+	public String getCreatedBy() { return createdBy; }
+
+	public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
 }
