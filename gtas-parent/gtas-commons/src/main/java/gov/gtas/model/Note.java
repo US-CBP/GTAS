@@ -22,7 +22,8 @@ public abstract class Note extends BaseEntityAudit {
     @Column(name = "note_plain_text", length = 10000, nullable = false)
     private String plainTextNote;
 
-    @Column(name = "note_rtf_text", length = 10000, nullable = false)
+  
+    @Column(columnDefinition="TEXT", name = "note_rtf_text", nullable = false)
     private String rtfNote;
 
     @ManyToMany(fetch = FetchType.LAZY)
