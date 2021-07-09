@@ -11,7 +11,7 @@
 #  path.config: "./config/logstash-cases.conf"
 
 - pipeline.id: flightpax
-  pipeline.workers: 8
+  pipeline.workers: 3
 #  pipeline.batch.size: 500
   path.config: "./config/logstash-flightpax.conf"
 

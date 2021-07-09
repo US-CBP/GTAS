@@ -135,6 +135,7 @@ services:
     environment:
       MARIADB_HOST: ${MARIADB_HOST}
       XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATEAUTHORITY: /run/secrets/elastic-ca/elastic-ca
+      LS_JAVA_OPTS: "-Xmx4g -Xms4g"
   neo4j:
     labels:
       kompose.image-pull-policy: "Always"
