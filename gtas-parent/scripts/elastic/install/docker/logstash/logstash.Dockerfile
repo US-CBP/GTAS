@@ -48,8 +48,6 @@ RUN chown logstash:logstash /usr/share/logstash/config/pipelines.yml
 
 
 
-
-ENV JAVA_OPTS="-Xms1g -Xmx2g"
 ENV LOGSTASH_DIR=/usr/share/logstash
 ENV LOGSTASH_LIB=/usr/share/logstash/logstash-core/lib/jars
 
