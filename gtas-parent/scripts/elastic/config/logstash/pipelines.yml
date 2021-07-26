@@ -4,7 +4,7 @@
 # Default values for ommitted settings are read from the `logstash.yml` file.
 # When declaring multiple pipelines, each MUST have its own `pipeline.id`.
 #
-
+#
 #- pipeline.id: cases
 #  pipeline.workers: 1
 #  # pipeline.batch.size: 125
