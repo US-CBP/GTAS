@@ -50,10 +50,10 @@ public class PreauthController {
   @Autowired
 	private UserService userService;
 
-	@Autowired
+	@Autowired(required = false)
 	private SignupLocationRepository signupLocationRepository;
 
-	@Autowired
+	@Autowired(required = false)
 	private SignupRequestService signupRequestService;
 
   @Autowired
