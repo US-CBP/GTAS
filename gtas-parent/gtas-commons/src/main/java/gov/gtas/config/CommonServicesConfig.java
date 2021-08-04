@@ -100,6 +100,9 @@ public class CommonServicesConfig {
 	@Value("${spring.mail.properties.ssl.trust.host}")
 	private String mailSenderSslTrustHost;
 
+	@Value("${spring.mail.properties.tls.version}")
+	private String mailSenderTlsVersion;
+
 	@SuppressWarnings("Duplicates")
 	private Properties hibProperties() {
 		Properties properties = new Properties();
@@ -203,6 +206,7 @@ public class CommonServicesConfig {
 		props.put("mail.smtp.port", mailSenderPort);
 
 		if(!StringUtils.isEmpty(mailSenderSslTrustHost)) {
+			props.put("mail.smtp.ssl.protocols", mailSenderTlsVersion);
 			props.put("mail.smtp.ssl.trust", mailSenderSslTrustHost);
 		}
 
