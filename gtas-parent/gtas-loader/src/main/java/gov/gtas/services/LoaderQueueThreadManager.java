@@ -3,12 +3,12 @@
  *
  * Please see LICENSE.txt for details.
  */
-package gov.gtas.job.scheduler;
+package gov.gtas.services;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import gov.gtas.job.config.JobSchedulerConfig;
+
 import gov.gtas.job.wrapper.MessageWrapper;
 import gov.gtas.summary.EventIdentifier;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
-import org.springframework.messaging.Message;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import gov.gtas.parsers.exception.ParseException;
@@ -36,15 +36,17 @@ public class LoaderQueueThreadManager {
 
     private static ConcurrentMap<String, LoaderWorkerThread> bucketBucket = new ConcurrentHashMap<>();
 
-    private static final Logger logger = LoggerFactory.getLogger(LoaderQueueThreadManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(LoaderQueueThreadManager.class);
 
     private final Semaphore semaphore;
 
     private final EventIdentifierFactory eventIdentifierFactory;
+    
 
     @Autowired
     public LoaderQueueThreadManager(ApplicationContext ctx,
-                                    @Value("${loader.permits}") Integer loaderPermits, JobSchedulerConfig jobSchedulerConfig, EventIdentifierFactory eventIdentifierFactory) {
+                                    @Value("${loader.permits}") Integer loaderPermits, 
+                                    EventIdentifierFactory eventIdentifierFactory) {
 
         this.ctx = ctx;
         this.eventIdentifierFactory = eventIdentifierFactory;
@@ -61,8 +63,8 @@ public class LoaderQueueThreadManager {
         int maxNumOfThreads = DEFAULT_THREADS_ON_LOADER;
 
         try {
-
-            maxNumOfThreads = jobSchedulerConfig.getThreadsOnLoader();
+        	//TODO: update default threads on loader
+            maxNumOfThreads = DEFAULT_THREADS_ON_LOADER;
 
         } catch (Exception e) {
             logger.error(String.format(
@@ -73,7 +75,7 @@ public class LoaderQueueThreadManager {
         this.exec = Executors.newFixedThreadPool(maxNumOfThreads);
     }
 
-    EventIdentifier receiveMessages(MessageWrapper message) throws ParseException, InterruptedException {
+    public EventIdentifier receiveMessages(MessageWrapper message) throws ParseException, InterruptedException {
 
         EventIdentifier eventIdentifier = eventIdentifierFactory.createEventIdentifier(message);
         String[] primeFlightKeyArray = eventIdentifier.getIdentifierArrayList().toArray(new String[0]);
@@ -123,4 +125,14 @@ public class LoaderQueueThreadManager {
         }
         return eventIdentifier;
     }
+    
+    /**
+	 * @return the bucketBucket
+	 */
+	public static ConcurrentMap<String, LoaderWorkerThread> getBucketBucket() {
+		return bucketBucket;
+	}
+	
 }
+
+

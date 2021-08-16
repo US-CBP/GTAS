@@ -1,0 +1,17 @@
+version: "2.1"
+services:
+  gtas-rule-runner:
+    image: originalname51/gtas-loader-runner
+    build:
+      context: .
+      dockerfile: dockerfile
+    restart: always
+    environment:
+      LOADER_NAME: GTAS_LOADER_1
+      LOADER_COUNTRY: USA
+      LOADER_PERMITS: 300
+      INBOUND_MESSAGE_FOLDER: /usr/local/gtas-data/input
+      WORKING_MESSAGE_FOLDER: /usr/local/gtas-data/working
+      PROCESSED_MESSAGE_FOLDER: /usr/local/gtas-data/processed
+      ERROR_MESSAGE_FOLDER: /usr/local/gtas-data/error
+    network_mode: host      

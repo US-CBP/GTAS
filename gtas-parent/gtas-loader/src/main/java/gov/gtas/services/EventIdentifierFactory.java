@@ -1,4 +1,4 @@
-package gov.gtas.job.scheduler;
+package gov.gtas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.job.wrapper.MessageWrapper;

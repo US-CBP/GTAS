@@ -8,11 +8,12 @@
 
 package gov.gtas.services;
 
+import gov.gtas.additional.jms.OmniLocalGtasSender;
 import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.enumtype.LookoutStatusEnum;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
-import gov.gtas.services.jms.OmniLocalGtasSender;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;

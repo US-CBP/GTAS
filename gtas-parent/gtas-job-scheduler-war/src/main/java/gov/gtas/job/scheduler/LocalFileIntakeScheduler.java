@@ -11,8 +11,6 @@ package gov.gtas.job.scheduler;
 import gov.gtas.job.localFileIntake.InboundQMessageSender;
 import gov.gtas.parsers.util.FileUtils;
 import gov.gtas.services.LoaderException;
-import gov.gtas.job.scheduler.Utils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

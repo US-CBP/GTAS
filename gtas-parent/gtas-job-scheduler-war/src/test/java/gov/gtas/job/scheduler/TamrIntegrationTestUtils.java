@@ -33,6 +33,7 @@ import gov.gtas.model.watchlist.json.WatchlistSpec;
 import gov.gtas.model.watchlist.json.WatchlistTerm;
 import gov.gtas.parsers.tamr.jms.TamrMessageReceiver;
 import gov.gtas.parsers.tamr.jms.TamrQueueConfig;
+import gov.gtas.services.LoaderScheduler;
 import gov.gtas.services.LoaderStatistics;
 import gov.gtas.svc.WatchlistService;
 

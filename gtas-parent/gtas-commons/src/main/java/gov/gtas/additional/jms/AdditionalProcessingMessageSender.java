@@ -1,4 +1,4 @@
-package gov.gtas.services.jms;
+package gov.gtas.additional.jms;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

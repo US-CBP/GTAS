@@ -3,7 +3,7 @@
  * 
  * Please see LICENSE.txt for details.
  */
-package gov.gtas.job.scheduler;
+package gov.loadeworker;
 
 import javax.jms.Session;
 
@@ -24,6 +24,7 @@ import gov.gtas.repository.PnrRepository;
 import gov.gtas.summary.MessageSummaryList;
 import gov.gtas.util.LobUtils;
 
+import org.apache.logging.log4j.core.jmx.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.io.File;
@@ -43,14 +45,13 @@ import java.util.HashSet;
 
 @Component
 @ConditionalOnProperty(prefix = "loader", name = "enabled")
-public class LoaderMessageReceiver {
+public class LoaderWorkerMessageReceiver {
 	private final LoaderQueueThreadManager queueManager;
 	private final PnrRepository pnrRepository;
 	private final MessageStatusRepository messageStatusRepository;
-	private final AdditionalProcessingMessageSender apms;
-	private final LoaderDistributor loaderDistributor;
+	private AdditionalProcessingMessageSender apms;
 
-	static final Logger logger = LoggerFactory.getLogger(LoaderMessageReceiver.class);
+	static final Logger logger = LoggerFactory.getLogger(LoaderWorkerMessageReceiver.class);
 
 	@Value("${message.dir.processed}")
 	private String processedstr;
@@ -82,21 +83,20 @@ public class LoaderMessageReceiver {
 	private PendingHitDetailRepository pendingHitDetailRepository;
 
 	@Autowired
-	public LoaderMessageReceiver(LoaderQueueThreadManager queueManager,
+	public LoaderWorkerMessageReceiver(LoaderQueueThreadManager queueManager,
 								 PnrRepository pnrRepository,
 								 MessageStatusRepository messageStatusRepository,
-								 AdditionalProcessingMessageSender apms,
-								 PendingHitDetailRepository pendingHitDetailRepository, 
-								 LoaderDistributor loaderDistributor) {
+								 Optional<AdditionalProcessingMessageSender> apms,
+								 PendingHitDetailRepository pendingHitDetailRepository
+								 ) {
 		this.queueManager = queueManager;
 		this.pnrRepository = pnrRepository;
 		this.messageStatusRepository = messageStatusRepository;
-		this.apms = apms;
+		apms.ifPresent(service -> {this.apms = service;});
 		this.pendingHitDetailRepository = pendingHitDetailRepository;
-		this.loaderDistributor = loaderDistributor;
 	}
 
-	@JmsListener(destination ="${inbound.loader.jms.queue}", concurrency = "10")
+	@JmsListener(destination ="${loader.name}", concurrency = "10")
 	public void receiveMessagesForLoader(Message<?> message, Session session, javax.jms.Message msg) {
 		final String filenameprop = "filename";
 		MessageHeaders headers = message.getHeaders();
@@ -108,53 +108,51 @@ public class LoaderMessageReceiver {
 		logger.debug("Application : headers received : {}", headers);
 		logger.debug("Filename: " + fileName);
 
-//		File workingfile = Utils.writeToDisk(fileName, payload, workingstr);
+		File workingfile = gov.gtas.services.Utils.writeToDisk(fileName, payload, workingstr);
 
 		try {
 			MessageWrapper mw = new MessageWrapper(message, fileName);
-			loaderDistributor.distributeToQueue(mw);
-//			EventIdentifier eventIdentifier = queueManager.receiveMessages(mw);
-//			if (additionalProcessingOn && (eventIdentifier.getEventType().equals("PNR") && proccessPnr
-//					|| eventIdentifier.getEventType().equals("APIS") && proccessApis ||
-//			addProcessQueue != null && addProcessQueue.contains(eventIdentifier.getEventType()))) {
-//				MessageAction messageAction = eventIdentifier.getEventType().equals("APIS") ? MessageAction.RAW_APIS : MessageAction.RAW_PNR;
-//
-//				String rawMessage;
-//				if (mw.getFromMessageInfo()) {
-//					ObjectMapper om = new ObjectMapper();
-//					MessageSummaryList msl = om.readValue((String)message.getPayload(), MessageSummaryList.class);
-//					if (eventIdentifier.getReceiverCanForward() != null && eventIdentifier.getReceiverCanForward()) {
-//						eventIdentifier.setReceiverCanForward(false); // only forward a message once.
-//						rawMessage = msl.getMessageSummaryList().get(0).getRawMessage();
-//						apms.sendRawMessage(addProcessQueue, rawMessage, eventIdentifier, messageAction);
-//					}
-//				} else {
-//					rawMessage = (String)message.getPayload();
-//					apms.sendRawMessage(addProcessQueue, rawMessage, eventIdentifier, messageAction);
-//				}
-//			}
+			EventIdentifier eventIdentifier = queueManager.receiveMessages(mw);
+			if (additionalProcessingOn && (eventIdentifier.getEventType().equals("PNR") && proccessPnr
+					|| eventIdentifier.getEventType().equals("APIS") && proccessApis ||
+			addProcessQueue != null && addProcessQueue.contains(eventIdentifier.getEventType()))) {
+				MessageAction messageAction = eventIdentifier.getEventType().equals("APIS") ? MessageAction.RAW_APIS : MessageAction.RAW_PNR;
+				String rawMessage;
+				if (mw.getFromMessageInfo()) {
+					ObjectMapper om = new ObjectMapper();
+					MessageSummaryList msl = om.readValue((String)message.getPayload(), MessageSummaryList.class);
+					if (eventIdentifier.getReceiverCanForward() != null && eventIdentifier.getReceiverCanForward()) {
+						eventIdentifier.setReceiverCanForward(false); // only forward a message once.
+						rawMessage = msl.getMessageSummaryList().get(0).getRawMessage();
+						apms.sendRawMessage(addProcessQueue, rawMessage, eventIdentifier, messageAction);
+					}
+				} else {
+					rawMessage = (String)message.getPayload();
+					apms.sendRawMessage(addProcessQueue, rawMessage, eventIdentifier, messageAction);
+				}
+			}
 		} catch (Exception e) {
 			logger.warn("Failed to parsed message. Is border crossing information corrupt? Error is: " + e);
 			Pnr failedMessage = new Pnr();
 			failedMessage.setCreateDate(new Date());
 			failedMessage.setRaw(LobUtils.createClob(payload));
 			failedMessage.setError(e.toString());
-//			failedMessage.setFilePath(workingfile.getAbsolutePath());
+			failedMessage.setFilePath(workingfile.getAbsolutePath());
 			failedMessage = pnrRepository.save(failedMessage);
 			MessageStatus messageStatus = new MessageStatus(failedMessage.getId(), MessageStatusEnum.FAILED_PRE_PARSE);
 			messageStatusRepository.save(messageStatus);
 		}
 	}
 
-	@JmsListener(destination = "${inbound.loader.pendinghits.queue}", concurrency = "10")
-	public void pendingHitEndPoint(Message<?> message, Session session, javax.jms.Message msg) {
-		String payload = message.getPayload().toString();
-		ObjectMapper om = new ObjectMapper();
-		try {
-			PendingHitDetails phd = om.readValue(payload, PendingHitDetails.class);
-			pendingHitDetailRepository.save(phd);
-		} catch (Exception e) {
-			logger.error("Unable to save pending hit detail! Error: " + e);
-		}
-	}
+//	@JmsListener(destination = "${inbound.loader.pendinghits.queue}", concurrency = "10")
+//	public void pendingHitEndPoint(Message<?> message, Session session, javax.jms.Message msg) {
+//		String payload = message.getPayload().toString();
+//		ObjectMapper om = new ObjectMapper();
+//		try {
+//			PendingHitDetails phd = om.readValue(payload, PendingHitDetails.class);
+//			pendingHitDetailRepository.save(phd);
+//		} catch (Exception e) {
+//			logger.error("Unable to save pending hit detail! Error: " + e);
+//		}
+//	}
 }

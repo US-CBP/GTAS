@@ -109,7 +109,38 @@ services:
     environment:
       KB_LIST: UDR Knowledge Base_1,WL_Knowledge_Base_3,WL_Knowledge_Base_2,WL_Knowledge_Base_1
       INBOUND_QUEUE: RULE_RUNNER_1
-      OUTBOUND_QUEUE: GTAS_RULE_ENGINE
+      OUTBOUND_QUEUE: GTAS_RULE_ENSGINE
+      ACTIVE_MQ_HOST: activemq
+    restart: unless-stopped
+    secrets:
+      - mysql-etl-user
+      - mysql-etl-password
+      - etl-neo4j-user
+      - etl-neo4j-password
+      - mysql-report-etl-user
+      - mysql-report-etl-password
+      - pentaho-to-elasticsearch-user
+      - pentaho-to-elasticsearch-password
+      - elastic-ca
+    networks: 
+      - gtas-webapp-network
+    depends_on: 
+      - activemq
+
+  gtas-loader-1:
+    container_name: loader-runner-1
+    image: wcogtas/gtas-loader-runner:dev
+    build:
+      context: .
+      dockerfile: ./gtas-parent/gtas-loader-runner/gtas-loader-runner.Dockerfile
+    environment:
+      LOADER_NAME: GTAS_LOADER_1
+      LOADER_COUNTRY: USA
+      LOADER_PERMITS: 300
+      INBOUND_MESSAGE_FOLDER: /usr/local/gtas-data/input
+      WORKING_MESSAGE_FOLDER: /usr/local/gtas-data/working
+      PROCESSED_MESSAGE_FOLDER: /usr/local/gtas-data/processed
+      ERROR_MESSAGE_FOLDER: /usr/local/gtas-data/error
       ACTIVE_MQ_HOST: activemq
     restart: unless-stopped
     secrets:
