@@ -21,7 +21,7 @@ services:
       kompose.service.type: "LoadBalancer"
     environment:
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
-      JAVA_OPTS: "-Xms8g -Xmx16g -Duser.timezone=UTC"
+      JAVA_OPTS: "-Xms8g -Xmx16g -Duser.timezone=UTC -Dlogging.level.org.springframework=TRACE"
       EMAIL_SENDER_USERNAME: ${EMAIL_SENDER_USERNAME}
       EMAIL_SENDER_PASSWORD: ${EMAIL_SENDER_PASSWORD}
       EMAIL_SENDER_HOST: ${EMAIL_SENDER_HOST}
