@@ -11,6 +11,7 @@ import gov.gtas.email.dto.UserEmailDTO;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.User;
+import gov.gtas.repository.UserRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserData;
@@ -31,6 +32,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,9 @@ public class UserController {
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	private UserDataValidator userDataValidator;
@@ -193,19 +198,23 @@ public class UserController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/forgot-password")
 	public JsonServiceResponse forgotPassword(@RequestParam String userId) {
-
-		try {
-			User user = userService.fetchUser(userId);
-			userService.forgotPassword(user);
+		Optional<User> user = userRepository.findById(userId);
+		if (user.isPresent()) {
+			try {
+				userService.forgotPassword(user.get());
+			} catch (Exception e) {
+				return new JsonServiceResponse(Status.FAILURE,
+						"System unable to process request: " + e.toString());
+			}
 
 			return new JsonServiceResponse(Status.SUCCESS,
-					"A temporary password has been sent to your email");
-
-		} catch (Exception e) {
-			return new JsonServiceResponse(Status.FAILURE,
-					"The provided user ID (" + userId + ") is not on the system!");
-
+						"A temporary password has been sent to your email");
 		}
+
+
+		return new JsonServiceResponse(Status.FAILURE,
+				"The provided user ID (" + userId + ") is not on the system!");
+
 
 	}
 
