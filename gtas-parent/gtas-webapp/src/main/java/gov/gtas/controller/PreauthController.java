@@ -11,6 +11,7 @@ import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.SignupLocation;
 import gov.gtas.model.User;
 import gov.gtas.repository.SignupLocationRepository;
+import gov.gtas.repository.UserRepository;
 import gov.gtas.services.SignupRequestService;
 import gov.gtas.services.dto.SignupRequestDTO;
 import gov.gtas.services.security.UserService;
@@ -30,6 +31,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +49,10 @@ public class PreauthController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-  @Autowired
+	@Autowired
+	private UserRepository userRepository;
+
+    @Autowired
 	private UserService userService;
 
 	@Autowired(required = false)
@@ -61,17 +66,21 @@ public class PreauthController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/api/preauth/forgotpassword")
 	public JsonServiceResponse forgotPassword(@RequestParam String userId) {
-
-		try {
-			User user = userService.fetchUser(userId);
-			userService.forgotPassword(user);
+		Optional<User> user = userRepository.findById(userId);
+		if (user.isPresent()) {
+			try {
+				userService.forgotPassword(user.get());
+			} catch (Exception e) {
+				return new JsonServiceResponse(Status.FAILURE,
+						"System unable to process request: " + e.toString());
+			}
 
 			return new JsonServiceResponse(Status.SUCCESS,
 					"A temporary password has been sent to your email");
-		} catch (Exception e) {
-			return new JsonServiceResponse(Status.FAILURE,
-					"The provided user ID (" + userId + ") is not on the system! ");
 		}
+
+		return new JsonServiceResponse(Status.FAILURE,
+				"The provided user ID (" + userId + ") is not on the system!");
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/api/preauth/forgotusername")
