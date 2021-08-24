@@ -22,8 +22,6 @@ import gov.gtas.vo.passenger.CaseVo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 
-import com.amazonaws.services.sqs.model.ListDeadLetterSourceQueuesRequest;
-
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
