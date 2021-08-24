@@ -22,8 +22,11 @@ import gov.gtas.vo.passenger.CaseVo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
 
+import com.amazonaws.services.sqs.model.ListDeadLetterSourceQueuesRequest;
+
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class PriorityVettingListServiceImpl implements PriorityVettingListService {
@@ -45,7 +48,6 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 	}
 
 	@Override
-	@Transactional
 	@PVLRequestAuditFirstArgRequest
 	public PriorityVettingListDTO generateDtoFromRequest(PriorityVettingListRequest request, String userId) {
 		Set<UserGroup> userGroups = userService.fetchUserGroups(userId);
@@ -57,8 +59,27 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		Pair<Long, List<Passenger>> immutablePair = passengerRepository.priorityVettingListQuery(request, userGroups,
 				userId);
 		List<CaseVo> caseVOS = new ArrayList<>();
-
-		for (Passenger passenger : immutablePair.getRight()) {
+		
+		Set<Long> passengerIds = immutablePair.getRight().stream().map(p -> p.getId()).collect(Collectors.toSet());
+		List<Passenger> fullPassengers; 
+		
+		/*
+		 * Need to get passengers with
+		 * Hit Details
+		 * 	Hit View Status
+		 * 	Hit Makers
+		 * 	Hit Category
+		 * 	User Groups
+		 * Documents
+		 * Flight	
+		 * */
+		if (!passengerIds.isEmpty()) {
+			fullPassengers = passengerRepository.getPriorityVettingListPassengers(passengerIds);
+		} else {
+			fullPassengers = Collections.emptyList();
+		}
+		
+		for (Passenger passenger : fullPassengers) {
 
 			CaseVo caseVo = new CaseVo();
 			int highPrioHitCount = 0;

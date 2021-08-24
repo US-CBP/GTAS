@@ -111,4 +111,26 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 
 	@Query("Select p from Passenger p left join fetch p.bags where p.id in :passengerIds and p.flight.id = :flightId")
     Set<Passenger> getDocumentsByPaxIdFlightId(@Param("passengerIds")Set<Long> passengerIds, @Param("flightId")Long flightId);
+
+	/*
+	 * Need to get passengers with
+	 * Hit Details
+	 * 	Hit View Status
+	 * 	Hit Maker
+	 *   Hit Category
+	 * 	  User Groups
+	 * Documents
+	 * Flight	
+	 * */
+	@Query("SELECT p FROM Passenger p " + 
+			" JOIN FETCH p.dataRetentionStatus " +
+			" JOIN FETCH p.flight " + 
+			" LEFT JOIN FETCH p.documents " + 
+			" JOIN FETCH p.hitDetails hd " + 
+			" JOIN FETCH hd.hitViewStatus " +
+			" JOIN FETCH hd.hitMaker hm" +
+			" JOIN FETCH hm.hitCategory hc" +
+			" JOIN FETCH hc.userGroups " +
+			" WHERE p.id in :passengerIds")
+	List<Passenger> getPriorityVettingListPassengers(@Param("passengerIds") Set<Long> passengerIds);
 }
