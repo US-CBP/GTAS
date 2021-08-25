@@ -46,6 +46,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 	}
 
 	@Override
+	@Transactional
 	@PVLRequestAuditFirstArgRequest
 	public PriorityVettingListDTO generateDtoFromRequest(PriorityVettingListRequest request, String userId) {
 		Set<UserGroup> userGroups = userService.fetchUserGroups(userId);
@@ -59,7 +60,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		List<CaseVo> caseVOS = new ArrayList<>();
 		
 		Set<Long> passengerIds = immutablePair.getRight().stream().map(p -> p.getId()).collect(Collectors.toSet());
-		List<Passenger> fullPassengers; 
+		Set<Passenger> fullPassengers; 
 		
 		/*
 		 * Need to get passengers with
@@ -74,7 +75,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		if (!passengerIds.isEmpty()) {
 			fullPassengers = passengerRepository.getPriorityVettingListPassengers(passengerIds);
 		} else {
-			fullPassengers = Collections.emptyList();
+			fullPassengers = Collections.emptySet();
 		}
 		
 		for (Passenger passenger : fullPassengers) {

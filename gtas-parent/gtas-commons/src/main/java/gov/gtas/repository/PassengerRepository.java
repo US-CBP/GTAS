@@ -132,5 +132,5 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 			" JOIN FETCH hm.hitCategory hc" +
 			" JOIN FETCH hc.userGroups " +
 			" WHERE p.id in :passengerIds")
-	List<Passenger> getPriorityVettingListPassengers(@Param("passengerIds") Set<Long> passengerIds);
+	Set<Passenger> getPriorityVettingListPassengers(@Param("passengerIds") Set<Long> passengerIds);
 }
