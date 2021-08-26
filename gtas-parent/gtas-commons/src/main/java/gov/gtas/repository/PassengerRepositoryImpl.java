@@ -51,6 +51,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	@Transactional
 	public Pair<Long, List<Long>> priorityVettingListQuery(PriorityVettingListRequest dto,
 			Set<UserGroup> userGroupSet, String userId) {
+		long start = System.nanoTime();
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -61,9 +62,12 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		q.select(pax.get("id")).where(rootQueryPredicate.toArray(new Predicate[] {})).distinct(true);
 		TypedQuery<Long> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), false);
 		List<Long> results = typedQuery.getResultList();
+		logger.info("Sort query in... {}.", (System.nanoTime() - start) / 1000000);
 
 		// COUNT QUERY - a version of root query without pagination and a count distinct
 		// on pax id
+		start = System.nanoTime();
+
 		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 		Root<Passenger> paxCount = countQuery.from(Passenger.class);
 		List<Predicate> countQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, countQuery,
@@ -72,6 +76,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		TypedQuery<Long> typedCountQuery = em.createQuery(countQuery);
 		Optional<Long> countResult = typedCountQuery.getResultList().stream().findFirst();
 		Long passengerCount = countResult.orElse(0L);
+		logger.info("Count query in... {}.", (System.nanoTime() - start) / 1000000);
 
 		return new ImmutablePair<>(passengerCount, results);
 	}
