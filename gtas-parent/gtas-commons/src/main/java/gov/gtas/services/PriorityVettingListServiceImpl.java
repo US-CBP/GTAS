@@ -55,7 +55,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 	public PriorityVettingListDTO generateDtoFromRequest(PriorityVettingListRequest request, String userId) {
 		long start = System.nanoTime();
 		Set<UserGroup> userGroups = userService.fetchUserGroups(userId);
-		logger.info("Usergroups found in.", (System.nanoTime() - start) / 1000000);
+		logger.info("Usergroups found in {}.", (System.nanoTime() - start) / 1000000);
 
 		if (request == null) {
 			return new PriorityVettingListDTO(new ArrayList<>());
@@ -63,7 +63,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		start = System.nanoTime();
 		Pair<Long, List<Passenger>> immutablePair = passengerRepository.priorityVettingListQuery(request, userGroups,
 				userId);
-		logger.info("PVL Query found in.", (System.nanoTime() - start) / 1000000);
+		logger.info("PVL Query found in {}.", (System.nanoTime() - start) / 1000000);
 
 		List<CaseVo> caseVOS = new ArrayList<>();
 		
@@ -87,7 +87,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		} else {
 			fullPassengers = Collections.emptySet();
 		}
-		logger.info("Passenger hydration in.", (System.nanoTime() - start) / 1000000);
+		logger.info("Passenger hydration in {}.", (System.nanoTime() - start) / 1000000);
 
 		for (Passenger passenger : fullPassengers) {
 
