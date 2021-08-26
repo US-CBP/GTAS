@@ -58,7 +58,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		CriteriaQuery<Long> q = cb.createQuery(Long.class);
 		Root<Passenger> pax = q.from(Passenger.class);
 		List<Predicate> rootQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, q, pax, userId);
-		q.select(pax.get("id")).where(rootQueryPredicate.toArray(new Predicate[] {})).groupBy(pax.get("id"));
+		q.select(pax.get("id")).where(rootQueryPredicate.toArray(new Predicate[] {})).distinct(true);
 		TypedQuery<Long> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), false);
 		List<Long> results = typedQuery.getResultList();
 
