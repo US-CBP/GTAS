@@ -49,18 +49,18 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	@SuppressWarnings("DuplicatedCode")
 	@Override
 	@Transactional
-	public Pair<Long, List<Passenger>> priorityVettingListQuery(PriorityVettingListRequest dto,
+	public Pair<Long, List<Long>> priorityVettingListQuery(PriorityVettingListRequest dto,
 			Set<UserGroup> userGroupSet, String userId) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		// ROOT QUERY
-		CriteriaQuery<Passenger> q = cb.createQuery(Passenger.class);
+		CriteriaQuery<Long> q = cb.createQuery(Long.class);
 		Root<Passenger> pax = q.from(Passenger.class);
 		List<Predicate> rootQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, q, pax, userId);
-		q.select(pax).where(rootQueryPredicate.toArray(new Predicate[] {})).groupBy(pax.get("id"));
-		TypedQuery<Passenger> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), false);
-		List<Passenger> results = typedQuery.getResultList();
+		q.select(pax.get("id")).where(rootQueryPredicate.toArray(new Predicate[] {})).groupBy(pax.get("id"));
+		TypedQuery<Long> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), false);
+		List<Long> results = typedQuery.getResultList();
 
 		// COUNT QUERY - a version of root query without pagination and a count distinct
 		// on pax id

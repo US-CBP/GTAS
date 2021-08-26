@@ -61,13 +61,13 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			return new PriorityVettingListDTO(new ArrayList<>());
 		}
 		start = System.nanoTime();
-		Pair<Long, List<Passenger>> immutablePair = passengerRepository.priorityVettingListQuery(request, userGroups,
+		Pair<Long, List<Long>> immutablePair = passengerRepository.priorityVettingListQuery(request, userGroups,
 				userId);
 		logger.info("PVL Query found in {}.", (System.nanoTime() - start) / 1000000);
 
 		List<CaseVo> caseVOS = new ArrayList<>();
 		
-		Set<Long> passengerIds = immutablePair.getRight().stream().map(p -> p.getId()).collect(Collectors.toSet());
+		Set<Long> passengerIds = new HashSet<>(immutablePair.getRight());
 		Set<Passenger> fullPassengers; 
 		
 		/*
