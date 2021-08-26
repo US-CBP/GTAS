@@ -20,6 +20,8 @@ import gov.gtas.services.dto.PriorityVettingListRequest;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.passenger.CaseVo;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class PriorityVettingListServiceImpl implements PriorityVettingListService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PriorityVettingListServiceImpl.class);
 
 	private final UserService userService;
 
@@ -49,14 +53,18 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 	@Transactional
 	@PVLRequestAuditFirstArgRequest
 	public PriorityVettingListDTO generateDtoFromRequest(PriorityVettingListRequest request, String userId) {
+		long start = System.nanoTime();
 		Set<UserGroup> userGroups = userService.fetchUserGroups(userId);
+		logger.info("Usergroups found in.", (System.nanoTime() - start) / 1000000);
 
 		if (request == null) {
 			return new PriorityVettingListDTO(new ArrayList<>());
 		}
-
+		start = System.nanoTime();
 		Pair<Long, List<Passenger>> immutablePair = passengerRepository.priorityVettingListQuery(request, userGroups,
 				userId);
+		logger.info("PVL Query found in.", (System.nanoTime() - start) / 1000000);
+
 		List<CaseVo> caseVOS = new ArrayList<>();
 		
 		Set<Long> passengerIds = immutablePair.getRight().stream().map(p -> p.getId()).collect(Collectors.toSet());
@@ -72,12 +80,15 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		 * Documents
 		 * Flight	
 		 * */
+		start = System.nanoTime();
+
 		if (!passengerIds.isEmpty()) {
 			fullPassengers = passengerRepository.getPriorityVettingListPassengers(passengerIds);
 		} else {
 			fullPassengers = Collections.emptySet();
 		}
-		
+		logger.info("Passenger hydration in.", (System.nanoTime() - start) / 1000000);
+
 		for (Passenger passenger : fullPassengers) {
 
 			CaseVo caseVo = new CaseVo();
