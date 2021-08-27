@@ -27,6 +27,8 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,29 +58,23 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		// ROOT QUERY
-		CriteriaQuery<Long> q = cb.createQuery(Long.class);
+		CriteriaQuery<PvlCriteraResult> q = cb.createQuery(PvlCriteraResult.class);
 		Root<Passenger> pax = q.from(Passenger.class);
 		List<Predicate> rootQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, q, pax, userId);
-		q.select(pax.get("id")).where(rootQueryPredicate.toArray(new Predicate[] {})).distinct(true);
-		TypedQuery<Long> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), false);
-		List<Long> results = typedQuery.getResultList();
+		q.multiselect(pax.get("id"), cb.countDistinct(pax.get("id"))).where(rootQueryPredicate.toArray(new Predicate[] {})).groupBy(pax.get("id"));
+		TypedQuery<PvlCriteraResult> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), false);
+		List<PvlCriteraResult> results = typedQuery.getResultList();
 		logger.info("Sort query in... {}.", (System.nanoTime() - start) / 1000000);
-
-		// COUNT QUERY - a version of root query without pagination and a count distinct
-		// on pax id
-		start = System.nanoTime();
-
-		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-		Root<Passenger> paxCount = countQuery.from(Passenger.class);
-		List<Predicate> countQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, countQuery,
-				paxCount, userId);
-		countQuery.select(cb.countDistinct(paxCount.get("id"))).where(countQueryPredicate.toArray(new Predicate[] {}));
-		TypedQuery<Long> typedCountQuery = em.createQuery(countQuery);
-		Optional<Long> countResult = typedCountQuery.getResultList().stream().findFirst();
-		Long passengerCount = countResult.orElse(0L);
-		logger.info("Count query in... {}.", (System.nanoTime() - start) / 1000000);
-
-		return new ImmutablePair<>(passengerCount, results);
+		if (results.isEmpty()) {
+			return new ImmutablePair<>(0L, null);
+		} else {
+			Long count = 0L;
+			List<Long>passengerIds = new ArrayList<>();
+			for (PvlCriteraResult pCriteraResult : results) {
+				passengerIds.add(pCriteraResult.getId());
+			} 
+			return new ImmutablePair<>(count, passengerIds);
+		}
 	}
 
 	private <T> List<Predicate> joinAndCreateHitViewPredicates(PriorityVettingListRequest dto,
