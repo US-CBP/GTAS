@@ -15,7 +15,6 @@ import gov.gtas.services.dto.RuleCatFilterCheckbox;
 import gov.gtas.services.dto.SortOptionsDto;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 import javax.persistence.EntityManager;
@@ -27,8 +26,6 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.hibernate.criterion.Projection;
-import org.hibernate.criterion.Projections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -83,17 +80,20 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		Join<Passenger, Flight> flight = pax.join("flight", JoinType.INNER);
 		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = flight.join("mutableFlightDetails",
 				JoinType.INNER);
-		Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.INNER);
-		Join<Flight, FlightCountDownView> flightCountDownViewJoin = flight.join("flightCountDownView", JoinType.INNER);
-		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.INNER);
 		Join<Passenger, HitDetail> hitDetails = pax.join("hitDetails", JoinType.INNER);
-		Join<PassengerNote ,Passenger> passengerNote = pax.join("notes", JoinType.LEFT);
-		Join<NoteType, PassengerNote> passengerNoteType = passengerNote.join("noteType", JoinType.LEFT);
 		Join<HitDetail, HitViewStatus> hitViewJoin = hitDetails.join("hitViewStatus", JoinType.INNER);
 		Join<HitDetail, HitMaker> hitMakerJoin = hitDetails.join("hitMaker", JoinType.INNER);
 		Join<HitMaker, HitCategory> hitCategoryJoin = hitMakerJoin.join("hitCategory", JoinType.INNER);
-		Join<HitMaker, User> hitMakerUserJoin = hitMakerJoin.join("author", JoinType.INNER);
+		
+		
+		// Lazy instantiate joins whenever possible to alleviate query load.
+		Join<Passenger, HitsSummary> hits = null; 
+		Join<Flight, FlightCountDownView> flightCountDownViewJoin = null;
+		Join<Passenger, PassengerDetails> paxDetailsJoin = null;
+		Join<HitMaker, User> hitMakerUserJoin = null;
+		
 		// **** PREDICATES ****
+		
 		List<Predicate> queryPredicates = new ArrayList<>();
 		// TIME UP TO -30 MINUTE PREDICATE
 		/*
@@ -112,7 +112,8 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 			for (NoteType nt : noteTypes) {
 				types.add(nt.getType());
 			}
-
+			Join<PassengerNote ,Passenger> passengerNote = pax.join("notes", JoinType.LEFT);
+			Join<NoteType, PassengerNote> passengerNoteType = passengerNote.join("noteType", JoinType.LEFT);
 			Predicate noteTypesIn = cb.in(passengerNoteType.get("type")).value(types);
 			queryPredicates.add(noteTypesIn);
 		}
@@ -143,6 +144,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		queryPredicates.add(hitViewStatus);
 
 		if (dto.getMyRulesOnly() != null && dto.getMyRulesOnly()) {
+			hitMakerUserJoin = hitMakerJoin.join("author", JoinType.INNER);
 			Predicate authorOnly = cb.equal(hitMakerUserJoin.get("userId"), userId);
 			queryPredicates.add(authorOnly);
 		}
@@ -164,6 +166,9 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		}
 		// LAST NAME PREDICATE
 		if (StringUtils.isNotBlank(dto.getLastName())) {
+			if (paxDetailsJoin == null) {
+				paxDetailsJoin =  pax.join("passengerDetails", JoinType.INNER);
+			}
 			String likeString = String.format("%%%s%%", dto.getLastName().toUpperCase());
 			queryPredicates.add(cb.like(paxDetailsJoin.get("lastName"), likeString));
 		}
@@ -228,16 +233,25 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 				if (isFlightColumn(column)) {
 					orderByItem.add(flight.get(column));
 				} else if (column.equals("onRuleHitList")) {
+					if (hits == null) {
+						hits = pax.join("hits", JoinType.INNER);
+					}
 					orderByItem.add(hits.get("ruleHitCount"));
 					orderByItem.add(hits.get("graphHitCount"));
 					orderByItem.add(hits.get("manualHitCount"));
 				} else if (column.equals("onWatchList")) {
+					if (hits == null) {
+						hits = pax.join("hits", JoinType.INNER);
+					}
 					orderByItem.add(hits.get("watchListHitCount"));
 					orderByItem.add(hits.get("partialHitCount"));
 				} else if ("eta".equalsIgnoreCase(column)) {
 					orderByItem.add(mutableFlightDetailsJoin.get("eta"));
 					// !!!!! THIS COVERS THE ELSE STATEMENT !!!!!
 				} else if ("countdown".equalsIgnoreCase(column)) {
+					if (flightCountDownViewJoin == null) {
+						flightCountDownViewJoin = flight.join("flightCountDownView", JoinType.INNER);
+					}
 					orderByItem.add(flightCountDownViewJoin.get("countDownTimer"));
 				} else if ("highPriorityRuleCatId".equalsIgnoreCase(column)) {
 					orderByItem.add(hitCategoryJoin.get("severity"));
@@ -246,6 +260,9 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 				} else if ("status".equalsIgnoreCase(column) || "action".equalsIgnoreCase(column)) {
 					orderByItem.add(hitViewJoin.get("hitViewStatusEnum"));
 				} else if (!"documentNumber".equalsIgnoreCase(column)) {
+					if (paxDetailsJoin == null) {
+						paxDetailsJoin =  pax.join("passengerDetails", JoinType.INNER);
+					}
 					orderByItem.add(paxDetailsJoin.get(column));
 				}
 				if (sort.getDir().equals("desc")) {
