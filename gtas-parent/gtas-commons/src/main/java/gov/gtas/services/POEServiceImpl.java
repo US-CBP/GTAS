@@ -24,6 +24,8 @@ import gov.gtas.services.dto.POETileServiceRequest;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.passenger.DocumentVo;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +37,8 @@ import java.util.stream.StreamSupport;
 
 @Component
 public class POEServiceImpl implements POEService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(POEServiceImpl.class);
 
     @Resource
     private POELaneRepository poeLaneRepository;
@@ -50,9 +54,13 @@ public class POEServiceImpl implements POEService {
 
     @Override
     public Set<LookoutStatusDTO> getAllTiles(String userId, POETileServiceRequest request) {
-        Set<LookoutStatusDTO> tiles = new HashSet<LookoutStatusDTO>();
+	   long start = System.nanoTime();
+
+       Set<LookoutStatusDTO> tiles = new HashSet<>();
        Set<HitViewStatus> hvs = hitViewStatusRepository.findAllWithNotClosedAndWithinRange(userService.fetchUserGroups(userId),request.getEtaStart(), request.getEtaEnd());
+	   logger.info("Tile in... {} m/s.", (System.nanoTime() - start) / 1000000);
        //TODO: consider indexes
+	   start = System.nanoTime();
        Set<HitViewStatus> hvsToBeUpdated = new HashSet<HitViewStatus>();
        for(HitViewStatus hv : hvs ){
            if(lookoutIsMissedOrInactiveAndUpdate(hv)){
@@ -63,6 +71,8 @@ public class POEServiceImpl implements POEService {
        if(!hvsToBeUpdated.isEmpty()){
            hitViewStatusRepository.saveAll(hvsToBeUpdated);
        }
+	   logger.info("Rest in... {} m/s.", (System.nanoTime() - start) / 1000000);
+
         return tiles;
     }
 
