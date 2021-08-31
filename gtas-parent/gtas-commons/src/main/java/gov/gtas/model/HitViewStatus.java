@@ -21,7 +21,7 @@ import java.util.Objects;
 //hvs_query_index uses 
 @Table(name = "hit_view_status", 
 indexes = {
-		@Index(name = "hvs_query_eta ", columnList = "full_utc_eta_timestamp)"),
+		@Index(name = "hvs_query_eta ", columnList = "full_utc_eta_timestamp"),
 		@Index(name= "hvs_query_etd", columnList = "full_utc_etd_timestamp")
 },
 		uniqueConstraints = {
