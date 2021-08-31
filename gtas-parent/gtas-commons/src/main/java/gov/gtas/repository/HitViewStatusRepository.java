@@ -27,7 +27,7 @@ public interface HitViewStatusRepository extends CrudRepository<HitViewStatus, L
     @Query("select count(distinct hvs.passenger) from HitViewStatus hvs "
     		+ "left join hvs.passenger p left join p.flight f "
     		+ "where hvs.userGroup in :userGroups AND hvs.hitViewStatusEnum = 'NEW' "
-    		+ "and f.mutableFlightDetails.etd > :etdDate and f.mutableFlightDetails.eta < :etaDate " +
+    		+ "and hvs.etd > :etdDate and hvs.eta < :etaDate " +
             "and not hvs.hitDetail.hitType = 'PWL' ")
     int getHitViewCountWithNewStatus(@Param("userGroups") Set<UserGroup> userGroups, @Param("etdDate")Date etdDate, @Param("etaDate") Date etaDate);
 
@@ -44,10 +44,10 @@ public interface HitViewStatusRepository extends CrudRepository<HitViewStatus, L
     + " where hvs.userGroup in :userGroups "
     + " AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED' "
     + " AND NOT hvs.lookoutStatusEnum = 'DEMOTED' "
-    + " AND (f.direction = 'O' AND mf.etd BETWEEN :startDate AND :endDate) "
-    + " OR (f.direction ='I' AND mf.eta BETWEEN :startDate AND :endDate ) "
-    + " OR (f.direction = 'A' AND (mf.etd BETWEEN :startDate AND :endDate "
-    + " OR mf.eta BETWEEN :startDate AND :endDate))")
+    + " AND (hvs.direction = 'O' AND hvs.etd BETWEEN :startDate AND :endDate) "
+    + " OR (hvs.direction ='I' AND hvs.eta BETWEEN :startDate AND :endDate ) "
+    + " OR (hvs.direction = 'A' AND (hvs.etd BETWEEN :startDate AND :endDate "
+    + " OR hvs.eta BETWEEN :startDate AND :endDate))")
     Set<HitViewStatus> findAllWithNotClosedAndWithinRange(@Param("userGroups") Set<UserGroup> userGroups,
                                                            @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }

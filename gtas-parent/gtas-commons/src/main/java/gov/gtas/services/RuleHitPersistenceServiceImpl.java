@@ -221,9 +221,10 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 							poeStatus = LookoutStatusEnum.ACTIVE;
 						}
 						for (UserGroup ug : hitMakerMappedByPrimaryKey.get(hd.getHitMakerId())) {
-
+							MutableFlightDetails mfd = hd.getPassenger().getFlight().getMutableFlightDetails();
+							Flight f = hd.getPassenger().getFlight();
 							HitViewStatus hitViewStatus = new HitViewStatus(hd, ug, HitViewStatusEnum.NEW,
-									hd.getPassenger(), poeStatus);
+									hd.getPassenger(), poeStatus, mfd.getEta(), mfd.getEtd(), f.getDirection());
 							hd.getHitViewStatus().add(hitViewStatus);
 						}
 					}
