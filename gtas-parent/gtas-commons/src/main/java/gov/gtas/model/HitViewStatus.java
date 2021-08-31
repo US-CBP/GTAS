@@ -53,6 +53,10 @@ public class HitViewStatus extends BaseEntityAudit {
 		this.passenger = passenger;
 		this.lookoutStatusEnum = lookoutStatusEnum;
 	}
+	
+	@Column(updatable = false, insertable = false,name = "hv_passenger_id",  columnDefinition = "bigint unsigned" )
+	@JsonIgnore
+	private Long passengerId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hv_passenger_id", referencedColumnName = "id", nullable = false)
@@ -202,4 +206,20 @@ public class HitViewStatus extends BaseEntityAudit {
 	public void setPassenger(Passenger passenger) {
 		this.passenger = passenger;
 	}
+
+	/**
+	 * @return the passengerId
+	 */
+	public Long getPassengerId() {
+		return passengerId;
+	}
+
+	/**
+	 * @param passengerId the passengerId to set
+	 */
+	public void setPassengerId(Long passengerId) {
+		this.passengerId = passengerId;
+	}
+	
+	
 }

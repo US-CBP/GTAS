@@ -66,8 +66,8 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		logger.info("PVL Query found in {}.", (System.nanoTime() - start) / 1000000);
 
 		List<CaseVo> caseVOS = new ArrayList<>();
-		
-		Set<Long> passengerIds = new HashSet<>(immutablePair.getRight());
+	
+		Set<Long> passengerIds = immutablePair.getRight() == null? new HashSet<>() : new HashSet<>(immutablePair.getRight());
 		Set<Passenger> fullPassengers; 
 		
 		/*

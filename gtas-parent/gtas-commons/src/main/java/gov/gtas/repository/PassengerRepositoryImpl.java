@@ -14,7 +14,6 @@ import gov.gtas.services.dto.PriorityVettingListRequest;
 import gov.gtas.services.dto.RuleCatFilterCheckbox;
 import gov.gtas.services.dto.SortOptionsDto;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import javax.persistence.EntityManager;
@@ -26,13 +25,12 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-
-import static java.time.ZoneOffset.UTC;
 
 @Component
 public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
@@ -56,9 +54,9 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 
 		// ROOT QUERY
 		CriteriaQuery<PvlCriteraResult> q = cb.createQuery(PvlCriteraResult.class);
-		Root<Passenger> pax = q.from(Passenger.class);
-		List<Predicate> rootQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, q, pax, userId);
-		q.multiselect(pax.get("id"), cb.countDistinct(pax.get("id"))).where(rootQueryPredicate.toArray(new Predicate[] {})).groupBy(pax.get("id"));
+		Root<HitViewStatus> hvs = q.from(HitViewStatus.class);
+		List<Predicate> rootQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, q, hvs, userId);
+		q.multiselect(hvs.get("passengerId"), cb.countDistinct(hvs.get("passengerId"))).where(rootQueryPredicate.toArray(new Predicate[] {})).groupBy(hvs.get("passengerId"));
 		TypedQuery<PvlCriteraResult> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), false);
 		List<PvlCriteraResult> results = typedQuery.getResultList();
 		logger.info("Sort query in... {}.", (System.nanoTime() - start) / 1000000);
@@ -75,13 +73,11 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	}
 
 	private <T> List<Predicate> joinAndCreateHitViewPredicates(PriorityVettingListRequest dto,
-			Set<UserGroup> userGroupSet, CriteriaBuilder cb, CriteriaQuery<T> q, Root<Passenger> pax, String userId) {
+			Set<UserGroup> userGroupSet, CriteriaBuilder cb, CriteriaQuery<T> q, Root<HitViewStatus> hvs, String userId) {
 		// ROOT QUERY JOINS
+		Join<HitViewStatus, Passenger> pax = hvs.join("passenger", JoinType.INNER);
 		Join<Passenger, Flight> flight = pax.join("flight", JoinType.INNER);
-		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = flight.join("mutableFlightDetails",
-				JoinType.INNER);
-		Join<Passenger, HitDetail> hitDetails = pax.join("hitDetails", JoinType.INNER);
-		Join<HitDetail, HitViewStatus> hitViewJoin = hitDetails.join("hitViewStatus", JoinType.INNER);
+		Join<HitViewStatus, HitDetail> hitDetails = hvs.join("hitDetail", JoinType.INNER);
 		Join<HitDetail, HitMaker> hitMakerJoin = hitDetails.join("hitMaker", JoinType.INNER);
 		Join<HitMaker, HitCategory> hitCategoryJoin = hitMakerJoin.join("hitCategory", JoinType.INNER);
 		
@@ -140,7 +136,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 			hitViewStatusEnumSet.add(HitViewStatusEnum.NOT_USED);
 		}
 
-		Predicate hitViewStatus = cb.in(hitViewJoin.get("hitViewStatusEnum")).value(hitViewStatusEnumSet);
+		Predicate hitViewStatus = cb.in(hvs.get("hitViewStatusEnum")).value(hitViewStatusEnumSet);
 		queryPredicates.add(hitViewStatus);
 
 		if (dto.getMyRulesOnly() != null && dto.getMyRulesOnly()) {
@@ -174,7 +170,9 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		}
 
 		// USER GROUP PREDICATE
-		Predicate userGroupFilter = cb.and(cb.in(hitCategoryJoin.joinSet("userGroups")).value(userGroupSet));
+	//	Predicate userGroupFilter = cb.and(cb.in(hvs.joinSet("userGroup")).value(userGroupSet));
+		Predicate userGroupFilter = cb.and(cb.in(hvs.get("userGroup")).value(userGroupSet));
+
 		queryPredicates.add(userGroupFilter);
 
 		// FLIGHT PREDICATES
@@ -198,29 +196,31 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		 * value as '0', so we check for that here to mean 'any direction'
 		 */
 		if (StringUtils.isNotBlank(dto.getDirection()) && !"A".equals(dto.getDirection())) {
-			queryPredicates.add(cb.equal(flight.get("direction"), dto.getDirection()));
+			queryPredicates.add(cb.equal(hvs.get("direction"), dto.getDirection()));
 		}
 
 		// ETA / ETD PREDICATE - REQUIRED!!
 		if (dto.getEtaEnd() == null || dto.getEtaStart() == null) {
 			throw new RuntimeException("Flight dates required!");
 		} else {
-			Expression<Date> relevantDate = cb.selectCase(flight.get("direction"))
-					.when("O", mutableFlightDetailsJoin.get("etd")).when("I", mutableFlightDetailsJoin.get("eta"))
-					.otherwise(mutableFlightDetailsJoin.get("eta")).as(Date.class);
-			Predicate startPredicate = cb.greaterThanOrEqualTo(relevantDate, dto.getEtaStart());
-			Predicate endPredicate = cb.lessThanOrEqualTo(relevantDate, dto.getEtaEnd());
-			Predicate relevantDateExpression = cb.and(startPredicate, endPredicate);
-			queryPredicates.add(relevantDateExpression);
-
-
-			LocalDateTime ldt = LocalDateTime.ofInstant(dto.getEtaStart().toInstant(), UTC);
-			ldt = ldt.minusDays(pvlHitCreationOffset);
-			Date etaMinusFour = Date.from(ldt.atZone(UTC).toInstant());
-
-			//HIT DETAIL PREDICATE FOR PERMANCE
-			Predicate hitDetailPredicate = cb.and(cb.greaterThan(hitDetails.get("createdDate").as(Date.class), etaMinusFour));
-			queryPredicates.add(hitDetailPredicate);
+	
+			Predicate inboundFlight = cb.equal(hvs.get("direction"), "I");
+			Predicate startPredicate = cb.greaterThanOrEqualTo(hvs.get("eta").as(Date.class), dto.getEtaStart());
+			Predicate endPredicate = cb.lessThanOrEqualTo(hvs.get("eta").as(Date.class), dto.getEtaEnd());
+			Predicate relevantDateExpressionInbound = cb.and(inboundFlight, startPredicate, endPredicate);
+			
+			Predicate outboundFlight = cb.equal(hvs.get("direction"), "O");
+			Predicate startPredicateEtd = cb.greaterThanOrEqualTo(hvs.get("etd").as(Date.class), dto.getEtaStart());
+			Predicate endPredicateEtd = cb.lessThanOrEqualTo(hvs.get("etd").as(Date.class), dto.getEtaEnd());
+			Predicate relevantDateExpressionOutBound = cb.and(outboundFlight, startPredicateEtd, endPredicateEtd);
+			
+			Predicate anyFlight = cb.equal(hvs.get("direction"), "A");
+			Predicate startPredicateAny = cb.greaterThanOrEqualTo(hvs.get("etd").as(Date.class), dto.getEtaStart());
+			Predicate endPredicateEtdAny = cb.lessThanOrEqualTo(hvs.get("etd").as(Date.class), dto.getEtaEnd());
+			Predicate relevantDateExpressionAny = cb.and(anyFlight, startPredicateAny, endPredicateEtdAny);
+		
+			Predicate allFlights = cb.or(relevantDateExpressionInbound, relevantDateExpressionOutBound, relevantDateExpressionAny);
+			queryPredicates.add(allFlights);
 
 		}
 
@@ -246,7 +246,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					orderByItem.add(hits.get("watchListHitCount"));
 					orderByItem.add(hits.get("partialHitCount"));
 				} else if ("eta".equalsIgnoreCase(column)) {
-					orderByItem.add(mutableFlightDetailsJoin.get("eta"));
+					orderByItem.add(hvs.get("eta"));
 					// !!!!! THIS COVERS THE ELSE STATEMENT !!!!!
 				} else if ("countdown".equalsIgnoreCase(column)) {
 					if (flightCountDownViewJoin == null) {
@@ -258,7 +258,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 				} else if ("flightNumber".equalsIgnoreCase(column)) {
 					orderByItem.add(flight.get("flightNumber"));
 				} else if ("status".equalsIgnoreCase(column) || "action".equalsIgnoreCase(column)) {
-					orderByItem.add(hitViewJoin.get("hitViewStatusEnum"));
+					orderByItem.add(hvs.get("hitViewStatusEnum"));
 				} else if (!"documentNumber".equalsIgnoreCase(column)) {
 					if (paxDetailsJoin == null) {
 						paxDetailsJoin =  pax.join("passengerDetails", JoinType.INNER);
