@@ -151,7 +151,8 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 		
 	@Transactional
 	@Query(" SELECT hd.id, hvs from HitDetail hd join hd.hitViewStatus hvs "
-			+ " join fetch hvs.passenger" 
+			+ " join fetch hvs.passenger p" 
+			+ " join fetch p.flight "
 			+ " join fetch hvs.userGroup "
 			+ " where hd.id in :hdIds ")
 	List<Object[]> getHdIdAndHitViewStatus(@Param("hdIds") Set<Long> hdIds);	
