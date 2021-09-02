@@ -1,6 +1,5 @@
 package gov.gtas.repository;
 
-import java.util.List;
 
 public class PvlCriteraResult {
 	Long id;
