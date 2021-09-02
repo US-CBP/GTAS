@@ -63,12 +63,12 @@ public class HitViewStatus extends BaseEntityAudit {
 	@JsonIgnore
 	private Passenger passenger;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "hv_hit_detail", referencedColumnName = "id", nullable = false)
 	@JsonIgnore
 	private HitDetail hitDetail;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch =FetchType.EAGER)
 	@JoinColumn(name = "hv_user_group", referencedColumnName = "id", nullable = false)
 	@JsonIgnore
 	private UserGroup userGroup;
