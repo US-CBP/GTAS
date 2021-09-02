@@ -8,6 +8,8 @@ package gov.gtas.repository;
 import java.util.List;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -125,12 +127,31 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 	@Query("SELECT p FROM Passenger p " + 
 			" JOIN FETCH p.dataRetentionStatus " +
 			" JOIN FETCH p.flight " + 
-			" LEFT JOIN FETCH p.documents " + 
-			" JOIN FETCH p.hitDetails hd " + 
-			" JOIN FETCH hd.hitViewStatus " +
-			" JOIN FETCH hd.hitMaker hm" +
-			" JOIN FETCH hm.hitCategory hc" +
-			" JOIN FETCH hc.userGroups " +
 			" WHERE p.id in :passengerIds")
 	Set<Passenger> getPriorityVettingListPassengers(@Param("passengerIds") Set<Long> passengerIds);
+	
+	@Transactional
+	@Query(" SELECT passenger.id, hd from Passenger passenger join passenger.hitDetails hd "
+			+ ""
+			+ "where passenger.id in :passengerIds ")
+	List<Object[]> getHitDetailsAndPaxId(@Param("passengerIds") Set<Long> passengerIds);
+	
+	@Transactional
+	@Query(" SELECT passenger.id, d from Passenger passenger join passenger.documents d where passenger.id in :passengerIds ")
+	List<Object[]> getPaxIdAndDocuments(@Param("passengerIds") Set<Long> passengerIds);
+	
+	@Transactional
+	@Query(" SELECT hd.id, cat from "
+			+ "HitDetail hd " 
+			+ " join hd.hitMaker hm "
+			+ " join  hm.hitCategory cat "
+			+ " join fetch cat.userGroups "
+			+ " where hd.id in :hdIds ")
+	List<Object[]> getHitIdAndCategory(@Param("hdIds") Set<Long> hdIds);
+		
+	@Transactional
+	@Query(" SELECT hd.id, hvs from HitDetail hd join hd.hitViewStatus hvs "
+			+ " join fetch hvs.userGroup "
+			+ " where hd.id in :hdIds ")
+	List<Object[]> getHdIdAndHitViewStatus(@Param("hdIds") Set<Long> hdIds);	
 }

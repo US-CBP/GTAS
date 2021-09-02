@@ -13,12 +13,14 @@ import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.*;
 import gov.gtas.model.dto.ViewUpdateDTo;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.HitViewStatusRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.dto.PriorityVettingListDTO;
 import gov.gtas.services.dto.PriorityVettingListRequest;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.passenger.CaseVo;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +70,6 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		List<CaseVo> caseVOS = new ArrayList<>();
 	
 		Set<Long> passengerIds = immutablePair.getRight() == null? new HashSet<>() : new HashSet<>(immutablePair.getRight());
-		Set<Passenger> fullPassengers; 
 		
 		/*
 		 * Need to get passengers with
@@ -81,13 +82,31 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 		 * Flight	
 		 * */
 		start = System.nanoTime();
+		Set<Passenger> fullPassengers; 
+		Map<Long, Set<HitDetail>> paxIdKeyHitDetailSetValueMap = new HashMap<>();
+		Set<Long> hitDetailIdSet;
+		Map<Long, HitCategory> hitCategoryMap = new HashMap<>();
+		Map<Long, Set<HitViewStatus>> paxIdKeyHitViewSetValueMap = new HashMap<>();
+		Map<Long, Set<Document>> paxIdKeyDocumentValueMap = new HashMap<>();
 
 		if (!passengerIds.isEmpty()) {
 			fullPassengers = passengerRepository.getPriorityVettingListPassengers(passengerIds);
+			paxIdKeyHitDetailSetValueMap = createHitDetailMap(passengerIds);
+			hitDetailIdSet = new HashSet<>();
+			Collection<Set<HitDetail>> values =	paxIdKeyHitDetailSetValueMap.values();
+			for (Set<HitDetail> hdSet : values) {
+				Set<Long> hdIds = hdSet.stream().map(hd -> hd.getId()).collect(Collectors.toSet());
+				hitDetailIdSet.addAll(hdIds);
+			}
+			hitCategoryMap = getHitCategories(hitDetailIdSet);
+			paxIdKeyHitViewSetValueMap = createHitViewMap(hitDetailIdSet);
+			paxIdKeyDocumentValueMap = createDocumentMap(passengerIds);
+			
 		} else {
 			fullPassengers = Collections.emptySet();
 		}
 		logger.info("Passenger hydration in {}.", (System.nanoTime() - start) / 1000000);
+		final Map<Long, HitCategory> finalHitCategoryMap = new HashMap<>(hitCategoryMap);
 
 		for (Passenger passenger : fullPassengers) {
 
@@ -99,16 +118,19 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			List<HitViewStatusEnum> hvsEnums = new ArrayList<>();
 			List<HitViewStatus> hvsToUpdate = new ArrayList<>();
 			String lookoutStatus = new String();
-
-			List<HitDetail> hitDetailsList = new ArrayList<>(passenger.getHitDetails());
+			Set<HitDetail> hitDetailSet = paxIdKeyHitDetailSetValueMap.get(passenger.getId());
+			List<HitDetail> hitDetailsList = new ArrayList<>(hitDetailSet);
 			hitDetailsList.sort((hd1, hd2) -> {
-				HitSeverityEnum hse1 = hd1.getHitMaker().getHitCategory().getSeverity();
-				HitSeverityEnum hse2 = hd2.getHitMaker().getHitCategory().getSeverity();
+				HitCategory hd1Category1 = finalHitCategoryMap.get(hd1.getId());
+				HitCategory hd1Category2 = finalHitCategoryMap.get(hd2.getId());
+				HitSeverityEnum hse1 = hd1Category1.getSeverity();
+				HitSeverityEnum hse2 = hd1Category2.getSeverity();
 				return Integer.compare(hse1.ordinal(), hse2.ordinal());
 			});
 			for (HitDetail hd : hitDetailsList) {
-				Set<UserGroup> hitUserGroups = hd.getHitMaker().getHitCategory().getUserGroups();
-				String severity = hd.getHitMaker().getHitCategory().getSeverity().toString();
+				HitCategory hdHitCategory = finalHitCategoryMap.get(hd.getId());
+				Set<UserGroup> hitUserGroups =hdHitCategory.getUserGroups();
+				String severity = hdHitCategory.getSeverity().toString();
 				if (!Collections.disjoint(hitUserGroups, userGroups)) {
 					String title = hd.getTitle();
 
@@ -116,7 +138,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 						title = "MASKED";
 					}
 
-          hitDetailsTitles.add(severity + " | " + hd.getHitMaker().getHitCategory().getName() + " | " + title
+          hitDetailsTitles.add(severity + " | " + hdHitCategory.getName() + " | " + title
 							+ " | " + hd.getHitEnum().getDisplayName());
 					switch(severity){
 						case "Top":
@@ -130,7 +152,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 							break;
 					}
 
-					for (HitViewStatus hvs : hd.getHitViewStatus()) {
+					for (HitViewStatus hvs : paxIdKeyHitViewSetValueMap.get(hd.getId())) {
 						if (userGroups.contains(hvs.getUserGroup())) {
 							hvsEnums.add(hvs.getHitViewStatusEnum());
 							if(poeService.lookoutIsMissedOrInactiveAndUpdate(hvs)){
@@ -144,11 +166,15 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 
 			String docNum = "";
 			String docType = "";
-			for (Document doc : passenger.getDocuments()) {
-				docNum = doc.getDocumentNumber();
-				docType = doc.getDocumentType();
-				if ("P".equalsIgnoreCase(doc.getDocumentType())) {
-					break;
+			Set<Document> docList =  paxIdKeyDocumentValueMap.get(passenger.getId());
+			// Some passengers will not have documents.
+			if (docList != null) {
+				for (Document doc : paxIdKeyDocumentValueMap.get(passenger.getId())) {
+					docNum = doc.getDocumentNumber();
+					docType = doc.getDocumentType();
+					if ("P".equalsIgnoreCase(doc.getDocumentType())) {
+						break;
+					}
 				}
 			}
 
@@ -184,6 +210,71 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			caseVOS.add(caseVo);
 		}
 		return new PriorityVettingListDTO(caseVOS);
+	}
+	
+	private Map<Long, HitCategory> getHitCategories(Set<Long> hitDetailIdSet) {
+		Map<Long, HitCategory> objectMap = new HashMap<>();
+		List<Object[]> oList = passengerRepository.getHitIdAndCategory(hitDetailIdSet);
+		for (Object[] answerKey : oList) {
+			Long hcId = (Long) answerKey[0];
+			HitCategory object = (HitCategory) answerKey[1];
+			objectMap.put(hcId, object);
+		}
+		return objectMap;
+	}
+
+	public Map<Long, Set<HitDetail>> createHitDetailMap(Set<Long> passengerIds) {
+		Map<Long, Set<HitDetail>> objectMap = new HashMap<>();
+		List<Object[]> oList = passengerRepository.getHitDetailsAndPaxId(passengerIds);
+		for (Object[] answerKey : oList) {
+			Long passengerId = (Long) answerKey[0];
+			HitDetail object = (HitDetail) answerKey[1];
+			processObject(object, objectMap, passengerId);
+		}
+		return objectMap;
+	}
+
+	public Map<Long, Set<Document>> createDocumentMap(Set<Long> passengerIds) {
+		Map<Long, Set<Document>> objectMap = new HashMap<>();
+		List<Object[]> oList = passengerRepository.getPaxIdAndDocuments(passengerIds);
+		for (Object[] answerKey : oList) {
+			Long passengerId = (Long) answerKey[0];
+			Document object = (Document) answerKey[1];
+			processObject(object, objectMap, passengerId);
+		}
+		return objectMap;
+	}
+	
+	public Map<Long, Set<HitCategory>> createHitCategoryMap(Set<Long> passengerIds) {
+		Map<Long, Set<HitCategory>> objectMap = new HashMap<>();
+		List<Object[]> oList = passengerRepository.getPaxIdAndDocuments(passengerIds);
+		for (Object[] answerKey : oList) {
+			Long passengerId = (Long) answerKey[0];
+			HitCategory object = (HitCategory) answerKey[1];
+			processObject(object, objectMap, passengerId);
+		}
+		return objectMap;
+	}
+
+	public Map<Long, Set<HitViewStatus>> createHitViewMap(Set<Long> hdIds) {
+		Map<Long, Set<HitViewStatus>> objectMap = new HashMap<>();
+		List<Object[]> oList = passengerRepository.getHdIdAndHitViewStatus(hdIds);
+		for (Object[] answerKey : oList) {
+			Long hdId = (Long) answerKey[0];
+			HitViewStatus object = (HitViewStatus) answerKey[1];
+			processObject(object, objectMap, hdId);
+		}
+		return objectMap;
+	}
+	
+	private static <T> void processObject(T type, Map<Long, Set<T>> map, Long passengerId) {
+		if (map.containsKey(passengerId)) {
+			map.get(passengerId).add(type);
+		} else {
+			Set<T> objectHashSet = new HashSet<>(map.values().size() * 50);
+			objectHashSet.add(type);
+			map.put(passengerId, objectHashSet);
+		}
 	}
 
 	@Override
