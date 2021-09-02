@@ -52,6 +52,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 	}
 
 	@Override
+	@Transactional
 	@PVLRequestAuditFirstArgRequest
 	public PriorityVettingListDTO generateDtoFromRequest(PriorityVettingListRequest request, String userId) {
 		long start = System.nanoTime();
