@@ -109,7 +109,7 @@ services:
     environment:
       KB_LIST: UDR Knowledge Base_1,WL_Knowledge_Base_3,WL_Knowledge_Base_2,WL_Knowledge_Base_1
       INBOUND_QUEUE: RULE_RUNNER_1
-      OUTBOUND_QUEUE: GTAS_RULE_ENSGINE
+      OUTBOUND_QUEUE: GTAS_RULE_ENGINE
       ACTIVE_MQ_HOST: activemq
     restart: unless-stopped
     secrets:
