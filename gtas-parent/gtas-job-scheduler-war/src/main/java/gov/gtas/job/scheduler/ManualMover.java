@@ -75,22 +75,22 @@ public class ManualMover {
 			try {
 				producer.close();
 			} catch (Exception ex) {
-				logger.error("", ex);
+				logger.error("Producer failed to close!", ex);
 			}
 			try {
 				consumer.close();
 			} catch (Exception ex) {
-				logger.error("", ex);
+				logger.error("Consumer failed to close!", ex);
 			}
 			try {
 				session.close();
 			} catch (Exception ex) {
-				logger.error("", ex);
+				logger.error("Session failed to close!", ex);
 			}
 			try {
 				connection.close();
 			} catch (Exception ex) {
-				logger.error("", ex);
+				logger.error("Connection failed to close!", ex);
 			}
 			lock.unlock();
 		}
