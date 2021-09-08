@@ -3,7 +3,7 @@
  * 
  * Please see LICENSE.txt for details.
  */
-package gov.gtas.job.scheduler;
+package gov.gtas.services;
 
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
@@ -12,6 +12,7 @@ package gov.gtas.job.scheduler;
  */
 import static gov.gtas.constant.GtasSecurityConstants.GTAS_APPLICATION_USERID;
 
+import gov.gtas.additional.jms.AdditionalProcessingMessageSender;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
@@ -24,13 +25,10 @@ import gov.gtas.parsers.omni.jms.OmniMessageSender;
 import gov.gtas.parsers.omni.model.OmniMessageType;
 import gov.gtas.parsers.omni.model.OmniPassenger;
 import gov.gtas.repository.MessageStatusRepository;
-import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.summary.MessageAction;
 import gov.gtas.summary.MessageSummaryList;
-import gov.gtas.services.jms.AdditionalProcessingMessageSender;
 import gov.gtas.summary.SummaryMetaData;
-import gov.gtas.svc.TargetingService;
 
 
 import java.io.File;
@@ -71,9 +69,6 @@ public class LoaderScheduler {
 			return stringValue;
 		}
 	}
-
-	@Autowired
-	private TargetingService targetingService;
 
 	@Autowired
 	private Loader loader;
@@ -120,13 +115,13 @@ public class LoaderScheduler {
 	@Value("${additional.processing.enabled.passenger}")
 	private Boolean additionalChecks;
 
-	@Autowired
+	@Autowired(required=false)
 	private AdditionalProcessingMessageSender apms;
 
 	@Value("${additional.checks.queue}")
 	private String addChecks;
 
-	void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) {
+	public void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) {
 		logger.debug(String.format("Processing %s", f.getAbsolutePath()));
 		ProcessedMessages processedMessages = loader.processMessage(f, primeFlightKey);
 		int[] result = processedMessages.getProcessed();

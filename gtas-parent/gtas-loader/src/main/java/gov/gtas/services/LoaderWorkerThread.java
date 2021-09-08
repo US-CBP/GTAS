@@ -3,7 +3,7 @@
  *
  * Please see LICENSE.txt for details.
  */
-package gov.gtas.job.scheduler;
+package gov.gtas.services;
 
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
@@ -135,7 +135,7 @@ public class LoaderWorkerThread implements Runnable {
 		return deleted;
 	}
 
-	synchronized boolean addMessageToQueue(MessageWrapper mw) throws InterruptedException {
+	public synchronized boolean addMessageToQueue(MessageWrapper mw) throws InterruptedException {
 		if (this.queue == null) {
 			// Handling data race condition. Add message to queue called AFTER
 			// destroyQueue() which causes

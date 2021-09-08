@@ -4,9 +4,8 @@
  *
  * Please see LICENSE.txt for details.
  */
-package gov.gtas.job.scheduler;
+package gov.gtas.services;
 
-import gov.gtas.services.LoaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +29,7 @@ public class Utils {
 	 * @return the new File object
 	 * @throws LoaderException
 	 */
-	static File moveToDirectory(String target, File file) throws LoaderException {
+	public static File moveToDirectory(String target, File file) throws LoaderException {
 		if (notExists(target) || file == null) {
 			return file;
 		}
@@ -53,7 +52,7 @@ public class Utils {
 		return targetPath.toFile();
 	}
 
-	static File writeToDisk(String fileName, String fileText, String target) {
+	public static File writeToDisk(String fileName, String fileText, String target) {
 		if (notExists(fileName) || notExists(target)) {
 			return null;
 		}

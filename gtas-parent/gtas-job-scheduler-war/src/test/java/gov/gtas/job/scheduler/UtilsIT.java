@@ -24,8 +24,9 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import gov.gtas.job.scheduler.Utils;
 import gov.gtas.services.LoaderException;
+import gov.gtas.services.Utils;
+
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -174,7 +175,7 @@ public class UtilsIT {
 	// for integration tests. Calling Utils.moveToDir directly will require manual
 	// cleanup.
 	private File moveToDirWrapper(String target, File file) throws LoaderException {
-		File movedFile = Utils.moveToDirectory(target, file);
+		File movedFile = gov.gtas.services.Utils.moveToDirectory(target, file);
 		movedFile.deleteOnExit();
 		return movedFile;
 	}

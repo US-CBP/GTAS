@@ -5,7 +5,7 @@
  *
  */
 
-package gov.gtas.services.jms;
+package gov.gtas.additional.jms;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,11 +1,11 @@
 package gov.gtas.services;
 
+import gov.gtas.additional.jms.AdditionalProcessingMessageSender;
 import gov.gtas.enumtype.MessageType;
 import gov.gtas.model.*;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.dto.MappedGroups;
 import gov.gtas.summary.*;
-import gov.gtas.services.jms.AdditionalProcessingMessageSender;
 import gov.gtas.util.LobUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

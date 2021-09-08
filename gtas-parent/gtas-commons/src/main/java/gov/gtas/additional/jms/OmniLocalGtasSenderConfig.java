@@ -4,7 +4,7 @@
  *  Please see LICENSE.txt for details.
  *
  */
-package gov.gtas.services.jms;
+package gov.gtas.additional.jms;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.context.annotation.Bean;

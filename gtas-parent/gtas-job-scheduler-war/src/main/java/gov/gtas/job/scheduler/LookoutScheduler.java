@@ -1,5 +1,6 @@
 package gov.gtas.job.scheduler;
 
+import gov.gtas.additional.jms.AdditionalProcessingMessageSender;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.LookoutRequest;
 import gov.gtas.model.NoteType;
@@ -8,7 +9,6 @@ import gov.gtas.repository.LookoutRequestRepository;
 import gov.gtas.services.AdditionalProcessingService;
 import gov.gtas.services.NoteTypeService;
 import gov.gtas.services.PassengerNoteService;
-import gov.gtas.services.jms.AdditionalProcessingMessageSender;
 import gov.gtas.summary.MessageSummary;
 import gov.gtas.summary.MessageSummaryList;
 import gov.gtas.summary.PassengerHit;

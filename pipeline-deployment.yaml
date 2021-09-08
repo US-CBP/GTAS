@@ -63,7 +63,7 @@ services:
     environment:
       DB_HOST: ${MARIADB_HOST}
       JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
-      JAVA_OPTS: "-Xms24g -Xmx24g -Duser.timezone=UTC -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
+      JAVA_OPTS: "-Xms12g -Xmx12g -Duser.timezone=UTC -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
       EMAIL_SENDER_USERNAME: ${EMAIL_SENDER_USERNAME}
       EMAIL_SENDER_PASSWORD: ${EMAIL_SENDER_PASSWORD}
       EMAIL_SENDER_HOST: ${EMAIL_SENDER_HOST}
@@ -82,7 +82,25 @@ services:
       placement:
         constraints:
           - node.labels.role == backend
-
+  gtas-loader-1:
+    labels:
+      kompose.image-pull-policy: "Always"
+      kompose.service.type: "LoadBalancer"
+    environment:
+      MARIA_URL: ${MARIADB_HOST}
+      DB_HOST: ${MARIADB_HOST}
+      MARIA_USERNAME: ${MARIADB_USER}
+      MARIA_PASSWORD: ${MARIADB_PASS}      
+      JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
+      JAVA_OPTS: "-Xms12g -Xmx12g -Duser.timezone=UTC -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
+      ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
+      ADDITIONAL_PROCESSING_RAW: "true"
+      ADDITIONAL_PROCESSING_RULES: "true"
+      ACTIVE_MQ_HOST: "activemq"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.role == backend
   activemq:
     labels:
       kompose.image-pull-policy: "Always"

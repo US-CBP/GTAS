@@ -215,8 +215,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-                <module>gtas-parsers</module>
-		        <module>gtas-loader</module> 
+                <module>gtas-parsers</module> 
 		        <module>gtas-commons</module>
 		        <module>gtas-rulesvc</module> 
 		        <module>gtas-webapp</module>
@@ -224,6 +223,8 @@
 		        <module>gtas-job-scheduler-war</module>
 		        <module>gtas-pdi-parser</module>
 		        <module>gtas-rule-runner</module>
+		        <module>gtas-loader</module>
+				<module>gtas-loader-runner</module>
 		    </modules>
 		</profile>
 		
