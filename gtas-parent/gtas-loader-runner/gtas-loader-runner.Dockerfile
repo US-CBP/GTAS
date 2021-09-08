@@ -18,5 +18,5 @@ ENV RUN_ARGUMENTS ' --loader.name=${LOADER_NAME} \
                     --spring.datasource.password=${MARIA_PASSWORD} \
                     --spring.activemq.broker-url=tcp://${ACTIVE_MQ_HOST}:61616'
 
-
+RUN mkdir -p /usr/local/gtas-data/processed /usr/local/gtas-data/error /usr/local/gtas-data/input /usr/local/gtas-data/working
 CMD mvn spring-boot:run -Dspring-boot.run.arguments="$RUN_ARGUMENTS" -Dspring-boot.run.jvmArguments="$JVM_ARGS"
