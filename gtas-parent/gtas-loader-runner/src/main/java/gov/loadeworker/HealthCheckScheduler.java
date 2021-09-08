@@ -14,6 +14,7 @@ import gov.gtas.services.LoaderQueueThreadManager;
 
 @Component
 public class HealthCheckScheduler {
+	
 	private static final Logger logger = LoggerFactory.getLogger(HealthCheckScheduler.class);
 	
 	private final LoaderWorkerRepository loaderWorkerRepository;
@@ -27,7 +28,7 @@ public class HealthCheckScheduler {
 	}
 
 
-	@Scheduled(fixedDelayString = "30000", initialDelayString = "5000")
+	@Scheduled(fixedDelayString = "${loader.delay}", initialDelayString = "15000")
 	public void jobScheduling() {
 		int bucketCount = LoaderQueueThreadManager.getBucketBucket().size();
 		LoaderWorker lw = loaderWorkerRepository.findByWorkerName(name);

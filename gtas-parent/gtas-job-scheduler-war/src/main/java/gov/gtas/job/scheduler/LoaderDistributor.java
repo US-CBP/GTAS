@@ -68,7 +68,7 @@ public class LoaderDistributor {
 		this.manualMover = new ManualMover(brokerUrl, distributorQueue);
 	}
 
-	@Scheduled(fixedDelayString = "30000", initialDelayString = "30000")
+	@Scheduled(fixedDelayString = "${loader.purge.check}", initialDelayString = "30000")
 	public void checkAllQueues() {
 		logger.info("Starting queue check job");
 		// Check all queues to retrieve stale messages
@@ -93,8 +93,8 @@ public class LoaderDistributor {
 		}
 		logger.info("Queue check job completed");
 	}
-	//TODO: Tweak fixed delay string
-	@Scheduled(fixedDelayString = "30000", initialDelayString = "30000")
+
+	@Scheduled(fixedDelayString = "${loader.register.check}", initialDelayString = "30000")
 	public void loaderHealthChecks() {
 		logger.info("Starting register/deregister job");
 		Date now = new Date();
