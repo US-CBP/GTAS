@@ -18,8 +18,24 @@ public class POETileServiceRequest {
     private Date etaStart;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etaEnd;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private String poeAirport;
 
-    public Date getEtaStart() {
+	/**
+	 * @return the poeAirport
+	 */
+	public String getPoeAirport() {
+		return poeAirport;
+	}
+
+	/**
+	 * @param poeAirport the poeAirport to set
+	 */
+	public void setPoeAirport(String poeAirport) {
+		this.poeAirport = poeAirport;
+	}
+
+	public Date getEtaStart() {
         return etaStart;
     }
 
