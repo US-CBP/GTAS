@@ -60,15 +60,15 @@ public class POEServiceImpl implements POEService {
 
 		Set<LookoutStatusDTO> tiles = new HashSet<>();
 		Set<HitViewStatus> hvs = new HashSet<>();
-		if (StringUtils.isNotBlank(request.getPoeAirport())) {
+		if ("All".equalsIgnoreCase(request.getPoeAirport()) 
+				|| StringUtils.isBlank(request.getPoeAirport())) {
+			hvs = hitViewStatusRepository.findAllWithNotClosedAndWithinRange(
+					userService.fetchUserGroups(userId), request.getEtaStart(), request.getEtaEnd());
+			logger.info("Tile in... {} m/s.", (System.nanoTime() - start) / 1000000);		
+		} else {
 			hvs = hitViewStatusRepository.findAllWithNotClosedAndWithinRangeWithAirport(
 					userService.fetchUserGroups(userId), request.getEtaStart(), request.getEtaEnd(), request.getPoeAirport());
 			logger.info("Tile with airport filter in... {} m/s.", (System.nanoTime() - start) / 1000000);
-
-		} else {
-			hvs = hitViewStatusRepository.findAllWithNotClosedAndWithinRange(
-					userService.fetchUserGroups(userId), request.getEtaStart(), request.getEtaEnd());
-			logger.info("Tile in... {} m/s.", (System.nanoTime() - start) / 1000000);
 		}
 
 	   start = System.nanoTime();
