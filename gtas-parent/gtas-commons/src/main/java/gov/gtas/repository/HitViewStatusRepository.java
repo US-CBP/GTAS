@@ -41,13 +41,10 @@ public interface HitViewStatusRepository extends CrudRepository<HitViewStatus, L
             "left join fetch f.mutableFlightDetails mf " +
             "left join fetch p.hitDetails hd " +
             "left join fetch hd.hitMaker hm "
-    + " where hvs.userGroup in :userGroups "
-    + " AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED' "
-    + " AND NOT hvs.lookoutStatusEnum = 'DEMOTED' "
-    + " AND (f.origin= :airport AND hvs.direction = 'O' AND hvs.etd BETWEEN :startDate AND :endDate) "
-    + " OR (f.destination = :airport AND hvs.direction ='I' AND hvs.eta BETWEEN :startDate AND :endDate ) "
-    + " OR ((f.destination =:airport OR f.origin= :airport) AND hvs.direction = 'A' AND (hvs.etd BETWEEN :startDate AND :endDate "
-    + " OR hvs.eta BETWEEN :startDate AND :endDate))")
+    + " where (hvs.userGroup in :userGroups AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED'  AND NOT hvs.lookoutStatusEnum = 'DEMOTED' and f.origin= :airport AND hvs.direction = 'O' AND hvs.etd BETWEEN :startDate AND :endDate) "
+    + " OR (hvs.userGroup in :userGroups AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED'  AND NOT hvs.lookoutStatusEnum = 'DEMOTED' and  f.destination = :airport AND hvs.direction ='I' AND hvs.eta BETWEEN :startDate AND :endDate ) "
+    + " OR (hvs.userGroup in :userGroups AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED'  AND NOT hvs.lookoutStatusEnum = 'DEMOTED' and  (f.destination =:airport OR f.origin= :airport) AND hvs.direction = 'A' AND (hvs.etd BETWEEN :startDate AND :endDate "
+    + " OR hvs.eta BETWEEN :startDate AND :endDate and hvs.userGroup in :userGroups AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED'  AND NOT hvs.lookoutStatusEnum = 'DEMOTED' ))")
     Set<HitViewStatus> findAllWithNotClosedAndWithinRangeWithAirport(@Param("userGroups") Set<UserGroup> userGroups,
                                                            @Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("airport") String airport);
     @Transactional
@@ -60,13 +57,10 @@ public interface HitViewStatusRepository extends CrudRepository<HitViewStatus, L
             "left join fetch f.mutableFlightDetails mf " +
             "left join fetch p.hitDetails hd " +
             "left join fetch hd.hitMaker hm "
-    + " where hvs.userGroup in :userGroups "
-    + " AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED' "
-    + " AND NOT hvs.lookoutStatusEnum = 'DEMOTED' "
-    + " AND (hvs.direction = 'O' AND hvs.etd BETWEEN :startDate AND :endDate) "
-    + " OR (hvs.direction ='I' AND hvs.eta BETWEEN :startDate AND :endDate ) "
-    + " OR (hvs.direction = 'A' AND (hvs.etd BETWEEN :startDate AND :endDate "
-    + " OR hvs.eta BETWEEN :startDate AND :endDate))")
+    + " where (hvs.userGroup in :userGroups AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED'  AND NOT hvs.lookoutStatusEnum = 'DEMOTED' and  hvs.direction = 'O' AND hvs.etd BETWEEN :startDate AND :endDate) "
+    + " OR (hvs.userGroup in :userGroups AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED'  AND NOT hvs.lookoutStatusEnum = 'DEMOTED' and  hvs.userGroup in :userGroups AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED'  AND NOT hvs.lookoutStatusEnum = 'DEMOTED' and  hvs.direction ='I' AND hvs.eta BETWEEN :startDate AND :endDate ) "
+    + " OR (hvs.userGroup in :userGroups AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED'  AND NOT hvs.lookoutStatusEnum = 'DEMOTED' and  hvs.direction = 'A' AND (hvs.etd BETWEEN :startDate AND :endDate "
+    + " OR hvs.eta BETWEEN :startDate AND :endDate and hvs.userGroup in :userGroups AND NOT hvs.lookoutStatusEnum = 'NOTPROMOTED'  AND NOT hvs.lookoutStatusEnum = 'DEMOTED' ))")
     Set<HitViewStatus> findAllWithNotClosedAndWithinRange(@Param("userGroups") Set<UserGroup> userGroups,
                                                            @Param("startDate") Date startDate, @Param("endDate") Date endDate);
     
