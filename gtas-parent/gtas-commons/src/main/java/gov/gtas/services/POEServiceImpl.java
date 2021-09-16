@@ -23,6 +23,8 @@ import gov.gtas.services.dto.LookoutStatusDTO;
 import gov.gtas.services.dto.POETileServiceRequest;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.passenger.DocumentVo;
+
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,10 +58,19 @@ public class POEServiceImpl implements POEService {
     public Set<LookoutStatusDTO> getAllTiles(String userId, POETileServiceRequest request) {
 	   long start = System.nanoTime();
 
-       Set<LookoutStatusDTO> tiles = new HashSet<>();
-       Set<HitViewStatus> hvs = hitViewStatusRepository.findAllWithNotClosedAndWithinRange(userService.fetchUserGroups(userId),request.getEtaStart(), request.getEtaEnd());
-	   logger.info("Tile in... {} m/s.", (System.nanoTime() - start) / 1000000);
-       //TODO: consider indexes
+		Set<LookoutStatusDTO> tiles = new HashSet<>();
+		Set<HitViewStatus> hvs = new HashSet<>();
+		if ("All".equalsIgnoreCase(request.getPoeAirport()) 
+				|| StringUtils.isBlank(request.getPoeAirport())) {
+			hvs = hitViewStatusRepository.findAllWithNotClosedAndWithinRange(
+					userService.fetchUserGroups(userId), request.getEtaStart(), request.getEtaEnd());
+			logger.info("Tile in... {} m/s.", (System.nanoTime() - start) / 1000000);		
+		} else {
+			hvs = hitViewStatusRepository.findAllWithNotClosedAndWithinRangeWithAirport(
+					userService.fetchUserGroups(userId), request.getEtaStart(), request.getEtaEnd(), request.getPoeAirport());
+			logger.info("Tile with airport filter in... {} m/s.", (System.nanoTime() - start) / 1000000);
+		}
+
 	   start = System.nanoTime();
        Set<HitViewStatus> hvsToBeUpdated = new HashSet<HitViewStatus>();
        for(HitViewStatus hv : hvs ){
