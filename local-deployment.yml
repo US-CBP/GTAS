@@ -12,7 +12,9 @@ services:
       ADDITIONAL_PROCESSING_RAW: "false"
       ADDITIONAL_PROCESSING_RULES: "false"
       UI_ADDRESS: localhost
-      DB_HOST: mariadb      
+      DB_HOST: mariadb 
+      JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
+      JAVA_OPTS: "-Xms1g -Xmx2g -Duser.timezone=UTC -Dlogging.level.org.springframework=TRACE"
   rule-runner:
     environment:
       MARIA_URL: mariadb
@@ -21,7 +23,7 @@ services:
       MARIA_PASSWORD: admin
       UI_ADDRESS: localhost
       ACTIVE_MQ_HOST: activemq
-      JVM_ARGS: -Xms1g -Xmx4g
+      JVM_ARGS: -Xms1g -Xmx2g
   activemq:
     ports:
       - 61616:61616
@@ -38,6 +40,7 @@ services:
       ADDITIONAL_PROCESSING_RAW: "false"
       ADDITIONAL_PROCESSING_RULES: "false"
       UI_ADDRESS: localhost
+      JVM_ARGS: -Xms1g -Xmx2g
     volumes:
       - type: bind
         source: ./gtas-data
@@ -48,17 +51,29 @@ services:
       NEO4J_AUTH: "neo4j/admin"
       NEO4J_dbms_connector_bolt_advertised__address: localhost:7687
       NEO4J_dbms_connectors_default__advertised__address: localhost
+      NEO4J_dbms_memory_heap_initial__size: 1G
+      NEO4J_dbms_memory_heap_max__size: 2G
   gtas-loader-1:
     environment:
       MARIA_URL: mariadb
       MARIA_USERNAME: root
       MARIA_PASSWORD: admin
       ACTIVE_MQ_HOST: activemq
+      JVM_ARGS: -Xms1g -Xmx2g
     volumes:
       - type: bind
         source: ./gtas-data
         target: /usr/local/gtas-data
-        consistency: consistent      
+        consistency: consistent
+  etl-job:
+    environment:
+      JVM_ARGS: -Xms1g -Xmx2g
+  logstash:
+    environment:
+      LS_JAVA_OPTS: "-Xmx1g -Xms1g"
+  elasticsearch:
+    environment:
+      ES_JAVA_OPTS: "-Xms1g -Xmx2g"
 secrets:
   kibana-crt:
     file: ./gtas-parent/gtas-commons/certs/kibana.crt
