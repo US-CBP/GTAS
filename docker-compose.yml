@@ -130,6 +130,8 @@ services:
   gtas-loader-1:
     container_name: loader-runner-1
     image: wcogtas/gtas-loader-runner:dev
+    deploy:
+      replicas: 1
     build:
       context: .
       dockerfile: ./gtas-parent/gtas-loader-runner/gtas-loader-runner.Dockerfile

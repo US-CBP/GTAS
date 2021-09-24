@@ -1,6 +1,13 @@
 version: '3.7'
 services:
   web-app:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          memory: 2G
     environment:
       EMAIL_SENDER_USERNAME: "some.user@somedomain.com"
       EMAIL_SENDER_PASSWORD: "somepassword"
@@ -12,10 +19,15 @@ services:
       ADDITIONAL_PROCESSING_RAW: "false"
       ADDITIONAL_PROCESSING_RULES: "false"
       UI_ADDRESS: localhost
-      DB_HOST: mariadb 
-      JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
-      JAVA_OPTS: "-Xms1g -Xmx2g -Duser.timezone=UTC -Dlogging.level.org.springframework=TRACE"
+      DB_HOST: mariadb      
   rule-runner:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          memory: 1G
     environment:
       MARIA_URL: mariadb
       DB_HOST: mariadb
@@ -23,12 +35,25 @@ services:
       MARIA_PASSWORD: admin
       UI_ADDRESS: localhost
       ACTIVE_MQ_HOST: activemq
-      JVM_ARGS: -Xms1g -Xmx2g
   activemq:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 500M
+        reservations:
+          memory: 500M
     ports:
       - 61616:61616
       - 8161:8161      
   gtas-scheduler:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          memory: 1G
     environment:
       EMAIL_SENDER_USERNAME: "some.user@somedomain.com"
       EMAIL_SENDER_PASSWORD: "somepassword"
@@ -40,40 +65,81 @@ services:
       ADDITIONAL_PROCESSING_RAW: "false"
       ADDITIONAL_PROCESSING_RULES: "false"
       UI_ADDRESS: localhost
-      JVM_ARGS: -Xms1g -Xmx2g
     volumes:
       - type: bind
         source: ./gtas-data
         target: /usr/local/gtas-data
         consistency: consistent
   neo4j:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          memory: 1G
     environment:
       NEO4J_AUTH: "neo4j/admin"
       NEO4J_dbms_connector_bolt_advertised__address: localhost:7687
       NEO4J_dbms_connectors_default__advertised__address: localhost
-      NEO4J_dbms_memory_heap_initial__size: 1G
-      NEO4J_dbms_memory_heap_max__size: 2G
   gtas-loader-1:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          memory: 1G
     environment:
       MARIA_URL: mariadb
       MARIA_USERNAME: root
       MARIA_PASSWORD: admin
       ACTIVE_MQ_HOST: activemq
-      JVM_ARGS: -Xms1g -Xmx2g
     volumes:
       - type: bind
         source: ./gtas-data
         target: /usr/local/gtas-data
-        consistency: consistent
-  etl-job:
-    environment:
-      JVM_ARGS: -Xms1g -Xmx2g
-  logstash:
-    environment:
-      LS_JAVA_OPTS: "-Xmx1g -Xms1g"
+        consistency: consistent 
   elasticsearch:
-    environment:
-      ES_JAVA_OPTS: "-Xms1g -Xmx2g"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          memory: 2G
+  logstash:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          memory: 1G
+  kibana:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 500M
+        reservations:
+          memory: 500M
+  mariadb:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          memory: 2G
+  etl-job:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          memory: 1G
 secrets:
   kibana-crt:
     file: ./gtas-parent/gtas-commons/certs/kibana.crt
