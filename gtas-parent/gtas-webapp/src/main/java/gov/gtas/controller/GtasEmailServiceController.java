@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@ConditionalOnProperty(prefix = "enable.email.notification", name = "enabled")
+@ConditionalOnProperty(prefix = "enable.email.notification", name = "service")
 public class GtasEmailServiceController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GtasEmailServiceController.class);
