@@ -44,12 +44,12 @@ public class GtasEmailServiceController {
 	public ResponseEntity<?> sendEmail(@RequestBody EmailNotificationDTO emialInfo) {
 		
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		try {
-			notificationService.sendManualNotificationEmail(emialInfo.getTo(), emialInfo.getNote(), emialInfo.getPaxId(), userId);
-			return new ResponseEntity<>(OK);
-		} catch(Exception ex) {
-			LOGGER.error(format("Manual email notification from UserId (%s) to failed with the exception: %s", userId, ex.toString()));
-			return new ResponseEntity<>(BAD_REQUEST);
+		//try {
+		notificationService.sendManualNotificationEmail(emialInfo.getTo(), emialInfo.getNote(), emialInfo.getPaxId(), userId);
+		return new ResponseEntity<>(OK);
+		//} catch(Exception ex) {
+		//	LOGGER.error(format("Manual email notification from UserId (%s) to failed with the exception: %s", userId, ex.toString()));
+		//	return new ResponseEntity<>(BAD_REQUEST);
 		}
 	}
 
