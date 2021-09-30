@@ -41,7 +41,7 @@ public class GtasEmailServiceController {
 	
 	@Transactional
 	@PostMapping(value = "users/notify", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> sendEmail(@RequestBody EmailNotificationDTO emialInfo) {
+	public ResponseEntity<?> sendEmail(@RequestBody EmailNotificationDTO emialInfo) throws Exception  {
 		
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		//try {
