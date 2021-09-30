@@ -50,7 +50,7 @@ public class GtasEmailServiceController {
 		//} catch(Exception ex) {
 		//	LOGGER.error(format("Manual email notification from UserId (%s) to failed with the exception: %s", userId, ex.toString()));
 		//	return new ResponseEntity<>(BAD_REQUEST);
-		}
+		//}
 	}
 
 }
