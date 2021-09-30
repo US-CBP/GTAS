@@ -214,7 +214,10 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 			Predicate endPredicateEtd = cb.lessThanOrEqualTo(hvs.get("etd").as(Date.class), dto.getEtaEnd());
 			Predicate relevantDateExpressionOutBound = cb.and(outboundFlight, startPredicateEtd, endPredicateEtd);
 			
-			Predicate anyFlight = cb.equal(hvs.get("direction"), "A");
+			Set<String> otherDirections = new HashSet<>();
+			otherDirections.add("A");
+			otherDirections.add("C");
+			Predicate anyFlight = cb.in(hvs.get("direction")).value(otherDirections);
 			Predicate startPredicateAny = cb.greaterThanOrEqualTo(hvs.get("etd").as(Date.class), dto.getEtaStart());
 			Predicate endPredicateEtdAny = cb.lessThanOrEqualTo(hvs.get("etd").as(Date.class), dto.getEtaEnd());
 			Predicate relevantDateExpressionAny = cb.and(anyFlight, startPredicateAny, endPredicateEtdAny);
