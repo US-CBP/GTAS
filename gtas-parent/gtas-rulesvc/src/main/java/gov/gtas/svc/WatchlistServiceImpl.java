@@ -16,13 +16,12 @@ import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
+import gov.gtas.model.watchlist.json.WatchlistItemSpec;
 import gov.gtas.model.watchlist.json.WatchlistSpec;
 import gov.gtas.model.watchlist.json.validation.WatchlistValidationAdapter;
 import gov.gtas.services.watchlist.WatchlistPersistenceService;
 import gov.gtas.repository.KnowledgeBaseRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
-import gov.gtas.repository.watchlist.WatchlistRepository;
-import gov.gtas.services.watchlist.WatchlistPersistenceService;
 import gov.gtas.svc.util.WatchlistBuilder;
 import gov.gtas.svc.util.WatchlistServiceJsonResponseHelper;
 
@@ -85,8 +84,23 @@ public class WatchlistServiceImpl implements WatchlistService {
 
 	@Override
 	public JsonServiceResponse createUpdateDeleteWatchlistItems(String userId, WatchlistSpec wlToCreateUpdate,
-			Long catId) {
+			Long catId)  {
 		WatchlistValidationAdapter.validateWatchlistSpec(wlToCreateUpdate);
+		for (WatchlistItemSpec wlItemSpec : wlToCreateUpdate.getWatchlistItems()) {
+			String wlItemKey = wlItemSpec.getStringKey();
+			if (StringUtils.isNoneBlank(wlItemKey)) {
+				List<WatchlistItem> wlItemInDB = watchlistItemRepository.findWatchlistItemByKeyString(wlItemKey);
+				if (!wlItemInDB.isEmpty()) {
+					logger.error("Ignoring WL item, key id already exist in DATABASE");
+					return WatchlistServiceJsonResponseHelper.createResponse(false, "Duplicate Record", null,
+							StringUtils.EMPTY);
+				}
+			} else {
+				logger.error("Ignoring WL item, key id not present");
+			return WatchlistServiceJsonResponseHelper.createResponse(false, "Not able to make key", null,
+						StringUtils.EMPTY);
+			}
+		}
 		WatchlistBuilder bldr = new WatchlistBuilder(wlToCreateUpdate);
 		bldr.buildPersistenceLists();
 		final String wlName = bldr.getName();

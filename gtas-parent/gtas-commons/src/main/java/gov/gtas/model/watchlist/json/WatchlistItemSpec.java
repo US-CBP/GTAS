@@ -10,6 +10,8 @@ import java.io.Serializable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * The base query condition term.
  */
@@ -19,6 +21,9 @@ public class WatchlistItemSpec implements Serializable {
 	private Long id;
 	private String action;
 	private WatchlistTerm[] terms;
+	
+	@JsonIgnore
+	private String stringKey;
 
 	public WatchlistItemSpec() {
 	}
@@ -27,6 +32,20 @@ public class WatchlistItemSpec implements Serializable {
 		this.id = id;
 		this.action = action;
 		this.terms = terms;
+	}
+	
+	/**
+	 * @return the hashString
+	 */
+	public String getStringKey() {
+		return stringKey;
+	}
+
+	/**
+	 * @param stringKey the hashString to set
+	 */
+	public void setStringKey(String stringKey) {
+		this.stringKey = stringKey;
 	}
 
 	/**

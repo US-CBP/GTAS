@@ -204,18 +204,19 @@ public class WatchlistManagementController {
 	public ResponseEntity<?> addUpdatePaxWatchlist(@RequestBody WLRequest<PassengerWatchlistItemDto> request) {
 		List<PassengerWatchlistItemDto> wlItems = request.getWlItems();
 		List<JsonServiceResponse> results = new ArrayList<JsonServiceResponse>();
-
+		
 		for (PassengerWatchlistItemDto wlitem : wlItems) {
 			WatchlistSpec wlSpec = new WatchlistSpec("Passenger", "PASSENGER");
 			List<WatchlistTerm> terms = new ArrayList<WatchlistTerm>();
+			String hashString = wlitem.getFirstName() + wlitem.getLastName() + wlitem.getDob() + wlitem.getCategoryId();
 			terms.add(new WatchlistTerm("firstName", "string", wlitem.getFirstName()));
 			terms.add(new WatchlistTerm("lastName", "string", wlitem.getLastName()));
 			terms.add(new WatchlistTerm("dob", "date", wlitem.getDob()));
 			Long categoryId = Long.parseLong(wlitem.getCategoryId());
-
+				
 			WatchlistItemSpec wlItemSpec = new WatchlistItemSpec(request.getId(), request.getAction(),
 					terms.toArray(new WatchlistTerm[0]));
-
+			wlItemSpec.setStringKey(hashString);
 			wlSpec.getWatchlistItems().add(wlItemSpec);
 			JsonServiceResponse result = createUpdateWatchlist(wlSpec, categoryId);
 			results.add(result);
@@ -230,6 +231,7 @@ public class WatchlistManagementController {
 
 		for (DocumentWatchlistItemDto wlitem : wlItems) {
 			WatchlistSpec wlSpec = new WatchlistSpec("Document", "DOCUMENT");
+			String hashId = wlitem.getDocumentType() + wlitem.getDocumentNumber() + wlitem.getCategoryId();
 			List<WatchlistTerm> terms = new ArrayList<WatchlistTerm>();
 			terms.add(new WatchlistTerm("documentType", "string", wlitem.getDocumentType()));
 			terms.add(new WatchlistTerm("documentNumber", "string", wlitem.getDocumentNumber()));
@@ -238,7 +240,7 @@ public class WatchlistManagementController {
 
 			WatchlistItemSpec wlItemSpec = new WatchlistItemSpec(request.getId(), request.getAction(),
 					terms.toArray(new WatchlistTerm[0]));
-
+			wlItemSpec.setStringKey(hashId);
 			wlSpec.getWatchlistItems().add(wlItemSpec);
 
 			JsonServiceResponse result = createUpdateWatchlist(wlSpec, categoryId);
@@ -252,7 +254,7 @@ public class WatchlistManagementController {
 		validateInput(wlSpec);
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		JsonServiceResponse result = watchlistService.createUpdateDeleteWatchlistItems(userId, wlSpec, categoryId);
-		if (categoryId > 0) {
+		if (categoryId > 0 && (result.getStatus() != Status.FAILURE)) {
 			List<Long> ids = (List<Long>) result.getResult();
 			watchlistService.updateWatchlistItemCategory(categoryId, ids.get(0));
 		}

@@ -14,12 +14,15 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "wl_item")
+@Table(name = "wl_item", indexes = {
+		@Index(name = "wl_key_index", columnList= "KEY_STRING")	
+})
 public class WatchlistItem extends HitMaker {
 	private static final long serialVersionUID = 3593L;
 
@@ -40,7 +43,9 @@ public class WatchlistItem extends HitMaker {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ITM_WL_KB", referencedColumnName = "ID", nullable = true)
 	private KnowledgeBase knowledgeBase;
-
+	
+	@Column(name = "KEY_STRING")
+	private String keyString;
 	
 	public KnowledgeBase getKnowledgeBase() {
 		return knowledgeBase;
@@ -48,6 +53,22 @@ public class WatchlistItem extends HitMaker {
 
 	public void setKnowledgeBase(KnowledgeBase knowledgeBase) {
 		this.knowledgeBase = knowledgeBase;
+	}
+	
+	
+
+	/**
+	 * @return the wlHash
+	 */
+	public String getKeyString() {
+		return keyString;
+	}
+
+	/**
+	 * @param keyString the wlHash to set
+	 */
+	public void setKeyString(String keyString) {
+		this.keyString = keyString;
 	}
 
 	/**
@@ -97,18 +118,16 @@ public class WatchlistItem extends HitMaker {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.itemData);
+		return Objects.hash(this.itemData, this.getHitCategory());
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
-			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		final WatchlistItem other = (WatchlistItem) obj;
-		return Objects.equals(this.itemData, other.itemData);
+		return Objects.equals(this.itemData, other.itemData) && Objects.equals(this.getHitCategory(), other.getHitCategory());
 	}
 }
