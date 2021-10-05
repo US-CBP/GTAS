@@ -167,18 +167,15 @@ public class JPQLGenerator {
 				QueryTerm qt = (QueryTerm) qe;
 				if (qt.getEntity().equalsIgnoreCase(EntityEnum.PASSENGER.getEntityName()) &&
 					qt.getField().equalsIgnoreCase("passengerDetails.age")) {
-				
-					String replacementField = "passengerDetails.dob";			
-					String replacementType = "date";
-					qt.setField(replacementField);
-					qt.setType(replacementType);
-				
+					
 					//Handle UTC offsets.
 					LocalDateTime localDatetime = LocalDateTime.now();
 					localDatetime = localDatetime.minusMinutes(utcMinuteOffset);
 					
 					LocalDate localDate = localDatetime.toLocalDate(); 
 					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					String replacementField = "passengerDetails.dob";			
+					String replacementType = "date";
 					switch (qt.getOperator()) {
 						case LESS:
 							// Because dates are stored as the "greatest date" being the date in the future, 
@@ -188,6 +185,8 @@ public class JPQLGenerator {
 							LocalDate lessTime = localDate.minusYears(lessAge + 1);
 							String[] lessReplacementValue = new String[] {lessTime.format(formatter)};
 							qt.setValue(lessReplacementValue);	
+							qt.setField(replacementField);
+							qt.setType(replacementType);
 							break;
 						case LESS_OR_EQUAL:
 							// Because dates are stored as the "greatest date" being the date in the future, 
@@ -196,7 +195,9 @@ public class JPQLGenerator {
 							int lessEqualAge = Integer.parseInt(qt.getValue()[0]);
 							LocalDate lessEqualTime = localDate.minusYears(lessEqualAge + 1);
 							String[] lessEqualReplacementValue = new String[] {lessEqualTime.format(formatter)};
-							qt.setValue(lessEqualReplacementValue);							
+							qt.setValue(lessEqualReplacementValue);		
+							qt.setField(replacementField);
+							qt.setType(replacementType);
 							break;						
 						case GREATER_OR_EQUAL:
 							// Because dates are stored as the "greatest date" being the date in the future, 
@@ -206,6 +207,8 @@ public class JPQLGenerator {
 							LocalDate greaterOrEqualTime = localDate.minusYears(greaterOrEqualAge);
 							String[] greaterOrEqualVal = new String[] {greaterOrEqualTime.format(formatter)};
 							qt.setValue(greaterOrEqualVal);
+							qt.setField(replacementField);
+							qt.setType(replacementType);
 							break;
 						case GREATER:
 							// Because dates are stored as the "greatest date" being the date in the future, 
@@ -214,7 +217,9 @@ public class JPQLGenerator {
 							int greaterAge = Integer.parseInt(qt.getValue()[0]);
 							LocalDate greaterTime = localDate.minusYears(greaterAge);
 							String[] greaterValue = new String[] {greaterTime.format(formatter)};
-							qt.setValue(greaterValue);						
+							qt.setValue(greaterValue);			
+							qt.setField(replacementField);
+							qt.setType(replacementType);
 							break;				
 						case EQUAL:
 							int equalAge = Integer.parseInt(qt.getValue()[0]);
@@ -225,6 +230,8 @@ public class JPQLGenerator {
 							qt.setOperator(BETWEEN);
 							String[] replacementValueEqual = new String[] {equalAgeStart.format(formatter), equalAgeFinish.format(formatter)};
 							qt.setValue(replacementValueEqual);
+							qt.setField(replacementField);
+							qt.setType(replacementType);
 							break;
 						case NOT_EQUAL:
 							int notEqualAge = Integer.parseInt(qt.getValue()[0]);
@@ -235,6 +242,8 @@ public class JPQLGenerator {
 							qt.setOperator(NOT_BETWEEN);
 							String[] replacementValueNotEqual = new String[] {notEqualAgeStart.format(formatter), notEqualAgeFinish.format(formatter)};
 							qt.setValue(replacementValueNotEqual);
+							qt.setField(replacementField);
+							qt.setType(replacementType);
 							break;
 						default: 
 							String message = "No conversion from age to date for query operator of " + qt.getOperator();
