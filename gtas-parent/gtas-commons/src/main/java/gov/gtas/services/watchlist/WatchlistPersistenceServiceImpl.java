@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -202,10 +201,10 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 			List<WatchlistItem> updList = new LinkedList<>();
 			for (WatchlistItem item : createUpdateItems) {
 				if (item.getId() != null) {
-					logRecords.add(createAuditLogRecord(AuditActionType.UPDATE_WL, watchlist, item,
-							WATCHLIST_LOG_UPDATE_MESSAGE, editUser));
 					item.setHitCategory(hc);
 					item.setAuthor(editUser);
+					logRecords.add(createAuditLogRecord(AuditActionType.UPDATE_WL, watchlist, item,
+							WATCHLIST_LOG_UPDATE_MESSAGE, editUser));
 					updList.add(item);
 				} else {
 					item.setAuthor(editUser);

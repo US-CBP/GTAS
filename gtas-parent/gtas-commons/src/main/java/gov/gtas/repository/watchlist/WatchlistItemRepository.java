@@ -8,6 +8,7 @@ package gov.gtas.repository.watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -33,7 +34,10 @@ public interface WatchlistItemRepository
 	public void deleteItemsByWatchlistName(@Param("watchlistName") String watchlistName);
 
 	@Query("SELECT wli from WatchlistItem wli where wli.knowledgeBase.kbName = :kbName")
-	public List<WatchlistItem> findAllWatchlistItemsByKnowledgeBaseName(@Param("kbName") String kbName);
+	public Set<WatchlistItem> findAllWatchlistItemsByKnowledgeBaseName(@Param("kbName") String kbName);
+	
+	@Query("SELECT wli from WatchlistItem wli where wli.keyString = :keyString")
+	public List<WatchlistItem> findWatchlistItemByKeyString(@Param("keyString") String keyString);	
 	
 	default WatchlistItem findOne(Long id) {
 		return findById(id).orElse(null);

@@ -97,6 +97,7 @@ public class WatchlistBuilder {
 					}
 
 					item.setItemData(json);
+					item.setKeyString(itemSpec.getStringKey());
 					StringBuilder ruleBldr = new StringBuilder();
 					/* List<String> ruleCriteria = */ WatchlistRuleCreationUtil.createWatchlistRule(this.entity,
 							itemSpec.getTerms(), this.getName(), ruleBldr);
@@ -105,6 +106,7 @@ public class WatchlistBuilder {
 					break;
 				case D:
 					item.setId(itemSpec.getId());
+					item.setKeyString(itemSpec.getStringKey());
 					this.deleteList.add(item);
 					break;
 				}
