@@ -1,24 +1,5 @@
 version: '3.7'
 services:
-  gtas-ui:
-    image: wcogtas/gtas-ui:dev
-    container_name: gtas-ui
-    labels:
-      kompose.image-pull-policy: "Always"
-      kompose.service.type: "LoadBalancer"
-    build: https://github.com/US-CBP/GTAS-UI.git
-    ports:
-      - 443:443
-    restart: always
-    secrets:
-      - source: env
-        target: /usr/src/app/.env
-      - source: ui-cert
-        target: /ui-cert/gtas.crt
-      - source: ui-key
-        target: /ui-key/gtas.key
-    networks:
-      - gtas-webapp-network
   web-app:
     image: wcogtas/webapp:dev
     container_name: web-app
@@ -349,12 +330,6 @@ services:
       - elasticsearch
 
 secrets:
-  env:
-    file: ./.env
-  ui-cert:
-    file: ./gtas-parent/gtas-commons/certs/gtas.crt
-  ui-key:
-    file: ./gtas-parent/gtas-commons/certs/gtas.key
   mysql-report-etl-user:
     file: ./gtas-parent/gtas-commons/secrets/mysql_report_etl_user.txt
   mysql-report-etl-password:

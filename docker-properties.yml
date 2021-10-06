@@ -1,13 +1,24 @@
 version: '3.7'
 services:
-#  http-proxy:
-#    environment:
-#      BOOTSTRAP_PATH: '/run/secrets/elastic-bootstrap-password'
-#    secrets:
-#      - source: webapp-cert
-#        target: /temp-cert/wcogtas.org.crt
-#      - source: webapp-key
-#        target: /temp-cert/wcogtas.org.key
+  gtas-ui:
+    image: wcogtas/gtas-ui:dev
+    container_name: gtas-ui
+    labels:
+      kompose.image-pull-policy: "Always"
+      kompose.service.type: "LoadBalancer"
+    build: https://github.com/US-CBP/GTAS-UI.git
+    ports:
+      - 443:443
+    restart: always
+    secrets:
+      - source: env
+        target: /usr/src/app/.env
+      - source: ui-cert
+        target: /ui-cert/gtas.crt
+      - source: ui-key
+        target: /ui-key/gtas.key
+    networks:
+      - gtas-webapp-network
   web-app:
     environment:
       DB_HOST: mariadb
@@ -49,3 +60,10 @@ services:
       ELASTICSEARCH_USER_PATH: '/run/secrets/pentaho-to-elasticsearch-user'
       ELASTICSEARCH_USER_PASSWORD_PATH: '/run/secrets/pentaho-to-elasticsearch-password'
       ELASTIC_CERT_PATH: '/run/secrets/elastic-ca'
+secrets:
+  env:
+    file: ./.env
+  ui-cert:
+    file: ./gtas-parent/gtas-commons/certs/gtas.crt
+  ui-key:
+    file: ./gtas-parent/gtas-commons/certs/gtas.key
