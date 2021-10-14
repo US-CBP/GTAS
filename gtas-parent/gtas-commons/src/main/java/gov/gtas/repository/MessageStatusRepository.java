@@ -38,4 +38,11 @@ public interface MessageStatusRepository extends CrudRepository<MessageStatus, L
 			+ "left join message m on ms.ms_message_id = m.id where m.id in :ids")
 	List<MessageStatus> getMessageFromIds(@Param("ids") List<Long> ids);
 	
+	@Query(value = "Select ms from MessageStatus ms where ms.messageStatusEnum = 'RUNNING_RULES' "
+			+ " and (ms.updatedAt < :cutOffDate and ms.updatedAt is not null)")
+	List<MessageStatus> getOrphanedRuleRunningMessages(@Param("cutOffDate") Date cutOffDate);
+	
+	@Query(value = "Select count(ms.messageId) from MessageStatus ms where ms.messageStatusEnum = 'RUNNING_RULES'")
+	Long getCountRunningRules();
+	
 }
