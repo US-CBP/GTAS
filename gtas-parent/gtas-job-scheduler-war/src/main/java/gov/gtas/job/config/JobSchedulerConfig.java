@@ -53,6 +53,7 @@ public class JobSchedulerConfig implements SchedulingConfigurer {
 	private static final String RUN_DATA_RETENTION_PNR_JOB = "runDataRetentionPNRJob";
 	private static final String MESSAGE_PASSENGER_OUT_PROCESS_THREAD_LIMIT = "messagePassengerOutProcessThreadLimit";
 	private static final String RETAIN_HITS = "retainHits";
+	private static final String MAX_RUNNING_RULES = "maxRunningRules";
 
 	@Resource
 	private Environment env;
@@ -80,6 +81,9 @@ public class JobSchedulerConfig implements SchedulingConfigurer {
 		return Executors.newScheduledThreadPool(executorThreads);
 	}
 
+	public Long getMaxRunningRules() {
+		return Long.parseLong(env.getRequiredProperty(MAX_RUNNING_RULES));
+	}
 	public boolean getNeo4JRuleEngineEnabled() {
 		return Boolean.parseBoolean(env.getRequiredProperty(NEO_4_J_RULE_ENGINE_ENABLED));
 	}

@@ -55,6 +55,8 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.hazelcast.hibernate.serialization.Hibernate5CacheEntrySerializerHook;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -147,8 +149,8 @@ public class RuleRunnerScheduler {
 
 		this.ctx = ctx;
 	}
-
-	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+	//Check once a minute for new rules
+	@Scheduled(fixedDelayString = "60000", initialDelayString = "60000")
 	public void ruleEngineRebalance() throws InterruptedException {
 		AppConfiguration recompileRulesAndWatchlist = appConfigurationRepository.findByOption(RECOMPILE_RULES);
 		if (!isBlank(recompileRulesAndWatchlist.getOption())
@@ -162,7 +164,29 @@ public class RuleRunnerScheduler {
 			appConfigurationRepository.save(recompileRulesAndWatchlist);
 		}
 	}
+	//Check message status health every 30 minutes
+	@Scheduled(fixedDelayString = "1800000", initialDelayString = "6000")	
+	public void ruleStatusHealthCheck() throws InterruptedException {
+		logger.info("Performing rule status health check.");
+		List<MessageStatus> msList = messageStatusRepository.getOrphanedRuleRunningMessages(oneHourAgo());
+		if (!msList.isEmpty()) {
+			logger.error("RUNNING RULES FOR OVER 1 HOUR! LIKELY ERROR IN RULE RUNNER OR NO "
+					+ "RULE RUNNERS RUNNING. Setting messages to ERROR STATE!");
+			for (MessageStatus errMessage : msList) {
+				errMessage.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
+			}
+			messageStatusRepository.saveAll(msList);
+		}
+		logger.info("Rule status health check completed.");
+	}
 
+    private Date oneHourAgo() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime pnrLdtCutOff = now.minusHours(1);
+        return new Date(pnrLdtCutOff.toInstant(ZoneOffset.UTC).toEpochMilli());
+    }
+    
+    
 	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
 	public void asyncHitPersister() throws InterruptedException {
 		int flightLimit = this.jobSchedulerConfig.getMaxFlightsPerRuleRun();
@@ -197,21 +221,29 @@ public class RuleRunnerScheduler {
 
 	/**
 	 * rule engine
+	 * @throws InterruptedException 
 	 **/
 	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
-	public void ruleEngineMediator() throws IOException {
+	public void ruleEngineMediator() throws IOException, InterruptedException {
 		int messageLimit = this.jobSchedulerConfig.getMaxMessagesPerRuleRun();
-		List<MessageStatus> source = messageStatusRepository.getMessagesFromStatus(MessageStatusEnum.LOADED.getName(),
-				messageLimit);
-		for (MessageStatus ms : source) {
-			ms.setMessageStatusEnum(MessageStatusEnum.RUNNING_RULES);
-		}
-		Iterable<MessageStatus> savedSource = messageStatusRepository.saveAll(source);
-		List<MessageStatus> msToMapper = prepareMessageStatusToSend(savedSource);
-		ObjectMapper mapper = new ObjectMapper();
-		String json = mapper.writeValueAsString(msToMapper);
-		if (!msToMapper.isEmpty()) {
-			sendFileContent(ruleQueues.get(0), json);
+		Long runningMessages = messageStatusRepository.getCountRunningRules();
+		Long maxRunningRules = this.jobSchedulerConfig.getMaxRunningRules();
+		if (runningMessages < maxRunningRules) {
+			List<MessageStatus> source = messageStatusRepository
+					.getMessagesFromStatus(MessageStatusEnum.LOADED.getName(), messageLimit);
+			for (MessageStatus ms : source) {
+				ms.setMessageStatusEnum(MessageStatusEnum.RUNNING_RULES);
+			}
+			Iterable<MessageStatus> savedSource = messageStatusRepository.saveAll(source);
+			List<MessageStatus> msToMapper = prepareMessageStatusToSend(savedSource);
+			ObjectMapper mapper = new ObjectMapper();
+			String json = mapper.writeValueAsString(msToMapper);
+			if (!msToMapper.isEmpty()) {
+				sendFileContent(ruleQueues.get(0), json);
+			}
+		} else {
+			logger.info("RULES CURRENTLY RUNNING: " + runningMessages + " MAX CAPACITY: " + maxRunningRules + ". PAUSING FOR 1 MINUTE TO ALLOW CATCH UP"  );
+			Thread.sleep(60000);
 		}
 	}
 

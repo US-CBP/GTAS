@@ -9,7 +9,10 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "message_status", indexes = @Index(name = "message_status_ms_status_index", columnList = "ms_status"))
+@Table(name = "message_status", indexes = {
+		@Index(name = "message_status_ms_status_index", columnList = "ms_status"),
+		@Index(name = "ms_updated_at_index" , columnList = "updated_at")
+		})
 public class MessageStatus {
 
 	@Id
@@ -33,6 +36,59 @@ public class MessageStatus {
 	@ManyToOne()
 	@JoinColumn(name = "flight_id", insertable = false, updatable = false)
 	private Flight flight;
+	
+	@Column(name = "updated_at")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date updatedAt;
+	
+	@Column(name = "created_at")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdAt;
+	
+	/**
+	 * @return the updatedAt
+	 */
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	/**
+	 * @param updatedAt the updatedAt to set
+	 */
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	/**
+	 * @return the createdAt
+	 */
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	/**
+	 * @param createdAt the createdAt to set
+	 */
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	/**
+	 * Sets createdAt before insert
+	 */
+	@PrePersist
+	public void setCreationDate() {
+		this.createdAt = new Date();
+		this.updatedAt = new Date();
+	}
+
+	/**
+	 * Sets updatedAt before update
+	 */
+	@PreUpdate
+	public void setChangeDate() {
+		this.updatedAt = new Date();
+	}
 
 	public boolean isNoLoadingError() {
 		return noLoadingError;
