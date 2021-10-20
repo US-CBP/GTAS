@@ -10,7 +10,7 @@ WORKDIR /gtas-parent/gtas-loader-runner
 ENV RUN_ARGUMENTS ' --loader.name=${LOADER_NAME} \
                     --loader.country=${LOADER_COUNTRY} \
                     --loader.permits=${LOADER_PERMITS} \
-                    --message.dir.origin=${INBOUND_MEcd SSAGE_FOLDER} \
+                    --message.dir.origin=${INBOUND_MESSAGE_FOLDER} \
                     --message.dir.working=${WORKING_MESSAGE_FOLDER} \
                     --message.dir.processed=${PROCESSED_MESSAGE_FOLDER} \
                     --message.dir.error=${ERROR_MESSAGE_FOLDER} \
