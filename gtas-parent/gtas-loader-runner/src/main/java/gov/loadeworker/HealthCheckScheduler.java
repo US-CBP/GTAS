@@ -40,6 +40,7 @@ public class HealthCheckScheduler {
 			lw.setUpdatedBy("LoaderWorker");
 			lw.setUpdatedAt(new Date());
 			lw.setWorkerName(name);
+			lw.setActive(true);
 		} else {
 			lw.setUpdatedAt(new Date());
 			lw.setBucketCount(bucketCount);

@@ -84,7 +84,7 @@ services:
       placement:
         constraints:
           - node.labels.role == backend
-  gtas-loader-1:
+  gtas-loader:
     labels:
       kompose.image-pull-policy: "Always"
       kompose.service.type: "LoadBalancer"
@@ -100,55 +100,10 @@ services:
       ADDITIONAL_PROCESSING_RULES: "true"
       ACTIVE_MQ_HOST: "activemq"
     deploy:
+      replicas: 3
       placement:
         constraints:
           - node.labels.role == backend
-  gtas-loader-2:
-    container_name: loader-runner-2
-    image: wcogtas/gtas-loader-runner:dev
-    build:
-      context: .
-      dockerfile: ./gtas-parent/gtas-loader-runner/gtas-loader-runner.Dockerfile
-    labels:
-      kompose.image-pull-policy: "Always"
-      kompose.service.type: "LoadBalancer"
-    environment:
-      LOADER_NAME: GTAS_LOADER_2
-      LOADER_COUNTRY: USA
-      LOADER_PERMITS: 300
-      INBOUND_MESSAGE_FOLDER: /usr/local/gtas-data/input
-      WORKING_MESSAGE_FOLDER: /usr/local/gtas-data/working
-      PROCESSED_MESSAGE_FOLDER: /usr/local/gtas-data/processed
-      ERROR_MESSAGE_FOLDER: /usr/local/gtas-data/error
-      ACTIVE_MQ_HOST: activemq
-      MARIA_URL: ${MARIADB_HOST}
-      DB_HOST: ${MARIADB_HOST}
-      MARIA_USERNAME: ${MARIADB_USER}
-      MARIA_PASSWORD: ${MARIADB_PASS}      
-      JAVA_TOOL_OPTIONS: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UseContainerSupport"
-      JAVA_OPTS: "-Xms5g -Xmx5g -Duser.timezone=UTC -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
-      ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
-      ADDITIONAL_PROCESSING_RAW: "true"
-      ADDITIONAL_PROCESSING_RULES: "true"
-    deploy:
-      placement:
-        constraints:
-          - node.labels.role == backend
-    restart: unless-stopped
-    secrets:
-      - mysql-etl-user
-      - mysql-etl-password
-      - etl-neo4j-user
-      - etl-neo4j-password
-      - mysql-report-etl-user
-      - mysql-report-etl-password
-      - pentaho-to-elasticsearch-user
-      - pentaho-to-elasticsearch-password
-      - elastic-ca
-    networks: 
-      - gtas-webapp-network
-    depends_on: 
-      - activemq
   activemq:
     labels:
       kompose.image-pull-policy: "Always"

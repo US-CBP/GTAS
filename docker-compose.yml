@@ -127,16 +127,12 @@ services:
     depends_on: 
       - activemq
 
-  gtas-loader-1:
-    container_name: loader-runner-1
+  gtas-loader:
     image: wcogtas/gtas-loader-runner:dev
-    deploy:
-      replicas: 1
     build:
       context: .
       dockerfile: ./gtas-parent/gtas-loader-runner/gtas-loader-runner.Dockerfile
     environment:
-      LOADER_NAME: GTAS_LOADER_1
       LOADER_COUNTRY: USA
       LOADER_PERMITS: 300
       INBOUND_MESSAGE_FOLDER: /usr/local/gtas-data/input

@@ -42,8 +42,6 @@ public class LoaderDistributor {
 
 	private LinkedMap<String, String> loaderNames;
 
-	private List<String> allQueueNames;
-
 	private int indexNumber = 0;
 
 	private ReentrantLock lock = new ReentrantLock();
@@ -55,14 +53,12 @@ public class LoaderDistributor {
 	public LoaderDistributor(JmsTemplate jmsTemplateFile, FlightLoaderRepository flightLoaderRepository,
 			EventIdentifierFactory eventIdentifierFactory, @Value("${message.dir.error}") String errorstr,
 			LoaderWorkerRepository loaderWorkerRepository, 	@Value("${activemq.broker.url}")String brokerUrl, 	
-			@Value("${inbound.loader.jms.queue}")String distributorQueue,
-			@Value("#{'${loader.queue.names}'.split(',')}") List<String> allQueueNames) {
+			@Value("${inbound.loader.jms.queue}")String distributorQueue) {
 		this.jmsTemplateFile = jmsTemplateFile;
 		this.flightLoaderRepository = flightLoaderRepository;
 		this.eventIdentifierFactory = eventIdentifierFactory;
 		this.errorstr = errorstr;
 		this.loaderNames = new LinkedMap<>();
-		this.allQueueNames = allQueueNames;
 		this.loaderWorkerRepository = loaderWorkerRepository;
 		//We do not want spring to manage this as it creates and destroys connections to the queue.
 		this.manualMover = new ManualMover(brokerUrl, distributorQueue);
@@ -72,23 +68,17 @@ public class LoaderDistributor {
 	public void checkAllQueues() {
 		logger.info("Starting queue check job");
 		// Check all queues to retrieve stale messages
-		for (String lwName : this.allQueueNames) {
+		List<LoaderWorker> workers = loaderWorkerRepository.loadActiveWorkers();
+		for (LoaderWorker lw : workers) {
 			try {
-				if (!loaderNames.containsKey(lwName)) {
-					logger.info("Queue " + lwName + " not active - Moving any old messages from " + lwName + " to GTAS distributor.");
-					manualMover.purgeQueue(lwName);
+				if (!loaderNames.containsKey(lw.getWorkerName())) {
+					logger.info("Queue " + lw.getWorkerName() + " not active - Moving any old messages from " + lw.getWorkerName() + " to GTAS distributor.");
+					manualMover.purgeQueue(lw.getWorkerName());
 				} else {
-					LoaderWorker lw = loaderWorkerRepository.findByWorkerName(lwName);
-					if (lw == null) {
-						logger.info("Stale registration/queue detected, moving messages to gtas distributor and removing queue from GTAS distributor: " + lwName);
-						manualMover.purgeQueue(lwName);
-						removeQueue(lwName);
-					} else {
-						logger.info("Active loader: " + lwName + ". No action taken.");
-					}
+					logger.info("Active loader: " + lw.getWorkerName() + ". No action taken.");
 				}
 			} catch (JMSException jme) {
-				logger.error("Failed queue purge for queue: " + lwName, jme);
+				logger.error("Failed queue purge for queue: " + lw.getWorkerName(), jme);
 			}
 		}
 		logger.info("Queue check job completed");
@@ -224,7 +214,8 @@ public class LoaderDistributor {
 		try {
 			// Always give the first open queue
 			boolean thereIsAnOpenQueue = false;
-			for (String queueName : allQueueNames) {
+			for (LoaderWorker worker : loaderWorkerRepository.loadActiveWorkers()) {
+				String queueName = worker.getWorkerName();
 				if (!loaderNames.containsKey(queueName)) {
 					thereIsAnOpenQueue = true;
 					openQueue = queueName;
