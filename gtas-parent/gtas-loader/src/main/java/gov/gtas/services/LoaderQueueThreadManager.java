@@ -133,6 +133,10 @@ public class LoaderQueueThreadManager {
 		return bucketBucket;
 	}
 	
+	public Semaphore getSemaphore() {
+		return this.semaphore;
+	}
+	
 }
 
 
