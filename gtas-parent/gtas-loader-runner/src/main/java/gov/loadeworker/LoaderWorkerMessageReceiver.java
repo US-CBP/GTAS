@@ -95,8 +95,12 @@ public class LoaderWorkerMessageReceiver {
 		apms.ifPresent(service -> {this.apms = service;});
 		this.pendingHitDetailRepository = pendingHitDetailRepository;
 	}
-
-	@JmsListener(destination ="${loader.name}", concurrency = "10")
+	
+	@JmsListener(
+			destination ="SET_IN_HEALTHCHECKSCHEDULER", 
+			concurrency = "10", 
+			id="message_reciever",
+			containerFactory="loaderAppJMSFactory")
 	public void receiveMessagesForLoader(Message<?> message, Session session, javax.jms.Message msg) {
 		final String filenameprop = "filename";
 		MessageHeaders headers = message.getHeaders();

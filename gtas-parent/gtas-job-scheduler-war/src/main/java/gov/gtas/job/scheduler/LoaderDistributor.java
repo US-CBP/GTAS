@@ -1,7 +1,11 @@
 package gov.gtas.job.scheduler;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -9,6 +13,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 
 import org.apache.commons.collections4.map.LinkedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +54,16 @@ public class LoaderDistributor {
 	private final LoaderWorkerRepository loaderWorkerRepository;
 
 	private final ManualMover manualMover;
+	
+	private final List<String> loaderQueueNameOptions;
 
 	public LoaderDistributor(JmsTemplate jmsTemplateFile, FlightLoaderRepository flightLoaderRepository,
-			EventIdentifierFactory eventIdentifierFactory, @Value("${message.dir.error}") String errorstr,
-			LoaderWorkerRepository loaderWorkerRepository, 	@Value("${activemq.broker.url}")String brokerUrl, 	
-			@Value("${inbound.loader.jms.queue}")String distributorQueue) {
+			EventIdentifierFactory eventIdentifierFactory, 
+			@Value("${message.dir.error}") String errorstr,
+			LoaderWorkerRepository loaderWorkerRepository, 	
+			@Value("${activemq.broker.url}")String brokerUrl, 	
+			@Value("${inbound.loader.jms.queue}")String distributorQueue,
+			@Value("${loader.queue.names}") Integer numberOfQueues) {
 		this.jmsTemplateFile = jmsTemplateFile;
 		this.flightLoaderRepository = flightLoaderRepository;
 		this.eventIdentifierFactory = eventIdentifierFactory;
@@ -62,23 +72,36 @@ public class LoaderDistributor {
 		this.loaderWorkerRepository = loaderWorkerRepository;
 		//We do not want spring to manage this as it creates and destroys connections to the queue.
 		this.manualMover = new ManualMover(brokerUrl, distributorQueue);
+		List<String> loaderQueueNameOptions = new ArrayList<>();
+		for (int i = 1; i <= numberOfQueues; i++) {
+			loaderQueueNameOptions.add("GTAS_LOADER_" + i);
+		}
+		this.loaderQueueNameOptions = loaderQueueNameOptions;
+		
 	}
 
 	@Scheduled(fixedDelayString = "${loader.purge.check}", initialDelayString = "30000")
 	public void checkAllQueues() {
 		logger.info("Starting queue check job");
 		// Check all queues to retrieve stale messages
-		List<LoaderWorker> workers = loaderWorkerRepository.loadActiveWorkers();
-		for (LoaderWorker lw : workers) {
+		Iterable<LoaderWorker> loaderWorkers = loaderWorkerRepository.findAll();
+		Map<String, LoaderWorker> loadersInUse = new HashMap<>();
+		for (LoaderWorker lw : loaderWorkers) {
+			if (lw.getAssignedQueue() != null && StringUtils.isNotBlank(lw.getAssignedQueue())) {
+				loadersInUse.put(lw.getAssignedQueue(), lw);
+			} 
+		}
+		for (String queueName : loaderQueueNameOptions) {
 			try {
-				if (!loaderNames.containsKey(lw.getWorkerName())) {
-					logger.info("Queue " + lw.getWorkerName() + " not active - Moving any old messages from " + lw.getWorkerName() + " to GTAS distributor.");
-					manualMover.purgeQueue(lw.getWorkerName());
+				if (!loadersInUse.containsKey(queueName)) {
+					logger.info("Queue " + queueName + " not active - Moving any old messages from " + queueName + " to GTAS distributor.");
+					manualMover.purgeQueue(queueName);
 				} else {
-					logger.info("Active loader: " + lw.getWorkerName() + ". No action taken.");
+					LoaderWorker lw = loadersInUse.get(queueName);
+					logger.info("Active loader: " + lw.getWorkerName() + " working on assigned queue " + lw.getAssignedQueue() + " .  No action taken.");
 				}
 			} catch (JMSException jme) {
-				logger.error("Failed queue purge for queue: " + lw.getWorkerName(), jme);
+				logger.error("Failed queue purge for queue: " + queueName, jme);
 			}
 		}
 		logger.info("Queue check job completed");
@@ -90,8 +113,22 @@ public class LoaderDistributor {
 		Date now = new Date();
 		Date healthCheckCutOff = DateUtils.addMinutes(now, -5);
 		Iterable<LoaderWorker> loaderWorkers = loaderWorkerRepository.findAll();
+		Map<String, LoaderWorker> loadersInUse = new HashMap<>();
 		for (LoaderWorker lw : loaderWorkers) {
-			String lwName = lw.getWorkerName();
+			if (lw.getAssignedQueue() != null && StringUtils.isNotBlank(lw.getAssignedQueue())) {
+				if (loadersInUse.containsKey(lw.getAssignedQueue())) {
+					logger.info("Duplicate key detected! Reassignment of loader worker needed!");
+					lw.setAssignedQueue(null);
+				} else {
+					loadersInUse.put(lw.getAssignedQueue(), lw);
+				}
+			} 
+		}
+		Set<String> loadersInUseSet = loadersInUse.keySet();
+		for (LoaderWorker lw : loaderWorkers) {
+			String lwName = lw.getAssignedQueue();
+			//Check to see if there is a duplicate worker queue - this can happen on a restart when loader names get purged. 
+			
 			if (!this.loaderNames.containsKey(lwName)) {
 				// Condition 1, new loaderworker:
 				this.loaderNames.put(lw.getWorkerName(), lwName);

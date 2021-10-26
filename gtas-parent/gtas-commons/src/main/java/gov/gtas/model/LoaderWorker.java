@@ -24,6 +24,47 @@ public class LoaderWorker extends BaseEntityAudit {
 
 	@Column(name="active")
 	private Boolean active;
+	
+	@Column(name="assigned_queue")
+	private String assignedQueue;
+	
+	@Column(name="permits_free")
+	private int permitsFree = 0;
+	
+	/**
+	 * @return the permitsFree
+	 */
+	public int getPermitsFree() {
+		return permitsFree;
+	}
+
+	/**
+	 * @param permitsFree the permitsFree to set
+	 */
+	public void setPermitsFree(int permitsFree) {
+		this.permitsFree = permitsFree;
+	}
+
+	/**
+	 * @return the assignedQueue
+	 */
+	public String getAssignedQueue() {
+		return assignedQueue;
+	}
+
+	/**
+	 * @param assignedQueue the assignedQueue to set
+	 */
+	public void setAssignedQueue(String assignedQueue) {
+		this.assignedQueue = assignedQueue;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
 
 	@Override
 	public int hashCode() {
