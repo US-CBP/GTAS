@@ -3,6 +3,7 @@ package gov.gtas.job.scheduler;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,7 +46,7 @@ public class LoaderDistributor {
 
 	private String errorstr;
 
-	private LinkedMap<String, String> loaderNames;
+	private LinkedMap<String, LoaderWorker> loaderNames;
 
 	private int indexNumber = 0;
 
@@ -114,37 +115,74 @@ public class LoaderDistributor {
 		Date healthCheckCutOff = DateUtils.addMinutes(now, -5);
 		Iterable<LoaderWorker> loaderWorkers = loaderWorkerRepository.findAll();
 		Map<String, LoaderWorker> loadersInUse = new HashMap<>();
+		Set<LoaderWorker> duplicateHashLoaders = new HashSet<>();
 		for (LoaderWorker lw : loaderWorkers) {
 			if (lw.getAssignedQueue() != null && StringUtils.isNotBlank(lw.getAssignedQueue())) {
-				if (loadersInUse.containsKey(lw.getAssignedQueue())) {
+				if (loadersInUse.containsKey(lw.getAssignedQueue()) || "DUPLICATE".equals(lw.getAssignedQueue())) {
 					logger.info("Duplicate key detected! Reassignment of loader worker needed!");
 					lw.setAssignedQueue(null);
+					duplicateHashLoaders.add(lw);
 				} else {
 					loadersInUse.put(lw.getAssignedQueue(), lw);
 				}
 			} 
 		}
-		Set<String> loadersInUseSet = loadersInUse.keySet();
+		Set<String> queuesInUse = new HashSet<>();
+
 		for (LoaderWorker lw : loaderWorkers) {
 			String lwName = lw.getAssignedQueue();
-			//Check to see if there is a duplicate worker queue - this can happen on a restart when loader names get purged. 
 			
-			if (!this.loaderNames.containsKey(lwName)) {
-				// Condition 1, new loaderworker:
-				this.loaderNames.put(lw.getWorkerName(), lwName);
-				logger.info("Registered new loader worker " + lwName);
-			} else if (lw.getUpdatedAt().before(healthCheckCutOff)) {
-				// Condition 2, old loaderworker
+			//Assign and register new queues as needed.
+			if (StringUtils.isBlank(lwName) || "DUPLICATE".equals(lwName)) {
+				String assignedQueue = assignQueue(lw);
+				if (StringUtils.isBlank(assignedQueue) || "DUPLICATE".equals(assignedQueue)) {
+					logger.info("Unable to assign new queue for duplicate! Setting or keeping as DUPLICATE queue!");
+					lw.setAssignedQueue("DUPLICATE");
+					lwName = "DUPLICATE";
+				} else {
+					lw.setAssignedQueue(assignedQueue);
+					lwName = lw.getAssignedQueue();
+					logger.info("Registered new loader worker " + lw.getAssignedQueue());
+
+				}
+				loaderWorkerRepository.save(lw);
+			} 
+			
+			if (lwName != null && !"DUPLICATE".equals(lwName)
+					&& !this.loaderNames.containsKey(lwName)) {
+				logger.info("Caught orphan queue - registered queue " + lwName);
+				addQueue(lw);
+			}
+			
+			if (lw.getUpdatedAt().before(healthCheckCutOff)) {
+				// Condition 1, old loaderworker needs to be deregistered.
 				if (this.loaderNames.containsKey(lwName)) {
 					removeQueue(lwName);
 				}
 				loaderWorkerRepository.delete(lw);
 				logger.info("Removed old loader worker " + lwName);
-			} else {
-				// Condition 3, loader in use.
+			} else if (this.loaderNames.containsKey(lwName)){
+				// Condition 2, loader in use.
+				queuesInUse.add(lwName);
 				logger.info("Queue in use: " + lwName + " processing "
-						+ lw.getBucketCount() + " files.");
+						+ lw.getBucketCount() + " flights with " + lw.getPermitsFree() + " permits free.");
+			} else {
+				// Condition 3, loader worker unable to register to a queue.
+				logger.info("\n**************************** \n"
+						+ "Unable to register worker to queue. \nEither increase number of allowed queues or decrease loader workers. \n"
+						+ "This does not effect the system integrity but does waste system resources. \n"
+						+ "Queue impacted: " + lw.getWorkerName() + ".\nIf not duplicate queue setting to DUPLICATE.\n"
+						+ "**************************** \n");
+				lw.setAssignedQueue("DUPLICATE");
+				loaderWorkerRepository.save(lw);
 			}
+		}
+		//Copy the key set - otherwise removing will impact the LinkedMap.
+		Set<String> keys = new HashSet<>(this.loaderNames.keySet());
+		keys.removeAll(queuesInUse);
+		for(String orphanQueue : keys) {
+			this.loaderNames.remove(orphanQueue);
+			logger.info("removed orphan " + orphanQueue);
 		}
 		logger.info("Register/De-register job completed");
 	}
@@ -153,7 +191,7 @@ public class LoaderDistributor {
 		EventIdentifier ei = null;
 		lock.lock();
 		try {
-		while (loaderNames.isEmpty()) {
+		while (this.loaderNames.isEmpty()) {
 			logger.error("No Loaders!!!! Sleeping thread for 1 minute and trying again.");
 			Thread.sleep(60000);
 		}
@@ -186,23 +224,23 @@ public class LoaderDistributor {
 				fl = new FlightLoader();
 				fl.setCreatedBy("LOADER");
 				fl.setIdTag(ei.getIdentifier());
-				if (indexNumber == loaderNames.size()) {
+				if (indexNumber == this.loaderNames.size()) {
 					indexNumber = 0;
 				}
-				loaderDestination = loaderNames.get(indexNumber);
+				loaderDestination = this.loaderNames.get(indexNumber);
 				indexNumber++;
 				fl.setLoaderName(loaderDestination);
 				flightLoaderRepository.save(fl);
-			} else if (loaderNames.containsKey(fl.getLoaderName())) {
+			} else if (this.loaderNames.containsKey(fl.getLoaderName())) {
 				logger.info("Association found, forwarding message");
 				loaderDestination = fl.getLoaderName();
 			} else {
 				logger.info("Loader assocation for flight " + ei.getIdentifier()
 						+ " is stale. Creating new loader association!");
-				if (indexNumber >= loaderNames.size()) {
+				if (indexNumber >= this.loaderNames.size()) {
 					indexNumber = 0;
 				}
-				loaderDestination = loaderNames.get(indexNumber);
+				loaderDestination = this.loaderNames.get(indexNumber);
 				indexNumber++;
 				fl.setLoaderName(loaderDestination);
 				fl.setUpdatedBy("LOADER");
@@ -245,22 +283,37 @@ public class LoaderDistributor {
 		}
 	}
 
-	public String assignQueue() {
+	private void addQueue(LoaderWorker lw) {
+		lock.lock();
+		try {
+			if (lw.getAssignedQueue() == null) {
+				throw new RuntimeException("Can not register null queue!");
+			}
+			this.loaderNames.put(lw.getAssignedQueue(), lw);
+		} catch(Exception e) {
+			logger.error("", e);
+		}
+		finally {
+			lock.unlock();
+		}
+	}
+	
+	private String assignQueue(LoaderWorker lw) {
 		lock.lock();
 		String openQueue = "";
 		try {
 			// Always give the first open queue
 			boolean thereIsAnOpenQueue = false;
-			for (LoaderWorker worker : loaderWorkerRepository.loadActiveWorkers()) {
-				String queueName = worker.getWorkerName();
-				if (!loaderNames.containsKey(queueName)) {
+			for (String queueOption : loaderQueueNameOptions) {
+				if (!this.loaderNames.containsKey(queueOption)) {
 					thereIsAnOpenQueue = true;
-					openQueue = queueName;
+					openQueue = queueOption;
+					lw.setAssignedQueue(openQueue);
 					break;
 				}
 			}
 			if (thereIsAnOpenQueue) {
-				loaderNames.put(openQueue, openQueue);
+				this.loaderNames.put(openQueue, lw);
 				logger.info("New queue assigned - " + openQueue);
 			} else {
 				logger.error("There are no open queues");
