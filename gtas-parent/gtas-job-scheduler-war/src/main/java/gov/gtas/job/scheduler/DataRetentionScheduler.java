@@ -50,6 +50,9 @@ public class DataRetentionScheduler {
 
     @Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
     public void dataRetention() throws InterruptedException {
+
+        logger.info("Data Retention Job Started.");
+
         int messageLimit = this.jobSchedulerConfig.messageOutProcessLimit();
         int pnrHourLimit = this.jobSchedulerConfig.getRetentionHoursMaskPNR();
         int apisHourLimit = this.jobSchedulerConfig.getRetentionHoursMaskAPIS();
@@ -74,7 +77,9 @@ public class DataRetentionScheduler {
         long pnrJobStart = System.nanoTime();
 
         if (pnrJob) {
+            logger.info("Pnr Job Started.");
             List<MessageStatus> messagesForPnrOutProcess = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedPnrDateMask, pnrMessageStatusForMask);
+            logger.info("Messages for pnr job" + messagesForPnrOutProcess.size());
             if (!messagesForPnrOutProcess.isEmpty()) {
                 long start = System.nanoTime();
                 List<PnrDataMaskThread> list = getRetentionThreads(messagesForPnrOutProcess, convertedAPISDateMask, convertedPnrDateMask,  maxPassengers, PnrDataMaskThread.class);
@@ -83,9 +88,9 @@ public class DataRetentionScheduler {
                 exec.invokeAll(list);
                 logger.info("Pnr data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             }
-   //         logger.info("gettingmessages to run delete on");
+            logger.info("Getting messages to delte:");
             List<MessageStatus> messagesToRunDeleteOn = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedPnrDateDelete, pnrMessageStatusForDelete);
-     //       logger.info("got to run delete on size of " + messagesToRunDeleteOn.size());
+            logger.info("got PNR to run delete on size of " + messagesToRunDeleteOn.size());
             if (!messagesToRunDeleteOn.isEmpty()) {
                 long start = System.nanoTime();
                 List<PnrDataDeletionThread> list = getRetentionThreads(messagesToRunDeleteOn, convertedAPISDateDelete, convertedPnrDateDelete,  maxPassengers, PnrDataDeletionThread.class);
@@ -102,6 +107,7 @@ public class DataRetentionScheduler {
 
         if (apisJob) {
             List<MessageStatus> messagesForAPISMask = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedAPISDateMask, apisMessageStatusForMask);
+            logger.info("Got this amount of messaages for APIS mask: " + messagesForAPISMask.size());
             if (!messagesForAPISMask.isEmpty()) {
                 long start = System.nanoTime();
                 List<ApisDataMaskThread> list = getRetentionThreads(messagesForAPISMask, convertedAPISDateMask, convertedPnrDateMask, maxPassengers, ApisDataMaskThread.class);
@@ -109,9 +115,10 @@ public class DataRetentionScheduler {
                 messagesForAPISMask = null; // Alert to be GC'd.
                 exec.invokeAll(list);
                 logger.info("Total Apis data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
-
             }
             List<MessageStatus> messagesForAPISDelete = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedAPISDateDelete, apisMessageStatusForDelete);
+            logger.info("Got this amount of messaages for APIS mask: " + messagesForAPISDelete.size());
+
             if (!messagesForAPISDelete.isEmpty()) {
                 long start = System.nanoTime();
                 List<ApisDataDeletionThread> list = getRetentionThreads(messagesForAPISDelete, convertedAPISDateDelete, convertedPnrDateDelete, maxPassengers, ApisDataDeletionThread.class);

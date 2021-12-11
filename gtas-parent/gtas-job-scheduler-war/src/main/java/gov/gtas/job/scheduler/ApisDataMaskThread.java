@@ -30,7 +30,7 @@ public class ApisDataMaskThread extends DataSchedulerThread implements Callable<
 
 
     @Override
-    public Boolean call()  {
+    public Boolean call() {
         boolean success = true;
         try {
             long start = System.nanoTime();
@@ -41,7 +41,7 @@ public class ApisDataMaskThread extends DataSchedulerThread implements Callable<
             }
             MessageAndFlightIds messageAndFlightIds = getApisMessageIdsAndFlightIds();
             Set<Passenger> passengers = passengerService.getPassengersFromMessageIds(messageAndFlightIds.getMessageIds(), messageAndFlightIds.getFlightIds());
-           getDefaultShareConstraint().createFilter(passengers);
+            getDefaultShareConstraint().createFilter(passengers);
             Set<DataRetentionStatus> dataRetentionStatuses = new HashSet<>();
             for (Passenger p : passengers) {
                 RelevantMessageChecker relevantMessageChecker = new RelevantMessageChecker(getApisCutOffDate(), getPnrCutOffDate(), p).invoke();
@@ -50,8 +50,10 @@ public class ApisDataMaskThread extends DataSchedulerThread implements Callable<
                 drs.setUpdatedBy("APIS_MASK");
                 if (!getDefaultShareConstraint().getWhiteListedPassenerIds().contains(p.getId()) && !relevantMessageChecker.isRelevantAPIS()) {
                     drs.setMaskedAPIS(true);
-                    logger.debug("masked pax id : " + drs.getPassengerId());
+                    logger.info("masked pax id : " + drs.getPassengerId());
                     dataRetentionStatuses.add(drs);
+                } else {
+                    logger.info("Passenger on whitelist or is not relevant message to mask");
                 }
             }
             dataRetentionService.saveDataRetentionStatus(dataRetentionStatuses);
