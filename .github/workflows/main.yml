@@ -86,22 +86,22 @@ jobs:
           context: ./gtas-parent/scripts/elastic
           file: ./gtas-parent/scripts/elastic/install/docker/logstash/logstash.Dockerfile
           tags: wcogtas/logstash:dev
-      - uses: docker/build-push-action@v2
-        name: Build and push Neo4J ETL job image
-        with:
-          platforms: linux/amd64
-          push: true
-          context: .
-          file: ./gtas-etl-main/etl_job.Dockerfile
-          tags: wcogtas/neo4j-etl-job:dev
-      - uses: docker/build-push-action@v2
-        name: Build and push Neo4J image
-        with:
-          platforms: linux/amd64
-          push: true
-          context: .
-          file: ./gtas-etl-main/neo4j.Dockerfile
-          tags: wcogtas/neo4j:dev
+#      - uses: docker/build-push-action@v2
+#        name: Build and push Neo4J ETL job image
+#        with:
+#          platforms: linux/amd64
+#          push: true
+#          context: .
+#          file: ./gtas-etl-main/etl_job.Dockerfile
+#          tags: wcogtas/neo4j-etl-job:dev
+#      - uses: docker/build-push-action@v2
+#        name: Build and push Neo4J image
+#        with:
+#          platforms: linux/amd64
+#          push: true
+#          context: .
+#          file: ./gtas-etl-main/neo4j.Dockerfile
+#          tags: wcogtas/neo4j:dev
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
