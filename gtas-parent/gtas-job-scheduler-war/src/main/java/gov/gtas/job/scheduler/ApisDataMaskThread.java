@@ -34,9 +34,9 @@ public class ApisDataMaskThread extends DataSchedulerThread implements Callable<
         boolean success = true;
         try {
             long start = System.nanoTime();
-            logger.debug("Starting rule running scheduled task");
+            logger.info("Starting Apis Data Mask Thread");
             if (getMessageStatuses().isEmpty()) {
-                logger.debug("No messages to process, ending masking process");
+                logger.info("No messages to process, ending masking process");
                 return success;
             }
             MessageAndFlightIds messageAndFlightIds = getApisMessageIdsAndFlightIds();
@@ -57,9 +57,10 @@ public class ApisDataMaskThread extends DataSchedulerThread implements Callable<
                 }
             }
             dataRetentionService.saveDataRetentionStatus(dataRetentionStatuses);
+            logger.info("Setting ms to apis data masked for message statuses" + getMessageStatuses().size());
             getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.APIS_DATA_MASKED));
             dataRetentionService.saveMessageStatus(getMessageStatuses());
-            logger.debug("Total time running apis data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+            logger.info("Total time running apis data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
         } catch (Exception e) {
             getMessageStatuses().forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.APIS_MASK_ERROR));
             dataRetentionService.saveMessageStatus(getMessageStatuses());
