@@ -112,6 +112,7 @@ public class PassengerServiceImplTest {
 		MessageStatus messageStatus = new MessageStatus();
 		messageStatus.setFlightId(1L);
 		messageStatus.setMessageId(5L);
+		messageStatus.setCreatedAt(new Date());
 		Set<Passenger> passengers = passengerService
     .getPassengersForFuzzyMatching(Collections.singletonList(messageStatus));
 		Assert.assertEquals(passengers.size(), 1);

@@ -107,6 +107,7 @@ public class MessageStatus {
 	public MessageStatus(Long message, MessageStatusEnum status) {
 		this.messageId = message;
 		this.messageStatusEnum = status;
+		this.createdAt = new Date();
 	}
 
 	public Date getAnalyzedTimestamp() {

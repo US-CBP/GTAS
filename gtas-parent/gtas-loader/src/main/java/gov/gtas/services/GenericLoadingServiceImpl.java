@@ -85,6 +85,7 @@ public class GenericLoadingServiceImpl implements GenericLoading {
     public MessageInformation load(MessageSummary messageSummary, String filePath) {
 
         MessageStatus messageStatus = new MessageStatus();
+        messageStatus.setCreatedAt(new Date());
         messageStatus.setMessageStatusEnum(MessageStatusEnum.RECEIVED);
         messageStatus.setNoLoadingError(true);
         MessageInformation messageInformation = new MessageInformation();

@@ -253,6 +253,7 @@ public class RuleRunnerScheduler {
 			MessageStatus msSource = new MessageStatus();
 			msSource.setFlightId(ms.getFlightId());
 			msSource.setMessageId(ms.getMessageId());
+			msSource.setCreatedAt(ms.getCreatedAt());
 			msToMapper.add(msSource);
 		}
 		return msToMapper;
