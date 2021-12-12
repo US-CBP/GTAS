@@ -161,7 +161,7 @@ public class DataRetentionScheduler {
                 if (message.getPassengerCount() != null) {
                     runningTotal += message.getPassengerCount();
                 }
-                logger.info("running total is now " + runningTotal);
+             //   logger.info("running total is now " + runningTotal);
             }
             if (runningTotal >= maxPassengers) {
                 logger.info("Running total eclipses max passengers, adding thread.");
