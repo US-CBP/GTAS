@@ -155,9 +155,9 @@ public class DataRetentionScheduler {
             logger.info("Inside message statuses. Running for loop on this many status: "+ messageStatuses.size());
             for (MessageStatus ms : messageStatuses) {
                 ruleThread.add(ms);
-                logger.info("Added message status to rule thread.");
+         //       logger.info("Added message status to rule thread.");
                 Message message = ms.getMessage();
-                logger.info("About to add this much to runnng total: "+ message.getPassengerCount());
+            //    logger.info("About to add this much to runnng total: "+ message.getPassengerCount());
                 if (message.getPassengerCount() != null) {
                     runningTotal += message.getPassengerCount();
                 }
@@ -185,7 +185,7 @@ public class DataRetentionScheduler {
             }
         }
         logger.info("Running total is this much:" + runningTotal);
-        if (runningTotal != 0) {
+        if (!ruleThread.isEmpty()) {
             T worker = ctx.getBean(threadType);
             worker.setMessageStatuses(ruleThread);
             worker.setApisCutOffDate(apisCutOffDate);
