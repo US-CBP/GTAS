@@ -14,8 +14,10 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @ConditionalOnProperty(prefix = "retention", name = "enabled")
 @Component
@@ -49,7 +51,7 @@ public class DataRetentionScheduler {
     }
 
     @Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
-    public void dataRetention() throws InterruptedException {
+    public void dataRetention() throws InterruptedException, ExecutionException {
 
         logger.info("Data Retention Job Started.");
 
@@ -113,7 +115,11 @@ public class DataRetentionScheduler {
                 List<ApisDataMaskThread> list = getRetentionThreads(messagesForAPISMask, convertedAPISDateMask, convertedPnrDateMask, maxPassengers, ApisDataMaskThread.class);
                 //noinspection UnusedAssignment
                 messagesForAPISMask = null; // Alert to be GC'd.
-                exec.invokeAll(list);
+                logger.info("Invoking list");
+                List<Future<Boolean>> results = exec.invokeAll(list);
+                for (Future<Boolean> listBoolean : results) {
+                    logger.info("Thread was succesful?? : " + listBoolean.get());
+                }
                 logger.info("Total Apis data masking task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
             }
             List<MessageStatus> messagesForAPISDelete = messageStatusRepository.getMessagesToOutProcess(messageLimit, convertedAPISDateDelete, apisMessageStatusForDelete);
