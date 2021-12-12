@@ -115,7 +115,7 @@ public class DataRetentionScheduler {
                 List<ApisDataMaskThread> list = getRetentionThreads(messagesForAPISMask, convertedAPISDateMask, convertedPnrDateMask, maxPassengers, ApisDataMaskThread.class);
                 //noinspection UnusedAssignment
                 messagesForAPISMask = null; // Alert to be GC'd.
-                logger.info("Invoking list");
+                logger.info("Invoking list of size " + list.size());
                 List<Future<Boolean>> results = exec.invokeAll(list);
                 for (Future<Boolean> listBoolean : results) {
                     logger.info("Thread was succesful?? : " + listBoolean.get());
@@ -167,6 +167,7 @@ public class DataRetentionScheduler {
                 } else {
                     worker.setDefaultShareConstraint(new RetainNothingShareConstraint());
                 }
+                logger.info("added worker to list with this many messages:" + worker.getMessageStatuses().size());
                 list.add(worker);
                 ruleThread = new ArrayList<>();
                 runningTotal = 0;
@@ -186,6 +187,7 @@ public class DataRetentionScheduler {
             } else {
                 worker.setDefaultShareConstraint(new RetainNothingShareConstraint());
             }
+            logger.info("added worker to list with this many messages:" + worker.getMessageStatuses().size());
             list.add(worker);
         }
         return list;
