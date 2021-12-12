@@ -146,9 +146,11 @@ public class DataRetentionScheduler {
 
     private <T extends DataSchedulerThread> List<T> getRetentionThreads(List<MessageStatus> messagesToOutProcess, Date apisCutOffDate, Date pnrCutOffDate, int maxPassengers, Class<T> threadType) {
         Map<Long, List<MessageStatus>> messageFlightMap = SchedulerUtils.geFlightMessageMap(messagesToOutProcess);
+        logger.info("got a map with this many flights " + messageFlightMap.keySet().size() + " and this many messages:" + messageFlightMap.values().size());
         int runningTotal = 0;
         List<MessageStatus> ruleThread = new ArrayList<>();
         List<T> list = new ArrayList<>();
+        logger.info("Have this many flights to generically process: " + messageFlightMap.values().size());
         for (List<MessageStatus> messageStatuses : messageFlightMap.values()) {
             for (MessageStatus ms : messageStatuses) {
                 ruleThread.add(ms);
@@ -190,6 +192,9 @@ public class DataRetentionScheduler {
             logger.info("added worker to list with this many messages:" + worker.getMessageStatuses().size());
             list.add(worker);
         }
+        logger.info("Returning list of size " + list.size());
+        logger.info("running total is " + runningTotal);
+        logger.info("Size of messages in is "+ messagesToOutProcess.size());
         return list;
     }
 
