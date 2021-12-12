@@ -152,14 +152,19 @@ public class DataRetentionScheduler {
         List<T> list = new ArrayList<>();
         logger.info("Have this many flights to generically process: " + messageFlightMap.values().size());
         for (List<MessageStatus> messageStatuses : messageFlightMap.values()) {
+            logger.info("Inside message statuses. Running for loop on this many status: "+ messageStatuses.size());
             for (MessageStatus ms : messageStatuses) {
                 ruleThread.add(ms);
+                logger.info("Added message status to rule thread.");
                 Message message = ms.getMessage();
+                logger.info("About to add this much to runnng total: "+ message.getPassengerCount());
                 if (message.getPassengerCount() != null) {
                     runningTotal += message.getPassengerCount();
                 }
+                logger.info("running total is now " + runningTotal);
             }
             if (runningTotal >= maxPassengers) {
+                logger.info("Running total eclipses max passengers, adding thread.");
                 T worker = ctx.getBean(threadType);
                 worker.setApisCutOffDate(apisCutOffDate);
                 worker.setPnrCutOffDate(pnrCutOffDate);
@@ -173,12 +178,13 @@ public class DataRetentionScheduler {
                 list.add(worker);
                 ruleThread = new ArrayList<>();
                 runningTotal = 0;
-
             }
             if (list.size() >= maxNumOfThreads - 1) {
+                logger.info("List size is greater than thread count.");
                 break;
             }
         }
+        logger.info("Running total is this much:" + runningTotal);
         if (runningTotal != 0) {
             T worker = ctx.getBean(threadType);
             worker.setMessageStatuses(ruleThread);
