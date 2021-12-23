@@ -48,7 +48,7 @@ public class DataRetentionScheduler {
         this.messageStatusRepository = messageStatusRepository;
     }
 
-    @Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+    @Scheduled(fixedDelayString = "${rule-runner.fixed-delay.milliseconds}", initialDelayString = "${rule-runner.initial-delay.milliseconds}")
     public void dataRetention() throws InterruptedException {
         int messageLimit = this.jobSchedulerConfig.messageOutProcessLimit();
         int pnrHourLimit = this.jobSchedulerConfig.getRetentionHoursMaskPNR();

@@ -80,10 +80,10 @@ public class RuleEngineRequestBuilder {
 
 	private final DocumentRepository documentRepository;
 
-	@Value("${ruleRunner.makeEmptyApisBagsOnNullBag}")
+	@Value("${rule-runner.make-empty-apis-bags-on-null-bag}")
 	private Boolean makeEmptyApisBagsOnNullBag;
 
-	@Value("${ruleRunner.makeEmptyPnrBagsOnNullBag}")
+	@Value("${rule-runner.make-empty-pnr-bags-on-null-bag}")
 	private Boolean makeEmptyPnrBagsOnNullBag;
 
 	private final PnrService pnrService;

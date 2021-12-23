@@ -49,7 +49,7 @@ public class LookoutScheduler {
     /**
      * rule engine
      **/
-    @Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+    @Scheduled(fixedDelayString = "${rule-runner.fixed-delay.milliseconds}", initialDelayString = "${rule-runner.initial-delay.milliseconds}")
     public void ruleEngine() {
         List<LookoutRequest> lookoutRequestList = lookoutRequestRepository.findTop500ByOrderByIdAsc();
         for (LookoutRequest lookoutRequest : lookoutRequestList) {

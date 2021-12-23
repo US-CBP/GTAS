@@ -148,7 +148,7 @@ public class RuleRunnerScheduler {
 		this.ctx = ctx;
 	}
 
-	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+	@Scheduled(fixedDelayString = "${rule-runner.fixed-delay.milliseconds}", initialDelayString = "${rule-runner.initial-delay.milliseconds}")
 	public void ruleEngineRebalance() throws InterruptedException {
 		AppConfiguration recompileRulesAndWatchlist = appConfigurationRepository.findByOption(RECOMPILE_RULES);
 		if (!isBlank(recompileRulesAndWatchlist.getOption())
@@ -163,7 +163,7 @@ public class RuleRunnerScheduler {
 		}
 	}
 
-	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+	@Scheduled(fixedDelayString = "${rule-runner.fixed-delay.milliseconds}", initialDelayString = "${rule-runner.initial-delay.milliseconds}")
 	public void asyncHitPersister() throws InterruptedException {
 		int flightLimit = this.jobSchedulerConfig.getMaxFlightsPerRuleRun();
 		Set<Number> flightIdsForPendingHits = pendingHitDetailRepository.getFlightsWithPendingHitsByLimit(flightLimit);
@@ -198,7 +198,7 @@ public class RuleRunnerScheduler {
 	/**
 	 * rule engine
 	 **/
-	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+	@Scheduled(fixedDelayString = "${rule-runner.fixed-delay.milliseconds}", initialDelayString = "${rule-runner.initial-delay.milliseconds}")
 	public void ruleEngineMediator() throws IOException {
 		int messageLimit = this.jobSchedulerConfig.getMaxMessagesPerRuleRun();
 		List<MessageStatus> source = messageStatusRepository.getMessagesFromStatus(MessageStatusEnum.LOADED.getName(),
@@ -226,7 +226,7 @@ public class RuleRunnerScheduler {
 		return msToMapper;
 	}
 	
-	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+	@Scheduled(fixedDelayString = "${rule-runner.fixed-delay.milliseconds}", initialDelayString = "${rule-runner.initial-delay.milliseconds}")
 	private void graphRuleEngine() throws InterruptedException {
 		int messageLimit = this.jobSchedulerConfig.getMaxMessagesPerRuleRun();
 		int maxPassengers = this.jobSchedulerConfig.getMaxPassengersPerRuleRun();

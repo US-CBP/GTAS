@@ -32,27 +32,27 @@ import javax.annotation.Resource;
 public class JobSchedulerConfig implements SchedulingConfigurer {
 
 
-	private static final String NEO_4_J_RULE_ENGINE_ENABLED="neo4jRuleEngineEnabled";
-	private static final String EXECUTOR_THREADS ="executorThreads";
-	private static final String THREADS_ON_RULES = "threadsOnRules";
-	private static final String THREADS_ON_LOADER= "threadsOnLoader";
-	private static final String MAX_MESSAGES_PER_RULE_RUN="maxMessagesPerRuleRun";
-	private static final String MAX_FLIGHTS_PER_RULE_RUN="maxFlightsPerRuleRun";
-	private static final String MAX_FLIGHTS_PROCESSED_PER_THREAD="maxFlightsProcessedPerThread";
-	private static final String MAX_PASSENGERS_PER_RULE_RUN="maxPassengersPerRuleRun";
-	private static final String OUT_PROCESS_LIMIT = "messageOutprocessLimit";
-	private static final String RETENTION_HOURS_MASK_APIS="retentionHoursMaskAPIS";
-	private static final String RETENTION_HOURS_DELETE_APIS="retentionHoursDeleteAPIS";
-	private static final String RETENTION_HOURS_MASK_PNR="retentionHoursMaskPNR";
-	private static final String RETENTION_HOURS_DELETE_PNR="retentionHoursDeletePNR";
-	private static final String MESSAGE_STATUS_FOR_PNR_MASK_RETENTION = "messageStatusMaskRetentionPNR";
-	private static final String MESSAGE_STATUS_FOR_PNR_DELETION_RETENTION = "messageStatusDeletionRetentionPNR";
-	private static final String MESSAGE_STATUS_FOR_APIS_MASK_RETENTION = "messageStatusMaskRetentionAPIS";
-	private static final String MESSAGE_STATUS_FOR_APIS_DELETION_RETENTION = "messageStatusDeletionRetentionAPIS";
-	private static final String RUN_DATA_RETENTION_APIS_JOB = "runDataRetentionApisJob";
-	private static final String RUN_DATA_RETENTION_PNR_JOB = "runDataRetentionPNRJob";
-	private static final String MESSAGE_PASSENGER_OUT_PROCESS_THREAD_LIMIT = "messagePassengerOutProcessThreadLimit";
-	private static final String RETAIN_HITS = "retainHits";
+	private static final String NEO_4_J_RULE_ENGINE_ENABLED="neo4j-rule-engine.enabled";
+	private static final String EXECUTOR_THREADS ="executor-threads";
+	private static final String THREADS_ON_RULES = "threads-on-rules";
+	private static final String THREADS_ON_LOADER= "threads-on-loader";
+	private static final String MAX_MESSAGES_PER_RULE_RUN="max-messages-per-rule-run";
+	private static final String MAX_FLIGHTS_PER_RULE_RUN="max-flights-per-rule-run";
+	private static final String MAX_FLIGHTS_PROCESSED_PER_THREAD="max-flights-processed-per-thread";
+	private static final String MAX_PASSENGERS_PER_RULE_RUN="max-passengers-per-rule-run";
+	private static final String OUT_PROCESS_LIMIT = "message-out-process-limit";
+	private static final String RETENTION_HOURS_MASK_APIS="retention-hours-mask-apis";
+	private static final String RETENTION_HOURS_DELETE_APIS="retention-hours-delete-apis";
+	private static final String RETENTION_HOURS_MASK_PNR="retention-hours-mask-pnr";
+	private static final String RETENTION_HOURS_DELETE_PNR="retention-Hours-delete-pnr";
+	private static final String MESSAGE_STATUS_FOR_PNR_MASK_RETENTION = "message-status-mask-retention-pnr";
+	private static final String MESSAGE_STATUS_FOR_PNR_DELETION_RETENTION = "message-status-deletion-retention-pnr";
+	private static final String MESSAGE_STATUS_FOR_APIS_MASK_RETENTION = "message-status-mask-retention-apis";
+	private static final String MESSAGE_STATUS_FOR_APIS_DELETION_RETENTION = "message-status-deletion-retention-apis";
+	private static final String RUN_DATA_RETENTION_APIS_JOB = "run-data-retention-apis-job";
+	private static final String RUN_DATA_RETENTION_PNR_JOB = "run-data-retention-pnr-job";
+	private static final String MESSAGE_PASSENGER_OUT_PROCESS_THREAD_LIMIT = "message-passenger-out-process-thread-limit";
+	private static final String RETAIN_HITS = "retain-hits";
 
 	@Resource
 	private Environment env;

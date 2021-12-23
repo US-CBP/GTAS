@@ -48,7 +48,7 @@ public class LocalFileIntakeScheduler {
 		this.sender = sender;
 	}
 
-	@Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
+	@Scheduled(fixedDelayString = "${loader.fixed-delay.milliseconds}", initialDelayString = "${loader.initial-delay.milliseconds}")
 	public void jobScheduling() {
 		processAndQFiles();
 	}

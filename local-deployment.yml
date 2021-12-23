@@ -9,25 +9,27 @@ services:
         reservations:
           memory: 2G
     environment:
-      EMAIL_SENDER_USERNAME: "some.user@somedomain.com"
-      EMAIL_SENDER_PASSWORD: "somepassword"
-      EMAIL_SENDER_HOST: "some.smtp.somedomain.com"
-      SSL_TRUST_HOST: "bogus"
-      AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
-      MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
-      ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
-      ADDITIONAL_PROCESSING_RAW: "false"
-      ADDITIONAL_PROCESSING_RULES: "false"
-      UI_ADDRESS: localhost
-      DB_HOST: mariadb      
+      DB_HOST: mariadb
+      SP_SPRING_MAIL_USERNAME: "test.user@testdomain.com"
+      SP_SPRING_MAIL_PASSWORD: "testpassword"
+      SP_SPRING_MAIL_HOST: "some.smtp.testdomain.com"
+      SP_SPRING_MAIL_PROPERTIES_SSL_TRUST_HOST: "testhost"
+      SP_EMAIL_HIT_NOTIFICATION_ENABLED: "false"
+      SP_ENABLE_EMAIL_NOTIFICATION_SERVICE: "false"
+      SP_ADDITIONAL_PROCESSING_ENABLED_PASSENGER: "false"
+      SP_ADDITIONAL_PROCESSING_ENABLED_RAW: "false"
+      SP_ADDITIONAL_PROCESSING_ENABLED_RULES: "false"
+      SP_RESET_LINK_URL: "https://localhost:443/password-reset"
+      SP_RESET_PASSWORD_LINK_URL: "https://localhost:443/reset-password"
+      SP_HIBERNATE_CONNECTION_URL: "jdbc:mariadb://mariadb:3306/gtas?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true"
   rule-runner:
     deploy:
       resources:
         limits:
           cpus: '2'
-          memory: 1G
+          memory: 2G
         reservations:
-          memory: 1G
+          memory: 2G
     environment:
       MARIA_URL: mariadb
       DB_HOST: mariadb
@@ -40,9 +42,9 @@ services:
       resources:
         limits:
           cpus: '2'
-          memory: 500M
+          memory: 1G
         reservations:
-          memory: 500M
+          memory: 1G
     ports:
       - 61616:61616
       - 8161:8161      
@@ -51,20 +53,23 @@ services:
       resources:
         limits:
           cpus: '2'
-          memory: 1G
+          memory: 2G
         reservations:
-          memory: 1G
+          memory: 2G
     environment:
-      EMAIL_SENDER_USERNAME: "some.user@somedomain.com"
-      EMAIL_SENDER_PASSWORD: "somepassword"
-      EMAIL_SENDER_HOST: "some.smtp.somedomain.com"
-      SSL_TRUST_HOST: "bogus"
-      AUTOMATED_HIT_NOTIFICATION_EMAIL_ENABLED: "false"
-      MANUAL_HIT_NOTIFICATION_EMAIL_ENABLED: "true"
-      ADDITIONAL_PROCESSING_THIRD_PARTY: "false"
-      ADDITIONAL_PROCESSING_RAW: "false"
-      ADDITIONAL_PROCESSING_RULES: "false"
-      UI_ADDRESS: localhost
+      DB_HOST: mariadb
+      SP_SPRING_MAIL_USERNAME: "some.user@somedomain.com"
+      SP_SPRING_MAIL_PASSWORD: "somepassword"
+      SP_SPRING_MAIL_HOST: "some.smtp.somedomain.com"
+      SP_SPRING_MAIL_PROPERTIES_SSL_TRUST_HOST: "bogus"
+      SP_EMAIL_HIT_NOTIFICATION_ENABLED: "false"
+      SP_ENABLE_EMAIL_NOTIFICATION_SERVICE: "false"
+      SP_ADDITIONAL_PROCESSING_ENABLED_PASSENGER: "false"
+      SP_ADDITIONAL_PROCESSING_ENABLED_RAW: "false"
+      SP_ADDITIONAL_PROCESSING_ENABLED_RULES: "false"
+      SP_RESET_LINK_URL: "https://localhost:443/password-reset"
+      SP_RESET_PASSWORD_LINK_URL: "https://localhost:443/reset-password"
+      SP_HIBERNATE_CONNECTION_URL: "jdbc:mariadb://mariadb:3306/gtas?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true"
     volumes:
       - type: bind
         source: ./gtas-data
@@ -75,9 +80,9 @@ services:
       resources:
         limits:
           cpus: '2'
-          memory: 1G
+          memory: 2G
         reservations:
-          memory: 1G
+          memory: 2G
     environment:
       NEO4J_AUTH: "neo4j/admin"
       NEO4J_dbms_connector_bolt_advertised__address: localhost:7687
@@ -87,9 +92,9 @@ services:
       resources:
         limits:
           cpus: '2'
-          memory: 1G
+          memory: 2G
         reservations:
-          memory: 1G
+          memory: 2G
     environment:
       MARIA_URL: mariadb
       MARIA_USERNAME: root
@@ -105,9 +110,9 @@ services:
       resources:
         limits:
           cpus: '2'
-          memory: 2G
+          memory: 4G
         reservations:
-          memory: 2G
+          memory: 4G
   logstash:
     deploy:
       resources:
@@ -137,9 +142,9 @@ services:
       resources:
         limits:
           cpus: '2'
-          memory: 1G
+          memory: 2G
         reservations:
-          memory: 1G
+          memory: 2G
 secrets:
   kibana-crt:
     file: ./gtas-parent/gtas-commons/certs/kibana.crt

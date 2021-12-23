@@ -43,10 +43,10 @@ public class ConfigurationController {
 	@Value("${cypher.url}")
 	String cypherUrl;
 
-	@Value("${neo4jusername}")
+	@Value("${neo4j.username}")
 	String neo4jusername;
 
-	@Value("${neo4jpassword}")
+	@Value("${neo4j.password}")
 	String neo4jpassword;
 
 	@Value("${agency.name}")

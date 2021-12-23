@@ -27,8 +27,8 @@ import gov.gtas.aws.QueueService;
  * 
  * Below is the default configuration for the scheduler
  * 
- * sqs.loader.fixedDelay.in.milliseconds=1000
- * sqs.loader.initialDelay.in.milliseconds=1000
+ * sqs.loader.fixed-delay.milliseconds=1000
+ * sqs.loader.initial-delay.milliseconds=1000
  * sqs.loader.enabled=false
  * sqs.loader.queue= <AWS SQS URL> 
  * sqs.loader.region=<REGION NAME WHERE THE SQS IS HOSTED>
@@ -65,7 +65,7 @@ public class SQSLoaderScheduler {
 	@Autowired
 	private InboundQMessageSender sender;
 
-	@Scheduled(fixedDelayString = "${sqs.loader.fixedDelay.in.milliseconds}", initialDelayString = "${sqs.loader.initialDelay.in.milliseconds}")
+	@Scheduled(fixedDelayString = "${sqs.loader.fixed-delay.milliseconds}", initialDelayString = "${sqs.loader.initial-delay.milliseconds}")
 	public void startPullForMessages() {
 
 		if (enabled == null || !Boolean.parseBoolean(enabled)) {

@@ -24,11 +24,11 @@ public class Neo4JConfig {
 	@Resource
 	private Environment env;
 
-	private static final String PROPERTY_NAME_USERNAME = "neo4jusername";
-	private static final String PROPERTY_NAME_CRED = "neo4jpassword";
-	private static final String NEO_4_J_ENABLED = "neo4jEnabled";
-	private static final String NEO_4_J_GRAPH_DB_URL = "neo4jUrl";
-	private static final String NEO_4_J_RULE_ENGINE_ENABLED="neo4jRuleEngineEnabled";
+	private static final String PROPERTY_NAME_USERNAME = "neo4j.username";
+	private static final String PROPERTY_NAME_CRED = "neo4j.password";
+	private static final String NEO_4_J_ENABLED = "neo4j.enabled";
+	private static final String NEO_4_J_GRAPH_DB_URL = "neo4j-url";
+	private static final String NEO_4_J_RULE_ENGINE_ENABLED="neo4j-rule-engine.enabled";
 
 	public Neo4JConfig() {
 	}

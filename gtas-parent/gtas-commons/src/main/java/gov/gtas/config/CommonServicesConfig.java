@@ -60,7 +60,7 @@ public class CommonServicesConfig {
 	private static final String PROPERTY_NAME_CONFIGURATION_RESOURCE_PATH = "hibernate.cache.provider_configuration_file_resource_path";
 	private static final String PROPERTY_NAME_HIBERNATE_QUERY_CACHE = "hibernate.cache.use_query_cache";
 	private static final String PROPERTY_NAME_HIBERNATE_USE_MINIMAL_PUTS = "hibernate.cache.use_minimal_puts";
-	private static final String PROPERTY_NAME_SHAREDCACHE_MODE = "javax.persistence.sharedCache.mode";
+	private static final String PROPERTY_NAME_SHAREDCACHE_MODE = "javax.persistence.shared-cache.mode";
 	private static final String PROPERTY_NAME_HIBERNATE_JDBC_BATCH_SIZE = "hibernate.jdbc.batch_size";
 	private static final String PROPERTY_NAME_HIBERNATE_USE_SQL_COMMENTS = "hibernate.use_sql_comments";
 	private static final String PROPERTY_NAME_HIBERNATE_ORDER_INSERTS = "hibernate.order_inserts";
@@ -68,15 +68,15 @@ public class CommonServicesConfig {
 	private static final String PROPERTY_NAME_HIBERNATE_JDBC_BATCH_VERSION_DATA = "hibernate.jdbc.batch_versioned_data";
 	private static final String HIBERNATE_TIMEOUT = "hibernate.timeout";
 
-	private static final String PROPERTY_NAME_C3P0_MIN_SIZE = "c3p0.min_size";
-	private static final String PROPERTY_NAME_C3P0_MAX_SIZE = "c3p0.max_size";
-	private static final String PROPERTY_NAME_C3P0_MAX_IDLETIME = "c3p0.max_idletime";
-	private static final String PROPERTY_NAME_C3P0_MAX_STATEMENTS = "c3p0.max_statements";
-	private static final String PROPERTY_NAME_C3P0_MAX_CONNECT = "c3p0.idleConnectionTestPeriod";
+	private static final String PROPERTY_NAME_C3P0_MIN_SIZE = "c3p0.min-size";
+	private static final String PROPERTY_NAME_C3P0_MAX_SIZE = "c3p0.max-size";
+	private static final String PROPERTY_NAME_C3P0_MAX_IDLETIME = "c3p0.max-idletime";
+	private static final String PROPERTY_NAME_C3P0_MAX_STATEMENTS = "c3p0.max-statements";
+	private static final String PROPERTY_NAME_C3P0_MAX_CONNECT = "c3p0.idle-connection-test-period";
 
-	private static final String PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET = "hibernate.connection.charSet";
-	private static final String PROPERTY_NAME_HIBERNATE_USEUNICODE = "hibernate.connection.useUnicode";
-	private static final String PROPERTY_NAME_HIBERNATE_CHARACTERENCODING = "hibernate.connection.characterEncoding";
+	private static final String PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET = "hibernate.connection.char-set";
+	private static final String PROPERTY_NAME_HIBERNATE_USEUNICODE = "hibernate.connection.use-unicode";
+	private static final String PROPERTY_NAME_HIBERNATE_CHARACTERENCODING = "hibernate.connection.character-encoding";
 
 	@Value("${spring.mail.username}")
 	private String mailSenderUserName;

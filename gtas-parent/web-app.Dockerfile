@@ -13,14 +13,14 @@ RUN mkdir /temp-dos
 COPY ./docker-resources/setenv.sh /temp-dos/setenv.sh
 RUN dos2unix /temp-dos/setenv.sh
 
-
 FROM tomcat:9-jdk8-adoptopenjdk-openj9 as tomcat
 
 RUN mkdir -p /usr/local/tomcat/webapps/gtas /logs/apache-tomcat-web /logs/apache-tomcat /temp /usr/local/tomcat/conf/cert /usr/local/tomcat/conf/key
 
 COPY --from=build-stage /root/.m2/repository/gov/gtas/gtas-webapp/1.0.0-BUILD-SNAPSHOT/gtas-webapp-1.0.0-BUILD-SNAPSHOT.war /usr/local/tomcat/webapps/gtas.war
 COPY --from=build-stage /temp-dos/setenv.sh /usr/local/tomcat/bin/setenv.sh
-COPY ./docker-resources/default.application.properties /usr/local/tomcat/conf/application.properties
+COPY ./gtas-commons/src/main/resources/default.application.properties /usr/local/tomcat/conf/application.properties
+COPY ../docker-resources/environment-variable-migration.sh /
 COPY ./docker-resources/logrotate.conf /
 COPY ./docker-resources/server.xml /usr/local/tomcat/conf/
 
@@ -32,4 +32,4 @@ WORKDIR /usr/local/tomcat/webapps/gtas
 RUN rm -rf /usr/local/tomcat/webapps/gtas && unzip -xvf /usr/local/tomcat/webapps/gtas.war
 
 WORKDIR /usr/local/tomcat/bin
-ENTRYPOINT mkdir -p /scheduler-logs/temp /temp && dockerize -wait tcp://${DB_HOST}:3306 -wait tcp://${NEO4J_HOST}:7687 -timeout 1000s logrotate /logrotate.conf && catalina.sh run
+ENTRYPOINT [ "/bin/bash", "-c", "printenv | /environment-variable-migration.sh /usr/local/tomcat/conf/application.properties && mkdir -p /scheduler-logs/temp /temp && dockerize -wait tcp://${DB_HOST}:3306 -wait tcp://${NEO4J_HOST}:7687 -timeout 1000s logrotate /logrotate.conf && catalina.sh run"]

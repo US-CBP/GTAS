@@ -71,7 +71,7 @@ public class OmniDerogUpdateServiceImpl implements OmniDerogUpdateService {
 
 	private final String PASSENGER_WATCHLIST_NAME = "Passenger";
 
-	@Value("${omni.derogReplace.batchSize}")
+	@Value("${omni.derog-replace.batchSize}")
 	private Integer batchSize;
 
 	@Autowired

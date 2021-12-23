@@ -49,7 +49,7 @@ public class TamrDerogReplaceScheduler {
  
     private final String PASSENGER_WATCHLIST_NAME = "Passenger";
     
-    @Value("${tamr.derogReplace.batchSize}")
+    @Value("${tamr.derog-replace.batchSize}")
     private Integer batchSize;
     
     WatchlistRepository watchlistRepository;
@@ -76,8 +76,8 @@ public class TamrDerogReplaceScheduler {
     /**
      * Replace the watchlist in Tamr if the GTAS one has changed.
      **/
-    @Scheduled(fixedDelayString = "${tamr.derogReplace.fixedDelay.in.milliseconds}",
-            initialDelayString = "${tamr.derogReplace.initialDelay.in.milliseconds}")
+    @Scheduled(fixedDelayString = "${tamr.derog-replace.fixed-delay.milliseconds}",
+            initialDelayString = "${tamr.derog-replace.initial-delay.milliseconds}")
     public void jobScheduling() throws InterruptedException {
         logger.info("Checking for watchlist edits to send to Tamr...");
         

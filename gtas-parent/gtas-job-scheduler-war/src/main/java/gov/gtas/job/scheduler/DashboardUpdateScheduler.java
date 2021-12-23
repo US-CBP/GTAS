@@ -74,7 +74,7 @@ public class DashboardUpdateScheduler {
 	/**
 	 * Job scheduling.
 	 */
-	// @Scheduled(fixedDelayString = "${dashboard.fixedDelay.in.milliseconds}")
+	// @Scheduled(fixedDelayString = "${dashboard.fixed-delay.milliseconds}")
 	@Transactional
 	public void jobScheduling() {
 		logger.debug("entering jobScheduling()");
