@@ -22,6 +22,50 @@ public class LoaderWorker extends BaseEntityAudit {
 	@Column(name="bucketCount")
 	private int bucketCount = 0;
 
+	@Column(name="active")
+	private Boolean active;
+	
+	@Column(name="assigned_queue")
+	private String assignedQueue;
+	
+	@Column(name="permits_free")
+	private int permitsFree = 0;
+	
+	/**
+	 * @return the permitsFree
+	 */
+	public int getPermitsFree() {
+		return permitsFree;
+	}
+
+	/**
+	 * @param permitsFree the permitsFree to set
+	 */
+	public void setPermitsFree(int permitsFree) {
+		this.permitsFree = permitsFree;
+	}
+
+	/**
+	 * @return the assignedQueue
+	 */
+	public String getAssignedQueue() {
+		return assignedQueue;
+	}
+
+	/**
+	 * @param assignedQueue the assignedQueue to set
+	 */
+	public void setAssignedQueue(String assignedQueue) {
+		this.assignedQueue = assignedQueue;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(workerName);
@@ -47,6 +91,20 @@ public class LoaderWorker extends BaseEntityAudit {
 	 */
 	public String getWorkerName() {
 		return workerName;
+	}
+
+	/**
+	 * @return active status
+	 */
+	public Boolean getActive() {
+		return active;
+	}
+
+	/**
+	 * @return set active status
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	/**

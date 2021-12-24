@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
@@ -22,6 +23,9 @@ public class JmsConfig {
 	@Value("${spring.activemq.broker-url}")
 	private String DEFAULT_BROKER_URL;
 	
+	@Value("${loader.name}:random")
+	private String name;
+
 	public Executor getAsyncExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(2);
@@ -43,12 +47,14 @@ public class JmsConfig {
 	}
 	
 	@Bean
-	public DefaultJmsListenerContainerFactory ruleAppFactory() {
+	public DefaultJmsListenerContainerFactory loaderAppJMSFactory() {
 		DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
 		factory.setConnectionFactory(connectionFactory());
 		factory.setConcurrency("1-10");
 		factory.setSessionAcknowledgeMode(Session.CLIENT_ACKNOWLEDGE);
 		factory.setTaskExecutor(getAsyncExecutor());
+		factory.setAutoStartup(false);
+		factory.setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
 		return factory;
 	}
 }
