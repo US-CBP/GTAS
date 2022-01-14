@@ -38,7 +38,7 @@
     "font-awesome-animation": "~0.0.7",
     "grunt": "~0.4.0",
     "inputmask": "^4.0.0",
-    "jquery": "2.2.3",
+    "jquery": "3.5.0",
     "jquery-extendext": "^0.1.1",
     "jspdf": "^1.3.4",
     "jszip": "^2.6.1",
