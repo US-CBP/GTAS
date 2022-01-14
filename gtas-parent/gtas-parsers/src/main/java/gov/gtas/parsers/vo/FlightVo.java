@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import gov.gtas.model.BookingDetail;
+import gov.gtas.parsers.pnrgov.segment.TRA;
 import gov.gtas.parsers.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -23,6 +24,7 @@ public class FlightVo implements Validatable {
 	private String flightNumber;
 	private String origin;
 	private String destination;
+	private TRA tra;
 	/*
 	 * THIS IS NOT UTC TIME. LOCAL ETD DATE IS IN WHATEVER LOCAL TIME OF THE AIRPORT
 	 * WHERE FLIGHT ORIGINATES This field (stripped to just the date instead of a
@@ -120,6 +122,14 @@ public class FlightVo implements Validatable {
 
 	public void setLocalEtaDate(Date localEtaDate) {
 		this.localEtaDate = localEtaDate;
+	}
+
+	public TRA getTra() {
+		return this.tra;
+	}
+
+	public void setTra(TRA tra) {
+		this.tra = tra;
 	}
 
 	@Override

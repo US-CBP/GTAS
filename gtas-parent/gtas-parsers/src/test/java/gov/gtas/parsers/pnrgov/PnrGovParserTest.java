@@ -6,16 +6,13 @@
 package gov.gtas.parsers.pnrgov;
 
 import gov.gtas.parsers.ParserTestHelper;
-import gov.gtas.parsers.vo.SeatVo;
+import gov.gtas.parsers.vo.*;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
-import gov.gtas.parsers.vo.BagVo;
-import gov.gtas.parsers.vo.DocumentVo;
-import gov.gtas.parsers.vo.PnrVo;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -30,6 +27,7 @@ import static org.junit.Assert.*;
 
 public class PnrGovParserTest implements ParserTestHelper {
     private static final String PNR_MESSAGE_PG_77 = "/pnr-messages/pnrMessagePg77.txt";
+    private static final String PNR_MESSAGE_PG_77_WITH_CODESHARE = "/pnr-messages/modifyPnr77ForCodeShare.txt";
     private static final String PNR_MESSAGE_PG_76 = "/pnr-messages/pnrMessagePg76.txt";
     private static final String PNR_MESSAGE_PG_75 = "/pnr-messages/pnrMessagePg75.txt";
     private static final String PNR_BAD_FORMAT = "/pnr-messages/pnrBadFormat.txt";
@@ -85,6 +83,19 @@ public class PnrGovParserTest implements ParserTestHelper {
         LocalDateTime reservationDate = getLocalDateTime(vo.getReservationCreateDate());
         LocalDateTime May23rd2013At181348 = LocalDateTime.of(2013, 5, 23, 18, 13, 48);
         assertTrue(May23rd2013At181348.isEqual(reservationDate));
+    }
+
+    @Test
+    public void pnrCodeShare() throws ParseException, IOException, URISyntaxException {
+        String message77 = getMessageText(PNR_MESSAGE_PG_77_WITH_CODESHARE);
+        PnrVo vo = this.parser.parse(message77);
+        assertEquals(2, vo.getCodeshares().size());
+        CodeShareVo csOne = vo.getCodeshares().get(0);
+        CodeShareVo csTwo = vo.getCodeshares().get(1);
+        assertEquals("1524", csOne.getOperatingFlightNumber());
+        assertEquals("SQ5678", csOne.getFullMarketingFlightNumber());
+        assertEquals("DL8976", csTwo.getFullMarketingFlightNumber());
+        assertEquals("0972", csTwo.getOperatingFlightNumber());
     }
 
     @Test

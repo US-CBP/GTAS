@@ -17,6 +17,7 @@ import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.EmailDTO;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,6 +35,7 @@ import java.util.List;
 import static gov.gtas.enumtype.HitTypeEnum.*;
 
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class HitEmailNotificationServiceTest {
 
     @Mock

@@ -29,6 +29,7 @@ public class CodeShareFlight implements Serializable {
 	@Column(name = "marketing_flight_number")
 	private String marketingFlightNumber;
 
+	@Deprecated
 	@Column(name = "operating_flight_number")
 	private String operatingFlightNumber;
 
