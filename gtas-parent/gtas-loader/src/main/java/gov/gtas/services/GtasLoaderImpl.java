@@ -494,6 +494,7 @@ public class GtasLoaderImpl implements GtasLoader {
 			List<CodeShareFlight> codeShareFlights = codeShareRepository.findByMarketingFlightNumberAndFlightId(cso.getFullMarketingFlightNumber(), flightId);
 			if (codeShareFlights.isEmpty()) {
 				CodeShareFlight cs = utils.convertCodeShare(cso);
+				cs.setFlightId(flightId);
 				cs.getPnrs().add(pnr);
 				pnr.getCodeshares().add(cs);
 			} else {

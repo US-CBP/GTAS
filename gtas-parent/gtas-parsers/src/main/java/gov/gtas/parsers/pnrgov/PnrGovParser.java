@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.parsers.pnrgov;
@@ -26,8 +26,12 @@ import gov.gtas.parsers.pnrgov.segment.SSR.SpecialRequirementDetails;
 import gov.gtas.parsers.pnrgov.segment.TIF.TravelerDetails;
 import gov.gtas.parsers.util.FlightUtils;
 import gov.gtas.parsers.util.ParseUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class PnrGovParser extends EdifactParser<PnrVo> {
+
+	Logger logger = LoggerFactory.getLogger(PnrGovParser.class);
 
 	private PassengerVo currentPassenger = null;
 
@@ -456,13 +460,28 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 		if (StringUtils.isNotBlank(tvl.getOperatingCarrier())) {
 			// codeshare flight: create a separate flight with the same
 			// details except use the codeshare carrier and flight number.
-			TVL cs_tvl = getMandatorySegment(TVL.class);
-			CodeShareVo cso = new CodeShareVo(tvl.getCarrier(),
-					FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()), tvl.getOperatingCarrier(),
-					FlightUtils.padFlightNumberWithZeroes(cs_tvl.getFlightNumber()));
+			//TVL is for PNR < 14.1
+			CodeShareVo cso = null;
 			FlightVo csFlight = new FlightVo();
+			if (f.getTra() != null) {
+				//TRA is to get codeshare details on PNR > 14.1
+				TRA cs_tra = f.getTra();
+				if (cs_tra != null) {
+					cso = new CodeShareVo(tvl.getCarrier(),
+							FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()), tvl.getOperatingCarrier(),
+							FlightUtils.padFlightNumberWithZeroes(cs_tra.getFlightNumber()));
+					csFlight.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(cs_tra.getFlightNumber()));
+				}
+			} else {
+				TVL cs_tvl = getConditionalSegment(TVL.class);
+				if (cs_tvl != null) {
+					cso = new CodeShareVo(tvl.getCarrier(),
+							FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()), tvl.getOperatingCarrier(),
+							FlightUtils.padFlightNumberWithZeroes(cs_tvl.getFlightNumber()));
+					csFlight.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(cs_tvl.getFlightNumber()));
+				}
+			}
 			csFlight.setCarrier(tvl.getOperatingCarrier());
-			csFlight.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(cs_tvl.getFlightNumber()));
 			csFlight.setDestination(tvl.getDestination());
 			csFlight.setOrigin(tvl.getOrigin());
 			csFlight.setLocalEtaDate(tvl.getEta());
@@ -474,23 +493,28 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			csFlight.setMarketingFlightNumber(FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()));
 			csFlight.setCodeShareFlight(true);
 			// f.setMarketingFlight(true);
-			parsedMessage.getCodeshares().add(cso);
-			if (csFlight.isValid()) {
-				csFlight.setUuid(f.getUuid());
-				parsedMessage.getFlights().add(csFlight);
-				parsedMessage.getFlights().remove(f);
-				f = csFlight;
-
+			if (cso != null) {
+				parsedMessage.getCodeshares().add(cso);
+				if (csFlight.isValid()) {
+					csFlight.setUuid(f.getUuid());
+					parsedMessage.getFlights().add(csFlight);
+					parsedMessage.getFlights().remove(f);
+					f = csFlight;
+				} else {
+					logger.warn("Unable to validate code share - flight not updated");
+				}
 			} else {
-				throw new ParseException("Invalid flight: " + csFlight);
+				logger.warn("Unable to process code share - flight not updated ");
 			}
-
 			processFlightSegments(tvl, f);
 		}
 	}
 
 	private void processFlightSegments(TVL tvl, FlightVo flightVo) throws ParseException {
-		getConditionalSegment(TRA.class);
+		TRA tra = getConditionalSegment(TRA.class);
+		if (tra != null) {
+			flightVo.setTra(tra);
+		}
 		getConditionalSegment(RPI.class);
 		getConditionalSegment(APD.class);
 
@@ -634,7 +658,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 		/**
 		 * TRI tri=null; try { tri = getMandatorySegment(TRI.class);
 		 * processGroup7_SeatInfo(tri, tvl); } catch (Exception e) {
-		 * 
+		 *
 		 * }
 		 **/
 
@@ -658,7 +682,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 		TIF tif = getConditionalSegment(TIF.class);
 		if(tif != null) {
 			List<TravelerDetails> td = tif.getTravelerDetails();
-			if(CollectionUtils.isNotEmpty(td)) {	
+			if(CollectionUtils.isNotEmpty(td)) {
 				refNumber = tif.getTravelerDetails().get(0).getTravelerReferenceNumber(); //Grab TIF Ref number, which is number by which passengers are ordered on the PNR
 			}
 			if (refNumber != null) {
@@ -793,7 +817,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 
 		/*
 		 * Can't use equality of flight number until code share flights are corrected.
-		 * 
+		 *
 		 * String primeCarrier = primeFlight.getCarrier(); String tvlCarrier =
 		 * tvl.getCarrier();\ String primeFlightNum = primeFlight.getFlightNumber();
 		 * String tvlFlightNum = tvl.getFlightNumber();
