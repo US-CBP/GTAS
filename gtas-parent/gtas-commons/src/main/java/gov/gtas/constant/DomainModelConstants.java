@@ -10,7 +10,7 @@ public class DomainModelConstants {
 	public static final int ENTITY_NAME_SIZE = 20;
 
 	// User
-	public static final int GTAS_USERID_COLUMN_SIZE = 255;
+	public static final int GTAS_USERID_COLUMN_SIZE = 50;
 
 	// Knowledge Base
 	public static final String KB_UNIQUE_CONSTRAINT_NAME = "KB_UNIQUE_NAME";
