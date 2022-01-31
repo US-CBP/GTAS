@@ -22,10 +22,15 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
 	@Query("SELECT pax FROM Passenger pax " + "left join fetch pax.passengerDetails  "
 			+ "left join fetch pax.bookingDetails "
 			+ "left join fetch pax.passengerTripDetails "
-			+ "left join fetch pax.flight "
-			+ "WHERE pax.id IN ("
+			+ "left join fetch pax.flight f "
+			+ "left join fetch f.mutableFlightDetails mf "
+			+ "WHERE (f.direction = 'O' AND mf.etd > :dateLimit) "
+			+ "OR (f.direction ='I' AND mf.eta > :dateLimit ) "
+			+ "OR (f.direction = 'A' AND (mf.etd > :dateLimit "
+			+ "OR mf.eta > :dateLimit))"
+			+ "AND pax.id IN ("
 			+ "SELECT pxtag.pax_id FROM PassengerIDTag pxtag WHERE pxtag.idTag IN (SELECT p.idTag FROM PassengerIDTag p WHERE p.pax_id = (:pax_id) ))")
-	List<Passenger> getBookingDetailsByPassengerIdTag(@Param("pax_id") Long pax_id);
+	List<Passenger> getBookingDetailsByPassengerIdTag(@Param("pax_id") Long pax_id, @Param("dateLimit") Date dateLimit);
 
     @Query("SELECT pax FROM Passenger pax " + "left join fetch pax.passengerDetails  "
 			+ "left join fetch pax.bookingDetails "
