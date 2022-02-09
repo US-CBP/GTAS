@@ -20,7 +20,7 @@
         <elasticsearch.version>7.2.0</elasticsearch.version>
         <sonar.sources>src/main/java</sonar.sources>
         <jackson.version>2.9.9</jackson.version>
-        <hibernate.version>5.3.7.Final</hibernate.version>
+        <hibernate.version>5.4.24.Final</hibernate.version>
     </properties>
 
     <repositories>
