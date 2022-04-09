@@ -45,7 +45,7 @@
     "lodash": "^4.17.15",
     "material-date-picker": "~1.2.1",
     "microplugin": "0.0.3",
-    "moment": "~2.10.6",
+    "moment": "~2.29.2",
     "ng-file-upload": "~9.1.1",
     "ng-idle": "~1.2.0",
     "npm-font-open-sans": "^1.1.0",
