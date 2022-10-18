@@ -19,7 +19,7 @@
         <sonar-plugin.version>3.7.0.1746</sonar-plugin.version>
         <elasticsearch.version>7.2.0</elasticsearch.version>
         <sonar.sources>src/main/java</sonar.sources>
-        <jackson.version>2.9.9</jackson.version>
+        <jackson.version>2.13.4.1</jackson.version>
         <hibernate.version>5.3.7.Final</hibernate.version>
     </properties>
 
