@@ -4,14 +4,30 @@
     <groupId>gov.gtas</groupId>
     <artifactId>gtas-parent</artifactId>
     <version>0.1-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
   </parent>
+
   <groupId>gov.gtas</groupId>
   <artifactId>gtas-watchlist-loader</artifactId>
   <name>WatchList Loader</name>
+
      <properties>
         <gtas-commons.version>0.1-SNAPSHOT</gtas-commons.version>
-    </properties> 
-  <dependencies>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>gov.gtas</groupId>
+                <artifactId>gtas-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
           <!-- GTAS intermodule dependencies -->
         <dependency>
             <groupId>gov.gtas</groupId>
@@ -42,9 +58,8 @@
         <dependency>
     		<groupId>org.apache.commons</groupId>
     		<artifactId>commons-csv</artifactId>
-    		<version>1.1</version>
 		</dependency>
-		
+
         <!-- spring -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -106,5 +121,5 @@
             </plugin>
         </plugins>
     </build>
-      
+
 </project>

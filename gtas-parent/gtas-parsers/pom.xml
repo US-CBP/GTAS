@@ -1,18 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>gov.gtas</groupId>
         <artifactId>gtas-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
-    </parent>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 
     <artifactId>gtas-parsers</artifactId>
     <packaging>jar</packaging>
     <name>GTAS Parsers</name>
-    <dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>gov.gtas</groupId>
+				<artifactId>gtas-bom</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -43,7 +57,7 @@
 		<gtas.version>0.1-SNAPSHOT</gtas.version>
 		<commons-collections4.version>4.2</commons-collections4.version>
     </properties>
-	
+
 	<profiles>
 		<profile>
 			<id>gtas-parser-with-dependencies</id>

@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>gov.gtas</groupId>
         <artifactId>gtas-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>gtas-loader</artifactId>
     <packaging>jar</packaging>
     <name>GTAS Loaders</name>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>gov.gtas</groupId>
+                <artifactId>gtas-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -40,7 +53,7 @@
             <scope>test</scope>
         </dependency>
         <!-- commons -->
-        <!--  
+        <!--
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
@@ -62,7 +75,6 @@
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -112,11 +124,11 @@
                                     <mainClass>gov.gtas.services.LoaderMain</mainClass>
                                 </manifest>
                             </archive>
-                           
+
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                         
+
                             <finalName>gtas-loader</finalName>
                         </configuration>
                         <phase>package</phase>
@@ -130,6 +142,6 @@
     </build>
 	</profile>
 </profiles>
-    
+
 </project>
 
