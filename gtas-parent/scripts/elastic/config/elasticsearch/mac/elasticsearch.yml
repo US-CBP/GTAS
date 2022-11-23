@@ -16,6 +16,14 @@
 #
 cluster.name: gtas-cluster
 #
+# The default threshold is <85% usage, change to bytes
+#
+cluster.routing.allocation.disk.threshold_enabled: true
+cluster.routing.allocation.disk.watermark.flood_stage: 5gb
+cluster.routing.allocation.disk.watermark.low: 30gb
+cluster.routing.allocation.disk.watermark.high: 20gb
+
+#
 # ------------------------------------ Node ------------------------------------
 #
 # Use a descriptive name for the node:
