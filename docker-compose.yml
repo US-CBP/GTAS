@@ -4,7 +4,7 @@ services:
   http-proxy:
     image: wcogtas/http-proxy:1.0.0
     container_name: http-proxy
-    build: 
+    build:
       context: ./gtas-parent
       dockerfile: docker-resources/proxy.Dockerfile
     restart: always
@@ -23,13 +23,13 @@ services:
   web-app:
     image: wcogtas/web-app:1.0.0
     container_name: web-app
-    build: 
+    build:
       context: ./gtas-parent
       dockerfile: web-app.Dockerfile
     ports:
       - 8080:8080
       - 8443:8443
-    environment: 
+    environment:
       - DB_HOST=mariadb
       - KIBANA_HOST=kibana
       - NEO4J_HOST=neo4j
@@ -62,7 +62,7 @@ services:
   gtas-scheduler:
     image: wcogtas/gtas-scheduler:1.0.0
     container_name: gtas-scheduler
-    build: 
+    build:
       context: .
       dockerfile: ./gtas-parent/gtas-job-scheduler-war/gtas-scheduler.Dockerfile
     restart: always
@@ -80,14 +80,14 @@ services:
       - webapp_neo4j_password
     networks:
       - GTAS_webapp-network
-    depends_on: 
+    depends_on:
       - activemq
 
   activemq:
     image: rmohr/activemq:5.15.9
     container_name: activemq
     restart: always
-    networks: 
+    networks:
       - GTAS_webapp-network
 
   mariadb:
