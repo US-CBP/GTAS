@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.services.search;
@@ -207,7 +207,7 @@ public class ElasticHelper {
 			}
 		}
 		rv.sort((o1, o2) -> o1.getEta().compareTo(o2.getEta()) * -1);
-	
+
 		return new AdhocQueryDto(rv, results.getHits().length);
 	}
 
@@ -256,7 +256,7 @@ public class ElasticHelper {
 				lpVo.setFlightNumber((String) result.get("flightNumber"));
 				lpVo.setHighlightMatch(converHighlightsTable(hit.getHighlightFields().entrySet()));
 				// Need to normalize for intuitive consideration
-				lpVo.setScore(hit.getExplanation().getValue().floatValue());
+				lpVo.setScore(hit.getExplanation().getValue());
 				lp.add(lpVo);
 			}
 		}
