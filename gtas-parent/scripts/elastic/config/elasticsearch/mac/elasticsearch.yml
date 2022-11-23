@@ -107,7 +107,9 @@ xpack.security.http.ssl.key: ${path.home}/config/certs/ssl/docker-cluster/elasti
 xpack.security.http.ssl.certificate: ${path.home}/config/certs/ssl/docker-cluster/elasticsearch/elasticsearch.crt
 xpack.security.http.ssl.certificate_authorities: [ "${path.home}/config/certs/ssl/ca/ca.crt" ]
 
-xpack.security.transport.ssl.verification_mode: certificate 
-xpack.security.transport.ssl.key: ${path.home}/config/certs/ssl/docker-cluster/elasticsearch/elasticsearch.key 
-xpack.security.transport.ssl.certificate: ${path.home}/config/certs/ssl/docker-cluster/elasticsearch/elasticsearch.crt 
+xpack.security.transport.ssl.verification_mode: certificate
+xpack.security.transport.ssl.key: ${path.home}/config/certs/ssl/docker-cluster/elasticsearch/elasticsearch.key
+xpack.security.transport.ssl.certificate: ${path.home}/config/certs/ssl/docker-cluster/elasticsearch/elasticsearch.crt
 xpack.security.transport.ssl.certificate_authorities: [ "${path.home}/config/certs/ssl/ca/ca.crt" ]
+
+xpack.ml.enabled: false
