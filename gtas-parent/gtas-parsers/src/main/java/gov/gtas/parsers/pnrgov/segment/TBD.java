@@ -17,7 +17,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.Segment;
-import org.elasticsearch.search.aggregations.metrics.percentiles.hdr.InternalHDRPercentiles;
 
 /**
  * <p>
