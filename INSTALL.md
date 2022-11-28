@@ -86,12 +86,12 @@ Install all ELK stack (Installs Elasticsearch, Logstash, Kibana and configures s
 
 The ELK [random generated password] is created during the installation process by the setup-security.sh script
 
-Elasticsearch:
-user: elastic
+`Elasticsearch`: <http://localhost:9200>
+username: elastic
 password: [random generated password]
 
-Kibana:
-user: kibana_user
+`Kibana`: <http://localhost:5601>
+username: kibana_user
 password: [random generated password]
 
 ### Install and start ActiveMQ
@@ -100,6 +100,10 @@ Install ActiveMQ (https://activemq.apache.org/getting-started)
 ```
 activemq start
 ```
+
+`activemq`: <http://localhost:8161> 
+username: admin
+password: admin
 
 ### Install and start Neo4J
 
@@ -113,8 +117,8 @@ activemq start
 ./gtas-parent/scripts/graph_db/linux/install_and_start_all.sh
 ```
 
-Default Neo4j:
-user: neo4j
+`neo4j`: <http://localhost:7474>
+username: neo4j
 password: neo4j
 
 When logging Neo4j with the above credentials it will ask for a new password. 
@@ -126,10 +130,10 @@ password: password
 
 Download Tomcat (9) https://tomcat.apache.org/download-90.cgi
 
-Deploy to tomcat, update application.properties file, and start the server.
+You will need to create two directories for processing messages in a development environment; 
+* ```message.dir.origin=...```  for unprocessed messages
+* ```message.dir.processed=...``` for messages that have been loaded by GTAS.
 
-You will need to create two folders for processing messages in a development environment; 
-one for unprocessed messages and one for messages that have been loaded by GTAS. 
 You may name the files as you wish, but the names must correspond with those in the application.properties file.
 This file must be copied to the configuration directory before starting the server.
 ```
