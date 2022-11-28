@@ -100,15 +100,15 @@
          configuration is used below.
     -->
 
-    <Connector port="8443" protocol="org.apache.coyote.http11.Http11AprProtocol" 
-               SSLEnabled="true" maxThreads="200" scheme="https"
-               secretRequired="false"
-               SSLProtocol="TLSv1+TLSv1.1+TLSv1.2"
-               certificateVerification="none"
-               SSLCertificateFile="conf/wcogtas.org.crt" 
-               SSLCertificateKeyFile="conf/wcogtas.org.key"
-               certificateKeyPassword="Pa$$word1" />
-    
+<!--    <Connector port="8443" protocol="org.apache.coyote.http11.Http11AprProtocol" -->
+<!--               SSLEnabled="true" maxThreads="200" scheme="https"-->
+<!--               secretRequired="false"-->
+<!--               SSLProtocol="TLSv1+TLSv1.1+TLSv1.2"-->
+<!--               certificateVerification="none"-->
+<!--               SSLCertificateFile="conf/wcogtas.org.crt" -->
+<!--               SSLCertificateKeyFile="conf/wcogtas.org.key"-->
+<!--               certificateKeyPassword="Pa$$word1" />-->
+
 <!--     <Connector port="8443" protocol="org.apache.coyote.http11.Http11AprProtocol"
                maxThreads="150" SSLEnabled="true" connectionTimeout="20000">
         <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" />
@@ -118,7 +118,7 @@
                          type="RSA" />
         </SSLHostConfig>
     </Connector> -->
-    
+
 
     <!-- Define an AJP 1.3 Connector on port 8009 -->
     <Connector port="8009" protocol="AJP/1.3" secretRequired="false" redirectPort="8443" />

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>gov.gtas</groupId>
         <artifactId>gtas-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>gtas-job-scheduler-war</artifactId>
@@ -15,41 +16,45 @@
     <name>gtas-job-scheduler Maven War file</name>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ruleservice.version>0.3-SNAPSHOT</ruleservice.version>
-        <loader.version>0.1-SNAPSHOT</loader.version>
+        <gtas-bom.version>0.1-SNAPSHOT</gtas-bom.version>
+        <gtas-rulesvc.version>0.3-SNAPSHOT</gtas-rulesvc.version>
+        <gtas-loader.version>0.1-SNAPSHOT</gtas-loader.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>gov.gtas</groupId>
+                <artifactId>gtas-bom</artifactId>
+                <version>${gtas-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
     <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-core</artifactId>
-             <version>1.11.535</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-sqs</artifactId>
-             <version>1.11.535</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-sns</artifactId>
-             <version>1.11.535</version>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>gov.gtas</groupId>
             <artifactId>gtas-rulesvc</artifactId>
-            <version>${ruleservice.version}</version>
+            <version>${gtas-rulesvc.version}</version>
         </dependency>
         <dependency>
             <groupId>gov.gtas</groupId>
             <artifactId>gtas-loader</artifactId>
-            <version>${loader.version}</version>
+            <version>${gtas-loader.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -60,13 +65,13 @@
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- Apache Commons FileUpload --> 
+        <!-- Apache Commons FileUpload -->
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 		</dependency>
 
-		<!-- Apache Commons IO --> 
+		<!-- Apache Commons IO -->
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -75,13 +80,19 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-spring</artifactId>
-             <version>5.13.3</version> 
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <finalName>gtas-job-scheduler</finalName>
         <plugins>

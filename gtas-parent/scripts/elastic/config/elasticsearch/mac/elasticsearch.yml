@@ -16,6 +16,14 @@
 #
 cluster.name: gtas-cluster
 #
+# The default threshold is <85% usage, change to bytes
+#
+cluster.routing.allocation.disk.threshold_enabled: true
+cluster.routing.allocation.disk.watermark.flood_stage: 5gb
+cluster.routing.allocation.disk.watermark.low: 30gb
+cluster.routing.allocation.disk.watermark.high: 20gb
+
+#
 # ------------------------------------ Node ------------------------------------
 #
 # Use a descriptive name for the node:
@@ -107,7 +115,9 @@ xpack.security.http.ssl.key: ${path.home}/config/certs/ssl/docker-cluster/elasti
 xpack.security.http.ssl.certificate: ${path.home}/config/certs/ssl/docker-cluster/elasticsearch/elasticsearch.crt
 xpack.security.http.ssl.certificate_authorities: [ "${path.home}/config/certs/ssl/ca/ca.crt" ]
 
-xpack.security.transport.ssl.verification_mode: certificate 
-xpack.security.transport.ssl.key: ${path.home}/config/certs/ssl/docker-cluster/elasticsearch/elasticsearch.key 
-xpack.security.transport.ssl.certificate: ${path.home}/config/certs/ssl/docker-cluster/elasticsearch/elasticsearch.crt 
+xpack.security.transport.ssl.verification_mode: certificate
+xpack.security.transport.ssl.key: ${path.home}/config/certs/ssl/docker-cluster/elasticsearch/elasticsearch.key
+xpack.security.transport.ssl.certificate: ${path.home}/config/certs/ssl/docker-cluster/elasticsearch/elasticsearch.crt
 xpack.security.transport.ssl.certificate_authorities: [ "${path.home}/config/certs/ssl/ca/ca.crt" ]
+
+xpack.ml.enabled: false
