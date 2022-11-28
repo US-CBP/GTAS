@@ -137,7 +137,7 @@ You will need to create two directories for processing messages in a development
 You may name the files as you wish, but the names must correspond with those in the application.properties file.
 This file must be copied to the configuration directory before starting the server.
 ```
-cp ./gtas-parent/gtas-commons/src/main/resources/default.application.properties [TOMCAT_HOME]/conf
+cp ./gtas-parent/gtas-commons/src/main/resources/default.application.properties [TOMCAT_HOME]/conf/application.properties
 ```
 
 Move the .war files to the tomcat server
@@ -150,6 +150,12 @@ cp ./gtas-parent/gtas-job-scheduler-war/target/gtas-job-scheduler.war [TOMCAT_HO
 ```
 [TOMCAT_HOME]/bin/catalina.sh run
 ```
+
+### Input data
+
+Copy API or PNR data into the directory specified by the 'message.dir.origin' property in the 'application.properties' file.
+
+Any processing errors will be reported in Tomcat's catalina.log file
 
 ### Open interface in a browser
 
