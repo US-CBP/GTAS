@@ -256,7 +256,7 @@ public class ElasticHelper {
 				lpVo.setFlightNumber((String) result.get("flightNumber"));
 				lpVo.setHighlightMatch(converHighlightsTable(hit.getHighlightFields().entrySet()));
 				// Need to normalize for intuitive consideration
-				lpVo.setScore(hit.getExplanation().getValue());
+				lpVo.setScore(hit.getExplanation().getValue().floatValue());
 				lp.add(lpVo);
 			}
 		}

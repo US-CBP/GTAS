@@ -17,7 +17,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- elastic -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
@@ -230,12 +229,6 @@
             </dependency>
 
             <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-yaml</artifactId>
-                <version>2.7.9</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast</artifactId>
                 <version>${hazelcast.version}</version>
@@ -301,7 +294,17 @@
 
             <dependency>
                 <groupId>org.elasticsearch</groupId>
+                <artifactId>elasticsearch</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch-core</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-client</artifactId>
                 <version>${elasticsearch.version}</version>
             </dependency>
             <dependency>
@@ -312,16 +315,6 @@
             <dependency>
                 <groupId>org.elasticsearch.plugin</groupId>
                 <artifactId>transport-netty4-client</artifactId>
-                <version>${elasticsearch.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.elasticsearch.plugin</groupId>
-                <artifactId>elasticsearch-rest-client</artifactId>
-                <version>${elasticsearch.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.elasticsearch.plugin</groupId>
-                <artifactId>elasticsearch</artifactId>
                 <version>${elasticsearch.version}</version>
             </dependency>
 
