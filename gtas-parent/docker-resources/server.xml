@@ -101,7 +101,7 @@
     -->
 
     <Connector port="8443" protocol="org.apache.coyote.http11.Http11AprProtocol" 
-               SSLEnabled="true" maxThreads="200" scheme="https"
+               SSLEnabled="false" maxThreads="200" scheme="https"
                secretRequired="false"
                SSLProtocol="TLSv1+TLSv1.1+TLSv1.2"
                certificateVerification="none"

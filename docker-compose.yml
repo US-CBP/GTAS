@@ -21,7 +21,7 @@ services:
         target: /wcogtas.org.key
 
   web-app:
-    image: wcogtas/web-app:1.0.0
+    image: vtas3:5000/web-app:20231103-1
     container_name: web-app
     build: 
       context: ./gtas-parent
