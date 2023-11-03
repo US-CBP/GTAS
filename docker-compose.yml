@@ -2,14 +2,13 @@ version: '3.7'
 services:
 
   http-proxy:
-    image: wcogtas/http-proxy:1.0.0
+    image: vtas3:5000/http-proxy:20231103-1
     container_name: http-proxy
     build: 
       context: ./gtas-parent
       dockerfile: docker-resources/proxy.Dockerfile
     restart: always
     ports:
-      - 443:443
       - 80:80
     networks:
       - GTAS_webapp-network
