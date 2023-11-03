@@ -1,7 +1,14 @@
 package gov.gtas.svc;
 
 import gov.gtas.model.GraphRule;
-import org.neo4j.driver.v1.*;
+
+import org.neo4j.driver.v1.AuthTokens;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.GraphDatabase;
+//import org.neo4j.driver.v1.*;
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.StatementResult;
 
 import java.util.*;
 import java.util.stream.Collectors;
