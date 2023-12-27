@@ -370,6 +370,22 @@
 					</execution>
 				</executions>
 				<dependencies>
+				<dependency>
+					<groupId>de.juplo</groupId>
+					<artifactId>scannotation</artifactId>
+					<version>1.0.4</version>
+					<exclusions>
+						<exclusion>
+							<groupId>org.javassist</groupId>
+							<artifactId>javassist</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>org.javassist</groupId>
+					<artifactId>javassist</artifactId>
+					<version>3.24.0-GA</version>
+				</dependency>
 					<dependency>
 						<groupId>com.hazelcast</groupId>
 						<artifactId>hazelcast-hibernate5</artifactId>
